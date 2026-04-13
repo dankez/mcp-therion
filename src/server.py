@@ -1,10 +1,54 @@
 from mcp.server.fastmcp import FastMCP
 import os
 import subprocess
+import json
 from src.anonymizer import anonymize_th
 
 mcp = FastMCP("Therion Mentor")
 DATA_ROOT = "/home/dankez/Downloads/dropbox-spolu/"
+STUDNICA_PATH = "studnica.json"
+
+@mcp.tool()
+def search_studnica(query: str):
+    """Vyhľadá záznamy v Studnici (podľa kľúča alebo hodnoty)."""
+    if not os.path.exists(STUDNICA_PATH):
+        return "Studnica je prázdna."
+    
+    try:
+        with open(STUDNICA_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        results = {}
+        query_lower = query.lower()
+        for k, v in data.items():
+            if query_lower in k.lower() or query_lower in v.lower():
+                results[k] = v
+                
+        if not results:
+            return f"Nenašli sa žiadne záznamy pre dopyt: '{query}'."
+        return results
+    except Exception as e:
+        return f"Chyba pri čítaní Studnice: {str(e)}"
+
+@mcp.tool()
+def add_to_studnica(topic: str, trick: str):
+    """Uloží novú tému a trik do Studnice."""
+    data = {}
+    if os.path.exists(STUDNICA_PATH):
+        try:
+            with open(STUDNICA_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception:
+            pass # Vytvoríme nový objekt, ak je súbor poškodený
+            
+    data[topic] = trick
+    
+    try:
+        with open(STUDNICA_PATH, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        return f"Téma '{topic}' bola úspešne pridaná do Studnice."
+    except Exception as e:
+        return f"Chyba pri ukladaní do Studnice: {str(e)}"
 
 @mcp.tool()
 def list_therion_projects():
