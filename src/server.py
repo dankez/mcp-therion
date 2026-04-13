@@ -103,5 +103,27 @@ def compile_therion(rel_path: str):
     except Exception as e:
         return f"Interná chyba: {str(e)}"
 
+@mcp.tool()
+def generate_th2_skeleton(description: str):
+    """Vygeneruje logickú kostru .th2 súboru z popisu."""
+    # Jednoduchá generácia na základe kľúčových slov
+    lines = [
+        "layout local",
+        "  scale 1 100",
+        "endlayout",
+        "",
+        f"# Logická kostra pre: {description}",
+        "scrap scrap1 -projection plan",
+        "  line wall",
+        "    10 10",
+        "    20 10",
+        "    20 20",
+        "    10 20",
+        "    10 10",
+        "  endline",
+        "endscrap"
+    ]
+    return "\n".join(lines)
+
 if __name__ == "__main__":
     mcp.run()
