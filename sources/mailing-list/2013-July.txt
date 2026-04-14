@@ -1,0 +1,2825 @@
+From jonathanprouty at gmail.com  Wed Jul  3 21:46:12 2013
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Wed, 3 Jul 2013 13:46:12 -0600
+Subject: [Therion] NODATA value in loch surface
+Message-ID: <CAEzKa93am7AYh-mDi=qrRooAwq9OL8XA-a0Tky45XqVq5aV4Ag@mail.gmail.com>
+
+Hello all,
+
+My apologies in advance if I've overlooked something, but is there a way to
+instruct Loch to NOT draw elevation data equal to a certain value? For
+instance, in my current model, I do not want Loch to draw any elevations
+that are equal to 0. Is this possible? Thanks very much in advance!
+
+Cheers,
+
+Jonny ^v^
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130703/8d327a6c/attachment.htm>
+
+From wolfgang.zillig at web.de  Fri Jul  5 08:44:27 2013
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Fri, 05 Jul 2013 08:44:27 +0200
+Subject: [Therion] NODATA value in loch surface
+In-Reply-To: <CAEzKa93am7AYh-mDi=qrRooAwq9OL8XA-a0Tky45XqVq5aV4Ag@mail.gmail.com>
+References: <CAEzKa93am7AYh-mDi=qrRooAwq9OL8XA-a0Tky45XqVq5aV4Ag@mail.gmail.com>
+Message-ID: <51D66B4B.2020906@web.de>
+
+Hello Jonny,
+I assume  that this is not possible. Are the holes in your elevation 
+data big?
+I would suggest that you interpolate the missing data. This can be done 
+tools from gdal-library:
+http://www.gdal.org/
+Ready compiled packages are available for Windows from OSGeo4W 
+http://trac.osgeo.org/osgeo4w/
+(OSGeo4W Installer)
+
+To fill the holes you need to do:
+1. copy the elevation matrix to a separate text file ie. dem.txt
+
+2. add a header to the text file that it looks like:
+ncols        366
+nrows        366
+xllcorner    0.000000000000
+yllcorner    -366.000000000000
+cellsize     1.000000000000
+471.2 473.3 482.9 489.5 492.3 ...
+447.7 449.8 453.8 456.4 457.2 ...
+...
+you have to adapt the ncols, nrows and yllcorner values to fit to your 
+matrix size (in my case 366 by 366 values)
+
+3. convert and mark nodata values with gdal_translate. "0" is the value 
+for nodata
+in OSGeo4W Shell:
+ > gdal_translate -a_nodata 0 dem.txt demnodata.tif
+
+4. fill the nodata regions by
+in OSGeo4W Shell:
+gdal_fillnodata.py demnodata.tif filled.tif
+
+5. convert back to ascii matrix
+in OSGeo4W Shell:
+gdal_translate -of AAIGrid filled.tif filled.txt
+
+Remark: the produced *.tif files can not be displayed in every image 
+viewing software as it contains no the usual RGB data but instead 
+integer or float valus. One nice software to display (and even analyze) 
+is ImageJ: http://imagej.nih.gov/ij/
+
+Best regards
+Wolfgang
+
+Am 03.07.2013 21:46, schrieb Jonny Prouty:
+> Hello all,
+>
+> My apologies in advance if I've overlooked something, but is there a 
+> way to instruct Loch to NOT draw elevation data equal to a certain 
+> value? For instance, in my current model, I do not want Loch to draw 
+> any elevations that are equal to 0. Is this possible? Thanks very much 
+> in advance!
+>
+> Cheers,
+>
+> Jonny ^v^
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130705/84e9b5f0/attachment.htm>
+
+From drfootleg at gmail.com  Thu Jul 18 21:27:41 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Thu, 18 Jul 2013 20:27:41 +0100
+Subject: [Therion] Options for converting splays in my Cave Converter tool
+Message-ID: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+
+As I am working on improving the handling of splays in my cave
+converter tool, I wanted to get the opinions of other surveyors as to
+what options are actually useful. Previously the cave converter
+automatically converted splays to LRUD dimensions for survey legs,
+removing the splays as it did so. This was because I came to DistoX
+surveying from traditional instruments where I typically only measured
+LRUD at stations. So my initial thoughts on splays were that they were
+just a way to measure these passage dimensions at each station.
+As I progressed in knowledge I came to realise the value of splays for
+marking key points to assist in sketching the shapes of chambers and
+interesting bends and shapes in passages, to mark side passages and
+key formations or other features. So I changed the converter to only
+remove the splays when just LRUD measurements were found at a station.
+This removed the masses of splays for long sections of simple passage,
+but retained them at interesting points where more splays were
+measured.
+Another few years on, and I am finally moving this LRUD generation
+code from the PocketTopo file parser into the general survey utility
+classes. So it will be possible to generate LRUD data from splays for
+any survey from any format read in. This is where my current questions
+arise. Which of the following options do people think are genuinely
+useful:
+1) Remove all splays from the output survey file.
+2) Keep all splays and also generate LRUD data for legs with stations
+which have splays.
+3) Remove splays which are used to generate a passage dimension (one
+of LRUD), but keep the rest of the splays.
+4) Remove splays when generating LRUD data only when there are no
+splays at a station other than those used to generate the LRUD data.
+
+Anything I missed?
+
+Feedback welcome. For anyone who is not familiar with my Cave
+Converter, the homepage for the tool is:
+http://wscc.darkgem.com/caveconverter/
+
+Footleg
+
+
+From martinsluka at mac.com  Thu Jul 18 22:28:16 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 18 Jul 2013 22:28:16 +0200
+Subject: [Therion] Options for converting splays in my Cave Converter
+	tool
+In-Reply-To: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+References: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+Message-ID: <85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+
+Footleg, 
+
+I apologise myself, but try to read something about geodetic method tachymetry :)
+
+http://engineeringsurvey.blogspot.cz/2013/02/tachymetry.html
+
+Splay shots allow to survey cave and not only to paint it. It is very important. The same kind of importance as the cross-section on station isn't generaly rectangular. I think the LRUD method came from mine surveying, where it is +- right. 
+
+m.
+
+
+
+Jul 18, 2013 v 9:27 PM, Footleg <drfootleg at gmail.com>:
+
+> Anything I missed?
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií a reprodukcí
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130718/459f0755/attachment.htm>
+
+From andrew at wotcc.org.uk  Fri Jul 19 11:45:14 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 19 Jul 2013 10:45:14 +0100
+Subject: [Therion] Options for converting splays in my Cave Converter
+ tool
+In-Reply-To: <85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+References: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+	<85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+Message-ID: <51E90AAA.7000205@wotcc.org.uk>
+
+Hi
+
+I would question the conversion of splays to LRUD. They were probably
+introduced because that was the best that could be done in a reasonable
+time frame while surveying underground. Now splays are taking over. They
+give more and better targeted information. LRUD always had major flaws
+like whether to take it perpendicular or as a perpendicular to the
+bisector of the previous and next leg (so what happens if there are 3
+legs from a station) And junctions where always a real mess, then there
+are pitches, lots of times the readings where left blank.
+
+Maybe converting LRUD to splays is the way to go, but that would give
+splays that go through rock at times.
+
+I would see them as 2 types of data, would you convert dive data to
+normal data, possibly to move from one program to another?
+
+I personally would leave them as splays, hopefully software will catch
+up to allow models to be produced from the better data
+
+Andrew
+
+On 18/07/13 21:28, Martin Sluka wrote:
+> Footleg, 
+> 
+> I apologise myself, but try to read something about geodetic method
+> tachymetry :)
+> 
+> http://engineeringsurvey.blogspot.cz/2013/02/tachymetry.html
+> 
+> Splay shots allow to survey cave and not only to paint it. It is very
+> important. The same kind of importance as the cross-section on station
+> isn't generaly rectangular. I think the LRUD method came from mine
+> surveying, where it is +- right. 
+> 
+> m.
+> 
+> 
+> 
+> Jul 18, 2013 v 9:27 PM, Footleg <drfootleg at gmail.com
+> <mailto:drfootleg at gmail.com>>:
+> 
+>> Anything I missed?
+> 
+> Martin Sluka - Studio Sluka
+> 
+> prodej Hahnemühle DFA 
+> tisk fotografií a reprodukcí
+> 
+> Na Rovnosti 2692/21
+> 130 00 Praha 3
+> tel.: +420 603513640
+> mail: martinsluka at mac.com <mailto:martinsluka at mac.com>
+> web: http://www.piezografie.cz
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From drfootleg at gmail.com  Fri Jul 19 14:24:29 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Fri, 19 Jul 2013 13:24:29 +0100
+Subject: [Therion] Options for converting splays in my Cave Converter
+	tool
+In-Reply-To: <85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+References: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+	<85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+Message-ID: <CAJkGg4ng2YsO2Ygcf+eHmG_7Yggy1ecdT9y+LgZ-=8JxXBDFBw@mail.gmail.com>
+
+On 18 July 2013 21:28, Martin Sluka <martinsluka at mac.com> wrote:
+> I apologise myself, but try to read something about geodetic method
+> tachymetry :)
+>
+> http://engineeringsurvey.blogspot.cz/2013/02/tachymetry.html
+>
+> Splay shots allow to survey cave and not only to paint it. It is very
+> important. The same kind of importance as the cross-section on station isn't
+> generaly rectangular. I think the LRUD method came from mine surveying,
+> where it is +- right.
+
+Thanks for the link Martin. Finally I know what I should be doing
+after all these years ;)
+
+But my question was not 'What should I do with my data?', but
+'What are the different useful things that anyone might want to do
+with their data?'
+
+Hold on to your seat now, as the following example features people
+doing things with survey data which does not always involve Therion!
+
+When drawing up a plan or elevation I agree the splays are almost
+always useful to retain completely. But there are some use cases where
+I might want to generate different models of my cave to aid
+visualisation.
+
+The first case is where someone is such a fan of splays (I recently
+had to fix a bug which occurred when more than 26 splays were present
+at a single station) that the 3D model of the cave is difficult to
+visualise because of the sheer number of splays. So it is useful to be
+able to generate a model without the splays present. The ideal would
+be a viewer which allows splays to be turned on or off, but I don't
+know of one. Loch appears to not show splays at all. Aven appears to
+always show splays.
+
+A second related case is where I have taken a backsight for every leg.
+I do this as a splay with the DistoX to check for problems in the
+measurement of that leg. But now I have a splay running along the line
+of every leg. In Aven when I view my model coloured by error these
+splays hide the colours of the legs in my loops because the splay is
+not in a loop and so appear white. Deleting the splays allows me to
+view my cave coloured by error very clearly. The ideal would be a way
+to indicate a leg is a backsight in the survey data file. But until
+that is implemented and the viewers allow it to be hidden I have to
+remove the splays for some views of my data.
+
+Now I want to view the relative passage sizes in Aven. So I need LRUD
+data to generate passage solid tubes. It is a crude approximation of
+the true passage shape and size, but definitely very useful. Hence the
+desire to generate LRUD data from the splays. I am not going to use it
+to draw up my maps, just to generate a half decent looking model. Why
+not use Therion and Loch to create the model (I can almost hear Martin
+asking!). Well until I have drawn all my scraps I do not get solid
+passages of the correct size. I think Loch makes up the passage
+dimensions based on the leg length of something. Certainly not using
+LRUD data or splays. I also cannot view my loop errors or survey
+coloured by date in Loch. Nor can I measure distances in the Loch
+viewer.
+
+Finally and possibly the most controversial use case. Someone has used
+their DistoX to measure orthogonal LRUD dimensions at each station,
+because this is how they have surveyed for years and having a new
+survey instrument does not change behaviour overnight. So they want
+the LRUD data to be extrapolated from these splay measurements. They
+don't want the splays left in their data file, so I have an option to
+remove any splay which was used to generate a passage dimension.
+
+I think all these are useful abilities in a tool which can process
+survey data. No single file format or viewer can do all the things I
+find useful, but my converter tool enables me to process my data to
+work around these issues. But what else do other people wish they
+could do which they would find useful, but which currently they can
+only achieve by painstaking hand editing of their survey data files?
+
+Footleg
+
+
+From bruce at tomo.co.nz  Sat Jul 20 01:26:30 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 20 Jul 2013 11:26:30 +1200
+Subject: [Therion] Options for converting splays in my Cave Convertertool
+In-Reply-To: <CAJkGg4ng2YsO2Ygcf+eHmG_7Yggy1ecdT9y+LgZ-=8JxXBDFBw@mail.gmail.com>
+References: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com><85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+	<CAJkGg4ng2YsO2Ygcf+eHmG_7Yggy1ecdT9y+LgZ-=8JxXBDFBw@mail.gmail.com>
+Message-ID: <AAFAC182C82642F98AE442216A922766@JUICEBRAIN>
+
+Hi Footleg
+
+Although I have not used your software, and I don't imagine that will need
+it with my current workflow habits, that may not always be the case.
+
+I like the idea of what you are doing, and think those four options in your
+original post seem to have potential uses.
+
+Some comments from your recent post.
+
+ 
+
+>Loch appears to not show splays at all.
+
+Loch does enable splays to be turned on and off.  By default they are off,
+even if they are present in the data file.
+
+Right click, select 'scene', then 'centreline' and you can toggle splay
+visibility.
+
+
+
+ 
+
+>Why not use Therion and Loch to create the model (I can almost hear Martin
+
+asking!). Well until I have drawn all my scraps I do not get solid
+
+passages of the correct size. I think Loch makes up the passage
+
+dimensions based on the leg length of something. Certainly not using
+
+LRUD data or splays. 
+
+ 
+
+Not quite right. If you set 'walls auto' in your centrelines,  (pg 20 5.3.11
+Therion Book) Loch generates passage tubes;
+
+1.    by guess where you have no LRUD data
+
+2.    as per LRUD data where it exists
+
+3.    as per plan scrap drawings and 'point passage-height' or 'point
+dimensions' where they exist, and otherwise guesses for passage height
+
+My guess is that if UD data is present, Loch will superpose plan shape and
+realistic passage height - I have never tried it, so Footlegs option to
+generate UD data from splays will be interesting.  The embedded image is
+case number 3 above.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130720/c9c06cc7/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 12215 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130720/c9c06cc7/attachment.jpg>
+
+From drfootleg at gmail.com  Sat Jul 20 16:23:32 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sat, 20 Jul 2013 15:23:32 +0100
+Subject: [Therion] Options for converting splays in my Cave Convertertool
+In-Reply-To: <AAFAC182C82642F98AE442216A922766@JUICEBRAIN>
+References: <CAJkGg4=htR4F95_5LGfuCd54V=x0c+exFU=vC0LR4BhneuYmjQ@mail.gmail.com>
+	<85233DFB-3DFC-46B9-9E7A-A9778DFCE019@mac.com>
+	<CAJkGg4ng2YsO2Ygcf+eHmG_7Yggy1ecdT9y+LgZ-=8JxXBDFBw@mail.gmail.com>
+	<AAFAC182C82642F98AE442216A922766@JUICEBRAIN>
+Message-ID: <CAJkGg4nT7XUf0q8YqK1wPumstvyCn6x-WLP20VEVd-E+7q8AtQ@mail.gmail.com>
+
+Thanks Bruce, I was not aware of that option to show/hide splays in Loch.
+
+I also never realised that lox models could generate passage walls using
+LRUD data. I had only seen it done using plan scraps and over-riding badly
+interpolated heights using ceiling height points in my scraps.
+
+Can I add LRUD data to my survey data in order to generate passage heights
+when the wall lines in my scraps are used to set the widths? This would be
+a good reason for me to accelerate support for Therion format reading and
+writing in Cave Converter. Then you will be able to generate LRUD data from
+splays to improve passage dimensions in models viewed in Loch. I'll find
+you a compelling reason to use this tool yet Bruce!
+
+Footleg
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130720/add82c05/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Jul 21 00:12:30 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 21 Jul 2013 10:12:30 +1200
+Subject: [Therion] Loch passage tube behaviour
+Message-ID: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+
+Footleg
+
+I think the answer is 'yes'.
+
+Hopefully you can view the images embedded in the image rather than
+attached, otherwise this won't make much sense.
+
+ 
+
+In this example there is a single centreline (comprising both cave and
+surface survey) and 4 scraps.
+
+A short section of cave at the left hand end does not have any scrap drawn.
+
+Compiled with Therion 5.3.11
+
+ 
+
+One interesting point is that regardless of the 'walls' setting, there is
+never a tube generated there once we have scraps drawn anywhere in this
+centreline.  My deduction is that Loch uses only one type of tube generation
+per centreline, because in almost all my larger projects that transition
+between traditional survey and paperless survey, I have a combination of
+each type of tube generation within the same Loch model.
+
+This fits with the description in the Therion Book
+
+"walls <auto/on/off>  turn on/off passage shape generation from LRUD data
+for
+
+subsequent shots. If set auto, passage is generated only if there is no
+scrap referencing
+
+given centreline."
+
+ 
+
+In these examples I have not used any 'point passage-height' or 'point
+dimensions' in the scraps.
+
+ 
+
+
+
+Paperless survey (no LRUD), walls auto, off or on (or not specified), No
+plan scraps. [Loch always guesses tube dimensions]
+
+-same if LRUD present and walls off
+
+ 
+
+
+
+Paperless survey (no LRUD), walls auto, off or on (or not specified), plan
+scraps drawn [Loch uses scraps for tube width and guesses tube height]
+
+ 
+
+ 
+
+Now, I added a few LRUD to the same centreline, including some with only UD
+
+ 
+
+  data dimensions station left right up down
+
+  1.4 - - 20 20
+
+  1.5 - - 20 20
+
+  1.6 2 2 20 20
+
+  
+
+  3.13 10 10 20 20
+
+  3.14 10 10 20 20
+
+ 
+
+Tube generation, where it occurs extends one station beyond those specified.
+
+ 
+
+
+
+Paperless survey (some LRUD), walls on or auto (or not specified), No plan
+scraps. [Loch uses LRUD for tube dimensions and only for stations where
+partial data is provided, it guesses the missing data   ie if a station has
+no data, no tube is generated]
+
+ 
+
+And now adding some scraps and things get interesting.
+
+ 
+
+
+
+Paperless survey (some LRUD), walls off (or not specified), Plan scraps
+drawn. [Loch uses scraps, not LR, for tube plan dimensions, and UD for
+height where specified, otherwise height is guessed.  Where there are no
+scraps, LRUD is not used.]
+
+That is perhaps contrary to what one might expect from the Therion Book
+'walls' entry.  It also produces perhaps the best model.
+
+
+
+Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [Loch
+uses scraps AND LR for tube plan dimensions, and UD for height where
+specified, otherwise height is guessed.  Where there is no LR, then it is
+guessed. Where there are no scraps, LRUD is used.]
+
+ 
+
+If I change the LRUD definition like this.
+
+ 
+
+  data dimensions station up down
+
+  1.4  20 20
+
+  1.5  20 20
+
+  1.6  20 20
+
+  data dimensions station left right up down  
+
+  3.13 10 10 20 20
+
+  3.14 10 10 20 20
+
+ 
+
+..then the guessed width troubles continue.
+
+
+
+Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [same as
+above]
+
+ 
+
+So my final conclusion, for paperless survey, no need to include walls
+statements in each survey, or if you do, walls off is better than on or
+auto. If you happen to provide some UD data, then your model will be
+improved (more realistic).
+
+ 
+
+I surmise that with these same settings, scraps with point passage-height or
+point dimensions will have a similar effect, but I have not tested this.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 16835 bytes
+Desc: image001.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 19226 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 23904 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 22270 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment-0003.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 23202 bytes
+Desc: image005.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment-0004.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 23243 bytes
+Desc: image006.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/0b32c39e/attachment-0005.jpg>
+
+From drfootleg at gmail.com  Sun Jul 21 22:40:32 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sun, 21 Jul 2013 21:40:32 +0100
+Subject: [Therion] Loch passage tube behaviour
+In-Reply-To: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+References: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+Message-ID: <CAJkGg4mXhQAdsZBs=RivJAmR5MUokRMDyoNayFJH61ORsymqaw@mail.gmail.com>
+
+A very useful account of the various options Bruce. Well worth adding to
+the wiki!
+
+I will experiment with some of my caves were I have LRUD data but have not
+entered it into Therion to see if I can improve my models.
+
+Footleg
+
+
+On 20 July 2013 23:12, Bruce <bruce at tomo.co.nz> wrote:
+
+> **
+>
+> Footleg****
+>
+> I think the answer is ‘yes’.****
+>
+> Hopefully you can view the images embedded in the image rather than
+> attached, otherwise this won’t make much sense.****
+>
+> ** **
+>
+> In this example there is a single centreline (comprising both cave and
+> surface survey) and 4 scraps.****
+>
+> A short section of cave at the left hand end does not have any scrap drawn.
+> ****
+>
+> Compiled with Therion 5.3.11****
+>
+> ** **
+>
+> One interesting point is that regardless of the ‘walls’ setting, there is
+> never a tube generated there once we have scraps drawn anywhere in this
+> centreline.  My deduction is that Loch uses only one type of tube
+> generation per centreline, because in almost all my larger projects that
+> transition between traditional survey and paperless survey, I have a
+> combination of each type of tube generation within the same **Loch**model.
+> ****
+>
+> This fits with the description in the Therion Book****
+>
+> *“walls <auto/on/off>  turn on/off passage shape generation from LRUD
+> data for*
+>
+> *subsequent shots. If set auto, passage is generated only if there is no
+> scrap referencing*
+>
+> *given centreline.”*
+>
+> ** **
+>
+> In these examples I have not used any ‘point passage-height’ or ‘point
+> dimensions’ in the scraps.****
+>
+> ** **
+>
+> ****
+>
+> Paperless survey (no LRUD), walls auto, off or on (or not specified), No
+> plan scraps. [**Loch** always guesses tube dimensions]****
+>
+> -same if LRUD present and walls off****
+>
+> ** **
+>
+> ****
+>
+> Paperless survey (no LRUD), walls auto, off or on (or not specified), plan
+> scraps drawn [**Loch** uses scraps for tube width and guesses tube height]
+> ****
+>
+> ** **
+>
+> ** **
+>
+> Now, I added a few LRUD to the same centreline, including some with only UD
+> ****
+>
+> ** **
+>
+>   data dimensions station left right up down****
+>
+>   1.4 - - 20 20****
+>
+>   1.5 - - 20 20****
+>
+>   1.6 2 2 20 20****
+>
+>   ****
+>
+>   3.13 10 10 20 20****
+>
+>   3.14 10 10 20 20****
+>
+> ** **
+>
+> Tube generation, where it occurs extends one station beyond those
+> specified.****
+>
+> ** **
+>
+> ****
+>
+> Paperless survey (some LRUD), walls on or auto (or not specified), No plan
+> scraps. [**Loch** uses LRUD for tube dimensions and only for stations
+> where partial data is provided, it guesses the missing data   ie if a
+> station has no data, no tube is generated]****
+>
+> ** **
+>
+> And now adding some scraps and things get interesting.****
+>
+> ** **
+>
+> ****
+>
+> Paperless survey (some LRUD), walls off (or not specified), Plan scraps
+> drawn. [**Loch** uses scraps, not LR, for tube plan dimensions, and UD
+> for height where specified, otherwise height is guessed.  Where there are
+> no scraps, LRUD is *not* used.]****
+>
+> That is perhaps contrary to what one might expect from the Therion Book
+> ‘walls’ entry.  It also produces perhaps the best model.****
+>
+> ****
+>
+> Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [**Loch
+> ** uses scraps AND LR for tube plan dimensions, and UD for height where
+> specified, otherwise height is guessed.  Where there is no LR, then it is
+> guessed. Where there are no scraps, LRUD *is* used.]****
+>
+> ** **
+>
+> If I change the LRUD definition like this…****
+>
+> ** **
+>
+>   data dimensions station up down****
+>
+>   1.4  20 20****
+>
+>   1.5  20 20****
+>
+>   1.6  20 20****
+>
+>   data dimensions station left right up down  ****
+>
+>   3.13 10 10 20 20****
+>
+>   3.14 10 10 20 20****
+>
+> ** **
+>
+> ..then the guessed width troubles continue.****
+>
+> ****
+>
+> Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [same
+> as above]****
+>
+> ** **
+>
+> So my final conclusion, for paperless survey, no need to include walls
+> statements in each survey, or if you do, walls off is better than on or
+> auto. If you happen to provide some UD data, then your model will be
+> improved (more realistic).****
+>
+> ** **
+>
+> I surmise that with these same settings, scraps with point passage-height
+> or point dimensions will have a similar effect, but I have not tested this.
+> ****
+>
+> ** **
+>
+> Bruce****
+>
+> ** **
+>
+> ** **
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 19226 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 22270 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 23243 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 23904 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment-0003.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 16835 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment-0004.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 23202 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130721/d39e23b0/attachment-0005.jpg>
+
+From graham.mullan at coly.org.uk  Mon Jul 22 08:39:52 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Mon, 22 Jul 2013 07:39:52 +0100
+Subject: [Therion] Options for converting splays in my Cave Converter
+	tool
+In-Reply-To: <mailman.30.1374275600.2919.therion@speleo.sk>
+References: <mailman.30.1374275600.2919.therion@speleo.sk>
+Message-ID: <51ECD3B8.6030906@coly.org.uk>
+
+I agree with Andrew and Martin. Splays are a different - and in my view 
+more useful - form of data from LRUD. Keep them as splays.
+
+One or twice (in Therion) I have needed to convert a splay to a leg, but 
+that is a highly selective process and not for a conversion tool.
+
+Graham
+--
+graham.mullan at coly.org.uk
+
+
+
+From john at k-stevens.co.uk  Tue Jul 23 21:03:05 2013
+From: john at k-stevens.co.uk (John Stevens)
+Date: Tue, 23 Jul 2013 20:03:05 +0100
+Subject: [Therion] Loch passage tube behaviour
+In-Reply-To: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+References: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+Message-ID: <04915AF93C48441D8D7823F97A164B88@Study>
+
+Bruce a very useful article but it differs from my experience in a couple of ways.
+
+I thought a couple of months ago I would try and produce a reasonable 3d model of a cave. So I surveyed a short section of passage with more data than I could possibly normally use. I set stations at 5m intervals and took 8 wall measurements every 1m. This would get me a lot of splays that I could then use as vertices for a 3d model (if I could find/write some software to make the model, not done yet)
+I could then compare this model with the one Therion produces and see which extra splays are really needed. 
+
+Unlike your models I seem to get the centreline tube in the middle (mostly) of the scrap tube. Unfortunately this centreline tube often protrudes through the scrap tube, ruining the model. How am I getting two tube?  I have tried various options with walls on/off/auto or commented out, to no avail.
+
+I also found the Dimensions –value [up, down] useful but it sometimes does unexpected things.
+Passage Height was even worse for this. If a single number was given it distributed the measurement above and below the centreline. If + – was used it appeared on the plan but did nothing on the model.
+
+using Therion 5.3.11
+
+This is a work in progress and your mail has come at just the right time
+
+Cheers
+
+John
+
+
+From: Bruce 
+Sent: Saturday, July 20, 2013 11:12 PM
+To: 'List for Therion users' 
+Subject: [Therion] Loch passage tube behaviour
+
+Footleg
+
+I think the answer is ‘yes’.
+
+Hopefully you can view the images embedded in the image rather than attached, otherwise this won’t make much sense.
+
+ 
+
+In this example there is a single centreline (comprising both cave and surface survey) and 4 scraps.
+
+A short section of cave at the left hand end does not have any scrap drawn.
+
+Compiled with Therion 5.3.11
+
+ 
+
+One interesting point is that regardless of the ‘walls’ setting, there is never a tube generated there once we have scraps drawn anywhere in this centreline.  My deduction is that Loch uses only one type of tube generation per centreline, because in almost all my larger projects that transition between traditional survey and paperless survey, I have a combination of each type of tube generation within the same Loch model.
+
+This fits with the description in the Therion Book
+
+“walls <auto/on/off>  turn on/off passage shape generation from LRUD data for
+
+subsequent shots. If set auto, passage is generated only if there is no scrap referencing
+
+given centreline.”
+
+ 
+
+In these examples I have not used any ‘point passage-height’ or ‘point dimensions’ in the scraps.
+
+ 
+
+
+
+Paperless survey (no LRUD), walls auto, off or on (or not specified), No plan scraps. [Loch always guesses tube dimensions]
+
+-same if LRUD present and walls off
+
+ 
+
+
+
+Paperless survey (no LRUD), walls auto, off or on (or not specified), plan scraps drawn [Loch uses scraps for tube width and guesses tube height]
+
+ 
+
+ 
+
+Now, I added a few LRUD to the same centreline, including some with only UD
+
+ 
+
+  data dimensions station left right up down
+
+  1.4 - - 20 20
+
+  1.5 - - 20 20
+
+  1.6 2 2 20 20
+
+  
+
+  3.13 10 10 20 20
+
+  3.14 10 10 20 20
+
+ 
+
+Tube generation, where it occurs extends one station beyond those specified.
+
+ 
+
+
+
+Paperless survey (some LRUD), walls on or auto (or not specified), No plan scraps. [Loch uses LRUD for tube dimensions and only for stations where partial data is provided, it guesses the missing data   ie if a station has no data, no tube is generated]
+
+ 
+
+And now adding some scraps and things get interesting.
+
+ 
+
+
+
+Paperless survey (some LRUD), walls off (or not specified), Plan scraps drawn. [Loch uses scraps, not LR, for tube plan dimensions, and UD for height where specified, otherwise height is guessed.  Where there are no scraps, LRUD is not used.]
+
+That is perhaps contrary to what one might expect from the Therion Book ‘walls’ entry.  It also produces perhaps the best model.
+
+
+
+Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [Loch uses scraps AND LR for tube plan dimensions, and UD for height where specified, otherwise height is guessed.  Where there is no LR, then it is guessed. Where there are no scraps, LRUD is used.]
+
+ 
+
+If I change the LRUD definition like this…
+
+ 
+
+  data dimensions station up down
+
+  1.4  20 20
+
+  1.5  20 20
+
+  1.6  20 20
+
+  data dimensions station left right up down  
+
+  3.13 10 10 20 20
+
+  3.14 10 10 20 20
+
+ 
+
+..then the guessed width troubles continue.
+
+
+
+Paperless survey (some LRUD), walls on or auto, Plan scraps drawn. [same as above]
+
+ 
+
+So my final conclusion, for paperless survey, no need to include walls statements in each survey, or if you do, walls off is better than on or auto. If you happen to provide some UD data, then your model will be improved (more realistic).
+
+ 
+
+I surmise that with these same settings, scraps with point passage-height or point dimensions will have a similar effect, but I have not tested this.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+
+
+--------------------------------------------------------------------------------
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+--------------------------------------------------------------------------------
+
+No virus found in this message.
+Checked by AVG - www.avg.com
+Version: 2013.0.3349 / Virus Database: 3204/6507 - Release Date: 07/20/13
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 16835 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 19226 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 23904 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 22270 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment-0003.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 23202 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment-0004.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 23243 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment-0005.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: eglwystest.zip
+Type: application/x-zip-compressed
+Size: 282773 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130723/3a267544/attachment.bin>
+
+From bruce at tomo.co.nz  Tue Jul 23 23:51:52 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 24 Jul 2013 09:51:52 +1200
+Subject: [Therion] Loch passage tube behaviour
+In-Reply-To: <04915AF93C48441D8D7823F97A164B88@Study>
+References: <2CC5BE04D2014BC28A1EF558CAD51DE7@JUICEBRAIN>
+	<04915AF93C48441D8D7823F97A164B88@Study>
+Message-ID: <E9E5804D2F2742798A6784F62779AF1C@JUICEBRAIN>
+
+Interesting John
+
+With your model as posted I did not get dual tubes with walls off although I
+did with walls on.
+
+If you remove all of the point passage-height and point dimensions from your
+scrap, then the behaviour of your model seems to match the behaviour I
+described.
+
+ 
+
+BTW I added my previous post to the wiki examples page
+http://therion.speleo.sk/wiki/doku.php/examples#loch_models_paperless_survey
+_plan_scraps_and_lrud
+
+ 
+
+Not able to spend more time on this just now (winter sniffles-back to bed),
+but seems like point dimensions and point passage-height changes the
+behaviour.
+
+ 
+
+A semi automated way of enabling therion to produce accurate model passage
+heights using splay shots would be useful, and it seems like Footlegs
+proposal might be convenient (for those of us who don't have to write the
+code). 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of John Stevens
+Sent: Wednesday, 24 July 2013 7:03 a.m.
+To: 'List for Therion users'
+Subject: Re: [Therion] Loch passage tube behaviour
+
+ 
+
+Bruce a very useful article but it differs from my experience in a couple of
+ways.
+
+ 
+
+I thought a couple of months ago I would try and produce a reasonable 3d
+model of a cave. So I surveyed a short section of passage with more data
+than I could possibly normally use. I set stations at 5m intervals and took
+8 wall measurements every 1m. This would get me a lot of splays that I could
+then use as vertices for a 3d model (if I could find/write some software to
+make the model, not done yet)
+
+I could then compare this model with the one Therion produces and see which
+extra splays are really needed. 
+
+ 
+
+Unlike your models I seem to get the centreline tube in the middle (mostly)
+of the scrap tube. Unfortunately this centreline tube often protrudes
+through the scrap tube, ruining the model. How am I getting two tube?  I
+have tried various options with walls on/off/auto or commented out, to no
+avail.
+
+ 
+
+I also found the Dimensions -value [up, down] useful but it sometimes does
+unexpected things.
+
+Passage Height was even worse for this. If a single number was given it
+distributed the measurement above and below the centreline. If + - was used
+it appeared on the plan but did nothing on the model.
+
+ 
+
+using Therion 5.3.11
+
+ 
+
+This is a work in progress and your mail has come at just the right time
+
+ 
+
+Cheers
+
+ 
+
+John
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130724/383f6ec7/attachment.htm>
+
+From andrew at wotcc.org.uk  Wed Jul 24 22:18:30 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 24 Jul 2013 21:18:30 +0100
+Subject: [Therion] file.sql format
+Message-ID: <51F03696.5030001@wotcc.org.uk>
+
+Hello
+
+I have just been playing with the export database part of Therion again.
+
+The file outputted was imported into some application fine, but most
+would not work phpMyAdmin being one of the ones that I could not import
+with and the one that my ISP forces me to use.
+
+phpMyAdmin was giving the error
+
+#1064 - You have an error in your SQL syntax; check the manual that
+corresponds to your MySQL server version for the right syntax to use
+near 'TRANSACTION' at line 1
+
+After a bit of searching I found this
+
+http://dev.mysql.com/doc/refman/5.0/en/commit.html
+
+(there is a similar page for MySQL4 and 3.23 that seem to say the same)
+
+So editing the exported file first line
+
+from
+
+begin transaction;
+
+to
+
+begin;
+
+and last line
+
+
+from
+
+commit transaction;
+
+to
+
+commit;
+
+then it worked
+Not sure if this is a bug or my lack of understanding of the .sql file
+format
+
+Andrew
+
+
+From lada at blazcata.cz  Thu Jul 25 16:36:56 2013
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Thu, 25 Jul 2013 16:36:56 +0200
+Subject: [Therion] file.sql format
+In-Reply-To: <51F03696.5030001@wotcc.org.uk>
+References: <51F03696.5030001@wotcc.org.uk>
+Message-ID: <CANkn7Rf=j5LV0kq=NvF3etMY2dB0xangjY9SYkJYOdUi4Oc52w@mail.gmail.com>
+
+I think it should be corrected to begin/commit only as afaik most of the
+sql servers use this syntax. L.
+
+Dne středa, 24. července 2013, Andrew Atkinson napsal(a):
+
+> Hello
+>
+> I have just been playing with the export database part of Therion again.
+>
+> The file outputted was imported into some application fine, but most
+> would not work phpMyAdmin being one of the ones that I could not import
+> with and the one that my ISP forces me to use.
+>
+> phpMyAdmin was giving the error
+>
+> #1064 - You have an error in your SQL syntax; check the manual that
+> corresponds to your MySQL server version for the right syntax to use
+> near 'TRANSACTION' at line 1
+>
+> After a bit of searching I found this
+>
+> http://dev.mysql.com/doc/refman/5.0/en/commit.html
+>
+> (there is a similar page for MySQL4 and 3.23 that seem to say the same)
+>
+> So editing the exported file first line
+>
+> from
+>
+> begin transaction;
+>
+> to
+>
+> begin;
+>
+> and last line
+>
+>
+> from
+>
+> commit transaction;
+>
+> to
+>
+> commit;
+>
+> then it worked
+> Not sure if this is a bug or my lack of understanding of the .sql file
+> format
+>
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <javascript:;>
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130725/f155405f/attachment.htm>
+
+From drfootleg at gmail.com  Thu Jul 25 22:07:51 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Thu, 25 Jul 2013 21:07:51 +0100
+Subject: [Therion] file.sql format
+In-Reply-To: <51F03696.5030001@wotcc.org.uk>
+References: <51F03696.5030001@wotcc.org.uk>
+Message-ID: <CAJkGg4=ZQ=s8UYL1_Qrh4pnguOW7ZBqpWo+Yfh9+ZWrzcmM89g@mail.gmail.com>
+
+In most databases, transactions are not needed for SQL imports. Their
+purpose is to ensure that a partial operation does not get committed
+to the database. For example if a system was transferring money from
+one account to another you would not want the withdrawl of an amount
+from the paying account to occur without being guaranteed that the
+payment was credited to the receiving account. The transaction
+begin/commit statements provide this guarantee. Either everything
+inside the transaction begin/end will be committed to the database, or
+none of it will.
+
+For SQL import of Therion data it would seem unnecessary unless it was
+really important to you that if you stopped the import part way
+through then all the import was rolled back and none of the data
+written into the database. More commonly with large data imports of
+complete tables you do not want to use transactions as this slows down
+the operation, and if it was to fail for some reason (like an error in
+the SQL script) then you can just drop and recreate the tables to
+reset the database ready to try again.
+
+Footleg
+
+On 24 July 2013 21:18, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> Hello
+>
+> I have just been playing with the export database part of Therion again.
+>
+> The file outputted was imported into some application fine, but most
+> would not work phpMyAdmin being one of the ones that I could not import
+> with and the one that my ISP forces me to use.
+>
+> phpMyAdmin was giving the error
+>
+> #1064 - You have an error in your SQL syntax; check the manual that
+> corresponds to your MySQL server version for the right syntax to use
+> near 'TRANSACTION' at line 1
+>
+> After a bit of searching I found this
+>
+> http://dev.mysql.com/doc/refman/5.0/en/commit.html
+>
+> (there is a similar page for MySQL4 and 3.23 that seem to say the same)
+>
+> So editing the exported file first line
+>
+> from
+>
+> begin transaction;
+>
+> to
+>
+> begin;
+>
+> and last line
+>
+>
+> from
+>
+> commit transaction;
+>
+> to
+>
+> commit;
+>
+> then it worked
+> Not sure if this is a bug or my lack of understanding of the .sql file
+> format
+>
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From bruce at tomo.co.nz  Sun Jul 28 07:49:52 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 28 Jul 2013 17:49:52 +1200
+Subject: [Therion] Topparser
+Message-ID: <64496B7080CA415AAFA4396158A86D7E@JUICEBRAIN>
+
+Discovered Andrew's Topparser
+(https://bitbucket.org/AndrewA/topparser/overview) yesterday.
+
+A very nice concept - almost one click conversion from Pocket Topo to
+Therion.  Great for saving time and ensuring consistency of file structure.
+
+ 
+
+It creates a survey file with map definitions and drawing files with xvi,
+backgrounds and empty scraps for each projection and section that was drawn
+using PocketTopo.
+
+ 
+
+It also creates a thconfig and runs it, and looks like it will open the
+output and send it to a svn, mercurial or git repository.
+
+ 
+
+I could not get it to run therion automatically (crashes apparently due to
+the empty scraps - which btw I thought was fixed in 5.3.11) but if I
+commented out the maps (ie hide the empty scraps from Therion) the files
+Topparser created compiled perfectly.
+
+ 
+
+A number of features don't seem to have been finished yet, but seems quite
+usable as it is.
+
+ 
+
+The first data I ran through it came up with this anomaly.
+
+ 
+
+data normal from to tape compass clino ignoreall
+
+#401.4  401.5    3.15      0.38      12.72    
+
+#401.4  401.5    3.16      358.96  13.71    
+
+#401.4  401.5    3.16      0.04      12.68    
+
+401.4    401.5    3.157    119.79  13.04    Calculated leg from 3 above
+
+ 
+
+Ie does not average bearings correctly either side of north.  I was using
+the 1.2.0 download, but I infer from the last commit message that Andrew
+might have fixed this.
+
+ 
+
+The instructions all make sense to a Therion user, except that I still have
+not really figured out the so called input and output folders.  The
+instructions are not particularly explicit and the screenshot of folder
+structure does not appear to match the screenshot of the data entry on page
+1.
+
+ 
+
+Minor quibbles.  I think this is worth developing further.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130728/31494953/attachment.htm>
+
+From andrew at wotcc.org.uk  Sun Jul 28 09:21:08 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 28 Jul 2013 08:21:08 +0100
+Subject: [Therion] Topparser
+In-Reply-To: <64496B7080CA415AAFA4396158A86D7E@JUICEBRAIN>
+References: <64496B7080CA415AAFA4396158A86D7E@JUICEBRAIN>
+Message-ID: <CAN+2M_H6LfhxSJwHacXRqW4ieAD+XQgWqUX=eFmU+hzWujE-gw@mail.gmail.com>
+
+Andrew
+On 28 Jul 2013 06:50, "Bruce" <bruce at tomo.co.nz> wrote:
+>
+>
+>
+>
+>
+> It also creates a thconfig and runs it, and looks like it will open the
+output and send it to a svn, mercurial or git repository.
+
+Currently only svn tested, hg I use so reasonably sure is correct, got I do
+not, so bit of a guess, if others are desired, happy to incorporate.
+>
+>
+>
+> I could not get it to run therion automatically (crashes apparently due
+to the empty scraps – which btw I thought was fixed in 5.3.11) but if I
+commented out the maps (ie hide the empty scraps from Therion) the files
+Topparser created compiled perfectly.
+>
+>
+
+In my thconfig file I only produce the Survex 3d which seems to allow it to
+run. The Windows launch commands are tested on xp so might need some
+amendment
+>
+> A number of features don’t seem to have been finished yet, but seems
+quite usable as it is.
+>
+Always more to do:-)
+>
+>
+> The first data I ran through it came up with this anomaly…
+>
+>
+>
+> data normal from to tape compass clino ignoreall
+>
+> #401.4  401.5    3.15      0.38      12.72
+>
+> #401.4  401.5    3.16      358.96  13.71
+>
+> #401.4  401.5    3.16      0.04      12.68
+>
+> 401.4    401.5    3.157    119.79  13.04    Calculated leg from 3 above
+>
+>
+>
+> Ie does not average bearings correctly either side of north.  I was using
+the 1.2.0 download, but I infer from the last commit message that Andrew
+might have fixed this.
+>
+Fixed, in the python version, I need to do a windows build, but need to
+borrow a Windows box to do this.
+>
+>
+> The instructions all make sense to a Therion user, except that I still
+have not really figured out the so called input and output folders.  The
+instructions are not particularly explicit and the screenshot of folder
+structure does not appear to match the screenshot of the data entry on page
+1.
+>
+>
+>
+> Minor quibbles.  I think this is worth developing further.
+
+Quibbles are good, might even get fixed if you are really lucky
+
+Thanks
+
+Andrew
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130728/5947bc4b/attachment.htm>
+
+From graham.mullan at coly.org.uk  Sun Jul 28 12:52:22 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Sun, 28 Jul 2013 11:52:22 +0100
+Subject: [Therion] TopParser
+In-Reply-To: <mailman.1.1375005602.26752.therion@speleo.sk>
+References: <mailman.1.1375005602.26752.therion@speleo.sk>
+Message-ID: <51F4F7E6.9060007@coly.org.uk>
+
+Bruce
+
+Apologies if the instructions don't make full sense. I wrote them as a 
+user, having had the program tried out on me by Andrew.
+
+The 'input' folder is simply that, it's where the Pocket Topo file that 
+you want to use currently resides. In our usage, it tends to be the 
+folder on the SD card taken from the PDA and put into the PC.
+
+The output folder is where you want the files to go, within the files 
+structure that you have created for your project.
+
+If that makes sense, or doesn't, let us know & I will clarig=fy the 
+instructions accordingly.
+
+Graham
+
+
+
+From andrew at wotcc.org.uk  Sun Jul 28 21:34:11 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 28 Jul 2013 20:34:11 +0100
+Subject: [Therion] Topparser
+In-Reply-To: <64496B7080CA415AAFA4396158A86D7E@JUICEBRAIN>
+References: <64496B7080CA415AAFA4396158A86D7E@JUICEBRAIN>
+Message-ID: <51F57233.9000604@wotcc.org.uk>
+
+Okay I have done a build for windows, 1.2.1, it works on the machine
+that it was built on, and that is all I have access to, so over to you all
+
+https://bitbucket.org/AndrewA/topparser/downloads
+
+Andrew
+
+On 28/07/13 06:49, Bruce wrote:
+> The first data I ran through it came up with this anomaly…
+> 
+>  
+> 
+> data normal from to tape compass clino ignoreall
+> 
+> #401.4  401.5    3.15      0.38      12.72   
+> 
+> #401.4  401.5    3.16      358.96  13.71   
+> 
+> #401.4  401.5    3.16      0.04      12.68   
+> 
+> 401.4    401.5    3.157    *119.79*  13.04    Calculated leg from 3 above
+> 
+>  
+> 
+> Ie does not average bearings correctly either side of north.  I was
+> using the 1.2.0 download, but I infer from the last commit message that
+> Andrew might have fixed this.
+> 
+>  
+> 
+
+
+From bruce at tomo.co.nz  Sun Jul 28 22:41:58 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 29 Jul 2013 08:41:58 +1200
+Subject: [Therion] TopParser
+In-Reply-To: <51F4F7E6.9060007@coly.org.uk>
+References: <mailman.1.1375005602.26752.therion@speleo.sk>
+	<51F4F7E6.9060007@coly.org.uk>
+Message-ID: <22819EA5CA6142A7B76BA498D467655B@JUICEBRAIN>
+
+Thanks Graham, and Andrew
+
+ 
+
+ 
+
+Have tried out TopParser 1.2.1
+
+It seems to work fine, and crashes more gracefully than 1.2.0 which is good
+(although I am not sure the 1.2.0 crashes were TopParsers fault).
+
+There is no Manual packaged with 1.2.1 so new users will need to download
+both packages to get a copy of the Manual.
+
+ 
+
+My confusion with the input and output folders is that the usage of the
+words is too colloquial.
+
+The interface has no labels that match 'input' or 'output'.
+
+I can guess which is which, but there are four folder entry boxes.
+
+ 
+
+I see;
+
+Pockettopo file: (input folder easy enough to guess)
+
+Project Directory: (output folder??)
+
+Survey Directory: (another output folder??)
+
+RAW Directory: (another output folder?? - subfolder in project location
+where top and xvi are stored)
+
+ 
+
+The first two screenshots in the manual do not appear to be a matching pair.
+If they were it might ease understanding.
+
+ 
+
+I think relative paths and the old dos . and .. for self and parent are
+allowed for the survey and raw directories, but not sure.
+
+ 
+
+Here are screen shots of what I have used.
+
+
+
+This produces the following python log.
+
+
+
+And then when I manually run the thconfig produced by Topparser I get 
+
+
+
+ 
+
+So probably something I am doing wrong, or at least differently to what you
+anticipated.
+
+ 
+
+One other minor quibble for now.
+
+Perhaps the plan and elevation scraps should be forced (or at least have the
+option)to inherit the map suffixes entered on the Data TAB (and then the
+specific plan, elevation and section suffixes entered on the plan and
+elevation TABs).
+
+This would ensure better consistency and ready recognition by the human user
+of the relationship of particular scraps - maps - files.
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Graham Mullan
+Sent: Sunday, 28 July 2013 10:52 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] TopParser
+
+ 
+
+Bruce
+
+ 
+
+Apologies if the instructions don't make full sense. I wrote them as a 
+
+user, having had the program tried out on me by Andrew.
+
+ 
+
+The 'input' folder is simply that, it's where the Pocket Topo file that 
+
+you want to use currently resides. In our usage, it tends to be the 
+
+folder on the SD card taken from the PDA and put into the PC.
+
+ 
+
+The output folder is where you want the files to go, within the files 
+
+structure that you have created for your project.
+
+ 
+
+If that makes sense, or doesn't, let us know & I will clarify the 
+
+instructions accordingly.
+
+ 
+
+Graham
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/de3908bd/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 23715 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/de3908bd/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 14954 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/de3908bd/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 20575 bytes
+Desc: image005.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/de3908bd/attachment-0002.jpg>
+
+From andrew at wotcc.org.uk  Sun Jul 28 23:20:47 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 28 Jul 2013 22:20:47 +0100
+Subject: [Therion] TopParser
+In-Reply-To: <22819EA5CA6142A7B76BA498D467655B@JUICEBRAIN>
+References: <mailman.1.1375005602.26752.therion@speleo.sk>
+	<51F4F7E6.9060007@coly.org.uk>
+	<22819EA5CA6142A7B76BA498D467655B@JUICEBRAIN>
+Message-ID: <51F58B2F.6010309@wotcc.org.uk>
+
+
+
+On 28/07/13 21:41, Bruce wrote:
+> Thanks Graham, and Andrew
+> 
+>  
+> 
+>  
+> 
+> Have tried out TopParser 1.2.1
+> 
+> It seems to work fine, and crashes more gracefully than 1.2.0 which is
+> good (although I am not sure the 1.2.0 crashes were TopParsers fault).
+> 
+> There is no Manual packaged with 1.2.1 so new users will need to
+> download both packages to get a copy of the Manual.
+
+Forgot that bit had to be done manually, changed the zip file so it has
+the manual in it.
+> 
+>  
+> 
+> My confusion with the input and output folders is that the usage of the
+> words is too colloquial.
+> 
+> The interface has no labels that match 'input' or 'output'.
+> 
+> I can guess which is which, but there are four folder entry boxes.
+
+Okay I need to explain this better but for now I will try below.
+> 
+>  
+> 
+> I see;
+> 
+> Pockettopo file: (input folder easy enough to guess)
+
+Usually on an external drive it will copy this to the Raw Directory
+> 
+> Project Directory: (output folder??)
+
+So I put all my caved into one area, eg CheddarCatchement. So this is
+the root of my directory, Survey Directory and Raw directory are
+relative to this
+
+> 
+> Survey Directory: (another output folder??)
+>
+
+Inside my CheddarCatchment I have the folders as names of caves, say
+Reservoir. So if I come back from a trip in reservoir with
+NewPassage.top, setting Project as CheddarCatchment and the Survey
+directory as Reservoir, if the Add subdirectory is ticked the th, th2
+and thconfig files will go in CheddarCatchment/Reservoir/NewPassage, if
+it is not ticked they will all just go in CheddarCatchment/Reservoir
+
+> RAW Directory: (another output folder?? - subfolder in project location
+> where top and xvi are stored)
+
+So I put xvi and .top in a sub-directory, so here I can name it. if the
+'Raw Directory is in the Survey Directory' is ticked it is relative to
+the Survey Directory if it is not ticked it is relative to the Project
+Directory.
+
+. and /.. should all work.
+
+The difficulty I am having here is so many varied ways to organise
+files, so giving people the option, without having a silly number of
+boxed to change, ideas welcome. You are probably the first person to use
+TopParser who has not been taught be me, so most people using it, use my
+method of filing, so it works for them :)
+> 
+>  
+> 
+> The first two screenshots in the manual do not appear to be a matching
+> pair.  If they were it might ease understanding.
+> 
+>  
+> 
+> I think relative paths and the old dos . and .. for self and parent are
+> allowed for the survey and raw directories, but not sure.
+> 
+>  
+> 
+> Here are screen shots of what I have used.
+> 
+> This produces the following python log.
+> 
+> And then when I manually run the thconfig produced by Topparser I get
+> 
+>  
+> 
+> So probably something I am doing wrong, or at least differently to what
+> you anticipated.
+
+Have you checked that under variables the windows set of command line
+are in place, click on 'Set to Windows' to check
+> 
+>  
+> 
+> One other minor quibble for now.
+> 
+> Perhaps the plan and elevation scraps should be forced (or at least have
+> the option)to inherit the map suffixes entered on the Data TAB (and then
+> the specific plan, elevation and section suffixes entered on the plan
+> and elevation TABs).
+> 
+> This would ensure better consistency and ready recognition by the human
+> user of the relationship of particular scraps – maps – files.
+
+Sorry not sure what you mean, do you mean that they all should be
+NewPassageSuffix.
+Can you give an example, this is different from what I do
+
+Andrew
+
+
+From bruce at tomo.co.nz  Mon Jul 29 09:48:27 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 29 Jul 2013 19:48:27 +1200
+Subject: [Therion] Topparser response
+Message-ID: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+
+Andrew
+
+ 
+
+Thanks for those revised input/output file instructions - makes perfect
+sense now.
+
+ 
+
+>> Perhaps the plan and elevation scraps should be forced (or at least 
+
+>> have the option)to inherit the map suffixes entered on the Data TAB 
+
+>> (and then the specific plan, elevation and section suffixes entered on 
+
+>> the plan and elevation TABs).
+
+>> 
+
+>> This would ensure better consistency and ready recognition by the 
+
+>> human user of the relationship of particular scraps - maps - files.
+
+ 
+
+>Sorry not sure what you mean, do you mean that they all should be
+NewPassageSuffix.
+
+>Can you give an example, this is different from what I do
+
+ 
+
+The approach I am trying to enforce is that each object inherits the name of
+it's parent, and any suffixes that might have been appended to the parent
+(or grandparent).  Also that each object name describes quite explicitly and
+unambiguously what it contains (but not overly verbose). Pretty close to
+what Topparser encourages already.
+
+ 
+
+eg
+
+Survey name: 404-Quackery
+
+ 
+
+Associated maps are therefore named;
+
+404-QuackeryPlan
+
+404-QuackeryElevEXT
+
+404-QuackeryElev290
+
+Etc
+
+ 
+
+Topparser encourages this at present.
+
+
+
+ 
+
+(A somewhat unrelated observation: Maps do not need to be children of the
+surveys they are based on, but the way Topparser currently creates them they
+are.  Therion does allow them to be outside of the 'survey' 'endsurvey'
+block, and indeed outside of the survey.th file altogether.  This is another
+topic however, but it could add complexity to Topparser in due course. For
+now it is easy enough for the user to move the map definitions to another
+file if they so wish.)
+
+ 
+
+Children of the maps (scraps) are therefore named;
+
+404-QuackeryPlan-s1, 404-QuackeryPlan-x1
+
+404-QuackeryElevEXT-s1, 404-QuackeryElevEXT-xp1, 404-QuackeryElevEXT-xv1
+
+ 
+
+All the above can be achieved with Topparser at present, but you have to
+duplicate part of the suffix as in these screen dumps.
+
+
+
+ 
+
+The current implementation cannot mimic the type of inheritance I would like
+for projected elevations however;
+
+404-QuackeryElev290-s1 is what I would like, but;
+
+
+
+The above produces;
+
+404-QuakeryElev-s290_1
+
+ which is at odds with the rest of the object naming.
+
+ 
+
+So in summary, Topparser in general allows scraps that are not named the
+same as the th2 file they are inside of.  While this might allow for more
+abbreviated scrap names it is not what the Therion wiki recommends (sure
+I've seen it somewhere :) ).
+
+This can be compensated for as in the examples above in all cases except for
+projected elevations.
+
+ 
+
+A minor thing that is easy for the user to overwrite each time - but worth
+considering.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/6745bd04/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 18967 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/6745bd04/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 13469 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/6745bd04/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 14105 bytes
+Desc: image005.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/6745bd04/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.jpg
+Type: image/jpeg
+Size: 12151 bytes
+Desc: image008.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/6745bd04/attachment-0003.jpg>
+
+From martinsluka at mac.com  Mon Jul 29 10:06:49 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 29 Jul 2013 10:06:49 +0200
+Subject: [Therion] Topparser response
+In-Reply-To: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+Message-ID: <1C2C0F30-726A-4DD5-8641-0CDB34CD7FA2@mac.com>
+
+Jul 29, 2013 v 9:48 AM, Bruce <bruce at tomo.co.nz>:
+
+> and indeed outside of thesurvey.th file altogether.
+
+It prevent mistake in case:
+
+map1 in one system and map1 in another system
+
+map1 at surveyA is different from map1 at surveyB
+
+It is feature not bug!!!
+
+m.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/f10ffb79/attachment.htm>
+
+From andrew at wotcc.org.uk  Mon Jul 29 10:49:57 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 29 Jul 2013 09:49:57 +0100
+Subject: [Therion] Topparser response
+In-Reply-To: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+Message-ID: <51F62CB5.3090606@wotcc.org.uk>
+
+okay, yep I see your logic, and it is probably better than mine, but I
+have historic features like no suffix on my plan files, because I
+started the project without them.
+
+I think I can reasonably easily implement what you are doing, and will
+try to quickly, as it is exemplar.
+
+Maps: I did not realise you could create outside of a survey, as I
+thought this was how it inherited its name, map at survey and have had no
+reason to try. I tend just to have a map in the main th file to just
+just that part of the data set, this then allows people to check it
+works. (yes I know that if you do not put a map in everything is
+exported) Then people who are new to therion can run just the bit that
+they have produced, and all they need to do is add an include, the map
+and equates to the parent file and they have added there bit.
+
+I am not sure where you would write a map in an automatic system if it
+was not there? I do not want to use this program to edit files that
+already exist automatically that leads to madness.
+Anyway if you have a place that you consistently put maps and it is a
+new file every time I will try to add it, if you send me an example.
+
+Documentation: so that explanation worked I will do an update or maybe
+Graham will, I noticed that the documentation predates the ability to
+change the surveyors and explorers.
+
+Andrew
+
+On 29/07/13 08:48, Bruce wrote:
+>  
+> 
+> The approach I am trying to enforce is that each object inherits the
+> name of it’s parent, and any suffixes that might have been appended to
+> the parent (or grandparent).  Also that each object name describes quite
+> explicitly and unambiguously what it contains (but not overly verbose).
+> Pretty close to what Topparser encourages already.
+> 
+>  
+> 
+
+
+From bruce at tomo.co.nz  Mon Jul 29 11:05:39 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 29 Jul 2013 21:05:39 +1200
+Subject: [Therion] Topparser response
+In-Reply-To: <51F62CB5.3090606@wotcc.org.uk>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+	<51F62CB5.3090606@wotcc.org.uk>
+Message-ID: <C6424C11606E4B4184B990331871007E@JUICEBRAIN>
+
+>I am not sure where you would write a map in an automatic system if it
+
+was not there? I do not want to use this program to edit files that
+
+already exist automatically that leads to madness.
+
+Anyway if you have a place that you consistently put maps and it is a
+
+new file every time I will try to add it, if you send me an example.
+
+ 
+
+As I noted in my reply to Martin just now, I have not yet tried this out in
+full.  I have ideas, but agree that it is not worth trying to get Topparser
+to do this.  It would be trivial for users to move the map definitions
+manually.
+
+ 
+
+>Documentation: ... I noticed that the documentation predates the ability to
+
+change the surveyors and explorers.
+
+ 
+
+Changing surveyors and explorers dose not appear to function on my Windows
+XP machine.
+
+ 
+
+There will be a lot of NZ caves surveyed by Alison and Andrew!
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/bb276bcd/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 5305 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/bb276bcd/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 4752 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/bb276bcd/attachment-0001.jpg>
+
+From bruce at tomo.co.nz  Mon Jul 29 11:05:39 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 29 Jul 2013 21:05:39 +1200
+Subject: [Therion] Topparser response
+In-Reply-To: <1C2C0F30-726A-4DD5-8641-0CDB34CD7FA2@mac.com>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+	<1C2C0F30-726A-4DD5-8641-0CDB34CD7FA2@mac.com>
+Message-ID: <B9D1AC85E2AE4EE780FCE2B91EC959C3@JUICEBRAIN>
+
+Hi Martin
+
+I think we each lost each others meaning in translation.
+
+ 
+
+"Maps do not need to be children of the surveys they are based on, but the
+way Topparser currently creates them they are.  Therion does allow them to
+be outside of the 'survey' 'endsurvey' block, and indeed outside of the
+survey.th file altogether."
+
+ 
+
+I agree it is a 'feature'.
+
+Therion allows maps to be tied to the hierarchy of the surveys and it also
+allows maps to be completely independent of the survey hierarchy, but it
+depends on how one constructs the dataset.  Despite wanting to for a year or
+two, I have not yet got around to constructing an 'independent' dataset, so
+I'm hardly an authority - just repeating what I read in the Therion Book and
+the wiki.
+
+ 
+
+I'm confused by the case you describe below - having 2 nearby caves each
+with a name 'map1' would be a problem if one used maps that were defined
+independently.  But surely they would sensibly be named CaveAMap and
+CaveBMap? 
+
+ 
+
+The reason I like the idea of independent map structures is that, when for
+example Cave A and Cave B are large cave systems with 2 or 3 levels of
+nested surveys each, and the distant reaches of these two caves that started
+out far part are now close together, and one wants a map that consists only
+of the last 300m of each cave where they are close together.
+
+ 
+
+With maps dependant on surveys you need
+
+Select submapA at subsurveyA.surveyA
+
+Select submapB at subsurveyB.surveyB
+
+ 
+
+With maps independent on surveys you only need
+
+Select submapA
+
+Select submapB
+
+ 
+
+The benefits are greater (if I am correct) the more nested levels (I have
+not yet had to go beyond three) and the more surveys and indeed the more
+caves that are converging. There is a similar (but partially opposite)
+effect on the 'station-names' suffixes required when drawing scraps.
+
+ 
+
+Now I am rambling.
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Martin Sluka
+Sent: Monday, 29 July 2013 8:07 p.m.
+To: List for Therion users
+Subject: Re: [Therion] Topparser response
+
+ 
+
+Jul 29, 2013 v 9:48 AM, Bruce <bruce at tomo.co.nz>:
+
+
+
+
+
+and indeed outside of the <http://survey.th/> survey.th file altogether.
+
+ 
+
+It prevent mistake in case:
+
+ 
+
+map1 in one system and map1 in another system
+
+ 
+
+map1 at surveyA is different from map1 at surveyB
+
+ 
+
+It is feature not bug!!!
+
+ 
+
+m.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/4d62c5f6/attachment.htm>
+
+From martinsluka at mac.com  Mon Jul 29 11:40:33 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 29 Jul 2013 11:40:33 +0200
+Subject: [Therion] Topparser response
+In-Reply-To: <B9D1AC85E2AE4EE780FCE2B91EC959C3@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+	<1C2C0F30-726A-4DD5-8641-0CDB34CD7FA2@mac.com>
+	<B9D1AC85E2AE4EE780FCE2B91EC959C3@JUICEBRAIN>
+Message-ID: <491BFA91-8489-4825-A736-2A7BF3910347@mac.com>
+
+
+Jul 29, 2013 v 11:05 AM, Bruce <bruce at tomo.co.nz>:
+
+> With maps dependant on surveys you need
+> Select submapA at subsurveyA.surveyA
+> Select submapB at subsurveyB.surveyB
+>  
+> With maps independent on surveys you only need
+> Select submapA
+> Select submapB
+>  
+> The benefits are greater (if I am correct) the more nested levels (I have not yet had to go beyond three) and the more surveys and indeed the more caves that are converging. There is a similar (but partially opposite) effect on the ‘station-names’ suffixes required when drawing scraps.
+> 
+
+
+You are right about benefit. If you do the maps definition alone, you may check it. But it is really difficult to prevent people to name two maps in historically long independent projects which were somewhen connected to one with the same name. The same with station names. This name-spaced structure of therions surveys and maps has the power to accept such duplicities, because there couldn't be duplicities in survey or map structures with suffixes.
+
+There couldn't be two identical names od stations in one scrap, there couldn't be two identical names of different stations in one survey, there could be two different but identical named scraps in one map, there couldn't be two identical names of different surveys in parent survey, etc. It is very similar to mail or url addresses. 
+
+I personally use very long map or survey or scrap names, just to prevent these, but in any enough big dataset you may find: "begin map  -  endmap" construction without good name of map.
+
+BTW to write the all "path" of map you need select in thconfig file you just double-click on particular map in map structure graph in side-menu of compilation window.
+
+Martin 
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/3eb3d2df/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sn?mek obrazovky 2013-07-29 v?11.35.05 AM.png
+Type: image/png
+Size: 31173 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/3eb3d2df/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sn?mek obrazovky 2013-07-29 v?11.38.03 AM.png
+Type: image/png
+Size: 14466 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/3eb3d2df/attachment-0001.png>
+
+From martinsluka at mac.com  Mon Jul 29 11:43:04 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 29 Jul 2013 11:43:04 +0200
+Subject: [Therion] Topparser response
+In-Reply-To: <B9D1AC85E2AE4EE780FCE2B91EC959C3@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+	<1C2C0F30-726A-4DD5-8641-0CDB34CD7FA2@mac.com>
+	<B9D1AC85E2AE4EE780FCE2B91EC959C3@JUICEBRAIN>
+Message-ID: <FD7EF030-1A3D-4611-A5E9-FF5912902291@mac.com>
+
+And the same for survey:
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/f8a9e16b/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sn?mek obrazovky 2013-07-29 v?11.41.40 AM.png
+Type: image/png
+Size: 32871 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/f8a9e16b/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sn?mek obrazovky 2013-07-29 v?11.41.34 AM.png
+Type: image/png
+Size: 11598 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/f8a9e16b/attachment-0001.png>
+
+From andrew at wotcc.org.uk  Mon Jul 29 12:15:08 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 29 Jul 2013 11:15:08 +0100
+Subject: [Therion] Topparser response
+In-Reply-To: <C6424C11606E4B4184B990331871007E@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN>
+	<51F62CB5.3090606@wotcc.org.uk>
+	<C6424C11606E4B4184B990331871007E@JUICEBRAIN>
+Message-ID: <51F640AC.90506@wotcc.org.uk>
+
+
+
+On 29/07/13 10:05, Bruce wrote:
+> Changing surveyors and explorers dose not appear to function on my
+> Windows XP machine.
+
+I take it from your screen shots that when you click the add/delete
+button you just get a blank(ish) window
+>  
+> 
+> There will be a lot of NZ caves surveyed by Alison and Andrew!
+> 
+>  
+> 
+Same as in the UK then :))
+
+Andrew
+
+
+From andrew at wotcc.org.uk  Mon Jul 29 21:16:11 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 29 Jul 2013 20:16:11 +0100
+Subject: [Therion] image missing and import error
+Message-ID: <51F6BF7B.7010903@wotcc.org.uk>
+
+Hello
+
+I have just upgraded to debian jessie which comes with Therion 5.3.10
+
+When opening a th2 file I find that all my background images are not
+visable, also not listed in the background images on the right hand side
+
+So in a new file I try importing a jpg, one I have done before, it gives
+an error, the log of which is attached, as is the th2 file it produces,
+which looks okay at a quick glance.
+
+I also tried a .top text file import, again that I have successfully
+done before, with the same result, the xvi is produced.
+
+Trying importing an xvi it looks like the same error
+
+Suspect this is a debian bug, as no one else has complained so will file
+a report after this
+
+thanks
+
+Andrew
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: insertimage.log
+Type: text/x-log
+Size: 623 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/546ef447/attachment.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test.th2
+Type: text/x-therion-drawing
+Size: 217 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130729/546ef447/attachment-0001.bin>
+
+From bruce at tomo.co.nz  Mon Jul 29 23:37:53 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 30 Jul 2013 09:37:53 +1200
+Subject: [Therion] Topparser response
+In-Reply-To: <51F640AC.90506@wotcc.org.uk>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN><51F62CB5.3090606@wotcc.org.uk>	<C6424C11606E4B4184B990331871007E@JUICEBRAIN>
+	<51F640AC.90506@wotcc.org.uk>
+Message-ID: <7834AB41A49443DDAA1EE6527DDCDD77@JUICEBRAIN>
+
+> I take it from your screen shots that when you click the add/delete
+button you just get a blank(ish) window
+
+correct
+
+
+
+
+From bruce at tomo.co.nz  Mon Jul 29 23:37:53 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 30 Jul 2013 09:37:53 +1200
+Subject: [Therion] image missing and import error
+In-Reply-To: <51F6BF7B.7010903@wotcc.org.uk>
+References: <51F6BF7B.7010903@wotcc.org.uk>
+Message-ID: <C7F489758CE3473DA3B5DBC0C9626E5E@JUICEBRAIN>
+
+Windows versions of Therion have had a bug with displaying 'background
+sketches' in pdf outputs for many versions - fixed in 5.3.11
+
+On reading your post more carefully I see this is a different problem,
+'background images' not loading into the drawing editor.
+
+I've not seen this before (in Windows).
+Bruce
+
+
+
+
+From lists at group-s.sk  Tue Jul 30 12:04:21 2013
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 30 Jul 2013 12:04:21 +0200
+Subject: [Therion] image missing and import error
+In-Reply-To: <51F6BF7B.7010903@wotcc.org.uk>
+References: <51F6BF7B.7010903@wotcc.org.uk>
+Message-ID: <CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+
+This is very strange error log... No idea what is going on.
+
+But could you please try edit xtherion and replace line (12275 on my Win32
+version, may be on linux some other number):
+$xth(me,can) lower $xth(me,imgs,$imgx,image) command
+
+with:
+catch {$xth(me,can) lower $xth(me,imgs,$imgx,image) command}
+
+... this line does nothing critical, so just ignoring the error should help.
+
+Regards, S.
+
+On 29 July 2013 21:16, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+
+> Hello
+>
+> I have just upgraded to debian jessie which comes with Therion 5.3.10
+>
+> When opening a th2 file I find that all my background images are not
+> visable, also not listed in the background images on the right hand side
+>
+> So in a new file I try importing a jpg, one I have done before, it gives
+> an error, the log of which is attached, as is the th2 file it produces,
+> which looks okay at a quick glance.
+>
+> I also tried a .top text file import, again that I have successfully
+> done before, with the same result, the xvi is produced.
+>
+> Trying importing an xvi it looks like the same error
+>
+> Suspect this is a debian bug, as no one else has complained so will file
+> a report after this
+>
+> thanks
+>
+> Andrew
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130730/1f36abc8/attachment.htm>
+
+From andrew at wotcc.org.uk  Tue Jul 30 19:58:17 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 30 Jul 2013 18:58:17 +0100
+Subject: [Therion] Topparser response
+In-Reply-To: <7834AB41A49443DDAA1EE6527DDCDD77@JUICEBRAIN>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN><51F62CB5.3090606@wotcc.org.uk>	<C6424C11606E4B4184B990331871007E@JUICEBRAIN>
+	<51F640AC.90506@wotcc.org.uk>
+	<7834AB41A49443DDAA1EE6527DDCDD77@JUICEBRAIN>
+Message-ID: <51F7FEB9.5080600@wotcc.org.uk>
+
+Okay new version uploaded, not sure why it has a double name on
+bitbucket, but it comes through as a normally named file.
+
+Fixed the add/delete cavers window
+Instruments now included in the th file.
+
+Instructions are in the process of been uploaded but not in this release.
+
+Now to see if I can solve the not processing data problem, could you
+send me your thconfig file you generated with TopParse. If you do not
+mind, all the files generated, might be better, include the top file
+would be good, I will see what happens on this machine
+
+On 29/07/13 22:37, Bruce wrote:
+>> I take it from your screen shots that when you click the add/delete
+> button you just get a blank(ish) window
+> 
+> correct
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From andrew at wotcc.org.uk  Tue Jul 30 20:47:40 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 30 Jul 2013 19:47:40 +0100
+Subject: [Therion] image missing and import error
+In-Reply-To: <CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+References: <51F6BF7B.7010903@wotcc.org.uk>
+	<CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+Message-ID: <51F80A4C.1020006@wotcc.org.uk>
+
+Found that line 3 times in the usr/bin/xtherion, I hope that was the
+right file to edit?
+
+so line 12278 which is pretty close to 12275, in section
+#and change coordinates
+
+changed this line and tried to insert image, same error.
+
+So in section
+#let's create image subimages
+I also changed line
+
+12546
+and
+12572
+
+I have now noticed that is says loading image climbing.jpg at the bottom
+left, but I do not think this is a change
+
+thanks
+
+Andrew
+
+
+
+On 30/07/13 11:04, Stacho Mudrak wrote:
+> This is very strange error log... No idea what is going on.
+> 
+> But could you please try edit xtherion and replace line (12275 on my
+> Win32 version, may be on linux some other number):
+> $xth(me,can) lower $xth(me,imgs,$imgx,image) command
+> 
+> with:
+> catch {$xth(me,can) lower $xth(me,imgs,$imgx,image) command}
+> 
+> ... this line does nothing critical, so just ignoring the error should help.
+> 
+> Regards, S.
+
+
+From bruce at tomo.co.nz  Tue Jul 30 22:02:51 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 31 Jul 2013 08:02:51 +1200
+Subject: [Therion] Topparser response
+In-Reply-To: <51F7FEB9.5080600@wotcc.org.uk>
+References: <ABE50DAB31074C10AC78E620C57F8635@JUICEBRAIN><51F62CB5.3090606@wotcc.org.uk><C6424C11606E4B4184B990331871007E@JUICEBRAIN>	<51F640AC.90506@wotcc.org.uk><7834AB41A49443DDAA1EE6527DDCDD77@JUICEBRAIN>
+	<51F7FEB9.5080600@wotcc.org.uk>
+Message-ID: <96D1F420729243B8BD91AA0206CFB8FF@JUICEBRAIN>
+
+Fast work Andrew
+I have downloaded and opened it.  The change order and change cavers dialogs
+now look like they should work.
+I may not have time to look at this further for another couple of weeks, but
+I will do as soon as I am free.
+
+Someone could add Topparser to
+http://therion.speleo.sk/wiki/doku.php/contrib:complimentarycaveapps#other_a
+pplications 
+if they want.  Otherwise I will add it in due course.
+
+Bruce
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Andrew Atkinson
+Sent: Wednesday, 31 July 2013 5:58 a.m.
+To: List for Therion users
+Subject: Re: [Therion] Topparser response
+
+Okay new version uploaded, not sure why it has a double name on
+bitbucket, but it comes through as a normally named file.
+
+Fixed the add/delete cavers window
+Instruments now included in the th file.
+
+Instructions are in the process of been uploaded but not in this release.
+
+Now to see if I can solve the not processing data problem, could you
+send me your thconfig file you generated with TopParse. If you do not
+mind, all the files generated, might be better, include the top file
+would be good, I will see what happens on this machine
+
+On 29/07/13 22:37, Bruce wrote:
+>> I take it from your screen shots that when you click the add/delete
+> button you just get a blank(ish) window
+> 
+> correct
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+

@@ -1,0 +1,2196 @@
+From Xavier.Pennec at sophia.inria.fr  Sat Dec  6 09:58:24 2008
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sat, 06 Dec 2008 09:58:24 +0100
+Subject: [Therion] Two minor bugs in metapost defs
+Message-ID: <493A3EB0.6020203@sophia.inria.fr>
+
+
+I found a few bugs in the metapost definitions that could be usefully 
+corrected in the next versions:
+In the subtype clay of wall, "Pickup PenA" is missing before drawing the 
+wall line at the end, and the effect is that the line is drawn with PenC 
+(thin).
+
+def l_wall_clay_SKBB (expr P) =
+  T:=identity;
+  cas := 0;
+  dlzka := arclength P;
+  mojkrok:=adjust_step(dlzka, .5u);
+  pickup PenC;
+  q := (-0.15u,0){up}..{down}origin..{up}(0.15u,0);
+  forever:
+    t := arctime (cas + mojkrok/2) of P;
+    thdraw q shifted (point t of P + .25u * unitvector(thdir(P,t) 
+rotated -90));
+    cas := cas + mojkrok;
+    exitif cas > dlzka - (2*mojkrok/3); % for rounding errors
+  endfor;
+ >>>>> Pickup PenA
+  thdraw P;
+enddef;
+
+I also noticed that sometimes the margin around a text is changed by the 
+presence (or absence) of a point label.
+After many trials, I finally identified that it comes from the value of 
+bboxmargin which is reset in process_label.
+It seems to me that an interim is missing before resetting bboxmargin in 
+order to keep this change localized.
+
+def process_label (expr cent, rot) =
+  begingroup
+<<<<   bboxmargin:=0.8bp;   
+ >>>>   interim bboxmargin:=2bp;
+    q:=((bbox lab) smoothed 2) rotatedaround (cent, rot);
+    draw lab rotatedaround (cent, rot);
+    write_circ_bbox(q);  % without corners smoothing it was enough to use
+                         % write_bbox(q);
+  endgroup;
+enddef;
+
+
+Xavier
+
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier_Pennec.vcf
+Type: text/x-vcard
+Size: 166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081206/d9b7a67d/attachment.vcf>
+
+From m.budaj at gmail.com  Tue Dec  9 14:10:46 2008
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 9 Dec 2008 14:10:46 +0100
+Subject: [Therion] Two minor bugs in metapost defs
+In-Reply-To: <493A3EB0.6020203@sophia.inria.fr>
+References: <493A3EB0.6020203@sophia.inria.fr>
+Message-ID: <f64c1c4a0812090510h3a262d7eu33637f5593ab0683@mail.gmail.com>
+
+Thanks for pointing it out. I am not sure whether thin pen in some
+wall subtypes was intentional or not -- perhaps it is better to make
+it consistent.
+
+BTW, there is a special page for submitting bugs and patches
+http://savannah.nongnu.org/projects/therion/ -- in the mailing list
+they might sometimes be overlooked or forgotten among all the mail.
+
+Martin
+
+2008/12/6 Xavier Pennec <Xavier.Pennec at sophia.inria.fr>:
+>
+> I found a few bugs in the metapost definitions that could be usefully
+> corrected in the next versions:
+> In the subtype clay of wall, "Pickup PenA" is missing before drawing the
+> wall line at the end, and the effect is that the line is drawn with PenC
+> (thin).
+>
+> def l_wall_clay_SKBB (expr P) =
+>  T:=identity;
+>  cas := 0;
+>  dlzka := arclength P;
+>  mojkrok:=adjust_step(dlzka, .5u);
+>  pickup PenC;
+>  q := (-0.15u,0){up}..{down}origin..{up}(0.15u,0);
+>  forever:
+>   t := arctime (cas + mojkrok/2) of P;
+>   thdraw q shifted (point t of P + .25u * unitvector(thdir(P,t) rotated
+> -90));
+>   cas := cas + mojkrok;
+>   exitif cas > dlzka - (2*mojkrok/3); % for rounding errors
+>  endfor;
+>>>>>> Pickup PenA
+>  thdraw P;
+> enddef;
+>
+> I also noticed that sometimes the margin around a text is changed by the
+> presence (or absence) of a point label.
+> After many trials, I finally identified that it comes from the value of
+> bboxmargin which is reset in process_label.
+> It seems to me that an interim is missing before resetting bboxmargin in
+> order to keep this change localized.
+>
+> def process_label (expr cent, rot) =
+>  begingroup
+> <<<<   bboxmargin:=0.8bp;   >>>>   interim bboxmargin:=2bp;
+>   q:=((bbox lab) smoothed 2) rotatedaround (cent, rot);
+>   draw lab rotatedaround (cent, rot);
+>   write_circ_bbox(q);  % without corners smoothing it was enough to use
+>                        % write_bbox(q);
+>  endgroup;
+> enddef;
+>
+>
+> Xavier
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From m.budaj at gmail.com  Tue Dec  9 16:09:39 2008
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 9 Dec 2008 16:09:39 +0100
+Subject: [Therion] survey-level: Minor correction /clarification of
+	entry in Therion Book
+In-Reply-To: <2441D91C421941F6AA1A8CC507505F24@JUICEBRAIN>
+References: <2441D91C421941F6AA1A8CC507505F24@JUICEBRAIN>
+Message-ID: <f64c1c4a0812090709r45ae005dye278aec9ae06da10@mail.gmail.com>
+
+> _ survey-level <N/all> . how many surveys to display with stations.
+>
+> Does it control the display of the nested level of survey?  Eg 126 versus
+> 126 at f.Greenlink.RiwakaSystem
+
+Exactly. N should be numeric value, default value is 0.
+
+Martin
+
+
+From ua9lif at mail.ru  Thu Dec 11 15:29:42 2008
+From: ua9lif at mail.ru (Sau ---)
+Date: Thu, 11 Dec 2008 17:29:42 +0300
+Subject: [Therion] russia
+Message-ID: <E1LAmXu-000IaQ-00.ua9lif-mail-ru@f233.mail.ru>
+
+
+Where i can found Russia Therion group? or any contacts with active members.
+
+
+From v_su at inbox.ru  Fri Dec 12 05:59:09 2008
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Fri, 12 Dec 2008 07:59:09 +0300
+Subject: [Therion] =?windows-1251?q?russia?=
+In-Reply-To: <E1LAmXu-000IaQ-00.ua9lif-mail-ru@f233.mail.ru>
+References: <E1LAmXu-000IaQ-00.ua9lif-mail-ru@f233.mail.ru>
+Message-ID: <E1LB07J-000DNl-00.v_su-inbox-ru@f229.mail.ru>
+
+Hello
+
+> Where i can found Russia Therion group? or any contacts with active members.
+
+russian Therion users group is not exists, afaik
+
+but some individuals online :)
+
+-- WBR, Vasily
+
+
+
+From ua9lif at mail.ru  Fri Dec 12 06:35:15 2008
+From: ua9lif at mail.ru (Sau ---)
+Date: Fri, 12 Dec 2008 08:35:15 +0300
+Subject: [Therion] =?koi8-r?b?cnVzc2lh?=
+In-Reply-To: <E1LB07J-000DNl-00.v_su-inbox-ru@f229.mail.ru>
+References: <E1LB07J-000DNl-00.v_su-inbox-ru@f229.mail.ru>
+Message-ID: <E1LB0gF-000Fq3-00.ua9lif-mail-ru@f63.mail.ru>
+
+
+> 
+> russian Therion users group is not exists, afaik
+> 
+> but some individuals online :)
+> 
+
+Хорошо, спасибо, контакты сохраню, вопросы будут спрошу.
+Свой вопрос про нитку хода и LRUD я решил.
+
+На русский язык вы переводили Therion?
+на карте при выводе статистики слово "Длинна" с ошибкой написана (версия 5.2)
+
+
+
+From magnu213 at umn.edu  Sun Dec 14 00:41:23 2008
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Sat, 13 Dec 2008 17:41:23 -0600
+Subject: [Therion] SD Units for fixed points
+Message-ID: <8B8943FA-819B-4EF4-96B3-B9729502E196@umn.edu>
+
+Hello,
+
+I was wondering what units the standard deviations are for fixed  
+points - the same units you are using for the rest of your data input,  
+or the units your fixed point is in (UTM15 for example)?  It doesn't  
+seem to be documented in the manual or elsewhere.
+
+Thanks,
+
+Carl
+
+
+
+
+
+
+
+From olly at survex.com  Mon Dec 15 01:45:58 2008
+From: olly at survex.com (Olly Betts)
+Date: Mon, 15 Dec 2008 00:45:58 +0000
+Subject: [Therion] standard deviation and survey grade
+In-Reply-To: <f64c1c4a0811240818q1f668ea7r27bfab058464c831@mail.gmail.com>
+References: <000c01c92e9f$ef7bde40$ef25f6d2@JUICEBRAIN>
+	<49089295.2040801@sophia.inria.fr>
+	<20081029183907.GB6861@survex.com>
+	<55e5b7b50810302258m2ff8d3d4u91f9274ca54515ba@mail.gmail.com>
+	<F9D1626B55104CA093788A719CB31603@JUICEBRAIN>
+	<AB0F0416313A474E95D7874AB7946EC0@JUICEBRAIN>
+	<55e5b7b50811190658r7d6b70eer2a91504f697bd1c1@mail.gmail.com>
+	<0AB202BCD5704DE6BA4F0CC65A013931@JUICEBRAIN>
+	<f64c1c4a0811240818q1f668ea7r27bfab058464c831@mail.gmail.com>
+Message-ID: <20081215004558.GT4124@survex.com>
+
+On Mon, Nov 24, 2008 at 05:18:14PM +0100, Martin Budaj wrote:
+> First proposal could be:
+> 
+> GRADE; POSITION / HEIGHT error (95% confidence); comment
+> 
+> 0             -- position unknown
+> 1  1000 m     -- rough estimate / memory
+> 2  100 m      -- GPS in bad conditions (canyons, foliage, SA), small-scale map
+> 3  15 / 45 m  -- GPS, large-scale map
+> 4  5 / 15 m   -- GPS longer observation, distinct features on a large-scale map
+> 5  1 / 3 m    -- GIS GPS
+> 6  15 cm      -- geodetic GPS, theodolite/total station, technical nivelation
+> 7  5 cm       -- geodetic GPS, precise theodolite/total station,
+> precise nivelation
+
+I don't think inventing numbered grades here is a good approach.  For
+centre-line survey data, a grade summarising how it was collected makes
+sense as you're trying to summarise the accuracy of a lot of
+measurements at once, and there's no direct indication of individual
+errors for particular readings.  It also gives people a benchmark to aim
+for, which can be tested by analysing loop misclosures.
+
+But for a GPS measurement, civilian units do give an indication of
+errors per reading - e.g. EPE or FOM.  While you can't directly use
+these as standard deviations or anything so convenient, at least by
+allowing them to be recorded, you allow software processing the data to
+make use of them.
+
+Even where an error indication isn't directly available (e.g. reading
+from a map), I'd have to look up in the table above to know that my
+"distinct feature on a large-scale map" qualifies me for "grade 4".
+I might as well use the table to see it qualifies me for "5m horizontal,
+15m vertical" position error.
+
+Also, the suggested grades force particular pairings of horizontal and
+vertical errors.  Just because a "GIS GPS" might be 1m/3m, that doesn't
+mean that every alternative technique for surveying to 1m horizontal
+accuracy would give 3m vertical accuracy.
+
+Cheers,
+    Olly
+
+
+From fabio at geribello.com.br  Tue Dec 16 15:14:12 2008
+From: fabio at geribello.com.br (Fabio Kok Geribello)
+Date: Tue, 16 Dec 2008 12:14:12 -0200
+Subject: [Therion] Two scraps, one river...
+Message-ID: <006c01c95f88$92e211d0$b8a63570$@com.br>
+
+Hi all,
+
+ 
+
+We´re using Therion to produce maps for many caves in Brazil but I´m having
+some poor results wen I have to  join scraps with intersecting areas
+.
+
+ 
+
+I know that Therion is only able to join lines so how do I represent a
+river, for exemple that spreads between two or more scraps?
+
+ 
+
+Usualy there is a gap appearing due to the scraps adjustments
+
+
+ 
+
+Is there any trick to solve that?
+
+ 
+
+Thank you,
+
+Fabio
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081216/103800d6/attachment.htm>
+
+From riza at sbox.tugraz.at  Wed Dec 17 12:01:14 2008
+From: riza at sbox.tugraz.at (Paul Karoshi)
+Date: Wed, 17 Dec 2008 12:01:14 +0100
+Subject: [Therion] Two scraps, one river...
+In-Reply-To: <006c01c95f88$92e211d0$b8a63570$@com.br>
+References: <006c01c95f88$92e211d0$b8a63570$@com.br>
+Message-ID: <20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+
+Hi,
+
+what you can do:
+
+just connect the borders. Therefor you have to draw the area with  
+several borders but thats no problem.
+
+So: area_scrap1 consists of border_1, border_2 and border_3
+     area_scrap2 consists of border_4, border_5 ans border_6
+
+     then use
+       join border_1 border_4
+       join border_2 border_3
+     in your .th-file
+
+If you still got questions i will send you an .th2 as example
+
+
+Paul
+
+
+
+
+
+
+Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+
+> Hi all,
+>
+>
+>
+> We´re using Therion to produce maps for many caves in Brazil but I´m having
+> some poor results wen I have to  join scraps with intersecting areas.
+>
+>
+>
+> I know that Therion is only able to join lines so how do I represent a
+> river, for exemple that spreads between two or more scraps?
+>
+>
+>
+> Usualy there is a gap appearing due to the scraps adjustments
+>
+>
+>
+> Is there any trick to solve that?
+>
+>
+>
+> Thank you,
+>
+> Fabio
+>
+>
+>
+>
+
+
+
+
+
+From m.budaj at gmail.com  Wed Dec 17 19:12:56 2008
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 17 Dec 2008 19:12:56 +0100
+Subject: [Therion] standard deviation and survey grade
+In-Reply-To: <20081215004558.GT4124@survex.com>
+References: <000c01c92e9f$ef7bde40$ef25f6d2@JUICEBRAIN>
+	<49089295.2040801@sophia.inria.fr> <20081029183907.GB6861@survex.com>
+	<55e5b7b50810302258m2ff8d3d4u91f9274ca54515ba@mail.gmail.com>
+	<F9D1626B55104CA093788A719CB31603@JUICEBRAIN>
+	<AB0F0416313A474E95D7874AB7946EC0@JUICEBRAIN>
+	<55e5b7b50811190658r7d6b70eer2a91504f697bd1c1@mail.gmail.com>
+	<0AB202BCD5704DE6BA4F0CC65A013931@JUICEBRAIN>
+	<f64c1c4a0811240818q1f668ea7r27bfab058464c831@mail.gmail.com>
+	<20081215004558.GT4124@survex.com>
+Message-ID: <f64c1c4a0812171012w58c5f2bfx738f9fceb7bf312b@mail.gmail.com>
+
+On Mon, Dec 15, 2008 at 1:45 AM, Olly Betts <olly at survex.com> wrote:
+> I don't think inventing numbered grades here is a good approach.  For
+> centre-line survey data, a grade summarising how it was collected makes
+> sense as you're trying to summarise the accuracy of a lot of
+> measurements at once, and there's no direct indication of individual
+> errors for particular readings.  It also gives people a benchmark to aim
+> for, which can be tested by analysing loop misclosures.
+
+The reason why we started to think about position measurement grades
+is that we are collecting data about hundreds of caves and other karst
+features in our area. In the summary tables (export cave-list) we need
+some indication of precision of entrance location (e.g. to select
+entrances the position of which needs to be refined). So some
+standardization seems to be necessary.
+
+Naturally the SD setting would be available for measurements with
+known error estimates.
+
+> Also, the suggested grades force particular pairings of horizontal and
+> vertical errors.  Just because a "GIS GPS" might be 1m/3m, that doesn't
+> mean that every alternative technique for surveying to 1m horizontal
+> accuracy would give 3m vertical accuracy.
+
+There is the same problem in centreline data (different combinations
+of compass/clino/distance accuracies) with just one generic grade to
+keep things simple. Perhaps the standard positioning grades need not
+to distinguish between horizontal and vertical accuracies and user
+should use SD setting for fine-tuning?
+
+Martin
+
+
+From s.m at group-s.sk  Fri Dec 19 12:23:37 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 19 Dec 2008 12:23:37 +0100
+Subject: [Therion] SD Units for fixed points
+In-Reply-To: <8B8943FA-819B-4EF4-96B3-B9729502E196@umn.edu>
+References: <8B8943FA-819B-4EF4-96B3-B9729502E196@umn.edu>
+Message-ID: <55e5b7b50812190323r7ada7a99lbc6d03f61c988e26@mail.gmail.com>
+
+Sorry for late answer first.
+
+Units for fix sd is the same as units for fix. But I am afraid, when
+you use cs option to specify coordinate system for fixed points, it
+will not change SD units. You need to change them manually using:
+
+units position m
+
+Or you can specify sd with units. E.g.
+
+sd x y 5 m
+sd z 20 m
+
+Regards, S.
+
+On Sun, Dec 14, 2008 at 12:41 AM, Carl Magnuson <magnu213 at umn.edu> wrote:
+> Hello,
+>
+> I was wondering what units the standard deviations are for fixed points -
+> the same units you are using for the rest of your data input, or the units
+> your fixed point is in (UTM15 for example)?  It doesn't seem to be
+> documented in the manual or elsewhere.
+>
+> Thanks,
+>
+> Carl
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From fabio at geribello.com.br  Fri Dec 19 15:17:32 2008
+From: fabio at geribello.com.br (Fabio Kok Geribello)
+Date: Fri, 19 Dec 2008 12:17:32 -0200
+Subject: [Therion] RES:  Two scraps, one river...
+In-Reply-To: <20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+References: <006c01c95f88$92e211d0$b8a63570$@com.br>
+	<20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+Message-ID: <009901c961e4$88d66700$9a833500$@com.br>
+
+Hi Paul,
+
+Thank you for your response, I tried but still couldn’t get a good result. Could you please send me an example...
+
+Fabio
+
+-----Mensagem original-----
+De: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Em nome de Paul Karoshi
+Enviada em: quarta-feira, 17 de dezembro de 2008 09:01
+Para: List for Therion users
+Assunto: Re: [Therion] Two scraps, one river...
+
+Hi,
+
+what you can do:
+
+just connect the borders. Therefor you have to draw the area with  
+several borders but thats no problem.
+
+So: area_scrap1 consists of border_1, border_2 and border_3
+     area_scrap2 consists of border_4, border_5 ans border_6
+
+     then use
+       join border_1 border_4
+       join border_2 border_3
+     in your .th-file
+
+If you still got questions i will send you an .th2 as example
+
+
+Paul
+
+
+
+
+
+
+Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+
+> Hi all,
+>
+>
+>
+> We´re using Therion to produce maps for many caves in Brazil but I´m having
+> some poor results wen I have to  join scraps with intersecting areas….
+>
+>
+>
+> I know that Therion is only able to join lines so how do I represent a
+> river, for exemple that spreads between two or more scraps?
+>
+>
+>
+> Usualy there is a gap appearing due to the scraps adjustments…
+>
+>
+>
+> Is there any trick to solve that?
+>
+>
+>
+> Thank you,
+>
+> Fabio
+>
+>
+>
+>
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From riza at sbox.tugraz.at  Fri Dec 19 17:37:50 2008
+From: riza at sbox.tugraz.at (Paul Karoshi)
+Date: Fri, 19 Dec 2008 17:37:50 +0100
+Subject: [Therion] RES:  Two scraps, one river...
+In-Reply-To: <009901c961e4$88d66700$9a833500$@com.br>
+References: <006c01c95f88$92e211d0$b8a63570$@com.br>
+	<20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+	<009901c961e4$88d66700$9a833500$@com.br>
+Message-ID: <20081219173750.152427uqh25zyjfo@webmail.tugraz.at>
+
+Hello,
+
+here I send you my examples.
+
+I hope this will help you. Feel free to ask if there are still questions.
+
+Greetings, Paul
+
+
+
+
+
+
+Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+
+> Hi Paul,
+>
+> Thank you for your response, I tried but still couldn’t get a good  
+> result. Could you please send me an example...
+>
+> Fabio
+>
+> -----Mensagem original-----
+> De: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Em  
+> nome de Paul Karoshi
+> Enviada em: quarta-feira, 17 de dezembro de 2008 09:01
+> Para: List for Therion users
+> Assunto: Re: [Therion] Two scraps, one river...
+>
+> Hi,
+>
+> what you can do:
+>
+> just connect the borders. Therefor you have to draw the area with
+> several borders but thats no problem.
+>
+> So: area_scrap1 consists of border_1, border_2 and border_3
+>      area_scrap2 consists of border_4, border_5 ans border_6
+>
+>      then use
+>        join border_1 border_4
+>        join border_2 border_3
+>      in your .th-file
+>
+> If you still got questions i will send you an .th2 as example
+>
+>
+> Paul
+>
+>
+>
+>
+>
+>
+> Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+>
+>> Hi all,
+>>
+>>
+>>
+>> We´re using Therion to produce maps for many caves in Brazil but I´m having
+>> some poor results wen I have to  join scraps with intersecting areas….
+>>
+>>
+>>
+>> I know that Therion is only able to join lines so how do I represent a
+>> river, for exemple that spreads between two or more scraps?
+>>
+>>
+>>
+>> Usualy there is a gap appearing due to the scraps adjustments…
+>>
+>>
+>>
+>> Is there any trick to solve that?
+>>
+>>
+>>
+>> Thank you,
+>>
+>> Fabio
+>>
+>>
+>>
+>>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+-------------- next part --------------
+encoding  utf-8
+survey xx_xxx_buildup -title "xx_xxx_buildup"
+
+
+ input xx_xxx_data_20080815_PK.th
+ input xx_xxx_sketch_20080815_PK.th2
+
+
+
+centreline   
+ #equate
+endcentreline
+
+join wall_11 wall_21
+join wall_12 wall_22
+join border_11 border_21
+join border_12 border_22
+
+
+map xx_xxx_plan -title "xx_xxx Plan- and Extended View"
+ xx_xxx_scrap_plan_1
+ break
+ xx_xxx_scrap_plan_2
+endmap
+
+
+map xx_xxx_extended -title "xx_xxx Extended View" -projection extended
+ xx_xxx_scrap_extended
+endmap  
+
+endsurvey
+
+-------------- next part --------------
+encoding  utf-8
+survey xx_xxx_data -title "xx_xxx_data"
+ 
+ centreline   
+  
+  #team ""
+  #team ""
+  #team ""
+  #team ""
+  #date 2007.9.2
+
+  units compass clino degrees
+
+  data normal from to length clino compass 
+  
+    12  13  8 -27 355
+    13  14  3.9 -54 300
+    13  15  3 0 50
+    14  16  12  -68 355
+    16  17  12.4  -90 0
+    17  18  3.3 -10 285
+    18  19  9.2 -90 0
+  
+  extend start 12
+  extend right 13
+
+ endcentreline
+endsurvey
+
+-------------- next part --------------
+encoding  utf-8
+##XTHERION## xth_me_area_adjust 147.0 -462.0 587.25 9.75
+##XTHERION## xth_me_area_zoom_to 400
+
+
+
+scrap xx_xxx_scrap_extended -projection extended -scale [0 0 1600 0 0.0 0.0 40.64 0.0 m]
+
+point 458.0 -119.5 station -name 15 at xx_xxx_data
+
+endscrap
+
+
+
+scrap xx_xxx_scrap_plan_1 -projection plan -scale [0 0 1600 0 0.0 0.0 40.64 0.0 m]
+
+point 439.75 -209.0 station -name 15 at xx_xxx_data
+
+line wall -id wall_22
+  428.5 -304.5
+  424.75 -297.5 408.25 -263.0 410.5 -255.0
+  412.75 -247.0 450.5 -219.25 454.0 -213.25
+  457.5 -207.25 447.0 -205.0 439.75 -209.0
+  432.5 -213.0 414.0 -230.5 405.75 -232.25
+  397.5 -234.0 380.5 -236.75 374.25 -228.5
+endline
+
+line border -id l48-345--223
+  368.5 -228.25
+  362.25 -220.25
+  333.5 -225.75
+  334.25 -237.25
+endline
+
+area water
+  l48-345--223
+  border_21
+  border_22
+endarea
+
+line border -id border_22
+  411.25 -241.25
+  406.25 -239.5 401.0 -238.25 396.0 -238.25
+  370.5 -238.25 368.5 -228.25 368.5 -228.25
+  smooth off
+endline
+
+line border -id border_21
+  334.25 -237.25
+  340.0 -244.5
+  340.0 -244.5 345.54 -246.26 352.25 -248.5
+  358.25 -250.5 364.03 -247.48 366.5 -247.0
+  376.75 -245.0 385.75 -241.75 388.25 -247.25
+  390.75 -252.75 392.5 -265.75 392.5 -265.75
+  smooth off
+  403.0 -264.25
+  411.25 -241.25
+endline
+
+line wall -subtype invisible
+  374.25 -228.5
+  350.5 -227.5
+  331.5 -238.75
+endline
+
+line wall -id wall_21
+  331.5 -238.75
+  333.25 -248.5 349.25 -258.75 356.25 -255.75
+  363.25 -252.75 381.25 -246.25 383.5 -251.25
+  385.75 -256.25 391.0 -293.25 387.25 -301.75
+endline
+
+point 350.5 -227.5 station -name 14 at xx_xxx_data
+
+point 401.5 -247.0 station -name 13 at xx_xxx_data
+
+point 402.75 -332.75 station -name 12 at xx_xxx_data
+
+endscrap
+
+
+
+scrap xx_xxx_scrap_plan_2 -projection plan -scale [0 0 1600 0 0.0 0.0 40.64 0.0 m]
+
+point 347.5 -142.75 station -name 16 at xx_xxx_data
+
+line border
+endline
+
+line wall -subtype invisible
+  373.0 -206.25
+  350.75 -208.5
+  321.25 -210.75
+endline
+
+line wall -id wall_11
+  306.25 -202.25
+  309.0 -197.5 305.75 -200.0 308.0 -191.25
+  310.25 -182.5 306.25 -165.25 317.0 -156.0
+  327.75 -146.75 339.5 -143.25 346.0 -149.25
+  352.5 -155.25 346.75 -167.0 344.25 -169.25
+  341.75 -171.5 319.25 -203.75 321.25 -210.75
+endline
+
+line wall -id wall_12
+  373.0 -206.25
+  373.85 -200.3 371.75 -179.5 381.0 -176.5
+  390.25 -173.5 386.0 -175.0 380.0 -169.0
+  374.0 -163.0 355.0 -152.0 353.75 -144.75
+  352.5 -137.5 358.5 -134.25 349.0 -131.75
+  339.5 -129.25 326.75 -123.5 317.5 -130.0
+  308.25 -136.5 307.0 -150.75 304.5 -154.25
+  302.0 -157.75 308.25 -152.5 290.0 -169.0
+  271.75 -185.5 275.25 -191.75 278.75 -195.5
+  282.25 -199.25 303.5 -210.5 306.25 -202.25
+endline
+
+point 305.5 -161.5 station -name 18 at xx_xxx_data
+
+point 347.5 -139.25 station -name 17 at xx_xxx_data
+
+point 350.75 -208.5 station -name 14 at xx_xxx_data
+
+line border -id border_11
+  350.5 -171.0
+  350.5 -171.0 330.75 -198.75 332.0 -209.5
+endline
+
+area water
+  l51-337--215
+  border_11
+  border_12
+endarea
+
+line border -id l51-337--215
+  332.0 -209.5
+  333.0 -216.25
+  364.75 -212.75
+  363.25 -207.25
+endline
+
+line border -id border_12
+  363.25 -207.25
+  363.5 -199.25 369.5 -171.5 369.5 -171.5
+  smooth off
+  355.75 -159.25
+  350.5 -171.0
+endline
+
+endscrap
+
+-------------- next part --------------
+encoding  utf-8
+source xx_xxx_buildup_20080815_PK.th
+
+ select xx_xxx_plan at xx_xxx_buildup
+ export map  -o xx_xxx_plan.pdf   -projection plan -layout xx_xxx_layout_plan
+ unselect xx_xxx_plan at xx_xxx_buildup
+ 
+ select xx_xxx_extended at xx_xxx_buildup
+ export map  -o xx_xxx_extended.pdf   -projection extended -layout xx_xxx_layout_extended
+ unselect xx_xxx_extended at xx_xxx_buildup
+
+#############################################################
+
+
+
+layout xx_xxx_layout_extended
+
+   map-header 0 0 off
+
+   #base-scale 1 50
+   scale 1 100 
+
+   language en
+   statistics topo-length off
+   statistics explo-length off
+   legend off
+   layers off
+   statistics explo off 
+   statistics topo off
+   statistics carto off
+   statistics copyright off
+   statistics explo-length off
+   statistics topo-length off 
+
+   debug station-names
+   
+   symbol-set UIS
+   symbol-assign line contour SKBB
+   symbol-assign point station:temporary SKBB 
+ 
+   #debug on
+
+   #Dichte der Blockfelder
+  
+    code metapost
+    def a_blocks (expr p) =
+    T:=identity;
+    pickup PenC;
+    path q, qq; q = bbox p;
+    picture tmp_pic; 
+    uu := .5max(u, (xpart urcorner q - xpart llcorner q)/100, (ypart urcorner q - ypart     llcorner q)/100);
+    tmp_pic := image(
+      for i = xpart llcorner q step 1.0uu until xpart urcorner q:
+        for j = ypart llcorner q step 1.0uu until ypart urcorner q:
+          qq := punked (((-.5uu,-.5uu)--(.5uu,-.5uu)--(.5uu,.5uu)--(-.5uu,.5uu)--cycle) 
+         randomized (uu/2))
+               rotated uniformdeviate(360) 
+               shifted ((i,j) randomized 1.0uu);
+    if xpart (p intersectiontimes qq) < 0:
+      thclean qq;
+      thdraw qq;
+    fi;
+        endfor;  
+      endfor;
+    );
+    clip tmp_pic to p;
+    draw tmp_pic;
+  enddef;  
+      
+endlayout
+#############################################################
+
+
+
+
+layout xx_xxx_layout_plan
+
+  map-image 0 130 sw xx_xxx_extended.pdf
+  #map-image -40 200 center Logo_hb.jpg
+
+ #base-scale 1 50
+  scale 1 100
+
+
+  map-header 0 0 se
+  #debug station-names
+
+  color map-bg 100
+   
+  transparency on
+
+  opacity 70
+
+  language en
+  #statistics topo-length on
+  statistics explo-length on
+  legend on
+  legend-width 15 cm
+  #layers off
+  legend-columns 2
+  #statistics explo off
+  #statistics topo on
+  #statistics carto off
+  #statistics copyright off
+  #statistics explo-length on
+  #statistics topo-length off 
+   
+  
+  debug station-names
+  
+  symbol-set UIS
+  #Einzelne UIS Symbole durch Symbole aus anderen Normen ersetzen
+  symbol-assign line contour SKBB
+  symbol-assign point station:temporary SKBB 
+ 
+  #debug on   
+ 
+ #Dichte der Blockfelder
+  
+     code metapost
+     def a_blocks (expr p) =
+    T:=identity;
+    pickup PenC;
+    path q, qq; q = bbox p;
+    picture tmp_pic; 
+    uu := 0.5max(u, (xpart urcorner q - xpart llcorner q)/100, (ypart urcorner q - ypart     llcorner q)/100);
+    tmp_pic := image(
+      for i = xpart llcorner q step 1.0uu until xpart urcorner q:
+        for j = ypart llcorner q step 1.0uu until ypart urcorner q:
+          qq := punked (((-.5uu,-.5uu)--(.5uu,-.5uu)--(.5uu,.5uu)--(-.5uu,.5uu)--cycle) 
+         randomized (uu/2))
+               rotated uniformdeviate(360) 
+               shifted ((i,j) randomized 1.0uu);
+    if xpart (p intersectiontimes qq) < 0:
+      thclean qq;
+      thdraw qq;
+    fi;
+        endfor;  
+      endfor;
+    );
+    clip tmp_pic to p;
+    draw tmp_pic;
+  enddef; 
+     
+
+endlayout
+
+From Xavier.Pennec at sophia.inria.fr  Sat Dec 20 09:09:52 2008
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sat, 20 Dec 2008 09:09:52 +0100
+Subject: [Therion] Pb with LRUD on null length and vertical shots
+Message-ID: <494CA850.9020102@sophia.inria.fr>
+
+
+To specify the LRUD at the beginning of  a leg (or when a is a sudden 
+change) it is usual in toporobot to make a null (or very small) length 
+shot (this is also usual in other survey softwares such as vtopo). The 
+intended behavior is the one of shot E with the therion syntax. In 
+therion, it seems that this does not work, since below a certain length 
+the shot is ploted as a vertical: in the example join, shots A and B are 
+ploted as shot F. The problem is that rewriting old surveys of type A as 
+E is quite a work prone to errors, and putting a length sufficient to 
+have it drawn horizontally (such as in shot D) is really changing the 
+measurements.
+
+The second problem is that vertical shots are always oriented towards 
+the north, even though one specifies a bearing to indicate where is the 
+right and the left. This makes it difficult to draw directly on the xvi 
+file.
+
+Is that behavior intentional or  is that due to a division by zero which 
+is not handles correctly?
+
+Xavier
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: test_lg0.xvi
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment.ksh>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test_lg0.pdf
+Type: application/pdf
+Size: 25477 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment.pdf>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: Test_lg0.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment-0001.ksh>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: Test_lg0.th2
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment-0002.ksh>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test_lg0.lox
+Type: application/octet-stream
+Size: 2519 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment.obj>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: test_lg0.thconfig
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment-0003.ksh>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier_Pennec.vcf
+Type: text/x-vcard
+Size: 166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/054ddb2c/attachment.vcf>
+
+From bruce.mutton at paradise.net.nz  Sat Dec 20 09:59:39 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 20 Dec 2008 21:59:39 +1300
+Subject: [Therion] RES:  Two scraps, one river...
+In-Reply-To: <20081219173750.152427uqh25zyjfo@webmail.tugraz.at>
+References: <006c01c95f88$92e211d0$b8a63570$@com.br>
+	<20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+	<009901c961e4$88d66700$9a833500$@com.br>
+	<20081219173750.152427uqh25zyjfo@webmail.tugraz.at>
+Message-ID: <83FECEC3A119413A9829435F0E0D9BBD@JUICEBRAIN>
+
+Nice example Paul
+
+Ehen I run it the river matches reasonably, but on zooming in there is a
+slight mismatch in the hatching.  As good as we can expect I suppose.
+
+I see you left a little tip in your example of how to include a plan and
+elevation in the same map.  By including a previous version of one of the
+pdf outputs as a map-image.
+Nice!  Does it usually work well? Scales match, print quality etc?
+
+Also you have redefined a boulder field (I think)
+What are it's special; features?
+
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Paul Karoshi
+Sent: Saturday, 20 December 2008 5:38 a.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] RES: Two scraps, one river...
+
+Hello,
+
+here I send you my examples.
+
+I hope this will help you. Feel free to ask if there are still questions.
+
+Greetings, Paul
+
+
+Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+
+> Hi Paul,
+>
+> Thank you for your response, I tried but still couldnt get a good  
+> result. Could you please send me an example...
+>
+> Fabio
+>
+> -----Mensagem original-----
+> De: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Em  
+> nome de Paul Karoshi
+> Enviada em: quarta-feira, 17 de dezembro de 2008 09:01
+> Para: List for Therion users
+> Assunto: Re: [Therion] Two scraps, one river...
+>
+> Hi,
+>
+> what you can do:
+>
+> just connect the borders. Therefor you have to draw the area with
+> several borders but thats no problem.
+>
+> So: area_scrap1 consists of border_1, border_2 and border_3
+>      area_scrap2 consists of border_4, border_5 ans border_6
+>
+>      then use
+>        join border_1 border_4
+>        join border_2 border_3
+>      in your .th-file
+>
+> If you still got questions i will send you an .th2 as example
+>
+>
+> Paul
+>
+>
+>
+>
+>
+>
+> Quoting Fabio Kok Geribello <fabio at geribello.com.br>:
+>
+>> Hi all,
+>>
+>>
+>>
+>> We´re using Therion to produce maps for many caves in Brazil but I´m
+having
+>> some poor results wen I have to  join scraps with intersecting areas
+.
+>>
+>>
+>>
+>> I know that Therion is only able to join lines so how do I represent a
+>> river, for exemple that spreads between two or more scraps?
+>>
+>>
+>>
+>> Usualy there is a gap appearing due to the scraps adjustments
+
+>>
+>>
+>>
+>> Is there any trick to solve that?
+>>
+>>
+>>
+>> Thank you,
+>>
+>> Fabio
+>>
+>>
+>>
+>>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+
+From martinsluka at mac.com  Sat Dec 20 13:51:07 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 20 Dec 2008 13:51:07 +0100
+Subject: [Therion] Pb with LRUD on null length and vertical shots
+In-Reply-To: <494CA850.9020102@sophia.inria.fr>
+References: <494CA850.9020102@sophia.inria.fr>
+Message-ID: <06C1D63F-5F87-47AC-BBC0-469ED5ED17A1@mac.com>
+
+
+On 20.12.2008, at 9:09, Xavier Pennec wrote:
+
+> To specify the LRUD at the beginning of  a leg (or when a is a  
+> sudden change) it is usual in toporobot to make a null (or very  
+> small) length shot (this is also usual in other survey softwares  
+> such as vtopo).
+
+
+example A.
+
+data dimensions station left right up down #you may use this  
+definition of data for all stations just separate LRUD from survey  
+shots.
+
+0 1 2 3 4
+
+data normal compass clino length left right up down
+
+0 1 185 -15 4,5 1 1 5 1
+
+.....
+
+
+example B:
+
+data normal compass clino length left right up down
+
+0 1 185 -15   4,5 [1 1] [2 1]  [3 5]  [4 1] #you may use this syntax  
+for LRUD anywhere the LRUD are changed on particular station
+1 2 201  10 12      2      3       1       2
+
+....
+
+LRUD in brackets mean first one for LRUD at "from" station, second  
+one for LRUD at "to" station.
+
+Martin
+
+
+From Xavier.Pennec at sophia.inria.fr  Sat Dec 20 18:27:44 2008
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sat, 20 Dec 2008 18:27:44 +0100
+Subject: [Therion] Pb with LRUD on null length and vertical shots
+In-Reply-To: <06C1D63F-5F87-47AC-BBC0-469ED5ED17A1@mac.com>
+References: <494CA850.9020102@sophia.inria.fr>
+	<06C1D63F-5F87-47AC-BBC0-469ED5ED17A1@mac.com>
+Message-ID: <494D2B10.7040107@sophia.inria.fr>
+
+Thanks Martin, but this does not solve the problem for the reuse of all 
+toporobot surveys: using either data dimension or [] means changing a 
+lot in the data and I want to stay close to the original data so that I 
+can verify the translation errors.
+
+What I don't understand is:
+* why a horizontal shot of 1mm should be considered as vertical for 
+displaying the LRUD?
+* why vertical shots are always oriented north even though a direction 
+is given?
+
+Xavier
+
+
+Martin Sluka a écrit :
+>
+> On 20.12.2008, at 9:09, Xavier Pennec wrote:
+>
+>> To specify the LRUD at the beginning of  a leg (or when a is a sudden 
+>> change) it is usual in toporobot to make a null (or very small) 
+>> length shot (this is also usual in other survey softwares such as 
+>> vtopo).
+>
+>
+> example A.
+>
+> data dimensions station left right up down #you may use this 
+> definition of data for all stations just separate LRUD from survey shots.
+>
+> 0 1 2 3 4
+>
+> data normal compass clino length left right up down
+>
+> 0 1 185 -15 4,5 1 1 5 1
+>
+> .....
+>
+>
+> example B:
+>
+> data normal compass clino length left right up down
+>
+> 0 1 185 -15   4,5 [1 1] [2 1]  [3 5]  [4 1] #you may use this syntax 
+> for LRUD anywhere the LRUD are changed on particular station
+> 1 2 201  10 12      2      3       1       2
+>
+> ....
+>
+> LRUD in brackets mean first one for LRUD at "from" station, second one 
+> for LRUD at "to" station.
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier_Pennec.vcf
+Type: text/x-vcard
+Size: 166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081220/60f8b3cc/attachment.vcf>
+
+From martinsluka at mac.com  Sat Dec 20 18:44:51 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 20 Dec 2008 18:44:51 +0100
+Subject: [Therion] Pb with LRUD on null length and vertical shots
+In-Reply-To: <494D2B10.7040107@sophia.inria.fr>
+References: <494CA850.9020102@sophia.inria.fr>
+	<06C1D63F-5F87-47AC-BBC0-469ED5ED17A1@mac.com>
+	<494D2B10.7040107@sophia.inria.fr>
+Message-ID: <87B88768-949B-4390-B510-737A390686AA@mac.com>
+
+
+On 20.12.2008, at 18:27, Xavier Pennec wrote:
+
+> changing a lot in the data and I want to stay close to the original  
+> data so that I can verify the translation errors.
+
+The transfer of data from Toporobot to therion is not yet made. There  
+are some simple scripts Stacho made, but I'm affraid these scripts  
+are not realy debuged.
+
+These zero_length shots are trick used widely in Toporobot, I know. I  
+used Toporobot for several years too. I think, there could be quite  
+simple way to change the zero_length shot to [ ] LRUD data for the  
+first station of zero_length shot and just ignoring the second  
+station of that shot.
+
+> What I don't understand is:
+> * why a horizontal shot of 1mm should be considered as vertical for  
+> displaying the LRUD?
+
+??? probably bug?
+
+> * why vertical shots are always oriented north even though a  
+> direction is given?
+
+That is definition in therion, it is on ToDo list, I think, to change  
+it according the azimuth.
+
+Martin
+
+
+From martinsluka at mac.com  Sat Dec 20 20:42:43 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 20 Dec 2008 20:42:43 +0100
+Subject: [Therion] therion 5.2.4
+Message-ID: <03717C93-0087-43B9-87E4-C217F90E64C8@mac.com>
+
+ustable version 5.2.4 is available
+
+m.s.
+
+
+From martinsluka at mac.com  Sat Dec 20 20:49:14 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 20 Dec 2008 20:49:14 +0100
+Subject: [Therion] therion 5.2.4 - changes
+Message-ID: <FDAED828-366A-4680-A9D5-885C6B77DC1C@mac.com>
+
+ustable version 5.2.4 is available
+
+m.s.
+
+list of changes:
+
+therion:
+  * georeferencing data added to pdf maps
+  * support for splay shots without station names
+  * bugs fixed:
+    - BCRA3 and BCRA5 survey grades fixed
+    - missing altitudes in cave list
+    - atlas page exclusion
+    - map header positioning using real numbers
+    - attribute export to metapost
+
+xtherion:
+
+  * script for creation of OziExplorer MAP files for georeferenced  
+maps (Help->Calibrate bitmap)
+  * added import functions for PocketTopo export
+    - centerline in text editor - File->Import->PocketTopo therion  
+export
+    - sketches in map editor - Backgroud Images->Insert->PocketTopo  
+therion export
+  * bugs fixed:
+    -
+
+loch:
+
+  * added Tools->Options->Measurement system setup
+  * bugs fixed:
+
+
+
+From bruce.mutton at paradise.net.nz  Sun Dec 21 10:13:17 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 21 Dec 2008 22:13:17 +1300
+Subject: [Therion] Explored 80m OK, 8m not OK
+Message-ID: <945758EF0C6E4C548124BF6F59D66876@JUICEBRAIN>
+
+Hi ya
+
+In my th file the line 
+
+ 
+
+   station RO31 "cream-brown flowstone too nice to explore" \
+
+                continuation explored 8m attr code "explored 8m cream-brown
+flowstone too nice go further"
+
+ 
+
+gives the following error;
+
+ 
+
+D:\Program Files\Therion\therion.exe: error -- SurveyRO.th [250] -- invalid
+explored length specification -- 8m
+
+ 
+
+Whereas the almost identical line (80m in place of 8m)
+
+ 
+
+   station RO31 "cream-brown flowstone too nice to explore" \
+
+                continuation explored 80m attr code "explored 8m cream-brown
+flowstone too nice go further"
+
+ 
+
+compiles perfectly.
+
+ 
+
+What is going on?  Am using 5.2.3
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081221/3cee1cb0/attachment.htm>
+
+From Xavier.Pennec at sophia.inria.fr  Sun Dec 21 10:29:12 2008
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sun, 21 Dec 2008 10:29:12 +0100
+Subject: [Therion] selection of stations/shots for xvi export?
+Message-ID: <494E0C68.3010401@sophia.inria.fr>
+
+Is there a way to select only a subpart of a survey for an xvi export in 
+a plan or an elevation?
+When reading the thbook, it seems to me that the selection tools are 
+only for extended elevation maps only.
+
+
+Xavier
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier_Pennec.vcf
+Type: text/x-vcard
+Size: 166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081221/737752e0/attachment.vcf>
+
+From riza at sbox.tugraz.at  Wed Dec 24 12:44:35 2008
+From: riza at sbox.tugraz.at (Paul Karoshi)
+Date: Wed, 24 Dec 2008 12:44:35 +0100
+Subject: [Therion] RES:  Two scraps, one river...
+In-Reply-To: <83FECEC3A119413A9829435F0E0D9BBD@JUICEBRAIN>
+References: <006c01c95f88$92e211d0$b8a63570$@com.br>
+	<20081217120114.16691wtl9id4v3ms@webmail.tugraz.at>
+	<009901c961e4$88d66700$9a833500$@com.br>
+	<20081219173750.152427uqh25zyjfo@webmail.tugraz.at>
+	<83FECEC3A119413A9829435F0E0D9BBD@JUICEBRAIN>
+Message-ID: <20081224124435.40101nr2kd7w7ee8@webmail.tugraz.at>
+
+Hi Bruce!
+
+> Nice example Paul
+
+Thanks :)
+Actually we are working in an area with lots of small caves (pits). So  
+I made those files I sent. For a new cave I just need to copy the  
+containing folder and then rename files and maps etc. to get a map  
+with plan and extened view (xxxx_xx stands for cavename or  
+cavenumber). Saves some time.
+
+> I see you left a little tip in your example of how to include a plan and
+> elevation in the same map.  By including a previous version of one of the
+> pdf outputs as a map-image.
+> Nice!  Does it usually work well? Scales match, print quality etc?
+
+Usually it works well. Scales match. Print quality is in plan and  
+elevation view the same.
+Although I would prefer to define that in a similar way as maps are  
+defined. That would be a map with scraps or maps of different  
+projection types. I do not know if this is easy to realise in therion.
+
+> Also you have redefined a boulder field (I think)
+> What are it's special; features?
+
+The modification of block field is the one Stefan Oswald did. You can  
+adjust the density of blocks there. See:  
+http://therion.speleo.sk/wiki/doku.php?id=metapost
+
+
+Merry Christmas, Paul
+
+
+
+From bruce.mutton at paradise.net.nz  Sat Dec 27 10:28:55 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 27 Dec 2008 22:28:55 +1300
+Subject: [Therion] Context point air-draught example from Therion Book fails
+Message-ID: <3767AAFA1062461DABBA8AF6BE295B0D@JUICEBRAIN>
+
+Seasons Greetings!
+
+In one of my scraps, the line;
+
+point 517.0 -483.0 label -text "15 Dec 2008" -scale xs -context point
+air-draught
+
+produces an error, 
+
+ 
+
+D:\Program Files\Therion\therion.exe: error -- Late08RPElev_02.th2 [10] --
+object context not allowed -- point air-draught
+
+ 
+
+This example is taken almost exactly from footnote 20, page 24 of the
+therion book.
+
+Is there something I'm doing wrong?
+
+(Still using 5.2.3) 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081227/a7e22b2b/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Sun Dec 28 09:11:57 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 28 Dec 2008 21:11:57 +1300
+Subject: [Therion] Cave Sketches don't offset
+Message-ID: <13ACB0195BBA4BA49509FC87E3874243@JUICEBRAIN>
+
+And Again;
+
+To get a quick preview of what my finished map will look like I've added
+some survey stations and cave sketches to my scraps.
+
+ 
+
+These plot nicely until I want to offset the map in which the scrap and
+sketch is contained.
+
+When the map is offset, the survey stations plot in the correctly offset
+location, but the sketch plots (incorrectly) in it's original location.
+
+ 
+
+Am I doing something wrong or is this a bug?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081228/0468891d/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Sun Dec 28 09:11:57 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 28 Dec 2008 21:11:57 +1300
+Subject: [Therion] Preview from other map-levels
+Message-ID: <72E7FECAE22849F6A479FFD81960AECB@JUICEBRAIN>
+
+Hi all
+
+Just when I thought I was getting comfortable with hierarchies of maps with
+various combinations of previews and offsets.
+
+I can no longer put off the realisation that I don't understand how to
+display a preview if Therion decides it will not do it with the default
+behaviour.
+
+ 
+
+I suspect the solution lies with the revise command; but how to make it
+work?
+
+The following text from the therion book makes reasonable sense, and
+generally works just fine.
+
+ 
+
+"_ preview <above/below> <other map id> will put the outline of the other
+map in the
+
+specified preview position relative to the current map.
+
+Preview is displayed only if the map is in the map-level level as specified
+by the
+
+select command.
+
+Use the revise command if you want to add maps from higher levels to the
+preview."
+
+ 
+
+However the following does not seem to give enough information to proceed.
+
+ 
+
+"`revise'
+
+Description: This command is used to set or change properties of an already
+existing
+
+object.
+
+Syntax: The syntax of this command for object created with \single line"
+command is
+
+revise id [-option1 value1 -option2 value2 ...]
+
+For objects created with \multi line" commands is syntax following
+
+revise id [-option1 value1 -option2 value2 ...]
+
+...
+
+optionX valueX
+
+data
+
+...
+
+endrevise
+
+Context: all
+
+Arguments:
+
+The id stands for object identifier (the id of an object you want to revise
+must always
+
+be specified)."
+
+ 
+
+Tips on how to refer to a previously defined map (easy?)  and which options
+need to be changed to which values(not so easy?)?
+
+A small example anyone?
+
+Thanks
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081228/44a0f67e/attachment.htm>
+
+From dave at daveclucas.com  Tue Dec 30 12:00:56 2008
+From: dave at daveclucas.com (Dave Clucas)
+Date: Tue, 30 Dec 2008 19:00:56 +0800
+Subject: [Therion] Using metapost code examples
+Message-ID: <2CDC217E-E91E-4780-A35C-F6B719CC9D32@daveclucas.com>
+
+Looking at the metapost examples in the Wiki it appears that a block  
+symbol can be defined or redefined which allows the size of the block  
+to be changed. Does this apply to each instance of a block or is it a  
+global definition. How do you specify the size of the block when you  
+place it in the drawing?
+
+   code metapost
+    def p_blocks_UIS (expr pos,theta,sc,al)=
+     symbolsize:=1.0u; %Factor*u; Factor=size of the blocks
+     U:=(.5u,.5u);
+     T:=identity aligned al rotated theta scaled sc shifted pos;
+     pickup PenC;
+     thdraw (.0symbolsize,.0symbolsize)--(1.0symbolsize,-. 
+5symbolsize)--(0.0symbolsize,-1.5symbolsize)-- 
+(-1.0symbolsize,-1.0symbolsize)--cycle;
+     thdraw (.5symbolsize,-.25symbolsize)--(1.0symbolsize,. 
+5symbolsize)--(0.0symbolsize,1.5symbolsize)--(-0.5symbolsize,. 
+5symbolsize);
+     thdraw (.0symbolsize,.0symbolsize)--(.0symbolsize,.5symbolsize)-- 
+(-1.5symbolsize,.5symbolsize)--(-1.5symbolsize,-0.5symbolsize)-- 
+(-0.5symbolsize,-0.5symbolsize);
+    enddef;
+   endcode
+
+
+
+Dave Clucas
+email:dave at daveclucas.com
+Website: http://daveclucas.com
+                  http://mycaves.org
+Skype: daveclucas
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081230/ea2e1e04/attachment.htm>
+
+From stefan_oswald at gmx.at  Tue Dec 30 13:01:17 2008
+From: stefan_oswald at gmx.at (Stefan Oswald)
+Date: Tue, 30 Dec 2008 13:01:17 +0100
+Subject: [Therion] Using metapost code examples
+In-Reply-To: <mailman.1.1230634801.17077.therion@speleo.sk>
+References: <mailman.1.1230634801.17077.therion@speleo.sk>
+Message-ID: <20081230120117.233970@gmx.net>
+
+Hi, 
+
+The size is controlled by the factor before the u. (symbolsize:=1.0u; %Factor*u; Factor=size of the blocks change 1.0 as you want) 
+>Does this apply to each instance of a block or is it a  
+>global definition.
+This overrules the point_block sizes in the whole plan compiled. 
+Size canging/definition of a single block is, as far as i know, not possible and not projected?
+
+The problem was (with other symbols it is still the case, a solution could be, for example an layout command for small symbols) that with small caves in small scales the normative symbol size is too large, so it might happen that you only see a small part of the symbol in a narrow passage on small scale. 
+You can handle this problem with block_points and block_area in UIS as in described in wiki by changing the factor before the "u". 
+
+Glück Tief, Stefan
+
+-------- Original-Nachricht --------
+> Datum: Tue, 30 Dec 2008 12:00:01 +0100
+> Von: therion-request at speleo.sk
+> An: therion at speleo.sk
+> Betreff: Therion Digest, Vol 37, Issue 14
+
+> Send Therion mailing list submissions to
+> 	therion at speleo.sk
+> 
+> To subscribe or unsubscribe via the World Wide Web, visit
+> 	http://mailman.speleo.sk/mailman/listinfo/therion
+> or, via email, send a message with subject or body 'help' to
+> 	therion-request at speleo.sk
+> 
+> You can reach the person managing the list at
+> 	therion-owner at speleo.sk
+> 
+> When replying, please edit your Subject line so it is more specific
+> than "Re: Contents of Therion digest..."
+> 
+> 
+> Today's Topics:
+> 
+>    1. Using metapost code examples (Dave Clucas)
+> 
+> 
+> ----------------------------------------------------------------------
+> 
+> Message: 1
+> Date: Tue, 30 Dec 2008 19:00:56 +0800
+> From: Dave Clucas <dave at daveclucas.com>
+> Subject: [Therion] Using metapost code examples
+> To: therion at speleo.sk
+> Message-ID: <2CDC217E-E91E-4780-A35C-F6B719CC9D32 at daveclucas.com>
+> Content-Type: text/plain; charset="us-ascii"; Format="flowed";
+> 	DelSp="yes"
+> 
+> Looking at the metapost examples in the Wiki it appears that a block  
+> symbol can be defined or redefined which allows the size of the block  
+> to be changed. Does this apply to each instance of a block or is it a  
+> global definition. How do you specify the size of the block when you  
+> place it in the drawing?
+> 
+>    code metapost
+>     def p_blocks_UIS (expr pos,theta,sc,al)=
+>      symbolsize:=1.0u; %Factor*u; Factor=size of the blocks
+>      U:=(.5u,.5u);
+>      T:=identity aligned al rotated theta scaled sc shifted pos;
+>      pickup PenC;
+>      thdraw (.0symbolsize,.0symbolsize)--(1.0symbolsize,-. 
+> 5symbolsize)--(0.0symbolsize,-1.5symbolsize)-- 
+> (-1.0symbolsize,-1.0symbolsize)--cycle;
+>      thdraw (.5symbolsize,-.25symbolsize)--(1.0symbolsize,. 
+> 5symbolsize)--(0.0symbolsize,1.5symbolsize)--(-0.5symbolsize,. 
+> 5symbolsize);
+>      thdraw (.0symbolsize,.0symbolsize)--(.0symbolsize,.5symbolsize)-- 
+> (-1.5symbolsize,.5symbolsize)--(-1.5symbolsize,-0.5symbolsize)-- 
+> (-0.5symbolsize,-0.5symbolsize);
+>     enddef;
+>    endcode
+> 
+> 
+> 
+> Dave Clucas
+> email:dave at daveclucas.com
+> Website: http://daveclucas.com
+>                   http://mycaves.org
+> Skype: daveclucas
+> 
+> 
+> 
+> 
+> -------------- next part --------------
+> An HTML attachment was scrubbed...
+> URL:
+> <http://mailman.speleo.sk/pipermail/therion/attachments/20081230/ea2e1e04/attachment.html>
+> 
+> ------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> 
+> End of Therion Digest, Vol 37, Issue 14
+> ***************************************
+
+
+From m.budaj at gmail.com  Tue Dec 30 13:19:32 2008
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 30 Dec 2008 13:19:32 +0100
+Subject: [Therion] Using metapost code examples
+In-Reply-To: <20081230120117.233970@gmx.net>
+References: <mailman.1.1230634801.17077.therion@speleo.sk>
+	<20081230120117.233970@gmx.net>
+Message-ID: <f64c1c4a0812300419x6a3e3d7ek1c2e3411c44a37d9@mail.gmail.com>
+
+> Size canging/definition of a single block is, as far as i know, not possible and not projected?
+
+You can do it simply by using -scale xl option (or -scale s etc.) for
+(almost) any point symbol.
+
+> The problem was (with other symbols it is still the case, a solution could be, for example an layout command for small symbols) that with small caves in small scales the normative symbol size is too large, so it might happen that you only see a small part of the symbol in a narrow passage on small scale.
+
+Try playing with base-scale layout option. It should address exactly this issue.
+
+martin
+
+
+From wookey at wookware.org  Tue Dec 30 23:57:46 2008
+From: wookey at wookware.org (Wookey)
+Date: Tue, 30 Dec 2008 22:57:46 +0000
+Subject: [Therion] Using metapost code examples
+In-Reply-To: <f64c1c4a0812300419x6a3e3d7ek1c2e3411c44a37d9@mail.gmail.com>
+References: <mailman.1.1230634801.17077.therion@speleo.sk>
+	<20081230120117.233970@gmx.net>
+	<f64c1c4a0812300419x6a3e3d7ek1c2e3411c44a37d9@mail.gmail.com>
+Message-ID: <20081230225746.GO8858@knossos.aleph1.co.uk>
+
+On 2008-12-30 13:19 +0100, Martin Budaj wrote:
+> > The problem was (with other symbols it is still the case, a solution could be, for example an layout command for small symbols) that with small caves in small scales the normative symbol size is too large, so it might happen that you only see a small part of the symbol in a narrow passage on small scale.
+> 
+> Try playing with base-scale layout option. It should address exactly this issue.
+
+Ah yes. I had this problem Dave. The Therion defaults are/were for
+relatively small caves at 1:200 so our huge ones at 1:3000 need some
+-base-scale and -scale options to be right.
+
+I'll get you my files so you can see the numbers I used.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From dave at daveclucas.com  Wed Dec 31 15:06:13 2008
+From: dave at daveclucas.com (Dave Clucas)
+Date: Wed, 31 Dec 2008 22:06:13 +0800
+Subject: [Therion] Therion Digest, Vol 37, Issue 15
+In-Reply-To: <mailman.1.1230721202.11085.therion@speleo.sk>
+References: <mailman.1.1230721202.11085.therion@speleo.sk>
+Message-ID: <3F900AC1-59B2-463B-A9F6-8CDA4349E072@daveclucas.com>
+
+I'm afraid that's what I thought. We have the situation here in Mulu  
+where the main passages are 50m wide with house sized boulders with  
+side passages a mere 5m wide and small car size boulders so ideally we  
+need a mixture of block sizes to play with. And of course chambers the  
+size of football fields.
+
+On 31 Dec 2008, at 19:00, therion-request at speleo.sk wrote:
+
+> Send Therion mailing list submissions to
+> 	therion at speleo.sk
+>
+> To subscribe or unsubscribe via the World Wide Web, visit
+> 	http://mailman.speleo.sk/mailman/listinfo/therion
+> or, via email, send a message with subject or body 'help' to
+> 	therion-request at speleo.sk
+>
+> You can reach the person managing the list at
+> 	therion-owner at speleo.sk
+>
+> When replying, please edit your Subject line so it is more specific
+> than "Re: Contents of Therion digest..."
+>
+>
+> Today's Topics:
+>
+>   1. Re: Using metapost code examples (Stefan Oswald)
+>   2. Re: Using metapost code examples (Martin Budaj)
+>   3. Re: Using metapost code examples (Wookey)
+>
+>
+> ----------------------------------------------------------------------
+>
+> Message: 1
+> Date: Tue, 30 Dec 2008 13:01:17 +0100
+> From: "Stefan Oswald" <stefan_oswald at gmx.at>
+> Subject: Re: [Therion] Using metapost code examples
+> To: therion at speleo.sk
+> Message-ID: <20081230120117.233970 at gmx.net>
+> Content-Type: text/plain; charset="iso-8859-1"
+>
+> Hi,
+>
+> The size is controlled by the factor before the u.  
+> (symbolsize:=1.0u; %Factor*u; Factor=size of the blocks change 1.0  
+> as you want)
+>> Does this apply to each instance of a block or is it a
+>> global definition.
+> This overrules the point_block sizes in the whole plan compiled.
+> Size canging/definition of a single block is, as far as i know, not  
+> possible and not projected?
+>
+> The problem was (with other symbols it is still the case, a solution  
+> could be, for example an layout command for small symbols) that with  
+> small caves in small scales the normative symbol size is too large,  
+> so it might happen that you only see a small part of the symbol in a  
+> narrow passage on small scale.
+> You can handle this problem with block_points and block_area in UIS  
+> as in described in wiki by changing the factor before the "u".
+>
+> Gl?ck Tief, Stefan
+>
+> -------- Original-Nachricht --------
+>> Datum: Tue, 30 Dec 2008 12:00:01 +0100
+>> Von: therion-request at speleo.sk
+>> An: therion at speleo.sk
+>> Betreff: Therion Digest, Vol 37, Issue 14
+>
+>> Send Therion mailing list submissions to
+>> 	therion at speleo.sk
+>>
+>> To subscribe or unsubscribe via the World Wide Web, visit
+>> 	http://mailman.speleo.sk/mailman/listinfo/therion
+>> or, via email, send a message with subject or body 'help' to
+>> 	therion-request at speleo.sk
+>>
+>> You can reach the person managing the list at
+>> 	therion-owner at speleo.sk
+>>
+>> When replying, please edit your Subject line so it is more specific
+>> than "Re: Contents of Therion digest..."
+>>
+>>
+>> Today's Topics:
+>>
+>>   1. Using metapost code examples (Dave Clucas)
+>>
+>>
+>> ----------------------------------------------------------------------
+>>
+>> Message: 1
+>> Date: Tue, 30 Dec 2008 19:00:56 +0800
+>> From: Dave Clucas <dave at daveclucas.com>
+>> Subject: [Therion] Using metapost code examples
+>> To: therion at speleo.sk
+>> Message-ID: <2CDC217E-E91E-4780-A35C-F6B719CC9D32 at daveclucas.com>
+>> Content-Type: text/plain; charset="us-ascii"; Format="flowed";
+>> 	DelSp="yes"
+>>
+>> Looking at the metapost examples in the Wiki it appears that a block
+>> symbol can be defined or redefined which allows the size of the block
+>> to be changed. Does this apply to each instance of a block or is it a
+>> global definition. How do you specify the size of the block when you
+>> place it in the drawing?
+>>
+>>   code metapost
+>>    def p_blocks_UIS (expr pos,theta,sc,al)=
+>>     symbolsize:=1.0u; %Factor*u; Factor=size of the blocks
+>>     U:=(.5u,.5u);
+>>     T:=identity aligned al rotated theta scaled sc shifted pos;
+>>     pickup PenC;
+>>     thdraw (.0symbolsize,.0symbolsize)--(1.0symbolsize,-.
+>> 5symbolsize)--(0.0symbolsize,-1.5symbolsize)--
+>> (-1.0symbolsize,-1.0symbolsize)--cycle;
+>>     thdraw (.5symbolsize,-.25symbolsize)--(1.0symbolsize,.
+>> 5symbolsize)--(0.0symbolsize,1.5symbolsize)--(-0.5symbolsize,.
+>> 5symbolsize);
+>>     thdraw (.0symbolsize,.0symbolsize)--(.0symbolsize,.5symbolsize)--
+>> (-1.5symbolsize,.5symbolsize)--(-1.5symbolsize,-0.5symbolsize)--
+>> (-0.5symbolsize,-0.5symbolsize);
+>>    enddef;
+>>   endcode
+>>
+>>
+>>
+>> Dave Clucas
+>> email:dave at daveclucas.com
+>> Website: http://daveclucas.com
+>>                  http://mycaves.org
+>> Skype: daveclucas
+>>
+>>
+>>
+>>
+>> -------------- next part --------------
+>> An HTML attachment was scrubbed...
+>> URL:
+>> <http://mailman.speleo.sk/pipermail/therion/attachments/20081230/ea2e1e04/attachment.html 
+>> >
+>>
+>> ------------------------------
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>> End of Therion Digest, Vol 37, Issue 14
+>> ***************************************
+>
+>
+> ------------------------------
+>
+> Message: 2
+> Date: Tue, 30 Dec 2008 13:19:32 +0100
+> From: "Martin Budaj" <m.budaj at gmail.com>
+> Subject: Re: [Therion] Using metapost code examples
+> To: "List for Therion users" <therion at speleo.sk>
+> Message-ID:
+> 	<f64c1c4a0812300419x6a3e3d7ek1c2e3411c44a37d9 at mail.gmail.com>
+> Content-Type: text/plain; charset=UTF-8
+>
+>> Size canging/definition of a single block is, as far as i know, not  
+>> possible and not projected?
+>
+> You can do it simply by using -scale xl option (or -scale s etc.) for
+> (almost) any point symbol.
+>
+>> The problem was (with other symbols it is still the case, a  
+>> solution could be, for example an layout command for small symbols)  
+>> that with small caves in small scales the normative symbol size is  
+>> too large, so it might happen that you only see a small part of the  
+>> symbol in a narrow passage on small scale.
+>
+> Try playing with base-scale layout option. It should address exactly  
+> this issue.
+>
+> martin
+>
+>
+> ------------------------------
+>
+> Message: 3
+> Date: Tue, 30 Dec 2008 22:57:46 +0000
+> From: Wookey <wookey at wookware.org>
+> Subject: Re: [Therion] Using metapost code examples
+> To: therion at speleo.sk
+> Message-ID: <20081230225746.GO8858 at knossos.aleph1.co.uk>
+> Content-Type: text/plain; charset=us-ascii
+>
+> On 2008-12-30 13:19 +0100, Martin Budaj wrote:
+>>> The problem was (with other symbols it is still the case, a  
+>>> solution could be, for example an layout command for small  
+>>> symbols) that with small caves in small scales the normative  
+>>> symbol size is too large, so it might happen that you only see a  
+>>> small part of the symbol in a narrow passage on small scale.
+>>
+>> Try playing with base-scale layout option. It should address  
+>> exactly this issue.
+>
+> Ah yes. I had this problem Dave. The Therion defaults are/were for
+> relatively small caves at 1:200 so our huge ones at 1:3000 need some
+> -base-scale and -scale options to be right.
+>
+> I'll get you my files so you can see the numbers I used.
+>
+> Wookey
+> -- 
+> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+> http://wookware.org/
+>
+>
+> ------------------------------
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+> End of Therion Digest, Vol 37, Issue 15
+> ***************************************
+
+
+
+Dave Clucas
+email:dave at daveclucas.com
+Website: http://daveclucas.com
+                  http://mycaves.org
+Skype: daveclucas
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20081231/78416310/attachment.htm>
+

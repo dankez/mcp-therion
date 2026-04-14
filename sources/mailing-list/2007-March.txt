@@ -1,0 +1,896 @@
+From mikel at speleonics.com.au  Thu Mar  1 22:49:15 2007
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Fri,  2 Mar 2007 08:49:15 +1100
+Subject: [Therion] Flowstone symbols
+Message-ID: <1172785755.45e74a5b9dfa4@anchor.net.au>
+
+Hi all
+
+Wookey wrote...
+
+> Mike - I have an interest in this too - mulu has large flowstone areas
+> which are currently poorly (artistically) represented. I'd be happy to
+> compare notes.
+
+Well now that flowstone as an area is in Therion we can look at tweaking the
+metapost code.
+
+The ASF's images for flowstone is at: http://www.caves.org.au/m_stab-1c.html#6.0
+It differs from gour pools in that the gour symbols all join or touch each other
+whereas the flowstone symbols are all separate. In the metapost code below I
+have increased the horizontal and vertical spacing a bit and my wife Jill thinks
+its pretty close now to the ASF symbol on the web. 
+
+code metapost
+beginpattern(pattern_flowstone);
+    pickup PenC;
+    p:=(-.35u,0){dir -60} .. {dir 60}(0.35u,0);
+    draw p;
+    draw p shifted (0.35u,0.4u);  # was (0.35u,0.3u)
+    patternxstep(1.0u);           # was 0.7
+    patternystep(0.8u);           # was 0.6
+endpattern;
+def a_flowstone_ASF (expr Path) =
+  T:=identity;
+  thclean Path;
+  thfill Path withpattern pattern_flowstone;
+enddef;
+endcode
+
+Now .... rotation. We draw flowstone and gours oriented to the direction that
+they are in the cave. I think they are pretty much the only area fills that we
+orient. The rest like mad, sand, clay, moonmilk etc are all unorientated.
+ 
+Mike Lake
+
+
+
+From mikel at speleonics.com.au  Sun Mar  4 00:56:49 2007
+From: mikel at speleonics.com.au (Mike Lake)
+Date: Sun, 4 Mar 2007 10:56:49 +1100
+Subject: [Therion] Flowstone symbols
+In-Reply-To: <1172785755.45e74a5b9dfa4@anchor.net.au>
+References: <1172785755.45e74a5b9dfa4@anchor.net.au>
+Message-ID: <20070303235649.GA3500@speleonics.com.au>
+
+Hi all
+
+On Fri 02 Mar 2007, Michael Lake wrote:
+> Now .... rotation. We draw flowstone and gours oriented to the direction that
+> they are in the cave. I think they are pretty much the only area fills that we
+> orient. The rest like mad, sand, clay, moonmilk etc are all unorientated.
+
+If rotation can be specified for fills then it would be nice to have in
+the xtherion map editor some indication of the directoin set. At present
+there is no indication that a region is filled at all. 
+
+What I would like to suggest is that non-orientated fills have some text
+added into the middle of the filled area like this:
+
+   Flowstone
+   Fill
+
+and for oriented fills i.e. where a rotation is specified both the text
+and an arrow like this:
+
+
+  \
+   \  Flowstone
+    \ Fill
+     \
+     _\/
+
+
+Would this be possible?
+
+
+Mike
+-- 
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+
+
+From epsm at naex.sk  Tue Mar  6 12:13:22 2007
+From: epsm at naex.sk (Stacho Mudrak)
+Date: Tue, 06 Mar 2007 12:13:22 +0100
+Subject: [Therion] Flowstone symbols
+In-Reply-To: <20070303235649.GA3500@speleonics.com.au>
+References: <1172785755.45e74a5b9dfa4@anchor.net.au>
+	<20070303235649.GA3500@speleonics.com.au>
+Message-ID: <20070306121322.v7cha0ek8wc0cgks@webmailer.sk>
+
+> What I would like to suggest is that non-orientated fills have some text
+> added into the middle of the filled area like this:
+>
+>    Flowstone
+>    Fill
+>
+> and for oriented fills i.e. where a rotation is specified both the text
+> and an arrow like this:
+>
+>
+>   \
+>    \  Flowstone
+>     \ Fill
+>      \
+>      _\/
+>
+>
+> Would this be possible?
+
+This is a very good idea. I was also missing a graphical indication of  
+an area. It will take some time to implement, but I like this idea a  
+lot!
+
+Regards, S.
+
+
+
+From s.m at group-s.sk  Tue Mar  6 12:16:38 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 06 Mar 2007 12:16:38 +0100
+Subject: [Therion] Flowstone symbols
+In-Reply-To: <1172785755.45e74a5b9dfa4@anchor.net.au>
+References: <1172785755.45e74a5b9dfa4@anchor.net.au>
+Message-ID: <20070306121638.rqwdue81b4gwgsk0@webmailer.sk>
+
+Quoting Michael Lake <mikel at speleonics.com.au>:
+> whereas the flowstone symbols are all separate. In the metapost code below I
+> have increased the horizontal and vertical spacing a bit and my wife  
+>  Jill thinks
+> its pretty close now to the ASF symbol on the web.
+
+OK, I will update it in the sources also.
+
+Thanks, S.
+
+
+
+From martinsluka at mac.com  Tue Mar  6 13:17:32 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 6 Mar 2007 13:17:32 +0100
+Subject: [Therion] Flowstone symbols
+In-Reply-To: <20070306121322.v7cha0ek8wc0cgks@webmailer.sk>
+References: <1172785755.45e74a5b9dfa4@anchor.net.au>
+	<20070303235649.GA3500@speleonics.com.au>
+	<20070306121322.v7cha0ek8wc0cgks@webmailer.sk>
+Message-ID: <187FC0F6-CEDA-43E2-8D04-F5877FE71B40@mac.com>
+
+
+On 6.3.2007, at 12:13, Stacho Mudrak wrote:
+
+> This is a very good idea. I was also missing a graphical indication of
+> an area. It will take some time to implement, but I like this idea a
+> lot!
+
+Just calculate the border box of area and put into middle of it a  
+label point?
+
+m.
+
+
+From mikel at speleonics.com.au  Fri Mar  9 14:58:20 2007
+From: mikel at speleonics.com.au (Mike Lake)
+Date: Sat, 10 Mar 2007 00:58:20 +1100
+Subject: [Therion] Creating a catalog of Therion symbols
+Message-ID: <20070309135820.GA22852@speleonics.com.au>
+
+Hi all
+
+I am trying to work out the best way to produce a catalog of all the 
+supported Therion symbols. I'd like to do this directly from the Metapost 
+source directory 'therion/mpost' so that it can be created automatically 
+and therefore kept up to date. (maybe via the Makefile in that directory)
+
+What would be nice would be to produce catalogs of UIS, SKBB, ASF and US 
+separately as well. I think a catalog of the symbols would be an
+excellent appendix to the Therion Book.
+
+So far I have done few symbols by copying and pasting bits of the
+Therion macros, thPoint, thArea etc files into a new mpost file. But this just 
+duplicates what is in the source files.
+
+My idea was to have a metapost file that inputs the therion macros i.e.
+inputs therion.mp and then for each definition use appropriate
+parameters such as scale, rotation, position etc. 
+
+File: therion/mpost/test.mp
+
+  Scale:=1.0
+  
+  input therion.mp
+  
+  % Testing UIS symbols
+  % p_stalactite_UIS(expr pos,theta,sc,al);
+  beginfig(1000);
+  p_stalactite_UIS( (1.0,4.0), 0, 1, (0,0) );
+  endfig;
+
+However when I run this (mpost test.mp) I get many errors still.
+
+mpost$ mpost test.mp 
+This is MetaPost, Version 0.641 (Web2C 7.5.4)
+(test.mp (therion.mp
+>> 0
+! Improper `:=' will be changed to `='.
+l.41 tracingstats:=
+1;
+? r
+OK, entering nonstopmode...
+! Inconsistent equation (off by 1).
+<to be read again> 
+;
+l.41 tracingstats:=1;
+
+(thPoint.mp)
+(thLine.mp)
+(thArea.mp
+[4001] [4002] [4003] [4004] [4005] [4006] [4007])
+(thText.mp)
+(thSpecial.mp)
+(thTrans.mp)
+) [1000])
+! Emergency
+stop.
+<*> test.mp
+
+8 output files written: test.1000 ..  test.4007
+mpost$ 
+
+Some of these output files are actually the EPSF-3.0 postscrip files and
+view fine in GhostView!
+
+I need some help with a minimal example of a file that I can process
+(with mpost or latex) which includes a few symbols but generated just from the code in
+therion/mpost. 
+
+What might be the best way to do this that is useful to all of us?
+
+Mike
+-- 
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+
+
+From m.budaj at gmail.com  Sat Mar 10 20:57:22 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 10 Mar 2007 20:57:22 +0100
+Subject: [Therion] Creating a catalog of Therion symbols
+In-Reply-To: <20070309135820.GA22852@speleonics.com.au>
+References: <20070309135820.GA22852@speleonics.com.au>
+Message-ID: <f64c1c4a0703101157r5275cec1if0447317e50301fa@mail.gmail.com>
+
+> I am trying to work out the best way to produce a catalog of all the
+> supported Therion symbols. I'd like to do this directly from the Metapost
+> source directory 'therion/mpost' so that it can be created automatically
+> and therefore kept up to date. (maybe via the Makefile in that directory)
+
+Try running therion with --print-symbols option. It creates a symbol
+catalog in xhtml format (map symbols are embedded as SVG fragments).
+You need recent opera or firefox to preview the file.
+
+Cheers,
+Martin
+
+P.S. recent development snapshot is missing one declaration in
+therion.mp file; insert the following code somewhere near the
+beginning of therion.mp file before generating the catalog:
+
+boolean ATTR__scrap_centerline;
+ATTR__scrap_centerline = false;
+
+
+From mikel at speleonics.com.au  Sun Mar 11 14:10:26 2007
+From: mikel at speleonics.com.au (Mike Lake)
+Date: Mon, 12 Mar 2007 00:10:26 +1100
+Subject: [Therion] Creating a catalog of Therion symbols
+In-Reply-To: <f64c1c4a0703101157r5275cec1if0447317e50301fa@mail.gmail.com>
+References: <20070309135820.GA22852@speleonics.com.au>
+	<f64c1c4a0703101157r5275cec1if0447317e50301fa@mail.gmail.com>
+Message-ID: <20070311131026.GA13545@speleonics.com.au>
+
+Hi
+
+I added the code to therion.mp and recompiled and ran therion again
+with this option and wow! Yes that is exactly what I wanted.
+It shows me exactly what symbols are missing from the ASF column
+and shows me what I get for each symbol.
+
+Why are some rows in a grey color? 
+e.g. point station-name is in a grey color row but point station:fixed
+is in normal white.
+
+
+On Sat 10 Mar 2007, Martin Budaj wrote:
+> > I am trying to work out the best way to produce a catalog of all the
+> > supported Therion symbols. I'd like to do this directly from the Metapost
+> > source directory 'therion/mpost' so that it can be created automatically
+> > and therefore kept up to date. (maybe via the Makefile in that directory)
+> 
+> Try running therion with --print-symbols option. It creates a symbol
+> catalog in xhtml format (map symbols are embedded as SVG fragments).
+> You need recent opera or firefox to preview the file.
+> 
+> Cheers,
+> Martin
+> 
+> P.S. recent development snapshot is missing one declaration in
+> therion.mp file; insert the following code somewhere near the
+> beginning of therion.mp file before generating the catalog:
+> 
+> boolean ATTR__scrap_centerline;
+> ATTR__scrap_centerline = false;
+
+
+Mike
+-- 
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+
+
+From m.budaj at gmail.com  Sun Mar 11 18:55:13 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 11 Mar 2007 18:55:13 +0100
+Subject: [Therion] Creating a catalog of Therion symbols
+In-Reply-To: <20070311131026.GA13545@speleonics.com.au>
+References: <20070309135820.GA22852@speleonics.com.au>
+	<f64c1c4a0703101157r5275cec1if0447317e50301fa@mail.gmail.com>
+	<20070311131026.GA13545@speleonics.com.au>
+Message-ID: <f64c1c4a0703111055j4a7f5ddard04885dc3e233b04@mail.gmail.com>
+
+On 3/11/07, Mike Lake <mikel at speleonics.com.au> wrote:
+> Why are some rows in a grey color?
+> e.g. point station-name is in a grey color row but point station:fixed
+> is in normal white.
+
+Grey rows contain text symbols or labels, which are currently defined
+globally, outside of any symbol set.
+
+Martin
+
+
+From wookey at aleph1.co.uk  Mon Mar 12 01:48:10 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 12 Mar 2007 00:48:10 +0000
+Subject: [Therion] Therion 0.5 now in Debian Experimental
+Message-ID: <20070312004810.GE17049@knossos.aleph1.co.uk>
+
+The cryptic message below means that therion 0.5 is now available in
+Debian experimental, for i386 architecture. Others will become
+available.
+
+Once Debian testing is released as stable (sometime soonish), therion
+0.5.0 will move into testing and become available on all architectures.
+
+Package feedback is welcome. 
+
+
+----- Forwarded message from Debian Installer <installer at ftp-master.debian.org> -----
+
+From: Debian Installer <installer at ftp-master.debian.org>
+Date: Sun, 11 Mar 2007 13:51:59 +0000
+To: Wookey <wookey at aleph1.co.uk>, wookey at debian.org
+Subject: therion_0.5.0-1_i386.changes ACCEPTED
+X-Spam-Status: No, score=-2.6 required=5.0 tests=AWL,BAYES_00 autolearn=ham 
+	version=3.0.3, No
+
+
+Accepted:
+therion-doc_0.5.0-1_all.deb
+  to pool/main/t/therion/therion-doc_0.5.0-1_all.deb
+therion-viewer_0.5.0-1_i386.deb
+  to pool/main/t/therion/therion-viewer_0.5.0-1_i386.deb
+therion_0.5.0-1.dsc
+  to pool/main/t/therion/therion_0.5.0-1.dsc
+therion_0.5.0-1.tar.gz
+  to pool/main/t/therion/therion_0.5.0-1.tar.gz
+therion_0.5.0-1_i386.deb
+  to pool/main/t/therion/therion_0.5.0-1_i386.deb
+
+
+Override entries for your package:
+therion-doc_0.5.0-1_all.deb - extra science
+therion-viewer_0.5.0-1_i386.deb - extra science
+therion_0.5.0-1.dsc - extra science
+therion_0.5.0-1_i386.deb - extra science
+
+Announcing to debian-devel-changes at lists.debian.org
+
+
+Thank you for your contribution to Debian.
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
+
+
+From s.m at group-s.sk  Tue Mar 13 11:48:50 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 13 Mar 2007 11:48:50 +0100
+Subject: [Therion] cave title in 0.5?
+In-Reply-To: <bd07447b0702220840v212e88a5r105c397ac0f3a209@mail.gmail.com>
+References: <bd07447b0702220840v212e88a5r105c397ac0f3a209@mail.gmail.com>
+Message-ID: <20070313114850.h6qlod7vk0s4gc4g@webmailer.sk>
+
+Even I tried to reproduce this error several times, I am still not  
+able to do so. Could you please send me some minimal sample, where  
+this problem appears (some one shot centerline).
+
+Thanks a lot, S.
+
+P.S. In any case, you can override cave name using simple tex macro in layout:
+
+code tex-map
+   \cavename{My cave title}
+endcode
+
+
+Quoting "Carlos \"Guâno\" Grohmann" <carlos.grohmann at gmail.com>:
+
+> I was testing the packages of the 0.5 version. In the final pdf, I
+> can't get the right cave name. Even if I set it like
+>
+> survey cave -title "Gruta da Lapinha - R*SP-"
+>
+> in my cave.th file (which is the source in thconfig) all I get is the
+> name in my .svx file (like, if my survex file has "*begin topoX", I
+> get "topoX" as the tilte).
+>
+> Carlos
+>
+> --
+> +-----------------------------------------------------------+
+>               Carlos Henrique Grohmann - Guano
+>   Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+> Linux User #89721  - carlos dot grohmann at gmail dot com
+> +-----------------------------------------------------------+
+> _________________
+> "Good morning, doctors. I have taken the liberty of removing Windows
+> 95 from my hard drive."
+> --The winning entry in a "What were HAL's first words" contest judged
+> by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+
+
+From carlos.grohmann at gmail.com  Tue Mar 13 15:25:27 2007
+From: carlos.grohmann at gmail.com (=?ISO-8859-1?Q?Carlos_"Gu=E2no"_Grohmann?=)
+Date: Tue, 13 Mar 2007 11:25:27 -0300
+Subject: [Therion] cave title in 0.5?
+In-Reply-To: <20070313114850.h6qlod7vk0s4gc4g@webmailer.sk>
+References: <bd07447b0702220840v212e88a5r105c397ac0f3a209@mail.gmail.com>
+	<20070313114850.h6qlod7vk0s4gc4g@webmailer.sk>
+Message-ID: <bd07447b0703130725j47311ad9kfc9ef12012def774@mail.gmail.com>
+
+After I sent you that first email about this "bug", I started using
+the \cavename command, so things were OK.
+
+I went to look the files again and I realized that I was doing some
+things wrong here..
+instead of
+
+survey cave -title "Gruta da Lapinha - R*SP-"
+
+
+I should be using
+
+survey lapinha -title "Gruta da Lapinha - R*SP-"
+
+Sorry about that.
+
+BTW, every time I compile a map in 0.5, it ends in error, but the map is OK...
+
+
+Carlos
+
+
+
+On 3/13/07, Stacho Mudrak <s.m at group-s.sk> wrote:
+> Even I tried to reproduce this error several times, I am still not
+> able to do so. Could you please send me some minimal sample, where
+> this problem appears (some one shot centerline).
+>
+> Thanks a lot, S.
+>
+> P.S. In any case, you can override cave name using simple tex macro in layout:
+>
+> code tex-map
+>    \cavename{My cave title}
+> endcode
+>
+>
+> Quoting "Carlos \"Guâno\" Grohmann" <carlos.grohmann at gmail.com>:
+>
+> > I was testing the packages of the 0.5 version. In the final pdf, I
+> > can't get the right cave name. Even if I set it like
+> >
+> > survey cave -title "Gruta da Lapinha - R*SP-"
+> >
+> > in my cave.th file (which is the source in thconfig) all I get is the
+> > name in my .svx file (like, if my survex file has "*begin topoX", I
+> > get "topoX" as the tilte).
+> >
+> > Carlos
+> >
+> > --
+> > +-----------------------------------------------------------+
+> >               Carlos Henrique Grohmann - Guano
+> >   Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+> > Linux User #89721  - carlos dot grohmann at gmail dot com
+> > +-----------------------------------------------------------+
+> > _________________
+> > "Good morning, doctors. I have taken the liberty of removing Windows
+> > 95 from my hard drive."
+> > --The winning entry in a "What were HAL's first words" contest judged
+> > by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> >
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+-- 
++-----------------------------------------------------------+
+              Carlos Henrique Grohmann - Guano
+  Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+Linux User #89721  - carlos dot grohmann at gmail dot com
++-----------------------------------------------------------+
+_________________
+"Good morning, doctors. I have taken the liberty of removing Windows
+95 from my hard drive."
+--The winning entry in a "What were HAL's first words" contest judged
+by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+
+
+From carlos.grohmann at gmail.com  Mon Mar 19 18:12:54 2007
+From: carlos.grohmann at gmail.com (=?ISO-8859-1?Q?Carlos_"Gu=E2no"_Grohmann?=)
+Date: Mon, 19 Mar 2007 14:12:54 -0300
+Subject: [Therion] legend in exported svg?
+Message-ID: <bd07447b0703191012lb3e9464n6b907f7be6667cc0@mail.gmail.com>
+
+Hello all.
+
+just doing some tests exporting svg and xhtml from therion, thinking
+about a final art in Inkscape or Xara. When I imported the svg, the
+cave was nice, but there is no legend. in the xhtml there is a legend,
+but I can't import this file into inkscape. how can I get a legend
+with svg files?
+
+thanks
+
+-- 
++-----------------------------------------------------------+
+              Carlos Henrique Grohmann - Guano
+  Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+Linux User #89721  - carlos dot grohmann at gmail dot com
++-----------------------------------------------------------+
+_________________
+"Good morning, doctors. I have taken the liberty of removing Windows
+95 from my hard drive."
+--The winning entry in a "What were HAL's first words" contest judged
+by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+
+
+From s.m at group-s.sk  Tue Mar 20 13:41:21 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 20 Mar 2007 13:41:21 +0100
+Subject: [Therion] legend in exported svg?
+In-Reply-To: <bd07447b0703191012lb3e9464n6b907f7be6667cc0@mail.gmail.com>
+References: <bd07447b0703191012lb3e9464n6b907f7be6667cc0@mail.gmail.com>
+Message-ID: <20070320134121.k4m9gecp0k8wssg8@webmailer.sk>
+
+Hmmm, I see no solution right now - the only way is to manually (or  
+some script) extract SVG from xhtml (just copy everything between  
+<svg> and </svg> tags for each used symbol into separate SVG files).
+
+May be, it is possible to add legend export to SVG - but I have no  
+idea. It is a field of MartinB and he will be back end of the week.
+
+Regards, S.
+
+Quoting "Carlos \"Guâno\" Grohmann" <carlos.grohmann at gmail.com>:
+
+> Hello all.
+>
+> just doing some tests exporting svg and xhtml from therion, thinking
+> about a final art in Inkscape or Xara. When I imported the svg, the
+> cave was nice, but there is no legend. in the xhtml there is a legend,
+> but I can't import this file into inkscape. how can I get a legend
+> with svg files?
+>
+> thanks
+>
+> --
+> +-----------------------------------------------------------+
+>               Carlos Henrique Grohmann - Guano
+>   Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+> Linux User #89721  - carlos dot grohmann at gmail dot com
+> +-----------------------------------------------------------+
+> _________________
+> "Good morning, doctors. I have taken the liberty of removing Windows
+> 95 from my hard drive."
+> --The winning entry in a "What were HAL's first words" contest judged
+> by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+
+
+From ohc at vt.edu  Tue Mar 20 23:53:23 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 20 Mar 2007 18:53:23 -0400
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <20070103045646.GP31021@xios>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0701020523g72d19aah75dd94d8224ae609@mail.gmail.com>
+	<20070103045646.GP31021@xios>
+Message-ID: <200703201853.23681.ohc@vt.edu>
+
+
+> I have now turned up my TeX memory to 2000000 and it all processes
+> fine.
+
+When turning up my memory I had to run fmtutil --all while 
+in /usr/share/texmf/web2c/  
+
+To update the memory charge
+main_memory = 1000000
+
+in /usr/share/texmf/web2c/texmf.cnf
+
+Steelwool
+
+
+From wookey at aleph1.co.uk  Fri Mar 23 23:03:32 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 23 Mar 2007 22:03:32 +0000
+Subject: [Therion] Fw: Bug#413417: FTBFS with GCC 4.3: 'INT_MAX' was not
+	declared in this scope
+Message-ID: <20070323220332.GA20005@knossos.aleph1.co.uk>
+
+I'll put this in the debian package, but it should go in the standard
+sources too.
+
+----- Forwarded message from Martin Michlmayr <tbm at cyrius.com> -----
+
+From: Martin Michlmayr <tbm at cyrius.com>
+Date: Sun, 4 Mar 2007 21:40:03 +0000
+To: submit at bugs.debian.org
+Subject: Bug#413417: FTBFS with GCC 4.3: 'INT_MAX' was not declared in this scope
+Reply-To: Martin Michlmayr <tbm at cyrius.com>, 413417 at bugs.debian.org
+X-Spam-Status: No, score=-2.5 required=5.0 tests=AWL,BAYES_00 autolearn=ham 
+	version=3.0.3, No
+
+Package: therion
+Version: 0.3.10-3
+Usertags: ftbfs-gcc-4.3
+Tags: patch
+
+Your package fails to build with GCC 4.3.  Version 4.3 has not been
+released yet but I'm building with a snapshot in order to find errors
+and give people an advance warning.  A patch for this problem is
+below.
+
+> Automatic build of therion_0.3.10-3 on em64t by sbuild/amd64 0.53
+...
+> g++ -c -Wall -DTHLINUX -O2 -o thpdf.o thpdf.cxx
+> In file included from thchencdata.h:11,
+>                  from thchenc.h:32,
+>                  from thpdf.cxx:54:
+> thparse.h:126: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:126: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:138: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:138: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:138: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> thparse.h:191: warning: deprecated conversion from string constant to 'char*'
+> In file included from thchenc.h:32,
+>                  from thpdf.cxx:54:
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thchencdata.h:50: warning: deprecated conversion from string constant to 'char*'
+> thpdf.cxx: In function 'void make_sheets()':
+> thpdf.cxx:260: error: 'INT_MAX' was not declared in this scope
+> thpdf.cxx:262: error: 'INT_MIN' was not declared in this scope
+> thpdf.cxx: In function 'void print_surface_bitmaps(std::ofstream&, double, double)':
+> thpdf.cxx:836: warning: suggest parentheses around && within ||
+> thpdf.cxx: In function 'void build_pages()':
+> thpdf.cxx:1333: warning: deprecated conversion from string constant to 'char*'
+> thpdf.cxx:1337: warning: deprecated conversion from string constant to 'char*'
+> thpdf.cxx:1341: warning: deprecated conversion from string constant to 'char*'
+> make[1]: *** [thpdf.o] Error 1
+> make[1]: Leaving directory `/build/tbm/therion-0.3.10'
+> make: *** [build-stamp] Error 2
+
+--- thpdf.cxx~	2007-03-04 21:25:58.000000000 +0000
++++ thpdf.cxx	2007-03-04 21:27:33.000000000 +0000
+@@ -35,6 +35,8 @@
+ #include <set>
+ #include <string>
+ 
++#include <limits.h>
++
+ // #include <cstring>
+ #include <cstdio>
+ #include <cfloat>
+
+-- 
+Martin Michlmayr
+http://www.cyrius.com/
+
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
+
+
+From m.budaj at gmail.com  Mon Mar 26 10:30:39 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 26 Mar 2007 10:30:39 +0200
+Subject: [Therion] Fw: Bug#413417: FTBFS with GCC 4.3: 'INT_MAX' was not
+	declared in this scope
+In-Reply-To: <20070323220332.GA20005@knossos.aleph1.co.uk>
+References: <20070323220332.GA20005@knossos.aleph1.co.uk>
+Message-ID: <f64c1c4a0703260130y5cf2277cq54ef75c0b74f28e6@mail.gmail.com>
+
+On 3/24/07, Wookey <wookey at aleph1.co.uk> wrote:
+> I'll put this in the debian package, but it should go in the standard
+> sources too.
+
+Source has been already patched, it will appear in the next snapshot.
+m.
+
+
+From carlos.grohmann at gmail.com  Fri Mar 30 19:20:12 2007
+From: carlos.grohmann at gmail.com (=?ISO-8859-1?Q?Carlos_"Gu=E2no"_Grohmann?=)
+Date: Fri, 30 Mar 2007 14:20:12 -0300
+Subject: [Therion] legend in exported svg?
+In-Reply-To: <20070320134121.k4m9gecp0k8wssg8@webmailer.sk>
+References: <bd07447b0703191012lb3e9464n6b907f7be6667cc0@mail.gmail.com>
+	<20070320134121.k4m9gecp0k8wssg8@webmailer.sk>
+Message-ID: <bd07447b0703301020r5de9f234r7e9edbb072b7f468@mail.gmail.com>
+
+I tryed to extract the legend from the xhtm file, but i couldn't. How
+about add the legend to the exported svg?
+
+Carlos
+
+
+
+On 3/20/07, Stacho Mudrak <s.m at group-s.sk> wrote:
+> Hmmm, I see no solution right now - the only way is to manually (or
+> some script) extract SVG from xhtml (just copy everything between
+> <svg> and </svg> tags for each used symbol into separate SVG files).
+>
+> May be, it is possible to add legend export to SVG - but I have no
+> idea. It is a field of MartinB and he will be back end of the week.
+>
+> Regards, S.
+>
+> Quoting "Carlos \"Guâno\" Grohmann" <carlos.grohmann at gmail.com>:
+>
+> > Hello all.
+> >
+> > just doing some tests exporting svg and xhtml from therion, thinking
+> > about a final art in Inkscape or Xara. When I imported the svg, the
+> > cave was nice, but there is no legend. in the xhtml there is a legend,
+> > but I can't import this file into inkscape. how can I get a legend
+> > with svg files?
+> >
+> > thanks
+> >
+> > --
+> > +-----------------------------------------------------------+
+> >               Carlos Henrique Grohmann - Guano
+> >   Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+> > Linux User #89721  - carlos dot grohmann at gmail dot com
+> > +-----------------------------------------------------------+
+> > _________________
+> > "Good morning, doctors. I have taken the liberty of removing Windows
+> > 95 from my hard drive."
+> > --The winning entry in a "What were HAL's first words" contest judged
+> > by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> >
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+-- 
++-----------------------------------------------------------+
+              Carlos Henrique Grohmann - Guano
+  Geologist M.Sc  - Doctorate Student at IGc-USP - Brazil
+Linux User #89721  - carlos dot grohmann at gmail dot com
++-----------------------------------------------------------+
+_________________
+"Good morning, doctors. I have taken the liberty of removing Windows
+95 from my hard drive."
+--The winning entry in a "What were HAL's first words" contest judged
+by 2001: A SPACE ODYSSEY creator Arthur C. Clarke
+
+

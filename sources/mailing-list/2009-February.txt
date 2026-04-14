@@ -1,0 +1,3082 @@
+From john at pybus.org  Tue Feb  3 00:32:04 2009
+From: john at pybus.org (John Pybus)
+Date: Mon, 02 Feb 2009 23:32:04 +0000
+Subject: [Therion] Showing centreline for whole cave
+Message-ID: <49878274.4090403@pybus.org>
+
+Hi,
+
+We're in the process of trying to draw up an extended elevation of a 
+complicated part of one cave.  It would be very useful to see the 
+centreline plotted for the whole cave.
+
+I've added the metapost code from 
+http://therion.speleo.sk/wiki/doku.php?id=metapost and it plots the 
+whole line rather than just the ends (though it is only showing for half 
+of the cave).  I've tried adding thee names of surveys which are not in 
+the scraps to the map, but no centreline is shown.
+
+Does anyone have any advise?  Is there a way to just get all the 
+centreline plotted?
+
+Thanks,
+John
+
+
+From bruce.mutton at paradise.net.nz  Tue Feb  3 06:19:25 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 03 Feb 2009 18:19:25 +1300
+Subject: [Therion] Showing centreline for whole cave
+In-Reply-To: <49878274.4090403@pybus.org>
+References: <49878274.4090403@pybus.org>
+Message-ID: <9B4638EDCCC94713B9685F3C56223B46@JUICEBRAIN>
+
+John
+
+> I've added the metapost code from 
+> http://therion.speleo.sk/wiki/doku.php?id=metapost and it plots the 
+> whole line rather than just the ends.
+
+>From my understanding it seems like your metapost code is working as
+intended.  It changes the symbol used for plotting, not what is plotted.
+
+> I've tried adding thee names of surveys which are not in 
+> the scraps to the map, but no centreline is shown.
+> ...  Is there a way to just get all the 
+> centreline plotted?
+
+I have little experience with extended elevations (which I expect are a
+little more complicated than plans and projected elevations).  The following
+(plan) map definitions indicate the approach I take, and it usually works
+for plan and projected elevations.
+I separate out maps composed of scraps and maps composed of surveys.  (My
+survey in this example is called ro) All of the survey maps can then be
+collected together into a master 'survey centreline' of the whole cave
+(separate to the drawings).
+When you come to compile a drawing, select both the 'map of scraps' and the
+'map of survey centrelines' for plotting both.  Sometimes I have problems if
+I have 
+symbol-hide group cave-centerline 
+or something similar set by accident in a layout somewhere.  Of course there
+will be nothing to plot!
+
+Also if your drawings are opaque and the survey is plotted on the bottom, it
+will be hidden.  In th example below s6 plots on top of s1 and s2.
+
+Example of the first bit of this process;
+
+   map Late08ROPlan   -title "Late08 RO Plan" \
+                      -projection plan
+     Late08ROPlan_s6  #passage that ducks under White River
+     break
+     Late08ROPlan_s1 #Page 3 Passage
+     Late08ROPlan_s2
+   endmap
+      
+   map Late08ROPlanCL   -title "Late08 RO Plan (centreline)" \
+                      -projection plan 
+      ro
+   endmap
+
+
+Also extended elevations require careful use of the extend statement.
+For example, this statement
+  extend ignore 1 5
+would in effect hide the survey legs between station 1 to 5, for example.
+
+Not sure if any of this will help, but it outlines some issues I had when
+getting going.
+
+Bruce
+
+
+
+From markus.boldt at ratiopharm.de  Tue Feb  3 10:05:10 2009
+From: markus.boldt at ratiopharm.de (Boldt, Markus)
+Date: Tue, 3 Feb 2009 10:05:10 +0100
+Subject: [Therion] hidden points of centerline
+Message-ID: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+
+Hello, 
+I'm new in this list and would like to introduce. I have been caving for
+over 30 years and during this time I have many caves explored and
+measured. So far, I have always used Caverender together with AutoCAD or
+very early drawn the plans by hand. Now I have found Therion and I'm
+thrilled. However, it is somewhat difficult for me to find or to
+understand one or the other in the English manual . My english is a bit
+rusty and not so great. Also lacking in my opinion, examples and a good
+descriptor list in the manual. I know of course that the project Therion
+is doing from enthusiastic people and so I will even try as soon as I
+understand more from Therion involve me positively . Once it comes, I
+wish one or the other question to look or to answer. 
+Now to my question: 
+I have the following data sequence in my *.th-File:
+
+
+data normal from to lenght compass clino left right up down 
+1	2	10.83	125	-12	3.5	1.0	0.8	2.0
+1	1a	1.0	125	-12	3.5	1.0	0.8	2.0
+1a	1b	1.0	125	-12	3.0	0.8	1.2	1.5
+1b	1c	1.0	125	-12	2.5	1.0	2.0	1.5
+1c	1d	1.0	125	-12	2.0	1.5	2.0	1.0
+1d	1e	1.0	125	-12	2.2	1.0	2.0	0.8
+1e	1f	1.0	125	-12.......
+.......1j	2	0.83	125	-12	2.2	1.0	2.0
+0.6
+
+I want the data 1 to 1a ..... until 1j to 2 only may be used for the
+generation of a *. xvi file , but not for the production of the finished
+Map in plan and extended. I'd like only the main Points 1  and 2 are
+taken or written. So the Centerline should go  directly from  1 to 2 . 
+I hope I have expressed me in a understandable way. 
+
+Many thanks for any idea
+
+Best wishes
+
+Markus 
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090203/2c6dedf7/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Tue Feb  3 10:30:08 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 03 Feb 2009 22:30:08 +1300
+Subject: [Therion] therion book revision marking
+In-Reply-To: <f64c1c4a0901301249s7037eb3uaaa647e5c93c813e@mail.gmail.com>
+References: <C106FFAD4E2349E3ABCEAF165A5CD8BD@JUICEBRAIN>
+	<f64c1c4a0901301249s7037eb3uaaa647e5c93c813e@mail.gmail.com>
+Message-ID: <99EFD7D4F43E48B084F93766C53E09D1@JUICEBRAIN>
+
+> ...sufficient to start with reading CHANGES file when new version is
+> released to be informed about the changes and then find the
+> corresponding passages in the therion book (e.g. by searching for a
+> new keyword).
+
+Martin
+
+I have been doing this, but perhaps sometimes changes are made to the
+Therion Book relating to an existing unchanged feature - explaining default
+font sizes instance? I always check the new versions, as I have many unasked
+questions, which are too low a priority to bother the forum with.
+
+Comparing text in documents is a bit tedious to do on a regular basis, if
+the authoring software can do it quickly and easily.  Perhaps it does not,
+and if so that is OK.
+
+Bruce
+
+
+
+
+From bruce.mutton at paradise.net.nz  Tue Feb  3 10:30:09 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 03 Feb 2009 22:30:09 +1300
+Subject: [Therion] Font size
+In-Reply-To: <f64c1c4a0901301315m2656f3bcmeda1702acbed708e@mail.gmail.com>
+References: <7284184839554677BAE1A460EC98681A@JUICEBRAIN>
+	<f64c1c4a0901301303q1f7cb224q8d45a3b72b6d31fb@mail.gmail.com>
+	<f64c1c4a0901301315m2656f3bcmeda1702acbed708e@mail.gmail.com>
+Message-ID: <030C931BC5DC4DBF928C42D9B476699B@JUICEBRAIN>
+
+> Therion book gives just an example; the defaults ... depend on scale:
+
+Thanks for explaining that Martin.  Explains why I thought the text was
+erratic sometimes.
+Bruce
+
+
+
+From bruce.mutton at paradise.net.nz  Tue Feb  3 10:55:13 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 03 Feb 2009 22:55:13 +1300
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+Message-ID: <B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+
+Markus
+
+ 
+
+I have never used splay survey legs, so perhaps I am not the best person to
+attempt an answer to your question, but I think it is what you are after.
+
+Look up 'flags' on page 19 of the Therion Book for a description.  I'm
+guessing you would have to modify your data entry as follows.
+
+data normal from to length compass clino left right up down 
+1       2       10.83   125     -12     3.5     1.0     0.8     2.0 
+flags splay
+1       1a      1.0     125     -12     3.5     1.0     0.8     2.0 
+1      1b      2.0     125     -12     3.0     0.8     1.2     1.5 
+1      1c      3.0     125     -12     2.5     1.0     2.0     1.5 
+1      1d      4.0     125     -12     2.0     1.5     2.0     1.0 
+1      1e      5.0     125     -12     2.2     1.0     2.0     0.8 
+1      1f      6.0     125     -12....... 
+flags not splay
+2      3  .
+
+My personal preference is to separate the survey leg data from the
+dimensions data as follows;
+
+data normal from to length compass clino
+1   2   10.83  125  -12
+etc
+
+data dimensions  station left right up down 
+1   3.5   1.0   0.8   2.0
+2   etc
+
+I find it easier to check as there are fewer numbers in each row, and it is
+explicitly stated which station the dimensions apply to, but there are very
+many ways to do it depending on your preference.
+
+Bruce
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090203/eabed0fe/attachment.htm>
+
+From markus.boldt at ratiopharm.de  Wed Feb  4 14:41:25 2009
+From: markus.boldt at ratiopharm.de (Boldt, Markus)
+Date: Wed, 4 Feb 2009 14:41:25 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+	<B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+Message-ID: <12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+
+ 
+Bruce, 
+thank you very much for that fast answer! But......
+ 
+That idea is good for making the data of the centerline and the
+wall-points easier to handle. So far I will do it in that way you give
+in example one in future. That is the way we survey a cave normaly.
+Earlier with this data we have drawn the map after it was estimated with
+CaveRender. So we have got the dimensions.  Additionally we have made a
+coorekt scaled drawing in the cave. Today with Therion, if the drawing
+in the cave is correctly (or nearly) scaled that way is not longer
+necessary. But it is a good tradition and a possibility to proof the
+drawing of the map. 
+ 
+In this relation my original question was: What must I do (and now I try
+my question in an other way), if I namely want to have all data in my
+data-file, but in the Map there should shown only the
+main-station-points (1, 2, ...)with name along the centerline. The
+Station with extention a, b, c... should not drawn and named. 
+May it be, that that is only possible with a different METAPOST-Code or
+is there a possibility in Therion itself? 
+ 
+In both cases of your example I get all stations drawn and named. 
+ 
+Markus
+ 
+ 
+
+________________________________
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im
+Auftrag von Bruce Mutton
+Gesendet: Dienstag, 3. Februar 2009 10:55
+An: 'List for Therion users'
+Betreff: Re: [Therion] hidden points of centerline
+
+
+
+Markus
+
+ 
+
+I have never used splay survey legs, so perhaps I am not the best person
+to attempt an answer to your question, but I think it is what you are
+after.
+
+Look up 'flags' on page 19 of the Therion Book for a description.  I'm
+guessing you would have to modify your data entry as follows...
+
+data normal from to length compass clino left right up down 
+1       2       10.83   125     -12     3.5     1.0     0.8     2.0 
+flags splay
+1       1a      1.0     125     -12     3.5     1.0     0.8     2.0 
+1      1b      2.0     125     -12     3.0     0.8     1.2     1.5 
+1      1c      3.0     125     -12     2.5     1.0     2.0     1.5 
+1      1d      4.0     125     -12     2.0     1.5     2.0     1.0 
+1      1e      5.0     125     -12     2.2     1.0     2.0     0.8 
+1      1f      6.0     125     -12....... 
+flags not splay
+2      3  ...
+
+My personal preference is to separate the survey leg data from the
+dimensions data as follows;
+
+data normal from to length compass clino
+1   2   10.83  125  -12
+etc
+
+data dimensions  station left right up down 
+1   3.5   1.0   0.8   2.0
+2   etc
+
+I find it easier to check as there are fewer numbers in each row, and it
+is explicitly stated which station the dimensions apply to, but there
+are very many ways to do it depending on your preference.
+
+Bruce
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090204/bd1b2ef3/attachment.htm>
+
+From m.budaj at gmail.com  Wed Feb  4 14:56:14 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 4 Feb 2009 14:56:14 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+	<B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+	<12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+Message-ID: <f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+
+> In this relation my original question was: What must I do (and now I try my question in an other way), if I namely want to have all data in my data-file, but in the Map there should shown only the main-station-points (1, 2, ...)with name along the centerline. The Station with extention a, b, c... should not drawn and named.
+> May it be, that that is only possible with a different METAPOST-Code or is there a possibility in Therion itself?
+>
+> In both cases of your example I get all stations drawn and named.
+
+This has been fixed recently (splay shots are not displayed in the
+map). I am not sure if latest snapshot already contains the fix -- if
+not, you have to wait for 5.2.7.
+
+Martin
+
+
+From markus.boldt at ratiopharm.de  Thu Feb  5 08:45:07 2009
+From: markus.boldt at ratiopharm.de (Boldt, Markus)
+Date: Thu, 5 Feb 2009 08:45:07 +0100
+Subject: [Therion] northarrow
+In-Reply-To: <f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern><B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN><12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+	<f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+Message-ID: <12C2D59D011E9A46B03212B2A704FE8F06EC9520@UL-MAILV01.global.intern>
+
+Excuse, 
+I have forgotten to ask for changig the size of the northarrow. 
+greetings
+Markus  
+
+
+
+
+From markus.boldt at ratiopharm.de  Thu Feb  5 08:41:14 2009
+From: markus.boldt at ratiopharm.de (Boldt, Markus)
+Date: Thu, 5 Feb 2009 08:41:14 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern><B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN><12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+	<f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+Message-ID: <12C2D59D011E9A46B03212B2A704FE8F06EC950A@UL-MAILV01.global.intern>
+
+Hi Martin, 
+many thanks! I have tried the update (5.2.6) now. I determine that I
+have to wait for "next generation". 
+
+For finishing my Map I have (I hope) al last question. I think I have
+have found all terms (or those which are interesting for the Moment) to
+configure the legend, but not how it is possible to scale the Text of
+the scalebar. 
+
+layout
+scale-bar 30 m    #makes the bar as long as 30m is in scale of the
+drawing
+
+But the text "30 m" is to small. 
+
+Greetings
+Markus 
+
+
+
+
+From markus.boldt at ratiopharm.de  Fri Feb  6 11:11:05 2009
+From: markus.boldt at ratiopharm.de (Boldt, Markus)
+Date: Fri, 6 Feb 2009 11:11:05 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern><B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN><12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+	<f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+Message-ID: <12C2D59D011E9A46B03212B2A704FE8F06F2A652@UL-MAILV01.global.intern>
+
+Thanks, martin, 
+yesterday night I have found a simple solution for that "problem": In the map-editor in the line OPTIONS from the point station I have written additionally to the option "-name 1" "-visibility off". 
+And now it works as I want to have my map. 
+Very good an simple
+regards 
+Markus
+
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Budaj
+Gesendet: Mittwoch, 4. Februar 2009 14:56
+An: List for Therion users
+Betreff: Re: [Therion] hidden points of centerline
+
+> In this relation my original question was: What must I do (and now I try my question in an other way), if I namely want to have all data in my data-file, but in the Map there should shown only the main-station-points (1, 2, ...)with name along the centerline. The Station with extention a, b, c... should not drawn and named.
+> May it be, that that is only possible with a different METAPOST-Code or is there a possibility in Therion itself?
+>
+> In both cases of your example I get all stations drawn and named.
+
+This has been fixed recently (splay shots are not displayed in the map). I am not sure if latest snapshot already contains the fix -- if not, you have to wait for 5.2.7.
+
+Martin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+
+From martinsluka at mac.com  Fri Feb  6 12:38:42 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 06 Feb 2009 12:38:42 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <12C2D59D011E9A46B03212B2A704FE8F06EC950A@UL-MAILV01.global.intern>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+	<B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+	<12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+	<f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+	<12C2D59D011E9A46B03212B2A704FE8F06EC950A@UL-MAILV01.global.intern>
+Message-ID: <548DE4E0-18FE-4687-9F80-DE9D67067EB4@mac.com>
+
+
+On 5.2.2009, at 8:41, Boldt, Markus wrote:
+
+> but not how it is possible to scale the Text of
+> the scalebar.
+
+Than one is a problem.
+
+I hope, Stacho or MartinB will add this feature.
+
+northarrow:
+
+
+code metapost
+  def s_northarrow (expr rot) =
+    T:=identity scaled 1.5 rotated -rot;
+    thdraw (-.5cm,-1cm)--(0,1.5cm)--(.5cm,-1cm)--(0,-.5cm)--cycle;
+    thfill (-.5cm,-1cm)--(0,1.5cm)--(0,-.5cm)--cycle;
+  enddef;
+endcode
+
+code tex-map
+\def\maplayout{
+   \legendbox{10}{35}{NW}{\the\legendcontent}
+   \legendbox{80}{90}{N}{\northarrow}
+   \legendbox{80}{80}{N}{\scalebar}
+}
+
+
+MartinS
+
+
+From thomas at thomas-holder.de  Sat Feb  7 14:30:09 2009
+From: thomas at thomas-holder.de (Thomas Holder)
+Date: Sat, 07 Feb 2009 14:30:09 +0100
+Subject: [Therion] loch performance issues on linux
+Message-ID: <498D8CE1.5070505@thomas-holder.de>
+
+Hi,
+
+I'm using the "Loch" 3D-viewer on Linux. When moving and rotating the 
+picture it flickers much. The autorotation is almost useless, it's so 
+demanding on CPU and memory that it becomes unresponsive after few 
+seconds. Other OpenGL applications like Google Earth work fine. The same 
+lox-file also works fine with Loch on Windows XP.
+
+Where is the problem? Any suggestions?
+
+OpenGL Information:
+GeForce 8400 GS
+NVIDIA Driver Version: 173.14.15
+
+Regards,
+   Thomas
+
+
+From duncan.collis at gmail.com  Sun Feb  8 02:57:11 2009
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Sun, 8 Feb 2009 09:57:11 +0800
+Subject: [Therion] backcompass and backclino in team and instrument
+	descriptions
+Message-ID: <34c51f620902071757w286ac048x55d43b8958049de8@mail.gmail.com>
+
+Hi,
+
+I think I may have found a minor bug:
+
+Therion does not accept 'backcompass' or 'backclino' as a valid role
+in the team command or a valid description in the instrument command
+
+eg this does not work:
+
+team "Fred Flintstone" tape backcompass backclino
+instrument backcompass "Silva Type80 F"
+instrument backclino "Suunto 646575"
+
+whereas this is OK:
+
+team "Barney Rubble" notes compass clino
+instrument compass "Silva Type80 C"
+instrument clino "Suunto 522534"
+
+The equivalent role and description are valid for the *team and
+*instrument commands in Survex.
+
+Duncan Collis
+
+
+From s.m at group-s.sk  Mon Feb  9 09:11:05 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 9 Feb 2009 09:11:05 +0100
+Subject: [Therion] loch performance issues on linux
+In-Reply-To: <498D8CE1.5070505@thomas-holder.de>
+References: <498D8CE1.5070505@thomas-holder.de>
+Message-ID: <55e5b7b50902090011n1d38721q88ad02771e420ecf@mail.gmail.com>
+
+Unfortunately, I have no idea... :(
+
+OpenGL commands for Linux/Windows version are basically the same - so
+it must be something very specific. Have you tried some simple models
+- e.g. no surface, no walls, just centerline? Or turning off some
+parts of the display - e.g. indicators?
+
+Regards, S.
+
+On Sat, Feb 7, 2009 at 2:30 PM, Thomas Holder <thomas at thomas-holder.de> wrote:
+> Hi,
+>
+> I'm using the "Loch" 3D-viewer on Linux. When moving and rotating the
+> picture it flickers much. The autorotation is almost useless, it's so
+> demanding on CPU and memory that it becomes unresponsive after few seconds.
+> Other OpenGL applications like Google Earth work fine. The same lox-file
+> also works fine with Loch on Windows XP.
+>
+> Where is the problem? Any suggestions?
+>
+> OpenGL Information:
+> GeForce 8400 GS
+> NVIDIA Driver Version: 173.14.15
+>
+> Regards,
+>  Thomas
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From s.m at group-s.sk  Mon Feb  9 09:15:02 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 9 Feb 2009 09:15:02 +0100
+Subject: [Therion] backcompass and backclino in team and instrument
+	descriptions
+In-Reply-To: <34c51f620902071757w286ac048x55d43b8958049de8@mail.gmail.com>
+References: <34c51f620902071757w286ac048x55d43b8958049de8@mail.gmail.com>
+Message-ID: <55e5b7b50902090015l3de48692t324910bcaa76b361@mail.gmail.com>
+
+Thanks for pointing out, I will try to fix it in the next release.
+
+Regards, S.
+
+On Sun, Feb 8, 2009 at 2:57 AM, Duncan Collis <duncan.collis at gmail.com> wrote:
+> Hi,
+>
+> I think I may have found a minor bug:
+>
+> Therion does not accept 'backcompass' or 'backclino' as a valid role
+> in the team command or a valid description in the instrument command
+>
+> eg this does not work:
+>
+> team "Fred Flintstone" tape backcompass backclino
+> instrument backcompass "Silva Type80 F"
+> instrument backclino "Suunto 646575"
+>
+> whereas this is OK:
+>
+> team "Barney Rubble" notes compass clino
+> instrument compass "Silva Type80 C"
+> instrument clino "Suunto 522534"
+>
+> The equivalent role and description are valid for the *team and
+> *instrument commands in Survex.
+>
+> Duncan Collis
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From drfootleg at googlemail.com  Mon Feb  9 15:23:23 2009
+From: drfootleg at googlemail.com (Footleg)
+Date: Mon, 9 Feb 2009 14:23:23 +0000
+Subject: [Therion] Therion import of Survex Data
+Message-ID: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+
+I am just getting to know Therion for the first time, because I am
+looking to create 3D models with surface overlays from my Survex
+survey data. I have managed to create a .lox file from a .3d file, but
+it does not include any passage walls. I just get a centreline. If I
+open my Survex generated .3d file directly in the .lox viewer it
+creates the walls from the LRUD data in the .3d file. But how do I get
+this data into a .lox model along with a surface?
+
+Footleg
+
+
+From fabio at geribello.com.br  Mon Feb  9 19:22:38 2009
+From: fabio at geribello.com.br (Fabio Kok Geribello)
+Date: Mon, 9 Feb 2009 16:22:38 -0200
+Subject: [Therion] Moving objects in Xtherion.
+Message-ID: <003001c98ae3$6386aeb0$2a940c10$@com.br>
+
+Hi,
+
+I´ve searched in the forum and only found a message from 2006 that the
+ability of moving an object in xtherion was in the todo list
+
+
+ 
+
+It was implemented?
+
+ 
+
+Thank You,
+
+ 
+
+Fabio
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090209/eec8739d/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Tue Feb 10 08:01:36 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 10 Feb 2009 20:01:36 +1300
+Subject: [Therion] North Points South & Fixed Points Move
+Message-ID: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+
+Wonder if anyone can tell me what is going on here?
+
+I have a set of files that produce a grid, fixed points and a surface image
+as per the attached (fairly boring I'm sorry - image removed to keep the
+file size down) 
+
+ 
+
+The output strangely has the north arrow pointing south (I am using 5.2.6 -
+however older datasets seem to process OK so far).
+
+The fixed points and the surface image are aligned almost perfectly, but the
+grid appears to be about 10m too far north relative to the fixed points and
+surface image.
+
+ 
+
+Perhaps my grid definition is somehow using a different co-ordinate system
+or the fixed points are been moved (in error?) by some loop closure routine?
+The displacement seems to be the same regardless of the std deviations
+following the point definitions.  There are no survey legs, only fixed
+points.
+
+ 
+
+The grid is set by;
+
+   grid-size 500 100 100 metres  # coordinate grid
+
+ 
+
+The fixed points are set by;
+
+#btmleft
+
+  centreline
+
+    #Set Co-ordinate System and Entrances 
+
+    #------------------------------------    
+
+    cs EPSG:27200 #NZ Map Grid 1949
+
+    #Recorded Entrance co-ordinates
+
+    fix btmleft 2483000 8038000  000  0 0 0 #NZMG
+
+ 
+
+   #Identified Survey Stations
+
+   #--------------------------    
+
+   station btmleft "btm left cnr of map"   
+
+      
+
+  endcentreline
+
+  
+
+#topright
+
+  centreline
+
+    #Set Co-ordinate System and Entrances 
+
+    #------------------------------------    
+
+    cs EPSG:27200 #NZ Map Grid 1949
+
+    #Recorded Entrance co-ordinates
+
+    fix topright 2486000 8042000  000  0 0 0 #NZMG
+
+ 
+
+  #Identified Survey Stations
+
+   #--------------------------    
+
+   station topright "top right cnr of map"   
+
+      
+
+  endcentreline
+
+ 
+
+The surface image is set by;
+
+surface 
+
+   cs EPSG:27200 #NZ Map Grid 1949
+
+   bitmap "./Parapara South GIS Plan geo98 contour 10000 A2.jpg" \
+
+     [349 344 2483000 8038000 2050 2602 2486000 8042000] 
+
+endsurface
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090210/a2da1bc6/attachment.htm>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090210/a2da1bc6/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ParaparaAreaPlan.pdf
+Type: application/pdf
+Size: 28188 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090210/a2da1bc6/attachment.pdf>
+
+From s.m at group-s.sk  Tue Feb 10 10:43:02 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 10 Feb 2009 10:43:02 +0100
+Subject: [Therion] Therion import of Survex Data
+In-Reply-To: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+References: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+Message-ID: <55e5b7b50902100143m1b544583x11d633a9b608f7af@mail.gmail.com>
+
+Unfortunatelly, LRUD data are not read from .3d file, when therion
+imports it. I will check, whether it is not possible to implement it
+some easy way.
+
+Regards, S.
+
+On Mon, Feb 9, 2009 at 3:23 PM, Footleg <drfootleg at googlemail.com> wrote:
+> I am just getting to know Therion for the first time, because I am
+> looking to create 3D models with surface overlays from my Survex
+> survey data. I have managed to create a .lox file from a .3d file, but
+> it does not include any passage walls. I just get a centreline. If I
+> open my Survex generated .3d file directly in the .lox viewer it
+> creates the walls from the LRUD data in the .3d file. But how do I get
+> this data into a .lox model along with a surface?
+>
+> Footleg
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From s.m at group-s.sk  Tue Feb 10 10:40:43 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 10 Feb 2009 10:40:43 +0100
+Subject: [Therion] Moving objects in Xtherion.
+In-Reply-To: <003001c98ae3$6386aeb0$2a940c10$@com.br>
+References: <003001c98ae3$6386aeb0$2a940c10$@com.br>
+Message-ID: <55e5b7b50902100140l5c536e2dx662408830f8191e7@mail.gmail.com>
+
+Unfortunately, not yet :(
+
+Regards, S.
+
+On Mon, Feb 9, 2009 at 7:22 PM, Fabio Kok Geribello
+<fabio at geribello.com.br> wrote:
+> Hi,
+>
+> I´ve searched in the forum and only found a message from 2006 that the
+> ability of moving an object in xtherion was in the todo list…
+>
+>
+>
+> It was implemented?
+>
+>
+>
+> Thank You,
+>
+>
+>
+> Fabio
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From martinsluka at mac.com  Tue Feb 10 13:04:10 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 10 Feb 2009 13:04:10 +0100
+Subject: [Therion] Moving objects in Xtherion.
+In-Reply-To: <55e5b7b50902100140l5c536e2dx662408830f8191e7@mail.gmail.com>
+References: <003001c98ae3$6386aeb0$2a940c10$@com.br>
+	<55e5b7b50902100140l5c536e2dx662408830f8191e7@mail.gmail.com>
+Message-ID: <18F78605-0732-4077-9395-470F90012FE1@mac.com>
+
+
+On 10.2.2009, at 10:40, Stacho Mudrak wrote:
+
+> Unfortunately, not yet :(
+>
+> Regards, S.
+>
+> On Mon, Feb 9, 2009 at 7:22 PM, Fabio Kok Geribello
+> <fabio at geribello.com.br> wrote:
+>> Hi,
+>>
+>> I´ve searched in the forum and only found a message from 2006 that  
+>> the
+>> ability of moving an object in xtherion was in the todo list…
+
+Theoreticaly you may "move" the object line in plain text editor.  
+Just open .th2 file find your line (add an ID to particular line in  
+map editor first) and add or subtract a appropriate constant from  
+coordinates of line points.
+
+It is possible to do, but one should make a simple macro or script to  
+do it. It is possible to do it in spreadsheet to, I think.
+
+m.s.
+
+From martinsluka at mac.com  Tue Feb 10 14:46:21 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 10 Feb 2009 14:46:21 +0100
+Subject: [Therion] Moving objects in Xtherion.
+In-Reply-To: <55e5b7b50902100140l5c536e2dx662408830f8191e7@mail.gmail.com>
+References: <003001c98ae3$6386aeb0$2a940c10$@com.br>
+	<55e5b7b50902100140l5c536e2dx662408830f8191e7@mail.gmail.com>
+Message-ID: <F7DD678F-BB61-4AAD-BF96-011AA6C5E320@mac.com>
+
+
+On 10.2.2009, at 10:40, Stacho Mudrak wrote:
+
+>> ability of moving an object in xtherion
+
+Just example:
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: shift_of_line.xls
+Type: application/octet-stream
+Size: 104448 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090210/8608d802/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 2.png
+Type: image/png
+Size: 132929 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090210/8608d802/attachment.png>
+
+From bruce.mutton at paradise.net.nz  Tue Feb 10 21:27:44 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Wed, 11 Feb 2009 09:27:44 +1300
+Subject: [Therion] Map Export Formats
+Message-ID: <36609E86B87949F094F006E0A0691FC9@JUICEBRAIN>
+
+Just checking
+
+Presumably map exports to esri and kml formats can only be made from plan
+projections?
+
+The other map export formats can be made from any projection?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090211/744e1189/attachment.htm>
+
+From m.budaj at gmail.com  Tue Feb 10 22:34:25 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 10 Feb 2009 22:34:25 +0100
+Subject: [Therion] hidden points of centerline
+In-Reply-To: <548DE4E0-18FE-4687-9F80-DE9D67067EB4@mac.com>
+References: <12C2D59D011E9A46B03212B2A704FE8F06E6BA42@UL-MAILV01.global.intern>
+	<B58FBC7FF567488CBBA9662E5D2D23F4@JUICEBRAIN>
+	<12C2D59D011E9A46B03212B2A704FE8F06EC91D4@UL-MAILV01.global.intern>
+	<f64c1c4a0902040556o44f5e16eldb769495f01f331@mail.gmail.com>
+	<12C2D59D011E9A46B03212B2A704FE8F06EC950A@UL-MAILV01.global.intern>
+	<548DE4E0-18FE-4687-9F80-DE9D67067EB4@mac.com>
+Message-ID: <f64c1c4a0902101334l1d544fc1r7bb79cb4d439e2a4@mail.gmail.com>
+
+On Fri, Feb 6, 2009 at 12:38 PM, Martin Sluka <martinsluka at mac.com> wrote:
+>
+> On 5.2.2009, at 8:41, Boldt, Markus wrote:
+>
+>> but not how it is possible to scale the Text of
+>> the scalebar.
+
+You can use this code in the layout. Change \size[20] to whatever you
+need. Someday the customization parameters will be accessible from
+layout without the need for redefining macros, but currently some more
+important issues are on the list.
+
+Martin
+
+code mpost
+def s_scalebar (expr l, units, txt) =
+  begingroup
+    interim warningcheck:=0;
+    tmpl:=l / Scale * cm * units / 2;
+  endgroup;
+  pickup PenC;
+  draw (-tmpl,0)--(tmpl,0);
+  draw (-tmpl,0)--(-tmpl,2bp);
+  draw (tmpl,0)--(tmpl,2bp);
+  begingroup
+    interim labeloffset:=2bp;
+    label.top(thTEX("\size[20]" & decimal (l) & "\thinspace " & txt),origin);
+  endgroup
+enddef;
+
+
+From wookey at wookware.org  Wed Feb 11 11:43:48 2009
+From: wookey at wookware.org (Wookey)
+Date: Wed, 11 Feb 2009 10:43:48 +0000
+Subject: [Therion] Therion import of Survex Data
+In-Reply-To: <55e5b7b50902100143m1b544583x11d633a9b608f7af@mail.gmail.com>
+References: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+	<55e5b7b50902100143m1b544583x11d633a9b608f7af@mail.gmail.com>
+Message-ID: <20090211104348.GE31602@knossos.aleph1.co.uk>
+
+Stacho Mudrak [2009-02-10 10:43 +0100]:
+> On Mon, Feb 9, 2009 at 3:23 PM, Footleg <drfootleg at googlemail.com> wrote:
+
+> > I am just getting to know Therion for the first time, because I am
+> > looking to create 3D models with surface overlays from my Survex
+> > survey data. I have managed to create a .lox file from a .3d file, but
+> > it does not include any passage walls. I just get a centreline. If I
+> > open my Survex generated .3d file directly in the .lox viewer it
+> > creates the walls from the LRUD data in the .3d file. But how do I get
+> > this data into a .lox model along with a surface?
+
+> Unfortunatelly, LRUD data are not read from .3d file, when therion
+> imports it. I will check, whether it is not possible to implement it
+> some easy way.
+
+I guess there must be some LRUD info in the 3D file because it is used
+to provide 'ticks' in printer plots?
+
+cc:ed to survex list in case someone can provide stacho useful advice.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From s.m at group-s.sk  Wed Feb 11 16:51:35 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 11 Feb 2009 16:51:35 +0100
+Subject: [Therion] North Points South & Fixed Points Move
+In-Reply-To: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+References: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+Message-ID: <55e5b7b50902110751k474be6b7g24db9e04db3d72a5@mail.gmail.com>
+
+This is strange - it looks like you are using some strange coordinate
+system. Are you able to isolate this problem to some simple data-set?
+It looks, there are just few fixed points and config file.
+
+Regards, S.
+
+On Tue, Feb 10, 2009 at 8:01 AM, Bruce Mutton
+<bruce.mutton at paradise.net.nz> wrote:
+> Wonder if anyone can tell me what is going on here?
+>
+> I have a set of files that produce a grid, fixed points and a surface image
+> as per the attached (fairly boring I'm sorry - image removed to keep the
+> file size down)
+>
+>
+>
+> The output strangely has the north arrow pointing south (I am using 5.2.6 –
+> however older datasets seem to process OK so far).
+>
+> The fixed points and the surface image are aligned almost perfectly, but the
+> grid appears to be about 10m too far north relative to the fixed points and
+> surface image.
+>
+>
+>
+> Perhaps my grid definition is somehow using a different co-ordinate system
+> or the fixed points are been moved (in error?) by some loop closure
+> routine?  The displacement seems to be the same regardless of the std
+> deviations following the point definitions.  There are no survey legs, only
+> fixed points.
+>
+>
+>
+> The grid is set by;
+>
+>    grid-size 500 100 100 metres  # coordinate grid
+>
+>
+>
+> The fixed points are set by;
+>
+> #btmleft
+>
+>   centreline
+>
+>     #Set Co-ordinate System and Entrances
+>
+>     #------------------------------------
+>
+>     cs EPSG:27200 #NZ Map Grid 1949
+>
+>     #Recorded Entrance co-ordinates
+>
+>     fix btmleft 2483000 8038000  000  0 0 0 #NZMG
+>
+>
+>
+>    #Identified Survey Stations
+>
+>    #--------------------------
+>
+>    station btmleft "btm left cnr of map"
+>
+>
+>
+>   endcentreline
+>
+>
+>
+> #topright
+>
+>   centreline
+>
+>     #Set Co-ordinate System and Entrances
+>
+>     #------------------------------------
+>
+>     cs EPSG:27200 #NZ Map Grid 1949
+>
+>     #Recorded Entrance co-ordinates
+>
+>     fix topright 2486000 8042000  000  0 0 0 #NZMG
+>
+>
+>
+>   #Identified Survey Stations
+>
+>    #--------------------------
+>
+>    station topright "top right cnr of map"
+>
+>
+>
+>   endcentreline
+>
+>
+>
+> The surface image is set by;
+>
+> surface
+>
+>    cs EPSG:27200 #NZ Map Grid 1949
+>
+>    bitmap "./Parapara South GIS Plan geo98 contour 10000 A2.jpg" \
+>
+>      [349 344 2483000 8038000 2050 2602 2486000 8042000]
+>
+> endsurface
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From bruce.mutton at paradise.net.nz  Wed Feb 11 19:56:35 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 12 Feb 2009 07:56:35 +1300
+Subject: [Therion] North Points South & Fixed Points Move
+In-Reply-To: <55e5b7b50902110751k474be6b7g24db9e04db3d72a5@mail.gmail.com>
+References: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+	<55e5b7b50902110751k474be6b7g24db9e04db3d72a5@mail.gmail.com>
+Message-ID: <7A4400F8EDDD4BDCB122C5E39DCB8A03@JUICEBRAIN>
+
+>This is strange - it looks like you are using some strange coordinate
+>system. Are you able to isolate this problem to some simple data-set?
+>It looks, there are just few fixed points and config file.
+
+>Regards, S.
+
+
+Stacho
+The data set is quite simple, more or less just code I sent you, patched
+together in what is becoming my standard dataset structure.  There are only
+three fixed points and the surface image.  I can send it to your personal
+mail if you want - with or without the image file (about 2MB).
+
+The co-ordinate system is the one I always use with Therion (with a few
+exceptions)  - and is the standard one used by outdoor people in New
+Zealand.  It has never given any problem until now, and my other data sets
+are fine (however I would not notice points plotted slightly incorrectly, as
+they all involve loop closures)  Correction; I have one dataset with fixed
+points plotted on grid co-ordinates (for the purposes of labelling the
+co-ordinates) but these use an arbitrary magnetic north co-ordinate system.
+They plot perfectly on the grid to the full zoom available in the pdf file.
+
+The region covered by the problem map is known for it's para-normal
+phenomena, so perhaps that might explain it?
+
+Bruce
+
+
+
+From bruce.mutton at paradise.net.nz  Thu Feb 12 09:43:52 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 12 Feb 2009 21:43:52 +1300
+Subject: [Therion] FW: North Points South & Fixed Points Move
+Message-ID: <DB31706D050945FB889DA0FB05191AF1@JUICEBRAIN>
+
+>The fixed points and the surface image are aligned almost perfectly, but
+the grid appears to be about 10m too far north >relative to the fixed points
+and surface image.
+
+ 
+
+Correction:
+
+Referring to my original post, on creating a 'caves' text output (attached)
+I see that in fact the output grid is plotted correctly, but the fixed
+points and surface image have been input 0.6m too far east and 7.5 to 7.7m
+too far south relative to their explicitly stated input co-ordinates.  
+
+ 
+
+So it would seem that it might in part be a Therion error in
+parsing/converting input co-ordinates rather than an output error?
+
+ 
+
+The north arrow still points south, unless I specify a DIFFERENT output
+co-ord system in the thconfig file; then it points north!?! 
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090212/354ac72e/attachment.htm>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090212/354ac72e/attachment.html>
+
+From s.m at group-s.sk  Thu Feb 12 15:27:44 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 12 Feb 2009 15:27:44 +0100
+Subject: [Therion] Therion import of Survex Data
+In-Reply-To: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+References: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+Message-ID: <55e5b7b50902120627y2d3d66e7n981fdcf58826f6af@mail.gmail.com>
+
+It will take some time, until .3d files will be imported with LRUD
+data. Some internal data structures need to be changed first.
+
+But I have added new feature to loch - File->Import. You can open your
+.3d file in loch as you did it before and then you can import surface
+in .lox format to existing model. Data sets should be merged.
+Alternatively you can use File->Export function to create .lox file
+with merged cave and surface data.
+
+This feature is available in 5.2.7 snapshot I have just uploaded.
+
+HTH, S.
+
+On Mon, Feb 9, 2009 at 3:23 PM, Footleg <drfootleg at googlemail.com> wrote:
+> I am just getting to know Therion for the first time, because I am
+> looking to create 3D models with surface overlays from my Survex
+> survey data. I have managed to create a .lox file from a .3d file, but
+> it does not include any passage walls. I just get a centreline. If I
+> open my Survex generated .3d file directly in the .lox viewer it
+> creates the walls from the LRUD data in the .3d file. But how do I get
+> this data into a .lox model along with a surface?
+>
+> Footleg
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From drfootleg at googlemail.com  Thu Feb 12 17:21:06 2009
+From: drfootleg at googlemail.com (Footleg)
+Date: Thu, 12 Feb 2009 16:21:06 +0000
+Subject: [Therion] Therion import of Survex Data
+In-Reply-To: <55e5b7b50902120627y2d3d66e7n981fdcf58826f6af@mail.gmail.com>
+References: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+	<55e5b7b50902120627y2d3d66e7n981fdcf58826f6af@mail.gmail.com>
+Message-ID: <3a2bbd710902120821h23875644q932bc93b6d310f37@mail.gmail.com>
+
+That sounds excellent! I will download and test this when I have a free moment.
+
+Many thanks!
+
+Footleg
+
+2009/2/12 Stacho Mudrak <s.m at group-s.sk>:
+> It will take some time, until .3d files will be imported with LRUD
+> data. Some internal data structures need to be changed first.
+>
+> But I have added new feature to loch - File->Import. You can open your
+> .3d file in loch as you did it before and then you can import surface
+> in .lox format to existing model. Data sets should be merged.
+> Alternatively you can use File->Export function to create .lox file
+> with merged cave and surface data.
+>
+> This feature is available in 5.2.7 snapshot I have just uploaded.
+>
+> HTH, S.
+>
+> On Mon, Feb 9, 2009 at 3:23 PM, Footleg <drfootleg at googlemail.com> wrote:
+>> I am just getting to know Therion for the first time, because I am
+>> looking to create 3D models with surface overlays from my Survex
+>> survey data. I have managed to create a .lox file from a .3d file, but
+>> it does not include any passage walls. I just get a centreline. If I
+>> open my Survex generated .3d file directly in the .lox viewer it
+>> creates the walls from the LRUD data in the .3d file. But how do I get
+>> this data into a .lox model along with a surface?
+>>
+>> Footleg
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From thomas at thomas-holder.de  Fri Feb 13 18:35:42 2009
+From: thomas at thomas-holder.de (Thomas Holder)
+Date: Fri, 13 Feb 2009 18:35:42 +0100
+Subject: [Therion] loch performance issues on linux
+In-Reply-To: <55e5b7b50902090011n1d38721q88ad02771e420ecf@mail.gmail.com>
+References: <498D8CE1.5070505@thomas-holder.de>
+	<55e5b7b50902090011n1d38721q88ad02771e420ecf@mail.gmail.com>
+Message-ID: <4995AF6E.5050307@thomas-holder.de>
+
+Hi Stacho,
+
+thanks for your reply.
+
+> Unfortunately, I have no idea... :(
+ >
+> OpenGL commands for Linux/Windows version are basically the same - so
+> it must be something very specific. Have you tried some simple models
+> - e.g. no surface, no walls, just centerline? Or turning off some
+> parts of the display - e.g. indicators?
+
+with simple models the flickering is less annoying and loch is quite 
+usable. But that doesn't help very much, since my particular goal was to 
+visualize the cave with surface and walls.
+
+Btw. I get similar flickering with Aven.
+
+Regards,
+   Thomas
+
+> On Sat, Feb 7, 2009 at 2:30 PM, Thomas Holder <thomas at thomas-holder.de> wrote:
+>> Hi,
+>>
+>> I'm using the "Loch" 3D-viewer on Linux. When moving and rotating the
+>> picture it flickers much. The autorotation is almost useless, it's so
+>> demanding on CPU and memory that it becomes unresponsive after few seconds.
+>> Other OpenGL applications like Google Earth work fine. The same lox-file
+>> also works fine with Loch on Windows XP.
+>>
+>> Where is the problem? Any suggestions?
+>>
+>> OpenGL Information:
+>> GeForce 8400 GS
+>> NVIDIA Driver Version: 173.14.15
+>>
+>> Regards,
+>>  Thomas
+
+
+From wookey at wookware.org  Fri Feb 13 19:21:28 2009
+From: wookey at wookware.org (Wookey)
+Date: Fri, 13 Feb 2009 18:21:28 +0000
+Subject: [Therion] loch performance issues on linux
+In-Reply-To: <498D8CE1.5070505@thomas-holder.de>
+References: <498D8CE1.5070505@thomas-holder.de>
+Message-ID: <20090213182128.GJ31602@knossos.aleph1.co.uk>
+
++++ Thomas Holder [2009-02-07 14:30 +0100]:
+> Hi,
+> 
+> I'm using the "Loch" 3D-viewer on Linux. When moving and rotating the 
+> picture it flickers much. The autorotation is almost useless, it's so 
+> demanding on CPU and memory that it becomes unresponsive after few 
+> seconds. Other OpenGL applications like Google Earth work fine. The same 
+> lox-file also works fine with Loch on Windows XP.
+> 
+> Where is the problem? Any suggestions?
+> 
+> OpenGL Information:
+> GeForce 8400 GS
+> NVIDIA Driver Version: 173.14.15
+
+Your problem is probably this video card. Nvidia only provide
+proprietary drivers so things don't always work right. If you are
+using the free 'nv' xorg driver then that is 2D only so OpenGL will be
+emulated in software. It sounds like this is happening, as you say
+Aven is similarly slow. I don't know why google earth might work
+better, but that's proprietary too so maybe they have special nvidia
+magic?
+
+See which version of mesa you have installed (various *mesa* packages
+are normally responsible for the opengl support) and which X driver you
+are using. noveau is the free 3D nvidia driver.
+
+I've never really messed with this so can't be more specific.
+
+I've never even tried using loch on this machine which also has an
+nvidia card because I know it won't work with nv. I will finally
+(after several years of waiting :-) be getting amchine next week which
+should be loch-capable. I look forward to giving it a go. 
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From bruce.mutton at paradise.net.nz  Fri Feb 13 21:33:39 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 14 Feb 2009 09:33:39 +1300
+Subject: [Therion] 5.2.7 Loch is much better
+Message-ID: <A945A01748094A8E8622EB6DC6D89B8E@JUICEBRAIN>
+
+The new 5.2.7 Loch brings all my old .lox files to life.
+
+I like the scene:station:labels.
+
+Because I'd added lots of station comments to my survey.th data, these are
+suddenly available, and help to identify where in the cave the wiggly
+coloured sausage shape is representing.
+
+ 
+
+Great work guys. Thanks!
+
+ 
+
+Two little things.
+
+1.	The default rotation speed makes me dizzy.  It spins so fast so as
+to be un-intelligible.  That's not so bad, but it seems not to be possible
+to make it go slow enough.  The range of speeds I find useful are about 2mm
+either side of the central slider point (out of a total range of 15mm each
+side) on my monitor, and even with it as close to centre as I can get it
+with keyboard or mouse it rotates at a comfortable speed, but still too fast
+for some applications.  I'd like to make it really slow sometimes.
+2.	This may be a bigger thing.  The scene:station visibility for
+entrance and fixed station is based on flags I think, and this is very
+useful to be able to isolate these parameters.  
+I use a lot of station marks (which I understand are not considered to be
+flags), as in
+  mark RO42 RO46 RO47 RO49 RO54 fixed
+ to identify survey cairns or otherwise somewhat permanent station markers
+in the cave (and on the surface).
+Is it possible to add "fixed station marks" as well as the "fixed station
+co-ords(?)" already implemented?
+
+Hmm, and while I'm at it continuation question marks and comments would be a
+useful thing as well.
+
+ 
+
+And thanks for fixing the map-header bug Martin.  I'm looking forward to
+5.2.8 to see it in action.
+
+(No hurry though)
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090214/d1c98df9/attachment.htm>
+
+From hilary.greaves at merton.ox.ac.uk  Sat Feb 14 00:17:07 2009
+From: hilary.greaves at merton.ox.ac.uk (Hilary Greaves)
+Date: Fri, 13 Feb 2009 23:17:07 +0000
+Subject: [Therion] Bus error
+Message-ID: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090213/32778911/attachment.ksh>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: guix_bug.zip
+Type: application/zip
+Size: 30645 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090213/32778911/attachment.zip>
+
+From wookey at wookware.org  Sat Feb 14 01:24:27 2009
+From: wookey at wookware.org (Wookey)
+Date: Sat, 14 Feb 2009 00:24:27 +0000
+Subject: [Therion] Bus error
+In-Reply-To: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+Message-ID: <20090214002426.GM31602@knossos.aleph1.co.uk>
+
++++ Hilary Greaves [2009-02-13 23:17 +0000]:
+> Hi
+> 
+> We're trying to draw an extended elevation, and keep getting 'bus errors' on trying to compile the thconfig.  
+> One set of files that triggers an error is attached (this one just tries to draw a single scrap).
+> 
+> Any ideas - is this fixable?
+
+'Bus error' actually means something like you have run out of memory,
+or the software has segfaulted - i.e there has been a serious disaster
+at a low level. There may well be a corresponding software bug, but
+trying another computer would be informative if you have one to hand. 
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From john at pybus.org  Sat Feb 14 02:07:39 2009
+From: john at pybus.org (John Pybus)
+Date: Sat, 14 Feb 2009 01:07:39 +0000
+Subject: [Therion] Bus error
+In-Reply-To: <20090214002426.GM31602@knossos.aleph1.co.uk>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<20090214002426.GM31602@knossos.aleph1.co.uk>
+Message-ID: <4996195B.809@pybus.org>
+
+Wookey wrote:
+> +++ Hilary Greaves [2009-02-13 23:17 +0000]:
+>> Hi
+>>
+>> We're trying to draw an extended elevation, and keep getting 'bus errors' on trying to compile the thconfig.  
+>> One set of files that triggers an error is attached (this one just tries to draw a single scrap).
+>>
+>> Any ideas - is this fixable?
+> 
+> 'Bus error' actually means something like you have run out of memory,
+> or the software has segfaulted - i.e there has been a serious disaster
+> at a low level. There may well be a corresponding software bug, but
+> trying another computer would be informative if you have one to hand. 
+
+Hils is struggling with the same dataset I am.  She's running OS/X and
+gets a Bus Error.  On Ubuntu (using the distro provided therion 0.5.1) I
+also get Segmentation faults with exactly the same test cases.  I'd
+guess it's dereferencing a null pointer somewhere.
+
+Cheers,
+John
+
+
+
+From john at pybus.org  Sat Feb 14 01:46:09 2009
+From: john at pybus.org (John Pybus)
+Date: Sat, 14 Feb 2009 00:46:09 +0000
+Subject: [Therion] Bus error
+In-Reply-To: <20090214002426.GM31602@knossos.aleph1.co.uk>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<20090214002426.GM31602@knossos.aleph1.co.uk>
+Message-ID: <49961451.8040005@pybus.org>
+
+Wookey wrote:
+> +++ Hilary Greaves [2009-02-13 23:17 +0000]:
+>> Hi
+>>
+>> We're trying to draw an extended elevation, and keep getting 'bus errors' on trying to compile the thconfig.  
+>> One set of files that triggers an error is attached (this one just tries to draw a single scrap).
+>>
+>> Any ideas - is this fixable?
+> 
+> 'Bus error' actually means something like you have run out of memory,
+> or the software has segfaulted - i.e there has been a serious disaster
+> at a low level. There may well be a corresponding software bug, but
+> trying another computer would be informative if you have one to hand. 
+
+Hils is struggling with the same dataset I am.  She's running OS/X and 
+gets a Bus Error.  On Ubuntu (using the distro provided therion 0.5.1) I 
+also get Segmentation faults with exactly the same test cases.  I'd 
+guess it's dereferencing a null pointer somewhere.
+
+Cheers,
+John
+
+
+From martinsluka at mac.com  Sat Feb 14 09:36:06 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 14 Feb 2009 09:36:06 +0100
+Subject: [Therion] Bus error
+In-Reply-To: <4996195B.809@pybus.org>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<20090214002426.GM31602@knossos.aleph1.co.uk> <4996195B.809@pybus.org>
+Message-ID: <591A4E77-724D-40C1-9C3E-1427E78B497B@mac.com>
+
+
+On 14.2.2009, at 2:07, John Pybus wrote:
+
+> Wookey wrote:
+>> +++ Hilary Greaves [2009-02-13 23:17 +0000]:
+>>> Hi
+>>>
+>>> We're trying to draw an extended elevation, and keep getting 'bus  
+>>> errors' on trying to compile the thconfig.  One set of files that  
+>>> triggers an error is attached (this one just tries to draw a  
+>>> single scrap).
+>>>
+>>> Any ideas - is this fixable?
+>> 'Bus error' actually means something like you have run out of memory,
+>> or the software has segfaulted - i.e there has been a serious  
+>> disaster
+>> at a low level. There may well be a corresponding software bug, but
+>> trying another computer would be informative if you have one to hand.
+>
+> Hils is struggling with the same dataset I am.  She's running OS/X and
+> gets a Bus Error.  On Ubuntu (using the distro provided therion  
+> 0.5.1) I
+> also get Segmentation faults with exactly the same test cases.  I'd
+> guess it's dereferencing a null pointer somewhere.
+>
+> Cheers,
+> John
+>
+>
+
+Just one strange think (I don't know if it is the source of error!).  
+You use a bit strange definition of lakes there - areas water. They  
+are defined by bottom wall and the water level is defined by another  
+line wall -outline in. See attached picture 1.
+
+Standard way is something as you may see on picture 2. The line  
+defined area is border and the wall clips the area inside the passage.
+
+In such case you may use "adjust horizontal" for line point to make  
+the water level allways horizontal. Check the extension of Rabbit  
+cave in samples.
+
+m.s.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 1.png
+Type: image/png
+Size: 10465 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090214/2a1e6cf7/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 2.png
+Type: image/png
+Size: 11991 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090214/2a1e6cf7/attachment-0001.png>
+
+From john at pybus.org  Sat Feb 14 12:27:29 2009
+From: john at pybus.org (John Pybus)
+Date: Sat, 14 Feb 2009 11:27:29 +0000
+Subject: [Therion] Bus error
+In-Reply-To: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+Message-ID: <4996AAA1.4000203@pybus.org>
+
+Hilary Greaves wrote:
+> Hi
+> 
+> We're trying to draw an extended elevation, and keep getting 'bus
+> errors' on trying to compile the thconfig. One set of files that
+> triggers an error is attached (this one just tries to draw a single
+> scrap).
+
+One thing to add about the test-case Hilary sent: If you remove the 
+"-flip horizontal" from la_texa/elev_bottom.th2 then the survey compiles 
+without a segfault (albeit giving a highly distorted passage as the 
+scrap is the wrong way round).
+
+
+On a related note: We've been using -flip horizontal quite a lot as we 
+combine two connected cave elevations which were not drawn the "same way 
+round".  To test various configurations we use "revise" commands in 
+another file to add flips to selected scraps.  What is not possible is 
+using revise to remove a flip which was originally marked -flip horizontal.
+
+Would it be possible to add an option "-flip none" which could be used 
+with revise to remove the flip?
+
+John
+
+
+From bruce.mutton at paradise.net.nz  Sat Feb 14 21:16:35 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 15 Feb 2009 09:16:35 +1300
+Subject: [Therion] Bus error
+In-Reply-To: <4996AAA1.4000203@pybus.org>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<4996AAA1.4000203@pybus.org>
+Message-ID: <E47AF9DEDCAE484F9DBB8A8945A8EA95@JUICEBRAIN>
+
+Martin was on to it.
+Correct the two water area 'drawings' and that fixes the problem.  Looks
+like a nice cave when a loch model is made.
+
+The dataset as originally submitted caused Windows to close Therion and left
+Xtherion hanging.  No error messages - just a crash.
+
+You guys clearly know more about revise, flip and extend that I, so I'll
+watch this space with baited breath.
+Bruce
+
+
+
+From bruce.mutton at paradise.net.nz  Sun Feb 15 10:03:12 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 15 Feb 2009 22:03:12 +1300
+Subject: [Therion] Selective output of label text
+In-Reply-To: <f64c1c4a0901301328s26d2141h6ffa5091fac1d3be@mail.gmail.com>
+References: <AcmBuIl9sdPgIS4HQr29d7vrE5OOng==@clear.net.nz>
+	<28D5D66FC52B49D2AA8FB5B43F10A38D@JUICEBRAIN>
+	<f64c1c4a0901301328s26d2141h6ffa5091fac1d3be@mail.gmail.com>
+Message-ID: <A4E0D78D49E34FC5B7AC5D4BB36B11D6@JUICEBRAIN>
+
+>just add following to the options for point labels you want to show
+>(all other labels will be hidden):
+
+>-attr visibility on
+
+>('visibility' and 'on' are just strings you can freely choose; just
+>match them in the metapost macros)
+
+>and use modified label definition in code tex-mpost
+
+
+  vardef p_label@#(expr txt,pos,rot,mode) =
+
+   if known ATTR_visibility: if ATTR_visibility="on":  % ADDED CONDITIONS
+
+    if (mode=1) or (mode=7): interim labeloffset:=(u/8) fi;
+    lab:=thelabel@#(txt, pos);
+    if mode>1: pickup PenD fi;
+    if mode=1:
+      pickup pencircle scaled (u/6);
+      drawdot(pos);
+      process_label(pos,0);
+    elseif mode=2: process_uplabel;
+    elseif mode=3: process_downlabel;
+    elseif mode=4: process_updownlabel;
+    elseif mode=5: process_circledlabel;
+    elseif mode=6: process_boxedlabel;
+    elseif mode=7: process_label(pos,rot);  % station name
+    elseif mode=8: process_filledlabel(pos, rot);
+    else: process_label(pos,rot); fi;
+
+   fi; fi;  % END OF CONDITIONS
+
+  enddef;
+
+>Martin
+>_______________________________________________
+
+
+Martin
+In trying various versions of the above, the best I can get is an error; 
+	"...
+	converting scraps ... done
+	making map ... D:\Program Files\Therion\therion.exe: error -- Can't
+open file
+	writing xtherion file ... done
+"
+I have tried many combinations of string, numeric, quotes, no quotes for the
+-attr variables parsed, and most cause identifiable metapost errors. If I
+comment out the metapost code it compiles perfectly.  I'm a bit lost and
+assume I'm making a simple mistake somewhere.
+
+However, before pursuing this approach too much further, it is apparent that
+adding extra attributes to labels is a big imposition when they already have
+a -scale attribute that matches, more or less, their 'importance'.  I have
+18km of plans and elevations to adjust!
+Better to link the visibility of labels (and other entities perhaps) to the
+scale, ie at 1:1000 print all labels, at 1:5000 print only labels with
+-scale l and -scale xl.  The attached file gives an indication of the
+approach I am looking at, and it will mean little or no change to my scrap
+drawings is needed.
+
+So, is there a way to modify the metapost code to progressively hide labels
+of -scale xs, s, m etc as the output scale increases from 1:1000, 1:2000,
+1:5000 etc?  
+
+Also I will need to modify the code for many entities I assume.  Ie line
+label, point passage-gradient (perhaps?) and not just point label.  There
+must be a location in my Windows Installation from where I can pluck the
+code for all the Therion entities, once I can figure out the pattern for the
+changes required?
+
+Or perhaps a simpler approach is to modify the syntax following;
+	code metapost
+	fonts_setup(0,0,0,4,6);
+where a font size of 0 means it is not printed (currently returns an error).
+
+Thanks for your patience.
+Any further guidance appreciated.
+Bruce
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LayoutScales.thc
+Type: application/octet-stream
+Size: 3117 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090215/9bee2014/attachment.obj>
+
+From bruce.mutton at paradise.net.nz  Sun Feb 15 10:03:12 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 15 Feb 2009 22:03:12 +1300
+Subject: [Therion] sql output station flags incorrect
+Message-ID: <20AD6DBDF73A44569115FF42EF0620FE@JUICEBRAIN>
+
+Have just started playing with Therions sql outputs, and bumbling along.
+
+ 
+
+May have found a bug?
+
+ 
+
+Running the query
+
+ 
+
+select ID, SURVEY_ID, NAME, X, Y, Z, FLAG
+
+from STATION, STATION_FLAG
+
+group by SURVEY_ID, NAME;
+
+ 
+
+results in
+
+ 
+
+D          SURVEY_ID      NAME   X          Y          Z          FLAG
+
+2          34         F100     2500604.74       6023114.36       620.49  fix
+
+3          34         F101     2500601.9         6023115.01       618.94
+fix
+
+4          34         F102     2500599.78       6023118.02       620.73  fix
+
+5          34         F103     2500604.18       6023127.05       622.96  fix
+
+6          34         F104     2500613.11       6023143.64       625.37  fix
+
+ 
+
+etc.  Problem is that ALL the 1200 station flags are fixed.  Most should be
+null I think, there should be three entrance flags, and some continuation
+flags.  At least that is what has been entered and what the 'caves' and
+'continuations' outputs indicate.  
+
+ 
+
+A bug, or am I misunderstanding something?
+
+Using 5.2.7
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090215/5636ed8f/attachment.htm>
+
+From m.budaj at gmail.com  Sun Feb 15 10:58:06 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 15 Feb 2009 10:58:06 +0100
+Subject: [Therion] sql output station flags incorrect
+In-Reply-To: <20AD6DBDF73A44569115FF42EF0620FE@JUICEBRAIN>
+References: <20AD6DBDF73A44569115FF42EF0620FE@JUICEBRAIN>
+Message-ID: <f64c1c4a0902150158j21d0441fj3728a7958d3fee62@mail.gmail.com>
+
+On Sun, Feb 15, 2009 at 10:03 AM, Bruce Mutton
+<bruce.mutton at paradise.net.nz> wrote:
+
+> select ID, SURVEY_ID, NAME, X, Y, Z, FLAG
+>
+> from STATION, STATION_FLAG
+>
+> group by SURVEY_ID, NAME;
+>
+>
+> etc.  Problem is that ALL the 1200 station flags are fixed.  Most should be
+> null I think, there should be three entrance flags, and some continuation
+> flags.  At least that is what has been entered and what the 'caves' and
+> 'continuations' outputs indicate.
+
+Try this one:
+
+select ID, SURVEY_ID, NAME, X, Y, Z, FLAG from STATION, STATION_FLAG
+where station.id = station_flag.station_id;
+
+Martin
+
+BTW, there is a simple database http://www.gaia-gis.it/spatialite/
+(based on SQLite) which makes it easy to perform geospatial analyses
+on combination of therion data and data obtained from other sources
+(e.g. in shapefile or csv formats).
+
+
+From m.budaj at gmail.com  Sun Feb 15 12:14:49 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 15 Feb 2009 12:14:49 +0100
+Subject: [Therion] Selective output of label text
+In-Reply-To: <A4E0D78D49E34FC5B7AC5D4BB36B11D6@JUICEBRAIN>
+References: <AcmBuIl9sdPgIS4HQr29d7vrE5OOng==@clear.net.nz>
+	<28D5D66FC52B49D2AA8FB5B43F10A38D@JUICEBRAIN>
+	<f64c1c4a0901301328s26d2141h6ffa5091fac1d3be@mail.gmail.com>
+	<A4E0D78D49E34FC5B7AC5D4BB36B11D6@JUICEBRAIN>
+Message-ID: <f64c1c4a0902150314j6c66ef84w89c7e54219068142@mail.gmail.com>
+
+On Sun, Feb 15, 2009 at 10:03 AM, Bruce Mutton
+<bruce.mutton at paradise.net.nz> wrote:
+> I have tried many combinations of string, numeric, quotes, no quotes for the
+> -attr variables parsed, and most cause identifiable metapost errors. If I
+> comment out the metapost code it compiles perfectly.  I'm a bit lost and
+> assume I'm making a simple mistake somewhere.
+
+I attach complete example with two labels; one of which is hidden
+using the code I sent.
+
+> However, before pursuing this approach too much further, it is apparent that
+> adding extra attributes to labels is a big imposition when they already have
+> a -scale attribute that matches, more or less, their 'importance'.  I have
+> 18km of plans and elevations to adjust!
+
+You are right.
+
+> So, is there a way to modify the metapost code to progressively hide labels
+> of -scale xs, s, m etc as the output scale increases from 1:1000, 1:2000,
+> 1:5000 etc?
+
+Therion core needs to be modified to support this (information about
+-scale option can't be evaluated by metapost currently), but then the
+same approach could be used.
+
+> Also I will need to modify the code for many entities I assume.  Ie line
+> label, point passage-gradient (perhaps?) and not just point label.  There
+> must be a location in my Windows Installation from where I can pluck the
+> code for all the Therion entities, once I can figure out the pattern for the
+> changes required?
+
+The files are in the source distribution only (directory mpost).
+
+Other option would be to extend symbol-hide/show options to evaluate
+other conditions, like
+
+symbol-hide point label where option:scale not "xl"
+
+This would avoid a lot of modifications to metapost code but is not so
+easy to implement in therion.
+
+Martin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: rabbit-mod.tar.gz
+Type: application/x-gzip
+Size: 7379 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090215/3243f002/attachment.bin>
+
+From john at pybus.org  Sun Feb 15 14:10:44 2009
+From: john at pybus.org (John Pybus)
+Date: Sun, 15 Feb 2009 13:10:44 +0000
+Subject: [Therion] Bus error
+In-Reply-To: <E47AF9DEDCAE484F9DBB8A8945A8EA95@JUICEBRAIN>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>	<4996AAA1.4000203@pybus.org>
+	<E47AF9DEDCAE484F9DBB8A8945A8EA95@JUICEBRAIN>
+Message-ID: <49981454.7000506@pybus.org>
+
+Bruce Mutton wrote:
+> Martin was on to it.
+> Correct the two water area 'drawings' and that fixes the problem.  Looks
+> like a nice cave when a loch model is made.
+
+Yep, it's part of an 1100m (thus far) deep system.
+
+> The dataset as originally submitted caused Windows to close Therion and left
+> Xtherion hanging.  No error messages - just a crash.
+
+Looks like the bad wall line on the water area is causing this problem, 
+though ideally therion would report an error (and let us know which 
+scrap is causing the issue) rather than crash entirely.
+
+> You guys clearly know more about revise, flip and extend that I, so I'll
+> watch this space with baited breath.
+
+I get the feeling that the extend elevation support in therion is not as 
+solid as for other projections.  We have had some other issues in the EE 
+(whereas the plan of 7km of cave has gone smoothly).  So far we've 
+managed to work around them; expect more bug reports as we isolate the 
+problems into test cases.
+
+John
+
+
+From bruce.mutton at paradise.net.nz  Sun Feb 15 21:42:47 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Mon, 16 Feb 2009 09:42:47 +1300
+Subject: [Therion] sql output station flags incorrect
+In-Reply-To: <f64c1c4a0902150158j21d0441fj3728a7958d3fee62@mail.gmail.com>
+References: <20AD6DBDF73A44569115FF42EF0620FE@JUICEBRAIN>
+	<f64c1c4a0902150158j21d0441fj3728a7958d3fee62@mail.gmail.com>
+Message-ID: <2F0380FA497D44928F54E6B590CB5D01@JUICEBRAIN>
+
+Thanks for the sql lesson Martin.
+Your example works.
+Seems like I've more to learn...
+
+I'll look up spatialite sometime.
+Bruce
+
+
+
+
+From john at pybus.org  Mon Feb 16 00:07:50 2009
+From: john at pybus.org (John Pybus)
+Date: Sun, 15 Feb 2009 23:07:50 +0000
+Subject: [Therion] Bus error - caused by single point line??
+In-Reply-To: <591A4E77-724D-40C1-9C3E-1427E78B497B@mac.com>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>	<20090214002426.GM31602@knossos.aleph1.co.uk>
+	<4996195B.809@pybus.org>
+	<591A4E77-724D-40C1-9C3E-1427E78B497B@mac.com>
+Message-ID: <4998A046.5080801@pybus.org>
+
+Martin Sluka wrote:
+> 
+> 
+> Just one strange think (I don't know if it is the source of error!). You 
+> use a bit strange definition of lakes there - areas water. They are 
+> defined by bottom wall and the water level is defined by another line 
+> wall -outline in. See attached picture 1.
+
+That was not a very good way of doing things, and we've fixed it (thanks 
+for pointing it out), but I think we've found what was causing the bug, 
+it was this:
+
++line wall -close off
++  320.0 -3625.0
++endline
+
+Somehow we'd managed to create a line with only one point.  We'd 
+actually noticed this before (and even isolated a test-case, but 
+forgotten to send it to the list).  That case is attached.
+
+There's little point to having a line with only one point -- it would 
+very nice if therion provided an error message to warn about them.
+
+Cheers,
+John
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: single_point_lines.zip
+Type: application/zip
+Size: 26868 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090215/a79e4f82/attachment.zip>
+
+From martinsluka at mac.com  Mon Feb 16 09:09:36 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 16 Feb 2009 09:09:36 +0100
+Subject: [Therion] Bus error - caused by single point line??
+In-Reply-To: <4998A046.5080801@pybus.org>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<20090214002426.GM31602@knossos.aleph1.co.uk> <4996195B.809@pybus.org>
+	<591A4E77-724D-40C1-9C3E-1427E78B497B@mac.com>
+	<4998A046.5080801@pybus.org>
+Message-ID: <63A4575F-05E6-4502-AFE2-E38F436F7BC6@mac.com>
+
+
+On 16.2.2009, at 0:07, John Pybus wrote:
+
+> Somehow we'd managed to create a line with only one point.  We'd  
+> actually noticed this before (and even isolated a test-case, but  
+> forgotten to send it to the list).  That case is attached.
+>
+> There's little point to having a line with only one point -- it  
+> would very nice if therion provided an error message to warn about  
+> them.
+
+You may check your th2 files in plain text editor - check my mail  
+from 2009.09.21- null lines
+
+xxxxxxxxxxxxxxxxxxxxxxxx
+
+check the th2 file for such null or single point lines:
+
+line wall
+endline
+
+line wall -subtype unsurveyed
+endline
+
+or
+
+line border -close on
+# originaly two point line, but closed, so there are two line points  
+in identical coordinates
+   699.5 -2003.0
+   699.5 -2003.0
+endline
+
+or :)
+
+line wall -close off
+   320.0 -3625.0
+endline
+
+xxxxxxxxxxxxxx
+
+I made a simple grep patter to find such "null lines" in th2 files:
+
+I have try grep search/replace
+
+^\s*(\w+) \w+\s+end\1
+
+and it look it works
+
+Martin
+
+
+
+
+From s.m at group-s.sk  Mon Feb 16 13:41:16 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 16 Feb 2009 13:41:16 +0100
+Subject: [Therion] Bus error
+In-Reply-To: <4996AAA1.4000203@pybus.org>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<4996AAA1.4000203@pybus.org>
+Message-ID: <55e5b7b50902160441x19c9e1baic6f0612a84d6673c@mail.gmail.com>
+
+> Would it be possible to add an option "-flip none" which could be used with
+> revise to remove the flip?
+
+It was a bug, that "-flip none" was not working. It will be fixed in
+the next version.
+
+Regards, S.
+
+
+From s.m at group-s.sk  Mon Feb 16 13:33:28 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 16 Feb 2009 13:33:28 +0100
+Subject: [Therion] Bus error - caused by single point line??
+In-Reply-To: <4998A046.5080801@pybus.org>
+References: <20090213231707.ABDDB159E7@webmail218.herald.ox.ac.uk>
+	<20090214002426.GM31602@knossos.aleph1.co.uk> <4996195B.809@pybus.org>
+	<591A4E77-724D-40C1-9C3E-1427E78B497B@mac.com>
+	<4998A046.5080801@pybus.org>
+Message-ID: <55e5b7b50902160433k547d2a07n84331e37b61d7f0b@mail.gmail.com>
+
+> There's little point to having a line with only one point -- it would very
+> nice if therion provided an error message to warn about them.
+
+I have found the problem in the source code (it is a null pointer
+usage). It will be fixed in the next version.
+
+Thanks for pointing out, S.
+
+
+From drfootleg at googlemail.com  Mon Feb 16 13:55:29 2009
+From: drfootleg at googlemail.com (Footleg)
+Date: Mon, 16 Feb 2009 12:55:29 +0000
+Subject: [Therion] Therion import of Survex Data
+In-Reply-To: <3a2bbd710902120821h23875644q932bc93b6d310f37@mail.gmail.com>
+References: <3a2bbd710902090623h37f6fcfakd321c3c75fa43367@mail.gmail.com>
+	<55e5b7b50902120627y2d3d66e7n981fdcf58826f6af@mail.gmail.com>
+	<3a2bbd710902120821h23875644q932bc93b6d310f37@mail.gmail.com>
+Message-ID: <3a2bbd710902160455p3af287dbqc1e18056d1b6840f@mail.gmail.com>
+
+I've had a play with this enhancement to the loch viewer now. Just
+wanted to let you know it is excellent! A simple change which greatly
+enhances the usefulness of the viewer. Now I can quickly view my
+survex models under a landscape without having to crunch the data
+through therion every time.
+
+Many thanks,
+Footleg
+
+2009/2/12 Footleg <drfootleg at googlemail.com>:
+> That sounds excellent! I will download and test this when I have a free moment.
+>
+> Many thanks!
+>
+> Footleg
+>
+> 2009/2/12 Stacho Mudrak <s.m at group-s.sk>:
+>> It will take some time, until .3d files will be imported with LRUD
+>> data. Some internal data structures need to be changed first.
+>>
+>> But I have added new feature to loch - File->Import. You can open your
+>> .3d file in loch as you did it before and then you can import surface
+>> in .lox format to existing model. Data sets should be merged.
+>> Alternatively you can use File->Export function to create .lox file
+>> with merged cave and surface data.
+>>
+>> This feature is available in 5.2.7 snapshot I have just uploaded.
+>>
+>> HTH, S.
+>>
+>> On Mon, Feb 9, 2009 at 3:23 PM, Footleg <drfootleg at googlemail.com> wrote:
+>>> I am just getting to know Therion for the first time, because I am
+>>> looking to create 3D models with surface overlays from my Survex
+>>> survey data. I have managed to create a .lox file from a .3d file, but
+>>> it does not include any passage walls. I just get a centreline. If I
+>>> open my Survex generated .3d file directly in the .lox viewer it
+>>> creates the walls from the LRUD data in the .3d file. But how do I get
+>>> this data into a .lox model along with a surface?
+>>>
+>>> Footleg
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+
+
+From bruce.mutton at geo-logic.co.nz  Tue Feb 17 05:34:28 2009
+From: bruce.mutton at geo-logic.co.nz (Bruce Mutton)
+Date: Tue, 17 Feb 2009 17:34:28 +1300
+Subject: [Therion] layouts and esri 2d gis format
+Message-ID: <A9D6AC9DE1B84E6C94AFDB2C536E6C8C@FLASHDADDY>
+
+Hi
+
+I notice that maps made with -format esri seem to be immune to layout
+settings.
+
+I get 4 sets of shape files regardless of my layout settings, 
+
+ 
+
+Outline2d
+
+Lines2d
+
+Points2d
+
+Areas2d
+
+ 
+
+Now I was about to write that because these all lack symbology, only the
+outline is of any value, and so to reduce the garbage content (60% of the
+file size produced) I tried using
+
+  symbol-hide group all  #hides ALL except passage infill colour
+
+Alas, the directories and files produced are identical.
+
+ 
+
+But on closer inspection I see that the lines, points and areas are quite
+rich in attributes, so there is some potential for them to be useful.
+
+ 
+
+Two questions:
+
+Are there any layout settings intended to be relevant to 2d GIS outputs?
+
+Has anyone put together any arcmap 8.3 (or other free GIS package) utilities
+that make use of the line, point and area attributes?
+
+For example to semi automatically display the text or add symbology or hide
+entities with particular attributes.  (I'm also not very good with GIS :) ) 
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090217/b430204a/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Tue Feb 17 08:09:33 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 17 Feb 2009 20:09:33 +1300
+Subject: [Therion] North Points South & Fixed Points Move: SOLVED
+In-Reply-To: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+References: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+Message-ID: <FC3476E22CD042B0AA9BD0313E272CEB@JUICEBRAIN>
+
+>.
+
+>The output strangely has the north arrow pointing south (I am using 5.2.6 -
+however older datasets seem to process OK so >far).
+
+>The fixed points and the surface image are aligned almost perfectly, but
+the grid appears to be about 10m too far north >relative to the fixed points
+and surface image.
+
+>.
+
+ 
+
+Problem solved.
+
+I discovered that I had entered co-ordinates 2000km too far north, so
+outside the valid range for this co-ord system.  My scruffy topo map had 6's
+that looked like 8's.
+
+ 
+
+I guess when the log file says
+
+"meridian convergence (deg): 175.85"
+
+You know there's got to be a positioning problem, as it seems to hover
+around +-few degrees usually.
+
+So I'll concede Therion is working perfectly and user error is to blame!
+
+ 
+
+Apologies 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090217/937467eb/attachment.htm>
+
+From martinsluka at mac.com  Tue Feb 17 08:23:35 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 17 Feb 2009 08:23:35 +0100
+Subject: [Therion] North Points South & Fixed Points Move: SOLVED
+In-Reply-To: <FC3476E22CD042B0AA9BD0313E272CEB@JUICEBRAIN>
+References: <715EA88CD58B46B1BFD4AD7C8A476FDE@JUICEBRAIN>
+	<FC3476E22CD042B0AA9BD0313E272CEB@JUICEBRAIN>
+Message-ID: <4AADFA07-5301-442F-B16D-2C973697FF7D@mac.com>
+
+
+On 17.2.2009, at 8:09, Bruce Mutton wrote:
+
+> I discovered that I had entered co-ordinates 2000km too far north,  
+> so outside the valid range for this co-ord system.
+
+:) I just forgot a zero in coordinates and the map was to big for  
+metapost even in scale 1:1000000 :)
+
+m.
+
+
+From john at pybus.org  Thu Feb 19 00:18:11 2009
+From: john at pybus.org (John Pybus)
+Date: Wed, 18 Feb 2009 23:18:11 +0000
+Subject: [Therion] Correcting bad drawings
+Message-ID: <499C9733.8010705@pybus.org>
+
+Hi again,
+
+It would be good to have some advise on how people deal with mistakes in 
+  sketches. For example:
+
+I have scans of a survey which was drawn up in the field however the 
+centreline on this contains a blunder (a leg 180 degrees out).  I can 
+trace the survey and give therion the correct centreline data, but it 
+produces a scrap with very large distortions around the blunder -- I 
+need to redraw a section of the scrap.
+
+I can export a .xvi to draw around but that doesn't contain the outline 
+of the rest of the scarp to join in to.  I can export a PDF or SVG but 
+that can't be imported as a background into xtherion.  How do people 
+deal with this situation?
+
+My current idea is to produce a PDF, render to PNG with ghostscript, 
+then import that into xtherion and overlay a .xvi (hoping they'll line 
+up) to get station LRUDs to draw round.  Does anyone have an easier way, 
+I have a number of such things to correct?
+
+Cheers,
+John
+
+
+From bruce.mutton at paradise.net.nz  Thu Feb 19 07:16:19 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 19 Feb 2009 19:16:19 +1300
+Subject: [Therion] Correcting bad drawings
+In-Reply-To: <499C9733.8010705@pybus.org>
+References: <499C9733.8010705@pybus.org>
+Message-ID: <CE6F322E05F74271A5ED8C50DF3F520C@JUICEBRAIN>
+
+>It would be good to have some advise on how people deal with mistakes in 
+>  sketches. For example:
+
+Having made a couple I now make as sure as I can that there are no gross
+mistakes before I start drawing.
+
+>I can export a .xvi to draw around but that doesn't contain the outline 
+>of the rest of the scarp to join in to.  I can export a PDF or SVG but 
+>that can't be imported as a background into xtherion.  How do people 
+>deal with this situation?
+
+You could save your pdf to jpg format with Adobe Acrobat.
+
+>My current idea is to produce a PDF, render to PNG with ghostscript, 
+>then import that into xtherion and overlay a .xvi (hoping they'll line 
+>up) 
+
+Almost certainly they won't.  If you scan to same resolution and orientation
+you may get lucky, but I would not count on it.
+
+>to get station LRUDs to draw round.  Does anyone have an easier way, 
+>I have a number of such things to correct?
+
+I would tend to print out a centre line and hand draw on that,
+copying/tracing the good parts of the old one.  Then scan and start drawing
+a replacement scrap.
+
+Alternatively break your existing scrap into two at the point of the error,
+then manually add corrections 'by eye'.  May be confusing, as probably the
+scraps as drawn in Xtherion will overlap (although the finished product
+should butt them together correctly). 
+
+
+Cheers,
+Hope this helps
+Bruce
+
+
+
+From Xavier.Pennec at sophia.inria.fr  Thu Feb 19 10:09:29 2009
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Thu, 19 Feb 2009 10:09:29 +0100
+Subject: [Therion] Correcting bad drawings
+In-Reply-To: <CE6F322E05F74271A5ED8C50DF3F520C@JUICEBRAIN>
+References: <499C9733.8010705@pybus.org>
+	<CE6F322E05F74271A5ED8C50DF3F520C@JUICEBRAIN>
+Message-ID: <499D21C9.3000101@sophia.inria.fr>
+
+I had the same problem quite a few times, especially to correct old 
+drawings that have an error, or to iterate the drawing corrections when 
+there is a new loop for instance.
+
+As all the point positions and handle orientations are warped to produce 
+the pdf, it seems to me that it could be possible to add a th2 export 
+type which would simply outputs the same th2 file with warped coordinates.
+Of course, there could be problems with the included images and 
+sketches, but that could be skipped if we already have all the other 
+objects. Any remark on the possibility of such an export?
+
+Xavier
+
+Bruce Mutton a écrit :
+>> It would be good to have some advise on how people deal with mistakes in 
+>>  sketches. For example:
+>>     
+>
+> Having made a couple I now make as sure as I can that there are no gross
+> mistakes before I start drawing.
+>
+>   
+>> I can export a .xvi to draw around but that doesn't contain the outline 
+>> of the rest of the scarp to join in to.  I can export a PDF or SVG but 
+>> that can't be imported as a background into xtherion.  How do people 
+>> deal with this situation?
+>>     
+>
+> You could save your pdf to jpg format with Adobe Acrobat.
+>
+>   
+>> My current idea is to produce a PDF, render to PNG with ghostscript, 
+>> then import that into xtherion and overlay a .xvi (hoping they'll line 
+>> up) 
+>>     
+>
+> Almost certainly they won't.  If you scan to same resolution and orientation
+> you may get lucky, but I would not count on it.
+>
+>   
+>> to get station LRUDs to draw round.  Does anyone have an easier way, 
+>> I have a number of such things to correct?
+>>     
+>
+> I would tend to print out a centre line and hand draw on that,
+> copying/tracing the good parts of the old one.  Then scan and start drawing
+> a replacement scrap.
+>
+> Alternatively break your existing scrap into two at the point of the error,
+> then manually add corrections 'by eye'.  May be confusing, as probably the
+> scraps as drawn in Xtherion will overlap (although the finished product
+> should butt them together correctly). 
+>
+>
+> Cheers,
+> Hope this helps
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>   
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier_Pennec.vcf
+Type: text/x-vcard
+Size: 166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/b1d975d2/attachment.vcf>
+
+From martinsluka at mac.com  Thu Feb 19 10:24:18 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 19 Feb 2009 10:24:18 +0100
+Subject: [Therion] Correcting bad drawings
+In-Reply-To: <499C9733.8010705@pybus.org>
+References: <499C9733.8010705@pybus.org>
+Message-ID: <7BE09CD2-8BDE-4973-B7CD-FAD4E7A56D6C@mac.com>
+
+
+On 19.2.2009, at 0:18, John Pybus wrote:
+
+> It would be good to have some advise on how people deal with  
+> mistakes in  sketches. For example:
+
+There are several way how to do it.
+
+1. Make shorter scraps - in extreme covering only one survey leg.
+
+2. try to use the morfing feature of therion. Check the samples  
+directory in therion. Do make there, in not compiled. After remake of  
+therion book they should be the last appendix there.
+
+You may find them on URL http://therion.speleo.sk/samples.doc/ too.
+
+If you will play with morfing you should  modify the layout a bit  -  
+see attached pictures - and add the sketch to be morfed to scrap. If  
+you save the xvi, and use it as background image there should be two  
+files - xvi and xvi - IMG1. The second one is the morfed sketch.
+
+Hope this helps.
+
+m.s.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 1.png
+Type: image/png
+Size: 103795 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 2.png
+Type: image/png
+Size: 27771 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 3.png
+Type: image/png
+Size: 15194 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 4.png
+Type: image/png
+Size: 19063 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 5.png
+Type: image/png
+Size: 88779 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Picture 6.png
+Type: image/png
+Size: 108642 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090219/6f4e8a02/attachment-0005.png>
+-------------- next part --------------
+
+
+
+
+From bruce.mutton at paradise.net.nz  Thu Feb 19 19:33:29 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Fri, 20 Feb 2009 07:33:29 +1300
+Subject: [Therion] On-Staion data to Therion
+Message-ID: <C5670EDCAA2446F8BD37A6651D946900@JUICEBRAIN>
+
+Has anyone transferred On-Station data to Therion?
+
+ 
+
+I've done a few km by hand about a year ago, and I think it's time to
+consider moving then next 57km.
+
+ 
+
+Has anyone any suggestions for semi-automatically translating large chunks
+and keeping all the meta data intact?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090220/e8cdb7ae/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Sat Feb 21 22:43:45 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 22 Feb 2009 10:43:45 +1300
+Subject: [Therion] FW:  Selective output of label text: A work-around
+Message-ID: <082D8DDE07C04649818D8817B020A2DB@JUICEBRAIN>
+
+>Or perhaps a simpler approach is to modify the syntax following;
+>	code metapost
+>	fonts_setup(0.01,0.01,0.01,4,6);
+
+Took me a while to think of using non-integer font sizes, but it works as a
+way of hiding text of particular sizes when using scales such as 1:2000 or
+1:5000 or more.
+
+Font point size 0.01 is too small to see!  The downside is that the pdf file
+size still grows with each item of text.  In my current exercise, the files
+are 800kB with the micro-text, and 200kB with no text.
+
+Still, it enables nice looking maps at any scale, with lots of text at
+1:1000 or smaller, and progressively less text as the scale heads towards
+1:10,000.  The only change required is to uncomment the appropriate layout -
+two keystrokes!
+
+Bruce
+
+
+
+From john at pybus.org  Tue Feb 24 00:44:55 2009
+From: john at pybus.org (John Pybus)
+Date: Mon, 23 Feb 2009 23:44:55 +0000
+Subject: [Therion] Problem using extend command
+Message-ID: <49A334F7.9010504@pybus.org>
+
+Hi,
+
+We're still working on our extended elevation, and have been having 
+problems getting the centreline to work with extend configuration commands.
+
+We have found a number of occasions where an "extend reverse 
+stationname" command reverses one leg at that point but doesn't apply to 
+any folloeing legs.  e.g. in a passage going
+
+5 -> 6 ->
+           7 ->
+                8 -> 9 -> 10
+
+extend reverse 7 gives:
+
+5 -> 6 ->
+        <- 7
+      8 -> 9 -> 10
+
+when I would expect:
+
+       5 -> 6 ->
+              <- 7
+10 <- 9 <- 8
+
+We've ended up having to add explicit extend right configuration for 
+station 7, then station 8 and station 9 etc.
+
+We've tried to pare down our survey to one example of this in the 
+attached file (julagua-elev_testcase.th)
+
+There are also several other examples where this occurs commented out.
+
+Any chance of fixing this?
+
+Cheers,
+
+John & Hilary
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: centreline_flipping.zip
+Type: application/zip
+Size: 39763 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090223/54027fda/attachment.zip>
+
+From bruce.mutton at paradise.net.nz  Tue Feb 24 01:30:17 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 24 Feb 2009 13:30:17 +1300
+Subject: [Therion] Problem using extend command
+In-Reply-To: <49A334F7.9010504@pybus.org>
+References: <49A334F7.9010504@pybus.org>
+Message-ID: <C7849F98C03C433D850F5BFD6622A87D@JUICEBRAIN>
+
+And hi again
+ As I have mentioned I have very little experience with extended elevations,
+but taking your example as an opportunity to learn...
+
+The following excerpt from the Therion book suggests you may have made an
+error in input.  Perhaps if you specify only one station it will work as you
+desire?
+
+"normal/reverse . extend given and following stations to the same/reverse
+direction as previous station. If two stations are given, direction is
+applied only to given shot.
+
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of John Pybus
+Sent: Tuesday, 24 February 2009 12:45 p.m.
+To: Therion List
+Subject: [Therion] Problem using extend command
+
+Hi,
+
+We're still working on our extended elevation, and have been having 
+problems getting the centreline to work with extend configuration commands.
+
+We have found a number of occasions where an "extend reverse 
+stationname" command reverses one leg at that point but doesn't apply to 
+any folloeing legs.  e.g. in a passage going
+
+5 -> 6 ->
+           7 ->
+                8 -> 9 -> 10
+
+extend reverse 7 gives:
+
+5 -> 6 ->
+        <- 7
+      8 -> 9 -> 10
+
+when I would expect:
+
+       5 -> 6 ->
+              <- 7
+10 <- 9 <- 8
+
+We've ended up having to add explicit extend right configuration for 
+station 7, then station 8 and station 9 etc.
+
+We've tried to pare down our survey to one example of this in the 
+attached file (julagua-elev_testcase.th)
+
+There are also several other examples where this occurs commented out.
+
+Any chance of fixing this?
+
+Cheers,
+
+John & Hilary
+
+
+
+From john at pybus.org  Tue Feb 24 02:25:47 2009
+From: john at pybus.org (John Pybus)
+Date: Tue, 24 Feb 2009 01:25:47 +0000
+Subject: [Therion] Problem using extend command
+In-Reply-To: <C7849F98C03C433D850F5BFD6622A87D@JUICEBRAIN>
+References: <49A334F7.9010504@pybus.org>
+	<C7849F98C03C433D850F5BFD6622A87D@JUICEBRAIN>
+Message-ID: <49A34C9B.2000605@pybus.org>
+
+Bruce Mutton wrote:
+> And hi again
+>  As I have mentioned I have very little experience with extended elevations,
+> but taking your example as an opportunity to learn...
+> 
+> The following excerpt from the Therion book suggests you may have made an
+> error in input.  Perhaps if you specify only one station it will work as you
+> desire?
+> 
+> "normal/reverse . extend given and following stations to the same/reverse
+> direction as previous station. If two stations are given, direction is
+> applied only to given shot.
+
+Ah, that was not my understanding of how it works.  My reading of that 
+passage is saying that the directive applies only to the given shot at 
+the 1st station (specified by the 2nd station) not that it then stops 
+applying to further stations in that direction.  It is useful at 
+junctions where the one station version isn't specific enough.
+
+i.e.   1--2--3
+           |
+           4--5
+
+extend reverse 2
+would give:
+
+1,3==2
+      |
+   5--4
+
+(i.e. both 2->3 and 2->4 get affected)
+and
+extend reverse 2  4
+would give:
+
+  1--2--3
+     |
+  5--4
+
+(i.e. just 2->4 direction gets affected)
+
+That is how the equivalent function works in survex espec files, so how 
+I expected the functionality in therion to work.
+
+I can't really see any use for the meaning Bruce describes, but the 
+meaning I drew is frequently useful at junctions in the cave.  I also 
+think it's a bad idea for therion to have commands with the same syntax 
+as survex but gratuitously different syntax.
+
+Perhaps it could be changed to match?
+
+[disclaimer: I did write the survex support for extend specifications, 
+though that was many years ago]
+
+John
+
+
+From bruce.mutton at paradise.net.nz  Fri Feb 27 09:46:33 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Fri, 27 Feb 2009 21:46:33 +1300
+Subject: [Therion] Therion or Survex 'language' styles
+Message-ID: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+
+Hi
+
+I've been dabbling with EditPad, and as of the last few days, NotePad++ text
+editors for managing my Therion files.
+
+I've started making a custom 'Therion' 'language' style to help highlight
+the data structure, and it occurs to me that someone may have already done
+this for Survex or Therion data files.
+
+ 
+
+If so they might like to post to the forum to save me the trouble of
+reinventing.
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090227/8a65c754/attachment.htm>
+
+From duncan.collis at gmail.com  Fri Feb 27 10:13:10 2009
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Fri, 27 Feb 2009 17:13:10 +0800
+Subject: [Therion] Therion or Survex 'language' styles
+In-Reply-To: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+References: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+Message-ID: <34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+
+On Fri, Feb 27, 2009 at 4:46 PM, Bruce Mutton
+<bruce.mutton at paradise.net.nz> wrote:
+
+> I’ve started making a custom ‘Therion’ ‘language’ style to help highlight
+> the data structure, and it occurs to me that someone may have already done
+> this for Survex or Therion data files.
+
+I've been using Notepad++ to edit Survex files for some time, with
+custom highlighting.
+
+> If so they might like to post to the forum to save me the trouble of
+> reinventing…
+
+Attached.
+
+Duncan.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: userDefineLangSurvex.xml
+Type: text/xml
+Size: 3270 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090227/758befe8/attachment.xml>
+
+From wookey at wookware.org  Fri Feb 27 13:44:09 2009
+From: wookey at wookware.org (Wookey)
+Date: Fri, 27 Feb 2009 12:44:09 +0000
+Subject: [Therion] Therion or Survex 'language' styles
+In-Reply-To: <34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+References: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+	<34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+Message-ID: <20090227124409.GK19953@knossos.aleph1.co.uk>
+
++++ Duncan Collis [2009-02-27 17:13 +0800]:
+> On Fri, Feb 27, 2009 at 4:46 PM, Bruce Mutton
+> <bruce.mutton at paradise.net.nz> wrote:
+> 
+> > I’ve started making a custom ‘Therion’ ‘language’ style to help highlight
+> > the data structure, and it occurs to me that someone may have already done
+> > this for Survex or Therion data files.
+> 
+> I've been using Notepad++ to edit Survex files for some time, with
+> custom highlighting.
+ 
+This is only useful on Windows right? (i.e. there is no point adding
+this to the existing survex Debian package vim highlighting files?)
+
+Anyone done an emacs/jed highlighting mode yet?
+
+I have forwartded it to the survex list though so it can get into the
+distributed Windows version.
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From bruce.mutton at paradise.net.nz  Fri Feb 27 21:00:58 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 28 Feb 2009 09:00:58 +1300
+Subject: [Therion] Therion or Survex 'language' styles
+In-Reply-To: <34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+References: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+	<34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+Message-ID: <921C2439A14745F18F0EDF6B7B826B3A@JUICEBRAIN>
+
+Duncan wrote
+>I've been using Notepad++ to edit Survex files for some time, with
+>custom highlighting.   Attached.
+
+Thanks Duncan
+If there are no more offers I'll backtrack on what I've started and use
+yours as a base for building a Therion style.
+
+I see that Notepad++ allows for Plugins to be developed to allow styles more
+closely matched to the finer points of languages than the xml style sheets
+do.  Plugins are beyond me, but would be a nice project for someone, as I've
+already come up against one (minor) limitation of the xml approach
+(extending comments over multiple lines with \ does not seem to be
+possible).
+
+Bruce
+
+
+
+From fabio at geribello.com.br  Sat Feb 28 00:28:35 2009
+From: fabio at geribello.com.br (Fabio Kok Geribello)
+Date: Fri, 27 Feb 2009 20:28:35 -0300
+Subject: [Therion] Changing the Legend text
+Message-ID: <002a01c99933$1cade4f0$5609aed0$@com.br>
+
+Hi people,
+
+ 
+
+I´m finishing a map and realized that there is a field (type of line) in the
+legend that is not translated
+
+correctly.
+
+ 
+
+Is there a way to correct it without compiling it again ?
+
+ 
+
+Many thanks,
+
+Fabio
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090227/046a219d/attachment.htm>
+
+From fabio at geribello.com.br  Sat Feb 28 00:56:35 2009
+From: fabio at geribello.com.br (Fabio Kok Geribello)
+Date: Fri, 27 Feb 2009 20:56:35 -0300
+Subject: [Therion] RES:  Changing the Legend text
+In-Reply-To: <002a01c99933$1cade4f0$5609aed0$@com.br>
+References: <002a01c99933$1cade4f0$5609aed0$@com.br>
+Message-ID: <000f01c99937$06536730$12fa3590$@com.br>
+
+I Just found the answer. J
+
+ 
+
+text pt "line moonmilk" "Leite de Lua" 
+
+ 
+
+Just after the endlayout on thconfig.
+
+ 
+
+Thank you all.
+
+ 
+
+ 
+
+De: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Em nome de
+Fabio Kok Geribello
+Enviada em: sexta-feira, 27 de fevereiro de 2009 20:29
+Para: 'List for Therion users'
+Assunto: [Therion] Changing the Legend text
+
+ 
+
+Hi people,
+
+ 
+
+I´m finishing a map and realized that there is a field (type of line) in the
+legend that is not translated
+
+correctly.
+
+ 
+
+Is there a way to correct it without compiling it again ?
+
+ 
+
+Many thanks,
+
+Fabio
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090227/ae44950d/attachment.htm>
+
+From luethi at vaw.baug.ethz.ch  Sat Feb 28 13:55:30 2009
+From: luethi at vaw.baug.ethz.ch (Martin Luethi)
+Date: Sat, 28 Feb 2009 13:55:30 +0100
+Subject: [Therion] Therion or Survex 'language' styles
+In-Reply-To: <20090227124409.GK19953@knossos.aleph1.co.uk>
+References: <7D320DAB17DC437E997DD4864F217697@JUICEBRAIN>
+	<34c51f620902270113j226ded59o7128b24feec74c8e@mail.gmail.com>
+	<20090227124409.GK19953@knossos.aleph1.co.uk>
+Message-ID: <18857.13378.609426.6317@gargle.gargle.HOWL>
+
+Wookey writes:
+ > Anyone done an emacs/jed highlighting mode yet?
+
+Not great, but mostly working:
+
+http://people.ee.ethz.ch/~luthi/soft/therion-mode.el
+
+Best, Martin
+
+

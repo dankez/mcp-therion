@@ -1,0 +1,1154 @@
+From anze.abram at gmail.com  Sat Nov  1 09:55:25 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Sat, 1 Nov 2025 08:55:25 +0000
+Subject: [Therion] macOS installation
+In-Reply-To: <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+ <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+Message-ID: <CAAqtp-kePFZbx9v1wKy_Yg2aw_X2=uDyZXHqbe4USyEDacuP=Q@mail.gmail.com>
+
+Thank you for this tip, I managed to successfully compile it this way. I
+had to do 'cd .' before cmake command, and finish off with 'make install'
+to place the apps at the correct location. It still produced a few errors
+in Loch sections, but the program seems to run OK in the end. The errors:
+
+[ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxWX.cxx.o
+
+[ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxData.cxx.o
+
+*/Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:12: **warning:
+**unused variable 'inpln' [-Wunused-variable]*
+
+  255 |   wxString inpln, flags, filename;
+
+      | *           ^~~~~*
+
+*/Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:19: **warning:
+**unused variable 'flags' [-Wunused-variable]*
+
+  255 |   wxString inpln, flags, filename;
+
+      | *                  ^~~~~*
+
+*/Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:26: **warning:
+**unused variable 'filename' [-Wunused-variable]*
+
+  255 |   wxString inpln, flags, filename;
+
+      | *                         ^~~~~~~~*
+
+3 warnings generated.
+
+[ 93%] Building CXX object loch/CMakeFiles/loch.dir/lxGLC.cxx.o
+
+[ 94%] Building CXX object loch/CMakeFiles/loch.dir/lxImgIO.cxx.o
+
+
+For those having problems with tcl/tk versions, there is a section at
+homebrew-therion mentioning this problem:
+https://github.com/ladislavb/homebrew-therion?tab=readme-ov-file#xtherion---cant-find-package-bwidget
+
+
+Cheers,
+
+A.
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+
+
+On Thu, 30 Oct 2025 at 13:50, Oliver Legg <ollylegg at gmail.com> wrote:
+
+> Trying using cmake, I find it does a better job at finding dependencies:
+>
+>     cd therion
+>     cmake -S . -B build
+>     cd build
+>     make
+>
+> > On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+> >
+> > Hi.
+> >
+> > - I am also using the 6.3.4 version I got from
+> https://github.com/therion/therion/releases/tag/v6.3.4
+> > - For compiling from source, I am using this page:
+> https://therion.speleo.sk/wiki/os-tips:osx10.8
+> >
+> > I produce the error when I run the bolded command.
+> >
+> > cd ~/Downloads/therion
+> > make config-macosx
+> > make <----
+> > cd loch
+> > make
+> > cd ..
+> > make install
+> >
+> > - I installed all the dependencies before via homebrew. Most were
+> installed, but I run into two problems:
+> >
+> > 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+> > 'pkg' package is also non-existant, but I didn't know which package to
+> install instead. Suggestions?
+> >
+> > Maybe it's worth pointing out that 'therion' and 'xtherion' compile
+> fine, it's the Loch part that the compiler gets stuck at.
+> >
+> > Anze
+> >
+> > An?e Abram
+> > Ulica bratov U?akar 84, 1000 Ljubljana
+> > SI - Slovenia
+> >
+> > M +386 41 480 906
+> > @ anze.abram at gmail.com
+> >
+> > Na?e o?i je zalila
+> > lava gore?a.
+> >
+> >
+> > On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+> > An?e,
+> >
+> > I managed to compile therion from source yesterday, on an Apple Silicon
+> Mac, but with the previous version of macOS Sequoia 15.6.1.
+> >
+> > I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+> >
+> > Are you using the CMake build method?
+> >
+> > I did install the dependencies via Homebrew (taken from the
+> `ladislavb/homebrew-therion` repository):
+> >
+> >     brew install BWidget cmake catch2 fmt freetype ghostscript
+> imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+> >     brew install --cask xquartz
+> >
+> > Olly
+> >
+> > > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+> > >
+> > > Greetings.
+> > >
+> > > I've been trying to reinstall Therion on a new M-series macbook on the
+> newest OS (Tahoe) but have run into several 'dead ends'.
+> > >
+> > > (1) First I tried the homebrew method, but I ran into the same issue
+> as several others. The whole homebrew route seems to be broken currently.
+> > >
+> > > https://github.com/ladislavb/homebrew-therion/issues/15
+> > >
+> > > (2) I tried to compile it from source, but it gets stuck while trying
+> to compile Loch with the following error:
+> > >
+> > > In file included from lxSetup.cxx:39:
+> > > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+> > >    35 | #include <vtkPolyData.h>
+> > >       |          ^~~~~~~~~~~~~~~
+> > > 1 error generated.
+> > > make[1]: *** [lxSetup.o] Error 1
+> > > make: *** [loch/loch] Error 2
+> > >
+> > > Does anyone know of a solution, how to tackle any of these problems by
+> chance? Thanks in advance,
+> > > Anze
+> > >
+> > > An?e Abram
+> > > Ulica bratov U?akar 84, 1000 Ljubljana
+> > > SI - Slovenia
+> > >
+> > > M +386 41 480 906
+> > > @ anze.abram at gmail.com
+> > >
+> > > Na?e o?i je zalila
+> > > lava gore?a.
+> > > _______________________________________________
+> > > Therion mailing list
+> > > Therion at speleo.sk
+> > > https://mailman.speleo.sk/listinfo/therion
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251101/493b2fa1/attachment.htm>
+
+From rsev at pm.me  Sat Nov  1 11:40:10 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Sat, 01 Nov 2025 10:40:10 +0000
+Subject: [Therion] =?utf-8?q?Mapiah_release_0=2E2=2E20_-_The_polish_refac?=
+ =?utf-8?q?toring_-_Part_2=2C_The_Par=C3=A1_Ending?=
+Message-ID: <jwSRFKJZvZwXgK_btRyqzJaA1Ev5Bci0pbhSpn2KHkii5x40lIrAlcc6flLBpPXe6NkuzGaAJvUhr3AB9gV-dYoagdpIC0iAnXhiLWlC5eA=@pm.me>
+
+Hi,
+
+Here is Mapiah release 0.2.20 the end of the Polish Refactoring saga. The changelog is available at the release page as are the desktop versions: https://github.com/rsevero/mapiah/releases/tag/v0.2.20
+
+The web version is available at https://mapiah.org/webapp
+
+Just decided to keep adding tests to the app for now to make things more solid instead of add more features.
+
+Please report.
+
+Regards,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251101/63eefa52/attachment-0001.htm>
+
+From anze.abram at gmail.com  Tue Nov  4 12:37:01 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Tue, 4 Nov 2025 12:37:01 +0100
+Subject: [Therion] macOS installation
+In-Reply-To: <CAAqtp-kePFZbx9v1wKy_Yg2aw_X2=uDyZXHqbe4USyEDacuP=Q@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+ <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+ <CAAqtp-kePFZbx9v1wKy_Yg2aw_X2=uDyZXHqbe4USyEDacuP=Q@mail.gmail.com>
+Message-ID: <CAAqtp-m9CF8XKuU-sHve2kDLnb0m2DJ=Fk1dJV4ZP8X6Fb0qpA@mail.gmail.com>
+
+A recent brew update/brew upgrade seems to break my Therion install again.
+The library in question is 'fmt' which was upgraded from v11 to v12
+apparently. If I try to compile anything with therion, I get the
+following error:
+
+dyld[13602]: Library not loaded: /opt/homebrew/opt/fmt/lib/libfmt.11.dylib
+
+  Referenced from: <1DDE563D-8CCA-3795-BBC8-F76B62F9AE43>
+/usr/local/bin/therion
+
+  Reason: tried: '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such
+file),
+'/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/fmt/lib/libfmt.11.dylib'
+(no such file), '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such file),
+'/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no such file),
+'/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib'
+(no such file), '/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no
+such file)
+
+zsh: abort      therion
+
+
+
+Do you recommend I look at trying to install the v11 again (brew install
+fmt at 11.2.0 doesn't work) or does this need to be addressed by therion
+developers?
+
+Thanks in advance,
+Anze
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+
+
+On Sat, 1 Nov 2025 at 09:55, An?e Abram <anze.abram at gmail.com> wrote:
+
+> Thank you for this tip, I managed to successfully compile it this way. I
+> had to do 'cd .' before cmake command, and finish off with 'make install'
+> to place the apps at the correct location. It still produced a few errors
+> in Loch sections, but the program seems to run OK in the end. The errors:
+>
+> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxWX.cxx.o
+>
+> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxData.cxx.o
+>
+> */Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:12: **warning:
+> **unused variable 'inpln' [-Wunused-variable]*
+>
+>   255 |   wxString inpln, flags, filename;
+>
+>       | *           ^~~~~*
+>
+> */Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:19: **warning:
+> **unused variable 'flags' [-Wunused-variable]*
+>
+>   255 |   wxString inpln, flags, filename;
+>
+>       | *                  ^~~~~*
+>
+> */Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:26: **warning:
+> **unused variable 'filename' [-Wunused-variable]*
+>
+>   255 |   wxString inpln, flags, filename;
+>
+>       | *                         ^~~~~~~~*
+>
+> 3 warnings generated.
+>
+> [ 93%] Building CXX object loch/CMakeFiles/loch.dir/lxGLC.cxx.o
+>
+> [ 94%] Building CXX object loch/CMakeFiles/loch.dir/lxImgIO.cxx.o
+>
+>
+> For those having problems with tcl/tk versions, there is a section at
+> homebrew-therion mentioning this problem:
+> https://github.com/ladislavb/homebrew-therion?tab=readme-ov-file#xtherion---cant-find-package-bwidget
+>
+>
+> Cheers,
+>
+> A.
+>
+> *An?e Abram*
+> Ulica bratov U?akar 84, 1000 Ljubljana
+> SI - Slovenia
+>
+> *M* +386 41 480 906
+> *@* anze.abram at gmail.com
+>
+> *Na?e o?i je zalila*
+> *lava gore?a*.
+>
+>
+> On Thu, 30 Oct 2025 at 13:50, Oliver Legg <ollylegg at gmail.com> wrote:
+>
+>> Trying using cmake, I find it does a better job at finding dependencies:
+>>
+>>     cd therion
+>>     cmake -S . -B build
+>>     cd build
+>>     make
+>>
+>> > On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>> >
+>> > Hi.
+>> >
+>> > - I am also using the 6.3.4 version I got from
+>> https://github.com/therion/therion/releases/tag/v6.3.4
+>> > - For compiling from source, I am using this page:
+>> https://therion.speleo.sk/wiki/os-tips:osx10.8
+>> >
+>> > I produce the error when I run the bolded command.
+>> >
+>> > cd ~/Downloads/therion
+>> > make config-macosx
+>> > make <----
+>> > cd loch
+>> > make
+>> > cd ..
+>> > make install
+>> >
+>> > - I installed all the dependencies before via homebrew. Most were
+>> installed, but I run into two problems:
+>> >
+>> > 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>> > 'pkg' package is also non-existant, but I didn't know which package to
+>> install instead. Suggestions?
+>> >
+>> > Maybe it's worth pointing out that 'therion' and 'xtherion' compile
+>> fine, it's the Loch part that the compiler gets stuck at.
+>> >
+>> > Anze
+>> >
+>> > An?e Abram
+>> > Ulica bratov U?akar 84, 1000 Ljubljana
+>> > SI - Slovenia
+>> >
+>> > M +386 41 480 906
+>> > @ anze.abram at gmail.com
+>> >
+>> > Na?e o?i je zalila
+>> > lava gore?a.
+>> >
+>> >
+>> > On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>> > An?e,
+>> >
+>> > I managed to compile therion from source yesterday, on an Apple Silicon
+>> Mac, but with the previous version of macOS Sequoia 15.6.1.
+>> >
+>> > I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>> >
+>> > Are you using the CMake build method?
+>> >
+>> > I did install the dependencies via Homebrew (taken from the
+>> `ladislavb/homebrew-therion` repository):
+>> >
+>> >     brew install BWidget cmake catch2 fmt freetype ghostscript
+>> imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>> >     brew install --cask xquartz
+>> >
+>> > Olly
+>> >
+>> > > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>> > >
+>> > > Greetings.
+>> > >
+>> > > I've been trying to reinstall Therion on a new M-series macbook on
+>> the newest OS (Tahoe) but have run into several 'dead ends'.
+>> > >
+>> > > (1) First I tried the homebrew method, but I ran into the same issue
+>> as several others. The whole homebrew route seems to be broken currently.
+>> > >
+>> > > https://github.com/ladislavb/homebrew-therion/issues/15
+>> > >
+>> > > (2) I tried to compile it from source, but it gets stuck while trying
+>> to compile Loch with the following error:
+>> > >
+>> > > In file included from lxSetup.cxx:39:
+>> > > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>> > >    35 | #include <vtkPolyData.h>
+>> > >       |          ^~~~~~~~~~~~~~~
+>> > > 1 error generated.
+>> > > make[1]: *** [lxSetup.o] Error 1
+>> > > make: *** [loch/loch] Error 2
+>> > >
+>> > > Does anyone know of a solution, how to tackle any of these problems
+>> by chance? Thanks in advance,
+>> > > Anze
+>> > >
+>> > > An?e Abram
+>> > > Ulica bratov U?akar 84, 1000 Ljubljana
+>> > > SI - Slovenia
+>> > >
+>> > > M +386 41 480 906
+>> > > @ anze.abram at gmail.com
+>> > >
+>> > > Na?e o?i je zalila
+>> > > lava gore?a.
+>> > > _______________________________________________
+>> > > Therion mailing list
+>> > > Therion at speleo.sk
+>> > > https://mailman.speleo.sk/listinfo/therion
+>> >
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251104/5fa4c26a/attachment-0001.htm>
+
+From plch.matej at gmail.com  Tue Nov  4 19:56:32 2025
+From: plch.matej at gmail.com (=?UTF-8?Q?Mat=C4=9Bj_Plch?=)
+Date: Tue, 4 Nov 2025 19:56:32 +0100
+Subject: [Therion] macOS installation
+In-Reply-To: <CAAqtp-m9CF8XKuU-sHve2kDLnb0m2DJ=Fk1dJV4ZP8X6Fb0qpA@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+ <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+ <CAAqtp-kePFZbx9v1wKy_Yg2aw_X2=uDyZXHqbe4USyEDacuP=Q@mail.gmail.com>
+ <CAAqtp-m9CF8XKuU-sHve2kDLnb0m2DJ=Fk1dJV4ZP8X6Fb0qpA@mail.gmail.com>
+Message-ID: <CAO3xD3=1LQ0et8vZ3mbFsDd_HdqC4uDW1xszm+7s61DUD+Jabg@mail.gmail.com>
+
+Hello,
+
+CMake uses libraries which were found during initial configuration. To
+search for libraries again you need to delete CMake cache and
+reconfigure it, in other words you can just remove the whole build
+folder and run CMake from scratch again.
+
+Mat?j
+
+?t 4. 11. 2025 v 12:37 odes?latel An?e Abram <anze.abram at gmail.com> napsal:
+>
+> A recent brew update/brew upgrade seems to break my Therion install again. The library in question is 'fmt' which was upgraded from v11 to v12 apparently. If I try to compile anything with therion, I get the following error:
+>
+> dyld[13602]: Library not loaded: /opt/homebrew/opt/fmt/lib/libfmt.11.dylib
+>
+>   Referenced from: <1DDE563D-8CCA-3795-BBC8-F76B62F9AE43> /usr/local/bin/therion
+>
+>   Reason: tried: '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such file), '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such file), '/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no such file), '/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no such file)
+>
+> zsh: abort      therion
+>
+>
+>
+> Do you recommend I look at trying to install the v11 again (brew install fmt at 11.2.0 doesn't work) or does this need to be addressed by therion developers?
+>
+> Thanks in advance,
+> Anze
+>
+> An?e Abram
+> Ulica bratov U?akar 84, 1000 Ljubljana
+> SI - Slovenia
+>
+> M +386 41 480 906
+> @ anze.abram at gmail.com
+>
+> Na?e o?i je zalila
+> lava gore?a.
+>
+>
+> On Sat, 1 Nov 2025 at 09:55, An?e Abram <anze.abram at gmail.com> wrote:
+>>
+>> Thank you for this tip, I managed to successfully compile it this way. I had to do 'cd .' before cmake command, and finish off with 'make install' to place the apps at the correct location. It still produced a few errors in Loch sections, but the program seems to run OK in the end. The errors:
+>>
+>> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxWX.cxx.o
+>>
+>> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxData.cxx.o
+>>
+>> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:12: warning: unused variable 'inpln' [-Wunused-variable]
+>>
+>>   255 |   wxString inpln, flags, filename;
+>>
+>>       |            ^~~~~
+>>
+>> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:19: warning: unused variable 'flags' [-Wunused-variable]
+>>
+>>   255 |   wxString inpln, flags, filename;
+>>
+>>       |                   ^~~~~
+>>
+>> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:26: warning: unused variable 'filename' [-Wunused-variable]
+>>
+>>   255 |   wxString inpln, flags, filename;
+>>
+>>       |                          ^~~~~~~~
+>>
+>> 3 warnings generated.
+>>
+>> [ 93%] Building CXX object loch/CMakeFiles/loch.dir/lxGLC.cxx.o
+>>
+>> [ 94%] Building CXX object loch/CMakeFiles/loch.dir/lxImgIO.cxx.o
+>>
+>>
+>> For those having problems with tcl/tk versions, there is a section at homebrew-therion mentioning this problem: https://github.com/ladislavb/homebrew-therion?tab=readme-ov-file#xtherion---cant-find-package-bwidget
+>>
+>>
+>> Cheers,
+>>
+>> A.
+>>
+>>
+>> An?e Abram
+>> Ulica bratov U?akar 84, 1000 Ljubljana
+>> SI - Slovenia
+>>
+>> M +386 41 480 906
+>> @ anze.abram at gmail.com
+>>
+>> Na?e o?i je zalila
+>> lava gore?a.
+>>
+>>
+>> On Thu, 30 Oct 2025 at 13:50, Oliver Legg <ollylegg at gmail.com> wrote:
+>>>
+>>> Trying using cmake, I find it does a better job at finding dependencies:
+>>>
+>>>     cd therion
+>>>     cmake -S . -B build
+>>>     cd build
+>>>     make
+>>>
+>>> > On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>>> >
+>>> > Hi.
+>>> >
+>>> > - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+>>> > - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+>>> >
+>>> > I produce the error when I run the bolded command.
+>>> >
+>>> > cd ~/Downloads/therion
+>>> > make config-macosx
+>>> > make <----
+>>> > cd loch
+>>> > make
+>>> > cd ..
+>>> > make install
+>>> >
+>>> > - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+>>> >
+>>> > 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>>> > 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+>>> >
+>>> > Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+>>> >
+>>> > Anze
+>>> >
+>>> > An?e Abram
+>>> > Ulica bratov U?akar 84, 1000 Ljubljana
+>>> > SI - Slovenia
+>>> >
+>>> > M +386 41 480 906
+>>> > @ anze.abram at gmail.com
+>>> >
+>>> > Na?e o?i je zalila
+>>> > lava gore?a.
+>>> >
+>>> >
+>>> > On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>>> > An?e,
+>>> >
+>>> > I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+>>> >
+>>> > I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>>> >
+>>> > Are you using the CMake build method?
+>>> >
+>>> > I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+>>> >
+>>> >     brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>>> >     brew install --cask xquartz
+>>> >
+>>> > Olly
+>>> >
+>>> > > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>>> > >
+>>> > > Greetings.
+>>> > >
+>>> > > I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+>>> > >
+>>> > > (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+>>> > >
+>>> > > https://github.com/ladislavb/homebrew-therion/issues/15
+>>> > >
+>>> > > (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+>>> > >
+>>> > > In file included from lxSetup.cxx:39:
+>>> > > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>>> > >    35 | #include <vtkPolyData.h>
+>>> > >       |          ^~~~~~~~~~~~~~~
+>>> > > 1 error generated.
+>>> > > make[1]: *** [lxSetup.o] Error 1
+>>> > > make: *** [loch/loch] Error 2
+>>> > >
+>>> > > Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+>>> > > Anze
+>>> > >
+>>> > > An?e Abram
+>>> > > Ulica bratov U?akar 84, 1000 Ljubljana
+>>> > > SI - Slovenia
+>>> > >
+>>> > > M +386 41 480 906
+>>> > > @ anze.abram at gmail.com
+>>> > >
+>>> > > Na?e o?i je zalila
+>>> > > lava gore?a.
+>>> > > _______________________________________________
+>>> > > Therion mailing list
+>>> > > Therion at speleo.sk
+>>> > > https://mailman.speleo.sk/listinfo/therion
+>>> >
+>>> > _______________________________________________
+>>> > Therion mailing list
+>>> > Therion at speleo.sk
+>>> > https://mailman.speleo.sk/listinfo/therion
+>>> > _______________________________________________
+>>> > Therion mailing list
+>>> > Therion at speleo.sk
+>>> > https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From anze.abram at gmail.com  Wed Nov  5 08:25:06 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Wed, 5 Nov 2025 08:25:06 +0100
+Subject: [Therion] macOS installation
+In-Reply-To: <CAO3xD3=1LQ0et8vZ3mbFsDd_HdqC4uDW1xszm+7s61DUD+Jabg@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+ <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+ <CAAqtp-kePFZbx9v1wKy_Yg2aw_X2=uDyZXHqbe4USyEDacuP=Q@mail.gmail.com>
+ <CAAqtp-m9CF8XKuU-sHve2kDLnb0m2DJ=Fk1dJV4ZP8X6Fb0qpA@mail.gmail.com>
+ <CAO3xD3=1LQ0et8vZ3mbFsDd_HdqC4uDW1xszm+7s61DUD+Jabg@mail.gmail.com>
+Message-ID: <CAAqtp-nrbnqVaKvOnswkp+ap6S4c_bXUXfo656dNS2LA5DZtPQ@mail.gmail.com>
+
+Thank you for your email, this indeed solved the issue.
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+
+
+On Tue, 4 Nov 2025 at 19:57, Mat?j Plch <plch.matej at gmail.com> wrote:
+
+> Hello,
+>
+> CMake uses libraries which were found during initial configuration. To
+> search for libraries again you need to delete CMake cache and
+> reconfigure it, in other words you can just remove the whole build
+> folder and run CMake from scratch again.
+>
+> Mat?j
+>
+> ?t 4. 11. 2025 v 12:37 odes?latel An?e Abram <anze.abram at gmail.com>
+> napsal:
+> >
+> > A recent brew update/brew upgrade seems to break my Therion install
+> again. The library in question is 'fmt' which was upgraded from v11 to v12
+> apparently. If I try to compile anything with therion, I get the following
+> error:
+> >
+> > dyld[13602]: Library not loaded:
+> /opt/homebrew/opt/fmt/lib/libfmt.11.dylib
+> >
+> >   Referenced from: <1DDE563D-8CCA-3795-BBC8-F76B62F9AE43>
+> /usr/local/bin/therion
+> >
+> >   Reason: tried: '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such
+> file),
+> '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/fmt/lib/libfmt.11.dylib'
+> (no such file), '/opt/homebrew/opt/fmt/lib/libfmt.11.dylib' (no such file),
+> '/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no such file),
+> '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib'
+> (no such file), '/opt/homebrew/Cellar/fmt/12.1.0/lib/libfmt.11.dylib' (no
+> such file)
+> >
+> > zsh: abort      therion
+> >
+> >
+> >
+> > Do you recommend I look at trying to install the v11 again (brew install
+> fmt at 11.2.0 doesn't work) or does this need to be addressed by therion
+> developers?
+> >
+> > Thanks in advance,
+> > Anze
+> >
+> > An?e Abram
+> > Ulica bratov U?akar 84, 1000 Ljubljana
+> > SI - Slovenia
+> >
+> > M +386 41 480 906
+> > @ anze.abram at gmail.com
+> >
+> > Na?e o?i je zalila
+> > lava gore?a.
+> >
+> >
+> > On Sat, 1 Nov 2025 at 09:55, An?e Abram <anze.abram at gmail.com> wrote:
+> >>
+> >> Thank you for this tip, I managed to successfully compile it this way.
+> I had to do 'cd .' before cmake command, and finish off with 'make install'
+> to place the apps at the correct location. It still produced a few errors
+> in Loch sections, but the program seems to run OK in the end. The errors:
+> >>
+> >> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxWX.cxx.o
+> >>
+> >> [ 92%] Building CXX object loch/CMakeFiles/loch.dir/lxData.cxx.o
+> >>
+> >> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:12:
+> warning: unused variable 'inpln' [-Wunused-variable]
+> >>
+> >>   255 |   wxString inpln, flags, filename;
+> >>
+> >>       |            ^~~~~
+> >>
+> >> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:19:
+> warning: unused variable 'flags' [-Wunused-variable]
+> >>
+> >>   255 |   wxString inpln, flags, filename;
+> >>
+> >>       |                   ^~~~~
+> >>
+> >> /Users/aabram/Downloads/--therion-6.3.4/loch/lxData.cxx:255:26:
+> warning: unused variable 'filename' [-Wunused-variable]
+> >>
+> >>   255 |   wxString inpln, flags, filename;
+> >>
+> >>       |                          ^~~~~~~~
+> >>
+> >> 3 warnings generated.
+> >>
+> >> [ 93%] Building CXX object loch/CMakeFiles/loch.dir/lxGLC.cxx.o
+> >>
+> >> [ 94%] Building CXX object loch/CMakeFiles/loch.dir/lxImgIO.cxx.o
+> >>
+> >>
+> >> For those having problems with tcl/tk versions, there is a section at
+> homebrew-therion mentioning this problem:
+> https://github.com/ladislavb/homebrew-therion?tab=readme-ov-file#xtherion---cant-find-package-bwidget
+> >>
+> >>
+> >> Cheers,
+> >>
+> >> A.
+> >>
+> >>
+> >> An?e Abram
+> >> Ulica bratov U?akar 84, 1000 Ljubljana
+> >> SI - Slovenia
+> >>
+> >> M +386 41 480 906
+> >> @ anze.abram at gmail.com
+> >>
+> >> Na?e o?i je zalila
+> >> lava gore?a.
+> >>
+> >>
+> >> On Thu, 30 Oct 2025 at 13:50, Oliver Legg <ollylegg at gmail.com> wrote:
+> >>>
+> >>> Trying using cmake, I find it does a better job at finding
+> dependencies:
+> >>>
+> >>>     cd therion
+> >>>     cmake -S . -B build
+> >>>     cd build
+> >>>     make
+> >>>
+> >>> > On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+> >>> >
+> >>> > Hi.
+> >>> >
+> >>> > - I am also using the 6.3.4 version I got from
+> https://github.com/therion/therion/releases/tag/v6.3.4
+> >>> > - For compiling from source, I am using this page:
+> https://therion.speleo.sk/wiki/os-tips:osx10.8
+> >>> >
+> >>> > I produce the error when I run the bolded command.
+> >>> >
+> >>> > cd ~/Downloads/therion
+> >>> > make config-macosx
+> >>> > make <----
+> >>> > cd loch
+> >>> > make
+> >>> > cd ..
+> >>> > make install
+> >>> >
+> >>> > - I installed all the dependencies before via homebrew. Most were
+> installed, but I run into two problems:
+> >>> >
+> >>> > 'lcdf' package is non-existent, so I installed 'lcdf-typetools'
+> instead.
+> >>> > 'pkg' package is also non-existant, but I didn't know which package
+> to install instead. Suggestions?
+> >>> >
+> >>> > Maybe it's worth pointing out that 'therion' and 'xtherion' compile
+> fine, it's the Loch part that the compiler gets stuck at.
+> >>> >
+> >>> > Anze
+> >>> >
+> >>> > An?e Abram
+> >>> > Ulica bratov U?akar 84, 1000 Ljubljana
+> >>> > SI - Slovenia
+> >>> >
+> >>> > M +386 41 480 906
+> >>> > @ anze.abram at gmail.com
+> >>> >
+> >>> > Na?e o?i je zalila
+> >>> > lava gore?a.
+> >>> >
+> >>> >
+> >>> > On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com>
+> wrote:
+> >>> > An?e,
+> >>> >
+> >>> > I managed to compile therion from source yesterday, on an Apple
+> Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+> >>> >
+> >>> > I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+> >>> >
+> >>> > Are you using the CMake build method?
+> >>> >
+> >>> > I did install the dependencies via Homebrew (taken from the
+> `ladislavb/homebrew-therion` repository):
+> >>> >
+> >>> >     brew install BWidget cmake catch2 fmt freetype ghostscript
+> imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+> >>> >     brew install --cask xquartz
+> >>> >
+> >>> > Olly
+> >>> >
+> >>> > > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+> >>> > >
+> >>> > > Greetings.
+> >>> > >
+> >>> > > I've been trying to reinstall Therion on a new M-series macbook on
+> the newest OS (Tahoe) but have run into several 'dead ends'.
+> >>> > >
+> >>> > > (1) First I tried the homebrew method, but I ran into the same
+> issue as several others. The whole homebrew route seems to be broken
+> currently.
+> >>> > >
+> >>> > > https://github.com/ladislavb/homebrew-therion/issues/15
+> >>> > >
+> >>> > > (2) I tried to compile it from source, but it gets stuck while
+> trying to compile Loch with the following error:
+> >>> > >
+> >>> > > In file included from lxSetup.cxx:39:
+> >>> > > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+> >>> > >    35 | #include <vtkPolyData.h>
+> >>> > >       |          ^~~~~~~~~~~~~~~
+> >>> > > 1 error generated.
+> >>> > > make[1]: *** [lxSetup.o] Error 1
+> >>> > > make: *** [loch/loch] Error 2
+> >>> > >
+> >>> > > Does anyone know of a solution, how to tackle any of these
+> problems by chance? Thanks in advance,
+> >>> > > Anze
+> >>> > >
+> >>> > > An?e Abram
+> >>> > > Ulica bratov U?akar 84, 1000 Ljubljana
+> >>> > > SI - Slovenia
+> >>> > >
+> >>> > > M +386 41 480 906
+> >>> > > @ anze.abram at gmail.com
+> >>> > >
+> >>> > > Na?e o?i je zalila
+> >>> > > lava gore?a.
+> >>> > > _______________________________________________
+> >>> > > Therion mailing list
+> >>> > > Therion at speleo.sk
+> >>> > > https://mailman.speleo.sk/listinfo/therion
+> >>> >
+> >>> > _______________________________________________
+> >>> > Therion mailing list
+> >>> > Therion at speleo.sk
+> >>> > https://mailman.speleo.sk/listinfo/therion
+> >>> > _______________________________________________
+> >>> > Therion mailing list
+> >>> > Therion at speleo.sk
+> >>> > https://mailman.speleo.sk/listinfo/therion
+> >>>
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251105/bc000dfd/attachment-0001.htm>
+
+From rsev at pm.me  Thu Nov  6 21:22:26 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Thu, 06 Nov 2025 20:22:26 +0000
+Subject: [Therion] Mapiah 0.2.21 released
+Message-ID: <0EMalUdbG07O219nz5kJ8kxqyuPHBeSdha-8OVnxK4VbwvC9lEl_GxrSJFnYFX0PZp-BQMP21ck_CUWoa3U0AyVueK4z4-S0gNcUFNLxc3Q=@pm.me>
+
+Hi,
+
+Just released Mapiah version 0.2.21.
+# Changelog
+
+## 0.2.21 - 2025-11-06 - Life isn't only programming
+* New features:
+* Setting canvas scale to 100% for new files.
+* Fixed bugs:
+* New files don?t update internal status on element add/edit/remove: caused all kinds of strange problems on new file editing.
+* On line creation, smooth option was set to B?zier line segments but control points were adjusted only after line creation completion.
+* Infrastructure maintenance:
+* Added tests:
+* asserting the fitter first command is always a moveTo before any curveTo, ensuring regressions don?t return;
+* editing a new line in a new file.
+* flutter pub upgrade --major-versions:
+* upgraded to petite_parser 7.0.1.
+
+Desktop versions available at https://github.com/rsevero/mapiah/releases/tag/v0.2.21
+
+We version available at https://mapiah.org/webapp.
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251106/379b9b39/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Nov 13 19:17:49 2025
+From: bruce at tomo.co.nz (bruce at tomo.co.nz)
+Date: Fri, 14 Nov 2025 07:17:49 +1300
+Subject: [Therion] Therion date data delimiter
+Message-ID: <000201dc54c9$d39fb0d0$7adf1270$@tomo.co.nz>
+
+Good morning
+
+I've just inherited some Therion survey data that includes dates defined:
+
+date 1985 2 16
+
+(as opposed to date 1985.2.16)
+
+ 
+
+A cursory look suggests it is working, in that no errors or warnings are
+reported, and Aven seems to be interpreting the dates of the surveys
+exported from Therion.
+
+ 
+
+The Therion Book suggests that . is the only valid delimiter in this
+position - no mention of using a space.
+
+ 
+
+Is there any problem with using a space as the date delimiter?
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251114/5a1b5cb4/attachment.htm>
+
+From beni at hallinger.org  Thu Nov 13 21:12:37 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 13 Nov 2025 21:12:37 +0100
+Subject: [Therion] Therion date data delimiter
+In-Reply-To: <000201dc54c9$d39fb0d0$7adf1270$@tomo.co.nz>
+References: <000201dc54c9$d39fb0d0$7adf1270$@tomo.co.nz>
+Message-ID: <62B463CE-24F8-4785-8CBB-25D213F58539@hallinger.org>
+
+Otherwise, might be easily adjusted using a quick sed 
+
+> Am 13.11.2025 um 19:18 schrieb bruce at tomo.co.nz:
+> 
+> ?
+> Good morning
+> I?ve just inherited some Therion survey data that includes dates defined:
+> date 1985 2 16
+> (as opposed to date 1985.2.16)
+>  
+> A cursory look suggests it is working, in that no errors or warnings are reported, and Aven seems to be interpreting the dates of the surveys exported from Therion.
+>  
+> The Therion Book suggests that . is the only valid delimiter in this position ? no mention of using a space.
+>  
+> Is there any problem with using a space as the date delimiter?
+>  
+> Regards
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251113/8a8275ba/attachment.htm>
+
+From rsev at pm.me  Thu Nov 13 22:59:54 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Thu, 13 Nov 2025 21:59:54 +0000
+Subject: [Therion] New Mapiah release 0.2.22
+Message-ID: <TOulw_LbNCOKTiBWVVA_21gWLnhTKs6VsIEyOnpElGjCnCV2hhYLXZ9Q5NUz6zaV1rwAS7MXRIF38N-hJG_E6iDb05WJOAOiQJDKSXqZcsc=@pm.me>
+
+Hi,
+
+Another weekly Mapiah release: 0.2.22.
+
+# Changelog
+
+## 0.2.22 - 2025-11-13 - The line simplification release
+* New features:
+* Simplify complex (that contains straight and B?zier curve segments) lines.
+* Keyboard shortcuts help page.
+* Simplified line segments forced to B?zier curves (Ctrl+Alt+L).
+* Simplified line segments forced to straight (Ctrl+Shift+L).
+* Fixed bugs:
+* Select and Node Edit buttons enabling/disabling logic.
+* On B?zier curve line simplification, first line segment being lost.
+* When several elements are selected and one is deselected, the status bar message is not updated.
+* Infrastructure maintenance:
+* Added test:
+* Open a file, select a line and simplify pressing Ctrl+L.
+* Fixed B?zier spelling.
+* Improving line segments list line generation. * Flutter upgraded to 3.38.1.
+
+The desktop versions are available at https://github.com/rsevero/mapiah/releases/tag/v0.2.22 and the web release is available at https://mapiah.org/webapp as usual.
+
+Regards,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251113/a00c1b4e/attachment.htm>
+
+From rsev at pm.me  Thu Nov 27 22:32:51 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Thu, 27 Nov 2025 21:32:51 +0000
+Subject: [Therion] Mapiah release 0.2.23
+Message-ID: <X1oFfAQVcHHfRHj2rA8-JpkzlQ0KqW9DY_R7SVLcJ5JcgAzlP59X_1Umw7LSXr4j-i9WrQXrZt3dE-teLDziSw7WVNRgv7kuLnSKfj-5BZ0=@pm.me>
+
+Hi,
+
+I have just released Mapiah version 0.2.23 with the following change log:
+
+# Changelog
+
+## 0.2.23 - 2025-11-27 - The Perua?u release
+* New features:
+* Add/remove commmands removing empty lines after element selected for deletion:
+* AreaBorderTHID;
+* Area;
+* Element;
+* Line;
+* Line segment;
+* Point;
+* Scrap;
+* XTherionImageInsertConfig.
+* Removing last area border THID from area removes the area.
+* Removing all or all but one line segments from line removes the line.
+* Fixed bugs:
+* MPCommandFactory.removeElements() does not use provided description type.
+* Empty lines not being properly represented as original version.
+* Infrastructure maintenance:
+* Flutter upgraded to 3.38.3.
+* flutter pub upgrade --major-versions * MPCommandFactory.[add/remove]elements() using all specific add/remove commands.
+* Created MP[Add|Remove]ElementCommand.
+* Created MP[Add|Remove]EmptyLineCommand.
+
+The desktop versions are available at https://github.com/rsevero/mapiah/releases/tag/v0.2.23 and the web version is available at https://mapiah.org/webapp.
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251127/d4704f0f/attachment.htm>
+

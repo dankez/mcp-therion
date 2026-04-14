@@ -1,0 +1,566 @@
+From mark at markdickey.net  Fri Dec  2 21:40:33 2022
+From: mark at markdickey.net (Mark Dickey)
+Date: Fri, 2 Dec 2022 15:40:33 -0500
+Subject: [Therion] Convert eligible lines to curves
+Message-ID: <5624eb07-6d74-7492-a16b-b22c09c4923c@markdickey.net>
+
+Good day,
+
+*Summary:*? I added a new xtherion feature: "Convert eligible lines to 
+curves". I have tested the feature locally and used it to convert almost 
+a thousand poly lines to bezier curves successfully. I created a new git 
+fork of therion and have created a pull request for review and 
+approval.? It is at: https://github.com/therion/therion/pull/468
+
+*Detail:*
+
+During a recent expedition I had a user change the line creation setting 
+in Topodroid away from bezier. This resulted in almost two weeks of 
+survey data on that device being poly based. While it would be possible 
+to convert lines individually, there were hundreds upon hundreds of 
+lines. I searched the therion book, wiki, and mailing list for tentative 
+solutions. The only reference to this was on the mailing list from years 
+ago and had no solution.
+
+I considered writing a parser for the th2 files and running it through a 
+separate algorithm, as well as exporting to svg, converting the lines in 
+illustrator, and then converting to th2...but I decided to add a new 
+feature to Therion to convert all eligible lines from poly to bezier curves.
+
+If approved, the new option is found under the "Edit" menu and provides 
+a prompt for confirmation with the count of lines to be converted. While 
+the process is running, there is a progress bar displayed. It takes a 
+long time to run when there is a high volume of points (mostly due to 
+redrawing of points I expect), but just let it go in the background and 
+it'll get there.
+
+-- 
+Mark Dickey
+914-879-7803
+mark at markdickey.net
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221202/e87e181a/attachment.htm>
+
+From rsev at pm.me  Tue Dec 13 23:23:09 2022
+From: rsev at pm.me (Rodrigo Severo)
+Date: Tue, 13 Dec 2022 22:23:09 +0000
+Subject: [Therion] Therion not overwriting existing PDFs
+Message-ID: <enS_RNdf1Zm3rmCMHe7VFaEhuvHLRc4yuVpss-YaSScIAuLVRxxG9ejJifT3wZGn4lO1AdXGC0OgnrPgWiJi49sHlaZQYapQ6gymfJSkY4M=@pm.me>
+
+Hi,
+
+My updated Therion (therion 6.0.5+839a85d+dev (2022-12-08) - using Proj 9.0.1, compiled against 9.0.1) running on Fedora 37 is refusing to overwrite an existing PDF file as it can be seem on the following log:
+
+##################### end of pdftex log file #####################
+therion: error -- filesystem error: cannot copy: File exists [/tmp/th844522/data.pdf] [sdlm-projetado.pdf]writing xtherion file ... done
+
+If I delete the previous created PDF file the new one is created without problem. I have never seem that in Therion.
+
+Is it a recent bug or some incompatibility with Fedora 37?
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221213/aa5db35c/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Dec 13 23:48:00 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 13 Dec 2022 22:48:00 +0000
+Subject: [Therion] Therion not overwriting existing PDFs
+In-Reply-To: <enS_RNdf1Zm3rmCMHe7VFaEhuvHLRc4yuVpss-YaSScIAuLVRxxG9ejJifT3wZGn4lO1AdXGC0OgnrPgWiJi49sHlaZQYapQ6gymfJSkY4M=@pm.me>
+References: <enS_RNdf1Zm3rmCMHe7VFaEhuvHLRc4yuVpss-YaSScIAuLVRxxG9ejJifT3wZGn4lO1AdXGC0OgnrPgWiJi49sHlaZQYapQ6gymfJSkY4M=@pm.me>
+Message-ID: <33366985-6bc7-e314-759f-80066d587330@ntlworld.com>
+
+Hi Rodrigo,
+
+> Is it a recent bug or some incompatibility with Fedora 37?
+
+I have seen this before *on Windows* when:
+1. The PDF is locked by a PDF viewer like Acrobat.
+2. The .xtherion.dat file is read-only or hidden.
+
+That second one is a real gotcha when copying from a Linux system.
+
+Are you perhaps bumping into a Linux equivalent of one of those?
+
+Tarquin
+
+From lists at group-s.sk  Wed Dec 14 07:12:37 2022
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 14 Dec 2022 07:12:37 +0100
+Subject: [Therion] Therion not overwriting existing PDFs
+In-Reply-To: <33366985-6bc7-e314-759f-80066d587330@ntlworld.com>
+References: <enS_RNdf1Zm3rmCMHe7VFaEhuvHLRc4yuVpss-YaSScIAuLVRxxG9ejJifT3wZGn4lO1AdXGC0OgnrPgWiJi49sHlaZQYapQ6gymfJSkY4M=@pm.me>
+ <33366985-6bc7-e314-759f-80066d587330@ntlworld.com>
+Message-ID: <CAP35+gHC3WOrWN8SHMVUZi4jQ8j2kwcib2h0AzaEgX_bnkQE3Q@mail.gmail.com>
+
+I am sorry, looks like a bug was introduced a week ago
+in 14b5ae0e132997cc9f1e313c04645684a882fd56.
+
+It should be fixed now.
+
+Best regards, S.
+
+On Wed, 14 Dec 2022 at 00:21, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> Hi Rodrigo,
+>
+> > Is it a recent bug or some incompatibility with Fedora 37?
+>
+> I have seen this before *on Windows* when:
+> 1. The PDF is locked by a PDF viewer like Acrobat.
+> 2. The .xtherion.dat file is read-only or hidden.
+>
+> That second one is a real gotcha when copying from a Linux system.
+>
+> Are you perhaps bumping into a Linux equivalent of one of those?
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221214/26990be0/attachment.htm>
+
+From rsev at pm.me  Wed Dec 14 10:42:42 2022
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 14 Dec 2022 09:42:42 +0000
+Subject: [Therion] Therion not overwriting existing PDFs
+In-Reply-To: <CAP35+gHC3WOrWN8SHMVUZi4jQ8j2kwcib2h0AzaEgX_bnkQE3Q@mail.gmail.com>
+References: <enS_RNdf1Zm3rmCMHe7VFaEhuvHLRc4yuVpss-YaSScIAuLVRxxG9ejJifT3wZGn4lO1AdXGC0OgnrPgWiJi49sHlaZQYapQ6gymfJSkY4M=@pm.me>
+ <33366985-6bc7-e314-759f-80066d587330@ntlworld.com>
+ <CAP35+gHC3WOrWN8SHMVUZi4jQ8j2kwcib2h0AzaEgX_bnkQE3Q@mail.gmail.com>
+Message-ID: <f9wkZNL4VcUDMDTVn3AvfNM_EwpgbiL4Ndl5t4f_yIk-a7QNzEayEBrEM_k5CprfyG4EcQXKmzwPaoL2xI5EoNj-CMNJ-4_DZQmVPFuFXdI=@pm.me>
+
+Hi Stacho,
+
+It's fixed.
+
+Thanks for your prompt answer.
+
+Regards,
+
+Rodrigo Severo
+
+------- Original Message -------
+On Wednesday, December 14th, 2022 at 3:12 AM, Stacho Mudrak <lists at group-s.sk> wrote:
+
+> I am sorry, looks like a bug was introduced a week ago in 14b5ae0e132997cc9f1e313c04645684a882fd56.
+>
+> It should be fixed now.
+>
+> Best regards, S.
+>
+> On Wed, 14 Dec 2022 at 00:21, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+>
+>> Hi Rodrigo,
+>>
+>>> Is it a recent bug or some incompatibility with Fedora 37?
+>>
+>> I have seen this before *on Windows* when:
+>> 1. The PDF is locked by a PDF viewer like Acrobat.
+>> 2. The .xtherion.dat file is read-only or hidden.
+>>
+>> That second one is a real gotcha when copying from a Linux system.
+>>
+>> Are you perhaps bumping into a Linux equivalent of one of those?
+>>
+>> Tarquin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221214/679ad86b/attachment.htm>
+
+From dropstone at gmx.de  Sat Dec 17 17:39:26 2022
+From: dropstone at gmx.de (Axel)
+Date: Sat, 17 Dec 2022 17:39:26 +0100
+Subject: [Therion] lookup scrap -define default color
+Message-ID: <trinity-41b3c447-a60a-408a-ae6d-4b450df0d8a4-1671295166080@3c-app-gmx-bap35>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221217/705afdb4/attachment.htm>
+
+From shemeshi at gmail.com  Tue Dec 20 23:38:26 2022
+From: shemeshi at gmail.com (Ofir Shemesh)
+Date: Wed, 21 Dec 2022 00:38:26 +0200
+Subject: [Therion] convert excel to therion
+Message-ID: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+
+hi,
+i have a cave data in *Excel*.
+the data columns are: from, to, distance, compass, clino, left, right, up,
+down.
+for example: 1.1, 1.2, 7.74, 331, 3.7, 1.9, 6.4, 2 0
+
+How can I convert this data to therion?
+
+tnx,
+Shemesh.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221221/ce59a04c/attachment.htm>
+
+From dropstone at gmx.de  Wed Dec 21 08:31:22 2022
+From: dropstone at gmx.de (Axel)
+Date: Wed, 21 Dec 2022 08:31:22 +0100
+Subject: [Therion] convert excel to therion
+In-Reply-To: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+References: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+Message-ID: <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221221/7bb4755b/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Dec 21 08:45:47 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 21 Dec 2022 07:45:47 +0000
+Subject: [Therion] convert excel to therion
+In-Reply-To: <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+References: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+ <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+Message-ID: <2e703420-6d47-db70-63bb-b5a09879dc35@ntlworld.com>
+
+Step 1 would be to get the data out of Excel and into a text-based
+format. Axel suggests copy & paste, which works very well.
+Alternatively, in Excel, use "Save as" to save it as a CSV file. Then
+open the CSV file in a text editor that has a find-&-replace function,
+and replace all commas with spaces. Save the file as something.th
+
+It's entirely up to you which approach you would prefer.
+
+Step 2 is to add in the basic Therion wrapper that Axel suggested.
+
+Cheers,
+Tarquin
+
+> u have to wrap it around some basic Therion code (survey/ centerline).
+> As ure question suggest u have not worked before with Therion u might
+> want to have a look at one of the dokumentations listet here:
+> https://therion.speleo.sk/wiki/doku.php
+> u want something like:
+> ? survey 1
+> ??? centerline
+> ????? date jjjj.mm.dd
+> ????? data normal from to length compass clino left right up down
+> ????? 1.1? 1.2? 7.74? 331? 3.7? 1.9? 6.4? 2? 0
+> ????? (copy&paste)
+> ????? ...
+> ??? endcenterline
+> ? endsurvey
+> in a text file saved as *.th
+> as stated before, pls have a look at the dokumentation. There are plenty
+> listed: e.g. a step by step one for cavers:
+> https://therion.speleo.sk/wiki/tfc
+> ?
+> Axel
+
+From andrew at wotcc.org.uk  Wed Dec 21 09:21:19 2022
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 21 Dec 2022 08:21:19 +0000
+Subject: [Therion] convert excel to therion
+In-Reply-To: <2e703420-6d47-db70-63bb-b5a09879dc35@ntlworld.com>
+References: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+ <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+ <2e703420-6d47-db70-63bb-b5a09879dc35@ntlworld.com>
+Message-ID: <15B756D2-7A19-46A3-91A0-7E71A90D1ED9@wotcc.org.uk>
+
+Instead of using CSV, there is also a lesser used format tsv, tab spaced variables.) 
+
+Exporting as tsv and then opening in a text editor saves the search and replace part.
+
+Andrew
+-- 
+Sent with K-9 Mail
+
+On 21 December 2022 07:45:47 GMT, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+>Step 1 would be to get the data out of Excel and into a text-based
+>format. Axel suggests copy & paste, which works very well.
+>Alternatively, in Excel, use "Save as" to save it as a CSV file. Then
+>open the CSV file in a text editor that has a find-&-replace function,
+>and replace all commas with spaces. Save the file as something.th
+>
+>It's entirely up to you which approach you would prefer.
+>
+>Step 2 is to add in the basic Therion wrapper that Axel suggested.
+>
+>Cheers,
+>Tarquin
+>
+>> u have to wrap it around some basic Therion code (survey/ centerline).
+>> As ure question suggest u have not worked before with Therion u might
+>> want to have a look at one of the dokumentations listet here:
+>> https://therion.speleo.sk/wiki/doku.php
+>> u want something like:
+>> ? survey 1
+>> ??? centerline
+>> ????? date jjjj.mm.dd
+>> ????? data normal from to length compass clino left right up down
+>> ????? 1.1? 1.2? 7.74? 331? 3.7? 1.9? 6.4? 2? 0
+>> ????? (copy&paste)
+>> ????? ...
+>> ??? endcenterline
+>> ? endsurvey
+>> in a text file saved as *.th
+>> as stated before, pls have a look at the dokumentation. There are plenty
+>> listed: e.g. a step by step one for cavers:
+>> https://therion.speleo.sk/wiki/tfc
+>> ?
+>> Axel
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+From shemeshi at gmail.com  Wed Dec 21 10:14:58 2022
+From: shemeshi at gmail.com (Ofir Shemesh)
+Date: Wed, 21 Dec 2022 11:14:58 +0200
+Subject: [Therion] convert excel to therion
+In-Reply-To: <15B756D2-7A19-46A3-91A0-7E71A90D1ED9@wotcc.org.uk>
+References: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+ <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+ <2e703420-6d47-db70-63bb-b5a09879dc35@ntlworld.com>
+ <15B756D2-7A19-46A3-91A0-7E71A90D1ED9@wotcc.org.uk>
+Message-ID: <CAGmzBqk7wWRYtz4pi6Wx4i=AwNMXKoQtGY5AAzCHaxFto-S_sA@mail.gmail.com>
+
+i was thinking - maybe someone has some script that does this conversion?
+
+??????? ??? ??, 21 ????? 2022 ?-10:21 ??? ?Andrew Atkinson?? <?
+andrew at wotcc.org.uk??>:?
+
+> Instead of using CSV, there is also a lesser used format tsv, tab spaced
+> variables.)
+>
+> Exporting as tsv and then opening in a text editor saves the search and
+> replace part.
+>
+> Andrew
+> --
+> Sent with K-9 Mail
+>
+> On 21 December 2022 07:45:47 GMT, Tarquin Wilton-Jones via Therion <
+> therion at speleo.sk> wrote:
+> >Step 1 would be to get the data out of Excel and into a text-based
+> >format. Axel suggests copy & paste, which works very well.
+> >Alternatively, in Excel, use "Save as" to save it as a CSV file. Then
+> >open the CSV file in a text editor that has a find-&-replace function,
+> >and replace all commas with spaces. Save the file as something.th
+> >
+> >It's entirely up to you which approach you would prefer.
+> >
+> >Step 2 is to add in the basic Therion wrapper that Axel suggested.
+> >
+> >Cheers,
+> >Tarquin
+> >
+> >> u have to wrap it around some basic Therion code (survey/ centerline).
+> >> As ure question suggest u have not worked before with Therion u might
+> >> want to have a look at one of the dokumentations listet here:
+> >> https://therion.speleo.sk/wiki/doku.php
+> >> u want something like:
+> >>   survey 1
+> >>     centerline
+> >>       date jjjj.mm.dd
+> >>       data normal from to length compass clino left right up down
+> >>       1.1  1.2  7.74  331  3.7  1.9  6.4  2  0
+> >>       (copy&paste)
+> >>       ...
+> >>     endcenterline
+> >>   endsurvey
+> >> in a text file saved as *.th
+> >> as stated before, pls have a look at the dokumentation. There are plenty
+> >> listed: e.g. a step by step one for cavers:
+> >> https://therion.speleo.sk/wiki/tfc
+> >>
+> >> Axel
+> >_______________________________________________
+> >Therion mailing list
+> >Therion at speleo.sk
+> >https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221221/e38dd913/attachment-0001.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Dec 21 20:09:58 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 21 Dec 2022 19:09:58 +0000
+Subject: [Therion] convert excel to therion
+In-Reply-To: <CAGmzBqk7wWRYtz4pi6Wx4i=AwNMXKoQtGY5AAzCHaxFto-S_sA@mail.gmail.com>
+References: <CAGmzBqkESYgn8fMqZynSXL3OGKG_u0P05BF9Skf7HVz4aqARKQ@mail.gmail.com>
+ <trinity-a411af4f-fa1b-4bb0-b180-0d935d6a111f-1671607882949@3c-app-gmx-bs63>
+ <2e703420-6d47-db70-63bb-b5a09879dc35@ntlworld.com>
+ <15B756D2-7A19-46A3-91A0-7E71A90D1ED9@wotcc.org.uk>
+ <CAGmzBqk7wWRYtz4pi6Wx4i=AwNMXKoQtGY5AAzCHaxFto-S_sA@mail.gmail.com>
+Message-ID: <51b3bc95-a074-66da-a451-982ae9274ced@ntlworld.com>
+
+> i was thinking?- maybe someone has some script that does this conversion?
+
+Possibly there is, but there is not really a need to do so for simple
+data sets:
+
+1. in Excel, save-as "Text (tab-delimited) (*.txt)", call it foo.th
+2. edit it in a text editor
+3. add this at the start:
+
+survey foo
+  centreline
+    date yyyy.mm.dd
+    data normal from to length compass clino left right up down
+
+and this at the end:
+
+  endcentreline
+endsurvey
+
+That's it. Done. Not really enough steps to need a script. If your
+spreadsheet has data in this order, you could do it with step 1 only:
+
+survey|foo
+centreline
+date|yyyy.mm.dd
+data|normal|from|to|length|compass|clino|left|right|up|down
+1.1|1.2|7.74|331|3.7|1.9|6.4|2|0
+endcentreline
+endsurvey
+
+If you have a *lot* of files, then yes, maybe you could create a macro
+to do it, but the exact information needed would depend on how your
+spreadsheet is arranged, so the macro would need to be created
+specifically for your spreadsheets, and you could not use someone else's
+script. It would depend on the order of your data, and where the date is
+written in the spreadsheet, what format the date is written in the
+spreadsheet, and where the survey name is written in the spreadsheet.
+Your macro would need to rearrange the file to match that format given
+above, then save the file as a TSV.
+
+An Excel macro could do all of that, and you could probably record it,
+without needing any programming/scripting ability. (Except maybe you
+might need to manually put the date in the right format.)
+
+From lists at group-s.sk  Fri Dec 23 09:12:58 2022
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 23 Dec 2022 09:12:58 +0100
+Subject: [Therion] lookup scrap -define default color
+In-Reply-To: <trinity-41b3c447-a60a-408a-ae6d-4b450df0d8a4-1671295166080@3c-app-gmx-bap35>
+References: <trinity-41b3c447-a60a-408a-ae6d-4b450df0d8a4-1671295166080@3c-app-gmx-bap35>
+Message-ID: <CAP35+gE9X9_G6G6yuiaP2qnkJhy8-wwCw7pQKNG0-V08sMqsCg@mail.gmail.com>
+
+Hi Axel,
+
+thanks for finding out and I am sorry for the delay. It looks like it was a
+bug. It should be fixed now (1c9d8da
+<https://github.com/therion/therion/commit/1c9d8da396bedf2f1bd693a1e27caf51229272e3>
+).
+
+Best regards, S.
+
+On Sat, 17 Dec 2022 at 17:39, Axel <dropstone at gmx.de> wrote:
+
+> Hi all,
+>
+> I want to color some scraps differently than the rest.
+> If map-fg is set to white there are no issues with the lookup, but if I
+> want to define a default color for the rest of the scraps it wont work.
+> With maps it works like that:
+>   lookup map:1
+>     - [color1]
+>     map2 at survey [color2]
+>   endlookup
+> Map2 is now in color2 wheras the rest is in color1. But the '- [color]'
+> definition wont work with scraps. Am I missing something or is that just
+> nor working for scraps?
+> Ok, one solution might be to create maps, but I really want to avoid that
+> as it would be a lot of work for that cave...
+>
+> thanks,
+> Axel
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221223/03d1dcb5/attachment.htm>
+
+From therion at speleo.sk  Fri Dec 23 19:00:03 2022
+From: therion at speleo.sk (Therion)
+Date: Fri, 23 Dec 2022 19:00:03 +0100 (CET)
+Subject: [Therion] new Therion 6.1.4
+Message-ID: <20221223180003.251F660A9E@mail.speleo.sk>
+
+Hi, there is a new release 6.1.4 of Therion.
+Check https://github.com/therion/therion/releases/tag/v6.1.4 for more details.
+
+Best regards,
+Therion team
+
+From henry at hbennett.com  Wed Dec 28 11:44:16 2022
+From: henry at hbennett.com (Henry Bennett)
+Date: Wed, 28 Dec 2022 10:44:16 +0000
+Subject: [Therion] new Therion 6.1.4
+In-Reply-To: <20221223180003.251F660A9E@mail.speleo.sk>
+References: <20221223180003.251F660A9E@mail.speleo.sk>
+Message-ID: <CAL=o7FgcJCzYXv60PqzvPcX9170=vXD-Amow79NPw7AYDwTJ1Q@mail.gmail.com>
+
+win 6.1.4 won't overwrite output files
+
+     ##################### end of pdftex log file #####################
+     C:\Program Files (x86)\Therion\therion.exe: error -- filesystem error:
+cannot copy: File exists [C:\Users...\AppData\Local\Temp\th10908\data.pdf]
+[cave_name.pdf]
+     writing xtherion file ... done
+
+I hit this with every survey. Reverting to 6.1.3 works fine
+
+Raised as case https://github.com/therion/therion/issues/480
+
+I looked at the commits since 6.1.3 and it's way beyond me.  Thanks for
+making Therion such a good project!
+
+Henry
+
+On Fri, Dec 23, 2022 at 6:00 PM Therion via Therion <therion at speleo.sk>
+wrote:
+
+> Hi, there is a new release 6.1.4 of Therion.
+> Check https://github.com/therion/therion/releases/tag/v6.1.4 for more
+> details.
+>
+> Best regards,
+> Therion team
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20221228/d7a6d2be/attachment.htm>
+
+From therion at speleo.sk  Fri Dec 30 18:20:03 2022
+From: therion at speleo.sk (Therion)
+Date: Fri, 30 Dec 2022 18:20:03 +0100 (CET)
+Subject: [Therion] new Therion 6.1.5
+Message-ID: <20221230172003.038735FFF4@mail.speleo.sk>
+
+Hi, there is a new release 6.1.5 of Therion.
+Check https://github.com/therion/therion/releases/tag/v6.1.5 for more details.
+
+Best regards,
+Therion team
+

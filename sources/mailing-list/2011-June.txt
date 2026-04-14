@@ -1,0 +1,3409 @@
+From bgee at campercaver.net  Wed Jun  1 01:28:44 2011
+From: bgee at campercaver.net (Bill Gee)
+Date: Tue, 31 May 2011 18:28:44 -0500
+Subject: [Therion] Compiling Therion on Fedora 15
+In-Reply-To: <20110531024916.GY5028@dream.aleph1.co.uk>
+References: <201105292017.02477.bgee@campercaver.net>
+	<20110531024916.GY5028@dream.aleph1.co.uk>
+Message-ID: <201105311828.44712.bgee@campercaver.net>
+
+Hi Wookey -
+
+Thanks for looking into this.  Your first response was rather daunting!  I know 
+enough about C programming to get into serious trouble, but not enough to get 
+out.
+
+One thing I have found with VTK is that I always have to make a link from the 
+vtk "include" directory to a directory named vtk-5.4 ...
+
+	ln -s /usr/include/vtk  /usr/include/vtk-5.4
+
+Also, my Fedora 14 system has vtk 5.6 installed.
+
+When you say "unstable", what are you referring to?  The Therion version?  
+Fedora?  Vtk?
+
+Regards - Bill Gee
+
+
+On Monday, May 30, 2011 21:49:17 Wookey wrote:
+> +++ Bill Gee [2011-05-29 20:17 -0500]:
+> > Hello everyone -
+> > 
+> > I just did a clean (not an upgrade) install of Fedora 15, 64-bit.  Trying
+> > to compile Therion 5.3.6 and 5.3.7 produces an error in thbezier.  There
+> > are warnings, too, but I think they can be ignored.
+> > 
+> > 
+> > c++ -c -Wall -DTHLINUX -O2 -o thbezier.o thbezier.cxx
+> > In file included from thbezier.cxx:48:0:
+> > thbezier.h:53:3: error: ‘size_t’ does not name a type
+> > thbezier.h:66:3: error: ‘size_t’ does not name a type
+> > thbezier.cxx: In member function ‘void
+> > thbezier_curve::copy_polyline(thbezier_polyline*, double)’:
+> > thbezier.cxx:1372:25: error: ‘struct thbezier_polyline’ has no member
+> > named ‘get_length’
+> > make: *** [thbezier.o] Error 1
+> 
+> OK. I've reproduced this now. By building on unstable instead of
+> stable. Could be updating to vtk v5.6 instead of v5.4. but a
+> number of other libs were upgraded too. Will investigate.
+> 
+> Wookey
+
+
+From wookey at wookware.org  Wed Jun  1 01:30:53 2011
+From: wookey at wookware.org (Wookey)
+Date: Wed, 1 Jun 2011 00:30:53 +0100
+Subject: [Therion] Compiling Therion on Fedora 15
+In-Reply-To: <20110531024916.GY5028@dream.aleph1.co.uk>
+References: <201105292017.02477.bgee@campercaver.net>
+	<20110531024916.GY5028@dream.aleph1.co.uk>
+Message-ID: <20110531233053.GO5028@dream.aleph1.co.uk>
+
++++ Wookey [2011-05-31 03:49 +0100]:
+> +++ Bill Gee [2011-05-29 20:17 -0500]:
+> > Hello everyone -
+> > 
+> > I just did a clean (not an upgrade) install of Fedora 15, 64-bit.  Trying to 
+> > compile Therion 5.3.6 and 5.3.7 produces an error in thbezier.  There are 
+> > warnings, too, but I think they can be ignored.
+> 
+> 
+> > c++ -c -Wall -DTHLINUX -O2 -o thbezier.o thbezier.cxx
+> > In file included from thbezier.cxx:48:0:
+> > thbezier.h:53:3: error: ‘size_t’ does not name a type
+> > thbezier.h:66:3: error: ‘size_t’ does not name a type
+> > thbezier.cxx: In member function ‘void 
+> > thbezier_curve::copy_polyline(thbezier_polyline*, double)’:
+> > thbezier.cxx:1372:25: error: ‘struct thbezier_polyline’ has no member named 
+> > ‘get_length’
+> > make: *** [thbezier.o] Error 1
+> 
+> OK. I've reproduced this now. By building on unstable instead of
+> stable. Could be updating to vtk v5.6 instead of v5.4. but a
+> number of other libs were upgraded too. Will investigate. 
+
+In fact this problem is due to using gcc-4.5 which has stricter rules
+for including c++ headers. This patch fixes it:
+
+Index: therion-5.3.7/thbezier.h
+===================================================================
+--- therion-5.3.7.orig/thbezier.h	2011-05-31 18:10:26.269303221 +0100
++++ therion-5.3.7/thbezier.h	2011-05-31 18:11:13.621303221 +0100
+@@ -29,6 +29,7 @@
+ #ifndef thbezier_h
+ #define thbezier_h
+ 
++#include <cstddef>
+ #include <list>
+ #include <vector>
+ 
+Index: therion-5.3.7/thdb2dcp.cxx
+===================================================================
+--- therion-5.3.7.orig/thdb2dcp.cxx	2011-05-31 18:10:26.285303221 +0100
++++ therion-5.3.7/thdb2dcp.cxx	2011-05-31 18:11:13.621303221 +0100
+@@ -27,6 +27,8 @@
+  
+ #include "thdb2dcp.h"
+ 
++#include <cstddef>
++
+ thdb2dcp::thdb2dcp() {
+ 
+   this->point = NULL;
+Index: therion-5.3.7/thscraplo.cxx
+===================================================================
+--- therion-5.3.7.orig/thscraplo.cxx	2011-05-31 18:10:26.309303221 +0100
++++ therion-5.3.7/thscraplo.cxx	2011-05-31 18:11:13.621303221 +0100
+@@ -27,6 +27,8 @@
+  
+ #include "thscraplo.h"
+ 
++#include <cstddef>
++
+ thscraplo::thscraplo() {
+ 
+   this->next_line = NULL;
+Index: therion-5.3.7/thscrapen.cxx
+===================================================================
+--- therion-5.3.7.orig/thscrapen.cxx	2011-05-31 18:10:26.317303221 +0100
++++ therion-5.3.7/thscrapen.cxx	2011-05-31 18:11:13.621303221 +0100
+@@ -27,6 +27,8 @@
+  
+ #include "thscrapen.h"
+ 
++#include <cstddef>
++
+ thscrapen::thscrapen() {
+ 
+   this->next_end = NULL;
+Index: therion-5.3.7/extern/lxMath.h
+===================================================================
+--- therion-5.3.7.orig/extern/lxMath.h	2011-05-31 18:10:26.293303221 +0100
++++ therion-5.3.7/extern/lxMath.h	2011-05-31 18:11:13.621303221 +0100
+@@ -31,6 +31,7 @@
+ 
+ // Standard libraries
+ #ifndef LXDEPCHECK
++#include <cstddef>
+ #include <list>
+ #include <vector>
+ #include <map>
+Index: therion-5.3.7/thwarp.h
+===================================================================
+--- therion-5.3.7.orig/thwarp.h	2011-05-31 18:10:26.277303221 +0100
++++ therion-5.3.7/thwarp.h	2011-05-31 18:11:13.621303221 +0100
+@@ -32,6 +32,7 @@
+ #include "thpic.h"
+ #include "thsketch.h"
+ 
++#include <cstddef>
+ 
+ class thwarp {
+ 
+Index: therion-5.3.7/extern/poly2tri/sweep/sweep_context.h
+===================================================================
+--- therion-5.3.7.orig/extern/poly2tri/sweep/sweep_context.h	2011-05-31 18:11:20.237303221 +0100
++++ therion-5.3.7/extern/poly2tri/sweep/sweep_context.h	2011-05-31 18:11:44.145303221 +0100
+@@ -32,6 +32,7 @@
+ #ifndef SWEEP_CONTEXT_H
+ #define SWEEP_CONTEXT_H
+ 
++#include <cstddef>
+ #include <list>
+ #include <vector>
+ 
+Index: therion-5.3.7/loch/lxMath.h
+===================================================================
+--- therion-5.3.7.orig/loch/lxMath.h	2011-05-31 18:14:22.781303222 +0100
++++ therion-5.3.7/loch/lxMath.h	2011-05-31 18:14:44.793303222 +0100
+@@ -31,6 +31,7 @@
+ 
+ // Standard libraries
+ #ifndef LXDEPCHECK
++#include <cstddef>
+ #include <list>
+ #include <vector>
+ #include <map>
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Wed Jun  1 01:40:06 2011
+From: wookey at wookware.org (Wookey)
+Date: Wed, 1 Jun 2011 00:40:06 +0100
+Subject: [Therion] therion 5.3.7 uploaded to Debian
+Message-ID: <20110531234006.GP5028@dream.aleph1.co.uk>
+
+I've just uploaded therion 5.3.7 to Debian unstable. It will percolate
+into testing and Ubuntu in due course.
+
+As well as the general 5.3.7 changes, this includes the fix for survex
+1.1 3d compatibility with dates, improved mimetype info, gcc4.5 fixes
+which should be included upstream and it builds with binutils gold
+
+Stacho thank you for including some of my previous patches so the
+delta remains quite small. Please review the new lot and include what
+you can. The binutils-gold more explicit library link list, and gcc4.5
+fixes are definate candidates. The new svg logo is another (which
+could go in the 'about' box too).
+
+The mimetype database info needs testing, so do please give feedback
+on how that works for you.
+
+I'll upload backports for Debian squeeze and ubuntu maverick/natty too.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Wed Jun  1 01:43:24 2011
+From: wookey at wookware.org (Wookey)
+Date: Wed, 1 Jun 2011 00:43:24 +0100
+Subject: [Therion] Compiling Therion on Fedora 15
+In-Reply-To: <20110531233053.GO5028@dream.aleph1.co.uk>
+References: <201105292017.02477.bgee@campercaver.net>
+	<20110531024916.GY5028@dream.aleph1.co.uk>
+	<20110531233053.GO5028@dream.aleph1.co.uk>
+Message-ID: <20110531234324.GQ5028@dream.aleph1.co.uk>
+
++++ Wookey [2011-06-01 00:30 +0100]:
+> +++ Wookey [2011-05-31 03:49 +0100]:
+
+The fact that the same file exists twice in the same sources and thus
+both copies have the same bug, seems like poor practice. Why have we
+got two copies? Are there more files like this?
+
+
+> Index: therion-5.3.7/extern/lxMath.h
+> ===================================================================
+> --- therion-5.3.7.orig/extern/lxMath.h	2011-05-31 18:10:26.293303221 +0100
+> +++ therion-5.3.7/extern/lxMath.h	2011-05-31 18:11:13.621303221 +0100
+> @@ -31,6 +31,7 @@
+>  
+>  // Standard libraries
+>  #ifndef LXDEPCHECK
+> +#include <cstddef>
+>  #include <list>
+>  #include <vector>
+>  #include <map>
+> Index: therion-5.3.7/loch/lxMath.h
+> ===================================================================
+> --- therion-5.3.7.orig/loch/lxMath.h	2011-05-31 18:14:22.781303222 +0100
+> +++ therion-5.3.7/loch/lxMath.h	2011-05-31 18:14:44.793303222 +0100
+> @@ -31,6 +31,7 @@
+>  
+>  // Standard libraries
+>  #ifndef LXDEPCHECK
+> +#include <cstddef>
+>  #include <list>
+>  #include <vector>
+>  #include <map>
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Sun Jun 12 13:32:08 2011
+From: wookey at wookware.org (Wookey)
+Date: Sun, 12 Jun 2011 12:32:08 +0100
+Subject: [Therion] distox
+In-Reply-To: <1271243691.7856.22.camel@localhost.localdomain>
+References: <1271229535.5502.20.camel@localhost.localdomain>
+	<20100414112256.GL7110@dream.aleph1.co.uk>
+	<1271243691.7856.22.camel@localhost.localdomain>
+Message-ID: <20110612113208.GY5028@dream.aleph1.co.uk>
+
++++ marco corvi [2010-04-14 13:14 +0200]:
+> On Wed, 2010-04-14 at 12:22 +0100, Wookey wrote:
+> > +++ marco corvi [2010-04-14 09:18 +0200]:
+
+> > > the work on "my distox programs" is going on.
+> > > you can get the programs and dome docs on the page
+> > > http://marcocorvi.altervista.org/caving/distox/index.htm
+> > 
+> > OK. good stuff. I will download, build and test tonight if I can. 
+> > 
+> > 
+> > OK. What's the deal with the calibration algorithm? Having that remain
+> > secret is going to be a problem. I thought the device could do its
+> > own calibration, but apparently it needs an external app? Perhaps we
+> > can adapt the SAP calibration code (which is Free) as it must be very
+> > similar. 
+> 
+> as far as i read, beat algo is better.
+> beat should have a paper published soon in CREG
+> describing the algo.
+> i believe that when it is published i can put
+> my reimplementation in the sources.
+
+Hi marco - has anything happenned on this? I was waiting for the
+calibration algorithm to make it into the sources before packaging it,
+although we are about to have a problem because QT3 is being dropped
+from distros so a QT4 port will be necessary as wel before it'll be
+accepted upstream, I suspect.
+
+I'm guessing you haven't done any work on this, but if could at least
+put the calibration code in then we'd have the full codebase to work
+on. Did you see Aaron curtis was looking at a reimplmentation for
+android?: http://ukcaving.com/board/index.php?topic=11998.0
+
+(which is what prompted me to poke you again)
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Sun Jun 12 13:33:13 2011
+From: wookey at wookware.org (Wookey)
+Date: Sun, 12 Jun 2011 12:33:13 +0100
+Subject: [Therion] Fw: therion 5.3.7-1 MIGRATED to testing
+Message-ID: <20110612113312.GZ5028@dream.aleph1.co.uk>
+
+Therion 5.3.7 is now in Debian 'Wheezy', and will presumably get
+pulled into Ubuntu universe at some point this cycle.
+
+----- Forwarded message from Debian testing watch <noreply at release.debian.org> -----
+
+From: Debian testing watch <noreply at release.debian.org>
+Date: Sat, 11 Jun 2011 16:39:09 +0000
+To: therion at packages.debian.org
+Subject: therion 5.3.7-1 MIGRATED to testing
+X-Spam-Status: No, score=-5.3 required=4.5 tests=AWL,BAYES_00,
+	RCVD_IN_DNSWL_MED autolearn=ham version=3.2.5
+
+FYI: The status of the therion source package
+in Debian's testing distribution has changed.
+
+  Previous version: 5.3.3-1.1
+  Current version:  5.3.7-1
+
+-- 
+This email is automatically generated once a day.  As the installation of
+new packages into testing happens multiple times a day you will receive
+later changes on the next day.
+See http://release.debian.org/testing-watch/ for more information.
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Sun Jun 12 20:09:30 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 12 Jun 2011 19:09:30 +0100
+Subject: [Therion] Duplicates including adding splays?
+Message-ID: <4DF500DA.8090709@wotcc.org.uk>
+
+Hello
+
+Therion 5.3.5 ubuntu 10.04
+
+In the attached file the following information is given about the survey
+
+title: RhinoPassage
+length: 189.07m (surface 0.00m, duplicated 24.58m)
+vertical range: 20.51m (from 1.27 at RhinoPassage at 20.38m to 
+1.3 at RhinoPassage at -0.13m)
+north-south range: 92.47m (from 1.27 at RhinoPassage at 33.43m to 
+1.53 at RhinoPassage at -59.04m)
+east-west range: 66.67m (from 1.53 at RhinoPassage at 66.67m to 
+1.0 at RhinoPassage at 0.00m)
+number of shots: 281
+number of stations: 282
+
+The duplicate figure got me wondering, it seems to be counting the 
+splays but the length does not. As the duplicate none splays are only 
+about 10m.
+Maybe this is what is wanted, but I personally think that the duplicate 
+value should be the amount taken off the length by the duplicate flag? 
+Ie why is length treated differently to duplicate (something to do with 
+the way survex treated splays and duplicate as different, I think that 
+splays are not included in extend in survex)
+
+Maybe 2 figures would be better, duplicate length and duplicate splays.
+
+{probably best to ignore this next bit}
+Oh this leads to all sorts of thinks that are really not important, like 
+maybe giving the length of all the splays, and the number of stations, 
+is it really 282 or really 54. All depends on your definition I guess
+
+Andrew
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: RhinoPassage.th.zip
+Type: application/zip
+Size: 3583 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110612/f987dc6e/attachment.zip>
+
+From dangle at tomo.co.nz  Sun Jun 12 22:44:21 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Mon, 13 Jun 2011 08:44:21 +1200
+Subject: [Therion] Duplicates including adding splays?
+In-Reply-To: <4DF500DA.8090709@wotcc.org.uk>
+References: <4DF500DA.8090709@wotcc.org.uk>
+Message-ID: <A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+
+Hi Andrew
+Yes, when splay shots to an unlabelled station such as '-' are included in a
+dataset, such as when using a distoX or similar, the statistics do not make
+that much sense to me. I think it still works the way you describe in 5.3.7.
+
+To my way of thinking, splay shots are not part of the survey length (and
+therefore should not be duplicate either), they are analogous to LRUD.  IF
+they are to be reported, they should be separately reported as 'total splay
+length' and 'number of splay stations' (could be further broken down into
+'surface splays' and 'cave splays' if one was being picky).
+
+If there were to be a compromise for the sake of simplicity I would prefer
+that therion exclude splay information from all the reported statistics (as
+it ignores LRUD, which are really just special splay shots), rather than the
+apparently selective way the splay shots are currently included. 
+
+Regards
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Andrew Atkinson
+Sent: Monday, 13 June 2011 6:10 a.m.
+To: List for Therion users
+Subject: [Therion] Duplicates including adding splays?
+
+Hello
+
+Therion 5.3.5 ubuntu 10.04
+
+In the attached file the following information is given about the survey
+
+title: RhinoPassage
+length: 189.07m (surface 0.00m, duplicated 24.58m)
+vertical range: 20.51m (from 1.27 at RhinoPassage at 20.38m to 
+1.3 at RhinoPassage at -0.13m)
+north-south range: 92.47m (from 1.27 at RhinoPassage at 33.43m to 
+1.53 at RhinoPassage at -59.04m)
+east-west range: 66.67m (from 1.53 at RhinoPassage at 66.67m to 
+1.0 at RhinoPassage at 0.00m)
+number of shots: 281
+number of stations: 282
+
+The duplicate figure got me wondering, it seems to be counting the 
+splays but the length does not. As the duplicate none splays are only 
+about 10m.
+Maybe this is what is wanted, but I personally think that the duplicate 
+value should be the amount taken off the length by the duplicate flag? 
+Ie why is length treated differently to duplicate (something to do with 
+the way survex treated splays and duplicate as different, I think that 
+splays are not included in extend in survex)
+
+Maybe 2 figures would be better, duplicate length and duplicate splays.
+
+{probably best to ignore this next bit}
+Oh this leads to all sorts of thinks that are really not important, like 
+maybe giving the length of all the splays, and the number of stations, 
+is it really 282 or really 54. All depends on your definition I guess
+
+Andrew
+
+
+
+From marco.corvi at elsagdatamat.com  Mon Jun 13 08:28:47 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Mon, 13 Jun 2011 08:28:47 +0200
+Subject: [Therion] Duplicates including adding splays?
+In-Reply-To: <A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+References: <4DF500DA.8090709@wotcc.org.uk>
+	<A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+Message-ID: <1307946527.3935.2.camel@localhost.localdomain>
+
+I agree with bruce.
+
+also noticed that splay shots are used for the "depth".
+it might make sense, but  i rather have the depth 
+computed with the survey shots only.
+
+marco.
+
+On Mon, 2011-06-13 at 08:44 +1200, Bruce wrote:
+> Hi Andrew
+> Yes, when splay shots to an unlabelled station such as '-' are included in a
+> dataset, such as when using a distoX or similar, the statistics do not make
+> that much sense to me. I think it still works the way you describe in 5.3.7.
+> 
+> To my way of thinking, splay shots are not part of the survey length (and
+> therefore should not be duplicate either), they are analogous to LRUD.  IF
+> they are to be reported, they should be separately reported as 'total splay
+> length' and 'number of splay stations' (could be further broken down into
+> 'surface splays' and 'cave splays' if one was being picky).
+> 
+> If there were to be a compromise for the sake of simplicity I would prefer
+> that therion exclude splay information from all the reported statistics (as
+> it ignores LRUD, which are really just special splay shots), rather than the
+> apparently selective way the splay shots are currently included. 
+> 
+> Regards
+> Bruce
+> 
+> -----Original Message-----
+> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+> Of Andrew Atkinson
+> Sent: Monday, 13 June 2011 6:10 a.m.
+> To: List for Therion users
+> Subject: [Therion] Duplicates including adding splays?
+> 
+> Hello
+> 
+> Therion 5.3.5 ubuntu 10.04
+> 
+> In the attached file the following information is given about the survey
+> 
+> title: RhinoPassage
+> length: 189.07m (surface 0.00m, duplicated 24.58m)
+> vertical range: 20.51m (from 1.27 at RhinoPassage at 20.38m to 
+> 1.3 at RhinoPassage at -0.13m)
+> north-south range: 92.47m (from 1.27 at RhinoPassage at 33.43m to 
+> 1.53 at RhinoPassage at -59.04m)
+> east-west range: 66.67m (from 1.53 at RhinoPassage at 66.67m to 
+> 1.0 at RhinoPassage at 0.00m)
+> number of shots: 281
+> number of stations: 282
+> 
+> The duplicate figure got me wondering, it seems to be counting the 
+> splays but the length does not. As the duplicate none splays are only 
+> about 10m.
+> Maybe this is what is wanted, but I personally think that the duplicate 
+> value should be the amount taken off the length by the duplicate flag? 
+> Ie why is length treated differently to duplicate (something to do with 
+> the way survex treated splays and duplicate as different, I think that 
+> splays are not included in extend in survex)
+> 
+> Maybe 2 figures would be better, duplicate length and duplicate splays.
+> 
+> {probably best to ignore this next bit}
+> Oh this leads to all sorts of thinks that are really not important, like 
+> maybe giving the length of all the splays, and the number of stations, 
+> is it really 282 or really 54. All depends on your definition I guess
+> 
+> Andrew
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+
+From marco.corvi at elsagdatamat.com  Mon Jun 13 08:40:40 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Mon, 13 Jun 2011 08:40:40 +0200
+Subject: [Therion] ceiling-meander
+Message-ID: <1307947240.3935.11.camel@localhost.localdomain>
+
+i'm kind of confused:
+
+looking at the UIS official symbols ...
+ceiling meander is shown with ticks outside,
+therion ceiling-meander draws with ticks pointing inside.
+
+also chinmey line in UIS is dashed with ticks.
+in therion is just dashed.
+(therion ceiling-step line is dashed with ticks).
+
+marco
+
+
+
+From marco.corvi at elsagdatamat.com  Mon Jun 13 08:47:03 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Mon, 13 Jun 2011 08:47:03 +0200
+Subject: [Therion] xtherion -close on
+Message-ID: <1307947623.3935.18.camel@localhost.localdomain>
+
+the line option "-close on" specifis that a line is closed.
+
+when exporting maps, therion properly closes a line with
+this option.
+
+when xtherion loads the file, the line is "open" and the
+checkbox "close" is unchecked.
+if i check it, xtherion add a point to the line with the
+same coords as the initial point.
+
+marco  
+
+
+
+From lists at group-s.sk  Mon Jun 13 10:00:40 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 13 Jun 2011 10:00:40 +0200
+Subject: [Therion] Duplicates including adding splays?
+In-Reply-To: <1307946527.3935.2.camel@localhost.localdomain>
+References: <4DF500DA.8090709@wotcc.org.uk>
+	<A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+	<1307946527.3935.2.camel@localhost.localdomain>
+Message-ID: <BANLkTintz42EK8S16a57j98HZGSqpN5oVQ@mail.gmail.com>
+
+It looks like a bug, they should not be used for depth. I will try to fix
+it.
+
+Thanks, S.
+
+On 13 June 2011 08:28, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+
+> I agree with bruce.
+>
+> also noticed that splay shots are used for the "depth".
+> it might make sense, but  i rather have the depth
+> computed with the survey shots only.
+>
+> marco.
+>
+> On Mon, 2011-06-13 at 08:44 +1200, Bruce wrote:
+> > Hi Andrew
+> > Yes, when splay shots to an unlabelled station such as '-' are included
+> in a
+> > dataset, such as when using a distoX or similar, the statistics do not
+> make
+> > that much sense to me. I think it still works the way you describe in
+> 5.3.7.
+> >
+> > To my way of thinking, splay shots are not part of the survey length (and
+> > therefore should not be duplicate either), they are analogous to LRUD.
+>  IF
+> > they are to be reported, they should be separately reported as 'total
+> splay
+> > length' and 'number of splay stations' (could be further broken down into
+> > 'surface splays' and 'cave splays' if one was being picky).
+> >
+> > If there were to be a compromise for the sake of simplicity I would
+> prefer
+> > that therion exclude splay information from all the reported statistics
+> (as
+> > it ignores LRUD, which are really just special splay shots), rather than
+> the
+> > apparently selective way the splay shots are currently included.
+> >
+> > Regards
+> > Bruce
+> >
+> > -----Original Message-----
+> > From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On
+> Behalf
+> > Of Andrew Atkinson
+> > Sent: Monday, 13 June 2011 6:10 a.m.
+> > To: List for Therion users
+> > Subject: [Therion] Duplicates including adding splays?
+> >
+> > Hello
+> >
+> > Therion 5.3.5 ubuntu 10.04
+> >
+> > In the attached file the following information is given about the survey
+> >
+> > title: RhinoPassage
+> > length: 189.07m (surface 0.00m, duplicated 24.58m)
+> > vertical range: 20.51m (from 1.27 at RhinoPassage at 20.38m to
+> > 1.3 at RhinoPassage at -0.13m)
+> > north-south range: 92.47m (from 1.27 at RhinoPassage at 33.43m to
+> > 1.53 at RhinoPassage at -59.04m)
+> > east-west range: 66.67m (from 1.53 at RhinoPassage at 66.67m to
+> > 1.0 at RhinoPassage at 0.00m)
+> > number of shots: 281
+> > number of stations: 282
+> >
+> > The duplicate figure got me wondering, it seems to be counting the
+> > splays but the length does not. As the duplicate none splays are only
+> > about 10m.
+> > Maybe this is what is wanted, but I personally think that the duplicate
+> > value should be the amount taken off the length by the duplicate flag?
+> > Ie why is length treated differently to duplicate (something to do with
+> > the way survex treated splays and duplicate as different, I think that
+> > splays are not included in extend in survex)
+> >
+> > Maybe 2 figures would be better, duplicate length and duplicate splays.
+> >
+> > {probably best to ignore this next bit}
+> > Oh this leads to all sorts of thinks that are really not important, like
+> > maybe giving the length of all the splays, and the number of stations,
+> > is it really 282 or really 54. All depends on your definition I guess
+> >
+> > Andrew
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110613/49d3d509/attachment.htm>
+
+From martinsluka at mac.com  Mon Jun 13 10:19:03 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 13 Jun 2011 10:19:03 +0200
+Subject: [Therion] ceiling-meander
+In-Reply-To: <1307947240.3935.11.camel@localhost.localdomain>
+References: <1307947240.3935.11.camel@localhost.localdomain>
+Message-ID: <4EF11EF0-F665-41A5-B398-18D7C0C8C3FB@mac.com>
+
+
+On 13.6.2011, at 8:40, marco corvi wrote:
+
+> i'm kind of confused:
+>
+> looking at the UIS official symbols ...
+> ceiling meander is shown with ticks outside,
+> therion ceiling-meander draws with ticks pointing inside.
+
+It is "error" in UIS symbols. Tick means "free air" - as step or pit.  
+You should not use ticks one time for "rock", second time for "air".
+
+> also chinmey line in UIS is dashed with ticks.
+> in therion is just dashed.
+> (therion ceiling-step line is dashed with ticks).
+
+You may use any symbol from any symbol set for your particular map.
+
+m.
+
+>
+> marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From drfootleg at gmail.com  Mon Jun 13 11:31:10 2011
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 13 Jun 2011 10:31:10 +0100
+Subject: [Therion] ceiling-meander
+In-Reply-To: <4EF11EF0-F665-41A5-B398-18D7C0C8C3FB@mac.com>
+References: <1307947240.3935.11.camel@localhost.localdomain>
+	<4EF11EF0-F665-41A5-B398-18D7C0C8C3FB@mac.com>
+Message-ID: <BANLkTim-oUrnUcRz4ARP+S-EFpOtzTOGUg@mail.gmail.com>
+
+That is news to me that the UIS have published these symbols with this error
+in for years? I always took the published UIS symbols to be the definitive
+reference, and inferred from them that the ticks indicated the direction
+that the floor was lower (for floor height changes) and the tick indicated
+the direction that the ceiling was lower (for roof height changes). So have
+I drawn all my aven lines wrong for the past 5 years?
+
+Footleg
+
+On 13 June 2011 09:19, Martin Sluka <martinsluka at mac.com> wrote:
+
+>
+> On 13.6.2011, at 8:40, marco corvi wrote:
+>
+>  i'm kind of confused:
+>>
+>> looking at the UIS official symbols ...
+>> ceiling meander is shown with ticks outside,
+>> therion ceiling-meander draws with ticks pointing inside.
+>>
+>
+> It is "error" in UIS symbols. Tick means "free air" - as step or pit. You
+> should not use ticks one time for "rock", second time for "air".
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110613/ad1c0348/attachment.htm>
+
+From martinsluka at mac.com  Mon Jun 13 12:32:30 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 13 Jun 2011 12:32:30 +0200
+Subject: [Therion] ceiling-meander
+In-Reply-To: <BANLkTim-oUrnUcRz4ARP+S-EFpOtzTOGUg@mail.gmail.com>
+References: <1307947240.3935.11.camel@localhost.localdomain>
+	<4EF11EF0-F665-41A5-B398-18D7C0C8C3FB@mac.com>
+	<BANLkTim-oUrnUcRz4ARP+S-EFpOtzTOGUg@mail.gmail.com>
+Message-ID: <5ED16192-084B-4828-87B8-6C47159AF067@mac.com>
+
+
+On 13.6.2011, at 11:31, Footleg wrote:
+
+> That is news to me that the UIS have published these symbols with  
+> this error in for years? I always took the published UIS symbols to  
+> be the definitive reference, and inferred from them that the ticks  
+> indicated the direction that the floor was lower (for floor height  
+> changes) and the tick indicated the direction that the ceiling was  
+> lower (for roof height changes). So have I drawn all my aven lines  
+> wrong for the past 5 years?
+>
+> Footleg
+
+This is more drawing maps philosophy problem. It is absolutely up to  
+you and your caving group which symbol set you will use. In therion  
+symbol sets you may find both (I hope).
+
+Martin
+
+>
+> On 13 June 2011 09:19, Martin Sluka <martinsluka at mac.com> wrote:
+>
+> On 13.6.2011, at 8:40, marco corvi wrote:
+>
+> i'm kind of confused:
+>
+> looking at the UIS official symbols ...
+> ceiling meander is shown with ticks outside,
+> therion ceiling-meander draws with ticks pointing inside.
+>
+> It is "error" in UIS symbols. Tick means "free air" - as step or  
+> pit. You should not use ticks one time for "rock", second time for  
+> "air".
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From m.budaj at gmail.com  Mon Jun 13 13:35:25 2011
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 13 Jun 2011 13:35:25 +0200
+Subject: [Therion] ceiling-meander
+In-Reply-To: <1307947240.3935.11.camel@localhost.localdomain>
+References: <1307947240.3935.11.camel@localhost.localdomain>
+Message-ID: <BANLkTi=U102HUA8_ZdtNbmUtNQ7Ze7zAEg@mail.gmail.com>
+
+> looking at the UIS official symbols ...
+> ceiling meander is shown with ticks outside,
+> therion ceiling-meander draws with ticks pointing inside.
+>
+> also chinmey line in UIS is dashed with ticks.
+> in therion is just dashed.
+> (therion ceiling-step line is dashed with ticks).
+
+In fact both problematic symbols are defined in SKBB (our local caving
+group) symbol set.
+
+Unfortunately, UIS set is incomplete in therion and missing symbols
+are taken fom other symbol sets even if you select UIS set in
+thconfig, as it is in this case. We can add those two symbols in the
+next snapshot, other symbols upon request.
+
+You can display an overview of currently defined symbols for all
+symbol sets by running
+
+therion --print-symbols
+
+which creates symbols.xhtml file (you can display it in Firefox).
+
+Martin
+
+
+From graham.mullan at coly.org.uk  Wed Jun 15 13:13:00 2011
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Wed, 15 Jun 2011 12:13:00 +0100
+Subject: [Therion] Bug in 5.3.7
+Message-ID: <4DF893BC.6090304@coly.org.uk>
+
+I upgraded to 5.3.7 and hit a problem.
+
+A file that contains both therion inputs and a 3d file import from 
+Survex failed to import the latter.
+
+Reverting to 5.3.5 has solved the problem.
+
+Graham
+--
+graham.mullan at coly.org.uk
+
+0117 9502556 or 07887 637064 (or 0844 2327803)
+
+
+From wookey at wookware.org  Wed Jun 15 18:16:26 2011
+From: wookey at wookware.org (Wookey)
+Date: Wed, 15 Jun 2011 17:16:26 +0100
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <4DF893BC.6090304@coly.org.uk>
+References: <4DF893BC.6090304@coly.org.uk>
+Message-ID: <20110615161625.GQ9581@dream.aleph1.co.uk>
+
++++ Graham Mullan [2011-06-15 12:13 +0100]:
+> I upgraded to 5.3.7 and hit a problem.
+
+Windows build I assume? Do try to say where your install came from as
+the therion site builds and the Debian/Ubuntu Linux builds are not
+identical, and it might matter.
+
+> A file that contains both therion inputs and a 3d file import from  
+> Survex failed to import the latter.
+
+With an error? If so saying what?
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From graham.mullan at coly.org.uk  Thu Jun 16 13:06:25 2011
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Thu, 16 Jun 2011 12:06:25 +0100
+Subject: [Therion] Therion bug
+In-Reply-To: <mailman.1.1308218401.7488.therion@speleo.sk>
+References: <mailman.1.1308218401.7488.therion@speleo.sk>
+Message-ID: <4DF9E3B1.906@coly.org.uk>
+
+Sorry, yes. Windows build
+
+The errors seem to be.
+
+writing Goughsth.3d ... done
+writing Goughs.lox ......
+C:\Program Files (x86)\Therion\therion.exe: warning -- 
+BlackcatSPl3 at Blackcat.Goughs -- invalid scrap outline
+.........
+C:\Program Files (x86)\Therion\therion.exe: warning -- 
+FontsSPl4 at Fonts.Goughs -- multiple scrap outer outlines not supported yet
+........
+C:\Program Files (x86)\Therion\therion.exe: warning -- 
+HeartbreakDigSPl1 at HeartbreakDig.Goughs -- invalid scrap outline
+. done
+writing xtherion file ... done
+compilation time: 7 sec
+
+I don't see what relevance that might have to the output, but then I 
+don't understand these things.
+
+Graham
+
+
+From lists at group-s.sk  Thu Jun 16 14:20:24 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 16 Jun 2011 14:20:24 +0200
+Subject: [Therion] Therion bug
+In-Reply-To: <4DF9E3B1.906@coly.org.uk>
+References: <mailman.1.1308218401.7488.therion@speleo.sk>
+	<4DF9E3B1.906@coly.org.uk>
+Message-ID: <BANLkTimX60TG-Dom_1gTr2ON-6GArSfJ2w@mail.gmail.com>
+
+Well, this is not an error, it is just warning caused by new triangulation
+algorithm for 3D model generation.
+
+Some of these warnings will be probably removed in the near future, when
+this algorithm will be finished.
+
+If your 3D model looks OK, you can ignore these warnings.
+
+HTH, S.
+
+On 16 June 2011 13:06, Graham Mullan <graham.mullan at coly.org.uk> wrote:
+
+> Sorry, yes. Windows build
+>
+> The errors seem to be.
+>
+> writing Goughsth.3d ... done
+> writing Goughs.lox ......
+> C:\Program Files (x86)\Therion\therion.exe: warning --
+> BlackcatSPl3 at Blackcat.Goughs -- invalid scrap outline
+> .........
+> C:\Program Files (x86)\Therion\therion.exe: warning --
+> FontsSPl4 at Fonts.Goughs -- multiple scrap outer outlines not supported yet
+> ........
+> C:\Program Files (x86)\Therion\therion.exe: warning --
+> HeartbreakDigSPl1 at HeartbreakDig.Goughs -- invalid scrap outline
+> . done
+> writing xtherion file ... done
+> compilation time: 7 sec
+>
+> I don't see what relevance that might have to the output, but then I don't
+> understand these things.
+>
+> Graham
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110616/88a300ba/attachment.htm>
+
+From lists at group-s.sk  Thu Jun 16 15:25:26 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 16 Jun 2011 15:25:26 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <1307947623.3935.18.camel@localhost.localdomain>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+Message-ID: <BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+
+ This point is added, because then the xtherion codes are much more simple.
+It is not needed for therion, but adjusting xtherion to work withou this
+extra point would be complicated.
+
+Best regards, S.
+
+On 13 June 2011 08:47, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+
+> the line option "-close on" specifis that a line is closed.
+>
+> when exporting maps, therion properly closes a line with
+> this option.
+>
+> when xtherion loads the file, the line is "open" and the
+> checkbox "close" is unchecked.
+> if i check it, xtherion add a point to the line with the
+> same coords as the initial point.
+>
+> marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110616/e05c46ed/attachment.htm>
+
+From marco.corvi at elsagdatamat.com  Thu Jun 16 15:32:03 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Thu, 16 Jun 2011 15:32:03 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+Message-ID: <1308231123.3780.8.camel@localhost.localdomain>
+
+On Thu, 2011-06-16 at 15:25 +0200, Stacho Mudrak wrote:
+> This point is added, because then the xtherion codes are much more simple.
+> It is not needed for therion, but adjusting xtherion to work withou this
+> extra point would be complicated.
+>
+
+when i import in xtherion file produced with qtopo
+and i save the file the lines become not-closed.
+
+that means that even xtherion
+does not fully understand therion syntax.
+that's kind of bad, because, so far, xtherion
+is the only viable therion editor.  
+
+marco
+
+
+
+From lists at group-s.sk  Thu Jun 16 16:21:57 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 16 Jun 2011 16:21:57 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <1308231123.3780.8.camel@localhost.localdomain>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+	<1308231123.3780.8.camel@localhost.localdomain>
+Message-ID: <BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+
+Sorry, I did not understand the problem before. In this case, it is a
+bug. I will try to fix it.
+
+Thanks, S.
+
+On 6/16/11, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+> On Thu, 2011-06-16 at 15:25 +0200, Stacho Mudrak wrote:
+>> This point is added, because then the xtherion codes are much more
+>> simple.
+>> It is not needed for therion, but adjusting xtherion to work withou this
+>> extra point would be complicated.
+>>
+>
+> when i import in xtherion file produced with qtopo
+> and i save the file the lines become not-closed.
+>
+> that means that even xtherion
+> does not fully understand therion syntax.
+> that's kind of bad, because, so far, xtherion
+> is the only viable therion editor.
+>
+> marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+-- 
+Sent from my mobile device
+
+
+From graham.mullan at coly.org.uk  Fri Jun 17 13:10:16 2011
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Fri, 17 Jun 2011 12:10:16 +0100
+Subject: [Therion] Therion Digest, Vol 66, Issue 6
+In-Reply-To: <mailman.1.1308304802.9668.therion@speleo.sk>
+References: <mailman.1.1308304802.9668.therion@speleo.sk>
+Message-ID: <4DFB3618.2070500@coly.org.uk>
+
+
+> From: Stacho Mudrak<lists at group-s.sk>
+>
+> Well, this is not an error, it is just warning caused by new triangulation
+> algorithm for 3D model generation.
+>
+> Some of these warnings will be probably removed in the near future, when
+> this algorithm will be finished.
+>
+> If your 3D model looks OK, you can ignore these warnings.
+>
+But the model does not look OK, the bit imported as a 3d file is missing 
+completely.
+
+Graham
+
+
+From lists at group-s.sk  Sat Jun 18 11:05:27 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 18 Jun 2011 11:05:27 +0200
+Subject: [Therion] Therion Digest, Vol 66, Issue 6
+In-Reply-To: <4DFB3618.2070500@coly.org.uk>
+References: <mailman.1.1308304802.9668.therion@speleo.sk>
+	<4DFB3618.2070500@coly.org.uk>
+Message-ID: <BANLkTinSfV4Db0+FdC0N_BNfNkrxqpukoQ@mail.gmail.com>
+
+Hmmm, may be, it is bug introduced in 5.3.7. I have just uploaded fixed
+version 5.3.8. Could you please try it?
+
+Thanks, S.
+
+On 17 June 2011 13:10, Graham Mullan <graham.mullan at coly.org.uk> wrote:
+
+>
+>  From: Stacho Mudrak<lists at group-s.sk>
+>>
+>> Well, this is not an error, it is just warning caused by new triangulation
+>> algorithm for 3D model generation.
+>>
+>> Some of these warnings will be probably removed in the near future, when
+>> this algorithm will be finished.
+>>
+>> If your 3D model looks OK, you can ignore these warnings.
+>>
+>>  But the model does not look OK, the bit imported as a 3d file is missing
+> completely.
+>
+> Graham
+> ______________________________**_________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/**mailman/listinfo/therion<http://mailman.speleo.sk/mailman/listinfo/therion>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110618/e600f400/attachment.htm>
+
+From lists at group-s.sk  Sat Jun 18 11:07:13 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 18 Jun 2011 11:07:13 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+	<1308231123.3780.8.camel@localhost.localdomain>
+	<BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+Message-ID: <BANLkTinL73WfjQmQBfkfADdsHymhQFvNqg@mail.gmail.com>
+
+This bug should be fixed in 5.3.8. But there is one issue. If you have close
+bezier spline, how do you specify control points, if last point is not same
+as first one?
+
+Best regards, S.
+
+On 16 June 2011 16:21, Stacho Mudrak <lists at group-s.sk> wrote:
+
+> Sorry, I did not understand the problem before. In this case, it is a
+> bug. I will try to fix it.
+>
+> Thanks, S.
+>
+> On 6/16/11, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+> > On Thu, 2011-06-16 at 15:25 +0200, Stacho Mudrak wrote:
+> >> This point is added, because then the xtherion codes are much more
+> >> simple.
+> >> It is not needed for therion, but adjusting xtherion to work withou this
+> >> extra point would be complicated.
+> >>
+> >
+> > when i import in xtherion file produced with qtopo
+> > and i save the file the lines become not-closed.
+> >
+> > that means that even xtherion
+> > does not fully understand therion syntax.
+> > that's kind of bad, because, so far, xtherion
+> > is the only viable therion editor.
+> >
+> > marco
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> >
+>
+> --
+> Sent from my mobile device
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110618/1006f1f3/attachment.htm>
+
+From marco.corvi at elsagdatamat.com  Mon Jun 20 10:15:24 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Mon, 20 Jun 2011 10:15:24 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <BANLkTinL73WfjQmQBfkfADdsHymhQFvNqg@mail.gmail.com>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+	<1308231123.3780.8.camel@localhost.localdomain>
+	<BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+	<BANLkTinL73WfjQmQBfkfADdsHymhQFvNqg@mail.gmail.com>
+Message-ID: <1308557724.3859.3.camel@localhost.localdomain>
+
+On Sat, 2011-06-18 at 11:07 +0200, Stacho Mudrak wrote:
+> This bug should be fixed in 5.3.8. But there is one issue. If you have close
+> bezier spline, how do you specify control points, if last point is not same
+> as first one?
+> 
+not sure ...
+however the first point has a fore control point and a back
+control point, the last point too.
+i 'd expect that the piece of line between the last and the first
+point uses the fore CP of the last and the back CP of the first.
+
+marco
+
+
+
+
+
+
+From graham.mullan at coly.org.uk  Mon Jun 20 14:48:54 2011
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Mon, 20 Jun 2011 13:48:54 +0100
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <mailman.1.1308564001.14935.therion@speleo.sk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+Message-ID: <4DFF41B6.8090404@coly.org.uk>
+
+As requested. I have tried the Windows build of Therion 5.3.8 and the 
+problem that I had has vanished. the whole cave now compiles including 
+the survex 3d file imported bit.
+
+Thanks
+
+Graham
+
+
+From drfootleg at gmail.com  Mon Jun 20 14:55:35 2011
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 20 Jun 2011 13:55:35 +0100
+Subject: [Therion] Lox model walls all inside out when a scrap contains a
+	loop
+Message-ID: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+
+I cannot get a lox model to show the walls properly when I add a loop in my
+scrap. I've attached the files I have been messing about with to test this.
+There is one loop in the scrap sketch (created by line 9, the last line in
+the file). As provided this does not display properly in Loch. But if I
+delete that last line so that the the centre of the loop is removed then the
+loch model looks fine. Am I missing a trick here? I cannot split every loop
+in my caving into separate scraps (before someone suggests that). I have too
+many of them in my real survey data.
+
+Testing with the 5.3.8 build.
+
+Footleg
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110620/d9e8b942/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Riano_test.zip
+Type: application/zip
+Size: 4071 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110620/d9e8b942/attachment.zip>
+
+From drfootleg at gmail.com  Mon Jun 20 15:09:31 2011
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 20 Jun 2011 14:09:31 +0100
+Subject: [Therion] Lox model walls all inside out when a scrap contains
+	a loop
+In-Reply-To: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+References: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+Message-ID: <BANLkTi=C0BZoU4O8QvBaHRCVmf8cwREssg@mail.gmail.com>
+
+I have noticed that the KML file also only displays the inside of the loop,
+and not the passages. But if you delete that line so there is no loop then
+the KML displays as expected.
+
+Footleg
+
+On 20 June 2011 13:55, Footleg <drfootleg at gmail.com> wrote:
+
+> I cannot get a lox model to show the walls properly when I add a loop in my
+> scrap. I've attached the files I have been messing about with to test this.
+> There is one loop in the scrap sketch (created by line 9, the last line in
+> the file). As provided this does not display properly in Loch. But if I
+> delete that last line so that the the centre of the loop is removed then the
+> loch model looks fine. Am I missing a trick here? I cannot split every loop
+> in my caving into separate scraps (before someone suggests that). I have too
+> many of them in my real survey data.
+>
+> Testing with the 5.3.8 build.
+>
+> Footleg
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110620/bd3faed4/attachment.htm>
+
+From wookey at wookware.org  Mon Jun 20 15:44:23 2011
+From: wookey at wookware.org (Wookey)
+Date: Mon, 20 Jun 2011 14:44:23 +0100
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <4DFF41B6.8090404@coly.org.uk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+Message-ID: <20110620134423.GY9581@dream.aleph1.co.uk>
+
++++ Graham Mullan [2011-06-20 13:48 +0100]:
+> As requested. I have tried the Windows build of Therion 5.3.8 and the  
+> problem that I had has vanished. the whole cave now compiles including  
+> the survex 3d file imported bit.
+
+Another release already! It's hard work keeping up...
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From lists at group-s.sk  Mon Jun 20 17:07:21 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 20 Jun 2011 17:07:21 +0200
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <20110620134423.GY9581@dream.aleph1.co.uk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+Message-ID: <BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+
+I have tried to implement all your fixes from debian repository. Is there
+any other way to help you with debian packaging?
+
+S.
+
+On 20 June 2011 15:44, Wookey <wookey at wookware.org> wrote:
+
+> +++ Graham Mullan [2011-06-20 13:48 +0100]:
+> > As requested. I have tried the Windows build of Therion 5.3.8 and the
+> > problem that I had has vanished. the whole cave now compiles including
+> > the survex 3d file imported bit.
+>
+> Another release already! It's hard work keeping up...
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110620/7f54e71e/attachment.htm>
+
+From wookey at wookware.org  Mon Jun 20 17:31:38 2011
+From: wookey at wookware.org (Wookey)
+Date: Mon, 20 Jun 2011 16:31:38 +0100
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+Message-ID: <20110620153138.GC9581@dream.aleph1.co.uk>
+
++++ Stacho Mudrak [2011-06-20 17:07 +0200]:
+> I have tried to implement all your fixes from debian repository. Is there any
+> other way to help you with debian packaging?
+
+If you can tell me which Debian patches have been
+incorporated for each new release it saves me having to work it out,
+by which ones don't apply and then deciding if it's because it's been
+included, or because things have changed.
+
+Now that the patches are all separated out this should work better
+than in the past. 
+
+I did set up a therion svn repository for the Debian packaging but
+it's got out of date. That would allow you to actually make the
+packaging chances so all I have to do is rebuild, check and upload :-)
+
+Did you include my nice new SVG bat? It'd be good to have in the
+loading and about boxes instead of the pixellated one.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Mon Jun 20 17:34:18 2011
+From: wookey at wookware.org (Wookey)
+Date: Mon, 20 Jun 2011 16:34:18 +0100
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+Message-ID: <20110620153418.GD9581@dream.aleph1.co.uk>
+
++++ Stacho Mudrak [2011-06-20 17:07 +0200]:
+> I have tried to implement all your fixes from debian repository. Is there any
+> other way to help you with debian packaging?
+
+Oh, and I didn't see a '5.3.8 has been uploaded' message. It's only
+because of Graham's post that I noticed. I guess you would have sent
+one after he'd reported back.
+
+But the point is that I need notification of new releases (not that I
+will necessarily upload quickly, but I definately won't if I don't
+know :-)
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Mon Jun 20 19:16:44 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 20 Jun 2011 18:16:44 +0100
+Subject: [Therion] No output in loch 5.3.3 Ubuntu 11.04 (Or aven for that
+	matter)
+Message-ID: <4DFF807C.4040808@wotcc.org.uk>
+
+After a hard drive failure I upgraded to ubuntu 11.04 and the default 
+versions came in. therion 5.3.5 loch 5.3.3 (survex 1.1.14)
+
+Xtherion seems to run fine and produces output (viewed in ubuntu 10.04 
+loch and the 3D file in aven )
+
+However, loch has no menus (a minor pain) trying to open a .3d file 
+gives a blank page. Opening a .lox file it just crashes out.
+
+Now I am sure I had read something about this in the mailing lists, but 
+cannot seem to find it.
+
+Now probably upgrading might solve it, but it would be good if the 
+default packages worked in an OS.
+Now will the new 5.3.7 (well hopefully 5.3.8) trickle down from debian 
+to Ubuntu 11.04 or will I have to wait for 11.10?  {Nearly moved to 
+Debian experimental when I lost my drive, starting to think it might 
+have been better :( }
+
+(For the record, aven also show a blank screen but you can see all the 
+stations in the left hand bar)
+
+Below is some info that I hope is useful
+
+Andrew
+
+
+I think this is the syslog line that happens when trying to open a lox, 
+is there another log file I should be looking for. Nothing appears when 
+opening a .3d
+
+Jun 20 17:55:38 janda kernel: [  941.228479] loch[2762]: segfault at 
+28d000002ed ip 00007f53c50f6b28 sp 00007fff21d93e90 error 6 in 
+libwx_baseu-2.6.so.0.3.1[7f53c509b000+10c000]
+
+This is the system information that you can get out of the help menu on 
+Aven (maybe it is relevant to loch)
+
+Linux 2.6.38-8-generic x86_64
+wxWidgets 2.8.11 (GTK+ >= 2.6)
+Display Depth: 24 bpp (colour)
+OpenGL 2.1.2 NVIDIA 270.41.06
+NVIDIA Corporation
+GeForce 7300 GS/PCI/SSE2
+R8G8B8
+Max Texture size: 4096x4096
+Max Viewport size: 4096x4096
+Point Size 1.000-63.375 (granularity 0.125)
+GL_ARB_color_buffer_float GL_ARB_copy_buffer GL_ARB_depth_clamp 
+GL_ARB_depth_texture GL_ARB_draw_buffers GL_ARB_ES2_compatibility 
+GL_ARB_explicit_attrib_location GL_ARB_fragment_program 
+GL_ARB_fragment_program_shadow GL_ARB_fragment_shader 
+GL_ARB_framebuffer_object GL_ARB_half_float_pixel 
+GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_map_buffer_range 
+GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query 
+GL_ARB_occlusion_query2 GL_ARB_pixel_buffer_object 
+GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_provoking_vertex 
+GL_ARB_robustness GL_ARB_sampler_objects GL_ARB_separate_shader_objects 
+GL_ARB_shader_objects GL_ARB_shading_language_100 
+GL_ARB_shading_language_include GL_ARB_shadow 
+GL_ARB_texture_border_clamp GL_ARB_texture_compression 
+GL_ARB_texture_cube_map GL_ARB_texture_env_add 
+GL_ARB_texture_env_combine GL_ARB_texture_env_crossbar 
+GL_ARB_texture_env_dot3 GL_ARB_texture_float 
+GL_ARB_texture_mirrored_repeat GL_ARB_texture_non_power_of_two 
+GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_swizzle 
+GL_ARB_timer_query GL_ARB_transpose_matrix GL_ARB_vertex_array_bgra 
+GL_ARB_vertex_array_object GL_ARB_vertex_buffer_object 
+GL_ARB_vertex_program GL_ARB_vertex_shader GL_ARB_window_pos 
+GL_ATI_draw_buffers GL_ATI_texture_float GL_ATI_texture_mirror_once 
+GL_S3_s3tc GL_EXT_texture_env_add GL_EXT_abgr GL_EXT_bgra 
+GL_EXT_blend_color GL_EXT_blend_equation_separate 
+GL_EXT_blend_func_separate GL_EXT_blend_minmax GL_EXT_blend_subtract 
+GL_EXT_compiled_vertex_array GL_EXT_Cg_shader GL_EXT_depth_bounds_test 
+GL_EXT_direct_state_access GL_EXT_draw_range_elements GL_EXT_fog_coord 
+GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample 
+GL_EXT_framebuffer_object GL_EXT_gpu_program_parameters 
+GL_EXT_multi_draw_arrays GL_EXT_packed_depth_stencil 
+GL_EXT_packed_pixels GL_EXT_pixel_buffer_object GL_EXT_point_parameters 
+GL_EXT_provoking_vertex GL_EXT_rescale_normal GL_EXT_secondary_color 
+GL_EXT_separate_shader_objects GL_EXT_separate_specular_color 
+GL_EXT_shadow_funcs GL_EXT_stencil_two_side GL_EXT_stencil_wrap 
+GL_EXT_texture3D GL_EXT_texture_compression_dxt1 
+GL_EXT_texture_compression_s3tc GL_EXT_texture_cube_map 
+GL_EXT_texture_edge_clamp GL_EXT_texture_env_combine 
+GL_EXT_texture_env_dot3 GL_EXT_texture_filter_anisotropic 
+GL_EXT_texture_format_BGRA8888 GL_EXT_texture_lod 
+GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp 
+GL_EXT_texture_object GL_EXT_texture_sRGB GL_EXT_texture_swizzle 
+GL_EXT_timer_query GL_EXT_vertex_array GL_EXT_vertex_array_bgra 
+GL_IBM_rasterpos_clip GL_IBM_texture_mirrored_repeat 
+GL_KTX_buffer_region GL_NV_alpha_test GL_NV_blend_minmax 
+GL_NV_blend_square GL_NV_complex_primitives GL_NV_copy_depth_to_color 
+GL_NV_depth_clamp GL_NV_fbo_color_attachments GL_NV_fence 
+GL_NV_float_buffer GL_NV_fog_distance GL_NV_fragdepth 
+GL_NV_fragment_program GL_NV_fragment_program_option 
+GL_NV_fragment_program2 GL_NV_framebuffer_multisample_coverage 
+GL_NV_half_float GL_NV_light_max_exponent GL_NV_multisample_filter_hint 
+GL_NV_occlusion_query GL_NV_packed_depth_stencil GL_NV_pixel_data_range 
+GL_NV_point_sprite GL_NV_primitive_restart GL_NV_register_combiners 
+GL_NV_register_combiners2 GL_NV_texgen_reflection GL_NV_texture_barrier 
+GL_NV_texture_compression_vtc GL_NV_texture_env_combine4 
+GL_NV_texture_expand_normal GL_NV_texture_lod_clamp 
+GL_NV_texture_rectangle GL_NV_texture_shader GL_NV_texture_shader2 
+GL_NV_texture_shader3 GL_NV_vertex_array_range GL_NV_vertex_array_range2 
+GL_NV_vertex_program GL_NV_vertex_program1_1 GL_NV_vertex_program2 
+GL_NV_vertex_program2_option GL_NV_vertex_program3 
+GL_NVX_conditional_render GL_OES_depth24 GL_OES_depth32 
+GL_OES_depth_texture GL_OES_element_index_uint GL_OES_fbo_render_mipmap 
+GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil 
+GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_texture_3D 
+GL_OES_texture_float GL_OES_texture_float_linear 
+GL_OES_texture_half_float GL_OES_texture_half_float_linear 
+GL_OES_texture_npot GL_OES_vertex_array_object GL_OES_vertex_half_float 
+GL_SGIS_generate_mipmap GL_SGIS_texture_lod GL_SGIX_depth_texture 
+GL_SGIX_shadow GL_SUN_slice_accum
+
+
+From andrew at wotcc.org.uk  Mon Jun 20 20:55:38 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 20 Jun 2011 19:55:38 +0100
+Subject: [Therion] No output in loch 5.3.3 Ubuntu 11.04 (Or aven for
+ that matter)
+In-Reply-To: <4DFF807C.4040808@wotcc.org.uk>
+References: <4DFF807C.4040808@wotcc.org.uk>
+Message-ID: <4DFF97AA.7070101@wotcc.org.uk>
+
+
+
+On 20/06/11 18:16, Andrew Atkinson wrote:
+> After a hard drive failure I upgraded to ubuntu 11.04 and the default
+> versions came in. therion 5.3.5 loch 5.3.3 (survex 1.1.14)
+>
+> Xtherion seems to run fine and produces output (viewed in ubuntu 10.04
+> loch and the 3D file in aven )
+
+Meant to say loch 5.2.8, but wrote the rest while waiting for it to boot 
+then forgot to go back and add it
+>
+> However, loch has no menus (a minor pain) trying to open a .3d file
+> gives a blank page. Opening a .lox file it just crashes out.
+>
+> Now I am sure I had read something about this in the mailing lists, but
+> cannot seem to find it.
+>
+> Now probably upgrading might solve it, but it would be good if the
+> default packages worked in an OS.
+> Now will the new 5.3.7 (well hopefully 5.3.8) trickle down from debian
+> to Ubuntu 11.04 or will I have to wait for 11.10? {Nearly moved to
+> Debian experimental when I lost my drive, starting to think it might
+> have been better :( }
+>
+> (For the record, aven also show a blank screen but you can see all the
+> stations in the left hand bar)
+>
+> Below is some info that I hope is useful
+>
+> Andrew
+>
+>
+> I think this is the syslog line that happens when trying to open a lox,
+> is there another log file I should be looking for. Nothing appears when
+> opening a .3d
+>
+> Jun 20 17:55:38 janda kernel: [ 941.228479] loch[2762]: segfault at
+> 28d000002ed ip 00007f53c50f6b28 sp 00007fff21d93e90 error 6 in
+> libwx_baseu-2.6.so.0.3.1[7f53c509b000+10c000]
+>
+> This is the system information that you can get out of the help menu on
+> Aven (maybe it is relevant to loch)
+>
+> Linux 2.6.38-8-generic x86_64
+> wxWidgets 2.8.11 (GTK+ >= 2.6)
+> Display Depth: 24 bpp (colour)
+> OpenGL 2.1.2 NVIDIA 270.41.06
+> NVIDIA Corporation
+> GeForce 7300 GS/PCI/SSE2
+> R8G8B8
+> Max Texture size: 4096x4096
+> Max Viewport size: 4096x4096
+> Point Size 1.000-63.375 (granularity 0.125)
+> GL_ARB_color_buffer_float GL_ARB_copy_buffer GL_ARB_depth_clamp
+> GL_ARB_depth_texture GL_ARB_draw_buffers GL_ARB_ES2_compatibility
+> GL_ARB_explicit_attrib_location GL_ARB_fragment_program
+> GL_ARB_fragment_program_shadow GL_ARB_fragment_shader
+> GL_ARB_framebuffer_object GL_ARB_half_float_pixel
+> GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_map_buffer_range
+> GL_ARB_multisample GL_ARB_multitexture GL_ARB_occlusion_query
+> GL_ARB_occlusion_query2 GL_ARB_pixel_buffer_object
+> GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_provoking_vertex
+> GL_ARB_robustness GL_ARB_sampler_objects GL_ARB_separate_shader_objects
+> GL_ARB_shader_objects GL_ARB_shading_language_100
+> GL_ARB_shading_language_include GL_ARB_shadow
+> GL_ARB_texture_border_clamp GL_ARB_texture_compression
+> GL_ARB_texture_cube_map GL_ARB_texture_env_add
+> GL_ARB_texture_env_combine GL_ARB_texture_env_crossbar
+> GL_ARB_texture_env_dot3 GL_ARB_texture_float
+> GL_ARB_texture_mirrored_repeat GL_ARB_texture_non_power_of_two
+> GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_swizzle
+> GL_ARB_timer_query GL_ARB_transpose_matrix GL_ARB_vertex_array_bgra
+> GL_ARB_vertex_array_object GL_ARB_vertex_buffer_object
+> GL_ARB_vertex_program GL_ARB_vertex_shader GL_ARB_window_pos
+> GL_ATI_draw_buffers GL_ATI_texture_float GL_ATI_texture_mirror_once
+> GL_S3_s3tc GL_EXT_texture_env_add GL_EXT_abgr GL_EXT_bgra
+> GL_EXT_blend_color GL_EXT_blend_equation_separate
+> GL_EXT_blend_func_separate GL_EXT_blend_minmax GL_EXT_blend_subtract
+> GL_EXT_compiled_vertex_array GL_EXT_Cg_shader GL_EXT_depth_bounds_test
+> GL_EXT_direct_state_access GL_EXT_draw_range_elements GL_EXT_fog_coord
+> GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample
+> GL_EXT_framebuffer_object GL_EXT_gpu_program_parameters
+> GL_EXT_multi_draw_arrays GL_EXT_packed_depth_stencil
+> GL_EXT_packed_pixels GL_EXT_pixel_buffer_object GL_EXT_point_parameters
+> GL_EXT_provoking_vertex GL_EXT_rescale_normal GL_EXT_secondary_color
+> GL_EXT_separate_shader_objects GL_EXT_separate_specular_color
+> GL_EXT_shadow_funcs GL_EXT_stencil_two_side GL_EXT_stencil_wrap
+> GL_EXT_texture3D GL_EXT_texture_compression_dxt1
+> GL_EXT_texture_compression_s3tc GL_EXT_texture_cube_map
+> GL_EXT_texture_edge_clamp GL_EXT_texture_env_combine
+> GL_EXT_texture_env_dot3 GL_EXT_texture_filter_anisotropic
+> GL_EXT_texture_format_BGRA8888 GL_EXT_texture_lod
+> GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp
+> GL_EXT_texture_object GL_EXT_texture_sRGB GL_EXT_texture_swizzle
+> GL_EXT_timer_query GL_EXT_vertex_array GL_EXT_vertex_array_bgra
+> GL_IBM_rasterpos_clip GL_IBM_texture_mirrored_repeat
+> GL_KTX_buffer_region GL_NV_alpha_test GL_NV_blend_minmax
+> GL_NV_blend_square GL_NV_complex_primitives GL_NV_copy_depth_to_color
+> GL_NV_depth_clamp GL_NV_fbo_color_attachments GL_NV_fence
+> GL_NV_float_buffer GL_NV_fog_distance GL_NV_fragdepth
+> GL_NV_fragment_program GL_NV_fragment_program_option
+> GL_NV_fragment_program2 GL_NV_framebuffer_multisample_coverage
+> GL_NV_half_float GL_NV_light_max_exponent GL_NV_multisample_filter_hint
+> GL_NV_occlusion_query GL_NV_packed_depth_stencil GL_NV_pixel_data_range
+> GL_NV_point_sprite GL_NV_primitive_restart GL_NV_register_combiners
+> GL_NV_register_combiners2 GL_NV_texgen_reflection GL_NV_texture_barrier
+> GL_NV_texture_compression_vtc GL_NV_texture_env_combine4
+> GL_NV_texture_expand_normal GL_NV_texture_lod_clamp
+> GL_NV_texture_rectangle GL_NV_texture_shader GL_NV_texture_shader2
+> GL_NV_texture_shader3 GL_NV_vertex_array_range GL_NV_vertex_array_range2
+> GL_NV_vertex_program GL_NV_vertex_program1_1 GL_NV_vertex_program2
+> GL_NV_vertex_program2_option GL_NV_vertex_program3
+> GL_NVX_conditional_render GL_OES_depth24 GL_OES_depth32
+> GL_OES_depth_texture GL_OES_element_index_uint GL_OES_fbo_render_mipmap
+> GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil
+> GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_texture_3D
+> GL_OES_texture_float GL_OES_texture_float_linear
+> GL_OES_texture_half_float GL_OES_texture_half_float_linear
+> GL_OES_texture_npot GL_OES_vertex_array_object GL_OES_vertex_half_float
+> GL_SGIS_generate_mipmap GL_SGIS_texture_lod GL_SGIX_depth_texture
+> GL_SGIX_shadow GL_SUN_slice_accum
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From dangle at tomo.co.nz  Mon Jun 20 22:24:10 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 21 Jun 2011 08:24:10 +1200
+Subject: [Therion] Lox model walls all inside out when a scrap contains
+	a	loop
+In-Reply-To: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+References: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+Message-ID: <DC5A4382AF7E40BA8DE6CB36066313C3@JUICEBRAIN>
+
+Yes,
+
+The 'internal' wall needs to have the option -outline in when it is all part
+of the same scrap.
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Footleg
+Sent: Tuesday, 21 June 2011 12:56 a.m.
+To: List for Therion users
+Subject: [Therion] Lox model walls all inside out when a scrap contains a
+loop
+
+ 
+
+I cannot get a lox model to show the walls properly when I add a loop in my
+scrap. I've attached the files I have been messing about with to test this.
+There is one loop in the scrap sketch (created by line 9, the last line in
+the file). As provided this does not display properly in Loch. But if I
+delete that last line so that the the centre of the loop is removed then the
+loch model looks fine. Am I missing a trick here? I cannot split every loop
+in my caving into separate scraps (before someone suggests that). I have too
+many of them in my real survey data.
+
+Testing with the 5.3.8 build.
+
+Footleg
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110621/ec703c8c/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: RianoEntPlan_test.th2
+Type: application/octet-stream
+Size: 5826 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110621/ec703c8c/attachment.obj>
+
+From wookey at wookware.org  Tue Jun 21 03:53:07 2011
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jun 2011 02:53:07 +0100
+Subject: [Therion] therion 5.3.8 (was re: Bug in 5.3.7 )
+In-Reply-To: <20110620153138.GC9581@dream.aleph1.co.uk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+	<20110620153138.GC9581@dream.aleph1.co.uk>
+Message-ID: <20110621015303.GL9581@dream.aleph1.co.uk>
+
++++ Wookey [2011-06-20 16:31 +0100]:
+> +++ Stacho Mudrak [2011-06-20 17:07 +0200]:
+> > I have tried to implement all your fixes from debian repository. Is there any
+> > other way to help you with debian packaging?
+> 
+> If you can tell me which Debian patches have been
+> incorporated for each new release it saves me having to work it out,
+> by which ones don't apply and then deciding if it's because it's been
+> included, or because things have changed.
+
+OK. I had a look and I see you've just incorporated the gcc4.5 fixes.
+Excellent. That will avoid future issues for people.
+
+I think you should also look at upstreaming:
+30doc-fixes.patch (manpage update)
+35loch-manpage.patch
+40samples-fixes.patch (build issue)
+50svg-logo.patch (this could be extended to use logo in various places)
+82-nolang-segfault-fix.patch
+There is not much debian-specific in there. 
+
+For the rest we should discuss whether we can avoid me maintaining
+patches by upstream changes or not. e.g I'm not sure of the
+czech-font-by-default thing is still a real issue or not.
+
+One thing I did notice:
+therion.ini in 5.3.8 has unix lineends
+therion.ini in 5.3.7 has dos lineends
+
+was that a deliberate change? It broke the
+80remove-czech-fonts-default.patch and more importantly it causes
+everyone upgrading to get a 'you changed therion.ini - do you want to
+use new or old' and if you ask for a diff it shows every line (which
+have technicaly changed, but only in lineend). 
+
+It probably should be a unix file, so maybe it's time to have this
+slighly annoying transition. There is probably a way for me to manage
+it silently in the packaging, but having to find that out stops this
+being a trivial upload I could do today.  
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Tue Jun 21 03:54:55 2011
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jun 2011 02:54:55 +0100
+Subject: [Therion] No output in loch 5.3.3 Ubuntu 11.04 (Or aven
+	for	that matter)
+In-Reply-To: <4DFF807C.4040808@wotcc.org.uk>
+References: <4DFF807C.4040808@wotcc.org.uk>
+Message-ID: <20110621015452.GM9581@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2011-06-20 18:16 +0100]:
+> After a hard drive failure I upgraded to ubuntu 11.04 and the default  
+> versions came in. therion 5.3.5 loch 5.3.3 (survex 1.1.14)
+
+Are you sure you have different versions of therion and therian-viewer
+(loch)? This page says they should be the same for natty:
+http://packages.ubuntu.com/search?keywords=therion&searchon=names&suite=natty&section=all
+
+(5.3.3-1ubuntu1 for both).
+
+I'm not sure if mismatched versions is a problem here - I guess things
+should work anyway
+
+> I think this is the syslog line that happens when trying to open a lox,  
+> is there another log file I should be looking for. Nothing appears when  
+> opening a .3d
+>
+> Jun 20 17:55:38 janda kernel: [  941.228479] loch[2762]: segfault at  
+> 28d000002ed ip 00007f53c50f6b28 sp 00007fff21d93e90 error 6 in  
+> libwx_baseu-2.6.so.0.3.1[7f53c509b000+10c000]
+
+That seems plausible. something horrid going wrong in the bowels of
+wxwindows libs. That may just be loch tickling a bug, rather than
+there actually being anything wrong with loch itself. 
+
+I failed to find any matching bug already reported in Ubuntu or Debian.
+
+> This is the system information that you can get out of the help menu on  
+> Aven (maybe it is relevant to loch)
+>
+> Linux 2.6.38-8-generic x86_64
+> wxWidgets 2.8.11 (GTK+ >= 2.6)
+> Display Depth: 24 bpp (colour)
+> OpenGL 2.1.2 NVIDIA 270.41.06
+
+I guess that means that you are using the proprietary nvidia drivers?
+
+You could see if the free drivers work any better for you (noveau).
+(They tend to crash my work natty X-server on a regular basis unless
+one turns turn acceleration off). 
+
+Finding out if therion 5.3.7-1 exhibits the same problem or not is of
+course interesting. That is currently avaialble for oneiric. 
+
+I've prepared a 5.3.8-1 now too. I'll put that in my PPA soon, pending
+resolution of the therion.ini linefeed issue. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Tue Jun 21 11:51:14 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 21 Jun 2011 10:51:14 +0100
+Subject: [Therion] No output in loch 5.3.3 Ubuntu 11.04 (Or
+ aven	for	that matter)
+In-Reply-To: <20110621015452.GM9581@dream.aleph1.co.uk>
+References: <4DFF807C.4040808@wotcc.org.uk>
+	<20110621015452.GM9581@dream.aleph1.co.uk>
+Message-ID: <4E006992.1090904@wotcc.org.uk>
+
+
+
+On 21/06/11 02:54, Wookey wrote:
+> +++ Andrew Atkinson [2011-06-20 18:16 +0100]:
+>> After a hard drive failure I upgraded to ubuntu 11.04 and the default
+>> versions came in. therion 5.3.5 loch 5.3.3 (survex 1.1.14)
+>
+> Are you sure you have different versions of therion and therian-viewer
+> (loch)? This page says they should be the same for natty:
+> http://packages.ubuntu.com/search?keywords=therion&searchon=names&suite=natty&section=all
+>
+> (5.3.3-1ubuntu1 for both).
+
+I did install manually from one of your web site, cannot remember which 
+one, but pretty sure that only was xtherion the viewer did not work. I 
+had checked in Synaptic, to see if I could force a version (A skill I 
+have not tried yet) but it only listed one version.
+
+Screen shot attached
+>
+> I'm not sure if mismatched versions is a problem here - I guess things
+> should work anyway
+>
+>> I think this is the syslog line that happens when trying to open a lox,
+>> is there another log file I should be looking for. Nothing appears when
+>> opening a .3d
+>>
+>> Jun 20 17:55:38 janda kernel: [  941.228479] loch[2762]: segfault at
+>> 28d000002ed ip 00007f53c50f6b28 sp 00007fff21d93e90 error 6 in
+>> libwx_baseu-2.6.so.0.3.1[7f53c509b000+10c000]
+>
+> That seems plausible. something horrid going wrong in the bowels of
+> wxwindows libs. That may just be loch tickling a bug, rather than
+> there actually being anything wrong with loch itself.
+>
+> I failed to find any matching bug already reported in Ubuntu or Debian.
+>
+>> This is the system information that you can get out of the help menu on
+>> Aven (maybe it is relevant to loch)
+>>
+>> Linux 2.6.38-8-generic x86_64
+>> wxWidgets 2.8.11 (GTK+>= 2.6)
+>> Display Depth: 24 bpp (colour)
+>> OpenGL 2.1.2 NVIDIA 270.41.06
+>
+> I guess that means that you are using the proprietary nvidia drivers?
+>
+> You could see if the free drivers work any better for you (noveau).
+> (They tend to crash my work natty X-server on a regular basis unless
+> one turns turn acceleration off).
+
+Have tried it before and it was very crash prone, also did not seem to 
+do the right settings for my monitor, not that the nvidia drivers are 
+much better, took me ages to get it to do the right resolution, so do 
+not really want to play that game again.
+>
+> Finding out if therion 5.3.7-1 exhibits the same problem or not is of
+> course interesting. That is currently avaialble for oneiric.
+
+But what is the easiest way to do this without breaking my only machine? 
+Oneiric is still in very breaky stage!
+>
+> I've prepared a 5.3.8-1 now too. I'll put that in my PPA soon, pending
+> resolution of the therion.ini linefeed issue.
+
+That seems a safer option from an end users point of view , thanks :)
+
+Andrew
+>
+> Wookey
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot.png
+Type: image/png
+Size: 14125 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110621/d0d741ce/attachment.png>
+
+From drfootleg at gmail.com  Tue Jun 21 15:58:12 2011
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 21 Jun 2011 14:58:12 +0100
+Subject: [Therion] Lox model walls all inside out when a scrap contains
+	a loop
+In-Reply-To: <DC5A4382AF7E40BA8DE6CB36066313C3@JUICEBRAIN>
+References: <BANLkTi=zsf5tHK8an0WWQ2JUPJc4Pr89gg@mail.gmail.com>
+	<DC5A4382AF7E40BA8DE6CB36066313C3@JUICEBRAIN>
+Message-ID: <BANLkTinuSDLGdpjZ3EDRDcZo=rN-2kmyRQ@mail.gmail.com>
+
+Thanks Bruce,
+
+With that option and a lot of messing about I finally managed to get my
+entrance maze to appear correctly on model! It seems that the model building
+for KML and LOX is very sensitive to loops. Too many and it just makes a
+complete mess of it. But at least now I have managed to split my maze in
+half and get the first half to appear correctly in both KML and LOX.
+
+Now to try and get the other half in a second scrap to work and to join them
+back together in a single model.
+
+Footleg
+
+On 20 June 2011 21:24, Bruce <dangle at tomo.co.nz> wrote:
+
+> ** **
+>
+> Yes,****
+>
+> The ‘internal’ wall needs to have the option -outline in when it is all
+> part of the same scrap.****
+>
+> Bruce****
+>
+> ** **
+>  ------------------------------
+>
+> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Footleg
+> *Sent:* Tuesday, 21 June 2011 12:56 a.m.
+> *To:* **List for Therion users**
+> *Subject:* [Therion] Lox model walls all inside out when a scrap contains
+> a loop****
+>
+> ** **
+>
+> I cannot get a lox model to show the walls properly when I add a loop in my
+> scrap. I've attached the files I have been messing about with to test this.
+> There is one loop in the scrap sketch (created by line 9, the last line in
+> the file). As provided this does not display properly in **Loch**. But if
+> I delete that last line so that the the centre of the loop is removed then
+> the loch model looks fine. Am I missing a trick here? I cannot split every
+> loop in my caving into separate scraps (before someone suggests that). I
+> have too many of them in my real survey data.
+>
+> Testing with the 5.3.8 build.
+>
+> Footleg****
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110621/759396ee/attachment.htm>
+
+From lists at group-s.sk  Tue Jun 21 18:16:41 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 21 Jun 2011 18:16:41 +0200
+Subject: [Therion] therion 5.3.8 (was re: Bug in 5.3.7 )
+In-Reply-To: <20110621015303.GL9581@dream.aleph1.co.uk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+	<20110620153138.GC9581@dream.aleph1.co.uk>
+	<20110621015303.GL9581@dream.aleph1.co.uk>
+Message-ID: <BANLkTikiLq-4zq3=AfJopCwGDEUaogV5NQ@mail.gmail.com>
+
+> One thing I did notice:
+> therion.ini in 5.3.8 has unix lineends
+> therion.ini in 5.3.7 has dos lineends
+>
+> was that a deliberate change? It broke the
+> 80remove-czech-fonts-default.patch and more importantly it causes
+> everyone upgrading to get a 'you changed therion.ini - do you want to
+> use new or old' and if you ask for a diff it shows every line (which
+> have technicaly changed, but only in lineend).
+
+No it was not. I did not know, it will cause such problems. I am sorry.
+I can put it back to dos lineend in the next snapshot. I usually do
+changes on windows, so from time to time, it happens and .ini files
+were not listed to be converted to unix format. But I think, they
+should have unix lineends.
+
+S.
+
+
+From lists at group-s.sk  Tue Jun 21 18:17:51 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 21 Jun 2011 18:17:51 +0200
+Subject: [Therion] Bug in 5.3.7
+In-Reply-To: <20110620153418.GD9581@dream.aleph1.co.uk>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+	<20110620153418.GD9581@dream.aleph1.co.uk>
+Message-ID: <BANLkTinV24MC+-4qt0R-nKUp2M2As3RnWQ@mail.gmail.com>
+
+OK, next time I will create a separate message, when new snapshot will
+be released.
+
+S.
+
+On 20 June 2011 17:34, Wookey <wookey at wookware.org> wrote:
+> +++ Stacho Mudrak [2011-06-20 17:07 +0200]:
+>> I have tried to implement all your fixes from debian repository. Is there any
+>> other way to help you with debian packaging?
+>
+> Oh, and I didn't see a '5.3.8 has been uploaded' message. It's only
+> because of Graham's post that I noticed. I guess you would have sent
+> one after he'd reported back.
+>
+> But the point is that I need notification of new releases (not that I
+> will necessarily upload quickly, but I definately won't if I don't
+> know :-)
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From lists at group-s.sk  Tue Jun 21 18:21:16 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 21 Jun 2011 18:21:16 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <1308557724.3859.3.camel@localhost.localdomain>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+	<1308231123.3780.8.camel@localhost.localdomain>
+	<BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+	<BANLkTinL73WfjQmQBfkfADdsHymhQFvNqg@mail.gmail.com>
+	<1308557724.3859.3.camel@localhost.localdomain>
+Message-ID: <BANLkTin=Rv2puXtDFz=b+e1eJvjKN3M_xA@mail.gmail.com>
+
+But in therion, syntax is different. It is:
+
+POINT
+CP1 CP2 POINT
+
+And I am not sure, whether therion accepts CP specification before the
+first point.
+
+S.
+
+On 20 June 2011 10:15, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+> On Sat, 2011-06-18 at 11:07 +0200, Stacho Mudrak wrote:
+>> This bug should be fixed in 5.3.8. But there is one issue. If you have close
+>> bezier spline, how do you specify control points, if last point is not same
+>> as first one?
+>>
+> not sure ...
+> however the first point has a fore control point and a back
+> control point, the last point too.
+> i 'd expect that the piece of line between the last and the first
+> point uses the fore CP of the last and the back CP of the first.
+>
+> marco
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From lists at group-s.sk  Tue Jun 21 18:22:06 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 21 Jun 2011 18:22:06 +0200
+Subject: [Therion] Duplicates including adding splays?
+In-Reply-To: <BANLkTintz42EK8S16a57j98HZGSqpN5oVQ@mail.gmail.com>
+References: <4DF500DA.8090709@wotcc.org.uk>
+	<A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+	<1307946527.3935.2.camel@localhost.localdomain>
+	<BANLkTintz42EK8S16a57j98HZGSqpN5oVQ@mail.gmail.com>
+Message-ID: <BANLkTimDvou6jso4xgKr=NW1xPmrenBL6g@mail.gmail.com>
+
+This bug should be also fixed now in 5.3.8. If not, please let me know.
+
+S.
+
+On 13 June 2011 10:00, Stacho Mudrak <lists at group-s.sk> wrote:
+> It looks like a bug, they should not be used for depth. I will try to fix
+> it.
+>
+> Thanks, S.
+>
+> On 13 June 2011 08:28, marco corvi <marco.corvi at elsagdatamat.com> wrote:
+>>
+>> I agree with bruce.
+>>
+>> also noticed that splay shots are used for the "depth".
+>> it might make sense, but  i rather have the depth
+>> computed with the survey shots only.
+>>
+>> marco.
+>>
+>> On Mon, 2011-06-13 at 08:44 +1200, Bruce wrote:
+>> > Hi Andrew
+>> > Yes, when splay shots to an unlabelled station such as '-' are included
+>> > in a
+>> > dataset, such as when using a distoX or similar, the statistics do not
+>> > make
+>> > that much sense to me. I think it still works the way you describe in
+>> > 5.3.7.
+>> >
+>> > To my way of thinking, splay shots are not part of the survey length
+>> > (and
+>> > therefore should not be duplicate either), they are analogous to LRUD.
+>> >  IF
+>> > they are to be reported, they should be separately reported as 'total
+>> > splay
+>> > length' and 'number of splay stations' (could be further broken down
+>> > into
+>> > 'surface splays' and 'cave splays' if one was being picky).
+>> >
+>> > If there were to be a compromise for the sake of simplicity I would
+>> > prefer
+>> > that therion exclude splay information from all the reported statistics
+>> > (as
+>> > it ignores LRUD, which are really just special splay shots), rather than
+>> > the
+>> > apparently selective way the splay shots are currently included.
+>> >
+>> > Regards
+>> > Bruce
+>> >
+>> > -----Original Message-----
+>> > From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On
+>> > Behalf
+>> > Of Andrew Atkinson
+>> > Sent: Monday, 13 June 2011 6:10 a.m.
+>> > To: List for Therion users
+>> > Subject: [Therion] Duplicates including adding splays?
+>> >
+>> > Hello
+>> >
+>> > Therion 5.3.5 ubuntu 10.04
+>> >
+>> > In the attached file the following information is given about the survey
+>> >
+>> > title: RhinoPassage
+>> > length: 189.07m (surface 0.00m, duplicated 24.58m)
+>> > vertical range: 20.51m (from 1.27 at RhinoPassage at 20.38m to
+>> > 1.3 at RhinoPassage at -0.13m)
+>> > north-south range: 92.47m (from 1.27 at RhinoPassage at 33.43m to
+>> > 1.53 at RhinoPassage at -59.04m)
+>> > east-west range: 66.67m (from 1.53 at RhinoPassage at 66.67m to
+>> > 1.0 at RhinoPassage at 0.00m)
+>> > number of shots: 281
+>> > number of stations: 282
+>> >
+>> > The duplicate figure got me wondering, it seems to be counting the
+>> > splays but the length does not. As the duplicate none splays are only
+>> > about 10m.
+>> > Maybe this is what is wanted, but I personally think that the duplicate
+>> > value should be the amount taken off the length by the duplicate flag?
+>> > Ie why is length treated differently to duplicate (something to do with
+>> > the way survex treated splays and duplicate as different, I think that
+>> > splays are not included in extend in survex)
+>> >
+>> > Maybe 2 figures would be better, duplicate length and duplicate splays.
+>> >
+>> > {probably best to ignore this next bit}
+>> > Oh this leads to all sorts of thinks that are really not important, like
+>> > maybe giving the length of all the splays, and the number of stations,
+>> > is it really 282 or really 54. All depends on your definition I guess
+>> >
+>> > Andrew
+>> >
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From wookey at wookware.org  Tue Jun 21 19:14:54 2011
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jun 2011 18:14:54 +0100
+Subject: [Therion] therion 5.3.8 (was re: Bug in 5.3.7 )
+In-Reply-To: <BANLkTikiLq-4zq3=AfJopCwGDEUaogV5NQ@mail.gmail.com>
+References: <mailman.1.1308564001.14935.therion@speleo.sk>
+	<4DFF41B6.8090404@coly.org.uk>
+	<20110620134423.GY9581@dream.aleph1.co.uk>
+	<BANLkTimpMt1DEXZWzv64xnY9nSzeom5v=A@mail.gmail.com>
+	<20110620153138.GC9581@dream.aleph1.co.uk>
+	<20110621015303.GL9581@dream.aleph1.co.uk>
+	<BANLkTikiLq-4zq3=AfJopCwGDEUaogV5NQ@mail.gmail.com>
+Message-ID: <20110621171454.GP9581@dream.aleph1.co.uk>
+
++++ Stacho Mudrak [2011-06-21 18:16 +0200]:
+> > One thing I did notice:
+> > therion.ini in 5.3.8 has unix lineends
+> > therion.ini in 5.3.7 has dos lineends
+> >
+> > was that a deliberate change? It broke the
+> > 80remove-czech-fonts-default.patch and more importantly it causes
+> > everyone upgrading to get a 'you changed therion.ini - do you want to
+> > use new or old' and if you ask for a diff it shows every line (which
+> > have technicaly changed, but only in lineend).
+> 
+> No it was not. I did not know, it will cause such problems. I am sorry.
+> I can put it back to dos lineend in the next snapshot. I usually do
+> changes on windows, so from time to time, it happens and .ini files
+> were not listed to be converted to unix format. But I think, they
+> should have unix lineends.
+
+Yes. I think it should stay linux, and I've already fixed-up the
+patch. And actually, so long as the file hasn't changed, the
+auto-update system shouldn't ask about it. I need to work out why it
+did for me last night. So actually this should be fine, and I'll
+upload soon. Don't change it back.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From dangle at tomo.co.nz  Tue Jun 21 23:08:53 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Wed, 22 Jun 2011 09:08:53 +1200
+Subject: [Therion] Duplicates including adding splays?
+In-Reply-To: <BANLkTimDvou6jso4xgKr=NW1xPmrenBL6g@mail.gmail.com>
+References: <4DF500DA.8090709@wotcc.org.uk>
+	<A1291DCCC29D4E1AB5EFE45B67456059@JUICEBRAIN>
+	<1307946527.3935.2.camel@localhost.localdomain>
+	<BANLkTintz42EK8S16a57j98HZGSqpN5oVQ@mail.gmail.com>
+	<BANLkTimDvou6jso4xgKr=NW1xPmrenBL6g@mail.gmail.com>
+Message-ID: <F67D22DEC6F84A6DA6598860019744EE@JUICEBRAIN>
+
+I think there were at least two issues raised in this thread, discussed
+below.
+
+> This bug should be also fixed now in 5.3.8. If not, please let me know.
+>S.
+>>
+>> also noticed that splay shots are used for the "depth".
+>> it might make sense, but  i rather have the depth
+>> computed with the survey shots only.
+>>
+One
+My informal comparison of 5.3.8 outputs with 5.3.7 suggests that depth is
+now likely to be accounting for only the centreline survey shots, which I
+like (although this could perhaps one day be a user selectable option-both
+are useful for differing purposes?).
+
+>> > To my way of thinking, splay shots are not part of the survey length
+>> > (and
+>> > therefore should not be duplicate either), they are analogous to LRUD.
+>> >  IF
+>> > they are to be reported, they should be separately reported as 'total
+>> > splay
+>> > length' and 'number of splay stations' (could be further broken down
+>> > into
+>> > 'surface splays' and 'cave splays' if one was being picky).
+>> >
+>> > If there were to be a compromise for the sake of simplicity I would
+>> > prefer
+>> > that therion exclude splay information from all the reported statistics
+>> > (as
+>> > it ignores LRUD, which are really just special splay shots), 
+>> >
+>> > Bruce
+>> >
+>> > Maybe this is what is wanted, but I personally think that the duplicate
+>> > value should be the amount taken off the length by the duplicate flag?
+>> > Maybe 2 figures would be better, duplicate length and duplicate splays.
+>> >
+>> > Andrew
+>> >
+Two
+It seems to me that the splay shot statistics are still mixed in with the
+centreline statistics- ie no change between 5.3.7 and 5.3.8. Perhaps this
+was not the 'bug' referred to above, and I suspect it might require a lot of
+work, but deserves consideration I think.
+
+Bruce
+
+
+
+From dangle at tomo.co.nz  Thu Jun 23 11:53:02 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Thu, 23 Jun 2011 21:53:02 +1200
+Subject: [Therion] metapost color definition
+Message-ID: <B1CBFD4FCBA74045BD80292ED4F43BA9@JUICEBRAIN>
+
+Anyone have any idea why the following metapost included in a layout causes
+the error below?
+
+It is almost identical to code extracted from data.mp, yet it upsets therion
+(I have added the 237 so you can see where the error occurs).
+
+ 
+
+       code metapost  
+
+                        %define colours for custom water point & area
+background
+
+237                   color colour_water; 
+
+                        colour_water :=(226/255,244/255,253/255); %light
+blue
+
+                        color colour_sump;
+
+                        colour_sump := (22/255,22/255,95/255);    %dark blue
+
+       endcode
+
+ 
+
+D:\Program Files\Therion\therion.exe: error --
+../../StdFiles/LayoutStandards.thc [237] --
+../../StdFiles/LayoutStandards.thc [237] -- not enough option arguments --
+color -- must be 2
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110623/4144c56d/attachment.htm>
+
+From lists at group-s.sk  Thu Jun 23 12:20:08 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 23 Jun 2011 12:20:08 +0200
+Subject: [Therion] metapost color definition
+In-Reply-To: <B1CBFD4FCBA74045BD80292ED4F43BA9@JUICEBRAIN>
+References: <B1CBFD4FCBA74045BD80292ED4F43BA9@JUICEBRAIN>
+Message-ID: <BANLkTi=P+qdbEeA8y3BzXdt7oQJA90+8wA@mail.gmail.com>
+
+It is a very rare case, where layout options are mixing with metapost
+code. Both have color keyword. It is because endcode is not needed in
+layout.
+
+Could you please try to add ! as a first character on the line 237.
+Therion will then know, that it is a line with the code. Or also a ;
+could do the job.
+
+Regards, S.
+
+On 23 June 2011 11:53, Bruce <dangle at tomo.co.nz> wrote:
+> Anyone have any idea why the following metapost included in a layout causes
+> the error below?
+>
+> It is almost identical to code extracted from data.mp, yet it upsets therion
+> (I have added the 237 so you can see where the error occurs).
+>
+>
+>
+>        code metapost
+>
+>                         %define colours for custom water point & area
+> background
+>
+> 237                   color colour_water;
+>
+>                         colour_water :=(226/255,244/255,253/255); %light
+> blue
+>
+>                         color colour_sump;
+>
+>                         colour_sump := (22/255,22/255,95/255);    %dark blue
+>
+>        endcode
+>
+>
+>
+> D:\Program Files\Therion\therion.exe: error --
+> ../../StdFiles/LayoutStandards.thc [237] --
+> ../../StdFiles/LayoutStandards.thc [237] -- not enough option arguments --
+> color -- must be 2
+>
+>
+>
+> Regards
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From marco.corvi at elsagdatamat.com  Thu Jun 23 12:53:11 2011
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Thu, 23 Jun 2011 12:53:11 +0200
+Subject: [Therion] xtherion -close on
+In-Reply-To: <BANLkTin=Rv2puXtDFz=b+e1eJvjKN3M_xA@mail.gmail.com>
+References: <1307947623.3935.18.camel@localhost.localdomain>
+	<BANLkTikAcL2tEkN6=uCrDggCnXsZUgeDgA@mail.gmail.com>
+	<1308231123.3780.8.camel@localhost.localdomain>
+	<BANLkTi=F6VAhJ=C6hpDGz3YYPb0p6Y8UVQ@mail.gmail.com>
+	<BANLkTinL73WfjQmQBfkfADdsHymhQFvNqg@mail.gmail.com>
+	<1308557724.3859.3.camel@localhost.localdomain>
+	<BANLkTin=Rv2puXtDFz=b+e1eJvjKN3M_xA@mail.gmail.com>
+Message-ID: <1308826391.3811.21.camel@localhost.localdomain>
+
+On Tue, 2011-06-21 at 18:21 +0200, Stacho Mudrak wrote:
+> But in therion, syntax is different. It is:
+> 
+> POINT
+> CP1 CP2 POINT
+> 
+> And I am not sure, whether therion accepts CP specification before the
+> first point.
+> 
+me neither.
+
+in thbook it says that a data line can have one of the two format above.
+maybe i missed the spot where it says that the first point of a 
+line can be only in the first format.
+
+not sure if thbook says it, but seems that in the sequence
+  ... PT1
+  CP1 CP2 PT2
+  ...
+in the piece of curve between P1 and P2, CP1 is the control point
+on the side of P1 and CP2 that on the side of P2.
+
+anyways thbook states what therion does, so it's up to the
+implementation of therion.
+
+i tested with 5.3.8:
+it seems that therion implementation accept the first line
+point in the second format, but it ignores the two control points.
+this is enough for my needs at the moment.
+thanks. 
+
+marco
+
+
+
+
+
+From dangle at tomo.co.nz  Thu Jun 23 22:19:18 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 24 Jun 2011 08:19:18 +1200
+Subject: [Therion] metapost color definition
+In-Reply-To: <BANLkTi=P+qdbEeA8y3BzXdt7oQJA90+8wA@mail.gmail.com>
+References: <B1CBFD4FCBA74045BD80292ED4F43BA9@JUICEBRAIN>
+	<BANLkTi=P+qdbEeA8y3BzXdt7oQJA90+8wA@mail.gmail.com>
+Message-ID: <4B9FC8C208C541D58D04E9D37DF04EE9@JUICEBRAIN>
+
+Fixed, thanks, ! does the trick.
+
+Makes me wonder if the need for endcode should be forced, or if all metapost
+lines should voluntarily start with !
+
+Reason is that peoples' custom metapost will always be vulnerable to
+additional keywords in future therion versions.  I guess everything becomes
+obsolete eventually.
+Bruce
+
+By surveying and mapping caves we steal from our future selves.
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Thursday, 23 June 2011 10:20 p.m.
+To: List for Therion users
+Subject: Re: [Therion] metapost color definition
+
+It is a very rare case, where layout options are mixing with metapost
+code. Both have color keyword. It is because endcode is not needed in
+layout.
+
+Could you please try to add ! as a first character on the line 237.
+Therion will then know, that it is a line with the code. Or also a ;
+could do the job.
+
+Regards, S.
+
+On 23 June 2011 11:53, Bruce <dangle at tomo.co.nz> wrote:
+> Anyone have any idea why the following metapost included in a layout
+causes
+> the error below?
+>
+> It is almost identical to code extracted from data.mp, yet it upsets
+therion
+> (I have added the 237 so you can see where the error occurs).
+>
+>
+>
+>        code metapost
+>
+>                         %define colours for custom water point & area
+> background
+>
+> 237                   color colour_water;
+>
+>                         colour_water :=(226/255,244/255,253/255); %light
+> blue
+>
+>                         color colour_sump;
+>
+>                         colour_sump := (22/255,22/255,95/255);    %dark
+blue
+>
+>        endcode
+>
+>
+>
+> D:\Program Files\Therion\therion.exe: error --
+> ../../StdFiles/LayoutStandards.thc [237] --
+> ../../StdFiles/LayoutStandards.thc [237] -- not enough option arguments --
+> color -- must be 2
+>
+>
+>
+> Regards
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From dangle at tomo.co.nz  Thu Jun 23 23:10:24 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 24 Jun 2011 09:10:24 +1200
+Subject: [Therion] metapost: Therion version and current date
+Message-ID: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+
+While I've having fun with metapost.
+
+ 
+
+Is it possible to expose the version number of therion to metapost?
+
+And the current system date and time?
+
+ 
+
+I'll add anything I make to the wiki.  Promise.
+
+ 
+
+Bruce
+
+By surveying and mapping caves we steal from our future selves.
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110624/ad1e4ac2/attachment.htm>
+
+From m.budaj at gmail.com  Fri Jun 24 16:20:48 2011
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Fri, 24 Jun 2011 16:20:48 +0200
+Subject: [Therion] metapost: Therion version and current date
+In-Reply-To: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+References: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+Message-ID: <BANLkTimpPB=OFyk5UVqYG9UEaXCr6j0xWg@mail.gmail.com>
+
+> Is it possible to expose the version number of therion to metapost?
+
+this could be added
+
+> And the current system date and time?
+
+there are following internal numeric variables in metapost:
+
+hour, minute, day, month, year
+
+martin
+
+
+From xavier.pennec at inria.fr  Fri Jun 24 18:21:34 2011
+From: xavier.pennec at inria.fr (Xavier Pennec)
+Date: Fri, 24 Jun 2011 18:21:34 +0200
+Subject: [Therion] use plan as cross-section (again)
+In-Reply-To: <1279607545.5191.14.camel@localhost.localdomain>
+References: <1279526427.5187.12.camel@localhost.localdomain>	<BE75CF80-C930-44E9-B4EC-01EB6C445DC5@mac.com>	<1279554295.5187.45.camel@localhost.localdomain>	<AANLkTima_7TUOWdQiumY0Hf3DvFAgk8bm2e93ZTsMwC1@mail.gmail.com>
+	<1279607545.5191.14.camel@localhost.localdomain>
+Message-ID: <4E04B98E.8020609@inria.fr>
+
+As Marco Corvi tried last year, I am trying to use scraps of type plan 
+as cross-sections in an extended scrap.
+The reason is that the cave is essentially vertical, so that most of my 
+scraps for plan are superimposed.
+Thus, they are better displayed as cross-sections. However, I would like 
+to have these scraps scales oriented and warped automatically according 
+to the stations as in the plan projection. Moreover, I would like to use 
+also some of these scraps to create a map plan.
+
+I am running therion on windows and I don't want to recompile. So I 
+cannot change the test in thdb2d.cxx as Marco did last year to accept 
+cross-sections of type none and plan. Is there any reason to forbid the 
+use of scraps projections other than none in cross-sections?
+
+I tried to play with the revise command to turn around, without success 
+so far as changing the projections of my scraps from plan to none does 
+not allow them to belong to a map plan!
+
+Any help
+
+
+
+
+
+Le 20/07/2010 08:32, marco corvi a écrit :
+> On Mon, 2010-07-19 at 23:40 +0200, Stacho Mudrak wrote:
+>> I am not sure, I understand your problem correctly, but would it help
+>> you, if cross section scraps could be also from other, than "none"
+>> projection?
+>>
+> that's fine for vertical caves, where cross-sections
+> are horizontal and have projection plan.
+>
+> infact i changed the test in thdb2d to allow
+> scraps with projections "plan" as well as "none".
+> then i had to add the north symbol as image.
+>
+> there might be similar problems for vertical
+> cross-sections ...
+> (not sure how to go about that).
+>
+> marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+-------------------------
+Xavier Pennec
+Senior Research Scientist / Directeur de recherche
+Asclepios project-team, INRIA Sophia-Antipolis
+2004 Route des Lucioles, BP93
+F-06902 Sophia-Antipolis Cedex, France
++33 4 92 38 76 64
++33 6 78 35 16 90
+http://www-sop.inria.fr/asclepios/
+-------------------------------
+
+
+From xavier.pennec at inria.fr  Fri Jun 24 18:22:24 2011
+From: xavier.pennec at inria.fr (Xavier Pennec)
+Date: Fri, 24 Jun 2011 18:22:24 +0200
+Subject: [Therion] use plan as cross-section (again)
+In-Reply-To: <4E04B98E.8020609@inria.fr>
+References: <1279526427.5187.12.camel@localhost.localdomain>	<BE75CF80-C930-44E9-B4EC-01EB6C445DC5@mac.com>	<1279554295.5187.45.camel@localhost.localdomain>	<AANLkTima_7TUOWdQiumY0Hf3DvFAgk8bm2e93ZTsMwC1@mail.gmail.com>	<1279607545.5191.14.camel@localhost.localdomain>
+	<4E04B98E.8020609@inria.fr>
+Message-ID: <4E04B9C0.2060801@inria.fr>
+
+Any help would be appreciated (the mail was sent too early).
+
+Xavier
+
+Le 24/06/2011 18:21, Xavier Pennec a écrit :
+> As Marco Corvi tried last year, I am trying to use scraps of type plan 
+> as cross-sections in an extended scrap.
+> The reason is that the cave is essentially vertical, so that most of 
+> my scraps for plan are superimposed.
+> Thus, they are better displayed as cross-sections. However, I would 
+> like to have these scraps scales oriented and warped automatically 
+> according to the stations as in the plan projection. Moreover, I would 
+> like to use also some of these scraps to create a map plan.
+>
+> I am running therion on windows and I don't want to recompile. So I 
+> cannot change the test in thdb2d.cxx as Marco did last year to accept 
+> cross-sections of type none and plan. Is there any reason to forbid 
+> the use of scraps projections other than none in cross-sections?
+>
+> I tried to play with the revise command to turn around, without 
+> success so far as changing the projections of my scraps from plan to 
+> none does not allow them to belong to a map plan!
+>
+> Any help
+>
+>
+>
+>
+>
+> Le 20/07/2010 08:32, marco corvi a écrit :
+>> On Mon, 2010-07-19 at 23:40 +0200, Stacho Mudrak wrote:
+>>> I am not sure, I understand your problem correctly, but would it help
+>>> you, if cross section scraps could be also from other, than "none"
+>>> projection?
+>>>
+>> that's fine for vertical caves, where cross-sections
+>> are horizontal and have projection plan.
+>>
+>> infact i changed the test in thdb2d to allow
+>> scraps with projections "plan" as well as "none".
+>> then i had to add the north symbol as image.
+>>
+>> there might be similar problems for vertical
+>> cross-sections ...
+>> (not sure how to go about that).
+>>
+>> marco
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+-- 
+-------------------------
+Xavier Pennec
+Senior Research Scientist / Directeur de recherche
+Asclepios project-team, INRIA Sophia-Antipolis
+2004 Route des Lucioles, BP93
+F-06902 Sophia-Antipolis Cedex, France
++33 4 92 38 76 64
++33 6 78 35 16 90
+http://www-sop.inria.fr/asclepios/
+-------------------------------
+
+
+From dangle at tomo.co.nz  Sat Jun 25 02:39:22 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Sat, 25 Jun 2011 12:39:22 +1200
+Subject: [Therion] metapost: Therion version and current date
+In-Reply-To: <BANLkTimpPB=OFyk5UVqYG9UEaXCr6j0xWg@mail.gmail.com>
+References: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+	<BANLkTimpPB=OFyk5UVqYG9UEaXCr6j0xWg@mail.gmail.com>
+Message-ID: <402B858806814BB38BCA7EFCDC035207@JUICEBRAIN>
+
+Thanks Martin
+
+I have made a clumsy crude attempt at getting therion's version and compile
+date into the map header/legend, as in the attached file, layout and image
+below.  Hopefully ready for the new 'thversion' variable.
+
+ 
+
+I can see that the metapost variables year month etc are there, but not sure
+how to access them, presumably via tex, to get them into the header.
+
+One way would be to modify the legend symbol to include the compile date
+-really messy.
+
+Another way would be to make a new entity like the north arrow or scalebar,
+and include it in the legend - not sure how to do this or if therion would
+recognise it if I did.
+
+Or can tex extract the mpost variables directly?
+
+ 
+
+Any good ideas?
+
+You can probably tell that I'm not much of a coder.
+
+ 
+
+Bruce
+
+ 
+
+layout LayoutEnterExperimentalVersionDate
+
+#check and enter the current th version and date each time you compile
+
+      code tex-map
+
+            \newtoks\thversion \thversion={5.3.8}
+
+            \newtoks\today \today={24Jun2011}
+
+      endcode
+
+      copy LayoutExperimentalHeader #from LayoutStandards: sets up for
+inclusion of the above
+
+endlayout LayoutEnterExperimentalVersionDate
+
+
+
+
+
+ 
+
+ 
+
+> Is it possible to expose the version number of therion to metapost?
+
+ 
+
+this could be added
+
+ 
+
+> And the current system date and time?
+
+ 
+
+there are following internal numeric variables in metapost:
+
+ 
+
+hour, minute, day, month, year
+
+ 
+
+martin
+
+_______________________________________________
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110625/2f334387/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 5178 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110625/2f334387/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 11984 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110625/2f334387/attachment-0001.jpg>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: LayoutExperimentalHeader.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110625/2f334387/attachment.txt>
+
+From m.budaj at gmail.com  Sat Jun 25 18:09:29 2011
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 25 Jun 2011 18:09:29 +0200
+Subject: [Therion] metapost: Therion version and current date
+In-Reply-To: <402B858806814BB38BCA7EFCDC035207@JUICEBRAIN>
+References: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+	<BANLkTimpPB=OFyk5UVqYG9UEaXCr6j0xWg@mail.gmail.com>
+	<402B858806814BB38BCA7EFCDC035207@JUICEBRAIN>
+Message-ID: <BANLkTik82_J0D7BhyepHMLBhjaMoc0gfiw@mail.gmail.com>
+
+> Or can tex extract the mpost variables directly?
+
+In fact TeX has its own \day, \month and \year (all numeric). You can
+find an example of converting month number to name at
+http://www.alfredklomp.com/programming/tex/macros/ (section 2)
+
+Martin
+
+
+From dangle at tomo.co.nz  Sun Jun 26 02:05:08 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 26 Jun 2011 12:05:08 +1200
+Subject: [Therion] metapost: Therion version and current date
+In-Reply-To: <BANLkTik82_J0D7BhyepHMLBhjaMoc0gfiw@mail.gmail.com>
+References: <C8C566A9BDDD4E9FB374498C641F8A21@JUICEBRAIN>
+	<BANLkTimpPB=OFyk5UVqYG9UEaXCr6j0xWg@mail.gmail.com>
+	<402B858806814BB38BCA7EFCDC035207@JUICEBRAIN>
+	<BANLkTik82_J0D7BhyepHMLBhjaMoc0gfiw@mail.gmail.com>
+Message-ID: <FADB9019E0F7415EB7186A25C060A1FC@JUICEBRAIN>
+
+>In fact TeX has its own \day, \month and \year (all numeric). You can
+>find an example of converting month number to name at
+>http://www.alfredklomp.com/programming/tex/macros/ (section 2)
+
+Thanks, that works nicely now.
+I'll put an example on the wiki when once we get a \thversion implemented...
+
+I'm having some challenges with adding it to tex-atlas, but I'll work on it
+some more before bothering y'all.
+
+Bruce
+
+
+
+From xavier.pennec at inria.fr  Tue Jun 28 22:25:22 2011
+From: xavier.pennec at inria.fr (Xavier Pennec)
+Date: Tue, 28 Jun 2011 22:25:22 +0200
+Subject: [Therion] Bug with background sketches?
+Message-ID: <4E0A38B2.2040002@inria.fr>
+
+I am trying to include the sketch of an old survey as a background image 
+on which I want to superimpose the new map.
+Here is a simplified example: the new survey is in SaleGosse4_test.th 
+with maps in SG4_plan1.th2.
+For the underlying survey to keep a reasonable size, I used a morphed 
+sketch of the same survey which is SG4_A1_plan2_carnet.th2 with 
+background sketch Sale-Gosse_Carnet_2010_A1_plan2.jpg.
+
+When I compile the pdf for that map (not included here because it is 
+above 6 Mb), the warped sketch image is included 9 times instead of only 
+one. Apparently, it is considered as a sketch for all the scraps of the 
+map while it should only be the sketch of one of them. There is not only 
+the problem of file size explosion (over 50 Mb for the original survey 
+sketch with 16 scraps above), but the image is also hiding the scraps 
+that are supposed to be above it.
+
+I tried to play with many parameters in the layout (transparency, 
+surface bottom or top) without much changes.
+It seems to me like a bug, or I missed something.  Does anyone have an idea?
+
+Best
+
+Xavier
+
+
+-- 
+-------------------------
+Xavier Pennec
+Senior Research Scientist / Directeur de recherche
+Asclepios project-team, INRIA Sophia-Antipolis
+2004 Route des Lucioles, BP93
+F-06902 Sophia-Antipolis Cedex, France
++33 4 92 38 76 64
++33 6 78 35 16 90
+http://www-sop.inria.fr/asclepios/
+-------------------------------
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: SG4_A1_plan2_carnet.th2
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110628/24cb56e0/attachment.ksh>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: SaleGosse4_test.thconfig
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110628/24cb56e0/attachment-0001.ksh>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: SaleGosse4_test.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110628/24cb56e0/attachment-0002.ksh>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: SG4_plan1.th2
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110628/24cb56e0/attachment-0003.ksh>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sale-Gosse_Carnet_2010_A1_plan2.jpg
+Type: image/jpeg
+Size: 77634 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110628/24cb56e0/attachment.jpg>
+
+From m.brewer at xtra.co.nz  Wed Jun 29 01:53:30 2011
+From: m.brewer at xtra.co.nz (michael brewer)
+Date: Wed, 29 Jun 2011 11:53:30 +1200
+Subject: [Therion] Bug with background sketches?
+In-Reply-To: <4E0A38B2.2040002@inria.fr>
+References: <4E0A38B2.2040002@inria.fr>
+Message-ID: <001901cc35ee$950b5c20$bf221460$@brewer@xtra.co.nz>
+
+I have had the same issues - 
+- the jpg file output size was over 100mb 
+- the image was on top of the scraps
+
+I didn't manage to sort the problem and gave it to Bruce to look at! 
+
+My initial thoughts were that this is due to some recent change as I had
+compiled almost the same map a year ago using an older version of therion
+without these issues.
+
+Michael
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Xavier Pennec
+Sent: Wednesday, 29 June 2011 8:25 a.m.
+To: therion at speleo.sk
+Subject: [Therion] Bug with background sketches?
+
+I am trying to include the sketch of an old survey as a background image on
+which I want to superimpose the new map.
+Here is a simplified example: the new survey is in SaleGosse4_test.th with
+maps in SG4_plan1.th2.
+For the underlying survey to keep a reasonable size, I used a morphed sketch
+of the same survey which is SG4_A1_plan2_carnet.th2 with background sketch
+Sale-Gosse_Carnet_2010_A1_plan2.jpg.
+
+When I compile the pdf for that map (not included here because it is above 6
+Mb), the warped sketch image is included 9 times instead of only one.
+Apparently, it is considered as a sketch for all the scraps of the map while
+it should only be the sketch of one of them. There is not only the problem
+of file size explosion (over 50 Mb for the original survey sketch with 16
+scraps above), but the image is also hiding the scraps that are supposed to
+be above it.
+
+I tried to play with many parameters in the layout (transparency, surface
+bottom or top) without much changes.
+It seems to me like a bug, or I missed something.  Does anyone have an idea?
+
+Best
+
+Xavier
+
+
+--
+-------------------------
+Xavier Pennec
+Senior Research Scientist / Directeur de recherche Asclepios project-team,
+INRIA Sophia-Antipolis
+2004 Route des Lucioles, BP93
+F-06902 Sophia-Antipolis Cedex, France
++33 4 92 38 76 64
++33 6 78 35 16 90
+http://www-sop.inria.fr/asclepios/
+-------------------------------
+
+
+
+From dangle at tomo.co.nz  Wed Jun 29 07:46:17 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Wed, 29 Jun 2011 17:46:17 +1200
+Subject: [Therion] Bug with background sketches?
+In-Reply-To: <001901cc35ee$950b5c20$bf221460$%brewer@xtra.co.nz>
+References: <4E0A38B2.2040002@inria.fr>
+	<001901cc35ee$950b5c20$bf221460$%brewer@xtra.co.nz>
+Message-ID: <313E7002E6D8404E8B71CE2897C2310E@JUICEBRAIN>
+
+I have been sitting on this one for some time, and today I did some tests.
+
+The problem was introduced somewhere between 5.2.10 and 5.3 and it can
+easily be inferred where it is happening in the process by comparing the
+pdftex log part of the log files below.
+
+I can provide the log files or more examples.
+I have versions 5.3.11 to .14 that I could experiment with if it would help.
+
+
+Bruce
+
+Therion 5.2.10
+
+######################## pdftex log file #########################
+This is pdfTeX, Version 3.1415926-1.40.10 (Web2C 7.5.7) (format=pdftex
+2009.5.24)  29 JUN 2011 14:48
+entering extended mode
+**data.tex
+(./data.tex (./th_enc.tex) (./th_texts.tex) (./th_resources.tex
+(c:/Program Files/Therion/texmf/tex/glyphtounicode.tex))
+(./th_fontdef.tex{c:/P
+rogram Files/Therion/texmf/fonts/pdftex.map})
+(./th_formdef.tex
+Normal \count register pool exhausted, switching to extended pool.)
+(./th_pagedef.tex <./pic0003.png> <./pic0006.png>) (./th_pages.tex)
+ 253 numeric registers used out of 32768
+ [1] )
+
+Therion 5.3
+
+######################## pdftex log file #########################
+This is pdfTeX, Version 3.1415926-1.40.10 (Web2C 2009) (format=pdftex
+2010.1.2)  29 JUN 2011 14:55
+entering extended mode
+**data.tex
+(./data.tex (./th_enc.tex) (./th_texts.tex) (./th_resources.tex
+(c:/Program Files/Therion/texmf/tex/glyphtounicode.tex))
+(./th_fontdef.tex{c:/P
+rogram Files/Therion/texmf/fonts/pdftex.map})
+(./th_formdef.tex
+Normal \count register pool exhausted, switching to extended pool.)
+(./th_pagedef.tex <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic0006.pn
+g> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic0003.p
+ng> <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic0006.
+png> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic0003
+.png> <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic000
+6.png> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic00
+03.png> <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic0
+006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic
+0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pi
+c0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./p
+ic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./
+pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<.
+/pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic0003.png> <
+./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic0006.png> 
+<./pic0003.png> <./pic0006.png> <./pic0003.png> <./pic0006.png>
+<./pic0003.png>
+ <./pic0006.png> <./pic0003.png> <./pic0006.png> <./pic0003.png>
+<./pic0006.png
+>) (./th_pages.tex)
+ 253 numeric registers used out of 32768
+ [1] )
+
+
+
+From dangle at tomo.co.nz  Wed Jun 29 22:04:28 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Thu, 30 Jun 2011 08:04:28 +1200
+Subject: [Therion] FW: PocketTopo series: separate files
+Message-ID: <469FC814B91E497E9E0B6C65CD6325D3@JUICEBRAIN>
+
+
+-----Original Message-----
+From: Torstein Finnesand
+Sent: Wednesday, 29 June 2011 9:23 a.m.
+To: Bruce
+Subject: PocketTopo series: separate files
+
+Hi! Thank for writing this:
+
+http://therion.speleo.sk/wiki/doku.php?id=paperless   
+
+You mention that "Each series needs to be stored in it's own separate 
+file. ie You use Menu.File.New when you need to start a new series." 
+Would it be possible for you to explain the reason to do so? I ask, 
+since I have stored many series in one top-file. But maybe I have missed 
+something.
+
+Torstein Finnesand
+Norway
+
+Hi Torstein
+...
+Do you mind if I copy this conversation to the forum?
+That way other users can benefit, or correct me if I have made an incorrect
+interpretation.
+
+As I mentioned on that page I have been writing it to try to consolidate my
+understanding of how it works, or at least find a good way of working with
+it.
+
+With regard to your question, I think PocketTopo started out using what
+seems to be rather restrictive TopoRobot conventions and limitations.  Now I
+think with each version it is becoming more flexible (Beat, the author will
+be the authority on this!)  In fact when I use PocketTopo I break many of
+the 'rules' about station numbering and loops and have not had any serious
+data loss or corruption.  To be honest I have trouble thinking in 'series'
+as it is not a concept that is used in New Zealand surveying.
+
+The key points to note are;
+1. Ensure all files that contain surveys that are connected to each other
+are in the same folder.  PocketTopo then displays the centrelines of all
+these surveys in the background of the current survey and sketch.  Do not
+keep any copies or other files in that folder.
+
+2. Main reasons to start a new file are when a new days survey is started, a
+new survey is starting in a different location, or if the plan or elevation
+centrelines start overlapping (causing the sketching to become difficult). 
+This way the centrelines of other surveys remain visible and only the
+sketches of the currently open file can be seen (reduces confusion).
+
+Hope this answers your question.
+Any don't forget to get back to me about the forum posting.
+Regards
+Bruce
+
+
+
+
+From dangle at tomo.co.nz  Wed Jun 29 22:06:00 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Thu, 30 Jun 2011 08:06:00 +1200
+Subject: [Therion] FW: PocketTopo series: separate files
+Message-ID: <95C0881D06C44725BB04246D363D7879@JUICEBRAIN>
+
+Hi! Thanks for a fast and thoroughly answer. Yes, I'm a member (for many 
+years), and feel free to copy it to the forum.
+Some comments below.
+Torstein
+
+> seems to be rather restrictive TopoRobot conventions and limitations.  Now
+I
+> think with each version it is becoming more flexible (Beat, the author
+will
+> be the authority on this!)  In fact when I use PocketTopo I break many of
+> the 'rules' about station numbering and loops and have not had any serious
+> data loss or corruption.  To be honest I have trouble thinking in 'series'
+> as it is not a concept that is used in New Zealand surveying.
+I have also problems with thinking in series ...
+
+> The key points to note are;
+> 1. Ensure all files that contain surveys that are connected to each other
+> are in the same folder.  PocketTopo then displays the centrelines of all
+> these surveys in the background of the current survey and sketch.  Do not
+> keep any copies or other files in that folder.
+
+Yes.
+
+> 2. Main reasons to start a new file are when a new days survey is started,
+a
+> new survey is starting in a different location, or if the plan or
+elevation
+> centrelines start overlapping (causing the sketching to become difficult).
+> This way the centrelines of other surveys remain visible and only the
+> sketches of the currently open file can be seen (reduces confusion).
+
+Yes.
+I think the problem is the use of the word "series" in the sentence I 
+referred to. I thought you by series meant the same as the series in 
+PocketTopo, which is described in the bullet points above that sentence. 
+Could it be an idea to rewrite the sentence?
+
+
+
+From andrew at wotcc.org.uk  Wed Jun 29 23:00:28 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 29 Jun 2011 22:00:28 +0100
+Subject: [Therion] FW: PocketTopo series: separate files
+In-Reply-To: <95C0881D06C44725BB04246D363D7879@JUICEBRAIN>
+References: <95C0881D06C44725BB04246D363D7879@JUICEBRAIN>
+Message-ID: <4E0B926C.6000700@wotcc.org.uk>
+
+I use to (and mainly still) do, however, on PocketTopo drawing window 
+you can turn off the other surveys by not selecting show all. (I think 
+it was Ben cooper who showed me this.) This has made me a partial 
+convert. However in the data window, all the legs are still shown, so I 
+find it unusable after about 200 stations. Also I do not think in 
+Toporobot, and having unique numbers for stations does my head in.
+
+(okay so that was not strickly Therion so to have some relevance)
+When I move it in to Therion I the put it back into separate folders, 
+otherwise I find the multiple files you get makes a complete mess,
+
+My data set can be found at
+http://www.ubss.org.uk/cave_survey_archive.php#Cheddar
+
+Built mainly from PocketTopo, whether good or bad it works for me
+
+Andrew
+
+
+On 29/06/11 21:06, Bruce wrote:
+>> >  2. Main reasons to start a new file are when a new days survey is started,
+> a
+>> >  new survey is starting in a different location, or if the plan or
+> elevation
+>> >  centrelines start overlapping (causing the sketching to become difficult).
+>> >  This way the centrelines of other surveys remain visible and only the
+>> >  sketches of the currently open file can be seen (reduces confusion).
+
+
+From dangle at tomo.co.nz  Thu Jun 30 09:40:24 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Thu, 30 Jun 2011 19:40:24 +1200
+Subject: [Therion] FW: PocketTopo series: separate files
+In-Reply-To: <4E0B926C.6000700@wotcc.org.uk>
+References: <95C0881D06C44725BB04246D363D7879@JUICEBRAIN>
+	<4E0B926C.6000700@wotcc.org.uk>
+Message-ID: <89011946D75644F2949168A577EDFEA6@JUICEBRAIN>
+
+> However in the data window, all the legs are still shown, so I 
+find it unusable after about 200 stations. 
+
+In recent versions if you right-click or tap a station you can 
+select ->data, ->map, ->outline or ->sideview, so that little problem goes
+away.  I have had 5km of centreline survey and many splays in the same
+folder and no problem toggling directly between the textual and pictorial
+representations of any particular survey leg.  Not quite so versatile with
+splay shots yet, but I think it is planned.
+Bruce
+
+
+

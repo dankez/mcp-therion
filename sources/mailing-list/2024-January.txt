@@ -1,0 +1,1252 @@
+From armchair.caver.nz at gmail.com  Mon Jan  1 01:26:16 2024
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Mon, 1 Jan 2024 13:26:16 +1300
+Subject: [Therion] Change altitude colours
+In-Reply-To: <000901da3c24$bf3ff560$3dbfe020$@tomo.co.nz>
+References: <CAG1=ZB_aDbFHJrMOx+Ffh9dVkjB-KGOAAjW4OwbZQmNf4wgFvg@mail.gmail.com>
+ <7a6f567a-90aa-4688-8dc3-d90a49454ad4@ntlworld.com>
+ <000901da3c24$bf3ff560$3dbfe020$@tomo.co.nz>
+Message-ID: <CAG1=ZB9faApNEC6bxJYmSwrU2VbDYgu7EcCqFNGL4vmVEbcLnw@mail.gmail.com>
+
+Excellent! That's two new things I didn't know how to do. I like the
+default smoothed legend.
+
+I have only altered the colours slightly, including adding in some
+additional bands. I can see the smoothed colours still works when there's a
+lookup table for the altitude colours:
+
+[image: image.png]
+
+Cheers,
+Paul
+
+On Mon, 1 Jan 2024 at 09:21, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Try also
+>
+> layout
+>
+>   colour-legend <smooth (=on)/discrete/off>  #specifies whether the
+> legend colours are presented as a smoothed vertical band or discrete boxes
+> (smooth applies to altitudes and dates only I think)
+>
+>   smooth-shading <off/quick> #specifies whether each scrap is rendered as
+> a single colour or smoothed in accordance with the altitude/date value at
+> each survey station)
+>
+> endlayout
+>
+> Bruce
+>
+>
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin
+> Wilton-Jones via Therion
+> Sent: Sunday, 31 December 2023 20:26
+> To: therion at speleo.sk
+> Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+> Subject: Re: [Therion] Change altitude colours
+>
+>
+>
+> Hi Paul,
+>
+>
+>
+> > /colour map-fg altitude/
+>
+>
+>
+> Yes indeed, you can use a lookup table.
+>
+>
+>
+> https://therion.speleo.sk/wiki/examples#colour_palette_scales_-_lookups
+>
+> https://www.mail-archive.com/therion at speleo.sk/msg06798.html
+>
+>
+>
+> Lookup tables allow you to do specific colouring by maps, or altitude.
+>
+>
+>
+> I have never tried to use it with smooth colouring though, so have no idea
+> how it interacts with that setting. I have only ever used it with:
+>
+> smooth-shading off
+>
+>
+>
+> Enjoy :)
+>
+>
+>
+> Tarquin
+>
+> _______________________________________________
+>
+> Therion mailing list
+>
+> Therion at speleo.sk
+>
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240101/2d3f30dd/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 256528 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240101/2d3f30dd/attachment-0001.png>
+
+From bruce at tomo.co.nz  Sat Jan  6 00:17:57 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 6 Jan 2024 12:17:57 +1300
+Subject: [Therion] Therion log file truncated prematurely
+Message-ID: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+
+Recently I've noticed some of my therion log files are truncated.  They end
+prematurely.
+
+Only happens with some thconfig files and while the location of the
+truncation is often consistent within each file, it can change with
+subsequent compile runs as well.
+
+Noticed this while trying to debug a presumably unrelated issue.
+
+Some examples below.
+
+ 
+
+Any insights as to why this might happen?
+
+ 
+
+Bruce
+
+on Windows 10 Home v 22H2
+
+ 
+
+ 
+
+
+
+
+
+ 
+
+Another example.
+
+ 
+
+therion 6.2.0 (2023-12-21)
+
+  - using Proj 9.3.0, compiled against 9.3.0
+
+initialization file: C:\Program Files\Therion/therion.ini
+
+reading ... done
+
+configuration file: thconfig-DwarfsDoor.thc
+
+reading ... done
+
+reading source files ... done
+
+preprocessing database ... done
+
+output coordinate system: EPSG:2193
+
+meridian convergence (deg): -0.0685
+
+geomag declinations (deg):
+
+  1992.1.1  21.3626
+
+  1993.1.1  21.3859
+
+ 
+
+.and the log proceeds normally until a line is truncated mid-sentence.
+
+0.27%    0.4m  146.4m  30    0.2m    0.0m    0.4m [sn45.31 at 118.MiddleEarth -
+118.64 - 118.63 - 118.62 - 118.61 - 118.60 - 118.56 - 118.66 - 78.12 =
+78.12 at 78.MiddleEarth <mailto:78.12 at 78.MiddleEarth>  - 78.11 - 78.10 - 78.9 -
+78.8 - 78.7 - 78.6 - 78.5 - 78.4 - 78.3 - 78.2 - 78.1 - 77.12 =
+77.12 at 77.MiddleEarth <mailto:77.12 at 77.MiddleEarth>  - 77.11
+
+
+ 
+
+
+
+ 
+
+In this case some loops are missing and scrap distortions and CRS
+transformations are missing.
+
+ 
+
+But the log file truncation can happen anywhere, as in the screenshot below.
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240106/d2dbbe4d/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 20637 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240106/d2dbbe4d/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 119448 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240106/d2dbbe4d/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 54103 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240106/d2dbbe4d/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 224449 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240106/d2dbbe4d/attachment-0007.png>
+
+From plch.matej at gmail.com  Mon Jan  8 10:43:14 2024
+From: plch.matej at gmail.com (=?UTF-8?Q?Mat=C4=9Bj_Plch?=)
+Date: Mon, 8 Jan 2024 10:43:14 +0100
+Subject: [Therion] Therion log file truncated prematurely
+In-Reply-To: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+Message-ID: <CAO3xD3=De6-u7ns4Q7+mM5veuDoMyEtKFSDvCWoa0yC8kuoatg@mail.gmail.com>
+
+Hi,
+I have recently changed backend of therion logging in this commit
+https://github.com/therion/therion/commit/5b60074328476b860ea35d48da0d6add4892ea12,
+so that is maybe when it stopped working. But I see two reasons why this
+bug happens:
+1. Original implementation did not explicitly flush the output stream, but
+it apparently relied on some implicit flushing, which the current
+implementation does not do. Fix would be to add an explicit flush.
+2. Thlogfile output should get closed in its destructor, which would
+properly write all the data, but it is possibly never destructed. Solution
+would be to reimplement thlogfile as a proper singleton, not just a global
+variable.
+
+I can prepare a quick fix with 1., but 2. should also get fixed in the
+future.
+
+Mat?j
+
+so 6. 1. 2024 v 0:18 odes?latel Bruce Mutton <bruce at tomo.co.nz> napsal:
+
+> Recently I?ve noticed some of my therion log files are truncated.  They
+> end prematurely.
+>
+> Only happens with some thconfig files and while the location of the
+> truncation is often consistent within each file, it can change with
+> subsequent compile runs as well.
+>
+> Noticed this while trying to debug a presumably unrelated issue.
+>
+> Some examples below.
+>
+>
+>
+> Any insights as to why this might happen?
+>
+>
+>
+> Bruce
+>
+> on Windows 10 Home v 22H2
+>
+>
+>
+>
+>
+>
+>
+> Another example.
+>
+>
+>
+> therion 6.2.0 (2023-12-21)
+>
+>   - using Proj 9.3.0, compiled against 9.3.0
+>
+> initialization file: C:\Program Files\Therion/therion.ini
+>
+> reading ... done
+>
+> configuration file: thconfig-DwarfsDoor.thc
+>
+> reading ... done
+>
+> reading source files ... done
+>
+> preprocessing database ... done
+>
+> output coordinate system: EPSG:2193
+>
+> meridian convergence (deg): -0.0685
+>
+> geomag declinations (deg):
+>
+>   1992.1.1  21.3626
+>
+>   1993.1.1  21.3859
+>
+>
+>
+> ?and the log proceeds normally until a line is truncated mid-sentence?
+>
+> 0.27%    0.4m  146.4m  30    0.2m    0.0m    0.4m [sn45.31 at 118.MiddleEarth
+> - 118.64 - 118.63 - 118.62 - 118.61 - 118.60 - 118.56 - 118.66 - 78.12 =
+> 78.12 at 78.MiddleEarth - 78.11 - 78.10 - 78.9 - 78.8 - 78.7 - 78.6 - 78.5 -
+> 78.4 - 78.3 - 78.2 - 78.1 - 77.12 = 77.12 at 77.MiddleEarth -
+> 77.11
+>
+>
+>
+>
+>
+>
+> In this case some loops are missing and scrap distortions and CRS
+> transformations are missing.
+>
+>
+>
+> But the log file truncation can happen anywhere, as in the screenshot
+> below?
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/3407f33c/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 20637 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/3407f33c/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 119448 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/3407f33c/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 54103 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/3407f33c/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 224449 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/3407f33c/attachment-0007.png>
+
+From rsev at pm.me  Mon Jan  8 20:09:12 2024
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 08 Jan 2024 19:09:12 +0000
+Subject: [Therion] Semi-transparent rock borders
+Message-ID: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+
+Hi,
+
+I have some closed rock borders that are opaque as expected when viewing my PDF file in Adobe Acrobat and FoxIT but are semi-transparent in Okular and Atril.
+
+Any suggestions on how to make them really opaque (on all PDF viewers)?
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240108/66fdc137/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jan  8 20:16:39 2024
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 8 Jan 2024 19:16:39 +0000
+Subject: [Therion] Semi-transparent rock borders
+In-Reply-To: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+References: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+Message-ID: <47ec81fd-7305-4de6-bc59-fa8edd8588fb@ntlworld.com>
+
+> I have some closed rock borders that are opaque as expected when viewing 
+> my PDF file in Adobe Acrobat and FoxIT but are semi-transparent in 
+> Okular and Atril.
+> 
+> Any suggestions on how to make them really opaque (on all PDF viewers)?
+
+Translucency (which you only get on rock borders when using 
+"smooth-shading off"), does not work in all PDF viewers. There is 
+nothing you can do about that, unless you are able to submit a code 
+patch to the PDF viewer application.
+
+https://therion.speleo.sk/wiki/contrib:externalviewers
+
+Sorry, I know that's not what you wanted to hear.
+
+Tarquin
+
+From rsev at pm.me  Mon Jan  8 20:52:05 2024
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 08 Jan 2024 19:52:05 +0000
+Subject: [Therion] Semi-transparent rock borders
+In-Reply-To: <47ec81fd-7305-4de6-bc59-fa8edd8588fb@ntlworld.com>
+References: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+ <47ec81fd-7305-4de6-bc59-fa8edd8588fb@ntlworld.com>
+Message-ID: <tgQ6lN8a4ARVR0HH_nRIPh9zMmPVDTPp14c61UuMKotcdi9PV1zKYCgY2Op3T9jL4REnebiTeGP1OOeFe8FkDG4XnA0G84PDPTXaklD0EcM=@pm.me>
+
+On Monday, January 8th, 2024 at 4:16 PM, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+
+
+> 
+> 
+> > I have some closed rock borders that are opaque as expected when viewing
+> 
+> > my PDF file in Adobe Acrobat and FoxIT but are semi-transparent in
+> > Okular and Atril.
+> > 
+> > Any suggestions on how to make them really opaque (on all PDF viewers)?
+> 
+> 
+> Translucency (which you only get on rock borders when using
+> "smooth-shading off"), does not work in all PDF viewers. There is
+> nothing you can do about that, unless you are able to submit a code
+> patch to the PDF viewer application.
+> 
+> https://therion.speleo.sk/wiki/contrib:externalviewers
+
+Thanks for the info. I just opened a bug with poppler the PDF rendering library used in both okular and Atril.
+
+
+Rodrigo
+
+From martinsluka at mac.com  Wed Jan 10 12:01:31 2024
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 10 Jan 2024 12:01:31 +0100
+Subject: [Therion] Semi-transparent rock borders
+In-Reply-To: <tgQ6lN8a4ARVR0HH_nRIPh9zMmPVDTPp14c61UuMKotcdi9PV1zKYCgY2Op3T9jL4REnebiTeGP1OOeFe8FkDG4XnA0G84PDPTXaklD0EcM=@pm.me>
+References: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+ <47ec81fd-7305-4de6-bc59-fa8edd8588fb@ntlworld.com>
+ <tgQ6lN8a4ARVR0HH_nRIPh9zMmPVDTPp14c61UuMKotcdi9PV1zKYCgY2Op3T9jL4REnebiTeGP1OOeFe8FkDG4XnA0G84PDPTXaklD0EcM=@pm.me>
+Message-ID: <87419FE9-58CA-4CEB-80C3-0DF64B4D1DDC@mac.com>
+
+It is bug in MacOS Viewer too. I?m afraid nobody will correct it.
+
+Martin
+
+> 8.?1.?2024 v 20:52, Rodrigo Severo via Therion <therion at speleo.sk>:
+> 
+> On Monday, January 8th, 2024 at 4:16 PM, Tarquin Wilton-Jones via Therion <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+> 
+> 
+>> 
+>> 
+>>> I have some closed rock borders that are opaque as expected when viewing
+>> 
+>>> my PDF file in Adobe Acrobat and FoxIT but are semi-transparent in
+>>> Okular and Atril.
+>>> 
+>>> Any suggestions on how to make them really opaque (on all PDF viewers)?
+>> 
+>> 
+>> Translucency (which you only get on rock borders when using
+>> "smooth-shading off"), does not work in all PDF viewers. There is
+>> nothing you can do about that, unless you are able to submit a code
+>> patch to the PDF viewer application.
+>> 
+>> https://therion.speleo.sk/wiki/contrib:externalviewers
+> 
+> Thanks for the info. I just opened a bug with poppler the PDF rendering library used in both okular and Atril.
+> 
+> 
+> Rodrigo
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240110/42b4c0fd/attachment.htm>
+
+From rsev at pm.me  Wed Jan 10 19:24:32 2024
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 10 Jan 2024 18:24:32 +0000
+Subject: [Therion] Semi-transparent rock borders
+In-Reply-To: <87419FE9-58CA-4CEB-80C3-0DF64B4D1DDC@mac.com>
+References: <ADMGxwv7s0kDawYEh1j1AbejD9Cq-mjTcgr8U82yjkmQpg86v7OMRZnyRikPAechwelR2RF3OxsJfkKL8CgPChVzRJ_thSjSWtyepVOlzRk=@pm.me>
+ <47ec81fd-7305-4de6-bc59-fa8edd8588fb@ntlworld.com>
+ <tgQ6lN8a4ARVR0HH_nRIPh9zMmPVDTPp14c61UuMKotcdi9PV1zKYCgY2Op3T9jL4REnebiTeGP1OOeFe8FkDG4XnA0G84PDPTXaklD0EcM=@pm.me>
+ <87419FE9-58CA-4CEB-80C3-0DF64B4D1DDC@mac.com>
+Message-ID: <ekaI2rjJomakXj5NUmKUbiUZATPZoTURFA-D-P7SWHJDn0HWnS2rtEMN9XI8Ha1dLGTlZSVwOyHhjIC6C44FdkpU0ou0hHRHnbA9C4PfpsU=@pm.me>
+
+On Wednesday, January 10th, 2024 at 8:01 AM, Martin Sluka via Therion <therion at speleo.sk> wrote:
+
+> It is bug in MacOS Viewer too. I?m afraid nobody will correct it.
+
+The bug has been labeled as "misrendering". It's not much but it's better than closed or ignored...
+
+https://gitlab.freedesktop.org/poppler/poppler/-/issues/1459
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240110/3fb083a5/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Jan 11 08:55:12 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 11 Jan 2024 20:55:12 +1300
+Subject: [Therion] Flush logfile output (PR #541) - Therion log file
+ truncated prematurely
+In-Reply-To: <therion/therion/pull/541@github.com>
+References: <therion/therion/pull/541@github.com>
+Message-ID: <000401da4463$831fa070$895ee150$@tomo.co.nz>
+
+Thanks Mat?j
+
+Limited checking suggests therion.log files created with this commit are complete up to the ### end of loop errors ###, although I am expecting scrap distortions and CRS transformations, and there are none.
+
+Not sure if this is my oversight or something that should be written and is genuinely missing.
+
+Regards
+
+Bruce
+
+ 
+
+ 
+
+From: Mat?j Plch <notifications at github.com> 
+Sent: Wednesday, 10 January 2024 09:10
+To: therion/therion <therion at noreply.github.com>
+Cc: Subscribed <subscribed at noreply.github.com>
+Subject: [therion/therion] Flush logfile output (PR #541)
+
+ 
+
+Flush logfile output after every write to prevent its truncation.
+
+  _____  
+
+
+You can view, comment on, or merge this pull request online at:
+
+
+  https://github.com/therion/therion/pull/541
+
+
+Commit Summary
+
+
+*	1fe1274 <https://github.com/therion/therion/pull/541/commits/1fe1274586119e104e855523ea00a20b07dbdba9>  flush logfile output
+
+
+File Changes 
+
+
+(1 <https://github.com/therion/therion/pull/541/files>  file)
+
+*	M thlogfile.h <https://github.com/therion/therion/pull/541/files#diff-e6f85872781d0868ff3e5fe21b73e3a797e3f54f372c11eecf4775433586bd14>  (3) 
+
+
+Patch Links:
+
+
+*	https://github.com/therion/therion/pull/541.patch
+*	https://github.com/therion/therion/pull/541.diff
+
+?
+Reply to this email directly, view it on GitHub <https://github.com/therion/therion/pull/541> , or unsubscribe <https://github.com/notifications/unsubscribe-auth/AEXIJTGNZVSX5ORRUK5YRI3YNWP2FAVCNFSM6AAAAABBTVPEWOVHI2DSMVQWIX3LMV43ASLTON2WKOZSGA3TGMBYGI2TINA> .
+You are receiving this because you are subscribed to this thread.  <https://github.com/notifications/beacon/AEXIJTCBCTBGB2HVSG5MXFTYNWP2FA5CNFSM6AAAAABBTVPEWOWGG33NNVSW45C7OR4XAZNFJFZXG5LFVJRW63LNMVXHIX3JMTHHXEF2WA.gif> Message ID: <therion/therion/pull/541 at github.com <mailto:therion/therion/pull/541 at github.com> >
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240111/56f8cf54/attachment-0001.htm>
+
+From drunews at mail.ru  Fri Jan 12 22:47:50 2024
+From: drunews at mail.ru (=?UTF-8?B?QW5kcmV5?=)
+Date: Sat, 13 Jan 2024 00:47:50 +0300
+Subject: [Therion] =?utf-8?q?Calibrating_surface_map?=
+In-Reply-To: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+Message-ID: <1705096070.552008111@f162.i.mail.ru>
+
+
+Dear Therion users,
+?
+I am struggling to make a 3D model with terrain overlaid by a raster map.
+?
+Everything is done according to the Thbook however? Loch is only showing me a semi-transparent grid without any map overlay.???
+>?
+Here is what I put into my Surface.th file:
+?
+----------------------------------------------------------------------
+surface
+cs epsg:32637 #UTM zone 37N Datum WGS84
+?
+bitmap Khipsta_DEM_utm.jpg [0 0 634154.048728 4787812.294106 13345 10428 642161.048728 4794069.094106] # 0 0 - SW corner
+?
+grid-units meter
+grid 634148.414 4787799.503 10 10 803 628 ?# x lower leftt, y lower left SW
+1088.598 1088.548 1088.4978 1088.4384 1088.3688 1089.3929 1090.4301 1091.0236 1089.8979 1088.7723 1087.3954 1085.6592 1083.9077 1080.9875 1077.3958 1073.8142 1065.2386 1055.7455 1046.4127 1039.4907 1032.5994 1025.662 1018.52 1011.3781 1004.0082 996.3887 988.7744 982.0675 975.7867 969??.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+?
+The corner point coords for the image:
+? File "Khipsta_DEM_utm.jpg"
+? Type "RASTER"
+? (634154.048728, 4794069.094106) (0, 0) Label "NW",
+? (634154.048728, 4787812.294106) (0, 10428) Label "SW",
+? (642161.048728, 4794069.094106) (13345, 0) Label "NE",
+? (642161.048728, 4787812.294106) (13345, 10428) Label "SE"
+? CoordSys Earth Projection 8, 104, "m", 39, 0, 0.9996, 500000, 0
+? Units "m"
+?
+If I comment ?bitmap? line?the .lox file will be a lot smaller and vice versa if uncommented?so I assume that overlay is being written into .lox
+?
+Could this be due to the .jpg file size which is 10.5Mb???
+?
+I was able to make 3D models with terrain overlay in the past but image size was under 10Mb.
+?
+Many thanks,
+Andrey
+?
+?
+?
+?
+?
+--
+Kind regards,
+Andrey
+?
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240113/a62965ba/attachment.htm>
+
+From bruce at tomo.co.nz  Sat Jan 13 00:59:31 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 13 Jan 2024 12:59:31 +1300
+Subject: [Therion] Calibrating surface map
+In-Reply-To: <1705096070.552008111@f162.i.mail.ru>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+ <1705096070.552008111@f162.i.mail.ru>
+Message-ID: <000001da45b3$6478c5b0$2d6a5110$@tomo.co.nz>
+
+Audrey
+
+I just compiled an old project surface with a 50MB jpg without problem, so file size is not your issue.
+
+Using a recent therion 6.2.0+fd5c1b6 (2024-01-10)
+
+
+
+In the image you can see what happens when the image does not cover the full surface grid.
+
+I?ve not looked at your numbers, but from your description perhaps the image position falls outside of your grid, and so you get something that looks like the left side of my image?
+
+Maybe your grid needs a grid-flip none/vertical/horizontal?
+
+I think the surface object needs to be inside a survey object, at least my one is.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Andrey via Therion
+Sent: Saturday, 13 January 2024 10:48
+To: List for Therion users <therion at speleo.sk>
+Cc: Andrey <drunews at mail.ru>
+Subject: [Therion] Calibrating surface map
+
+ 
+
+Dear Therion users,
+
+ 
+
+I am struggling to make a 3D model with terrain overlaid by a raster map.
+
+ 
+
+Everything is done according to the Thbook however  Loch is only showing me a semi-transparent grid without any map overlay.   
+
+ 
+
+Here is what I put into my Surface.th file:
+
+ 
+
+  _____  
+
+surface
+
+cs epsg:32637 #UTM zone 37N Datum WGS84
+
+ 
+
+bitmap Khipsta_DEM_utm.jpg [0 0 634154.048728 4787812.294106 13345 10428 642161.048728 4794069.094106] # 0 0 - SW corner
+
+ 
+
+grid-units meter
+
+grid 634148.414 4787799.503 10 10 803 628  # x lower leftt, y lower left SW
+
+1088.598 1088.548 1088.4978 1088.4384 1088.3688 1089.3929 1090.4301 1091.0236 1089.8979 1088.7723 1087.3954 1085.6592 1083.9077 1080.9875 1077.3958 1073.8142 1065.2386 1055.7455 1046.4127 1039.4907 1032.5994 1025.662 1018.52 1011.3781 1004.0082 996.3887 988.7744 982.0675 975.7867 969??.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ 
+
+The corner point coords for the image:
+
+  File "Khipsta_DEM_utm.jpg"
+
+  Type "RASTER"
+
+  (634154.048728, 4794069.094106) (0, 0) Label "NW",
+
+  (634154.048728, 4787812.294106) (0, 10428) Label "SW",
+
+  (642161.048728, 4794069.094106) (13345, 0) Label "NE",
+
+  (642161.048728, 4787812.294106) (13345, 10428) Label "SE"
+
+  CoordSys Earth Projection 8, 104, "m", 39, 0, 0.9996, 500000, 0
+
+  Units "m"
+
+ 
+
+If I comment ?bitmap? line the .lox file will be a lot smaller and vice versa if uncommented so I assume that overlay is being written into .lox
+
+ 
+
+Could this be due to the .jpg file size which is 10.5Mb?  
+
+ 
+
+I was able to make 3D models with terrain overlay in the past but image size was under 10Mb.
+
+ 
+
+Many thanks,
+
+Andrey
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+--
+Kind regards,
+Andrey
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240113/b95234ce/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 426848 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240113/b95234ce/attachment-0001.png>
+
+From jonathanprouty at gmail.com  Sat Jan 13 19:36:47 2024
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Sat, 13 Jan 2024 13:36:47 -0500
+Subject: [Therion] Calibrating surface map
+In-Reply-To: <1705096070.552008111@f162.i.mail.ru>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+ <1705096070.552008111@f162.i.mail.ru>
+Message-ID: <CAEzKa9060xkHgis28e48AniZuxb+58_ia+ipicfDsdzQ43ijKg@mail.gmail.com>
+
+Hello Andrey,
+
+Are you able to see _any_ bitmap overlays in other loch models? I had an
+issue long ago where an issue with my video card caused textures to load
+incorrectly or not at all.
+
+Also, in the scene settings options in loch, do you have it set to actually
+show the bitmap overlay?
+
+Cheers,
+Jonny
+
+On Fri, Jan 12, 2024, 5:22?PM Andrey via Therion <therion at speleo.sk> wrote:
+
+> Dear Therion users,
+>
+> I am struggling to make a 3D model with terrain overlaid by a raster map.
+>
+> Everything is done according to the Thbook however  Loch is only showing
+> me a semi-transparent grid without any map overlay.
+>
+>
+>
+> Here is what I put into my Surface.th file:
+>
+> ------------------------------
+> surface
+> cs epsg:32637 #UTM zone 37N Datum WGS84
+>
+> bitmap Khipsta_DEM_utm.jpg [0 0 634154.048728 4787812.294106 13345 10428
+> 642161.048728 4794069.094106] # 0 0 - SW corner
+>
+> grid-units meter
+> grid 634148.414 4787799.503 10 10 803 628  # x lower leftt, y lower left SW
+> 1088.598 1088.548 1088.4978 1088.4384 1088.3688 1089.3929 1090.4301
+> 1091.0236 1089.8979 1088.7723 1087.3954 1085.6592 1083.9077 1080.9875
+> 1077.3958 1073.8142 1065.2386 1055.7455 1046.4127 1039.4907 1032.5994
+> 1025.662 1018.52 1011.3781 1004.0082 996.3887 988.7744 982.0675 975.7867
+> 969??.
+>
+> --------------------------------------------------------------------------------------------------------------------------------------------------------------
+>
+> The corner point coords for the image:
+>   File "Khipsta_DEM_utm.jpg"
+>   Type "RASTER"
+>   (634154.048728, 4794069.094106) (0, 0) Label "NW",
+>   (634154.048728, 4787812.294106) (0, 10428) Label "SW",
+>   (642161.048728, 4794069.094106) (13345, 0) Label "NE",
+>   (642161.048728, 4787812.294106) (13345, 10428) Label "SE"
+>   CoordSys Earth Projection 8, 104, "m", 39, 0, 0.9996, 500000, 0
+>   Units "m"
+>
+> If I comment ?bitmap? line the .lox file will be a lot smaller and vice
+> versa if uncommented so I assume that overlay is being written into .lox
+>
+> Could this be due to the .jpg file size which is 10.5Mb?
+>
+> I was able to make 3D models with terrain overlay in the past but image
+> size was under 10Mb.
+>
+> Many thanks,
+> Andrey
+>
+>
+>
+>
+>
+> --
+> Kind regards,
+> Andrey
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240113/32d963a0/attachment.htm>
+
+From drunews at mail.ru  Sun Jan 14 00:57:43 2024
+From: drunews at mail.ru (=?UTF-8?B?QW5kcmV5?=)
+Date: Sun, 14 Jan 2024 02:57:43 +0300
+Subject: [Therion] =?utf-8?q?Calibrating_surface_map?=
+In-Reply-To: <CAEzKa9060xkHgis28e48AniZuxb+58_ia+ipicfDsdzQ43ijKg@mail.gmail.com>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+ <1705096070.552008111@f162.i.mail.ru>
+ <CAEzKa9060xkHgis28e48AniZuxb+58_ia+ipicfDsdzQ43ijKg@mail.gmail.com>
+Message-ID: <1705190263.839742122@f150.i.mail.ru>
+
+
+Hello Jonny,
+?
+Thanks for the hint!?
+?
+I?ve tried to open few old models which were surely working and half of them did not show any map?texture.
+?
+Trying to open the same models on other computer proved that they all work fine.
+There must be something wrong with graphics on my laptop.? Will try updating drivers etc.
+?
+Cheers,
+Andrey
+? 
+>???????, 13 ?????? 2024, 18:36 UTC ?? Jonny Prouty <jonathanprouty at gmail.com>:
+>?
+>Hello Andrey,
+>?
+>Are you able to see _any_ bitmap overlays in other loch models? I had an issue long ago where an issue with my video card caused textures to load incorrectly or not at all.?
+>?
+>Also, in the scene settings options in loch, do you have it set to actually show the bitmap overlay?
+>?
+>Cheers,
+>Jonny ?
+>On Fri, Jan 12, 2024, 5:22PM Andrey via Therion < therion at speleo.sk > wrote:
+>>Dear Therion users,
+>>?
+>>I am struggling to make a 3D model with terrain overlaid by a raster map.
+>>?
+>>Everything is done according to the Thbook however? Loch is only showing me a semi-transparent grid without any map overlay.???
+>>>?
+>>Here is what I put into my Surface.th file:
+>>?
+>>----------------------------------------------------------------------
+>>surface
+>>cs epsg:32637 #UTM zone 37N Datum WGS84
+>>?
+>>bitmap Khipsta_DEM_utm.jpg [0 0 634154.048728 4787812.294106 13345 10428 642161.048728 4794069.094106] # 0 0 - SW corner
+>>?
+>>grid-units meter
+>>grid 634148.414 4787799.503 10 10 803 628 ?# x lower leftt, y lower left SW
+>>1088.598 1088.548 1088.4978 1088.4384 1088.3688 1089.3929 1090.4301 1091.0236 1089.8979 1088.7723 1087.3954 1085.6592 1083.9077 1080.9875 1077.3958 1073.8142 1065.2386 1055.7455 1046.4127 1039.4907 1032.5994 1025.662 1018.52 1011.3781 1004.0082 996.3887 988.7744 982.0675 975.7867 969??.
+>>--------------------------------------------------------------------------------------------------------------------------------------------------------------
+>>?
+>>The corner point coords for the image:
+>>? File "Khipsta_DEM_utm.jpg"
+>>? Type "RASTER"
+>>? (634154.048728, 4794069.094106) (0, 0) Label "NW",
+>>? (634154.048728, 4787812.294106) (0, 10428) Label "SW",
+>>? (642161.048728, 4794069.094106) (13345, 0) Label "NE",
+>>? (642161.048728, 4787812.294106) (13345, 10428) Label "SE"
+>>? CoordSys Earth Projection 8, 104, "m", 39, 0, 0.9996, 500000, 0
+>>? Units "m"
+>>?
+>>If I comment ?bitmap? line?the .lox file will be a lot smaller and vice versa if uncommented?so I assume that overlay is being written into .lox
+>>?
+>>Could this be due to the .jpg file size which is 10.5Mb???
+>>?
+>>I was able to make 3D models with terrain overlay in the past but image size was under 10Mb.
+>>?
+>>Many thanks,
+>>Andrey
+>>?
+>>?
+>>?
+>>?
+>>?
+>>--
+>>Kind regards,
+>>Andrey
+>>? _______________________________________________
+>>Therion mailing list
+>>Therion at speleo.sk
+>>https://mailman.speleo.sk/listinfo/therion 
+?
+?
+--
+Kind regards,
+Andrey
+?
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240114/bc616256/attachment.htm>
+
+From rsev at pm.me  Sun Jan 14 20:53:44 2024
+From: rsev at pm.me (Rodrigo Severo)
+Date: Sun, 14 Jan 2024 19:53:44 +0000
+Subject: [Therion] Subtypes can't have numbers?
+Message-ID: <_jcHG32ZIxHjJbBmveOnH3UvQYZsWvu1525DHKuDuPOSLdh4ZSLw4oxz0aLxlKCsgcqs3SSGmAvB0kyMR16pylczVoau1B3vfwhUlVGb8nE=@pm.me>
+
+Hi,
+
+Just trying to set a "line u:s41p" symbol on latest Therion and getting strange metapost errors:
+
+! Missing `=' has been inserted.
+<to be read again>
+51
+l.6846 let l_u_s51
+p = l_u;
+You should have said `let symbol = something'.
+But don't worry; I'll pretend that an equals sign
+was present. The next token I read will be `something'.
+
+! Missing symbolic token inserted.
+<inserted text>
+INACCESSIBLE
+l.6846 let l_u_s51
+p = l_u;
+Sorry: You can't redefine a number, string, or expr.
+I've inserted an inaccessible symbol so that your
+definition will be completed without mixing me up too badly.
+
+! Extra tokens will be flushed.
+<to be read again>
+p
+l.6846 let l_u_s51p
+= l_u;
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+
+! Missing `=' has been inserted.
+<to be read again>
+51
+l.6847 def l_u_s51
+p_legend = l_u_s51p(((-.3,0.5) .. (.3,.3) .. (.7,.7) .. (1...
+The next thing in this `def' should have been `=',
+because I've already looked at the definition heading.
+But don't worry; I'll pretend that an equals sign
+was present. Everything from here to `enddef'
+will be the replacement text of this macro.
+
+I believe that subtypes aren?t supporting all chars allowed by <keyword> as defined in THBook page 13 (Data types).
+
+Is it a bug or am I misreading something?
+
+Regards,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240114/75032d3f/attachment.htm>
+
+From m.budaj at gmail.com  Sun Jan 14 21:48:24 2024
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 14 Jan 2024 21:48:24 +0100
+Subject: [Therion] Subtypes can't have numbers?
+In-Reply-To: <_jcHG32ZIxHjJbBmveOnH3UvQYZsWvu1525DHKuDuPOSLdh4ZSLw4oxz0aLxlKCsgcqs3SSGmAvB0kyMR16pylczVoau1B3vfwhUlVGb8nE=@pm.me>
+References: <_jcHG32ZIxHjJbBmveOnH3UvQYZsWvu1525DHKuDuPOSLdh4ZSLw4oxz0aLxlKCsgcqs3SSGmAvB0kyMR16pylczVoau1B3vfwhUlVGb8nE=@pm.me>
+Message-ID: <CALPsdSvgahvdXQ2xq6VJVd9RV2fDnOMVitTthOB3rG=R8WyDqQ@mail.gmail.com>
+
+Hi, this is a MetaPost limitation; s41p actually means s[41].p in MetaPost,
+not a simple variable name.
+
+M.
+
+
+On Sun, Jan 14, 2024, 20:54 Rodrigo Severo via Therion <therion at speleo.sk>
+wrote:
+
+> Hi,
+>
+>
+> Just trying to set a "line u:s41p" symbol on latest Therion and getting
+> strange metapost errors:
+>
+> ! Missing `=' has been inserted.
+> <to be read again>
+>                    51
+> l.6846 let l_u_s51
+>                   p = l_u;
+> You should have said `let symbol = something'.
+> But don't worry; I'll pretend that an equals sign
+> was present. The next token I read will be `something'.
+>
+> ! Missing symbolic token inserted.
+> <inserted text>
+>                  INACCESSIBLE
+> l.6846 let l_u_s51
+>                   p = l_u;
+> Sorry: You can't redefine a number, string, or expr.
+> I've inserted an inaccessible symbol so that your
+> definition will be completed without mixing me up too badly.
+>
+> ! Extra tokens will be flushed.
+> <to be read again>
+>                    p
+> l.6846 let l_u_s51p
+>                     = l_u;
+> I've just read as much of that statement as I could fathom,
+> so a semicolon should have been next. It's very puzzling...
+> but I'll try to get myself back together, by ignoring
+> everything up to the next `;'. Please insert a semicolon
+> now in front of anything that you don't want me to delete.
+> (See Chapter 27 of The METAFONTbook for an example.)
+>
+> ! Missing `=' has been inserted.
+> <to be read again>
+>                    51
+> l.6847 def l_u_s51
+>                   p_legend = l_u_s51p(((-.3,0.5) .. (.3,.3) .. (.7,.7) ..
+> (1...
+> The next thing in this `def' should have been `=',
+> because I've already looked at the definition heading.
+> But don't worry; I'll pretend that an equals sign
+> was present. Everything from here to `enddef'
+> will be the replacement text of this macro.
+>
+> I believe that subtypes aren?t supporting all chars allowed by <keyword>
+> as defined in THBook page 13 (Data types).
+>
+> Is it a bug or am I misreading something?
+>
+>
+> Regards,
+>
+> Rodrigo
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240114/b19e0b6f/attachment.htm>
+
+From rls at hwyl.org  Fri Jan 26 14:12:19 2024
+From: rls at hwyl.org (Rich Smith)
+Date: Fri, 26 Jan 2024 13:12:19 +0000
+Subject: [Therion] XVI commands: xth_me_area_adjust etc.
+Message-ID: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+
+Hi Therion
+
+I'm the author of cave surveying app SexyTopo, and I'm trying to write a
+better Therion exporter. Previously I'd kind of hacked an exporter that did
+an approximate job, but I'm rewriting it and trying to do a better job.
+
+I understand I should generate an XVI file for each projection that
+represents the sketch. I then need to set this in the th2 file with some
+commands. For example:
+
+##XTHERION## xth_me_area_adjust -132.0 -156.10532659555793
+1768.2371519518056 726.0
+##XTHERION## xth_me_area_zoom_to 100
+##XTHERION## xth_me_image_insert {950.6824683592552 1 1.0}
+{267.841199967364 5} {blaengwynlais plan.xvi} 0 {}
+
+Are these documented anywhere? It seems like xth_me_area_adjust sets the
+dimensions of the image, and xth_me_image_insert specifies the position and
+filename, but I'm not clear what all the values represent.
+
+Many thanks for any pointers!
+Rich
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240126/9721f46a/attachment.htm>
+
+From lists at group-s.sk  Sun Jan 28 23:03:29 2024
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sun, 28 Jan 2024 23:03:29 +0100
+Subject: [Therion] XVI commands: xth_me_area_adjust etc.
+In-Reply-To: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+References: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+Message-ID: <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+
+Hi Rich,
+
+first of all, thanks a lot for the great work on SexyTopo! I like your app
+a lot.
+
+Unfortunately, there is no documentation, but the attributes are the
+following:
+
+xth_me_area_adjust <Xmin> <Ymin> <Xmax> <Ymax> - where Xmin, Ymin and Xmax,
+Ymax are cartesian coordinates of lower left and upper right corners of
+drawing area
+xth_me_area_zoom_to <zoom> - where <zoom> is the default zoom factor, when
+drawing is open in xtherion. Should be 25,50,100,200,400.
+xth_me_image_insert {<Xpos> <visibility> <gamma>} {<Ypos> <root>}
+{<filename>} 0 {}
+  <Xpos> <Ypos> is the position of the 0,0 point of XVI coordinate system
+  <visibility> - 0 image is hidden / 1 image is shown
+  <gamma> - image gamma
+  <root> - root station name (if XVI is changed during compilation, this
+station keeps its position relative to the entire drawing). Can be omitted.
+  <filename> - name of image file
+  0 {} - image identifiers, can be 0 {} for all images - if it is like
+this, it will be calculated automatically
+
+HTH, S.
+
+
+On Fri, 26 Jan 2024 at 14:12, Rich Smith <rls at hwyl.org> wrote:
+
+> Hi Therion
+>
+> I'm the author of cave surveying app SexyTopo, and I'm trying to write a
+> better Therion exporter. Previously I'd kind of hacked an exporter that did
+> an approximate job, but I'm rewriting it and trying to do a better job.
+>
+> I understand I should generate an XVI file for each projection that
+> represents the sketch. I then need to set this in the th2 file with some
+> commands. For example:
+>
+> ##XTHERION## xth_me_area_adjust -132.0 -156.10532659555793
+> 1768.2371519518056 726.0
+> ##XTHERION## xth_me_area_zoom_to 100
+> ##XTHERION## xth_me_image_insert {950.6824683592552 1 1.0}
+> {267.841199967364 5} {blaengwynlais plan.xvi} 0 {}
+>
+> Are these documented anywhere? It seems like xth_me_area_adjust sets the
+> dimensions of the image, and xth_me_image_insert specifies the position and
+> filename, but I'm not clear what all the values represent.
+>
+> Many thanks for any pointers!
+> Rich
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240128/d0009460/attachment.htm>
+
+From martinsluka at mac.com  Mon Jan 29 14:10:49 2024
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 29 Jan 2024 14:10:49 +0100
+Subject: [Therion] XVI commands: xth_me_area_adjust etc.
+In-Reply-To: <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+References: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+ <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+Message-ID: <E5B1C5DF-33F0-4C57-BFBD-A245DF2C810F@mac.com>
+
+
+> 28. 1. 2024 v 23:03, Stacho Mudrak <lists at group-s.sk>:
+> 
+> cartesian coordinates of lower left and upper right corners of drawing area
+
+in pixels!
+
+M.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240129/0dd5486f/attachment.htm>
+

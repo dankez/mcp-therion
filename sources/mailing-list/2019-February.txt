@@ -1,0 +1,3261 @@
+From therion at speleo.sk  Fri Feb  1 20:01:38 2019
+From: therion at speleo.sk (Therion)
+Date: Fri,  1 Feb 2019 20:01:38 +0100 (CET)
+Subject: [Therion] new Therion 5.4.3
+Message-ID: <20190201190138.3457960C3D@mail.speleo.sk>
+
+Hi, there is a new release 5.4.3 of Therion.
+Release notes:
+
+v5.4.3          Therion 5.4.3 (2019-02-01):
+    
+    therion:
+     * input line length increased to allow reading larger elevation datasets
+     * built-in Proj.4 removed; internal mapping of EPSG and ESRI codes replaced
+       by +init=epsg|esri:... libproj initialization string
+     * bugs fixed:
+       - add and use PROJ grid files in the windows distribution
+       - fix comment and code typos [PR#127]
+
+Best regards,
+Therion team
+
+
+From bgee at campercaver.net  Fri Feb  8 22:01:10 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 08 Feb 2019 15:01:10 -0600
+Subject: [Therion] Changing text on the legend
+Message-ID: <3146621.0yxtI35pYo@main2.billgee.local>
+
+Hello everyone -
+
+This has been annoying me for a while.  Time to see if there is a fix ...
+
+I have defined quite a few custom symbols, and I have redefined some of the symbols that are included with Therion.  When Therion prints the legend, those symbols get labels like "area u:pavement".
+
+I added some text lines to the thconfig file, but that has no effect.  A close reading of the Therion Book tells me that text substitution only works for text strings that are part of the language pack.  That implies it does NOT work to re-label symbols in the legend.  Is that true?
+
+The attached file is a sample cave.  The PDF file shows the incorrect strings in the legend.  The two custom symbols on this map are defined below.
+
+code metapost
+# Define an area fill for pavement
+    beginpattern(pattern_pavement);
+      draw (-0.7u, -0.2u)--(-0.1u, 0.2u) withpen pensquare scaled (0.04u);
+      draw (0.1u, 0.2u)--(0.7u, -0.2u) withpen pensquare scaled (0.04u);
+      patternxstep(1.6u);
+      patternystep(0.50u);
+    endpattern;
+
+    def a_u_pavement (expr Path) =
+      T:=identity;
+      thclean Path;
+      thfill Path withpattern pattern_pavement;
+    enddef;
+
+# Define an area fill for tiled floor
+    beginpattern(pattern_tiles);
+      draw (-0.1u, -0.1u)--(-0.1u, 0.1u)--(0.1u, 0.1u)--(0.1u, -0.1u)--cycle;
+      patternxstep(0.3u);
+      patternystep(0.3u);
+    endpattern;
+    
+    def a_u_tiles (expr Path) =
+      T:= identity;
+      thclean Path;
+      thfill Path withpattern pattern_tiles;
+    enddef;
+    
+    
+# Initialize the new symbols
+    initsymbol ("a_u_pavement");
+    initsymbol ("a_u_tiles");
+
+endcode
+
+
+Thanks!
+-- 
+Bill Gee
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: TestMap.zip
+Type: application/zip
+Size: 35403 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190208/afdfdafc/attachment.zip>
+
+From bruce at tomo.co.nz  Sat Feb  9 00:07:23 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 9 Feb 2019 12:07:23 +1300
+Subject: [Therion] Changing text on the legend
+In-Reply-To: <3146621.0yxtI35pYo@main2.billgee.local>
+References: <3146621.0yxtI35pYo@main2.billgee.local>
+Message-ID: <001c01d4c003$0f0a38b0$2d1eaa10$@tomo.co.nz>
+
+Hi Bill
+
+Not sure what is going wrong (just perused your files, I have not compiled
+them).
+
+I have had no such problems, and cannot see any significant differences to
+what I am doing for symbols that do not exist as a Therion default ,
+although I have only user defined points and lines, not areas.
+
+ 
+
+Here are some examples that work in my thconfig file just fine (rope is
+perhaps a bad example, as I think it is now a default symbol, however it was
+not when I first created this many years ago).
+
+text en "line u:rope"            "rope" #text to appear in legend 
+
+text mi "line u:rope"            "taura"
+
+text fr "line u:rope"            "corde"
+
+text en "line u:heyphone"        "hey phone antenna" 
+
+ 
+
+In the particular case of rope, have small differences associated with
+symbol definition, that I don't expect are relevant, but maybe.
+
+1.	No semi colon after initsymbol (seems like it is a mistake on my
+part, but it seems like it has not ever caused me problems).
+2.	I have defined the 'shape' of the symbol in the legend.
+
+ 
+
+initsymbol("l_u_rope")
+
+ 
+
+def l_u_rope_legend =
+
+                l_u_rope(((.2,.2) -- (.8,.8)) inscale)
+
+enddef;
+
+ 
+
+Don't expect this will help, but maybe.
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee via Therion
+Sent: Saturday, 9 February 2019 10:01
+To: therion at speleo.sk
+Cc: Bill Gee <bgee at campercaver.net>
+Subject: [Therion] Changing text on the legend
+
+ 
+
+Hello everyone -
+
+ 
+
+This has been annoying me for a while.  Time to see if there is a fix ...
+
+ 
+
+I have defined quite a few custom symbols, and I have redefined some of the
+symbols that are included with Therion.  When Therion prints the legend,
+those symbols get labels like "area u:pavement".
+
+ 
+
+I added some text lines to the thconfig file, but that has no effect.  A
+close reading of the Therion Book tells me that text substitution only works
+for text strings that are part of the language pack.  That implies it does
+NOT work to re-label symbols in the legend.  Is that true?
+
+ 
+
+The attached file is a sample cave.  The PDF file shows the incorrect
+strings in the legend.  The two custom symbols on this map are defined
+below.
+
+ 
+
+code metapost
+
+# Define an area fill for pavement
+
+    beginpattern(pattern_pavement);
+
+      draw (-0.7u, -0.2u)--(-0.1u, 0.2u) withpen pensquare scaled (0.04u);
+
+      draw (0.1u, 0.2u)--(0.7u, -0.2u) withpen pensquare scaled (0.04u);
+
+      patternxstep(1.6u);
+
+      patternystep(0.50u);
+
+    endpattern;
+
+ 
+
+    def a_u_pavement (expr Path) =
+
+      T:=identity;
+
+      thclean Path;
+
+      thfill Path withpattern pattern_pavement;
+
+    enddef;
+
+ 
+
+# Define an area fill for tiled floor
+
+    beginpattern(pattern_tiles);
+
+      draw (-0.1u, -0.1u)--(-0.1u, 0.1u)--(0.1u, 0.1u)--(0.1u,
+-0.1u)--cycle;
+
+      patternxstep(0.3u);
+
+      patternystep(0.3u);
+
+    endpattern;
+
+    
+
+    def a_u_tiles (expr Path) =
+
+      T:= identity;
+
+      thclean Path;
+
+      thfill Path withpattern pattern_tiles;
+
+    enddef;
+
+    
+
+    
+
+# Initialize the new symbols
+
+    initsymbol ("a_u_pavement");
+
+    initsymbol ("a_u_tiles");
+
+ 
+
+endcode
+
+ 
+
+ 
+
+Thanks!
+
+-- 
+
+Bill Gee
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190209/0aee42a3/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Sat Feb  9 01:13:40 2019
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Sat, 9 Feb 2019 01:13:40 +0100 (CET)
+Subject: [Therion] Changing text on the legend
+In-Reply-To: <001c01d4c003$0f0a38b0$2d1eaa10$@tomo.co.nz>
+References: <3146621.0yxtI35pYo@main2.billgee.local>
+ <001c01d4c003$0f0a38b0$2d1eaa10$@tomo.co.nz>
+Message-ID: <1370632105.2674042.1549671220565.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Hi Bill, 
+
+I had a quick look on you thconfig. The definition of the new custom legend seems OK. 
+But, in your layout "MainMapNoColor" and "MainMapColorized", you need to add the language definition with the option "language en_US". If you do not add this option, therion seems to not use the en_US by default, and thus your custom legend is not taken in account. 
+
+See the thconfig in attachement. 
+
+Cheers, 
+
+Xav 
+
+
+De: "Bruce Mutton via Therion" <therion at speleo.sk> 
+À: "List for Therion users" <therion at speleo.sk> 
+Cc: "Bruce Mutton" <bruce at tomo.co.nz> 
+Envoyé: Vendredi 8 Février 2019 18:07:23 
+Objet: Re: [Therion] Changing text on the legend 
+
+
+
+Hi Bill 
+
+Not sure what is going wrong (just perused your files, I have not compiled them). 
+
+I have had no such problems, and cannot see any significant differences to what I am doing for symbols that do not exist as a Therion default , although I have only user defined points and lines, not areas. 
+
+
+
+Here are some examples that work in my thconfig file just fine (rope is perhaps a bad example, as I think it is now a default symbol, however it was not when I first created this many years ago). 
+
+text en "line u:rope" "rope" #text to appear in legend 
+
+text mi "line u:rope" "taura" 
+
+text fr "line u:rope" "corde" 
+
+text en "line u:heyphone" "hey phone antenna" 
+
+
+
+In the particular case of rope, have small differences associated with symbol definition, that I don’t expect are relevant, but maybe… 
+
+    1. No semi colon after initsymbol (seems like it is a mistake on my part, but it seems like it has not ever caused me problems). 
+    2. I have defined the ‘shape’ of the symbol in the legend. 
+
+
+
+
+initsymbol("l_u_rope") 
+
+
+
+def l_u_rope_legend = 
+
+l_u_rope(((.2,.2) -- (.8,.8)) inscale) 
+
+enddef; 
+
+
+
+Don’t expect this will help, but maybe… 
+
+Bruce 
+
+
+
+-----Original Message----- 
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee via Therion 
+Sent: Saturday, 9 February 2019 10:01 
+To: therion at speleo.sk 
+Cc: Bill Gee <bgee at campercaver.net> 
+Subject: [Therion] Changing text on the legend 
+
+
+
+Hello everyone - 
+
+
+
+This has been annoying me for a while. Time to see if there is a fix ... 
+
+
+
+I have defined quite a few custom symbols, and I have redefined some of the symbols that are included with Therion. When Therion prints the legend, those symbols get labels like "area u:pavement". 
+
+
+
+I added some text lines to the thconfig file, but that has no effect. A close reading of the Therion Book tells me that text substitution only works for text strings that are part of the language pack. That implies it does NOT work to re-label symbols in the legend. Is that true? 
+
+
+
+The attached file is a sample cave. The PDF file shows the incorrect strings in the legend. The two custom symbols on this map are defined below. 
+
+
+
+code metapost 
+
+# Define an area fill for pavement 
+
+beginpattern(pattern_pavement); 
+
+draw (-0.7u, -0.2u)--(-0.1u, 0.2u) withpen pensquare scaled (0.04u); 
+
+draw (0.1u, 0.2u)--(0.7u, -0.2u) withpen pensquare scaled (0.04u); 
+
+patternxstep(1.6u); 
+
+patternystep(0.50u); 
+
+endpattern; 
+
+
+
+def a_u_pavement (expr Path) = 
+
+T:=identity; 
+
+thclean Path; 
+
+thfill Path withpattern pattern_pavement; 
+
+enddef; 
+
+
+
+# Define an area fill for tiled floor 
+
+beginpattern(pattern_tiles); 
+
+draw (-0.1u, -0.1u)--(-0.1u, 0.1u)--(0.1u, 0.1u)--(0.1u, -0.1u)--cycle; 
+
+patternxstep(0.3u); 
+
+patternystep(0.3u); 
+
+endpattern; 
+
+
+
+def a_u_tiles (expr Path) = 
+
+T:= identity; 
+
+thclean Path; 
+
+thfill Path withpattern pattern_tiles; 
+
+enddef; 
+
+
+
+
+
+# Initialize the new symbols 
+
+initsymbol ("a_u_pavement"); 
+
+initsymbol ("a_u_tiles"); 
+
+
+
+endcode 
+
+
+
+
+
+Thanks! 
+
+-- 
+
+Bill Gee 
+
+
+
+_______________________________________________ 
+Therion mailing list 
+Therion at speleo.sk 
+https://mailman.speleo.sk/listinfo/therion 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190209/542e8937/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig
+Type: application/octet-stream
+Size: 2335 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190209/542e8937/attachment.obj>
+
+From bgee at campercaver.net  Sat Feb  9 22:02:36 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 09 Feb 2019 15:02:36 -0600
+Subject: [Therion] [Solved]  Changing text on the legend
+In-Reply-To: <1370632105.2674042.1549671220565.JavaMail.zimbra@univ-grenoble-alpes.fr>
+References: <3146621.0yxtI35pYo@main2.billgee.local>
+ <001c01d4c003$0f0a38b0$2d1eaa10$@tomo.co.nz>
+ <1370632105.2674042.1549671220565.JavaMail.zimbra@univ-grenoble-alpes.fr>
+Message-ID: <1610916.z46FP87m0P@main2.billgee.local>
+
+Hi Xavier -
+
+Yep, that did it.  The translations are working now.  Thanks!  It's so simple - no wonder I missed it.
+
+I added the "language" line to the 'basics' section of my layouts.   That way it propagates to all of the layouts I use.  
+
+I will make the change to my master files. 
+
+-- 
+Bill Gee
+
+
+
+On Friday, February 8, 2019 6:13:40 PM CST Xavier Robert via Therion wrote:
+> Hi Bill, 
+> 
+> I had a quick look on you thconfig. The definition of the new custom legend seems OK. 
+> But, in your layout "MainMapNoColor" and "MainMapColorized", you need to add the language definition with the option "language en_US". If you do not add this option, therion seems to not use the en_US by default, and thus your custom legend is not taken in account. 
+> 
+> See the thconfig in attachement. 
+> 
+> Cheers, 
+> 
+> Xav 
+> 
+> 
+> De: "Bruce Mutton via Therion" <therion at speleo.sk> 
+> À: "List for Therion users" <therion at speleo.sk> 
+> Cc: "Bruce Mutton" <bruce at tomo.co.nz> 
+> Envoyé: Vendredi 8 Février 2019 18:07:23 
+> Objet: Re: [Therion] Changing text on the legend 
+> 
+> 
+> 
+> Hi Bill 
+> 
+> Not sure what is going wrong (just perused your files, I have not compiled them). 
+> 
+> I have had no such problems, and cannot see any significant differences to what I am doing for symbols that do not exist as a Therion default , although I have only user defined points and lines, not areas. 
+> 
+> 
+> 
+> Here are some examples that work in my thconfig file just fine (rope is perhaps a bad example, as I think it is now a default symbol, however it was not when I first created this many years ago). 
+> 
+> text en "line u:rope" "rope" #text to appear in legend 
+> 
+> text mi "line u:rope" "taura" 
+> 
+> text fr "line u:rope" "corde" 
+> 
+> text en "line u:heyphone" "hey phone antenna" 
+> 
+> 
+> 
+> In the particular case of rope, have small differences associated with symbol definition, that I don’t expect are relevant, but maybe… 
+> 
+>     1. No semi colon after initsymbol (seems like it is a mistake on my part, but it seems like it has not ever caused me problems). 
+>     2. I have defined the ‘shape’ of the symbol in the legend. 
+> 
+> 
+> 
+> 
+> initsymbol("l_u_rope") 
+> 
+> 
+> 
+> def l_u_rope_legend = 
+> 
+> l_u_rope(((.2,.2) -- (.8,.8)) inscale) 
+> 
+> enddef; 
+> 
+> 
+> 
+> Don’t expect this will help, but maybe… 
+> 
+> Bruce 
+> 
+> 
+> 
+> -----Original Message----- 
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee via Therion 
+> Sent: Saturday, 9 February 2019 10:01 
+> To: therion at speleo.sk 
+> Cc: Bill Gee <bgee at campercaver.net> 
+> Subject: [Therion] Changing text on the legend 
+> 
+> 
+> 
+> Hello everyone - 
+> 
+> 
+> 
+> This has been annoying me for a while. Time to see if there is a fix ... 
+> 
+> 
+> 
+> I have defined quite a few custom symbols, and I have redefined some of the symbols that are included with Therion. When Therion prints the legend, those symbols get labels like "area u:pavement". 
+> 
+> 
+> 
+> I added some text lines to the thconfig file, but that has no effect. A close reading of the Therion Book tells me that text substitution only works for text strings that are part of the language pack. That implies it does NOT work to re-label symbols in the legend. Is that true? 
+> 
+> 
+> 
+> The attached file is a sample cave. The PDF file shows the incorrect strings in the legend. The two custom symbols on this map are defined below. 
+> 
+> 
+> 
+> code metapost 
+> 
+> # Define an area fill for pavement 
+> 
+> beginpattern(pattern_pavement); 
+> 
+> draw (-0.7u, -0.2u)--(-0.1u, 0.2u) withpen pensquare scaled (0.04u); 
+> 
+> draw (0.1u, 0.2u)--(0.7u, -0.2u) withpen pensquare scaled (0.04u); 
+> 
+> patternxstep(1.6u); 
+> 
+> patternystep(0.50u); 
+> 
+> endpattern; 
+> 
+> 
+> 
+> def a_u_pavement (expr Path) = 
+> 
+> T:=identity; 
+> 
+> thclean Path; 
+> 
+> thfill Path withpattern pattern_pavement; 
+> 
+> enddef; 
+> 
+> 
+> 
+> # Define an area fill for tiled floor 
+> 
+> beginpattern(pattern_tiles); 
+> 
+> draw (-0.1u, -0.1u)--(-0.1u, 0.1u)--(0.1u, 0.1u)--(0.1u, -0.1u)--cycle; 
+> 
+> patternxstep(0.3u); 
+> 
+> patternystep(0.3u); 
+> 
+> endpattern; 
+> 
+> 
+> 
+> def a_u_tiles (expr Path) = 
+> 
+> T:= identity; 
+> 
+> thclean Path; 
+> 
+> thfill Path withpattern pattern_tiles; 
+> 
+> enddef; 
+> 
+> 
+> 
+> 
+> 
+> # Initialize the new symbols 
+> 
+> initsymbol ("a_u_pavement"); 
+> 
+> initsymbol ("a_u_tiles"); 
+> 
+> 
+> 
+> endcode 
+> 
+> 
+> 
+> 
+> 
+> Thanks! 
+> 
+> 
+
+
+
+
+
+
+From martinsluka at mac.com  Sun Feb 10 11:13:03 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 10 Feb 2019 11:13:03 +0100
+Subject: [Therion] topoDroid - Therion
+Message-ID: <C0398F5A-B599-46D5-A90B-9BE6D4EF61D1@mac.com>
+
+https://therion.speleo.sk/wiki/topodroidtherion
+
+m.
+
+
+From duncan.collis at gmail.com  Thu Feb 14 03:10:16 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Thu, 14 Feb 2019 10:10:16 +0800
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map output
+ with background sketches..
+Message-ID: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+
+In my th2 file I've got scraps with -sketch specified, and stations
+placed to enable warping/morphing of these background images.
+
+In th2 a map is defined (let's call it map_A) which includes the scraps I want.
+
+Then in .thconfig:
+
+select map_A
+
+layout morph
+  scale 1 500
+  grid bottom
+  grid-size 100 100 100 m
+  sketches on
+  grid off
+endlayout
+
+# Output plan in Therion pdf format
+export map \
+  -projection plan \
+  -format pdf\
+  -output map_A.pdf \
+  -layout morph
+
+# Output plan in Therion xvi format
+export map \
+  -projection plan \
+  -format xvi\
+  -output map_A.xvi\
+  -layout morph
+
+PDF output is as expected from the manual. It shows the background
+images attached to the scraps in the selected map, plus only the parts
+of the centreline that are used in those scraps. However if I change
+the export command to use XVI format, I get the background images and
+the centreline for the whole project, which contains over 20,000
+stations. This is very difficult to use as it takes a long time for
+XTherion to load it, and then the area I'm interested in is tiny
+compared with the whole drawing area, so it requires quite a bit of
+zooming and scrolling to get there before I can start working.
+
+Am I right in thinking that the XVI output should contain the same
+bits of centreline as appear in the PDF output, rather than the whole
+lot? Am I missing something?
+
+Also: 'grid off' does not seem to affect the XVI output, which is why
+I've specified a fairly large grid size so that the grid isn't
+obscuring the sketches. I'd really like to be able to disable the grid
+in XVI completely.
+
+Is there a way to achieve these two things?
+
+Best regards,
+
+Duncan.
+
+
+From bruce at tomo.co.nz  Thu Feb 14 06:55:19 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 14 Feb 2019 18:55:19 +1300
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+	output with background sketches..
+In-Reply-To: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+Message-ID: <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+
+Duncan
+I think your experience is more or less consistent with that here https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I experimented with 4-5 years ago.
+One observation I made was that exporting a map to xvi actually produced something more akin to a model.  In those pages I did not have any -sketch specified with the scraps, so I guess all Therion had to work with was the centreline (model).
+Although I don't think there is anything about on that wki page, I recall that xvi map exports are a bit 'scattergun' in that they do not respect the limits of the selected map.  
+Maybe if a survey is selected rather than a map you may have better xvi control?
+Have a look at this table https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide some insight.  It may no longer be current, and there may have been mistakes in it from the start.  Any feedback welcome.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via Therion
+Sent: Thursday, 14 February 2019 15:10
+To: therion at speleo.sk
+Cc: Duncan Collis <duncan.collis at gmail.com>
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map output with background sketches..
+
+In my th2 file I've got scraps with -sketch specified, and stations placed to enable warping/morphing of these background images.
+
+In th2 a map is defined (let's call it map_A) which includes the scraps I want.
+
+Then in .thconfig:
+
+select map_A
+
+layout morph
+  scale 1 500
+  grid bottom
+  grid-size 100 100 100 m
+  sketches on
+  grid off
+endlayout
+
+# Output plan in Therion pdf format
+export map \
+  -projection plan \
+  -format pdf\
+  -output map_A.pdf \
+  -layout morph
+
+# Output plan in Therion xvi format
+export map \
+  -projection plan \
+  -format xvi\
+  -output map_A.xvi\
+  -layout morph
+
+PDF output is as expected from the manual. It shows the background images attached to the scraps in the selected map, plus only the parts of the centreline that are used in those scraps. However if I change the export command to use XVI format, I get the background images and the centreline for the whole project, which contains over 20,000 stations. This is very difficult to use as it takes a long time for XTherion to load it, and then the area I'm interested in is tiny compared with the whole drawing area, so it requires quite a bit of zooming and scrolling to get there before I can start working.
+
+Am I right in thinking that the XVI output should contain the same bits of centreline as appear in the PDF output, rather than the whole lot? Am I missing something?
+
+Also: 'grid off' does not seem to affect the XVI output, which is why I've specified a fairly large grid size so that the grid isn't obscuring the sketches. I'd really like to be able to disable the grid in XVI completely.
+
+Is there a way to achieve these two things?
+
+Best regards,
+
+Duncan.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From duncan.collis at gmail.com  Thu Feb 14 07:56:55 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Thu, 14 Feb 2019 14:56:55 +0800
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+ output with background sketches..
+In-Reply-To: <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+Message-ID: <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+
+Hi, Bruce.
+
+Thanks for the reply. The wiki pages you linked were one of the most
+helpful resources when I was trying to get this to work, along with
+Marco Corvi's "Therion by Examples".
+
+I've tried selecting surveys, but when I do that I get an XVI file
+containing the centreline of the selected surveys, but no background
+sketches, even if I also select the map with the sketches in it.
+Changing the order of the select statements doesn't make any
+difference. I've also tried adding scrap outlines by drawing walls
+around the areas of interest in the th2 file in the vain hope that
+this would have some effect, but it did nothing. I've tried selecting
+scraps directly instead of maps, with the same result.
+
+I think that this has the potential to be a really useful feature, but
+unfortunately its current behaviour regarding inclusion of centreline
+makes it all but unusable in large projects.
+
+Best regards,
+Duncan.
+
+On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+> Duncan
+> I think your experience is more or less consistent with that here
+> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I experimented
+> with 4-5 years ago.
+> One observation I made was that exporting a map to xvi actually produced
+> something more akin to a model.  In those pages I did not have any -sketch
+> specified with the scraps, so I guess all Therion had to work with was the
+> centreline (model).
+> Although I don't think there is anything about on that wki page, I recall
+> that xvi map exports are a bit 'scattergun' in that they do not respect the
+> limits of the selected map.
+> Maybe if a survey is selected rather than a map you may have better xvi
+> control?
+> Have a look at this table
+> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide some
+> insight.  It may no longer be current, and there may have been mistakes in
+> it from the start.  Any feedback welcome.
+>
+> Bruce
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via
+> Therion
+> Sent: Thursday, 14 February 2019 15:10
+> To: therion at speleo.sk
+> Cc: Duncan Collis <duncan.collis at gmail.com>
+> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map output
+> with background sketches..
+>
+> In my th2 file I've got scraps with -sketch specified, and stations placed
+> to enable warping/morphing of these background images.
+>
+> In th2 a map is defined (let's call it map_A) which includes the scraps I
+> want.
+>
+> Then in .thconfig:
+>
+> select map_A
+>
+> layout morph
+>   scale 1 500
+>   grid bottom
+>   grid-size 100 100 100 m
+>   sketches on
+>   grid off
+> endlayout
+>
+> # Output plan in Therion pdf format
+> export map \
+>   -projection plan \
+>   -format pdf\
+>   -output map_A.pdf \
+>   -layout morph
+>
+> # Output plan in Therion xvi format
+> export map \
+>   -projection plan \
+>   -format xvi\
+>   -output map_A.xvi\
+>   -layout morph
+>
+> PDF output is as expected from the manual. It shows the background images
+> attached to the scraps in the selected map, plus only the parts of the
+> centreline that are used in those scraps. However if I change the export
+> command to use XVI format, I get the background images and the centreline
+> for the whole project, which contains over 20,000 stations. This is very
+> difficult to use as it takes a long time for XTherion to load it, and then
+> the area I'm interested in is tiny compared with the whole drawing area, so
+> it requires quite a bit of zooming and scrolling to get there before I can
+> start working.
+>
+> Am I right in thinking that the XVI output should contain the same bits of
+> centreline as appear in the PDF output, rather than the whole lot? Am I
+> missing something?
+>
+> Also: 'grid off' does not seem to affect the XVI output, which is why I've
+> specified a fairly large grid size so that the grid isn't obscuring the
+> sketches. I'd really like to be able to disable the grid in XVI completely.
+>
+> Is there a way to achieve these two things?
+>
+> Best regards,
+>
+> Duncan.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From duncan.collis at gmail.com  Thu Feb 14 08:02:08 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Thu, 14 Feb 2019 15:02:08 +0800
+Subject: [Therion] Morphing of background scketches fails on Win10 when
+ Therion installation path contains spaces
+Message-ID: <CA+u30UD5+-L+uBTxV25ehcJDO861akP+G+svps4kadc_+u3DJA@mail.gmail.com>
+
+Hi,
+
+Another problem I encountered when trying to morph background
+sketches, this time with an easy workaround which I am posting here in
+the hope that it will of use to someone.
+
+With Therion installed in:
+
+   D:\Program Files\Therion
+
+the following error appears in the compiler window when trying to
+morph background sketches:
+
+'D:\Program' is not recognized as an internal or external command,
+operable program or batch file.
+
+Reinstalling Therion in:
+
+   D:\Therion
+
+solves the problem, which seems to be due to the space in the original
+installation path.
+
+Best regards,
+
+Duncan.
+
+
+From bruce at tomo.co.nz  Thu Feb 14 10:21:27 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 14 Feb 2019 22:21:27 +1300
+Subject: [Therion] Morphing of background scketches fails on Win10 when
+	Therion installation path contains spaces
+In-Reply-To: <CA+u30UD5+-L+uBTxV25ehcJDO861akP+G+svps4kadc_+u3DJA@mail.gmail.com>
+References: <CA+u30UD5+-L+uBTxV25ehcJDO861akP+G+svps4kadc_+u3DJA@mail.gmail.com>
+Message-ID: <000001d4c446$ac62fbf0$0528f3d0$@tomo.co.nz>
+
+The space in the Therion install path may not be the whole story.
+The path to my installation of Therion is C:\Program Files (x86)\Therion , which has two spaces, and I have no problem compiling a map with 'sketches on' and -sketch xxxx set for some scraps.
+
+Windows 10 Home v 1803
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via Therion
+Sent: Thursday, 14 February 2019 20:02
+To: List for Therion users <therion at speleo.sk>
+Cc: Duncan Collis <duncan.collis at gmail.com>
+Subject: [Therion] Morphing of background scketches fails on Win10 when Therion installation path contains spaces
+
+Hi,
+
+Another problem I encountered when trying to morph background sketches, this time with an easy workaround which I am posting here in the hope that it will of use to someone.
+
+With Therion installed in:
+
+   D:\Program Files\Therion
+
+the following error appears in the compiler window when trying to morph background sketches:
+
+'D:\Program' is not recognized as an internal or external command, operable program or batch file.
+
+Reinstalling Therion in:
+
+   D:\Therion
+
+solves the problem, which seems to be due to the space in the original installation path.
+
+Best regards,
+
+Duncan.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Thu Feb 14 10:49:23 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 14 Feb 2019 10:49:23 +0100
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+	output with background sketches..
+In-Reply-To: <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+Message-ID: <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+
+To ability to export xvi as part of PDF output is long time on to-do list.
+
+The export of morphed sketches is part of exporting maps based on scraps or partial maps based on scraps, not exporting centerlines as defined in maps based on surveys.
+
+Martin
+
+> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+> 
+> Hi, Bruce.
+> 
+> Thanks for the reply. The wiki pages you linked were one of the most
+> helpful resources when I was trying to get this to work, along with
+> Marco Corvi's "Therion by Examples".
+> 
+> I've tried selecting surveys, but when I do that I get an XVI file
+> containing the centreline of the selected surveys, but no background
+> sketches, even if I also select the map with the sketches in it.
+> Changing the order of the select statements doesn't make any
+> difference. I've also tried adding scrap outlines by drawing walls
+> around the areas of interest in the th2 file in the vain hope that
+> this would have some effect, but it did nothing. I've tried selecting
+> scraps directly instead of maps, with the same result.
+> 
+> I think that this has the potential to be a really useful feature, but
+> unfortunately its current behaviour regarding inclusion of centreline
+> makes it all but unusable in large projects.
+> 
+> Best regards,
+> Duncan.
+> 
+> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>> Duncan
+>> I think your experience is more or less consistent with that here
+>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I experimented
+>> with 4-5 years ago.
+>> One observation I made was that exporting a map to xvi actually produced
+>> something more akin to a model.  In those pages I did not have any -sketch
+>> specified with the scraps, so I guess all Therion had to work with was the
+>> centreline (model).
+>> Although I don't think there is anything about on that wki page, I recall
+>> that xvi map exports are a bit 'scattergun' in that they do not respect the
+>> limits of the selected map.
+>> Maybe if a survey is selected rather than a map you may have better xvi
+>> control?
+>> Have a look at this table
+>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide some
+>> insight.  It may no longer be current, and there may have been mistakes in
+>> it from the start.  Any feedback welcome.
+>> 
+>> Bruce
+>> 
+>> -----Original Message-----
+>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via
+>> Therion
+>> Sent: Thursday, 14 February 2019 15:10
+>> To: therion at speleo.sk
+>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map output
+>> with background sketches..
+>> 
+>> In my th2 file I've got scraps with -sketch specified, and stations placed
+>> to enable warping/morphing of these background images.
+>> 
+>> In th2 a map is defined (let's call it map_A) which includes the scraps I
+>> want.
+>> 
+>> Then in .thconfig:
+>> 
+>> select map_A
+>> 
+>> layout morph
+>>  scale 1 500
+>>  grid bottom
+>>  grid-size 100 100 100 m
+>>  sketches on
+>>  grid off
+>> endlayout
+>> 
+>> # Output plan in Therion pdf format
+>> export map \
+>>  -projection plan \
+>>  -format pdf\
+>>  -output map_A.pdf \
+>>  -layout morph
+>> 
+>> # Output plan in Therion xvi format
+>> export map \
+>>  -projection plan \
+>>  -format xvi\
+>>  -output map_A.xvi\
+>>  -layout morph
+>> 
+>> PDF output is as expected from the manual. It shows the background images
+>> attached to the scraps in the selected map, plus only the parts of the
+>> centreline that are used in those scraps. However if I change the export
+>> command to use XVI format, I get the background images and the centreline
+>> for the whole project, which contains over 20,000 stations. This is very
+>> difficult to use as it takes a long time for XTherion to load it, and then
+>> the area I'm interested in is tiny compared with the whole drawing area, so
+>> it requires quite a bit of zooming and scrolling to get there before I can
+>> start working.
+>> 
+>> Am I right in thinking that the XVI output should contain the same bits of
+>> centreline as appear in the PDF output, rather than the whole lot? Am I
+>> missing something?
+>> 
+>> Also: 'grid off' does not seem to affect the XVI output, which is why I've
+>> specified a fairly large grid size so that the grid isn't obscuring the
+>> sketches. I'd really like to be able to disable the grid in XVI completely.
+>> 
+>> Is there a way to achieve these two things?
+>> 
+>> Best regards,
+>> 
+>> Duncan.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From duncan.collis at gmail.com  Thu Feb 14 12:26:07 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Thu, 14 Feb 2019 19:26:07 +0800
+Subject: [Therion] Morphing of background scketches fails on Win10 when
+ Therion installation path contains spaces
+In-Reply-To: <000001d4c446$ac62fbf0$0528f3d0$@tomo.co.nz>
+References: <CA+u30UD5+-L+uBTxV25ehcJDO861akP+G+svps4kadc_+u3DJA@mail.gmail.com>
+ <000001d4c446$ac62fbf0$0528f3d0$@tomo.co.nz>
+Message-ID: <CA+u30UCWLBQnY5Gpw9Z_zULvJOYkuKaZ43L3JBUntW+CZ1MA1w@mail.gmail.com>
+
+Hi, Bruce.
+
+Hmm, that's interesting. There must indeed be more to it. I suspect it
+will require a bit of poking around in the code to figure it out.
+However unless there are users who encounter this problem for whom the
+workaround I described doesn't work, I don't think it need to be
+looked at with any urgency.
+
+Best regards,
+Duncan.
+
+On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+> The space in the Therion install path may not be the whole story.
+> The path to my installation of Therion is C:\Program Files (x86)\Therion ,
+> which has two spaces, and I have no problem compiling a map with 'sketches
+> on' and -sketch xxxx set for some scraps.
+>
+> Windows 10 Home v 1803
+>
+> Bruce
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via
+> Therion
+> Sent: Thursday, 14 February 2019 20:02
+> To: List for Therion users <therion at speleo.sk>
+> Cc: Duncan Collis <duncan.collis at gmail.com>
+> Subject: [Therion] Morphing of background scketches fails on Win10 when
+> Therion installation path contains spaces
+>
+> Hi,
+>
+> Another problem I encountered when trying to morph background sketches, this
+> time with an easy workaround which I am posting here in the hope that it
+> will of use to someone.
+>
+> With Therion installed in:
+>
+>    D:\Program Files\Therion
+>
+> the following error appears in the compiler window when trying to morph
+> background sketches:
+>
+> 'D:\Program' is not recognized as an internal or external command, operable
+> program or batch file.
+>
+> Reinstalling Therion in:
+>
+>    D:\Therion
+>
+> solves the problem, which seems to be due to the space in the original
+> installation path.
+>
+> Best regards,
+>
+> Duncan.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From duncan.collis at gmail.com  Thu Feb 14 12:39:18 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Thu, 14 Feb 2019 19:39:18 +0800
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+ output with background sketches..
+In-Reply-To: <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+ <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+Message-ID: <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+
+Hi, Martin.
+
+Thanks for the quick response, but I'm afraid I'm not sure I
+completely follow your meaning.
+
+The map I'm trying to export *is* based on scraps. The problem is that
+I'm ending up with the centreline of the whole system in the XVI file
+rather than being limited to the scraps.
+
+If that is the expected behaviour then it's useful to know, as I can
+stop wasting time trying to get it to do something else, and can start
+thinking more about how to work around it - I already have an idea to
+write a script to strip parts of the centreline that I don't want out
+of the XVI file.
+
+Best regards,
+
+Duncan.
+
+On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+> To ability to export xvi as part of PDF output is long time on to-do list.
+>
+> The export of morphed sketches is part of exporting maps based on scraps or
+> partial maps based on scraps, not exporting centerlines as defined in maps
+> based on surveys.
+>
+> Martin
+>
+>> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+>>
+>> Hi, Bruce.
+>>
+>> Thanks for the reply. The wiki pages you linked were one of the most
+>> helpful resources when I was trying to get this to work, along with
+>> Marco Corvi's "Therion by Examples".
+>>
+>> I've tried selecting surveys, but when I do that I get an XVI file
+>> containing the centreline of the selected surveys, but no background
+>> sketches, even if I also select the map with the sketches in it.
+>> Changing the order of the select statements doesn't make any
+>> difference. I've also tried adding scrap outlines by drawing walls
+>> around the areas of interest in the th2 file in the vain hope that
+>> this would have some effect, but it did nothing. I've tried selecting
+>> scraps directly instead of maps, with the same result.
+>>
+>> I think that this has the potential to be a really useful feature, but
+>> unfortunately its current behaviour regarding inclusion of centreline
+>> makes it all but unusable in large projects.
+>>
+>> Best regards,
+>> Duncan.
+>>
+>> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>>> Duncan
+>>> I think your experience is more or less consistent with that here
+>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I
+>>> experimented
+>>> with 4-5 years ago.
+>>> One observation I made was that exporting a map to xvi actually produced
+>>> something more akin to a model.  In those pages I did not have any
+>>> -sketch
+>>> specified with the scraps, so I guess all Therion had to work with was
+>>> the
+>>> centreline (model).
+>>> Although I don't think there is anything about on that wki page, I recall
+>>> that xvi map exports are a bit 'scattergun' in that they do not respect
+>>> the
+>>> limits of the selected map.
+>>> Maybe if a survey is selected rather than a map you may have better xvi
+>>> control?
+>>> Have a look at this table
+>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide
+>>> some
+>>> insight.  It may no longer be current, and there may have been mistakes
+>>> in
+>>> it from the start.  Any feedback welcome.
+>>>
+>>> Bruce
+>>>
+>>> -----Original Message-----
+>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via
+>>> Therion
+>>> Sent: Thursday, 14 February 2019 15:10
+>>> To: therion at speleo.sk
+>>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+>>> output
+>>> with background sketches..
+>>>
+>>> In my th2 file I've got scraps with -sketch specified, and stations
+>>> placed
+>>> to enable warping/morphing of these background images.
+>>>
+>>> In th2 a map is defined (let's call it map_A) which includes the scraps I
+>>> want.
+>>>
+>>> Then in .thconfig:
+>>>
+>>> select map_A
+>>>
+>>> layout morph
+>>>  scale 1 500
+>>>  grid bottom
+>>>  grid-size 100 100 100 m
+>>>  sketches on
+>>>  grid off
+>>> endlayout
+>>>
+>>> # Output plan in Therion pdf format
+>>> export map \
+>>>  -projection plan \
+>>>  -format pdf\
+>>>  -output map_A.pdf \
+>>>  -layout morph
+>>>
+>>> # Output plan in Therion xvi format
+>>> export map \
+>>>  -projection plan \
+>>>  -format xvi\
+>>>  -output map_A.xvi\
+>>>  -layout morph
+>>>
+>>> PDF output is as expected from the manual. It shows the background images
+>>> attached to the scraps in the selected map, plus only the parts of the
+>>> centreline that are used in those scraps. However if I change the export
+>>> command to use XVI format, I get the background images and the centreline
+>>> for the whole project, which contains over 20,000 stations. This is very
+>>> difficult to use as it takes a long time for XTherion to load it, and
+>>> then
+>>> the area I'm interested in is tiny compared with the whole drawing area,
+>>> so
+>>> it requires quite a bit of zooming and scrolling to get there before I
+>>> can
+>>> start working.
+>>>
+>>> Am I right in thinking that the XVI output should contain the same bits
+>>> of
+>>> centreline as appear in the PDF output, rather than the whole lot? Am I
+>>> missing something?
+>>>
+>>> Also: 'grid off' does not seem to affect the XVI output, which is why
+>>> I've
+>>> specified a fairly large grid size so that the grid isn't obscuring the
+>>> sketches. I'd really like to be able to disable the grid in XVI
+>>> completely.
+>>>
+>>> Is there a way to achieve these two things?
+>>>
+>>> Best regards,
+>>>
+>>> Duncan.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From martinsluka at mac.com  Thu Feb 14 12:47:02 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 14 Feb 2019 12:47:02 +0100
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+	output with background sketches..
+In-Reply-To: <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+ <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+ <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+Message-ID: <D778DF94-4BC9-4C6B-A489-99967A0494F6@mac.com>
+
+Xvi is generated from centerlines in surveys. It has nothing together (till now) with scraps. 
+
+So there is the problem. If you select only particular survey(s) it shoul generate only xvi fot that survey(s). 
+
+Martin
+
+Odesláno z iPhonu
+
+14. 2. 2019 v 12:39, Duncan Collis via Therion <therion at speleo.sk>:
+
+> Hi, Martin.
+> 
+> Thanks for the quick response, but I'm afraid I'm not sure I
+> completely follow your meaning.
+> 
+> The map I'm trying to export *is* based on scraps. The problem is that
+> I'm ending up with the centreline of the whole system in the XVI file
+> rather than being limited to the scraps.
+> 
+> If that is the expected behaviour then it's useful to know, as I can
+> stop wasting time trying to get it to do something else, and can start
+> thinking more about how to work around it - I already have an idea to
+> write a script to strip parts of the centreline that I don't want out
+> of the XVI file.
+> 
+> Best regards,
+> 
+> Duncan.
+> 
+>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>> To ability to export xvi as part of PDF output is long time on to-do list.
+>> 
+>> The export of morphed sketches is part of exporting maps based on scraps or
+>> partial maps based on scraps, not exporting centerlines as defined in maps
+>> based on surveys.
+>> 
+>> Martin
+>> 
+>>> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+>>> 
+>>> Hi, Bruce.
+>>> 
+>>> Thanks for the reply. The wiki pages you linked were one of the most
+>>> helpful resources when I was trying to get this to work, along with
+>>> Marco Corvi's "Therion by Examples".
+>>> 
+>>> I've tried selecting surveys, but when I do that I get an XVI file
+>>> containing the centreline of the selected surveys, but no background
+>>> sketches, even if I also select the map with the sketches in it.
+>>> Changing the order of the select statements doesn't make any
+>>> difference. I've also tried adding scrap outlines by drawing walls
+>>> around the areas of interest in the th2 file in the vain hope that
+>>> this would have some effect, but it did nothing. I've tried selecting
+>>> scraps directly instead of maps, with the same result.
+>>> 
+>>> I think that this has the potential to be a really useful feature, but
+>>> unfortunately its current behaviour regarding inclusion of centreline
+>>> makes it all but unusable in large projects.
+>>> 
+>>> Best regards,
+>>> Duncan.
+>>> 
+>>>> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>>>> Duncan
+>>>> I think your experience is more or less consistent with that here
+>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I
+>>>> experimented
+>>>> with 4-5 years ago.
+>>>> One observation I made was that exporting a map to xvi actually produced
+>>>> something more akin to a model.  In those pages I did not have any
+>>>> -sketch
+>>>> specified with the scraps, so I guess all Therion had to work with was
+>>>> the
+>>>> centreline (model).
+>>>> Although I don't think there is anything about on that wki page, I recall
+>>>> that xvi map exports are a bit 'scattergun' in that they do not respect
+>>>> the
+>>>> limits of the selected map.
+>>>> Maybe if a survey is selected rather than a map you may have better xvi
+>>>> control?
+>>>> Have a look at this table
+>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide
+>>>> some
+>>>> insight.  It may no longer be current, and there may have been mistakes
+>>>> in
+>>>> it from the start.  Any feedback welcome.
+>>>> 
+>>>> Bruce
+>>>> 
+>>>> -----Original Message-----
+>>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via
+>>>> Therion
+>>>> Sent: Thursday, 14 February 2019 15:10
+>>>> To: therion at speleo.sk
+>>>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>>>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+>>>> output
+>>>> with background sketches..
+>>>> 
+>>>> In my th2 file I've got scraps with -sketch specified, and stations
+>>>> placed
+>>>> to enable warping/morphing of these background images.
+>>>> 
+>>>> In th2 a map is defined (let's call it map_A) which includes the scraps I
+>>>> want.
+>>>> 
+>>>> Then in .thconfig:
+>>>> 
+>>>> select map_A
+>>>> 
+>>>> layout morph
+>>>> scale 1 500
+>>>> grid bottom
+>>>> grid-size 100 100 100 m
+>>>> sketches on
+>>>> grid off
+>>>> endlayout
+>>>> 
+>>>> # Output plan in Therion pdf format
+>>>> export map \
+>>>> -projection plan \
+>>>> -format pdf\
+>>>> -output map_A.pdf \
+>>>> -layout morph
+>>>> 
+>>>> # Output plan in Therion xvi format
+>>>> export map \
+>>>> -projection plan \
+>>>> -format xvi\
+>>>> -output map_A.xvi\
+>>>> -layout morph
+>>>> 
+>>>> PDF output is as expected from the manual. It shows the background images
+>>>> attached to the scraps in the selected map, plus only the parts of the
+>>>> centreline that are used in those scraps. However if I change the export
+>>>> command to use XVI format, I get the background images and the centreline
+>>>> for the whole project, which contains over 20,000 stations. This is very
+>>>> difficult to use as it takes a long time for XTherion to load it, and
+>>>> then
+>>>> the area I'm interested in is tiny compared with the whole drawing area,
+>>>> so
+>>>> it requires quite a bit of zooming and scrolling to get there before I
+>>>> can
+>>>> start working.
+>>>> 
+>>>> Am I right in thinking that the XVI output should contain the same bits
+>>>> of
+>>>> centreline as appear in the PDF output, rather than the whole lot? Am I
+>>>> missing something?
+>>>> 
+>>>> Also: 'grid off' does not seem to affect the XVI output, which is why
+>>>> I've
+>>>> specified a fairly large grid size so that the grid isn't obscuring the
+>>>> sketches. I'd really like to be able to disable the grid in XVI
+>>>> completely.
+>>>> 
+>>>> Is there a way to achieve these two things?
+>>>> 
+>>>> Best regards,
+>>>> 
+>>>> Duncan.
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Thu Feb 14 20:19:21 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 15 Feb 2019 08:19:21 +1300
+Subject: [Therion] Morphing of background scketches fails on Win10 when
+	Therion installation path contains spaces
+In-Reply-To: <CA+u30UCWLBQnY5Gpw9Z_zULvJOYkuKaZ43L3JBUntW+CZ1MA1w@mail.gmail.com>
+References: <CA+u30UD5+-L+uBTxV25ehcJDO861akP+G+svps4kadc_+u3DJA@mail.gmail.com>
+ <000001d4c446$ac62fbf0$0528f3d0$@tomo.co.nz>
+ <CA+u30UCWLBQnY5Gpw9Z_zULvJOYkuKaZ43L3JBUntW+CZ1MA1w@mail.gmail.com>
+Message-ID: <000401d4c49a$3206c860$96145920$@tomo.co.nz>
+
+And Therion 5.4.3+d0538ee (2019+02+01)
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis via Therion
+Sent: Friday, 15 February 2019 00:26
+To: List for Therion users <therion at speleo.sk>
+Cc: Duncan Collis <duncan.collis at gmail.com>
+Subject: Re: [Therion] Morphing of background scketches fails on Win10 when Therion installation path contains spaces
+
+Hi, Bruce.
+
+Hmm, that's interesting. There must indeed be more to it. I suspect it will require a bit of poking around in the code to figure it out.
+However unless there are users who encounter this problem for whom the workaround I described doesn't work, I don't think it need to be looked at with any urgency.
+
+Best regards,
+Duncan.
+
+On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+> The space in the Therion install path may not be the whole story.
+> The path to my installation of Therion is C:\Program Files 
+> (x86)\Therion , which has two spaces, and I have no problem compiling 
+> a map with 'sketches on' and -sketch xxxx set for some scraps.
+>
+> Windows 10 Home v 1803
+>
+> Bruce
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis 
+> via Therion
+> Sent: Thursday, 14 February 2019 20:02
+> To: List for Therion users <therion at speleo.sk>
+> Cc: Duncan Collis <duncan.collis at gmail.com>
+> Subject: [Therion] Morphing of background scketches fails on Win10 
+> when Therion installation path contains spaces
+>
+> Hi,
+>
+> Another problem I encountered when trying to morph background 
+> sketches, this time with an easy workaround which I am posting here in 
+> the hope that it will of use to someone.
+>
+> With Therion installed in:
+>
+>    D:\Program Files\Therion
+>
+> the following error appears in the compiler window when trying to 
+> morph background sketches:
+>
+> 'D:\Program' is not recognized as an internal or external command, 
+> operable program or batch file.
+>
+> Reinstalling Therion in:
+>
+>    D:\Therion
+>
+> solves the problem, which seems to be due to the space in the original 
+> installation path.
+>
+> Best regards,
+>
+> Duncan.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From duncan.collis at gmail.com  Fri Feb 15 02:19:30 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Fri, 15 Feb 2019 09:19:30 +0800
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+ output with background sketches..
+In-Reply-To: <D778DF94-4BC9-4C6B-A489-99967A0494F6@mac.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+ <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+ <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+ <D778DF94-4BC9-4C6B-A489-99967A0494F6@mac.com>
+Message-ID: <CA+u30UBc4TZJbAYY0o3MQTYqgYM8HeCO+5z3U_umQUT9TnOG9g@mail.gmail.com>
+
+Hi, Martin.
+
+Thanks for the clarification. That leads me to a final question: is it
+possible to select a particular survey and also get morphed sketches
+in the output XVI file? I've tried to do this without success, but
+maybe there's something I am missing?
+
+I've tried:
+
+select survey_1 at system
+select survey_2 at system
+
+and get an XVI file with centreline for survey_1 and survey_2 and no sketches.
+
+If I try:
+
+select map_A at system
+select survey_1 at system
+select survey_2 at system
+
+I still only get the centreline. Is this expected behaviour?
+
+Best regards,
+Duncan.
+
+On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+> Xvi is generated from centerlines in surveys. It has nothing together (till
+> now) with scraps.
+>
+> So there is the problem. If you select only particular survey(s) it shoul
+> generate only xvi fot that survey(s).
+>
+> Martin
+>
+> Odesláno z iPhonu
+>
+> 14. 2. 2019 v 12:39, Duncan Collis via Therion <therion at speleo.sk>:
+>
+>> Hi, Martin.
+>>
+>> Thanks for the quick response, but I'm afraid I'm not sure I
+>> completely follow your meaning.
+>>
+>> The map I'm trying to export *is* based on scraps. The problem is that
+>> I'm ending up with the centreline of the whole system in the XVI file
+>> rather than being limited to the scraps.
+>>
+>> If that is the expected behaviour then it's useful to know, as I can
+>> stop wasting time trying to get it to do something else, and can start
+>> thinking more about how to work around it - I already have an idea to
+>> write a script to strip parts of the centreline that I don't want out
+>> of the XVI file.
+>>
+>> Best regards,
+>>
+>> Duncan.
+>>
+>>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>>> To ability to export xvi as part of PDF output is long time on to-do
+>>> list.
+>>>
+>>> The export of morphed sketches is part of exporting maps based on scraps
+>>> or
+>>> partial maps based on scraps, not exporting centerlines as defined in
+>>> maps
+>>> based on surveys.
+>>>
+>>> Martin
+>>>
+>>>> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+>>>>
+>>>> Hi, Bruce.
+>>>>
+>>>> Thanks for the reply. The wiki pages you linked were one of the most
+>>>> helpful resources when I was trying to get this to work, along with
+>>>> Marco Corvi's "Therion by Examples".
+>>>>
+>>>> I've tried selecting surveys, but when I do that I get an XVI file
+>>>> containing the centreline of the selected surveys, but no background
+>>>> sketches, even if I also select the map with the sketches in it.
+>>>> Changing the order of the select statements doesn't make any
+>>>> difference. I've also tried adding scrap outlines by drawing walls
+>>>> around the areas of interest in the th2 file in the vain hope that
+>>>> this would have some effect, but it did nothing. I've tried selecting
+>>>> scraps directly instead of maps, with the same result.
+>>>>
+>>>> I think that this has the potential to be a really useful feature, but
+>>>> unfortunately its current behaviour regarding inclusion of centreline
+>>>> makes it all but unusable in large projects.
+>>>>
+>>>> Best regards,
+>>>> Duncan.
+>>>>
+>>>>> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>>>>> Duncan
+>>>>> I think your experience is more or less consistent with that here
+>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I
+>>>>> experimented
+>>>>> with 4-5 years ago.
+>>>>> One observation I made was that exporting a map to xvi actually
+>>>>> produced
+>>>>> something more akin to a model.  In those pages I did not have any
+>>>>> -sketch
+>>>>> specified with the scraps, so I guess all Therion had to work with was
+>>>>> the
+>>>>> centreline (model).
+>>>>> Although I don't think there is anything about on that wki page, I
+>>>>> recall
+>>>>> that xvi map exports are a bit 'scattergun' in that they do not respect
+>>>>> the
+>>>>> limits of the selected map.
+>>>>> Maybe if a survey is selected rather than a map you may have better xvi
+>>>>> control?
+>>>>> Have a look at this table
+>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide
+>>>>> some
+>>>>> insight.  It may no longer be current, and there may have been mistakes
+>>>>> in
+>>>>> it from the start.  Any feedback welcome.
+>>>>>
+>>>>> Bruce
+>>>>>
+>>>>> -----Original Message-----
+>>>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis
+>>>>> via
+>>>>> Therion
+>>>>> Sent: Thursday, 14 February 2019 15:10
+>>>>> To: therion at speleo.sk
+>>>>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>>>>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+>>>>> output
+>>>>> with background sketches..
+>>>>>
+>>>>> In my th2 file I've got scraps with -sketch specified, and stations
+>>>>> placed
+>>>>> to enable warping/morphing of these background images.
+>>>>>
+>>>>> In th2 a map is defined (let's call it map_A) which includes the scraps
+>>>>> I
+>>>>> want.
+>>>>>
+>>>>> Then in .thconfig:
+>>>>>
+>>>>> select map_A
+>>>>>
+>>>>> layout morph
+>>>>> scale 1 500
+>>>>> grid bottom
+>>>>> grid-size 100 100 100 m
+>>>>> sketches on
+>>>>> grid off
+>>>>> endlayout
+>>>>>
+>>>>> # Output plan in Therion pdf format
+>>>>> export map \
+>>>>> -projection plan \
+>>>>> -format pdf\
+>>>>> -output map_A.pdf \
+>>>>> -layout morph
+>>>>>
+>>>>> # Output plan in Therion xvi format
+>>>>> export map \
+>>>>> -projection plan \
+>>>>> -format xvi\
+>>>>> -output map_A.xvi\
+>>>>> -layout morph
+>>>>>
+>>>>> PDF output is as expected from the manual. It shows the background
+>>>>> images
+>>>>> attached to the scraps in the selected map, plus only the parts of the
+>>>>> centreline that are used in those scraps. However if I change the
+>>>>> export
+>>>>> command to use XVI format, I get the background images and the
+>>>>> centreline
+>>>>> for the whole project, which contains over 20,000 stations. This is
+>>>>> very
+>>>>> difficult to use as it takes a long time for XTherion to load it, and
+>>>>> then
+>>>>> the area I'm interested in is tiny compared with the whole drawing
+>>>>> area,
+>>>>> so
+>>>>> it requires quite a bit of zooming and scrolling to get there before I
+>>>>> can
+>>>>> start working.
+>>>>>
+>>>>> Am I right in thinking that the XVI output should contain the same bits
+>>>>> of
+>>>>> centreline as appear in the PDF output, rather than the whole lot? Am I
+>>>>> missing something?
+>>>>>
+>>>>> Also: 'grid off' does not seem to affect the XVI output, which is why
+>>>>> I've
+>>>>> specified a fairly large grid size so that the grid isn't obscuring the
+>>>>> sketches. I'd really like to be able to disable the grid in XVI
+>>>>> completely.
+>>>>>
+>>>>> Is there a way to achieve these two things?
+>>>>>
+>>>>> Best regards,
+>>>>>
+>>>>> Duncan.
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From martinsluka at mac.com  Fri Feb 15 08:12:28 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 15 Feb 2019 08:12:28 +0100
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+	output with background sketches..
+In-Reply-To: <CA+u30UBc4TZJbAYY0o3MQTYqgYM8HeCO+5z3U_umQUT9TnOG9g@mail.gmail.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+ <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+ <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+ <D778DF94-4BC9-4C6B-A489-99967A0494F6@mac.com>
+ <CA+u30UBc4TZJbAYY0o3MQTYqgYM8HeCO+5z3U_umQUT9TnOG9g@mail.gmail.com>
+Message-ID: <76BC2C7D-47A7-4875-A0E4-1D5652036C63@mac.com>
+
+It is. I hope in the future it will be possible. 
+
+Martin Sluka
+
+Odesláno z iPhonu
+
+15. 2. 2019 v 2:19, Duncan Collis via Therion <therion at speleo.sk>:
+
+> Hi, Martin.
+> 
+> Thanks for the clarification. That leads me to a final question: is it
+> possible to select a particular survey and also get morphed sketches
+> in the output XVI file? I've tried to do this without success, but
+> maybe there's something I am missing?
+> 
+> I've tried:
+> 
+> select survey_1 at system
+> select survey_2 at system
+> 
+> and get an XVI file with centreline for survey_1 and survey_2 and no sketches.
+> 
+> If I try:
+> 
+> select map_A at system
+> select survey_1 at system
+> select survey_2 at system
+> 
+> I still only get the centreline. Is this expected behaviour?
+> 
+> Best regards,
+> Duncan.
+> 
+>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>> Xvi is generated from centerlines in surveys. It has nothing together (till
+>> now) with scraps.
+>> 
+>> So there is the problem. If you select only particular survey(s) it shoul
+>> generate only xvi fot that survey(s).
+>> 
+>> Martin
+>> 
+>> Odesláno z iPhonu
+>> 
+>> 14. 2. 2019 v 12:39, Duncan Collis via Therion <therion at speleo.sk>:
+>> 
+>>> Hi, Martin.
+>>> 
+>>> Thanks for the quick response, but I'm afraid I'm not sure I
+>>> completely follow your meaning.
+>>> 
+>>> The map I'm trying to export *is* based on scraps. The problem is that
+>>> I'm ending up with the centreline of the whole system in the XVI file
+>>> rather than being limited to the scraps.
+>>> 
+>>> If that is the expected behaviour then it's useful to know, as I can
+>>> stop wasting time trying to get it to do something else, and can start
+>>> thinking more about how to work around it - I already have an idea to
+>>> write a script to strip parts of the centreline that I don't want out
+>>> of the XVI file.
+>>> 
+>>> Best regards,
+>>> 
+>>> Duncan.
+>>> 
+>>>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>>>> To ability to export xvi as part of PDF output is long time on to-do
+>>>> list.
+>>>> 
+>>>> The export of morphed sketches is part of exporting maps based on scraps
+>>>> or
+>>>> partial maps based on scraps, not exporting centerlines as defined in
+>>>> maps
+>>>> based on surveys.
+>>>> 
+>>>> Martin
+>>>> 
+>>>>> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+>>>>> 
+>>>>> Hi, Bruce.
+>>>>> 
+>>>>> Thanks for the reply. The wiki pages you linked were one of the most
+>>>>> helpful resources when I was trying to get this to work, along with
+>>>>> Marco Corvi's "Therion by Examples".
+>>>>> 
+>>>>> I've tried selecting surveys, but when I do that I get an XVI file
+>>>>> containing the centreline of the selected surveys, but no background
+>>>>> sketches, even if I also select the map with the sketches in it.
+>>>>> Changing the order of the select statements doesn't make any
+>>>>> difference. I've also tried adding scrap outlines by drawing walls
+>>>>> around the areas of interest in the th2 file in the vain hope that
+>>>>> this would have some effect, but it did nothing. I've tried selecting
+>>>>> scraps directly instead of maps, with the same result.
+>>>>> 
+>>>>> I think that this has the potential to be a really useful feature, but
+>>>>> unfortunately its current behaviour regarding inclusion of centreline
+>>>>> makes it all but unusable in large projects.
+>>>>> 
+>>>>> Best regards,
+>>>>> Duncan.
+>>>>> 
+>>>>>> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>>>>>> Duncan
+>>>>>> I think your experience is more or less consistent with that here
+>>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I
+>>>>>> experimented
+>>>>>> with 4-5 years ago.
+>>>>>> One observation I made was that exporting a map to xvi actually
+>>>>>> produced
+>>>>>> something more akin to a model.  In those pages I did not have any
+>>>>>> -sketch
+>>>>>> specified with the scraps, so I guess all Therion had to work with was
+>>>>>> the
+>>>>>> centreline (model).
+>>>>>> Although I don't think there is anything about on that wki page, I
+>>>>>> recall
+>>>>>> that xvi map exports are a bit 'scattergun' in that they do not respect
+>>>>>> the
+>>>>>> limits of the selected map.
+>>>>>> Maybe if a survey is selected rather than a map you may have better xvi
+>>>>>> control?
+>>>>>> Have a look at this table
+>>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may provide
+>>>>>> some
+>>>>>> insight.  It may no longer be current, and there may have been mistakes
+>>>>>> in
+>>>>>> it from the start.  Any feedback welcome.
+>>>>>> 
+>>>>>> Bruce
+>>>>>> 
+>>>>>> -----Original Message-----
+>>>>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis
+>>>>>> via
+>>>>>> Therion
+>>>>>> Sent: Thursday, 14 February 2019 15:10
+>>>>>> To: therion at speleo.sk
+>>>>>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>>>>>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+>>>>>> output
+>>>>>> with background sketches..
+>>>>>> 
+>>>>>> In my th2 file I've got scraps with -sketch specified, and stations
+>>>>>> placed
+>>>>>> to enable warping/morphing of these background images.
+>>>>>> 
+>>>>>> In th2 a map is defined (let's call it map_A) which includes the scraps
+>>>>>> I
+>>>>>> want.
+>>>>>> 
+>>>>>> Then in .thconfig:
+>>>>>> 
+>>>>>> select map_A
+>>>>>> 
+>>>>>> layout morph
+>>>>>> scale 1 500
+>>>>>> grid bottom
+>>>>>> grid-size 100 100 100 m
+>>>>>> sketches on
+>>>>>> grid off
+>>>>>> endlayout
+>>>>>> 
+>>>>>> # Output plan in Therion pdf format
+>>>>>> export map \
+>>>>>> -projection plan \
+>>>>>> -format pdf\
+>>>>>> -output map_A.pdf \
+>>>>>> -layout morph
+>>>>>> 
+>>>>>> # Output plan in Therion xvi format
+>>>>>> export map \
+>>>>>> -projection plan \
+>>>>>> -format xvi\
+>>>>>> -output map_A.xvi\
+>>>>>> -layout morph
+>>>>>> 
+>>>>>> PDF output is as expected from the manual. It shows the background
+>>>>>> images
+>>>>>> attached to the scraps in the selected map, plus only the parts of the
+>>>>>> centreline that are used in those scraps. However if I change the
+>>>>>> export
+>>>>>> command to use XVI format, I get the background images and the
+>>>>>> centreline
+>>>>>> for the whole project, which contains over 20,000 stations. This is
+>>>>>> very
+>>>>>> difficult to use as it takes a long time for XTherion to load it, and
+>>>>>> then
+>>>>>> the area I'm interested in is tiny compared with the whole drawing
+>>>>>> area,
+>>>>>> so
+>>>>>> it requires quite a bit of zooming and scrolling to get there before I
+>>>>>> can
+>>>>>> start working.
+>>>>>> 
+>>>>>> Am I right in thinking that the XVI output should contain the same bits
+>>>>>> of
+>>>>>> centreline as appear in the PDF output, rather than the whole lot? Am I
+>>>>>> missing something?
+>>>>>> 
+>>>>>> Also: 'grid off' does not seem to affect the XVI output, which is why
+>>>>>> I've
+>>>>>> specified a fairly large grid size so that the grid isn't obscuring the
+>>>>>> sketches. I'd really like to be able to disable the grid in XVI
+>>>>>> completely.
+>>>>>> 
+>>>>>> Is there a way to achieve these two things?
+>>>>>> 
+>>>>>> Best regards,
+>>>>>> 
+>>>>>> Duncan.
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>> 
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>> 
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From duncan.collis at gmail.com  Fri Feb 15 12:18:09 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Fri, 15 Feb 2019 19:18:09 +0800
+Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+ output with background sketches..
+In-Reply-To: <76BC2C7D-47A7-4875-A0E4-1D5652036C63@mac.com>
+References: <CA+u30UAOX8fn9aoU9et6nNrWa92tQWbOiV5STjMEVgDD2KruiA@mail.gmail.com>
+ <000001d4c429$dfd3f420$9f7bdc60$@tomo.co.nz>
+ <CA+u30UB7fcgo7A3PVitGwz2LxcKTFt5h5om42XMk_rqcRU1z=A@mail.gmail.com>
+ <D0934BD2-6C2B-46D7-B55A-848606E421D8@mac.com>
+ <CA+u30UAiG+agXcOURFT=gy6AF6eDbRE60taMTJyAmWtWaxT=HQ@mail.gmail.com>
+ <D778DF94-4BC9-4C6B-A489-99967A0494F6@mac.com>
+ <CA+u30UBc4TZJbAYY0o3MQTYqgYM8HeCO+5z3U_umQUT9TnOG9g@mail.gmail.com>
+ <76BC2C7D-47A7-4875-A0E4-1D5652036C63@mac.com>
+Message-ID: <CA+u30UCdhQ-S=dLuSN8M2JWjt11KgFB=yF0uWuZdTJVR5+1U=g@mail.gmail.com>
+
+Hi, Martin.
+
+Thanks for the clarification.
+
+Best regards,
+
+Duncan.
+
+On 15/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+> It is. I hope in the future it will be possible.
+>
+> Martin Sluka
+>
+> Odesláno z iPhonu
+>
+> 15. 2. 2019 v 2:19, Duncan Collis via Therion <therion at speleo.sk>:
+>
+>> Hi, Martin.
+>>
+>> Thanks for the clarification. That leads me to a final question: is it
+>> possible to select a particular survey and also get morphed sketches
+>> in the output XVI file? I've tried to do this without success, but
+>> maybe there's something I am missing?
+>>
+>> I've tried:
+>>
+>> select survey_1 at system
+>> select survey_2 at system
+>>
+>> and get an XVI file with centreline for survey_1 and survey_2 and no
+>> sketches.
+>>
+>> If I try:
+>>
+>> select map_A at system
+>> select survey_1 at system
+>> select survey_2 at system
+>>
+>> I still only get the centreline. Is this expected behaviour?
+>>
+>> Best regards,
+>> Duncan.
+>>
+>>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>>> Xvi is generated from centerlines in surveys. It has nothing together
+>>> (till
+>>> now) with scraps.
+>>>
+>>> So there is the problem. If you select only particular survey(s) it shoul
+>>> generate only xvi fot that survey(s).
+>>>
+>>> Martin
+>>>
+>>> Odesláno z iPhonu
+>>>
+>>> 14. 2. 2019 v 12:39, Duncan Collis via Therion <therion at speleo.sk>:
+>>>
+>>>> Hi, Martin.
+>>>>
+>>>> Thanks for the quick response, but I'm afraid I'm not sure I
+>>>> completely follow your meaning.
+>>>>
+>>>> The map I'm trying to export *is* based on scraps. The problem is that
+>>>> I'm ending up with the centreline of the whole system in the XVI file
+>>>> rather than being limited to the scraps.
+>>>>
+>>>> If that is the expected behaviour then it's useful to know, as I can
+>>>> stop wasting time trying to get it to do something else, and can start
+>>>> thinking more about how to work around it - I already have an idea to
+>>>> write a script to strip parts of the centreline that I don't want out
+>>>> of the XVI file.
+>>>>
+>>>> Best regards,
+>>>>
+>>>> Duncan.
+>>>>
+>>>>> On 14/02/2019, Martin Sluka via Therion <therion at speleo.sk> wrote:
+>>>>> To ability to export xvi as part of PDF output is long time on to-do
+>>>>> list.
+>>>>>
+>>>>> The export of morphed sketches is part of exporting maps based on
+>>>>> scraps
+>>>>> or
+>>>>> partial maps based on scraps, not exporting centerlines as defined in
+>>>>> maps
+>>>>> based on surveys.
+>>>>>
+>>>>> Martin
+>>>>>
+>>>>>> 14. 2. 2019 v 7:56, Duncan Collis via Therion <therion at speleo.sk>:
+>>>>>>
+>>>>>> Hi, Bruce.
+>>>>>>
+>>>>>> Thanks for the reply. The wiki pages you linked were one of the most
+>>>>>> helpful resources when I was trying to get this to work, along with
+>>>>>> Marco Corvi's "Therion by Examples".
+>>>>>>
+>>>>>> I've tried selecting surveys, but when I do that I get an XVI file
+>>>>>> containing the centreline of the selected surveys, but no background
+>>>>>> sketches, even if I also select the map with the sketches in it.
+>>>>>> Changing the order of the select statements doesn't make any
+>>>>>> difference. I've also tried adding scrap outlines by drawing walls
+>>>>>> around the areas of interest in the th2 file in the vain hope that
+>>>>>> this would have some effect, but it did nothing. I've tried selecting
+>>>>>> scraps directly instead of maps, with the same result.
+>>>>>>
+>>>>>> I think that this has the potential to be a really useful feature, but
+>>>>>> unfortunately its current behaviour regarding inclusion of centreline
+>>>>>> makes it all but unusable in large projects.
+>>>>>>
+>>>>>> Best regards,
+>>>>>> Duncan.
+>>>>>>
+>>>>>>> On 14/02/2019, Bruce Mutton via Therion <therion at speleo.sk> wrote:
+>>>>>>> Duncan
+>>>>>>> I think your experience is more or less consistent with that here
+>>>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion that I
+>>>>>>> experimented
+>>>>>>> with 4-5 years ago.
+>>>>>>> One observation I made was that exporting a map to xvi actually
+>>>>>>> produced
+>>>>>>> something more akin to a model.  In those pages I did not have any
+>>>>>>> -sketch
+>>>>>>> specified with the scraps, so I guess all Therion had to work with
+>>>>>>> was
+>>>>>>> the
+>>>>>>> centreline (model).
+>>>>>>> Although I don't think there is anything about on that wki page, I
+>>>>>>> recall
+>>>>>>> that xvi map exports are a bit 'scattergun' in that they do not
+>>>>>>> respect
+>>>>>>> the
+>>>>>>> limits of the selected map.
+>>>>>>> Maybe if a survey is selected rather than a map you may have better
+>>>>>>> xvi
+>>>>>>> control?
+>>>>>>> Have a look at this table
+>>>>>>> https://therion.speleo.sk/wiki/outputs#map_xvi_therion, it may
+>>>>>>> provide
+>>>>>>> some
+>>>>>>> insight.  It may no longer be current, and there may have been
+>>>>>>> mistakes
+>>>>>>> in
+>>>>>>> it from the start.  Any feedback welcome.
+>>>>>>>
+>>>>>>> Bruce
+>>>>>>>
+>>>>>>> -----Original Message-----
+>>>>>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Duncan Collis
+>>>>>>> via
+>>>>>>> Therion
+>>>>>>> Sent: Thursday, 14 February 2019 15:10
+>>>>>>> To: therion at speleo.sk
+>>>>>>> Cc: Duncan Collis <duncan.collis at gmail.com>
+>>>>>>> Subject: [Therion] Inconsistent SELECT behaviour for pdf and xvi map
+>>>>>>> output
+>>>>>>> with background sketches..
+>>>>>>>
+>>>>>>> In my th2 file I've got scraps with -sketch specified, and stations
+>>>>>>> placed
+>>>>>>> to enable warping/morphing of these background images.
+>>>>>>>
+>>>>>>> In th2 a map is defined (let's call it map_A) which includes the
+>>>>>>> scraps
+>>>>>>> I
+>>>>>>> want.
+>>>>>>>
+>>>>>>> Then in .thconfig:
+>>>>>>>
+>>>>>>> select map_A
+>>>>>>>
+>>>>>>> layout morph
+>>>>>>> scale 1 500
+>>>>>>> grid bottom
+>>>>>>> grid-size 100 100 100 m
+>>>>>>> sketches on
+>>>>>>> grid off
+>>>>>>> endlayout
+>>>>>>>
+>>>>>>> # Output plan in Therion pdf format
+>>>>>>> export map \
+>>>>>>> -projection plan \
+>>>>>>> -format pdf\
+>>>>>>> -output map_A.pdf \
+>>>>>>> -layout morph
+>>>>>>>
+>>>>>>> # Output plan in Therion xvi format
+>>>>>>> export map \
+>>>>>>> -projection plan \
+>>>>>>> -format xvi\
+>>>>>>> -output map_A.xvi\
+>>>>>>> -layout morph
+>>>>>>>
+>>>>>>> PDF output is as expected from the manual. It shows the background
+>>>>>>> images
+>>>>>>> attached to the scraps in the selected map, plus only the parts of
+>>>>>>> the
+>>>>>>> centreline that are used in those scraps. However if I change the
+>>>>>>> export
+>>>>>>> command to use XVI format, I get the background images and the
+>>>>>>> centreline
+>>>>>>> for the whole project, which contains over 20,000 stations. This is
+>>>>>>> very
+>>>>>>> difficult to use as it takes a long time for XTherion to load it, and
+>>>>>>> then
+>>>>>>> the area I'm interested in is tiny compared with the whole drawing
+>>>>>>> area,
+>>>>>>> so
+>>>>>>> it requires quite a bit of zooming and scrolling to get there before
+>>>>>>> I
+>>>>>>> can
+>>>>>>> start working.
+>>>>>>>
+>>>>>>> Am I right in thinking that the XVI output should contain the same
+>>>>>>> bits
+>>>>>>> of
+>>>>>>> centreline as appear in the PDF output, rather than the whole lot? Am
+>>>>>>> I
+>>>>>>> missing something?
+>>>>>>>
+>>>>>>> Also: 'grid off' does not seem to affect the XVI output, which is why
+>>>>>>> I've
+>>>>>>> specified a fairly large grid size so that the grid isn't obscuring
+>>>>>>> the
+>>>>>>> sketches. I'd really like to be able to disable the grid in XVI
+>>>>>>> completely.
+>>>>>>>
+>>>>>>> Is there a way to achieve these two things?
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>>
+>>>>>>> Duncan.
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>>>
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>>>
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Feb 21 19:28:21 2019
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 21 Feb 2019 19:28:21 +0100 (CET)
+Subject: [Therion] Point altitude/deph, Help !
+Message-ID: <1895086926.4598480.1550773701942.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Dear all, 
+
+On the caves’ survey I draw, I am often adding the altitude of points that are characteristic in the cave by using the point « altitude ». I find that really great and I want to keep it. 
+
+However, I received several remarks from my co-cavers/surveyors that this is not quite readable, and that they would prefer if I can also add the depth since the entrance at those points. I can do it manually with the point label, but for a complex system, that will be a pain to maintain each time we add a new survey or a connection with an other cave previously unconnected. 
+
+I thus tried to add a new user defined point (u:prof) based on the present altitude definition. However I am really not a mpost guru and I am facing two problems. Here is the code I wrote : 
+
+###### New point depth ###### 
+code metapost 
+def p_u_prof (expr pos, R, S, A) = 
+T:=identity aligned A scaled 1.5S rotated R shifted pos; 
+# calcul of the depth of the point: altitude of the point - altitude max of the cave 
+# (it will be better with the altitude of the main entrance 
+# defined by the option -entrance of the survey block) 
+depth := \thaltitude - \cavemaxz; 
+# Print the label 
+begingroup 
+interim defaultscale:=1; 
+label (btex {-- } depth {m --} etex, (0, 0)) transformed T withcolor(0.5,0.,0.); 
+# 1) Why is profondeur value NOT printed ? Where is the error ? 
+endgroup; 
+enddef; 
+initsymbol("p_u_prof") 
+endcode 
+############################## 
+
+The problem is that this point will print the text "-- depth m --", but not the value of the depth. I suspect that : 
+
+
+    1. the depth calcul may not be accurate? 
+    2. the way I call the variable depth is not accurate? 
+
+Does anyone has a clue for that problem? 
+
+
+My second problem/question deals with the way to calculate the depth. Here I try to calculate it by using the maximum altitude of the cave (\cavemaxz). But it should be better if I use the altitude of the main entrance if it exists. But I did not find if there is such a varaible already defined. Does anyone knows how to do that ? 
+
+Cheers, 
+
+Xavier 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190221/a4128b52/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Feb 21 19:43:04 2019
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 21 Feb 2019 19:43:04 +0100 (CET)
+Subject: [Therion] Depth in the header
+Message-ID: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Dear all, 
+
+I have an other question link to the depth definition with Therion. 
+
+In the header, Therion print only the total vertical distance between the highest point and the lowest point of the cave by default. As for the point depth, lots of my co-cavers/surveyors made me the remark that it would be better if we can print the depth in the form +xx, -yy where 
+
+
+    * +xx is the height of the highest point of the cave in regards to the main entrance, 
+    * -yy is the height of the lowest point of the cave in regards to the main entrance, 
+
+It also ask question depending of the data: 
+
+
+    * If there are different entrances, which entrance to use? In that case, a solution will be to choose the entrance defined in the survey block with the option -entrance 
+    * If there are different caves on the map, what reference point to choose ? A solution could be to choose the highest entrance. 
+
+I tried to find Therion's variables to calcule that, but it seems that we lack an info that is the altitude of the main entrance. 
+
+Does anyone has an idea how to do that ? 
+
+Do I need to open a request on Github (I am not sure to be able to code that myself) ? 
+
+Cheers, 
+
+Xav 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190221/7d7b37e3/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Feb 21 20:33:34 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 22 Feb 2019 08:33:34 +1300
+Subject: [Therion] Depth in the header
+In-Reply-To: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+References: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+Message-ID: <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+
+Kia Ora Xavier
+
+I don’t have a proper answer for you.  It would seem to me that this is too complicated to become a built in feature.  As you suggest, for an export of one cave the problem might be easier to solve, but where many caves are exported it might be difficult to conceive an automated approach.
+
+ 
+
+Maybe an easier thing to code would be something where the user could just choose a reference altitude to use as a notional zero altitude for your user defined metapost?  
+
+ 
+
+Personally I do not care much for the height relative to entrances, and I have modified the header to report height like this.
+
+
+
+Together with gridlines and altitude points throughout the map, the user of the map can do their own maths!
+
+ 
+
+Regarding ‘caves’ and ‘main entrances’, I explored some ideas in the wiki here <https://therion.speleo.sk/wiki/faq?s%5b%5d=entrance#how_do_i_specify_a_main_entrance_and_also_the_other_entrances>  
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190222/2915dfce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 6221 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190222/2915dfce/attachment.png>
+
+From Xavier.Pennec at inria.fr  Thu Feb 21 22:56:00 2019
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Thu, 21 Feb 2019 22:56:00 +0100
+Subject: [Therion] Depth in the header
+In-Reply-To: <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+References: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+ <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+Message-ID: <96bb229f-a61a-3123-4ed7-94f0ece7c3d4@inria.fr>
+
+Hi Xavier, Hi Bruce,
+
+A trick that I used a while ago was to use the grid-origin command in 
+the layout. According to Marco corvi's description 
+(http://marcocorvi.altervista.org/caving/tbe/m_02/m_02a.htm): 
+/grid-origin//specifies the coordinates of the grid origin. Example: 
+"grid-origin 0 0 1875 m", assuming that the entrance altitude is 1875 m, 
+sets the altitude values for the //|altitude|//points. Having set the 
+entrance (grid origin) altitude, when you specify an "altitude" for a 
+point of a wall line (with the line-point option "altitude .") the value 
+of the altitude is computed and printed on the map. /
+
+The difficulty is that all the layouts need to have the same grid-origin 
+if you want to have compatible depth in different exported maps.
+
+Hope that helps.
+
+Xavier
+
+
+
+Le 21-Feb-19 à 20:33, Bruce Mutton via Therion a écrit :
+>
+> Kia Ora Xavier
+>
+> I don’t have a proper answer for you.  It would seem to me that this 
+> is too complicated to become a built in feature.  As you suggest, for 
+> an export of one cave the problem might be easier to solve, but where 
+> many caves are exported it might be difficult to conceive an automated 
+> approach.
+>
+> Maybe an easier thing to code would be something where the user could 
+> just choose a reference altitude to use as a notional zero altitude 
+> for your user defined metapost?
+>
+> Personally I do not care much for the height relative to entrances, 
+> and I have modified the header to report height like this.
+>
+> Together with gridlines and altitude points throughout the map, the 
+> user of the map can do their own maths!
+>
+> Regarding ‘caves’ and ‘main entrances’, I explored some ideas in the 
+> wiki here 
+> <https://therion.speleo.sk/wiki/faq?s%5b%5d=entrance#how_do_i_specify_a_main_entrance_and_also_the_other_entrances> 
+>
+>
+> Regards
+>
+> Bruce
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190221/c26aee5f/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 6221 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190221/c26aee5f/attachment.png>
+
+From andrew at wotcc.org.uk  Mon Feb 25 14:11:04 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 25 Feb 2019 13:11:04 +0000
+Subject: [Therion] SVG output gives blank file and compiling error
+Message-ID: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+
+Using 5.4.3ds1-4 on Debian testing
+
+The thconfig.thc at
+
+http://www.cave-registry.org.uk/svn/WookeyCatchment/SludgePit/
+
+works fine for pdf map output, but if I try to output svg a file is
+produced that does not display in any of the svg programs I have. It
+also does not finishing compiling giving a red ERROR in xtherion
+
+The log file just seems to stop
+
+here is the end of it
+
+
+##################### end of pdftex log file #####################
+done
+writing output/SludgePitP.svg ...
+####################### metapost log file ########################
+This is MetaPost, version 2.00 (TeX Live 2019/dev/Debian) (kpathsea
+version 6.3.1/dev)  25 FEB 2019 13:01
+**data.mp
+(/usr/share/texlive/texmf-dist/metapost/base/mpost.mp
+(/usr/share/texlive/texmf-dist/metapost/base/plain.mp
+Preloading the plain mem file, version 1.005) ) (./data.mp
+{randomseed:=42}
+ [4001] [4002] [4003] [4004] [4005] [4006] [4007] [4008] [4009] [4010]
+[4011] [
+4012] [4013]
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+[18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
+[Warning: scrap outline intersects itself in scrap
+4PotsLowerSP2 at Maze.SludgePit
+] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46]
+[47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61]
+[62] [63] [64] [65] [66] [67] [68] [69] [70] [71] [72] [73]
+
+
+
+
+I have also tried xhtml which the manual says is  SVG embedded in XHTML
+file which contains also legend
+
+and only a legend is produced. Spent a while looking at the manual and
+wiki pages, and not finding my mistake, can anyone help
+
+thanks
+
+Andrew
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Mon Feb 25 17:22:52 2019
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Mon, 25 Feb 2019 17:22:52 +0100 (CET)
+Subject: [Therion] Point altitude/deph, Help !
+In-Reply-To: <1895086926.4598480.1550773701942.JavaMail.zimbra@univ-grenoble-alpes.fr>
+References: <1895086926.4598480.1550773701942.JavaMail.zimbra@univ-grenoble-alpes.fr>
+Message-ID: <990459140.5982851.1551111772008.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Hi Xavier, 
+
+Thanks a lot for your answer. I already tough at that trick, but if I do that, I loose the altitude information, and I do not want to loose it. 
+
+Cheers, 
+
+Xavier 
+
+
+_____________________________________________________________ 
+Hi Xavier, Hi Bruce, 
+
+A trick that I used a while ago was to use the grid-origin command in the layout. According to Marco corvi's description ( [ http://marcocorvi.altervista.org/caving/tbe/m_02/m_02a.htm | http://marcocorvi.altervista.org/caving/tbe/m_02/m_02a.htm ] ): grid-origin specifies the coordinates of the grid origin. Example: "grid-origin 0 0 1875 m", assuming that the entrance altitude is 1875 m, sets the altitude values for the altitude points. Having set the entrance (grid origin) altitude, when you specify an "altitude" for a point of a wall line (with the line-point option "altitude .") the value of the altitude is computed and printed on the map. 
+
+The difficulty is that all the layouts need to have the same grid-origin if you want to have compatible depth in different exported maps. 
+
+Hope that helps. 
+
+Xavier 
+
+
+
+
+De: "List for Therion users" <therion at speleo.sk> 
+À: "List for Therion users" <therion at speleo.sk> 
+Cc: "Xavier Robert" <xavier.robert at univ-grenoble-alpes.fr> 
+Envoyé: Jeudi 21 Février 2019 13:28:21 
+Objet: [Therion] Point altitude/deph, Help ! 
+
+Dear all, 
+
+On the caves’ survey I draw, I am often adding the altitude of points that are characteristic in the cave by using the point « altitude ». I find that really great and I want to keep it. 
+
+However, I received several remarks from my co-cavers/surveyors that this is not quite readable, and that they would prefer if I can also add the depth since the entrance at those points. I can do it manually with the point label, but for a complex system, that will be a pain to maintain each time we add a new survey or a connection with an other cave previously unconnected. 
+
+I thus tried to add a new user defined point (u:prof) based on the present altitude definition. However I am really not a mpost guru and I am facing two problems. Here is the code I wrote : 
+
+###### New point depth ###### 
+code metapost 
+def p_u_prof (expr pos, R, S, A) = 
+T:=identity aligned A scaled 1.5S rotated R shifted pos; 
+# calcul of the depth of the point: altitude of the point - altitude max of the cave 
+# (it will be better with the altitude of the main entrance 
+# defined by the option -entrance of the survey block) 
+depth := \thaltitude - \cavemaxz; 
+# Print the label 
+begingroup 
+interim defaultscale:=1; 
+label (btex {-- } depth {m --} etex, (0, 0)) transformed T withcolor(0.5,0.,0.); 
+# 1) Why is profondeur value NOT printed ? Where is the error ? 
+endgroup; 
+enddef; 
+initsymbol("p_u_prof") 
+endcode 
+############################## 
+
+The problem is that this point will print the text "-- depth m --", but not the value of the depth. I suspect that : 
+
+
+    1. the depth calcul may not be accurate? 
+    2. the way I call the variable depth is not accurate? 
+
+Does anyone has a clue for that problem? 
+
+
+My second problem/question deals with the way to calculate the depth. Here I try to calculate it by using the maximum altitude of the cave (\cavemaxz). But it should be better if I use the altitude of the main entrance if it exists. But I did not find if there is such a varaible already defined. Does anyone knows how to do that ? 
+
+Cheers, 
+
+Xavier 
+
+
+_______________________________________________ 
+Therion mailing list 
+Therion at speleo.sk 
+https://mailman.speleo.sk/listinfo/therion 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190225/c19c1cf5/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Mon Feb 25 22:16:10 2019
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Mon, 25 Feb 2019 22:16:10 +0100 (CET)
+Subject: [Therion] Depth in the header
+In-Reply-To: <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+References: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+ <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+Message-ID: <1626121782.6060193.1551129370470.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Hi Bruce ! 
+
+Thanks a lot for your answer, it has given me some ideas (I try to be synthetic and hopefully understandable, but I am really far to be a Tex guru, I may misunderstand this language) : 
+
+If I manually define a reference altitude that is the altitude of the main entrance, this is easy to calcul the depth for the header: 
++[Max. altitude of the cave - ref. altitude] / [Min. altitude of the cave - ref. altitude]. 
+
+I thus tried to do that by combining a thconfig (where I should define the altitude reference) and a config.thc (where I should define the layouts and Tex codes to perform all the calculs and tweek the header) files to port the coding to multiple thconfig's files (see attachements, I tried to comment all my changes and my problems): 
+
+
+    * In the config.thc, I wrote 3 layouts 
+        * a layout langue-en that define some variables in english (Presently, I also have the same in french and spanish). This is where I also define all the new tokens I eventually use in my layouts (clubs, synthesys, webpage,...). This is working very well. 
+        * a layout headerl where I define all what I want to write in my header. I used the models from the Therion Wiki, and arrange it a bit to my desires... I specially wrote a section to modify the depth (between TEST / END TEST). This part seems OK, depending on the type of variables used (see further). 
+        * a layout Testdepth : this is the layout where I calcul the altitude differences above and under the entrance inside a code tex-map - endcode block. Here, I have a problem: If I do this calcul by using directly numbers (i.e. I need to give the values as numbers [e.g. \edef\cavemaxzc{1008}], and not as variable [e.g. \edef\cavemaxzc{\the\cavemaxz}] ), it is OK. If I try to use counters or token, I receive an error. The problem is that if I want to be able to use this code for a lot of caves, I need to be able to give the value of the tokens \cavemaxz and \caveminz. (I tried with \the\cavemaxz or \number\cavemaxz, and that does not work). 
+    * In the thconfig, I made 3 changes to change the depth in the header: 
+        * I manually define the variable \altref that correspond to the altitude of the entrance. If I declare the variable as a token (\newtoks) or a counter (\nexcount), I get an error: ! Missing number, treated as zero. <to be read again> { l.765 \newcount\altref \altref{ 1000}. I need to define it as \edef\altref{1000}. If this variable is empty, I also have an error, probably because this variable is not passed to the layouts in config.thc 
+        * I call the layout Testdepth from the config.thc. In that case, I have the error: ! Missing number, treated as zero<to be read again> \relax l.755 ...hc = \numexpr \cavemaxzc - \altref \relax. It seems that the variable \altref that I defined is not passed to the Tex code in the layout Tesdepth. I fear that is because this new defined variable is not a token. May I true ? 
+        * If I copy the layout Testdepth from the config.thc and paste it inside the layout my_layout from the thconfig (while I comment the line copy Testdepth), it does work, if the \cavemaxz and \caveminz are defined as numbers and not as token or counters. If this variable is empty, I also have an error, probably because this variable is not passed to the layouts in config.thc. (On the contrary, the new counters \maxdepthc and \mindepthc are passed !) 
+
+If I good understood, in Tex, a token is not a number, and thus we cannot directly make any calculs with it. We need to translate it to a number. 
+
+Moreover, it seems that if we want to pass variables between layouts that are stored in different files (i.e. here config.thc and thconfig), the variable needs to be defined everywhere as tokens (or counters ?). 
+
+So I suppose that I need to find a way to translate a token or a counter into a number. Does anyone know how to do that? 
+
+Sorry for this long email, 
+Cheers, 
+
+Xavier 
+
+
+De: "List for Therion users" <therion at speleo.sk> 
+À: "List for Therion users" <therion at speleo.sk> 
+Cc: "Bruce Mutton" <bruce at tomo.co.nz> 
+Envoyé: Jeudi 21 Février 2019 14:33:34 
+Objet: Re: [Therion] Depth in the header 
+
+
+
+Kia Ora Xavier 
+
+I don’t have a proper answer for you. It would seem to me that this is too complicated to become a built in feature. As you suggest, for an export of one cave the problem might be easier to solve, but where many caves are exported it might be difficult to conceive an automated approach. 
+
+
+
+Maybe an easier thing to code would be something where the user could just choose a reference altitude to use as a notional zero altitude for your user defined metapost? 
+
+
+
+Personally I do not care much for the height relative to entrances, and I have modified the header to report height like this. 
+
+
+
+Together with gridlines and altitude points throughout the map, the user of the map can do their own maths! 
+
+
+
+Regarding ‘caves’ and ‘main entrances’, I explored some ideas in the wiki [ https://therion.speleo.sk/wiki/faq?s%5b%5d=entrance#how_do_i_specify_a_main_entrance_and_also_the_other_entrances | here ] 
+
+
+
+Regards 
+
+Bruce 
+
+_______________________________________________ 
+Therion mailing list 
+Therion at speleo.sk 
+https://mailman.speleo.sk/listinfo/therion 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190225/04739e0a/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 6221 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190225/04739e0a/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Test-Depth_Header.zip
+Type: application/zip
+Size: 11143 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190225/04739e0a/attachment.zip>
+
+From bruce at tomo.co.nz  Tue Feb 26 07:22:23 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 26 Feb 2019 19:22:23 +1300
+Subject: [Therion] SVG output gives blank file and compiling error
+In-Reply-To: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+References: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+Message-ID: <000a01d4cd9b$a52223d0$ef666b70$@tomo.co.nz>
+
+Andrew
+Not sure if this is helpful or not.
+I just compiled a random project that I am working on just now.
+svg files are produced OK.  The label text spacing is rubbish however.
+xhtml files are produced OK. They have a header and the text spacing seems just fine.
+
+Using therion 5.4.3+d0538ee (2019-02-01) on Windows 10
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Andrew Atkinson via Therion
+Sent: Tuesday, 26 February 2019 02:11
+Subject: [Therion] SVG output gives blank file and compiling error
+
+Using 5.4.3ds1-4 on Debian testing
+
+The thconfig.thc at
+
+http://www.cave-registry.org.uk/svn/WookeyCatchment/SludgePit/
+
+works fine for pdf map output, but if I try to output svg a file is produced that does not display in any of the svg programs I have. It also does not finishing compiling giving a red ERROR in xtherion
+
+The log file just seems to stop
+...
+I have also tried xhtml which the manual says is  SVG embedded in XHTML file which contains also legend
+and only a legend is produced. Spent a while looking at the manual and wiki pages, and not finding my mistake, can anyone help
+thanks
+
+Andrew
+
+
+
+From bruce at tomo.co.nz  Tue Feb 26 07:22:23 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 26 Feb 2019 19:22:23 +1300
+Subject: [Therion] Depth in the header
+In-Reply-To: <1626121782.6060193.1551129370470.JavaMail.zimbra@univ-grenoble-alpes.fr>
+References: <247756131.4603229.1550774584216.JavaMail.zimbra@univ-grenoble-alpes.fr>
+ <002e01d4ca1c$57d048f0$0770dad0$@tomo.co.nz>
+ <1626121782.6060193.1551129370470.JavaMail.zimbra@univ-grenoble-alpes.fr>
+Message-ID: <000401d4cd9b$a4af64d0$ee0e2e70$@tomo.co.nz>
+
+Hi Xavier
+
+I ran your example, just to check that it compiles as provided, and it does.  I have not tried to unpick it – no time at present.
+
+I think you have exhausted my metapost knowledge already, and come to the same road blocks and questions that I have previously experienced (converting variable types, doing maths with them, and parsing them from procedure to procedure (from file to file).
+
+:)
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Xavier Robert via Therion
+Sent: Tuesday, 26 February 2019 10:16
+Subject: Re: [Therion] Depth in the header
+
+ 
+
+Hi Bruce  !
+
+ 
+
+Thanks a lot for your answer, it has given me some ideas (I try to be synthetic and hopefully understandable, but I am really far to be a Tex guru, I may misunderstand this language) :
+
+ 
+
+If I manually define a reference altitude that is the altitude of the main entrance, this is easy to calcul the depth for the header:
+
++[Max. altitude of the cave - ref. altitude] / [Min. altitude of the cave - ref. altitude]. 
+
+ 
+
+I thus tried to do that by combining a thconfig (where I should define the altitude reference) and a config.thc (where I should define the layouts and Tex codes to perform all the calculs and tweek the header) files to port the coding to multiple thconfig's files (see attachements, I tried to comment all my changes and my problems):
+
+*	In the config.thc, I wrote 3 layouts
+
+*	a layout langue-en that define some variables in english (Presently, I also have the same in french and spanish). This is where I also define all the new tokens I eventually use in my layouts (clubs, synthesys, webpage,...). This is working very well.
+*	a layout headerl where I define all what I want to write in my header. I used the models from the Therion Wiki, and arrange it a bit to my desires... I specially wrote a section to modify the depth (between TEST / END TEST). This part seems OK, depending on the type of variables used (see further).
+*	a layout Testdepth : this is the layout where I calcul the altitude differences above and under the entrance inside a code tex-map - endcode block. Here, I have a problem: If I do this calcul by using directly numbers (i.e. I need to give the values as numbers [e.g. \edef\cavemaxzc{1008}], and not as variable[e.g. \edef\cavemaxzc{\the\cavemaxz}]), it is OK. If I try to use counters or token, I receive an error. The problem is that if I want to be able to use this code for a lot of caves, I need to be able to give the value of the tokens \cavemaxz and \caveminz. (I tried with \the\cavemaxz or \number\cavemaxz, and that does not work).
+
+*	In the thconfig, I made 3 changes to change the depth in the header:
+
+*	I manually define the variable \altref that correspond to the altitude of the entrance. If I declare the variable as a token (\newtoks) or a counter (\nexcount), I get an error: ! Missing number, treated as zero.<to be read again> {l.765 \newcount\altref \altref{1000}. I need to define it as \edef\altref{1000}. If this variable is empty, I also have an error, probably because this variable is not passed to the layouts in config.thc
+*	I call the layout Testdepth from the config.thc. In that case, I have the error: ! Missing number, treated as zero<to be read again> \relax l.755 ...hc = \numexpr \cavemaxzc - \altref \relax. It seems that the variable \altref that I defined is not passed to the Tex code in the layout Tesdepth. I fear that is because this new defined variable is not a token. May I true ?
+
+*	If I copy the layout Testdepth from the config.thc and paste it inside the layout my_layout from the thconfig (while I comment the line copy Testdepth), it does work, if the \cavemaxz and \caveminz are defined as numbers and not as token or counters. If this variable is empty, I also have an error, probably because this variable is not passed to the layouts in config.thc. (On the contrary, the new counters \maxdepthc and \mindepthc are passed !)
+
+If I good understood, in Tex, a token is not a number, and thus we cannot directly make any calculs with it. We need to translate it to a number.
+
+ 
+
+Moreover, it seems that if we want to pass variables between layouts that are stored in different files (i.e. here config.thc and thconfig), the variable needs to be defined everywhere as tokens (or counters ?).
+
+ 
+
+So I suppose that I need to find a way to translate a token or a counter into a number. Does anyone know how to do that?
+
+ 
+
+Sorry for this long email,
+
+Cheers,
+
+ 
+
+Xavier
+
+ 
+
+  _____  
+
+De: "List for Therion users" <therion at speleo.sk <mailto:therion at speleo.sk> >
+Envoyé: Jeudi 21 Février 2019 14:33:34
+Objet: Re: [Therion] Depth in the header
+
+ 
+
+Kia Ora Xavier
+
+I don’t have a proper answer for you.  It would seem to me that this is too complicated to become a built in feature.  As you suggest, for an export of one cave the problem might be easier to solve, but where many caves are exported it might be difficult to conceive an automated approach.
+
+ 
+
+Maybe an easier thing to code would be something where the user could just choose a reference altitude to use as a notional zero altitude for your user defined metapost?  
+
+ 
+
+Personally I do not care much for the height relative to entrances, and I have modified the header to report height like this.
+
+
+
+Together with gridlines and altitude points throughout the map, the user of the map can do their own maths!
+
+ 
+
+Regarding ‘caves’ and ‘main entrances’, I explored some ideas in the wiki here <https://therion.speleo.sk/wiki/faq?s%5b%5d=entrance#how_do_i_specify_a_main_entrance_and_also_the_other_entrances>  
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190226/d5eb1d5c/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 6221 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190226/d5eb1d5c/attachment.png>
+
+From andrew at wotcc.org.uk  Tue Feb 26 10:48:29 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 26 Feb 2019 09:48:29 +0000
+Subject: [Therion] SVG output gives blank file and compiling error
+In-Reply-To: <000a01d4cd9b$a52223d0$ef666b70$@tomo.co.nz>
+References: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+ <000a01d4cd9b$a52223d0$ef666b70$@tomo.co.nz>
+Message-ID: <96d5d545-1de5-a82f-d619-9f27aafe465f@wotcc.org.uk>
+
+Are your files available so that I can see if they work on my machine?
+
+My files are on the link sent in the original email.
+
+
+http://www.cave-registry.org.uk/svn/WookeyCatchment/SludgePit/
+
+
+If you have time could you try to compile them, we can then find out if
+it is my mistake or maybe a Linux bug
+
+thanks
+
+Andrew
+
+On 26/02/2019 06:22, Bruce Mutton via Therion wrote:
+> Andrew
+> Not sure if this is helpful or not.
+> I just compiled a random project that I am working on just now.
+> svg files are produced OK.  The label text spacing is rubbish however.
+> xhtml files are produced OK. They have a header and the text spacing seems just fine.
+> 
+> Using therion 5.4.3+d0538ee (2019-02-01) on Windows 10
+> 
+> Bruce
+
+
+From bruce at tomo.co.nz  Tue Feb 26 19:56:24 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 27 Feb 2019 07:56:24 +1300
+Subject: [Therion] SVG output gives blank file and compiling error
+In-Reply-To: <96d5d545-1de5-a82f-d619-9f27aafe465f@wotcc.org.uk>
+References: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+ <000a01d4cd9b$a52223d0$ef666b70$@tomo.co.nz>
+ <96d5d545-1de5-a82f-d619-9f27aafe465f@wotcc.org.uk>
+Message-ID: <000001d4ce04$fa621530$ef263f90$@tomo.co.nz>
+
+I have compiled a small section of SludgePit and it produces proper svg and xhtml files on Windows 10.
+I've sent Andrew a small dataset of mine for him to test.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Andrew Atkinson via Therion
+Sent: Tuesday, 26 February 2019 22:48
+To: therion at speleo.sk
+Cc: Andrew Atkinson <andrew at wotcc.org.uk>
+Subject: Re: [Therion] SVG output gives blank file and compiling error
+
+Are your files available so that I can see if they work on my machine?
+
+My files are on the link sent in the original email.
+
+http://www.cave-registry.org.uk/svn/WookeyCatchment/SludgePit/
+
+If you have time could you try to compile them, we can then find out if it is my mistake or maybe a Linux bug
+
+thanks
+
+Andrew
+
+On 26/02/2019 06:22, Bruce Mutton via Therion wrote:
+> Andrew
+> Not sure if this is helpful or not.
+> I just compiled a random project that I am working on just now.
+> svg files are produced OK.  The label text spacing is rubbish however.
+> xhtml files are produced OK. They have a header and the text spacing seems just fine.
+> 
+> Using therion 5.4.3+d0538ee (2019-02-01) on Windows 10
+> 
+> Bruce
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Thu Feb 28 19:48:22 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 28 Feb 2019 19:48:22 +0100
+Subject: [Therion] units tape fractional inches
+In-Reply-To: <000001d4ce04$fa621530$ef263f90$@tomo.co.nz>
+References: <e77894a5-bd39-b51a-bce5-09b01411f3ff@wotcc.org.uk>
+ <000a01d4cd9b$a52223d0$ef666b70$@tomo.co.nz>
+ <96d5d545-1de5-a82f-d619-9f27aafe465f@wotcc.org.uk>
+ <000001d4ce04$fa621530$ef263f90$@tomo.co.nz>
+Message-ID: <77102839-BEB0-4EFC-BB2F-14AA640FE47D@mac.com>
+
+May you advice how to add to centerline tape measured accidentally with DistoX switched to feet?
+
+for example 11’ 5 3/16’'
+
+I may simple convert it, but I want to write centerline as it was measured, if possible.
+
+Thanks
+
+Martin
+

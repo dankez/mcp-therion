@@ -1,0 +1,2727 @@
+From s.m at group-s.sk  Tue Jun  1 00:12:32 2010
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 1 Jun 2010 00:12:32 +0200
+Subject: [Therion] VTK export from Loch
+In-Reply-To: <4C041B25.5050108@mac.com>
+References: <108522385651826754473258869025193261576-Webmail@me.com>
+	<AANLkTinsYg_TswK7126Tz-JxI-c--y86221RL0HXApy5@mail.gmail.com>
+	<4C041B25.5050108@mac.com>
+Message-ID: <AANLkTinwBmH5iA-bYG6FpckDzjupGVmWbNXx_5qtG5Rp@mail.gmail.com>
+
+Hopefully today :)
+
+Best regards, S.
+
+On 31 May 2010 22:25, thierrygonon <thierrygonon at mac.com> wrote:
+> Thanks,
+>
+> By DETAILED, I mean with all changes of direction of the shot : in my case,
+> shots are simplified : instead of being smooth, they are roughly simplified
+> by long perpendicular shots that doesn't reflect reality.
+> The problem you mention regarding large coordinate numbers is probably mine
+> : my datas are in WGS84, that mean 7 digits for Egypt...
+> So, is next snapshot coming soon ???
+>
+> Thanks,
+>
+> Thierry
+>
+> Stacho Mudrak a écrit :
+>>
+>> Well, what do you mean by DETAILED export? In general, it is a problem
+>> to export e.g. surface texture, but all other items should be exported
+>> as far as I know. There was a problem when using coordinate systems
+>> with large numbers, it will be fixed in the next snapshot by using
+>> binary VTK output format.
+>>
+>> Best regards, S.
+>>
+>> On 31 May 2010 16:12, Thierry Gonon <thierrygonon at mac.com> wrote:
+>>
+>>>
+>>> Hi all,
+>>>
+>>> I'm actually working on Egyptian data and I have the following problem :
+>>> In order to make a detailed analysis, I'm using Paraview. So I export my
+>>> loch file (from Loch) to VTK file format. It opens well in Paraview, but
+>>> it's quite simplified... Is there a way to make a DETAILED export that can
+>>> be read in Paraview ? I tried to change the extension of the loch file, but
+>>> without success... Any ideas ?
+>>> Is there a way to access to some settings for this kind of export in Loch
+>>> ???
+>>>
+>>> Thanks !
+>>>
+>>>
+>>> Thierry et Isabel Gonon
+>>> 8 Rue Bernard Gangloff
+>>> 01160 PONT D'AIN
+>>> Tél : 04 74 34 49 26
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From m.budaj at gmail.com  Tue Jun  1 16:08:24 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 1 Jun 2010 16:08:24 +0200
+Subject: [Therion] new snapshot
+Message-ID: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+
+Hi all,
+
+new snapshot is available. Changes include:
+
+* Austrian symbol set is implemented (just use "copy AUT" in your
+layout to activate it).
+* New coordinate system OSGB:ST is added (Andrew, please test it -- if
+it works fine, we will include other squares as well)
+
+Other news is that after a spam attack we decided to change editing
+policy for wiki pages. Editing is now allowed only for registered
+users (some of the users are already registered; for those who are not
+we will publish registration instructions soon).
+
+Martin
+
+
+From wookey at wookware.org  Tue Jun  1 20:54:56 2010
+From: wookey at wookware.org (Wookey)
+Date: Tue, 1 Jun 2010 19:54:56 +0100
+Subject: [Therion] Packaging therion 5.3 doe Debian/ubuntu
+In-Reply-To: <20100530223759.GK604@dream.aleph1.co.uk>
+References: <20100530223759.GK604@dream.aleph1.co.uk>
+Message-ID: <20100601185456.GY604@dream.aleph1.co.uk>
+
++++ Wookey [2010-05-30 23:37 +0100]:
+> OK. I'm updating the Debian (anfd thus ubuntu) Therion package to the
+> currently released 5.3.
+> 
+> I'm getting a build problem in loch:
+> c++ -o  -D_GNU_SOURCE -DLOCH -DLXLINUX
+> -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6
+> -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES
+> -DNO_GCC_PRAGMA   -Wno-deprecated -fno-strict-aliasing
+> -I/usr/include/freetype2 -I/usr/include/vtk-5.4 -O2 -o lxAboutDlg.o
+> lxAboutDlg.cxx
+> lxAboutDlg.cxx: In constructor ‘lxAboutDlg::lxAboutDlg(wxWindow*)’:
+> lxAboutDlg.cxx:80: error: ‘LTHVERSION’ was not declared in this scope
+> 
+> The code says:
+>   wxString lxVer;
+>   lxVer = _T("Version: ");
+>   lxVer += _T(THVERSION);
+>   
+> So can someone explain where the 'LTHVERSION' being complained about
+> comes from? The 'THVERSION' in the code _is_ declared. Is this
+> something to do with the _T function/macro?
+
+OK. I can make it build by changing the code to:
+>   lxVer += _T("5.3");  (i.e. substitute the variable myself)
+
+If I just remove the _T:
+lxVer += THVERSION;
+I get
+lxAboutDlg.cxx:80: error: ambiguous overload for ‘operator+=’ in ‘lxVer += "5.3"’
+/usr/include/wx-2.6/wx/string.h:902: note: candidates are: void wxString::operator+=(const wxWCharBuffer&) <near match>
+/usr/include/wx-2.6/wx/string.h:1284: note:                wxString& wxString::operator+=(const wxString&) <near match>
+/usr/include/wx-2.6/wx/string.h:1290: note:                wxString& wxString::operator+=(wxChar) <near match>
+
+changing it to:
+ lxVer += (const wxWCharBuffer&) THVERSION;
+ or
+ lxVer += (const wxString&) THVERSION;
+compiles but segfaults if you try to open the about dialog. 
+
+So it does seem that the original error is something to do with the
+_T() thing as removing it gets me differnt complaints.
+
+So, can anyone explain why THVERSION is happily in scope so long as
+the code is wrong, but as soon as we use the _T() fn/macro a complaint
+about a variable that doesn;t exist is produced? 
+
+I think this is c++ magic, which I admit to not understanding so I
+need a bit of help.
+
+Gcc version is 4.4.4
+
+For the time being I am just using "5.3" instead of the variable, but
+that's not a very satisfactory solution. I do now have some 5.3
+packages but they need a bit of work to be uploadable. I'll put up
+links for people to try as soon as they look like they work OK.
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From s.m at group-s.sk  Tue Jun  1 21:31:21 2010
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 1 Jun 2010 21:31:21 +0200
+Subject: [Therion] Packaging therion 5.3 doe Debian/ubuntu
+In-Reply-To: <20100601185456.GY604@dream.aleph1.co.uk>
+References: <20100530223759.GK604@dream.aleph1.co.uk>
+	<20100601185456.GY604@dream.aleph1.co.uk>
+Message-ID: <AANLkTinZoZBgj4li1TxhZx6wVaOMbdKTBIi_UMcKMaJk@mail.gmail.com>
+
+> So, can anyone explain why THVERSION is happily in scope so long as
+> the code is wrong, but as soon as we use the _T() fn/macro a complaint
+> about a variable that doesn;t exist is produced?
+
+L is inserted before the string probably because unicode string
+constant is used. But it is strange, on gcc 4.3 there is no such
+error. I have tried using _T("" THVERSION "") in the latest snapshot.
+It compiles on 4.3, does it on 4.4?
+
+Regards, S.
+
+
+From wookey at wookware.org  Tue Jun  1 22:29:03 2010
+From: wookey at wookware.org (Wookey)
+Date: Tue, 1 Jun 2010 21:29:03 +0100
+Subject: [Therion] Packaging therion 5.3 doe Debian/ubuntu
+In-Reply-To: <AANLkTinZoZBgj4li1TxhZx6wVaOMbdKTBIi_UMcKMaJk@mail.gmail.com>
+References: <20100530223759.GK604@dream.aleph1.co.uk>
+	<20100601185456.GY604@dream.aleph1.co.uk>
+	<AANLkTinZoZBgj4li1TxhZx6wVaOMbdKTBIi_UMcKMaJk@mail.gmail.com>
+Message-ID: <20100601202903.GZ604@dream.aleph1.co.uk>
+
++++ Stacho Mudrak [2010-06-01 21:31 +0200]:
+> > So, can anyone explain why THVERSION is happily in scope so long as
+> > the code is wrong, but as soon as we use the _T() fn/macro a complaint
+> > about a variable that doesn;t exist is produced?
+> 
+> L is inserted before the string probably because unicode string
+> constant is used. But it is strange, on gcc 4.3 there is no such
+> error. I have tried using _T("" THVERSION "") in the latest snapshot.
+> It compiles on 4.3, does it on 4.4?
+
+Yep. That compiles on 4.4 and it works in the about window.
+
+Well done that man! Does that explain what's going on? It does feel
+like this is working round some other issue rather than actually being
+'correct'.
+
+I'll go with that patch for now.
+
+(I still need to test this with gcc v4.5 as well)
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From thierrygonon at mac.com  Tue Jun  1 22:34:50 2010
+From: thierrygonon at mac.com (thierrygonon)
+Date: Tue, 01 Jun 2010 22:34:50 +0200
+Subject: [Therion] new snapshot
+In-Reply-To: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+Message-ID: <4C056EEA.2020306@mac.com>
+
+Hi all,
+
+Just tried out this new version regarding the problem I mentioned 
+yesterday... It works very fine !!
+
+Thank you very much
+
+Thierry
+
+Martin Budaj a écrit :
+> Hi all,
+>
+> new snapshot is available. Changes include:
+>
+> * Austrian symbol set is implemented (just use "copy AUT" in your
+> layout to activate it).
+> * New coordinate system OSGB:ST is added (Andrew, please test it -- if
+> it works fine, we will include other squares as well)
+>
+> Other news is that after a spam attack we decided to change editing
+> policy for wiki pages. Editing is now allowed only for registered
+> users (some of the users are already registered; for those who are not
+> we will publish registration instructions soon).
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+
+From gianc64 at yahoo.it  Thu Jun  3 15:56:34 2010
+From: gianc64 at yahoo.it (gianc64)
+Date: Thu, 3 Jun 2010 06:56:34 -0700 (PDT)
+Subject: [Therion] Multiple layer in editing mode
+Message-ID: <147085.37126.qm@web28602.mail.ukl.yahoo.com>
+
+Hi,
+
+I am new to list and I have this question:
+
+It's possible for Therion to work in Editing mode with multiple layer?
+
+Thanks in advance
+
+gianc64
+
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100603/3e16a988/attachment.htm>
+
+From andrew at wotcc.org.uk  Sun Jun  6 22:25:03 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 06 Jun 2010 21:25:03 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+Message-ID: <4C0C041F.7060608@wotcc.org.uk>
+
+Martin
+
+Thanks for implementing OSGB: so quickly, I will test as soon as possible.
+Unfortunately, that means I have to learn some new skills, installing 
+from source. So after lots of errors, and the web, I have got it down to 
+the attached text. This is most probably my lack of knowledge, but any 
+assistance or pointers would be most appreciated.
+
+Andrew
+
+On 01/06/10 15:08, Martin Budaj wrote:
+> Hi all,
+>
+> new snapshot is available. Changes include:
+>
+> * Austrian symbol set is implemented (just use "copy AUT" in your
+> layout to activate it).
+> * New coordinate system OSGB:ST is added (Andrew, please test it -- if
+> it works fine, we will include other squares as well)
+>
+> Other news is that after a spam attack we decided to change editing
+> policy for wiki pages. Editing is now allowed only for registered
+> users (some of the users are already registered; for those who are not
+> we will publish registration instructions soon).
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: output.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100606/592b234a/attachment.txt>
+
+From wookey at wookware.org  Mon Jun  7 01:55:32 2010
+From: wookey at wookware.org (Wookey)
+Date: Mon, 7 Jun 2010 00:55:32 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <4C0C041F.7060608@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+Message-ID: <20100606235531.GL604@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2010-06-06 21:25 +0100]:
+> Martin
+>
+> Thanks for implementing OSGB: so quickly, I will test as soon as possible.
+> Unfortunately, that means I have to learn some new skills, installing  
+> from source. 
+
+In fact I have made some new therion packages for both 5.3.0 and 5.3.3
+so you may not need to bother.
+
+There are various minor things not quite right yet to do with help
+files and desktop icons - that sort of thing, but it should be
+sufficient to test.
+
+I've also tried to make an ubuntu PPA so things get build for your
+arch and with correct libraries. But that's not uploaded yet.
+
+Are you i386 or amd64? I've made amd64 packages. I can make some i386
+ones with a bit of faffage, on another machine.
+
+> make -C ./loch
+> make[1]: Entering directory `/usr/local/src/therion/loch'
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread -O2 -o lxR2P.o lxR2P.c
+> make[1]: Leaving directory `/usr/local/src/therion/loch'
+
+That's not an error. Should there be more text?
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From wookey at wookware.org  Mon Jun  7 05:07:00 2010
+From: wookey at wookware.org (Wookey)
+Date: Mon, 7 Jun 2010 04:07:00 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <20100606235531.GL604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+Message-ID: <20100607030658.GN604@dream.aleph1.co.uk>
+
++++ Wookey [2010-06-07 00:55 +0100]:
+> +++ Andrew Atkinson [2010-06-06 21:25 +0100]:
+> In fact I have made some new therion packages for both 5.3.0 and 5.3.3
+> so you may not need to bother.
+
+OK. Highly preliminary packages uploaded to:
+http://wookware.org/software/therion/
+
+Only amd64 built so far. If you need i386 either ask for someone to
+build it, or download the sources, and do dpkg-buildpackage to build
+them locally (it'll complain and report missing dependencies if you
+haven't got everything you need).
+
+Feedback welcome although I've spotted a pile of things wrong in 5.3.0
+already. (samples docs in twice - that sort of thing).
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Mon Jun  7 09:54:03 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 07 Jun 2010 08:54:03 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <20100606235531.GL604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+Message-ID: <4C0CA59B.1070906@wotcc.org.uk>
+
+No that was not all of it, I'll copy and paste into the file this time.
+
+Also I guess information like
+
+I am on amd64 running ubuntu 10.04
+
+would be useful
+
+Andrew
+
+On 07/06/10 00:55, Wookey wrote:
+> +++ Andrew Atkinson [2010-06-06 21:25 +0100]:
+>> Martin
+>>
+>> Thanks for implementing OSGB: so quickly, I will test as soon as possible.
+>> Unfortunately, that means I have to learn some new skills, installing
+>> from source.
+>
+> In fact I have made some new therion packages for both 5.3.0 and 5.3.3
+> so you may not need to bother.
+>
+> There are various minor things not quite right yet to do with help
+> files and desktop icons - that sort of thing, but it should be
+> sufficient to test.
+>
+> I've also tried to make an ubuntu PPA so things get build for your
+> arch and with correct libraries. But that's not uploaded yet.
+>
+> Are you i386 or amd64? I've made amd64 packages. I can make some i386
+> ones with a bit of faffage, on another machine.
+>
+>> make -C ./loch
+>> make[1]: Entering directory `/usr/local/src/therion/loch'
+>> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread -O2 -o lxR2P.o lxR2P.c
+>> make[1]: Leaving directory `/usr/local/src/therion/loch'
+>
+> That's not an error. Should there be more text?
+>
+> Wookey
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: output.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100607/950fc208/attachment.txt>
+
+From andrew at wotcc.org.uk  Mon Jun  7 10:22:07 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 07 Jun 2010 09:22:07 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <20100607030658.GN604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+Message-ID: <4C0CAC2F.6060500@wotcc.org.uk>
+
+
+
+Thanks wookey. therion_5.3.3-1_amd64.deb seems to work. It installs and 
+I can run it and produce pdfs and 3d files. From Synaptic package 
+manager (screen shot attached)  it would seem that the documentation and 
+view has not been updated, but also everything appears twice, but this 
+could be something that I have done, when trying install for source?? 
+However the 5.3.3-1 properties both say maintained by Wookey, but why 
+the other 2 doubled up does not seem logical.
+
+Now to test OSGB:ST
+
+Andrew
+
+On 07/06/10 04:07, Wookey wrote:
+> +++ Wookey [2010-06-07 00:55 +0100]:
+>> +++ Andrew Atkinson [2010-06-06 21:25 +0100]:
+>> In fact I have made some new therion packages for both 5.3.0 and 5.3.3
+>> so you may not need to bother.
+>
+> OK. Highly preliminary packages uploaded to:
+> http://wookware.org/software/therion/
+>
+> Only amd64 built so far. If you need i386 either ask for someone to
+> build it, or download the sources, and do dpkg-buildpackage to build
+> them locally (it'll complain and report missing dependencies if you
+> haven't got everything you need).
+>
+> Feedback welcome although I've spotted a pile of things wrong in 5.3.0
+> already. (samples docs in twice - that sort of thing).
+>
+> Wookey
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Synaptic_screen.png
+Type: image/png
+Size: 36130 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100607/c868bf1d/attachment.png>
+
+From andrew at wotcc.org.uk  Mon Jun  7 11:06:18 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 07 Jun 2010 10:06:18 +0100
+Subject: [Therion] new snapshot - OSGB:ST
+In-Reply-To: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+Message-ID: <4C0CB68A.3000801@wotcc.org.uk>
+
+
+
+On 01/06/10 15:08, Martin Budaj wrote:
+
+> * New coordinate system OSGB:ST is added (Andrew, please test it -- if
+> it works fine, we will include other squares as well)
+
+Works and entrances is within 12m on Google earth, but in different 
+directions, however I doubt this is Therion, we have lots of checking to do.
+
+Have used it to import survex 3d files and for fixing directly in .th file.
+
+Thanks, this will make life easier for the group here.
+
+
+Andrew
+
+PS. Not urgent by any means, but could the Irish grid be added to the 
+todo list, one of the projects I am involved in is County Claire, in 
+Ireland.
+
+
+
+From m.mansfeld at mansfeld-elektronik.de  Mon Jun  7 11:25:32 2010
+From: m.mansfeld at mansfeld-elektronik.de (Matthias Mansfeld)
+Date: Mon, 07 Jun 2010 11:25:32 +0200
+Subject: [Therion] new snapshot - OSGB:ST
+In-Reply-To: <4C0CB68A.3000801@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>,
+	<4C0CB68A.3000801@wotcc.org.uk>
+Message-ID: <4C0CD72C.31983.8DEFCBD@m.mansfeld.mansfeld-elektronik.de>
+
+On 7 Jun 2010 at 10:06, Andrew Atkinson wrote:
+
+> PS. Not urgent by any means, but could the Irish grid be added to the 
+> todo list, one of the projects I am involved in is County Claire, in 
+> Ireland.
+
+Please define which one. I assume the old one (Garmin GPS know it as 
+"IG") which is used in most OSI maps and in the current literature. 
+At least my GPS offered me both IG and ITM for Ireland.
+
+Best wishes
+Matthias
+
+
+From andrew at wotcc.org.uk  Mon Jun  7 11:44:09 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 07 Jun 2010 10:44:09 +0100
+Subject: [Therion] Irish Grid
+In-Reply-To: <4C0CD72C.31983.8DEFCBD@m.mansfeld.mansfeld-elektronik.de>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>,
+	<4C0CB68A.3000801@wotcc.org.uk>
+	<4C0CD72C.31983.8DEFCBD@m.mansfeld.mansfeld-elektronik.de>
+Message-ID: <4C0CBF69.5000305@wotcc.org.uk>
+
+As usual, you are ahead of me, I was referring to the IG, I did not know 
+about the ITM, but I guess this will become more common as it is 
+designed for GPS, however, we have lots of historic data which will be 
+in the IG.
+
+Andrew
+
+On 07/06/10 10:25, Matthias Mansfeld wrote:
+> On 7 Jun 2010 at 10:06, Andrew Atkinson wrote:
+>
+>> PS. Not urgent by any means, but could the Irish grid be added to the
+>> todo list, one of the projects I am involved in is County Claire, in
+>> Ireland.
+>
+> Please define which one. I assume the old one (Garmin GPS know it as
+> "IG") which is used in most OSI maps and in the current literature.
+> At least my GPS offered me both IG and ITM for Ireland.
+>
+> Best wishes
+> Matthias
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+From wookey at wookware.org  Mon Jun  7 16:22:51 2010
+From: wookey at wookware.org (Wookey)
+Date: Mon, 7 Jun 2010 15:22:51 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <4C0CAC2F.6060500@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0CAC2F.6060500@wotcc.org.uk>
+Message-ID: <20100607142250.GR604@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2010-06-07 09:22 +0100]:
+>
+>
+> Thanks wookey. therion_5.3.3-1_amd64.deb seems to work. It installs and  
+> I can run it and produce pdfs and 3d files. From Synaptic package  
+> manager (screen shot attached)  it would seem that the documentation and  
+> view has not been updated, 
+
+Ah yes, I forgot to upload the therion-viewer packages. I've put them
+there now too.
+
+> but also everything appears twice, but this  
+> could be something that I have done, when trying install for source??  
+
+Appears twice where? In the menus?
+
+That could well be the case. Building loaclly from source will install
+versions in /usr/local/bin. Packaged versions witll go in /usr/bin.
+The /usr/local/bin version will take priority if you just run
+'xtherion' or 'therion' so you may have been testing those...
+
+Best to remove the local versions (by just deleting all
+therion-related files under /usr/local - this is no neat way like
+there is with packages)
+
+> However the 5.3.3-1 properties both say maintained by Wookey, but why  
+> the other 2 doubled up does not seem logical.
+
+No, you'll have to give more details to work out exactly what's what.
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Mon Jun  7 16:25:51 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 07 Jun 2010 15:25:51 +0100
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <20100607142250.GR604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>	<4C0CAC2F.6060500@wotcc.org.uk>
+	<20100607142250.GR604@dream.aleph1.co.uk>
+Message-ID: <4C0D016F.7050808@wotcc.org.uk>
+
+Doubt everyone needs to see this, so gone private
+
+
+>
+> Appears twice where? In the menus?
+
+In Synaptic, as shown in the previous screen shot
+>
+> That could well be the case. Building loaclly from source will install
+> versions in /usr/local/bin.
+
+I think from the longer error file I got I did not install. The output 
+was cut and past after using make
+
+(the short version that you said contained no error was from
+make > output.txt
+Why did that not capture all the text?)
+
+when trying to build from source I did try
+checkinstall
+
+on the hope it would put in Therion without loch, but when I ran Therion 
+it was still the old version
+
+Again here is the output from makefile, attached (hope this does not 
+break what I have)
+
+  Packaged versions witll go in /usr/bin.
+> The /usr/local/bin version will take priority if you just run
+> 'xtherion' or 'therion' so you may have been testing those...
+
+/usr/local/bin is empty
+>
+> Best to remove the local versions (by just deleting all
+> therion-related files under /usr/local - this is no neat way like
+> there is with packages)
+>
+>> However the 5.3.3-1 properties both say maintained by Wookey, but why
+>> the other 2 doubled up does not seem logical.
+>
+> No, you'll have to give more details to work out exactly what's what.
+
+Here (search_results.txt) is a dump of all the files I get when I search 
+for therion, does it help?
+
+
+Andrew
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: search_results.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100607/596d3993/attachment.txt>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: output_checkinstall.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100607/596d3993/attachment-0001.txt>
+
+From wookey at wookware.org  Mon Jun  7 17:38:14 2010
+From: wookey at wookware.org (Wookey)
+Date: Mon, 7 Jun 2010 16:38:14 +0100
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <4C0D016F.7050808@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0CAC2F.6060500@wotcc.org.uk>
+	<20100607142250.GR604@dream.aleph1.co.uk>
+	<4C0D016F.7050808@wotcc.org.uk>
+Message-ID: <20100607153814.GT604@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2010-06-07 15:25 +0100]:
+> Doubt everyone needs to see this, so gone private
+
+>> Appears twice where? In the menus?
+>
+> In Synaptic, as shown in the previous screen shot
+
+Ah. OK. missed screenshot. Will look.
+
+>> That could well be the case. Building loaclly from source will install
+>> versions in /usr/local/bin.
+>
+> I think from the longer error file I got I did not install. The output  
+> was cut and past after using make
+>
+> (the short version that you said contained no error was from
+> make > output.txt
+> Why did that not capture all the text?)
+
+Because that only captures stdout (standard output). Errors go to
+stderr. So you need to do:
+
+make 2>&1 > output.txt
+to get both.
+
+> make -C ./loch
+> make[1]: Entering directory `/usr/local/src/therion/loch'
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread -O2 -o lxR2P.o lxR2P.c
+> lxR2P.c:3:19: error: GL/gl.h: No such file or directory
+> lxR2P.c:5:20: error: GL/glx.h: No such file or directory
+
+opengl headers missing. Either not installed on not specified in build
+command line. Building from source means you just have to 'know' which
+debian packages you need install to build it.  
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From wookey at wookware.org  Mon Jun  7 17:42:31 2010
+From: wookey at wookware.org (Wookey)
+Date: Mon, 7 Jun 2010 16:42:31 +0100
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <20100607153814.GT604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0CAC2F.6060500@wotcc.org.uk>
+	<20100607142250.GR604@dream.aleph1.co.uk>
+	<4C0D016F.7050808@wotcc.org.uk>
+	<20100607153814.GT604@dream.aleph1.co.uk>
+Message-ID: <20100607154231.GU604@dream.aleph1.co.uk>
+
++++ Wookey [2010-06-07 16:38 +0100]:
+> +++ Andrew Atkinson [2010-06-07 15:25 +0100]:
+> > Doubt everyone needs to see this, so gone private
+
+oops, Dontcha just hate lists that mangle the reply-to headers? Serves you
+all right :-)
+
+I'll try a bit harder next time. 
+
+This is a list for reasonably smart people. Do we really want reply-to
+mangling? I know I don't. 
+
+Wookey
+-- 
+Principal hats:  Emdebian, Wookware, Balloonboard
+http://wookware.org/
+
+
+From lada at blazcata.cz  Mon Jun  7 17:50:23 2010
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Mon, 07 Jun 2010 17:50:23 +0200
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <20100607154231.GU604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0CAC2F.6060500@wotcc.org.uk>
+	<20100607142250.GR604@dream.aleph1.co.uk>
+	<4C0D016F.7050808@wotcc.org.uk>
+	<20100607153814.GT604@dream.aleph1.co.uk>
+	<20100607154231.GU604@dream.aleph1.co.uk>
+Message-ID: <7afc94455de678c10916190d8c5686be@outsider2.texxar.cz>
+
+It is question of common agreement. But usually (in 99% of the cases)
+everybody wants to reply back to the list and not directly to the sender.
+So I can say also "This is a list of reasonably smart people so they know
+how to reply directly to the sender" :) So what other people in this list
+think about this? L.
+
+On Mon, 7 Jun 2010 16:42:31 +0100, Wookey <wookey at wookware.org> wrote:
+> +++ Wookey [2010-06-07 16:38 +0100]:
+>> +++ Andrew Atkinson [2010-06-07 15:25 +0100]:
+>> > Doubt everyone needs to see this, so gone private
+> 
+> oops, Dontcha just hate lists that mangle the reply-to headers? Serves
+you
+> all right :-)
+> 
+> I'll try a bit harder next time.
+> 
+> This is a list for reasonably smart people. Do we really want reply-to
+> mangling? I know I don't.
+> 
+> Wookey
+> --
+> Principal hats:  Emdebian, Wookware, Balloonboard
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From m.mansfeld at mansfeld-elektronik.de  Mon Jun  7 19:01:36 2010
+From: m.mansfeld at mansfeld-elektronik.de (Matthias Mansfeld)
+Date: Mon, 07 Jun 2010 19:01:36 +0200
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <7afc94455de678c10916190d8c5686be@outsider2.texxar.cz>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>,
+	<20100607154231.GU604@dream.aleph1.co.uk>,
+	<7afc94455de678c10916190d8c5686be@outsider2.texxar.cz>
+Message-ID: <4C0D4210.5256.A808606@m.mansfeld.mansfeld-elektronik.de>
+
+On 7 Jun 2010 at 17:50, Ladislav Blazek wrote:
+
+> It is question of common agreement. But usually (in 99% of the cases)
+> everybody wants to reply back to the list and not directly to the sender.
+> So I can say also "This is a list of reasonably smart people so they know
+> how to reply directly to the sender" :) So what other people in this list
+> think about this? L.
+
+I have no problem, if specific and/or highly individual 
+build/compile/install/whatever problems go over the list, even if 
+they don't touch me at all. 
+
+Keep it as it is and feel free to post to the list address.
+
+Best wishes
+Matthias
+
+
+
+From dangle at tomo.co.nz  Mon Jun  7 22:53:43 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 8 Jun 2010 08:53:43 +1200
+Subject: [Therion] FW:  Multiple layer in editing mode
+Message-ID: <5504F9BAAB0F4622B06360979A22B76E@JUICEBRAIN>
+
+Hi gianc64
+
+I presume you are referring to the Xtherion map editor.
+
+All drawing is done on a single layer, although background images could be
+though of as each being on their own layer.  They can be made visible or not
+on an individual basis.
+
+ 
+
+When your drawing file is processed and you choose to export to pdf, then
+the pdf file often contains layers.  User control of these is only
+indirectly available, in fact it's not really control, more a consequence of
+the types of entities that are exported - ie cave maps, previews, surface.
+
+ 
+
+Hope that helps
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of gianc64
+Sent: Friday, 4 June 2010 1:57 a.m.
+To: therion at speleo.sk
+Subject: [Therion] Multiple layer in editing mode
+
+ 
+
+Hi,
+
+I am new to list and I have this question:
+
+It's possible for Therion to work in Editing mode with multiple layer?
+
+Thanks in advance
+
+gianc64
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100608/8badf002/attachment.htm>
+
+From dangle at tomo.co.nz  Mon Jun  7 22:53:43 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 8 Jun 2010 08:53:43 +1200
+Subject: [Therion] new snapshot - gone private
+In-Reply-To: <4C0D4210.5256.A808606@m.mansfeld.mansfeld-elektronik.de>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<20100607154231.GU604@dream.aleph1.co.uk>
+	<7afc94455de678c10916190d8c5686be@outsider2.texxar.cz>
+	<4C0D4210.5256.A808606@m.mansfeld.mansfeld-elektronik.de>
+Message-ID: <FDF8E550963544BA93F3B3BBCC604D12@JUICEBRAIN>
+
+I vote to keep it as it is...
+
+Bruce
+
+
+
+From andrew at wotcc.org.uk  Wed Jun  9 17:12:49 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 09 Jun 2010 16:12:49 +0100
+Subject: [Therion] new snapshot
+In-Reply-To: <20100607030658.GN604@dream.aleph1.co.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+Message-ID: <4C0FAF71.9010106@wotcc.org.uk>
+
+On trying to use the package
+
+therion-viewer_5.3.3-1_amd64.deb	
+
+
+I get this
+
+Error: Dependency is not satisfiable: libvtk5.4
+
+on ubuntu 10.04
+
+Andrew
+
+
+
+On 07/06/10 04:07, Wookey wrote:
+> OK. Highly preliminary packages uploaded to:
+> http://wookware.org/software/therion/
+
+
+
+From andrew at wotcc.org.uk  Wed Jun  9 17:19:34 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 09 Jun 2010 16:19:34 +0100
+Subject: [Therion] Disappearing menus in xtherion 5.3.3-1
+In-Reply-To: <4C0FAF71.9010106@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0FAF71.9010106@wotcc.org.uk>
+Message-ID: <4C0FB106.8000000@wotcc.org.uk>
+
+Using the deb package Wookey built on Ubuntu 10.04
+
+The menus disappear occasionally. I can find no logic to when or where 
+(tend not to use menus very often.)
+If I have more than one instance of therion open, there can be menus in 
+one, and not in the other.
+
+Andrew
+
+
+
+From andrew at wotcc.org.uk  Wed Jun  9 18:01:14 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 09 Jun 2010 17:01:14 +0100
+Subject: [Therion] data nosurvey
+In-Reply-To: <4C0FB106.8000000@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>	<4C0FAF71.9010106@wotcc.org.uk>
+	<4C0FB106.8000000@wotcc.org.uk>
+Message-ID: <4C0FBACA.60101@wotcc.org.uk>
+
+Hi all
+
+I have 2 stations connected by sight only so I tried
+
+data nosurvey from to
+   2.1 2.9
+
+full file attached, which works with the 2 lines above commented out, 
+but with them in I get the error
+
+therion: error -- unsurveyed shot between unfixed stations -- 
+StalPotInlet.th [95]
+
+Which is true, they are not fixed any help connecting these 2 stations 
+with a centreline, to show line of sight would be useful
+
+thanks
+
+Andrew
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: StalPotInlet.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100609/b9cd644f/attachment.ksh>
+
+From dangle at tomo.co.nz  Thu Jun 10 11:51:43 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Thu, 10 Jun 2010 21:51:43 +1200
+Subject: [Therion] Associating thconfig extension with Wish Application
+	causes bad option utf-8 on some machines
+Message-ID: <F2F6B670235547E399418FED46EEE901@JUICEBRAIN>
+
+For the last few years I have been adding a non-'therion'-standard extension
+to thconfig files, eg thconfig.thc so that I can open them in XTherion
+directly from the Windows File Explorer. 
+
+The first time this is attempted an association needs to be made with 'Wish
+Application', but thereafter it works smoothly, well at least most of the
+time.
+
+ 
+
+I have described my rudimentary understanding of this here.
+
+http://therion.speleo.sk/wiki/doku.php?id=windows
+<http://therion.speleo.sk/wiki/doku.php?id=windows&s%5b%5d=modify&s%5b%5d=di
+stinguish&s%5b%5d=layout> &s[]=modify&s[]=distinguish&s[]=layout
+
+ 
+
+A while back I installed Therion on a Windows 7 machine and got an error
+similar to the image below.
+
+
+
+bad option "utf-8": must be convertfrom, convertto,names, or system while
+executing "encoding utf-8" (file "D:\Therion\....thconfig-Flora.thc" line 1)
+
+ 
+
+I assumed it was due to some difference between Windows 7 and Windows XP,
+upsetting the implementation of the tcl scripts,
+
+however I had the same problem recently with an old Windows XP machine
+(older that my current 2006 machine).
+
+ 
+
+So perhaps something else is going on.  On a particular machine it will
+either always work, or never work.
+
+Any ideas how I might overcome the problem on the machines where this
+technique does not work?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100610/9b461278/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 13554 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100610/9b461278/attachment.jpg>
+
+From dangle at tomo.co.nz  Thu Jun 10 22:19:49 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 11 Jun 2010 08:19:49 +1200
+Subject: [Therion] data nosurvey
+In-Reply-To: <4C0FBACA.60101@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0FAF71.9010106@wotcc.org.uk> <4C0FB106.8000000@wotcc.org.uk>
+	<4C0FBACA.60101@wotcc.org.uk>
+Message-ID: <88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+
+> I have 2 stations connected by sight only so I tried
+
+> data nosurvey from to
+>    2.1 2.9
+
+
+Andrew
+I can only think of somewhat lateral solutions to this.
+
+1. Make the measurements between the stations (You seem to be using a distoX
+based on the data format), or
+
+2. Replace the nodata line with;
+   station 2.1  "Can see stn 2.9 from here"
+and then make your drawings using Xtherion with this in mind, or
+
+3. Make a guess at what the measurements are between the points, and do
+something like making your survey grade BCRA5 and then;
+group
+ grade BCRA3
+ <your guessed measurements here>
+endgroup
+
+If this distorts too much you could use sd to lower the dependence on the
+guessed data.  Based on my trials a year ago this can be very effective.
+
+Bruce 
+
+
+
+From andrew at wotcc.org.uk  Thu Jun 10 22:58:19 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 10 Jun 2010 21:58:19 +0100
+Subject: [Therion] data nosurvey
+In-Reply-To: <88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>	<4C0FAF71.9010106@wotcc.org.uk>
+	<4C0FB106.8000000@wotcc.org.uk>	<4C0FBACA.60101@wotcc.org.uk>
+	<88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+Message-ID: <4C1151EB.5010809@wotcc.org.uk>
+
+Yep, that would work, but Therion is meant to work with the survex data 
+formats, so the nosurvey should work. It looks a bit like a bug, or I am 
+using wrongly. If no survey is not supported, that is fine, it is not 
+critical.
+
+My solution would be to put a false leg in and not that nearly hit and 
+accept a small gap. This would not case any false distortion but I 
+prefer the idea of nosurvey.
+
+Andrew
+
+On 10/06/10 21:19, Bruce wrote:
+>> I have 2 stations connected by sight only so I tried
+>
+>> data nosurvey from to
+>>     2.1 2.9
+>
+>
+> Andrew
+> I can only think of somewhat lateral solutions to this.
+>
+> 1. Make the measurements between the stations (You seem to be using a distoX
+> based on the data format), or
+>
+> 2. Replace the nodata line with;
+>     station 2.1  "Can see stn 2.9 from here"
+> and then make your drawings using Xtherion with this in mind, or
+>
+> 3. Make a guess at what the measurements are between the points, and do
+> something like making your survey grade BCRA5 and then;
+> group
+>   grade BCRA3
+>   <your guessed measurements here>
+> endgroup
+>
+> If this distorts too much you could use sd to lower the dependence on the
+> guessed data.  Based on my trials a year ago this can be very effective.
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+From andrew at wotcc.org.uk  Mon Jun 14 10:19:50 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 14 Jun 2010 09:19:50 +0100
+Subject: [Therion] Overview maps
+In-Reply-To: <88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>	<4C0FAF71.9010106@wotcc.org.uk>
+	<4C0FB106.8000000@wotcc.org.uk>	<4C0FBACA.60101@wotcc.org.uk>
+	<88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+Message-ID: <4C15E626.5070204@wotcc.org.uk>
+
+Martin (or anyone else)
+
+On this complex example from the wiki, there appear to be different 
+scale maps of the same cave.
+
+http://cachtice.speleo.sk/mapa_cj/template.html
+
+I would like to do this to highlight a very complex junction of cave. So 
+in a map I can offset by using
+
+map_to_offset [50 0 m] below
+
+Is there a way to double the scale of this section, or have you done it 
+by putting it together in another program, which is fine, I just do not 
+want to waste effort if it is something Therion will do.
+
+thanks
+
+Andrew
+
+
+
+From martinsluka at mac.com  Mon Jun 14 14:59:58 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 14 Jun 2010 14:59:58 +0200
+Subject: [Therion] Overview maps
+In-Reply-To: <4C15E626.5070204@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0FAF71.9010106@wotcc.org.uk>
+	<4C0FB106.8000000@wotcc.org.uk> <4C0FBACA.60101@wotcc.org.uk>
+	<88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+	<4C15E626.5070204@wotcc.org.uk>
+Message-ID: <2F6FA63A-2E5A-4982-A8F6-E4692FC665CB@mac.com>
+
+
+On 14.6.2010, at 10:19, Andrew Atkinson wrote:
+
+> Is there a way to double the scale of this section, or have you done  
+> it by putting it together in another program, which is fine, I just  
+> do not want to waste effort if it is something Therion will do.
+
+Not directly, but if you export the map in different scale first, you  
+may add it as picture/PDF to final export.
+
+m.
+
+
+From m.budaj at gmail.com  Mon Jun 14 15:05:35 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 14 Jun 2010 15:05:35 +0200
+Subject: [Therion] Overview maps
+In-Reply-To: <4C15E626.5070204@wotcc.org.uk>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>
+	<4C0C041F.7060608@wotcc.org.uk>
+	<20100606235531.GL604@dream.aleph1.co.uk>
+	<20100607030658.GN604@dream.aleph1.co.uk>
+	<4C0FAF71.9010106@wotcc.org.uk> <4C0FB106.8000000@wotcc.org.uk>
+	<4C0FBACA.60101@wotcc.org.uk>
+	<88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>
+	<4C15E626.5070204@wotcc.org.uk>
+Message-ID: <AANLkTimZIOKN2X1iAXwxw6fo-B3vltP1wrnw5oBndB1a@mail.gmail.com>
+
+On Mon, Jun 14, 2010 at 10:19 AM, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> On this complex example from the wiki, there appear to be different scale
+> maps of the same cave.
+>
+> http://cachtice.speleo.sk/mapa_cj/template.html
+>
+> I would like to do this to highlight a very complex junction of cave. So in
+> a map I can offset by using
+>
+> map_to_offset [50 0 m] below
+>
+> Is there a way to double the scale of this section, or have you done it by
+> putting it together in another program, which is fine, I just do not want to
+> waste effort if it is something Therion will do.
+
+Hi,
+
+it is not possible to do it using map offsets. Currently the only way
+would be to use 'map-image' in layout, which has some limitations
+(positioning relative to particular passage is not possible). We plan
+to add new point symbol 'picture' which would make it possible to
+insert external pictures into any scrap, but I am not sure how long it
+takes to implement it.
+
+Martin
+
+
+From andrew at wotcc.org.uk  Mon Jun 14 15:13:39 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 14 Jun 2010 14:13:39 +0100
+Subject: [Therion] Overview maps
+In-Reply-To: <2F6FA63A-2E5A-4982-A8F6-E4692FC665CB@mac.com>
+References: <AANLkTimtezDUpmuykJDcVEMmZm6O2A8FK5Wp27N2s_9i@mail.gmail.com>	<4C0C041F.7060608@wotcc.org.uk>	<20100606235531.GL604@dream.aleph1.co.uk>	<20100607030658.GN604@dream.aleph1.co.uk>	<4C0FAF71.9010106@wotcc.org.uk>	<4C0FB106.8000000@wotcc.org.uk>
+	<4C0FBACA.60101@wotcc.org.uk>	<88E1C83444AE4901ADBE27AE56AB1F98@JUICEBRAIN>	<4C15E626.5070204@wotcc.org.uk>
+	<2F6FA63A-2E5A-4982-A8F6-E4692FC665CB@mac.com>
+Message-ID: <4C162B03.2030109@wotcc.org.uk>
+
+Martin
+
+Not sure I understand. So I have exported it at 1:5000 and would like it 
+on a 1:1000. Currently I am exporting both then using Inkscape to put 
+them together. Are you saying that, if I export at 1:5000 then when I do 
+the 1:1000 export from therion, I can add it in at this stage?
+If this is so, I am not looking for the right thing, as I cannot find 
+anything on the wiki or thbook that I can see would do this?
+
+thanks
+
+Andrew
+
+On 14/06/10 13:59, Martin Sluka wrote:
+>
+> On 14.6.2010, at 10:19, Andrew Atkinson wrote:
+>
+>> Is there a way to double the scale of this section, or have you done
+>> it by putting it together in another program, which is fine, I just do
+>> not want to waste effort if it is something Therion will do.
+>
+> Not directly, but if you export the map in different scale first, you
+> may add it as picture/PDF to final export.
+>
+> m.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+From dangle at tomo.co.nz  Mon Jun 14 22:22:10 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Jun 2010 08:22:10 +1200
+Subject: [Therion] Overview maps
+Message-ID: <DAF313F2AE704D93B767F12E407D8033@JUICEBRAIN>
+
+>it is not possible to do it using map offsets. Currently the only way would
+be to use 'map-image' in layout, which >has some limitations (positioning
+relative to particular passage is not possible). We plan to add new point
+symbol >'picture' which would make it possible to insert external pictures
+into any scrap, but I am not sure how long it >takes to implement it
+
+ 
+
+I like this proposal.  I would dearly like to be able to "offset and
+enlarge".
+
+A 'point picture' entity would open up a way to achieve this, along the
+lines of my example below.
+
+ 
+
+Andrew, below is an example of how I have created two maps in the same
+thconfig file and then inserted one into the other.
+
+I think it would work well for creating locality plans, ie cave @1:1000 and
+locality at 1:10,000, blacked out and with surface image enabled, but as
+Martin pointed out, it is too clumsy for local enlargements in a dataset
+where active extension of the cave survey is ongoing.
+
+ 
+
+#Make elevation first so that it's pdf can be added to the plan
+
+
+export map   -projection [elevation 270 deg] \
+
+  -layout LayoutMapBulmer_System             \
+
+  -layout LayoutMapBulmer_SystemElev       \    
+
+  -output ./Output/MapBeautifulBulmerSystem_Elev.pdf  
+
+ 
+
+#then make the plan with the elevation inserted  
+
+ export map -projection plan          \
+
+  -layout LayoutMapBulmer_System     \
+
+  -layout LayoutMapBulmer_SystemPlan \
+
+  -output ./Output/MapBeautifulBulmerSystem_Plan.pdf
+
+ 
+
+The file LayoutMapBulmer_SystemPlan.thc contains the line;
+
+ 
+
+  map-image 0.8 103 sw "./Output/MapBeautifulBulmerSystem_Elev.pdf" #0.8
+needed to align plan & elev vertically
+
+ 
+
+to insert the elevation into the map.
+
+ 
+
+Keep up the good work
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/4100e13b/attachment.htm>
+
+From dangle at tomo.co.nz  Mon Jun 14 22:29:18 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Jun 2010 08:29:18 +1200
+Subject: [Therion] Therion list archives
+Message-ID: <477095F9334B46AC8A88879C3DC15C50@JUICEBRAIN>
+
+What has happened to the list archives "since 2005" where one could search
+the whole database in one go.
+
+Now I can only find this http://mailman.speleo.sk/pipermail/therion/ which
+only gives a month by month breakdown - next to impossible to search
+realistically.
+
+ 
+
+Used to be something like "gamine therion" (???)  It always used to be a bit
+tricky to find it in this format, but now I cannot find it at all.
+
+ 
+
+Am I just looking in the wrong places or has it been dropped?
+
+I'm missing it.  (Sad, I know)
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/42b01763/attachment.htm>
+
+From dangle at tomo.co.nz  Mon Jun 14 22:50:26 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Jun 2010 08:50:26 +1200
+Subject: [Therion] map-bg transparent
+Message-ID: <F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+
+On the topic of maps within maps.
+
+ 
+
+Therion inserts images with transparent backgrounds into maps correctly - at
+least it has worked for me.
+
+Is it possible to get therion to create a map with a transparent background?
+
+ 
+
+Something like 'map-bg off' perhaps?
+
+ 
+
+This would be useful sometimes when inserting map enlargements within a main
+map output.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/4b4da8fe/attachment.htm>
+
+From lada at blazcata.cz  Mon Jun 14 22:56:43 2010
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Mon, 14 Jun 2010 22:56:43 +0200
+Subject: [Therion] Therion list archives
+In-Reply-To: <477095F9334B46AC8A88879C3DC15C50@JUICEBRAIN>
+References: <477095F9334B46AC8A88879C3DC15C50@JUICEBRAIN>
+Message-ID: <403e88dfc64b7670c4832b87f7761d5c@outsider2.texxar.cz>
+
+Standard mailman archives are not searchable without some external tool
+(ht://Dig, Namazu...). But you can simply use google for searching. Just
+put something like 
+
+site:http://mailman.speleo.sk layout
+
+to the google's search field.
+
+L.
+
+On Tue, 15 Jun 2010 08:29:18 +1200, "Bruce" <dangle at tomo.co.nz> wrote:
+> What has happened to the list archives "since 2005" where one could
+search
+> the whole database in one go.
+> 
+> Now I can only find this http://mailman.speleo.sk/pipermail/therion/
+which
+> only gives a month by month breakdown - next to impossible to search
+> realistically.
+> 
+> 
+> 
+> Used to be something like "gamine therion" (???)  It always used to be a
+> bit
+> tricky to find it in this format, but now I cannot find it at all.
+> 
+> 
+> 
+> Am I just looking in the wrong places or has it been dropped?
+> 
+> I'm missing it.  (Sad, I know)
+> 
+> 
+> 
+> Bruce
+
+
+
+From jenelopy at googlemail.com  Mon Jun 14 22:55:29 2010
+From: jenelopy at googlemail.com (Jenny Black)
+Date: Tue, 15 Jun 2010 08:55:29 +1200
+Subject: [Therion] Therion list archives
+In-Reply-To: <477095F9334B46AC8A88879C3DC15C50@JUICEBRAIN>
+References: <477095F9334B46AC8A88879C3DC15C50@JUICEBRAIN>
+Message-ID: <AANLkTim_9be1AotqLOf3CiRVtPEvmH5Jn-IOflwWwI_x@mail.gmail.com>
+
+Hi Bruce,
+
+On 15 June 2010 08:29, Bruce <dangle at tomo.co.nz> wrote:
+
+> Used to be something like “gamine therion” (???)  It always used to be a bit
+> tricky to find it in this format, but now I cannot find it at all.
+
+Do you mean Gmane? If so, try:
+http://dir.gmane.org/gmane.comp.gis.therion this seems to work for me
+to search the therion mailing list archive.
+
+Thanks,
+Jenny
+
+
+From dangle at tomo.co.nz  Tue Jun 15 00:43:59 2010
+From: dangle at tomo.co.nz (dangle at tomo.co.nz)
+Date: Tue, 15 Jun 2010 10:43:59 +1200
+Subject: [Therion] Therion list archives
+Message-ID: <FD475C964E944BB5A177A94841EFD4FB@FLASHDADDY>
+
+Oh, I found it - just had to get the spelling right.
+
+http://blog.gmane.org/gmane.comp.gis.therion
+
+ 
+
+It seems the link to this has been dropped from the therion site?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/d7fbe1fd/attachment.htm>
+
+From dangle at tomo.co.nz  Tue Jun 15 03:55:00 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Jun 2010 13:55:00 +1200
+Subject: [Therion] Therion list archives
+In-Reply-To: <FD475C964E944BB5A177A94841EFD4FB@FLASHDADDY>
+References: <FD475C964E944BB5A177A94841EFD4FB@FLASHDADDY>
+Message-ID: <20BDCF5004AB44F686B8C92B72341C24@JUICEBRAIN>
+
+Thanks Jenny, Ladislav, I should have checked the list before I posted.
+
+I'll sneak a link into the wiki
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of dangle at tomo.co.nz
+Sent: Tuesday, 15 June 2010 10:44 a.m.
+To: therion at speleo.sk
+Subject: [Therion] Therion list archives
+
+ 
+
+Oh, I found it - just had to get the spelling right.
+
+http://blog.gmane.org/gmane.comp.gis.therion
+
+ 
+
+It seems the link to this has been dropped from the therion site?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/ca6cd6ef/attachment.htm>
+
+From dangle at tomo.co.nz  Tue Jun 15 09:38:22 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Jun 2010 19:38:22 +1200
+Subject: [Therion] Cross-sections plotted independently of cave passage
+Message-ID: <7CBFFD2C3397473C9DBBA28F669F7FC9@JUICEBRAIN>
+
+Up until now I've been creating cross-section scraps and inserting them
+within plan or elevation scraps using a statement like;
+
+ 
+
+point 331.25 -43.0 section -scrap BX-Ent2PLANxs-24
+
+ 
+
+This is how I think it is usually done(?)
+
+It works fine most of the time, but sometimes the density of passages is
+such that the cross-section needs to be on the far side of the page, or
+maybe you prefer to group the cross-sections together in their own little
+table.  This makes including the cross-section insertion points within plan
+or elevation scraps impractical I think.
+
+Some time back there were discussions on this forum about alternative ways
+of presenting cross-sections however I am not sure if they were resolved.
+
+ 
+
+Something in the Therion Book made me think this might give interesting
+results.
+
+1.	Add one or more cross-section scraps to a map (or maps) of type
+-projection none
+2.	Export those maps to a map output.
+
+So perhaps the result below is interesting, but I'm not sure how I might
+develop it further into a means of presenting the cross-sections where the
+sections are not plotted adjacent to the plan or elevation of the passage.
+
+The trouble is all the cross-section maps plot on top of each other.
+
+ 
+
+One way might be to export each cross-section one at a time then have lots
+of map-image statements to add them to a final master map.  This would be a
+very messy th-config file.
+
+Or would a plan scrap with no associated survey, and lots of 'point x y
+section -scrap <scrap>' work?
+
+ 
+
+Has anyone tried to layout cross-sections independent of the passage without
+resorting to post processing?
+
+ 
+
+Bruce
+
+ 
+
+(Example below)
+
+ 
+
+map BX-Ent2SectionsA \
+
+            -projection none
+
+             BX-Ent2PLANxs-24
+
+            BX-Ent2PLANxs-94
+
+endmap
+
+ 
+
+  map BX-Ent2SectionsB \
+
+            -projection none
+
+            BX-Ent2PLANxs-36        
+
+            BX-Ent2PLANxs-27
+
+ endmap
+
+.
+
+export map -projection none \
+
+  -layout LayoutMapThisCave             \
+
+  -layout LayoutMapThisCaveElev       \  
+
+  -layout-scale  1 100    \
+
+  -layout-scale-bar 10 m \
+
+  -output ../Outputs/CaveSections.pdf
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/349c1dc8/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 10631 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100615/349c1dc8/attachment.jpg>
+
+From dangle at tomo.co.nz  Thu Jun 17 22:54:26 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 18 Jun 2010 08:54:26 +1200
+Subject: [Therion] TerrainTool and Therion
+Message-ID: <57D048A7F24B4E56A42F2E2331B34079@JUICEBRAIN>
+
+I tried a pre release version a couple of days ago, and it works just fine.
+Bruce
+
+-----Original Message-----
+From: survex-bounces at survex.com [mailto:survex-bounces at survex.com] On Behalf
+Of Mike McCombe
+Sent: Friday, 18 June 2010 6:52 a.m.
+To: survex at survex.com
+Subject: TerrainTool and Therion
+
+There is now a new version of TerrainTool (1.07) which allows terrain data
+to be saved in Therion "surface" format. More details and download are
+available from the UBSS website http://www.ubss.org.uk or e-mail me.
+
+Best regards,
+Mike McCombe
+--
+Survex http://lists.survex.com/mailman/listinfo/survex
+
+
+
+From m.budaj at gmail.com  Sat Jun 19 16:30:50 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 19 Jun 2010 16:30:50 +0200
+Subject: [Therion] map-bg transparent
+In-Reply-To: <F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+Message-ID: <AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+
+On Mon, Jun 14, 2010 at 10:50 PM, Bruce <dangle at tomo.co.nz> wrote:
+
+> Is it possible to get therion to create a map with a transparent background?
+>
+> Something like ‘map-bg off’ perhaps?
+
+It will be supported in the next snapshot (if map-bg is white or
+omitted in layout).
+
+Martin
+
+
+From dangle at tomo.co.nz  Sat Jun 19 23:36:17 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 20 Jun 2010 09:36:17 +1200
+Subject: [Therion] map-bg transparent
+In-Reply-To: <AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+Message-ID: <30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+
+>> Is it possible to get therion to create a map with a transparent
+background?
+>>
+>> Something like 'map-bg off' perhaps?
+
+>It will be supported in the next snapshot (if map-bg is white or
+>omitted in layout).
+
+
+Thanks Martin
+I think that sometimes a white opaque background would be desirable.
+How about;
+
+map-bg [100 100 100] #or
+map-bg [100]         #gives an opaque white background, and
+map-bg off           #gives a transparent  background?
+
+ie similar in concept to   map-header-bg off
+
+If this is more complicated to code then your suggestion would be a good
+interim solution.
+Bruce
+
+
+
+From martinsluka at mac.com  Sun Jun 20 11:10:13 2010
+From: martinsluka at mac.com (martinsluka)
+Date: Sun, 20 Jun 2010 02:10:13 -0700 (PDT)
+Subject: [Therion] map-bg transparent
+In-Reply-To: <30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+Message-ID: <c19840af-8cf9-457a-aa37-cfbb77a76708@me.com>
+
+:) old postscript definition: CMYK 0000 is transparent 0010 (1% Y) is white. In RGB: 255 255 255 is transparent 255 255 254 could be white.
+
+m.
+
+On 19 Jun, 2010,at 11:36 PM, Bruce <dangle at tomo.co.nz> wrote:
+
+>> Is it possible to get therion to create a map with a transparent
+background?
+>>
+>> Something like 'map-bg off' perhaps?
+
+>It will be supported in the next snapshot (if map-bg is white or
+>omitted in layout).
+
+
+Thanks Martin
+I think that sometimes a white opaque background would be desirable.
+How about;
+
+map-bg [100 100 100] #or
+map-bg [100] #gives an opaque white background, and
+map-bg off #gives a transparent background?
+
+ie similar in concept to map-header-bg off
+
+If this is more complicated to code then your suggestion would be a good
+interim solution.
+Bruce
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100620/a1ebf76e/attachment.htm>
+
+From dirk.peinelt at t-online.de  Sun Jun 20 22:00:43 2010
+From: dirk.peinelt at t-online.de (Dirk Peinelt)
+Date: Sun, 20 Jun 2010 22:00:43 +0200
+Subject: [Therion] Therion - height point
+Message-ID: <002501cb10b3$44c5df80$ce519e80$@peinelt@t-online.de>
+
+Hello,
+
+is it possible to get a height-point with a "P"-prefix? (pit)
+
+point 0 0 height -value [85 m]
+
+ 
+
+Or should I use a label point?
+
+ 
+
+point 0 0 remark -text "P85"
+
+point 0 0 label -text "P85"
+
+ 
+
+Thanks!
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100620/2b83d621/attachment.htm>
+
+From m.budaj at gmail.com  Mon Jun 21 20:05:07 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 21 Jun 2010 20:05:07 +0200
+Subject: [Therion] Therion - height point
+In-Reply-To: <5561362450609668178@unknownmsgid>
+References: <5561362450609668178@unknownmsgid>
+Message-ID: <AANLkTinTKYXGEf4eAUi-dCY4K3F107lp9bZwZIWWFSju@mail.gmail.com>
+
+On Sun, Jun 20, 2010 at 10:00 PM, Dirk Peinelt <dirk.peinelt at t-online.de> wrote:
+> is it possible to get a height-point with a “P”-prefix? (pit)
+
+You just need to add following to your layout:
+
+  code mpost
+    verbatimtex \def\thheightpos{C}\def\thheightneg{P} etex
+
+and use "point 0 0 height -value [+10 m]" or "point 0 0 height -value
+[-85 m]" in your data to get C10 or P85.
+
+Martin
+
+
+From m.budaj at gmail.com  Mon Jun 21 20:06:38 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 21 Jun 2010 20:06:38 +0200
+Subject: [Therion] map-bg transparent
+In-Reply-To: <30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+Message-ID: <AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+
+On Sat, Jun 19, 2010 at 11:36 PM, Bruce <dangle at tomo.co.nz> wrote:
+> I think that sometimes a white opaque background would be desirable.
+> How about;
+>
+> map-bg [100 100 100] #or
+> map-bg [100]         #gives an opaque white background, and
+> map-bg off           #gives a transparent  background?
+>
+> ie similar in concept to   map-header-bg off
+
+OK, it can be done this way.
+
+Martin
+
+
+From andrew at wotcc.org.uk  Tue Jun 22 21:35:29 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 22 Jun 2010 20:35:29 +0100
+Subject: [Therion] Outside and inside
+In-Reply-To: <AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+Message-ID: <4C211081.1080507@wotcc.org.uk>
+
+Okay this is a simple question, that after all these years I should have 
+got in my head, but obviously not. I thought it was somewhere in the 
+wiki or thbook, but I cannot find it now.
+
+When drawing walls should the yellow 'tick' be on the inside or out?
+
+Possibly more important, does it make a difference, all me pdfs are 
+fine, but I have a problem with the kml.
+
+Which leads to a question when is a space between passages a pillar? If 
+this 'pillar' is defined over many survey trips and multiple scraps, is 
+the only solution to use -outline in option? Which leads to a further 
+question, what happens if I would like to produce output with one of the 
+passages not included, ie not publish the picture to the whole world 
+before giving a lecture at a conference.
+
+The scenario is illustrated by the 2 attached images. The model shows 
+what it should look like, the other is the kml on google earth with the 
+passage on the right missing. Is the only way to get this to work as a 
+kml, to define all the inside walls as outline in?
+
+thanks in advance for the help
+
+Andrew
+
+PS If anyone is interested, all the help received has produced this 
+output (8Mb)
+
+http://www.ubss.org.uk/resources/surveys/survex/Charterhouse.lox
+
+Lots of the 'smearing' is from made up surveys, constructed from old plans.
+
+More project information available on
+
+http://www.ubss.org.uk/cave_survey_archive.php
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Model.png
+Type: image/png
+Size: 52720 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100622/03147b99/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kml.png
+Type: image/png
+Size: 451820 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100622/03147b99/attachment-0001.png>
+
+From martinsluka at mac.com  Tue Jun 22 22:39:46 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 22 Jun 2010 22:39:46 +0200
+Subject: [Therion] Outside and inside
+In-Reply-To: <4C211081.1080507@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+Message-ID: <0EE77C13-1359-4FBB-BD8C-871C325C17C8@mac.com>
+
+
+On 22.6.2010, at 21:35, Andrew Atkinson wrote:
+
+> When drawing walls should the yellow 'tick' be on the inside or out?
+
+yellow tick is oriented to "air" but it is not very important you draw  
+line type wall. Anyway it is better to draw lines counterclockwise -  
+it will put yellow tick automaticaly in. Any way you may change the  
+air and bedrock side of line in line control window - check reverse  
+button.
+
+> Possibly more important, does it make a difference, all me pdfs are  
+> fine, but I have a problem with the kml.
+
+I have no experience with kml, but loch files show strange artefats if  
+the logic air/bedrock is not correct.
+
+> Which leads to a question when is a space between passages a pillar?  
+> If this 'pillar' is defined over many survey trips and multiple  
+> scraps, is the only solution to use -outline in option?
+
+Pillar and <outline -in> has sence only in one scrap. If pillar is  
+created by two or more scraps therion should recognize it correctly.  
+You may use <-outline out -clip off> for line/s which ends gallery in  
+concave form, or if pit should be transparent (IT IS transparent on a  
+correct map).
+
+> Which leads to a further question, what happens if I would like to  
+> produce output with one of the passages not included, ie not publish  
+> the picture to the whole world before giving a lecture at a  
+> conference.
+
+Just define another map including all scraps (or sub-maps) you want to  
+export and ommiting those you don't.
+
+Martin
+
+
+From andrew at wotcc.org.uk  Wed Jun 23 09:36:53 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 23 Jun 2010 08:36:53 +0100
+Subject: [Therion] Outside and inside
+In-Reply-To: <0EE77C13-1359-4FBB-BD8C-871C325C17C8@mac.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>
+	<0EE77C13-1359-4FBB-BD8C-871C325C17C8@mac.com>
+Message-ID: <4C21B995.7030000@wotcc.org.uk>
+
+
+>
+>> Which leads to a question when is a space between passages a pillar?
+>> If this 'pillar' is defined over many survey trips and multiple
+>> scraps, is the only solution to use -outline in option?
+>
+> Pillar and <outline -in> has sence only in one scrap. If pillar is
+> created by two or more scraps therion should recognize it correctly. You
+> may use <-outline out -clip off> for line/s which ends gallery in
+> concave form, or if pit should be transparent (IT IS transparent on a
+> correct map).
+>
+
+Only in one scrap, that  makes sense logically, and has saved me lots of 
+trial and error. But the real benefit has been it has allowed me to 
+focus on the correct scrap to find the error, that I have now done, and 
+have a working kml
+
+thank you
+
+Andrew
+
+
+
+From dangle at tomo.co.nz  Wed Jun 23 11:48:01 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Wed, 23 Jun 2010 21:48:01 +1200
+Subject: [Therion] Outside and inside / Vertical smearing of 3d Models
+In-Reply-To: <4C211081.1080507@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+Message-ID: <4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+
+Andrew
+
+My experience matches what Martin describes.
+
+Since about version 5.2.8+- -outline in/out does not seem to have affected
+pdf outputs much if at all.  However it is still of critical importance for
+.lox and .kml
+
+ 
+
+ 
+
+> http://www.ubss.org.uk/resources/surveys/survex/Charterhouse.lox
+
+ 
+
+Your example would make a nice addition to the therion projects page
+http://therion.speleo.sk/wiki/doku.php?id=projeurope 
+
+You might like to add it, or give permission for someone else to
+
+ 
+
+>Lots of the 'smearing' is from made up surveys, constructed from old plans.
+
+ 
+
+I have had this effect where drawings extend beyond the influence of survey
+stations (both 'real' and 'made-up' surveys).  Any tips as to how to prevent
+or minimise this?
+
+ 
+
+The Longwood cave (in the Charterhouse set above, screenshot below) seems to
+have a matching survey centreline and model when viewed in plan, but the
+model is still smeared and the elevations of the smeared 3d model do not
+match the survey centreline.  I assume this is because the drawing is not
+'connected' to the centreline by way of point 'survey-station's, and if it
+were, presumably this view would become the more realistic 3d tube we are
+accustomed to.
+
+
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100623/559b2426/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 42177 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100623/559b2426/attachment.jpg>
+
+From andrew at wotcc.org.uk  Wed Jun 23 13:15:16 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 23 Jun 2010 12:15:16 +0100
+Subject: [Therion] Outside and inside / Vertical smearing of 3d Models
+In-Reply-To: <4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+Message-ID: <4C21ECC4.905@wotcc.org.uk>
+
+
+
+On 23/06/10 10:48, Bruce wrote:
+> Your example would make a nice addition to the therion projects page
+> http://therion.speleo.sk/wiki/doku.php?id=projeurope
+>
+> You might like to add it, or give permission for someone else to
+
+It is on my list of things to do
+>
+>>Lots of the 'smearing' is from made up surveys, constructed from old plans.
+>
+> I have had this effect where drawings extend beyond the influence of
+> survey stations (both 'real' and 'made-up' surveys).  Any tips as to how
+> to prevent or minimise this?
+
+It is good to have further evidence for this, it was my theory also.
+>
+> The Longwood cave (in the Charterhouse set above, screenshot below)
+> seems to have a matching survey centreline and model when viewed in
+> plan, but the model is still smeared and the elevations of the smeared
+> 3d model do not match the survey centreline.  I assume this is because
+> the drawing is not ‘connected’ to the centreline by way of point
+> ‘survey-station’s, and if it were, presumably this view would become the
+> more realistic 3d tube we are accustomed to.
+
+The longwood survey, the centreline does not match the plan. we suspect 
+that, as we do not have the original plan, the version we have has been 
+sheared and twisted by copying so only 2 stations are used in the 
+scraps. I seem to remember that if no height information is given it 
+makes it proportional to the width, and does not use the X-sections, so 
+I am hoping that if we add some height points we will get better output 
+in the lox model
+
+thanks
+
+Andrew
+
+
+
+From martinsluka at mac.com  Wed Jun 23 14:31:34 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 23 Jun 2010 14:31:34 +0200
+Subject: [Therion] Outside and inside / Vertical smearing of 3d Models
+In-Reply-To: <4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+Message-ID: <1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+
+
+On 23.6.2010, at 11:48, Bruce wrote:
+
+> I have had this effect where drawings extend beyond the influence of  
+> survey stations (both 'real' and 'made-up' surveys).  Any tips as to  
+> how to prevent or minimise this?
+
+Try add some "dummy" shots (ignore).
+
+Martin
+
+
+From andrew at wotcc.org.uk  Wed Jun 30 08:53:22 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 30 Jun 2010 07:53:22 +0100
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+Message-ID: <4C2AE9E2.8040505@wotcc.org.uk>
+
+Hello
+
+We have lots of old data that we are trying input to build up our area 
+map. Lots of this data is in degrees and minutes.
+When dealing with co-ordinates (lat-long) 52:34:23.2 works as 
+degrees:minutes:seconds.
+I cannot seem to be able to get this format to work for survey data, is 
+there a way to use degrees:minutes, if not could it be added to the 
+things to be implemented, it would save lots of spread sheet work 
+converting it, and make checking back to the original data far easier 
+for future users of the data
+
+thanks
+
+Andrew
+
+
+
+From martinsluka at mac.com  Wed Jun 30 09:22:03 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 30 Jun 2010 09:22:03 +0200
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <4C2AE9E2.8040505@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+	<4C2AE9E2.8040505@wotcc.org.uk>
+Message-ID: <152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>
+
+
+On 30.6.2010, at 8:53, Andrew Atkinson wrote:
+
+> Hello
+>
+> We have lots of old data that we are trying input to build up our  
+> area map. Lots of this data is in degrees and minutes.
+> When dealing with co-ordinates (lat-long) 52:34:23.2 works as  
+> degrees:minutes:seconds.
+> I cannot seem to be able to get this format to work for survey data,  
+> is there a way to use degrees:minutes, if not could it be added to  
+> the things to be implemented, it would save lots of spread sheet  
+> work converting it, and make checking back to the original data far  
+> easier for future users of the data
+>
+> thanks
+>
+> Andrew
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+It should be possible according Thbook:
+
+lat-long, long-lat ◃ latitude (N positive, S negative) and longitude  
+(E positive,
+W negative) in given order in degrees (deg[:min[:sec]] allowed), WGS84  
+datum. By
+default, not supported on output.
+
+52:34.56461 ?
+
+m.
+
+From andrew at wotcc.org.uk  Wed Jun 30 09:12:03 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 30 Jun 2010 08:12:03 +0100
+Subject: [Therion] Wiki examples
+In-Reply-To: <4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+Message-ID: <4C2AEE43.7040805@wotcc.org.uk>
+
+So how do I register for the wiki? Instructions say go to the login box 
+and then you can login/register, but I cannot seem to find a register button
+
+thanks
+
+Andrew
+
+On 23/06/10 10:48, Bruce wrote:
+> Your example would make a nice addition to the therion projects page
+> http://therion.speleo.sk/wiki/doku.php?id=projeurope
+>
+> You might like to add it, or give permission for someone else to
+>
+
+
+
+From martinsluka at mac.com  Wed Jun 30 09:28:40 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 30 Jun 2010 09:28:40 +0200
+Subject: [Therion] Wiki examples
+In-Reply-To: <4C2AEE43.7040805@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+	<4C2AEE43.7040805@wotcc.org.uk>
+Message-ID: <0190AE45-19DD-439B-BBB7-10D916B52D16@mac.com>
+
+
+On 30.6.2010, at 9:12, Andrew Atkinson wrote:
+
+> So how do I register for the wiki? Instructions say go to the login  
+> box and then you can login/register, but I cannot seem to find a  
+> register button
+
+Write directly to Lada. See cc
+
+m.
+
+
+From andrew at wotcc.org.uk  Wed Jun 30 09:27:31 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 30 Jun 2010 08:27:31 +0100
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>	<4C2AE9E2.8040505@wotcc.org.uk>
+	<152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>
+Message-ID: <4C2AF1E3.90703@wotcc.org.uk>
+
+sorry I have not been clear enough, yes it works with lat-long
+
+it is when you try it in centreline it does not work
+
+centreline
+   data normal from to tape compass clino
+   1 2 3.24 -6:50 1:50
+
+thanks
+
+Andrew
+
+On 30/06/10 08:22, Martin Sluka wrote:
+>
+> On 30.6.2010, at 8:53, Andrew Atkinson wrote:
+>
+>> Hello
+>>
+>> We have lots of old data that we are trying input to build up our area
+>> map. Lots of this data is in degrees and minutes.
+>> When dealing with co-ordinates (lat-long) 52:34:23.2 works as
+>> degrees:minutes:seconds.
+>> I cannot seem to be able to get this format to work for survey data,
+>> is there a way to use degrees:minutes, if not could it be added to the
+>> things to be implemented, it would save lots of spread sheet work
+>> converting it, and make checking back to the original data far easier
+>> for future users of the data
+>>
+>> thanks
+>>
+>> Andrew
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> It should be possible according Thbook:
+>
+> lat-long, long-lat ◃ latitude (N positive, S negative) and longitude (E
+> positive,
+> W negative) in given order in degrees (deg[:min[:sec]] allowed), WGS84
+> datum. By
+> default, not supported on output.
+>
+> 52:34.56461 ?
+>
+> m.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From s.m at group-s.sk  Wed Jun 30 14:30:10 2010
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 30 Jun 2010 14:30:10 +0200
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <4C2AF1E3.90703@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+	<4C2AE9E2.8040505@wotcc.org.uk>
+	<152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>
+	<4C2AF1E3.90703@wotcc.org.uk>
+Message-ID: <AANLkTimTIXGAjMJ4Z7LGYr_ErVFdQQRzQGlDGeec5NZC@mail.gmail.com>
+
+This is very strange, so far I have tried it, it works on my computer.
+Can you send me exact description of an error that it generates when
+reading such a data? Or a minimaln sample that does not work?
+
+Thanks, S.
+
+On 30 June 2010 09:27, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> sorry I have not been clear enough, yes it works with lat-long
+>
+> it is when you try it in centreline it does not work
+>
+> centreline
+>  data normal from to tape compass clino
+>  1 2 3.24 -6:50 1:50
+>
+> thanks
+>
+> Andrew
+>
+> On 30/06/10 08:22, Martin Sluka wrote:
+>>
+>> On 30.6.2010, at 8:53, Andrew Atkinson wrote:
+>>
+>>> Hello
+>>>
+>>> We have lots of old data that we are trying input to build up our area
+>>> map. Lots of this data is in degrees and minutes.
+>>> When dealing with co-ordinates (lat-long) 52:34:23.2 works as
+>>> degrees:minutes:seconds.
+>>> I cannot seem to be able to get this format to work for survey data,
+>>> is there a way to use degrees:minutes, if not could it be added to the
+>>> things to be implemented, it would save lots of spread sheet work
+>>> converting it, and make checking back to the original data far easier
+>>> for future users of the data
+>>>
+>>> thanks
+>>>
+>>> Andrew
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>> It should be possible according Thbook:
+>>
+>> lat-long, long-lat ◃ latitude (N positive, S negative) and longitude (E
+>> positive,
+>> W negative) in given order in degrees (deg[:min[:sec]] allowed), WGS84
+>> datum. By
+>> default, not supported on output.
+>>
+>> 52:34.56461 ?
+>>
+>> m.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From andrew at wotcc.org.uk  Wed Jun 30 17:11:03 2010
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 30 Jun 2010 16:11:03 +0100
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <AANLkTimTIXGAjMJ4Z7LGYr_ErVFdQQRzQGlDGeec5NZC@mail.gmail.com>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>	<4C211081.1080507@wotcc.org.uk>	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>	<4C2AE9E2.8040505@wotcc.org.uk>	<152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>	<4C2AF1E3.90703@wotcc.org.uk>
+	<AANLkTimTIXGAjMJ4Z7LGYr_ErVFdQQRzQGlDGeec5NZC@mail.gmail.com>
+Message-ID: <4C2B5E87.3060509@wotcc.org.uk>
+
+Thank you for confirming it should work, that allowed me to find my 
+error else where.
+
+However it has lead to another question, it seems to accept minutes 
+larger than 60, (500 adds on 8 1/3 degrees as would be expected) should 
+this not generate a warning at the very least?
+
+thanks
+
+Andrew
+
+
+
+On 30/06/10 13:30, Stacho Mudrak wrote:
+> This is very strange, so far I have tried it, it works on my computer.
+> Can you send me exact description of an error that it generates when
+> reading such a data? Or a minimaln sample that does not work?
+>
+> Thanks, S.
+>
+> On 30 June 2010 09:27, Andrew Atkinson<andrew at wotcc.org.uk>  wrote:
+>> sorry I have not been clear enough, yes it works with lat-long
+>>
+>> it is when you try it in centreline it does not work
+>>
+>> centreline
+>>   data normal from to tape compass clino
+>>   1 2 3.24 -6:50 1:50
+>>
+>> thanks
+>>
+>> Andrew
+>>
+>> On 30/06/10 08:22, Martin Sluka wrote:
+>>>
+>>> On 30.6.2010, at 8:53, Andrew Atkinson wrote:
+>>>
+>>>> Hello
+>>>>
+>>>> We have lots of old data that we are trying input to build up our area
+>>>> map. Lots of this data is in degrees and minutes.
+>>>> When dealing with co-ordinates (lat-long) 52:34:23.2 works as
+>>>> degrees:minutes:seconds.
+>>>> I cannot seem to be able to get this format to work for survey data,
+>>>> is there a way to use degrees:minutes, if not could it be added to the
+>>>> things to be implemented, it would save lots of spread sheet work
+>>>> converting it, and make checking back to the original data far easier
+>>>> for future users of the data
+>>>>
+>>>> thanks
+>>>>
+>>>> Andrew
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>>> It should be possible according Thbook:
+>>>
+>>> lat-long, long-lat ◃ latitude (N positive, S negative) and longitude (E
+>>> positive,
+>>> W negative) in given order in degrees (deg[:min[:sec]] allowed), WGS84
+>>> datum. By
+>>> default, not supported on output.
+>>>
+>>> 52:34.56461 ?
+>>>
+>>> m.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From s.m at group-s.sk  Wed Jun 30 18:43:20 2010
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 30 Jun 2010 18:43:20 +0200
+Subject: [Therion] Degrees: minutes in centreline
+In-Reply-To: <4C2B5E87.3060509@wotcc.org.uk>
+References: <AcsMAzU/n2DkLmp1S/uns5U4CUx3ug==@clear.net.nz>
+	<F161BEDC717244E4AD4D9B653AFEF080@JUICEBRAIN>
+	<AANLkTin4-4nDbWuIyBhpt2kHe_R_LaZOHY603t39F4oJ@mail.gmail.com>
+	<30EA7B85D6744BCB9AF156741A095968@JUICEBRAIN>
+	<AANLkTimUqINyLLvOmRq2AK4EdDRWFbb8ROTHMIwxGA-F@mail.gmail.com>
+	<4C211081.1080507@wotcc.org.uk>
+	<4B59CA42703F482682B9412883A193CC@JUICEBRAIN>
+	<1288B258-79D7-40FC-9D6D-5A74AB808E0E@mac.com>
+	<4C2AE9E2.8040505@wotcc.org.uk>
+	<152161A7-8787-42BB-AE02-3DF247CAD954@mac.com>
+	<4C2AF1E3.90703@wotcc.org.uk>
+	<AANLkTimTIXGAjMJ4Z7LGYr_ErVFdQQRzQGlDGeec5NZC@mail.gmail.com>
+	<4C2B5E87.3060509@wotcc.org.uk>
+Message-ID: <AANLkTilG8_42u51m-6oS-yp98sPJJMoBNGOSdp2-o3IT@mail.gmail.com>
+
+Yes, I have noticed this bug when I was trying it. I will fix it.
+
+Thanks, S.
+
+On 30 June 2010 17:11, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> Thank you for confirming it should work, that allowed me to find my error
+> else where.
+>
+> However it has lead to another question, it seems to accept minutes larger
+> than 60, (500 adds on 8 1/3 degrees as would be expected) should this not
+> generate a warning at the very least?
+>
+> thanks
+>
+> Andrew
+>
+>
+>
+> On 30/06/10 13:30, Stacho Mudrak wrote:
+>>
+>> This is very strange, so far I have tried it, it works on my computer.
+>> Can you send me exact description of an error that it generates when
+>> reading such a data? Or a minimaln sample that does not work?
+>>
+>> Thanks, S.
+>>
+>> On 30 June 2010 09:27, Andrew Atkinson<andrew at wotcc.org.uk>  wrote:
+>>>
+>>> sorry I have not been clear enough, yes it works with lat-long
+>>>
+>>> it is when you try it in centreline it does not work
+>>>
+>>> centreline
+>>>  data normal from to tape compass clino
+>>>  1 2 3.24 -6:50 1:50
+>>>
+>>> thanks
+>>>
+>>> Andrew
+>>>
+>>> On 30/06/10 08:22, Martin Sluka wrote:
+>>>>
+>>>> On 30.6.2010, at 8:53, Andrew Atkinson wrote:
+>>>>
+>>>>> Hello
+>>>>>
+>>>>> We have lots of old data that we are trying input to build up our area
+>>>>> map. Lots of this data is in degrees and minutes.
+>>>>> When dealing with co-ordinates (lat-long) 52:34:23.2 works as
+>>>>> degrees:minutes:seconds.
+>>>>> I cannot seem to be able to get this format to work for survey data,
+>>>>> is there a way to use degrees:minutes, if not could it be added to the
+>>>>> things to be implemented, it would save lots of spread sheet work
+>>>>> converting it, and make checking back to the original data far easier
+>>>>> for future users of the data
+>>>>>
+>>>>> thanks
+>>>>>
+>>>>> Andrew
+>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>>
+>>>> It should be possible according Thbook:
+>>>>
+>>>> lat-long, long-lat ◃ latitude (N positive, S negative) and longitude (E
+>>>> positive,
+>>>> W negative) in given order in degrees (deg[:min[:sec]] allowed), WGS84
+>>>> datum. By
+>>>> default, not supported on output.
+>>>>
+>>>> 52:34.56461 ?
+>>>>
+>>>> m.
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+

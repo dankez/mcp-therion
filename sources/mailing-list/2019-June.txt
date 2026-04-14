@@ -1,0 +1,3981 @@
+From bruce at tomo.co.nz  Sat Jun  1 11:03:12 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 1 Jun 2019 21:03:12 +1200
+Subject: [Therion] Problem with aligning point symbols that have an
+ orientation set - due to definition transformation order
+Message-ID: <000001d51858$d9135850$8b3a08f0$@tomo.co.nz>
+
+I have just spent some time to understand the positioning of point symbols,
+with regard to metapost definitions and the alignment offsets, and have
+written up my insights by adding to this wiki section
+https://therion.speleo.sk/wiki/metapost#symbol_sizing_and_positioning
+
+Thanks to the two Martins for helping me along this path.
+
+ 
+
+In the process of achieving understanding, I unearthed a problem that has
+occasionally plagued me over the previous 10 years.  Before now I could
+never get the pattern or a hint of what the cause may be.  But now I have
+it!
+
+ 
+
+An example with the air-draught symbol to demonstrate.  I have chosen it
+because it is long and skinny and also highlights a minor problem with
+'tight' aligning of such symbols; with half width of 0.2u and half height of
+1.0u.  The definition of the symbol includes matching alignment offsets of
+U: = 0.2u and 1.0u, and starts like this.
+
+ 
+
+def p_airdraught_UIS (expr pos,theta,sc,al)=
+
+  U:=(.2u,u);
+
+  T:=identity aligned al rotated theta scaled 1 shifted pos;
+
+ 
+
+Like almost all built-in Therion metapost symbols, the T: function first
+aligns the symbol, then rotates it.
+
+For orthogonal rotations at least, the alignments are very nicely matched to
+the insertion point, but not so much for non-orthogonal rotations. This is
+the relatively minor problem.
+
+The bigger problem is that for -orientations much different to zero, then
+alignments are inappropriately rotated as well!  In the example
+SymbolAirdraughtAlignedTHENRotated.png attached, -align right manifests as
+-align left, and -align bottom-right manifests as -align top-left once the
+-orientation is much more than 45 degrees.  A situation that has resulted in
+uncomfortable drawing hacks on my part on more than one occasion.
+
+ 
+
+On both attached images the cross hair intersection is the insertion point
+of the symbol, and the layout used includes a rotation of 15 degrees, to
+highlight the differences between not specifying a symbol orientation, and
+specifying an -orientation of zero and 180 degrees.
+
+ 
+
+So I wondered what would happen if I changed the order of the
+transformation?
+
+ie
+
+def p_airdraught_UIS (expr pos,theta,sc,al)=
+
+  U:=(.2u,u);
+
+  T:=identity rotated theta aligned al scaled 1 shifted pos;
+
+ 
+
+And the answer is, the alignments entered by the user are properly honoured!
+
+With both methods, there is a problem aligning long narrow symbols that are
+also rotated.
+
+ 
+
+
+
+I think this can be compensated for by stretching out the smaller U:
+component a little.  Say, instead of
+
+  U:=(.2u,u);
+
+Make it more like
+
+  U:=(.4u,u);
+
+ 
+
+So the question.  Is there an appetite for changing the order of
+transformation for almost all of Therion's metapost point symbols?
+
+It will affect a number of existing projects, but only materially where
+point symbols with an orientation greater than 45 degrees off 0 degrees (or
+360) and a non-centred alignment are used.  These are probably limited to
+points entrance, air-draught, passage ends, gradients (maybe), water-flow,
+spring, sink, and possibly any point labels that have been aligned with
+these.
+
+ 
+
+Unless anyone can come up with any more unpleasant side effects, I would
+vote for change.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190601/4b59f67d/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 43986 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190601/4b59f67d/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: SymbolAirdraughtAlignedTHENRotated.png
+Type: image/png
+Size: 136682 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190601/4b59f67d/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: SymbolAirdraughtRotatedTHENAligned.png
+Type: image/png
+Size: 131676 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190601/4b59f67d/attachment-0002.png>
+
+From lists at group-s.sk  Sat Jun  1 22:44:20 2019
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 1 Jun 2019 22:44:20 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+Message-ID: <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+
+Unfortunately, there is no such option. Once a map is defined in your
+dataset, it will be used with its average altitude in the export when only
+surveys are selected for output. The idea behind is, that once you start
+defining maps out of the scraps, you will build the whole tree of them
+including top-level ones. So the only way how to overcome this problem is
+to comment all your maps in the code until you define the whole hierarchy
+of them.
+
+S.
+
+On Fri, 31 May 2019 at 22:15, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> Thank you for your message, this helps alot.
+> There is a way out tough, a middle ground: one can define custom maps in
+> the thconfig file using source.
+>
+> I need to think about how this affects the projects structure.
+>
+> Besides that, is there a option to disable map-averaging and tell
+> therion to use the scrap average for each scrap?
+> That would solve this imho.
+>
+> Thanks, i understand i better now, how this works currently.
+>
+>
+> Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+> > Hello Beni,
+> >
+> > I am not 100% sure if I understand your problem correctly, but this is
+> > how therion does average altitude calculations:
+> >
+> > the altitude of a scrap = arithmetic average of altitudes of its
+> > stations
+> > the altitude of a map = arithmetic average of altitudes of scraps
+> >
+> > And your observation is correct. If you have some maps defined in your
+> > dataset, then maps of selected surveys are exported and sorted
+> > according to their altitudes. If you have no maps defined, then scraps
+> > in selected surveys are taken and altitude sorted.
+> >
+> > So if you are working on a large dataset and you do not want to define
+> > upper-level maps, it is probably better not to define any maps at all
+> > - then only scraps will be taken into consideration.
+> >
+> > Best regards, S.
+> >
+> > On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org>
+> > wrote:
+> >
+> >> Hi Stacho,
+> >> your infos did the trick.
+> >> indeed the data showed at closer examination, that the parts where
+> >> averaged lower than the part in question. The wrongly-lower part
+> >> contains a steep slope but the average height was still some few
+> >> meters
+> >> below the average of the offending part.
+> >>
+> >> What puzzled me was that even splitting the scraps was not enough!
+> >> I now have a scrap containing only the sloped part of the tunnel,
+> >> and
+> >> that is surely averaged above the lower part.
+> >>
+> >> What solved it was to also rearrange the map definitions that
+> >> contain
+> >> the sloped part: i put the low part prior the slope in question in
+> >> another map like this:
+> >> -------snip----------
+> >> # This works instead:
+> >> map working-priortunnel
+> >> scrap-low-tunnel-before-slope
+> >> endmap
+> >> map working-slope
+> >> scrap-slope-itself-with-followig-high-part
+> >> endmap
+> >>
+> >> # this does NOT work lie intendet:
+> >> #map notWorking-combined
+> >> #  scrap-low-tunnel-before-slope
+> >> #  scrap-slope-itself-with-followig-high-part
+> >> #endmap
+> >> -------snap----------
+> >>
+> >> It looks like therion currently uses the average height of the MAP,
+> >> not
+> >> the contained scraps, to calculate which part is above or below. In
+> >> this
+> >> example, it looks like it is getting the average height of the
+> >> "notWorking-combined" combined map and comparing this to the
+> >> uncorrelated below-tunnel.
+> >> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+> >> definition,
+> >> the average calculation can only take the
+> >> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+> >>
+> >> much higher average height.
+> >>
+> >> Can you confirm this from therions sourcecode, and is this really
+> >> the
+> >> intendet behaviour, since i think each scrap shopuld be averaged for
+> >>
+> >> itself, regardless of its map allocation...?
+> >>
+> >> Wih best regards,
+> >> Beni
+> >>
+> >> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+> >>> Hello,
+> >>>
+> >>> if you select just survey, then all maps consisting of scraps in
+> >> this
+> >>> and sub-surveys should be ordered by average altitude. But this
+> >> may
+> >>> easily cause that some overlapping is not done correctly. But it
+> >> is
+> >>> also possible, there is some bug and it is not done correctly. Are
+> >> you
+> >>> able to post some minimalistic sample, where depth sort fails?
+> >>>
+> >>> The only way how to manually order maps in the output is to create
+> >>> upper-level maps (in your case probably what you mean by
+> >>> <region>-Hautplan) consisting of lower level maps in the correct
+> >>> order.
+> >>>
+> >>> HTH, S.
+> >>>
+> >>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+> >> <beni at hallinger.org>
+> >>> wrote:
+> >>>
+> >>>> Hello there,
+> >>>> i have a very large dataset here. It is organised by regions like
+> >>>> this
+> >>>> (but much more leaf objects and regions):
+> >>>>
+> >>>> =====snip=====
+> >>>> - survey TheCave
+> >>>> - survey RegionWest
+> >>>> - survey 1
+> >>>> - survey 3
+> >>>> - survey 5
+> >>>> - survey RegionEast
+> >>>> - survey 2
+> >>>> - survey 4
+> >>>> - survey 6
+> >>>> =====snap=====
+> >>>>
+> >>>> I currently work from bottom to up, that is i draw the individual
+> >>>> surveys as scraps, based on original material (sometimes they are
+> >>>> really
+> >>>> large and cosnsist of several many scraps).
+> >>>>
+> >>>> In each of they leaf surveys (the numbered ones) i make by
+> >>>> convention a
+> >>>> map called "<n>-Hauptplan". The main idea is that every leaf
+> >> survey
+> >>>> can
+> >>>> be treaten modular and that i can compile varoius maps at upper
+> >>>> levels
+> >>>> (i.e regions).
+> >>>>
+> >>>> Currently, the regions have no "<region>-Hautplan". When i use
+> >>>> "select
+> >>>> RegionWest.TheCave", therion is instructed to select all scraps
+> >>>> below
+> >>>> it. For the most part, this works like intendet and the
+> >> overlappings
+> >>>> are
+> >>>> calculated correctly. There are some places however, where the
+> >> upper
+> >>>>
+> >>>> part of the passage is rendered below the lower part, which is
+> >>>> wrong.
+> >>>> This is with about 10-15% of the passages (so most is already
+> >> ok).
+> >>>>
+> >>>> I know from the manuals that therion does this "randomly" so
+> >> there
+> >>>> is no
+> >>>> real way to adjust this from my perspective (placing the "input
+> >> 2.th [1]
+> >>>> [1]"
+> >>>> command in the region.th [2] [2] file, wich then inputs the
+> >> scraps etc,
+> >>>> lower in
+> >>>> the list does not help - it seems random where it is).
+> >>>> I think, however, that it would be a very great addition, if
+> >> there
+> >>>> would
+> >>>> be some code in the renderer, that sorts the vertical
+> >> presentation
+> >>>> of
+> >>>> the scraps/maps by average altitude of said scrap/map, and that
+> >> this
+> >>>>
+> >>>> behavior is controllable by some configuration (cmdline option,
+> >> or
+> >>>> even
+> >>>> better, thconfig parameter).
+> >>>> => Is there maybe already something hidden like this i don't know
+> >> so
+> >>>>
+> >>>> far?
+> >>>> That would be very great, because when i look at the dataset, i
+> >> face
+> >>>>
+> >>>> about 30-50 hours producing correctly manually sorted handcrafted
+> >>>> maps
+> >>>> at the region level...
+> >>>>
+> >>>> Sincerely, Beni
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>>
+> >>>
+> >>> Links:
+> >>> ------
+> >>> [1] http://2.th
+> >>> [2] http://region.th
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> >
+> >
+> > Links:
+> > ------
+> > [1] http://2.th
+> > [2] http://region.th
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190601/4ebc8e2c/attachment.htm>
+
+From beni at hallinger.org  Mon Jun  3 08:21:15 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 3 Jun 2019 08:21:15 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+ <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+Message-ID: <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+
+Good morning,
+thank you for that info!
+Would it be a huge effort to make such an option available? Just asking.
+
+To define the top level hierarchies, it would be cool to somehow get the altitude-sorted map names from some debug log or so. That list could be used directly to construct the map-command block that reproduces the current result. This would drastically reduce the effort.
+Would it be possible to add a debug log output command, that produces such a list? Or is it already possible to get that list somehow, for example from the sql database output?
+
+> Am 01.06.2019 um 22:44 schrieb Stacho Mudrak <lists at group-s.sk>:
+> 
+> Unfortunately, there is no such option. Once a map is defined in your dataset, it will be used with its average altitude in the export when only surveys are selected for output. The idea behind is, that once you start defining maps out of the scraps, you will build the whole tree of them including top-level ones. So the only way how to overcome this problem is to comment all your maps in the code until you define the whole hierarchy of them.
+> 
+> S.
+> 
+>> On Fri, 31 May 2019 at 22:15, Benedikt Hallinger <beni at hallinger.org> wrote:
+>> Thank you for your message, this helps alot.
+>> There is a way out tough, a middle ground: one can define custom maps in 
+>> the thconfig file using source.
+>> 
+>> I need to think about how this affects the projects structure.
+>> 
+>> Besides that, is there a option to disable map-averaging and tell 
+>> therion to use the scrap average for each scrap?
+>> That would solve this imho.
+>> 
+>> Thanks, i understand i better now, how this works currently.
+>> 
+>> 
+>> Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+>> > Hello Beni,
+>> > 
+>> > I am not 100% sure if I understand your problem correctly, but this is
+>> > how therion does average altitude calculations:
+>> > 
+>> > the altitude of a scrap = arithmetic average of altitudes of its
+>> > stations
+>> > the altitude of a map = arithmetic average of altitudes of scraps
+>> > 
+>> > And your observation is correct. If you have some maps defined in your
+>> > dataset, then maps of selected surveys are exported and sorted
+>> > according to their altitudes. If you have no maps defined, then scraps
+>> > in selected surveys are taken and altitude sorted.
+>> > 
+>> > So if you are working on a large dataset and you do not want to define
+>> > upper-level maps, it is probably better not to define any maps at all
+>> > - then only scraps will be taken into consideration.
+>> > 
+>> > Best regards, S.
+>> > 
+>> > On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org>
+>> > wrote:
+>> > 
+>> >> Hi Stacho,
+>> >> your infos did the trick.
+>> >> indeed the data showed at closer examination, that the parts where
+>> >> averaged lower than the part in question. The wrongly-lower part
+>> >> contains a steep slope but the average height was still some few
+>> >> meters
+>> >> below the average of the offending part.
+>> >> 
+>> >> What puzzled me was that even splitting the scraps was not enough!
+>> >> I now have a scrap containing only the sloped part of the tunnel,
+>> >> and
+>> >> that is surely averaged above the lower part.
+>> >> 
+>> >> What solved it was to also rearrange the map definitions that
+>> >> contain
+>> >> the sloped part: i put the low part prior the slope in question in
+>> >> another map like this:
+>> >> -------snip----------
+>> >> # This works instead:
+>> >> map working-priortunnel
+>> >> scrap-low-tunnel-before-slope
+>> >> endmap
+>> >> map working-slope
+>> >> scrap-slope-itself-with-followig-high-part
+>> >> endmap
+>> >> 
+>> >> # this does NOT work lie intendet:
+>> >> #map notWorking-combined
+>> >> #  scrap-low-tunnel-before-slope
+>> >> #  scrap-slope-itself-with-followig-high-part
+>> >> #endmap
+>> >> -------snap----------
+>> >> 
+>> >> It looks like therion currently uses the average height of the MAP,
+>> >> not
+>> >> the contained scraps, to calculate which part is above or below. In
+>> >> this
+>> >> example, it looks like it is getting the average height of the
+>> >> "notWorking-combined" combined map and comparing this to the
+>> >> uncorrelated below-tunnel.
+>> >> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+>> >> definition,
+>> >> the average calculation can only take the
+>> >> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+>> >> 
+>> >> much higher average height.
+>> >> 
+>> >> Can you confirm this from therions sourcecode, and is this really
+>> >> the
+>> >> intendet behaviour, since i think each scrap shopuld be averaged for
+>> >> 
+>> >> itself, regardless of its map allocation...?
+>> >> 
+>> >> Wih best regards,
+>> >> Beni
+>> >> 
+>> >> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+>> >>> Hello,
+>> >>> 
+>> >>> if you select just survey, then all maps consisting of scraps in
+>> >> this
+>> >>> and sub-surveys should be ordered by average altitude. But this
+>> >> may
+>> >>> easily cause that some overlapping is not done correctly. But it
+>> >> is
+>> >>> also possible, there is some bug and it is not done correctly. Are
+>> >> you
+>> >>> able to post some minimalistic sample, where depth sort fails?
+>> >>> 
+>> >>> The only way how to manually order maps in the output is to create
+>> >>> upper-level maps (in your case probably what you mean by
+>> >>> <region>-Hautplan) consisting of lower level maps in the correct
+>> >>> order.
+>> >>> 
+>> >>> HTH, S.
+>> >>> 
+>> >>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+>> >> <beni at hallinger.org>
+>> >>> wrote:
+>> >>> 
+>> >>>> Hello there,
+>> >>>> i have a very large dataset here. It is organised by regions like
+>> >>>> this
+>> >>>> (but much more leaf objects and regions):
+>> >>>> 
+>> >>>> =====snip=====
+>> >>>> - survey TheCave
+>> >>>> - survey RegionWest
+>> >>>> - survey 1
+>> >>>> - survey 3
+>> >>>> - survey 5
+>> >>>> - survey RegionEast
+>> >>>> - survey 2
+>> >>>> - survey 4
+>> >>>> - survey 6
+>> >>>> =====snap=====
+>> >>>> 
+>> >>>> I currently work from bottom to up, that is i draw the individual
+>> >>>> surveys as scraps, based on original material (sometimes they are
+>> >>>> really
+>> >>>> large and cosnsist of several many scraps).
+>> >>>> 
+>> >>>> In each of they leaf surveys (the numbered ones) i make by
+>> >>>> convention a
+>> >>>> map called "<n>-Hauptplan". The main idea is that every leaf
+>> >> survey
+>> >>>> can
+>> >>>> be treaten modular and that i can compile varoius maps at upper
+>> >>>> levels
+>> >>>> (i.e regions).
+>> >>>> 
+>> >>>> Currently, the regions have no "<region>-Hautplan". When i use
+>> >>>> "select
+>> >>>> RegionWest.TheCave", therion is instructed to select all scraps
+>> >>>> below
+>> >>>> it. For the most part, this works like intendet and the
+>> >> overlappings
+>> >>>> are
+>> >>>> calculated correctly. There are some places however, where the
+>> >> upper
+>> >>>> 
+>> >>>> part of the passage is rendered below the lower part, which is
+>> >>>> wrong.
+>> >>>> This is with about 10-15% of the passages (so most is already
+>> >> ok).
+>> >>>> 
+>> >>>> I know from the manuals that therion does this "randomly" so
+>> >> there
+>> >>>> is no
+>> >>>> real way to adjust this from my perspective (placing the "input
+>> >> 2.th [1]
+>> >>>> [1]"
+>> >>>> command in the region.th [2] [2] file, wich then inputs the
+>> >> scraps etc,
+>> >>>> lower in
+>> >>>> the list does not help - it seems random where it is).
+>> >>>> I think, however, that it would be a very great addition, if
+>> >> there
+>> >>>> would
+>> >>>> be some code in the renderer, that sorts the vertical
+>> >> presentation
+>> >>>> of
+>> >>>> the scraps/maps by average altitude of said scrap/map, and that
+>> >> this
+>> >>>> 
+>> >>>> behavior is controllable by some configuration (cmdline option,
+>> >> or
+>> >>>> even
+>> >>>> better, thconfig parameter).
+>> >>>> => Is there maybe already something hidden like this i don't know
+>> >> so
+>> >>>> 
+>> >>>> far?
+>> >>>> That would be very great, because when i look at the dataset, i
+>> >> face
+>> >>>> 
+>> >>>> about 30-50 hours producing correctly manually sorted handcrafted
+>> >>>> maps
+>> >>>> at the region level...
+>> >>>> 
+>> >>>> Sincerely, Beni
+>> >>>> _______________________________________________
+>> >>>> Therion mailing list
+>> >>>> Therion at speleo.sk
+>> >>>> https://mailman.speleo.sk/listinfo/therion
+>> >>> 
+>> >>> 
+>> >>> Links:
+>> >>> ------
+>> >>> [1] http://2.th
+>> >>> [2] http://region.th
+>> >>> _______________________________________________
+>> >>> Therion mailing list
+>> >>> Therion at speleo.sk
+>> >>> https://mailman.speleo.sk/listinfo/therion
+>> >> _______________________________________________
+>> >> Therion mailing list
+>> >> Therion at speleo.sk
+>> >> https://mailman.speleo.sk/listinfo/therion
+>> > 
+>> > 
+>> > Links:
+>> > ------
+>> > [1] http://2.th
+>> > [2] http://region.th
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190603/a99bb456/attachment.htm>
+
+From martinsluka at mac.com  Mon Jun  3 18:05:26 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 3 Jun 2019 18:05:26 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+ <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+ <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+Message-ID: <DDA95D19-6688-4B94-8499-64EFF31CE873@mac.com>
+
+Just an illustration of problem of calculation of relative position of scraps based on average altitude of stations. Blue station(s) is bellow pink station(s), but blue scrap is above pink scrap.
+
+Martin
+
+
+
+> 3. 6. 2019 v 8:21, Benedikt Hallinger <beni at hallinger.org>:
+> 
+> Good morning,
+> thank you for that info!
+> Would it be a huge effort to make such an option available? Just asking.
+> 
+> To define the top level hierarchies, it would be cool to somehow get the altitude-sorted map names from some debug log or so. That list could be used directly to construct the map-command block that reproduces the current result. This would drastically reduce the effort.
+> Would it be possible to add a debug log output command, that produces such a list? Or is it already possible to get that list somehow, for example from the sql database output?
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190603/347a2efb/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: break_importance.png
+Type: image/png
+Size: 9269 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190603/347a2efb/attachment.png>
+
+From omrigas at gmail.com  Sun Jun  9 16:29:24 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 9 Jun 2019 17:29:24 +0300
+Subject: [Therion] code for Map layout
+Message-ID: <CAOjFj0kUW_7QciTSejSjEdK3keEe71hEPOv_frhk_9C5Z=mWfQ@mail.gmail.com>
+
+Hello everyone,
+does any one have a code for map layout that I can use on my projects?
+
+I would be glad to see examples from more experience users
+
+Omri
+--
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190609/f12a4d48/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Jun  9 23:18:21 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 10 Jun 2019 09:18:21 +1200
+Subject: [Therion] code for Map layout
+In-Reply-To: <CAOjFj0kUW_7QciTSejSjEdK3keEe71hEPOv_frhk_9C5Z=mWfQ@mail.gmail.com>
+References: <CAOjFj0kUW_7QciTSejSjEdK3keEe71hEPOv_frhk_9C5Z=mWfQ@mail.gmail.com>
+Message-ID: <000001d51f08$df86a3c0$9e93eb40$@tomo.co.nz>
+
+Omri
+
+Here is how I do it.  My aim is to have it modular and flexible, so it is easy to get many types of pdf output from the same project, either simultaneously or with minimal easy edits between compiles.  Refer attached.  
+
+Quite a lot of experimental noise in there, particularly in LayoutStandards.thc, but you should find something of  use.
+
+ 
+
+Some probably outdated explanatory information here https://therion.speleo.sk/wiki/templates
+
+And here https://therion.speleo.sk/wiki/bds
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of ???? ????
+Sent: Monday, 10 June 2019 02:29
+To: List for Therion users <therion at speleo.sk>
+Subject: [Therion] code for Map layout
+
+ 
+
+Hello everyone,
+
+does any one have a code for map layout that I can use on my projects?
+
+ 
+
+I would be glad to see examples from more experience users
+
+ 
+
+Omri
+
+-- 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LayoutMapThisCavePlan.thc
+Type: application/octet-stream
+Size: 2923 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig-NameOfCave.thc
+Type: application/octet-stream
+Size: 5294 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LayoutMapThisCave.thc
+Type: application/octet-stream
+Size: 3663 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment-0002.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LayoutMapThisCaveElev.thc
+Type: application/octet-stream
+Size: 1472 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment-0003.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StdFiles.zip
+Type: application/x-zip-compressed
+Size: 19306 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/c1d40eeb/attachment.bin>
+
+From omrigas at gmail.com  Mon Jun 10 18:53:14 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Mon, 10 Jun 2019 19:53:14 +0300
+Subject: [Therion] code for Map layout
+In-Reply-To: <000001d51f08$df86a3c0$9e93eb40$@tomo.co.nz>
+References: <CAOjFj0kUW_7QciTSejSjEdK3keEe71hEPOv_frhk_9C5Z=mWfQ@mail.gmail.com>
+ <000001d51f08$df86a3c0$9e93eb40$@tomo.co.nz>
+Message-ID: <CAOjFj0mf=csO-VgxFRuWfRhxU59SCvko9eEr_O69boTQWEtVPg@mail.gmail.com>
+
+Thanks!
+
+On Mon, Jun 10, 2019 at 12:18 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Omri
+>
+> Here is how I do it.  My aim is to have it modular and flexible, so it is
+> easy to get many types of pdf output from the same project, either
+> simultaneously or with minimal easy edits between compiles.  Refer
+> attached.
+>
+> Quite a lot of experimental noise in there, particularly in
+> LayoutStandards.thc, but you should find something of  use.
+>
+>
+>
+> Some probably outdated explanatory information here
+> https://therion.speleo.sk/wiki/templates
+>
+> And here https://therion.speleo.sk/wiki/bds
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+>
+> *From:* Therion <therion-bounces at speleo.sk> *On Behalf Of *???? ????
+> *Sent:* Monday, 10 June 2019 02:29
+> *To:* List for Therion users <therion at speleo.sk>
+> *Subject:* [Therion] code for Map layout
+>
+>
+>
+> Hello everyone,
+>
+> does any one have a code for map layout that I can use on my projects?
+>
+>
+>
+> I would be glad to see examples from more experience users
+>
+>
+>
+> Omri
+>
+> --
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190610/f6df0a40/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Jun 10 21:42:35 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 11 Jun 2019 07:42:35 +1200
+Subject: [Therion] code for Map layout
+In-Reply-To: <CAOjFj0kZngjWCOEmXMJAUCRmo4xYbWGoR_GSx8VSspxK-zAqhA@mail.gmail.com>
+References: <CAOjFj0kUW_7QciTSejSjEdK3keEe71hEPOv_frhk_9C5Z=mWfQ@mail.gmail.com>
+ <000001d51f08$df86a3c0$9e93eb40$@tomo.co.nz>
+ <CAOjFj0kef8aFA9ZZVogSWy583JXJoRV0sS7+fSAEU-WnA+mb4A@mail.gmail.com>
+ <CAOjFj0kZngjWCOEmXMJAUCRmo4xYbWGoR_GSx8VSspxK-zAqhA@mail.gmail.com>
+Message-ID: <001401d51fc4$a88e3240$f9aa96c0$@tomo.co.nz>
+
+Hi Omri
+
+These files are part of my ‘new project’ template, so they rea ready to go, as is (provided you have a similar folder layout to what I use).  For me a project is usually a catchment or small caving region.  Of course within that there are individual caves, so these files are more or less ‘one for each cave’.  Except for the zipped files, which are ‘one for the project’.
+
+The only change I make when I bring these into use is to find and replace each instance of ‘NameOfCave’ and change it to whatever the ‘shortcode’ name of the cave or catchment is.  ie only the thconfig file.
+
+All of these layout files are referenced (input) in the thconfig file.
+
+>From then on, any of the layout definitions can be invoked at will (using copy statement).
+
+ 
+
+So it is more like your second statement below.
+
+ 
+
+In case you are interested, I have included a default project readme file.  It is an attempt to ensure all contributors to a particular mapping project are pulling the donkey (all of the donkeys) in the same direction.  The data arrangement suggested is the only one that ticks all of the boxes for me, but it is far from universally accepted outside my circle of influence.  Other arrangements are perfectly valid.
+
+ 
+
+Bruce
+
+ 
+
+From: עמרי גסטר <omrigas at gmail.com> 
+Sent: Tuesday, 11 June 2019 06:27
+To: bruce at tomo.co.nz
+Subject: Re: [Therion] code for Map layout
+
+ 
+
+I need to separate each layout to a different file and then call it with the copy command right?
+
+or can I specify the file name and then call a specific layout from the file?
+
+ 
+
+ 
+
+On Mon, Jun 10, 2019 at 12:18 AM Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+Omri
+
+Here is how I do it.  My aim is to have it modular and flexible, so it is easy to get many types of pdf output from the same project, either simultaneously or with minimal easy edits between compiles.  Refer attached.  
+
+Quite a lot of experimental noise in there, particularly in LayoutStandards.thc, but you should find something of  use.
+
+Some probably outdated explanatory information here https://therion.speleo.sk/wiki/templates
+
+And here https://therion.speleo.sk/wiki/bds
+
+ Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190611/729e25d7/attachment.htm>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: _Readme_th-TherionProjectBazaar Conventions.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190611/729e25d7/attachment.txt>
+
+From Nick at pff.uk.com  Wed Jun 19 21:47:28 2019
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Wed, 19 Jun 2019 19:47:28 +0000
+Subject: [Therion] Using 3d Scan Data To Create A Map
+Message-ID: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+
+Hi, Something a bit different for the clever people out there.
+
+I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+
+I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly's to the correct spot and shows a pin with the cave name but no cave.
+My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+
+As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+
+On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy's so it was looking like the only viable option was going to be to use a Total Station device which we don't have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+
+Any help would be appreciated.
+
+Nick
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190619/473cd20a/attachment.htm>
+
+From geospatial3d at gmail.com  Wed Jun 19 23:13:15 2019
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Wed, 19 Jun 2019 22:13:15 +0100
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+Message-ID: <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+
+Nick,
+
+I have both DistoX2 and LiDAR data for parts of the same cave.
+
+All the LiDAR scans were registered to create a single model as normal
+for LiDAR.
+The individual scans were then decimated in the Point Cloud Software
+using a suitable distance to nearest neighbour. I found Survex gets a
+bit overwhelmed with millions of LiDAR data so you may have to
+experiment with a suitable distance between adjacent LiDAR data. Each
+decimated individual scan was then output to LibreOffice Calc and new
+ranges, bearings and inclinations calculated to create single station
+Survex files with lots of splays, now all orientated the same way.
+Dummy traverse observations were created within Survex to link all the
+LiDAR scan stations based upon the Point Cloud registration
+coordinates and elevations of the scan stations.
+I then manually matched the Survex output of the above LiDAR data to
+some known DistoX2 observations or in your case, perhaps known show
+cave outline. You can do this within Survex by having your non-LiDAR
+data as another survey then using a Calibrate Compass figure (may
+require up to +/-180degrees) within the LiDAR Survex data to change
+the orientation so as to match the known and also setting one of the
+LiDAR stations within the Dummy traverse observations to coordinates
+and elevation that give a good fit with the known data. Several
+iterations are needed with these.
+
+Hope that is self explanatory.
+Has worked for me - I have a DistoX2 Survex model with very detailed
+LiDAR data in two large chambers - the resulting LOG file looks a bit
+weird eg.
+     1 8659-node.
+     1 19071-node.
+     1 21844-node.
+     1 22774-node.
+     1 23053-node.
+     1 24470-node.
+     1 25278-node.
+
+As a side note, part of my project includes a Show Cave and I have not
+had a problem with insitu metalwork there or on scaffolded sections of
+the cave. I have always kept the DistoX2 well away from metalwork and
+when the passage is narrow with metalwork, I have used an intermediate
+station with DistoX2 observations to it only, never from it.
+I have considered the use of turned angles to get through a serious
+metaliferous section - the Leica DST360 could do this for you or a
+small theodolite - use magnetic obs at each end to orientate it all.
+
+Kevin Dixon
+
+On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+>
+> Hi, Something a bit different for the clever people out there.
+>
+>
+>
+> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+>
+> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+>
+> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+>
+>
+>
+> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+>
+> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+>
+>
+>
+> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+>
+>
+>
+> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+>
+>
+>
+> Any help would be appreciated.
+>
+>
+>
+> Nick
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Thu Jun 20 09:26:59 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 20 Jun 2019 09:26:59 +0200
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+Message-ID: <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+
+I’m curios if there is a software able to create  vector map outline from cloud data automatically. 
+
+Martin
+
+Odesláno z iPhonu
+
+19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+
+> Nick,
+> 
+> I have both DistoX2 and LiDAR data for parts of the same cave.
+> 
+> All the LiDAR scans were registered to create a single model as normal
+> for LiDAR.
+> The individual scans were then decimated in the Point Cloud Software
+> using a suitable distance to nearest neighbour. I found Survex gets a
+> bit overwhelmed with millions of LiDAR data so you may have to
+> experiment with a suitable distance between adjacent LiDAR data. Each
+> decimated individual scan was then output to LibreOffice Calc and new
+> ranges, bearings and inclinations calculated to create single station
+> Survex files with lots of splays, now all orientated the same way.
+> Dummy traverse observations were created within Survex to link all the
+> LiDAR scan stations based upon the Point Cloud registration
+> coordinates and elevations of the scan stations.
+> I then manually matched the Survex output of the above LiDAR data to
+> some known DistoX2 observations or in your case, perhaps known show
+> cave outline. You can do this within Survex by having your non-LiDAR
+> data as another survey then using a Calibrate Compass figure (may
+> require up to +/-180degrees) within the LiDAR Survex data to change
+> the orientation so as to match the known and also setting one of the
+> LiDAR stations within the Dummy traverse observations to coordinates
+> and elevation that give a good fit with the known data. Several
+> iterations are needed with these.
+> 
+> Hope that is self explanatory.
+> Has worked for me - I have a DistoX2 Survex model with very detailed
+> LiDAR data in two large chambers - the resulting LOG file looks a bit
+> weird eg.
+>     1 8659-node.
+>     1 19071-node.
+>     1 21844-node.
+>     1 22774-node.
+>     1 23053-node.
+>     1 24470-node.
+>     1 25278-node.
+> 
+> As a side note, part of my project includes a Show Cave and I have not
+> had a problem with insitu metalwork there or on scaffolded sections of
+> the cave. I have always kept the DistoX2 well away from metalwork and
+> when the passage is narrow with metalwork, I have used an intermediate
+> station with DistoX2 observations to it only, never from it.
+> I have considered the use of turned angles to get through a serious
+> metaliferous section - the Leica DST360 could do this for you or a
+> small theodolite - use magnetic obs at each end to orientate it all.
+> 
+> Kevin Dixon
+> 
+>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+>> 
+>> Hi, Something a bit different for the clever people out there.
+>> 
+>> 
+>> 
+>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+>> 
+>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+>> 
+>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+>> 
+>> 
+>> 
+>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+>> 
+>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+>> 
+>> 
+>> 
+>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+>> 
+>> 
+>> 
+>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+>> 
+>> 
+>> 
+>> Any help would be appreciated.
+>> 
+>> 
+>> 
+>> Nick
+>> 
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From herich at speleodd.sk  Thu Jun 20 09:33:23 2019
+From: herich at speleodd.sk (Pavel Herich)
+Date: Thu, 20 Jun 2019 09:33:23 +0200
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+Message-ID: <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+
+This software should do it:
+https://geoslam.com/hub/
+P.
+
+
+Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+> I’m curios if there is a software able to create  vector map outline
+> from cloud data automatically.
+> 
+> Martin
+> 
+> Odesláno z iPhonu
+> 
+> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+> 
+>> Nick,
+>> 
+>> I have both DistoX2 and LiDAR data for parts of the same cave.
+>> 
+>> All the LiDAR scans were registered to create a single model as normal
+>> for LiDAR.
+>> The individual scans were then decimated in the Point Cloud Software
+>> using a suitable distance to nearest neighbour. I found Survex gets a
+>> bit overwhelmed with millions of LiDAR data so you may have to
+>> experiment with a suitable distance between adjacent LiDAR data. Each
+>> decimated individual scan was then output to LibreOffice Calc and new
+>> ranges, bearings and inclinations calculated to create single station
+>> Survex files with lots of splays, now all orientated the same way.
+>> Dummy traverse observations were created within Survex to link all the
+>> LiDAR scan stations based upon the Point Cloud registration
+>> coordinates and elevations of the scan stations.
+>> I then manually matched the Survex output of the above LiDAR data to
+>> some known DistoX2 observations or in your case, perhaps known show
+>> cave outline. You can do this within Survex by having your non-LiDAR
+>> data as another survey then using a Calibrate Compass figure (may
+>> require up to +/-180degrees) within the LiDAR Survex data to change
+>> the orientation so as to match the known and also setting one of the
+>> LiDAR stations within the Dummy traverse observations to coordinates
+>> and elevation that give a good fit with the known data. Several
+>> iterations are needed with these.
+>> 
+>> Hope that is self explanatory.
+>> Has worked for me - I have a DistoX2 Survex model with very detailed
+>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+>> weird eg.
+>>     1 8659-node.
+>>     1 19071-node.
+>>     1 21844-node.
+>>     1 22774-node.
+>>     1 23053-node.
+>>     1 24470-node.
+>>     1 25278-node.
+>> 
+>> As a side note, part of my project includes a Show Cave and I have not
+>> had a problem with insitu metalwork there or on scaffolded sections of
+>> the cave. I have always kept the DistoX2 well away from metalwork and
+>> when the passage is narrow with metalwork, I have used an intermediate
+>> station with DistoX2 observations to it only, never from it.
+>> I have considered the use of turned angles to get through a serious
+>> metaliferous section - the Leica DST360 could do this for you or a
+>> small theodolite - use magnetic obs at each end to orientate it all.
+>> 
+>> Kevin Dixon
+>> 
+>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> 
+>>> wrote:
+>>> 
+>>> Hi, Something a bit different for the clever people out there.
+>>> 
+>>> 
+>>> 
+>>> I have been playing with some 3d scan data and have attempted to use 
+>>> it to create a Therion map.
+>>> 
+>>> Firstly we put created an outline of the cave passage using point 
+>>> cloud software and exported as dxf.
+>>> 
+>>> I turned the dxf into a background sketch and drew around it and 
+>>> could output a nice pdf of our cave. Also did a manual scaling. So 
+>>> far so good.
+>>> 
+>>> 
+>>> 
+>>> I added a dummy station and gave it entrance coordinates, then 
+>>> exported as a KML model. When I open the output file Google Earth 
+>>> fly’s to the correct spot and shows a pin with the cave name but no 
+>>> cave.
+>>> 
+>>> My question is , does this fail because we have no survey data, 
+>>> centreline etc and it is impossible to do this or am I missing 
+>>> something.
+>>> 
+>>> 
+>>> 
+>>> As an alternative I can export to an esri shp file and run that 
+>>> though Qgis and get what I want but as I am going to attempt to 
+>>> combine the 3 scan data with a several normal disto surveys I would 
+>>> like to see Therion Kml output work if possible to save lots of 
+>>> messing around. (GIS makes my head hurt)
+>>> 
+>>> 
+>>> 
+>>> On a side note using the point cloud software I can slice though the 
+>>> scan data on different planes and pick up lots of detail, rocks and 
+>>> boulders etc. Using the dxf/background image method I should be able 
+>>> to get a very accurate representation of the passage. I can hear you 
+>>> all saying what the hell is he doing that for when he could just 
+>>> survey the cave in the normal way! Well the cave is a show cave and 
+>>> absolutely rammed with metal walkways and cables. Disto tests showed 
+>>> wild inaccuracy’s so it was looking like the only viable option was 
+>>> going to be to use a Total Station device which we don’t have.  We 
+>>> then had a very kind offer to scan the cave, this has proved to be 
+>>> very interesting but drawing a normal map is a bit of a challenge 
+>>> although it seems not impossible.
+>>> 
+>>> 
+>>> 
+>>> Any help would be appreciated.
+>>> 
+>>> 
+>>> 
+>>> Nick
+>>> 
+>>> 
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Thu Jun 20 10:36:15 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 20 Jun 2019 10:36:15 +0200
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+Message-ID: <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+
+Isn’t it as call for nuclear aircraft carrier to kill a fly?
+
+Martin
+
+Odesláno z iPhonu
+
+20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+
+> This software should do it:
+> https://geoslam.com/hub/
+> P.
+> 
+> 
+> Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+>> I’m curios if there is a software able to create  vector map outline
+>> from cloud data automatically.
+>> Martin
+>> Odesláno z iPhonu
+>> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+>>> Nick,
+>>> I have both DistoX2 and LiDAR data for parts of the same cave.
+>>> All the LiDAR scans were registered to create a single model as normal
+>>> for LiDAR.
+>>> The individual scans were then decimated in the Point Cloud Software
+>>> using a suitable distance to nearest neighbour. I found Survex gets a
+>>> bit overwhelmed with millions of LiDAR data so you may have to
+>>> experiment with a suitable distance between adjacent LiDAR data. Each
+>>> decimated individual scan was then output to LibreOffice Calc and new
+>>> ranges, bearings and inclinations calculated to create single station
+>>> Survex files with lots of splays, now all orientated the same way.
+>>> Dummy traverse observations were created within Survex to link all the
+>>> LiDAR scan stations based upon the Point Cloud registration
+>>> coordinates and elevations of the scan stations.
+>>> I then manually matched the Survex output of the above LiDAR data to
+>>> some known DistoX2 observations or in your case, perhaps known show
+>>> cave outline. You can do this within Survex by having your non-LiDAR
+>>> data as another survey then using a Calibrate Compass figure (may
+>>> require up to +/-180degrees) within the LiDAR Survex data to change
+>>> the orientation so as to match the known and also setting one of the
+>>> LiDAR stations within the Dummy traverse observations to coordinates
+>>> and elevation that give a good fit with the known data. Several
+>>> iterations are needed with these.
+>>> Hope that is self explanatory.
+>>> Has worked for me - I have a DistoX2 Survex model with very detailed
+>>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+>>> weird eg.
+>>>    1 8659-node.
+>>>    1 19071-node.
+>>>    1 21844-node.
+>>>    1 22774-node.
+>>>    1 23053-node.
+>>>    1 24470-node.
+>>>    1 25278-node.
+>>> As a side note, part of my project includes a Show Cave and I have not
+>>> had a problem with insitu metalwork there or on scaffolded sections of
+>>> the cave. I have always kept the DistoX2 well away from metalwork and
+>>> when the passage is narrow with metalwork, I have used an intermediate
+>>> station with DistoX2 observations to it only, never from it.
+>>> I have considered the use of turned angles to get through a serious
+>>> metaliferous section - the Leica DST360 could do this for you or a
+>>> small theodolite - use magnetic obs at each end to orientate it all.
+>>> Kevin Dixon
+>>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+>>>> Hi, Something a bit different for the clever people out there.
+>>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+>>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+>>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+>>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+>>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+>>>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+>>>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+>>>> Any help would be appreciated.
+>>>> Nick
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From geospatial3d at gmail.com  Thu Jun 20 12:43:53 2019
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Thu, 20 Jun 2019 11:43:53 +0100
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+ <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+Message-ID: <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+
+Those with their own LiDAR instrument will usually have access to
+their LiDAR manufacturer Software and this often includes automated
+rendering of man-made surfaces - results quality depend a lot on the
+LiDAR resolution and accuracy. Natural surfaces such as caves are more
+difficult for Point Cloud software to deal with automatically.
+
+For the rest of us, you may wish to consider the following open source
+software for Point Clouds:
+MeshLab - lots of functionality, poor interface, I used this a decade
+ago when there were few open source options
+CloudCompare - nice interface, I have not used it for a while
+ParaView - uses PCL (Point Cloud Library), PCL can be used direct
+depending on your coding ability
+PDAL - a library of point cloud tools, need to use something like QGIS
+for results visualisation
+Blender - more for 3D videographics
+3DTK - 3D Toolkit, not familiar with
+
+Other options are available.
+
+Kevin Dixon
+
+On Thu, Jun 20, 2019 at 9:36 AM Martin Sluka via Therion
+<therion at speleo.sk> wrote:
+>
+> Isn’t it as call for nuclear aircraft carrier to kill a fly?
+>
+> Martin
+>
+> Odesláno z iPhonu
+>
+> 20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+>
+> > This software should do it:
+> > https://geoslam.com/hub/
+> > P.
+> >
+> >
+> > Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+> >> I’m curios if there is a software able to create  vector map outline
+> >> from cloud data automatically.
+> >> Martin
+> >> Odesláno z iPhonu
+> >> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+> >>> Nick,
+> >>> I have both DistoX2 and LiDAR data for parts of the same cave.
+> >>> All the LiDAR scans were registered to create a single model as normal
+> >>> for LiDAR.
+> >>> The individual scans were then decimated in the Point Cloud Software
+> >>> using a suitable distance to nearest neighbour. I found Survex gets a
+> >>> bit overwhelmed with millions of LiDAR data so you may have to
+> >>> experiment with a suitable distance between adjacent LiDAR data. Each
+> >>> decimated individual scan was then output to LibreOffice Calc and new
+> >>> ranges, bearings and inclinations calculated to create single station
+> >>> Survex files with lots of splays, now all orientated the same way.
+> >>> Dummy traverse observations were created within Survex to link all the
+> >>> LiDAR scan stations based upon the Point Cloud registration
+> >>> coordinates and elevations of the scan stations.
+> >>> I then manually matched the Survex output of the above LiDAR data to
+> >>> some known DistoX2 observations or in your case, perhaps known show
+> >>> cave outline. You can do this within Survex by having your non-LiDAR
+> >>> data as another survey then using a Calibrate Compass figure (may
+> >>> require up to +/-180degrees) within the LiDAR Survex data to change
+> >>> the orientation so as to match the known and also setting one of the
+> >>> LiDAR stations within the Dummy traverse observations to coordinates
+> >>> and elevation that give a good fit with the known data. Several
+> >>> iterations are needed with these.
+> >>> Hope that is self explanatory.
+> >>> Has worked for me - I have a DistoX2 Survex model with very detailed
+> >>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+> >>> weird eg.
+> >>>    1 8659-node.
+> >>>    1 19071-node.
+> >>>    1 21844-node.
+> >>>    1 22774-node.
+> >>>    1 23053-node.
+> >>>    1 24470-node.
+> >>>    1 25278-node.
+> >>> As a side note, part of my project includes a Show Cave and I have not
+> >>> had a problem with insitu metalwork there or on scaffolded sections of
+> >>> the cave. I have always kept the DistoX2 well away from metalwork and
+> >>> when the passage is narrow with metalwork, I have used an intermediate
+> >>> station with DistoX2 observations to it only, never from it.
+> >>> I have considered the use of turned angles to get through a serious
+> >>> metaliferous section - the Leica DST360 could do this for you or a
+> >>> small theodolite - use magnetic obs at each end to orientate it all.
+> >>> Kevin Dixon
+> >>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+> >>>> Hi, Something a bit different for the clever people out there.
+> >>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+> >>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+> >>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+> >>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+> >>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+> >>>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+> >>>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+> >>>> Any help would be appreciated.
+> >>>> Nick
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From Nick at pff.uk.com  Thu Jun 20 13:21:00 2019
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Thu, 20 Jun 2019 11:21:00 +0000
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+ <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+ <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+Message-ID: <eea158aa750c42cf8c270f86fc3e9367@PFF-EXCH1.pff.local>
+
+Thanks for all the info Kevin.
+
+I think I follow and understand your workflow.
+
+I have been using CloudCompare and MeshLab, however the best results have come from very expensive LiDAR instrument manufactures software and other 3rd party paid for software. Bit out of my budget I'm afraid. To a great extent this may be me not knowing how to use the open source software correctly so as ever it's work in progress.
+
+Surface scan using a drone next, can't wait!
+
+Has anybody got an answer to the Therion KML model output question, what information does Therion need to create this? It seems to me that just having cave walls drawn is not enough even though I can get good pdf output.
+
+Nick
+
+-----Original Message-----
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of kevin dixon
+Sent: 20 June 2019 11:44
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Using 3d Scan Data To Create A Map
+
+Those with their own LiDAR instrument will usually have access to their LiDAR manufacturer Software and this often includes automated rendering of man-made surfaces - results quality depend a lot on the LiDAR resolution and accuracy. Natural surfaces such as caves are more difficult for Point Cloud software to deal with automatically.
+
+For the rest of us, you may wish to consider the following open source software for Point Clouds:
+MeshLab - lots of functionality, poor interface, I used this a decade ago when there were few open source options CloudCompare - nice interface, I have not used it for a while ParaView - uses PCL (Point Cloud Library), PCL can be used direct depending on your coding ability PDAL - a library of point cloud tools, need to use something like QGIS for results visualisation Blender - more for 3D videographics 3DTK - 3D Toolkit, not familiar with
+
+Other options are available.
+
+Kevin Dixon
+
+On Thu, Jun 20, 2019 at 9:36 AM Martin Sluka via Therion <therion at speleo.sk> wrote:
+>
+> Isn’t it as call for nuclear aircraft carrier to kill a fly?
+>
+> Martin
+>
+> Odesláno z iPhonu
+>
+> 20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+>
+> > This software should do it:
+> > https://geoslam.com/hub/
+> > P.
+> >
+> >
+> > Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+> >> I’m curios if there is a software able to create  vector map 
+> >> outline from cloud data automatically.
+> >> Martin
+> >> Odesláno z iPhonu
+> >> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+> >>> Nick,
+> >>> I have both DistoX2 and LiDAR data for parts of the same cave.
+> >>> All the LiDAR scans were registered to create a single model as 
+> >>> normal for LiDAR.
+> >>> The individual scans were then decimated in the Point Cloud 
+> >>> Software using a suitable distance to nearest neighbour. I found 
+> >>> Survex gets a bit overwhelmed with millions of LiDAR data so you 
+> >>> may have to experiment with a suitable distance between adjacent 
+> >>> LiDAR data. Each decimated individual scan was then output to 
+> >>> LibreOffice Calc and new ranges, bearings and inclinations 
+> >>> calculated to create single station Survex files with lots of splays, now all orientated the same way.
+> >>> Dummy traverse observations were created within Survex to link all 
+> >>> the LiDAR scan stations based upon the Point Cloud registration 
+> >>> coordinates and elevations of the scan stations.
+> >>> I then manually matched the Survex output of the above LiDAR data 
+> >>> to some known DistoX2 observations or in your case, perhaps known 
+> >>> show cave outline. You can do this within Survex by having your 
+> >>> non-LiDAR data as another survey then using a Calibrate Compass 
+> >>> figure (may require up to +/-180degrees) within the LiDAR Survex 
+> >>> data to change the orientation so as to match the known and also 
+> >>> setting one of the LiDAR stations within the Dummy traverse 
+> >>> observations to coordinates and elevation that give a good fit 
+> >>> with the known data. Several iterations are needed with these.
+> >>> Hope that is self explanatory.
+> >>> Has worked for me - I have a DistoX2 Survex model with very 
+> >>> detailed LiDAR data in two large chambers - the resulting LOG file 
+> >>> looks a bit weird eg.
+> >>>    1 8659-node.
+> >>>    1 19071-node.
+> >>>    1 21844-node.
+> >>>    1 22774-node.
+> >>>    1 23053-node.
+> >>>    1 24470-node.
+> >>>    1 25278-node.
+> >>> As a side note, part of my project includes a Show Cave and I have 
+> >>> not had a problem with insitu metalwork there or on scaffolded 
+> >>> sections of the cave. I have always kept the DistoX2 well away 
+> >>> from metalwork and when the passage is narrow with metalwork, I 
+> >>> have used an intermediate station with DistoX2 observations to it only, never from it.
+> >>> I have considered the use of turned angles to get through a 
+> >>> serious metaliferous section - the Leica DST360 could do this for 
+> >>> you or a small theodolite - use magnetic obs at each end to orientate it all.
+> >>> Kevin Dixon
+> >>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+> >>>> Hi, Something a bit different for the clever people out there.
+> >>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+> >>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+> >>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+> >>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+> >>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+> >>>> As an alternative I can export to an esri shp file and run that 
+> >>>> though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt) On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+> >>>> Any help would be appreciated.
+> >>>> Nick
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+From martinsluka at mac.com  Thu Jun 20 19:55:37 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 20 Jun 2019 19:55:37 +0200
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+ <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+ <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+Message-ID: <10348353-47E6-4DFA-94F0-A9A01482D97B@mac.com>
+
+Kevin, is any of those softwares able to create vector outline of projection of cloud to a plane?
+
+Martin
+
+> 20. 6. 2019 v 12:43, kevin dixon <geospatial3d at gmail.com>:
+> 
+> Those with their own LiDAR instrument will usually have access to
+> their LiDAR manufacturer Software and this often includes automated
+> rendering of man-made surfaces - results quality depend a lot on the
+> LiDAR resolution and accuracy. Natural surfaces such as caves are more
+> difficult for Point Cloud software to deal with automatically.
+> 
+> For the rest of us, you may wish to consider the following open source
+> software for Point Clouds:
+> MeshLab - lots of functionality, poor interface, I used this a decade
+> ago when there were few open source options
+> CloudCompare - nice interface, I have not used it for a while
+> ParaView - uses PCL (Point Cloud Library), PCL can be used direct
+> depending on your coding ability
+> PDAL - a library of point cloud tools, need to use something like QGIS
+> for results visualisation
+> Blender - more for 3D videographics
+> 3DTK - 3D Toolkit, not familiar with
+> 
+> Other options are available.
+> 
+> Kevin Dixon
+> 
+> On Thu, Jun 20, 2019 at 9:36 AM Martin Sluka via Therion
+> <therion at speleo.sk> wrote:
+>> 
+>> Isn’t it as call for nuclear aircraft carrier to kill a fly?
+>> 
+>> Martin
+>> 
+>> Odesláno z iPhonu
+>> 
+>> 20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+>> 
+>>> This software should do it:
+>>> https://geoslam.com/hub/
+>>> P.
+>>> 
+>>> 
+>>> Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+>>>> I’m curios if there is a software able to create  vector map outline
+>>>> from cloud data automatically.
+>>>> Martin
+>>>> Odesláno z iPhonu
+>>>> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+>>>>> Nick,
+>>>>> I have both DistoX2 and LiDAR data for parts of the same cave.
+>>>>> All the LiDAR scans were registered to create a single model as normal
+>>>>> for LiDAR.
+>>>>> The individual scans were then decimated in the Point Cloud Software
+>>>>> using a suitable distance to nearest neighbour. I found Survex gets a
+>>>>> bit overwhelmed with millions of LiDAR data so you may have to
+>>>>> experiment with a suitable distance between adjacent LiDAR data. Each
+>>>>> decimated individual scan was then output to LibreOffice Calc and new
+>>>>> ranges, bearings and inclinations calculated to create single station
+>>>>> Survex files with lots of splays, now all orientated the same way.
+>>>>> Dummy traverse observations were created within Survex to link all the
+>>>>> LiDAR scan stations based upon the Point Cloud registration
+>>>>> coordinates and elevations of the scan stations.
+>>>>> I then manually matched the Survex output of the above LiDAR data to
+>>>>> some known DistoX2 observations or in your case, perhaps known show
+>>>>> cave outline. You can do this within Survex by having your non-LiDAR
+>>>>> data as another survey then using a Calibrate Compass figure (may
+>>>>> require up to +/-180degrees) within the LiDAR Survex data to change
+>>>>> the orientation so as to match the known and also setting one of the
+>>>>> LiDAR stations within the Dummy traverse observations to coordinates
+>>>>> and elevation that give a good fit with the known data. Several
+>>>>> iterations are needed with these.
+>>>>> Hope that is self explanatory.
+>>>>> Has worked for me - I have a DistoX2 Survex model with very detailed
+>>>>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+>>>>> weird eg.
+>>>>>   1 8659-node.
+>>>>>   1 19071-node.
+>>>>>   1 21844-node.
+>>>>>   1 22774-node.
+>>>>>   1 23053-node.
+>>>>>   1 24470-node.
+>>>>>   1 25278-node.
+>>>>> As a side note, part of my project includes a Show Cave and I have not
+>>>>> had a problem with insitu metalwork there or on scaffolded sections of
+>>>>> the cave. I have always kept the DistoX2 well away from metalwork and
+>>>>> when the passage is narrow with metalwork, I have used an intermediate
+>>>>> station with DistoX2 observations to it only, never from it.
+>>>>> I have considered the use of turned angles to get through a serious
+>>>>> metaliferous section - the Leica DST360 could do this for you or a
+>>>>> small theodolite - use magnetic obs at each end to orientate it all.
+>>>>> Kevin Dixon
+>>>>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+>>>>>> Hi, Something a bit different for the clever people out there.
+>>>>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+>>>>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+>>>>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+>>>>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+>>>>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+>>>>>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+>>>>>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+>>>>>> Any help would be appreciated.
+>>>>>> Nick
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From geospatial3d at gmail.com  Thu Jun 20 21:29:48 2019
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Thu, 20 Jun 2019 20:29:48 +0100
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <10348353-47E6-4DFA-94F0-A9A01482D97B@mac.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+ <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+ <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+ <10348353-47E6-4DFA-94F0-A9A01482D97B@mac.com>
+Message-ID: <CAAUsM+NTtT6=RkdcFxXGTjcJXk2-X0Q-2=DJ9jW0nBzyb8vg0w@mail.gmail.com>
+
+I do not know.
+
+I have in the past hand cranked a result by plotting LiDAR data 2D
+(whole dataset or sub-slices) and manually selecting outer points to
+create an outline or cross section but that was circa ten years ago.
+
+An 'automated' approach will need some sort of fractal control -
+coastline length problem.
+
+Kevin
+
+On Thu, Jun 20, 2019 at 6:56 PM Martin Sluka via Therion
+<therion at speleo.sk> wrote:
+>
+> Kevin, is any of those softwares able to create vector outline of projection of cloud to a plane?
+>
+> Martin
+>
+> > 20. 6. 2019 v 12:43, kevin dixon <geospatial3d at gmail.com>:
+> >
+> > Those with their own LiDAR instrument will usually have access to
+> > their LiDAR manufacturer Software and this often includes automated
+> > rendering of man-made surfaces - results quality depend a lot on the
+> > LiDAR resolution and accuracy. Natural surfaces such as caves are more
+> > difficult for Point Cloud software to deal with automatically.
+> >
+> > For the rest of us, you may wish to consider the following open source
+> > software for Point Clouds:
+> > MeshLab - lots of functionality, poor interface, I used this a decade
+> > ago when there were few open source options
+> > CloudCompare - nice interface, I have not used it for a while
+> > ParaView - uses PCL (Point Cloud Library), PCL can be used direct
+> > depending on your coding ability
+> > PDAL - a library of point cloud tools, need to use something like QGIS
+> > for results visualisation
+> > Blender - more for 3D videographics
+> > 3DTK - 3D Toolkit, not familiar with
+> >
+> > Other options are available.
+> >
+> > Kevin Dixon
+> >
+> > On Thu, Jun 20, 2019 at 9:36 AM Martin Sluka via Therion
+> > <therion at speleo.sk> wrote:
+> >>
+> >> Isn’t it as call for nuclear aircraft carrier to kill a fly?
+> >>
+> >> Martin
+> >>
+> >> Odesláno z iPhonu
+> >>
+> >> 20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+> >>
+> >>> This software should do it:
+> >>> https://geoslam.com/hub/
+> >>> P.
+> >>>
+> >>>
+> >>> Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+> >>>> I’m curios if there is a software able to create  vector map outline
+> >>>> from cloud data automatically.
+> >>>> Martin
+> >>>> Odesláno z iPhonu
+> >>>> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+> >>>>> Nick,
+> >>>>> I have both DistoX2 and LiDAR data for parts of the same cave.
+> >>>>> All the LiDAR scans were registered to create a single model as normal
+> >>>>> for LiDAR.
+> >>>>> The individual scans were then decimated in the Point Cloud Software
+> >>>>> using a suitable distance to nearest neighbour. I found Survex gets a
+> >>>>> bit overwhelmed with millions of LiDAR data so you may have to
+> >>>>> experiment with a suitable distance between adjacent LiDAR data. Each
+> >>>>> decimated individual scan was then output to LibreOffice Calc and new
+> >>>>> ranges, bearings and inclinations calculated to create single station
+> >>>>> Survex files with lots of splays, now all orientated the same way.
+> >>>>> Dummy traverse observations were created within Survex to link all the
+> >>>>> LiDAR scan stations based upon the Point Cloud registration
+> >>>>> coordinates and elevations of the scan stations.
+> >>>>> I then manually matched the Survex output of the above LiDAR data to
+> >>>>> some known DistoX2 observations or in your case, perhaps known show
+> >>>>> cave outline. You can do this within Survex by having your non-LiDAR
+> >>>>> data as another survey then using a Calibrate Compass figure (may
+> >>>>> require up to +/-180degrees) within the LiDAR Survex data to change
+> >>>>> the orientation so as to match the known and also setting one of the
+> >>>>> LiDAR stations within the Dummy traverse observations to coordinates
+> >>>>> and elevation that give a good fit with the known data. Several
+> >>>>> iterations are needed with these.
+> >>>>> Hope that is self explanatory.
+> >>>>> Has worked for me - I have a DistoX2 Survex model with very detailed
+> >>>>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+> >>>>> weird eg.
+> >>>>>   1 8659-node.
+> >>>>>   1 19071-node.
+> >>>>>   1 21844-node.
+> >>>>>   1 22774-node.
+> >>>>>   1 23053-node.
+> >>>>>   1 24470-node.
+> >>>>>   1 25278-node.
+> >>>>> As a side note, part of my project includes a Show Cave and I have not
+> >>>>> had a problem with insitu metalwork there or on scaffolded sections of
+> >>>>> the cave. I have always kept the DistoX2 well away from metalwork and
+> >>>>> when the passage is narrow with metalwork, I have used an intermediate
+> >>>>> station with DistoX2 observations to it only, never from it.
+> >>>>> I have considered the use of turned angles to get through a serious
+> >>>>> metaliferous section - the Leica DST360 could do this for you or a
+> >>>>> small theodolite - use magnetic obs at each end to orientate it all.
+> >>>>> Kevin Dixon
+> >>>>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+> >>>>>> Hi, Something a bit different for the clever people out there.
+> >>>>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+> >>>>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+> >>>>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+> >>>>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+> >>>>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+> >>>>>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+> >>>>>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+> >>>>>> Any help would be appreciated.
+> >>>>>> Nick
+> >>>>>> _______________________________________________
+> >>>>>> Therion mailing list
+> >>>>>> Therion at speleo.sk
+> >>>>>> https://mailman.speleo.sk/listinfo/therion
+> >>>>> _______________________________________________
+> >>>>> Therion mailing list
+> >>>>> Therion at speleo.sk
+> >>>>> https://mailman.speleo.sk/listinfo/therion
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >>
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From alastairgott at hotmail.com  Thu Jun 20 21:49:23 2019
+From: alastairgott at hotmail.com (alastair gott)
+Date: Thu, 20 Jun 2019 19:49:23 +0000
+Subject: [Therion] Using 3d Scan Data To Create A Map
+In-Reply-To: <CAAUsM+NTtT6=RkdcFxXGTjcJXk2-X0Q-2=DJ9jW0nBzyb8vg0w@mail.gmail.com>
+References: <3bf461a87f9d4333a0d7cde52b1dd407@PFF-EXCH1.pff.local>
+ <CAAUsM+Mm2zN6WRAKLXw3oWLEJ+nNOQNS5YcjgDrWxYdajjZ_dw@mail.gmail.com>
+ <27087262-2FA0-415E-9016-0D51D0FBDE88@mac.com>
+ <e3647ecff04f11c6e51a0b153a2598c3@speleodd.sk>
+ <63F14FC4-7FB2-47E3-8A9C-F3C6A72CE5E8@mac.com>
+ <CAAUsM+MdFmT+aeo2Fn855VQi-mBFOYM3pyfr+8MqoUPEw9HHgQ@mail.gmail.com>
+ <10348353-47E6-4DFA-94F0-A9A01482D97B@mac.com>,
+ <CAAUsM+NTtT6=RkdcFxXGTjcJXk2-X0Q-2=DJ9jW0nBzyb8vg0w@mail.gmail.com>
+Message-ID: <AM0PR03MB4867452FBDDCED3BF07FEB82D6E40@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Just musing, KML doesn’t really give you anything other than the walls?
+
+Therefore it doesn’t really matter if you use the base point for the 3D scan data and trace around the walls to whatever detail you want. Using the 3D scan data as a background image on your th2 file.
+
+As far as I know the KML only really gives you plan data, perhaps a negligible amount of vertical data, but I’ve never really played about with it.
+
+I’ve been able to create KML by using one or two points of a .3D file in a mile (or half a mile) of passage. The introduction of less points just increases the warping of the walls.
+
+It just depends on what accuracy you want, 3D scan will give you pinpoint accuracy, how you use that is up to you.
+
+I hope you get on well with the introduction of 3D scan data :)
+
+See you soon Nick!
+
+Al.
+
+Sent from my iPhone
+
+> On 20 Jun 2019, at 20:30, kevin dixon <geospatial3d at gmail.com> wrote:
+> 
+> I do not know.
+> 
+> I have in the past hand cranked a result by plotting LiDAR data 2D
+> (whole dataset or sub-slices) and manually selecting outer points to
+> create an outline or cross section but that was circa ten years ago.
+> 
+> An 'automated' approach will need some sort of fractal control -
+> coastline length problem.
+> 
+> Kevin
+> 
+> On Thu, Jun 20, 2019 at 6:56 PM Martin Sluka via Therion
+> <therion at speleo.sk> wrote:
+>> 
+>> Kevin, is any of those softwares able to create vector outline of projection of cloud to a plane?
+>> 
+>> Martin
+>> 
+>>> 20. 6. 2019 v 12:43, kevin dixon <geospatial3d at gmail.com>:
+>>> 
+>>> Those with their own LiDAR instrument will usually have access to
+>>> their LiDAR manufacturer Software and this often includes automated
+>>> rendering of man-made surfaces - results quality depend a lot on the
+>>> LiDAR resolution and accuracy. Natural surfaces such as caves are more
+>>> difficult for Point Cloud software to deal with automatically.
+>>> 
+>>> For the rest of us, you may wish to consider the following open source
+>>> software for Point Clouds:
+>>> MeshLab - lots of functionality, poor interface, I used this a decade
+>>> ago when there were few open source options
+>>> CloudCompare - nice interface, I have not used it for a while
+>>> ParaView - uses PCL (Point Cloud Library), PCL can be used direct
+>>> depending on your coding ability
+>>> PDAL - a library of point cloud tools, need to use something like QGIS
+>>> for results visualisation
+>>> Blender - more for 3D videographics
+>>> 3DTK - 3D Toolkit, not familiar with
+>>> 
+>>> Other options are available.
+>>> 
+>>> Kevin Dixon
+>>> 
+>>> On Thu, Jun 20, 2019 at 9:36 AM Martin Sluka via Therion
+>>> <therion at speleo.sk> wrote:
+>>>> 
+>>>> Isn’t it as call for nuclear aircraft carrier to kill a fly?
+>>>> 
+>>>> Martin
+>>>> 
+>>>> Odesláno z iPhonu
+>>>> 
+>>>> 20. 6. 2019 v 9:33, Pavel Herich <herich at speleodd.sk>:
+>>>> 
+>>>>> This software should do it:
+>>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgeoslam.com%2Fhub%2F&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213530576&amp;sdata=xAonwt7nb%2BlKTnV25024kZpGe0bAk2dGxC6o2%2B0S%2BNc%3D&amp;reserved=0
+>>>>> P.
+>>>>> 
+>>>>> 
+>>>>> Dňa 2019-06-20 09:26 Martin Sluka via Therion napísal(a):
+>>>>>> I’m curios if there is a software able to create  vector map outline
+>>>>>> from cloud data automatically.
+>>>>>> Martin
+>>>>>> Odesláno z iPhonu
+>>>>>> 19. 6. 2019 v 23:13, kevin dixon <geospatial3d at gmail.com>:
+>>>>>>> Nick,
+>>>>>>> I have both DistoX2 and LiDAR data for parts of the same cave.
+>>>>>>> All the LiDAR scans were registered to create a single model as normal
+>>>>>>> for LiDAR.
+>>>>>>> The individual scans were then decimated in the Point Cloud Software
+>>>>>>> using a suitable distance to nearest neighbour. I found Survex gets a
+>>>>>>> bit overwhelmed with millions of LiDAR data so you may have to
+>>>>>>> experiment with a suitable distance between adjacent LiDAR data. Each
+>>>>>>> decimated individual scan was then output to LibreOffice Calc and new
+>>>>>>> ranges, bearings and inclinations calculated to create single station
+>>>>>>> Survex files with lots of splays, now all orientated the same way.
+>>>>>>> Dummy traverse observations were created within Survex to link all the
+>>>>>>> LiDAR scan stations based upon the Point Cloud registration
+>>>>>>> coordinates and elevations of the scan stations.
+>>>>>>> I then manually matched the Survex output of the above LiDAR data to
+>>>>>>> some known DistoX2 observations or in your case, perhaps known show
+>>>>>>> cave outline. You can do this within Survex by having your non-LiDAR
+>>>>>>> data as another survey then using a Calibrate Compass figure (may
+>>>>>>> require up to +/-180degrees) within the LiDAR Survex data to change
+>>>>>>> the orientation so as to match the known and also setting one of the
+>>>>>>> LiDAR stations within the Dummy traverse observations to coordinates
+>>>>>>> and elevation that give a good fit with the known data. Several
+>>>>>>> iterations are needed with these.
+>>>>>>> Hope that is self explanatory.
+>>>>>>> Has worked for me - I have a DistoX2 Survex model with very detailed
+>>>>>>> LiDAR data in two large chambers - the resulting LOG file looks a bit
+>>>>>>> weird eg.
+>>>>>>>  1 8659-node.
+>>>>>>>  1 19071-node.
+>>>>>>>  1 21844-node.
+>>>>>>>  1 22774-node.
+>>>>>>>  1 23053-node.
+>>>>>>>  1 24470-node.
+>>>>>>>  1 25278-node.
+>>>>>>> As a side note, part of my project includes a Show Cave and I have not
+>>>>>>> had a problem with insitu metalwork there or on scaffolded sections of
+>>>>>>> the cave. I have always kept the DistoX2 well away from metalwork and
+>>>>>>> when the passage is narrow with metalwork, I have used an intermediate
+>>>>>>> station with DistoX2 observations to it only, never from it.
+>>>>>>> I have considered the use of turned angles to get through a serious
+>>>>>>> metaliferous section - the Leica DST360 could do this for you or a
+>>>>>>> small theodolite - use magnetic obs at each end to orientate it all.
+>>>>>>> Kevin Dixon
+>>>>>>>> On Wed, Jun 19, 2019 at 9:02 PM Nick Bairstow <Nick at pff.uk.com> wrote:
+>>>>>>>> Hi, Something a bit different for the clever people out there.
+>>>>>>>> I have been playing with some 3d scan data and have attempted to use it to create a Therion map.
+>>>>>>>> Firstly we put created an outline of the cave passage using point cloud software and exported as dxf.
+>>>>>>>> I turned the dxf into a background sketch and drew around it and could output a nice pdf of our cave. Also did a manual scaling. So far so good.
+>>>>>>>> I added a dummy station and gave it entrance coordinates, then exported as a KML model. When I open the output file Google Earth fly’s to the correct spot and shows a pin with the cave name but no cave.
+>>>>>>>> My question is , does this fail because we have no survey data, centreline etc and it is impossible to do this or am I missing something.
+>>>>>>>> As an alternative I can export to an esri shp file and run that though Qgis and get what I want but as I am going to attempt to combine the 3 scan data with a several normal disto surveys I would like to see Therion Kml output work if possible to save lots of messing around. (GIS makes my head hurt)
+>>>>>>>> On a side note using the point cloud software I can slice though the scan data on different planes and pick up lots of detail, rocks and boulders etc. Using the dxf/background image method I should be able to get a very accurate representation of the passage. I can hear you all saying what the hell is he doing that for when he could just survey the cave in the normal way! Well the cave is a show cave and absolutely rammed with metal walkways and cables. Disto tests showed wild inaccuracy’s so it was looking like the only viable option was going to be to use a Total Station device which we don’t have.  We then had a very kind offer to scan the cave, this has proved to be very interesting but drawing a normal map is a bit of a challenge although it seems not impossible.
+>>>>>>>> Any help would be appreciated.
+>>>>>>>> Nick
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk
+>>>>>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213530576&amp;sdata=K0fFnL9GqnBx%2FxkNJ5RaZyucLvu0Tqp8fMSoUgtzXGU%3D&amp;reserved=0
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213530576&amp;sdata=K0fFnL9GqnBx%2FxkNJ5RaZyucLvu0Tqp8fMSoUgtzXGU%3D&amp;reserved=0
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213530576&amp;sdata=K0fFnL9GqnBx%2FxkNJ5RaZyucLvu0Tqp8fMSoUgtzXGU%3D&amp;reserved=0
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213540575&amp;sdata=N0El%2FsIWaCQ6Z5%2BuGS36ovSkVRIOuMpf326G5wPkkU8%3D&amp;reserved=0
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213540575&amp;sdata=N0El%2FsIWaCQ6Z5%2BuGS36ovSkVRIOuMpf326G5wPkkU8%3D&amp;reserved=0
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213540575&amp;sdata=N0El%2FsIWaCQ6Z5%2BuGS36ovSkVRIOuMpf326G5wPkkU8%3D&amp;reserved=0
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213540575&amp;sdata=N0El%2FsIWaCQ6Z5%2BuGS36ovSkVRIOuMpf326G5wPkkU8%3D&amp;reserved=0
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://nam04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7C4a1bc8d4138e4cb217e308d6f5b5ba83%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636966558213540575&amp;sdata=N0El%2FsIWaCQ6Z5%2BuGS36ovSkVRIOuMpf326G5wPkkU8%3D&amp;reserved=0
+
+From md at foxel.org  Mon Jun 24 06:23:23 2019
+From: md at foxel.org (Max D)
+Date: Mon, 24 Jun 2019 06:23:23 +0200
+Subject: [Therion] Different Color for Rocks?
+Message-ID: <25C689CA-CC55-40F7-99F0-BE64E4AD67B4@foxel.org>
+
+Currently if I have a closed `rock-border` the contents (the rock) will be drawn slightly darker than the passage fill due to transparency and this area being painted twice - see http://filez.foxel.org/e817c23fd65d
+
+Is it possible to fill rocks with an other color than the  passage fill color?
+
+Best regards
+
+--max
+
+
+
+From martinsluka at mac.com  Mon Jun 24 07:20:18 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 24 Jun 2019 07:20:18 +0200
+Subject: [Therion] Different Color for Rocks?
+In-Reply-To: <25C689CA-CC55-40F7-99F0-BE64E4AD67B4@foxel.org>
+References: <25C689CA-CC55-40F7-99F0-BE64E4AD67B4@foxel.org>
+Message-ID: <770B5C93-31DA-4A5C-A509-2B250305317F@mac.com>
+
+It is, check wiki. 
+
+BTW, what is the PDF viewer the screenshot from you sent?
+
+Martin S. 
+
+Odesláno z iPhonu
+
+24. 6. 2019 v 6:23, Max D <md at foxel.org>:
+
+> Currently if I have a closed `rock-border` the contents (the rock) will be drawn slightly darker than the passage fill due to transparency and this area being painted twice - see http://filez.foxel.org/e817c23fd65d
+> 
+> Is it possible to fill rocks with an other color than the  passage fill color?
+> 
+> Best regards
+> 
+> --max
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Mon Jun 24 07:22:28 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 24 Jun 2019 17:22:28 +1200
+Subject: [Therion] Different Color for Rocks?
+In-Reply-To: <25C689CA-CC55-40F7-99F0-BE64E4AD67B4@foxel.org>
+References: <25C689CA-CC55-40F7-99F0-BE64E4AD67B4@foxel.org>
+Message-ID: <000c01d52a4c$d25255b0$76f70110$@tomo.co.nz>
+
+Have a look at https://therion.speleo.sk/wiki/metapost#point_symbols for the re definition of point block.  You could probably do something similar with line rock-border (maybe, I have not looked at the rock-border code).
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Max D
+Sent: Monday, 24 June 2019 16:23
+To: therion at speleo.sk
+Subject: [Therion] Different Color for Rocks?
+
+Currently if I have a closed `rock-border` the contents (the rock) will be drawn slightly darker than the passage fill due to transparency and this area being painted twice - see http://filez.foxel.org/e817c23fd65d
+
+Is it possible to fill rocks with an other color than the  passage fill color?
+
+Best regards
+
+--max
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bgee at campercaver.net  Mon Jun 24 18:15:33 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 24 Jun 2019 11:15:33 -0500
+Subject: [Therion] BreakOut 3D cave viewer
+Message-ID: <1821984.1uquElkFjM@main2.billgee.local>
+
+Hello everyone -
+
+I attended the NSS annual convention in Cookeville, TN last week.  There was a very interesting presentation on a 3D cave viewing software that might be interesting to this group.  The web site is
+
+	https://breakoutcavesurvey.com
+
+The program is pure Java, so it requires a Java Runtime Environment of some kind.  The whole thing is just one .jar file.    The demonstration was on a Mac laptop.  It starts on my desktop running Fedora 30, but gives an OpenGL error on my laptop.  There are probably some missing libraries of some kind.  The developer said that it will run on Windows.
+
+The viewer knows how to deal with Compass and Walls files.  Therion can output a Compass PLT file, so should be able to feed Breakout.  I have not tried this yet.
+
+-- 
+Bill Gee
+
+
+
+
+
+
+From martinsluka at mac.com  Mon Jun 24 20:05:05 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 24 Jun 2019 20:05:05 +0200
+Subject: [Therion] BreakOut 3D cave viewer
+In-Reply-To: <1821984.1uquElkFjM@main2.billgee.local>
+References: <1821984.1uquElkFjM@main2.billgee.local>
+Message-ID: <F7F2A22E-8A7D-4189-8962-DB2C94E8858E@mac.com>
+
+
+
+Odesláno z iPhonu
+
+24. 6. 2019 v 18:15, Bill Gee <bgee at campercaver.net>:
+
+> Hello everyone -
+> 
+> I attended the NSS annual convention in Cookeville, TN last week.  There was a very interesting presentation on a 3D cave viewing software that might be interesting to this group.  The web site is
+> 
+>    https://breakoutcavesurvey.com
+> 
+> The program is pure Java, so it requires a Java Runtime Environment of some kind.  The whole thing is just one .jar file.    The demonstration was on a Mac laptop.  It starts on my desktop running Fedora 30, but gives an OpenGL error on my laptop.  There are probably some missing libraries of some kind.  The developer said that it will run on Windows.
+> 
+> The viewer knows how to deal with Compass and Walls files.  Therion can output a Compass PLT file, so should be able to feed Breakout.  I have not tried this yet.
+> 
+> -- 
+> Bill Gee
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From md at foxel.org  Tue Jun 25 08:19:34 2019
+From: md at foxel.org (Max D)
+Date: Tue, 25 Jun 2019 08:19:34 +0200
+Subject: [Therion] Different Color for Rocks?
+In-Reply-To: <mailman.0.1561370402.1393.therion@speleo.sk>
+References: <mailman.0.1561370402.1393.therion@speleo.sk>
+Message-ID: <2C8B1881-90CB-44D8-86F4-D48028C91A49@foxel.org>
+
+
+
+> On 24. Jun 2019, at 12:00, therion-request at speleo.sk wrote:
+> 
+> BTW, what is the PDF viewer the screenshot from you sent?
+
+It is Apple default "Preview" (PDFKit).
+
+Bruce, thanks for the Pointer!
+
+--max
+
+
+
+From martinsluka at mac.com  Tue Jun 25 09:07:03 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 25 Jun 2019 09:07:03 +0200
+Subject: [Therion] Different Color for Rocks?
+In-Reply-To: <2C8B1881-90CB-44D8-86F4-D48028C91A49@foxel.org>
+References: <mailman.0.1561370402.1393.therion@speleo.sk>
+ <2C8B1881-90CB-44D8-86F4-D48028C91A49@foxel.org>
+Message-ID: <015CAD49-72BF-4256-A8EE-EB2C570C8EA1@mac.com>
+
+Take care that PDFKit renders PDFs from Therion in different way than Adobe Acrobat and xpdf. PDFKit is not able to render transparency in correct way. The same for all other PDF viewers which use PDFKit - like Foxit. 
+
+Martin
+
+Odesláno z iPhonu
+
+25. 6. 2019 v 8:19, Max D <md at foxel.org>:
+
+> 
+> 
+>> On 24. Jun 2019, at 12:00, therion-request at speleo.sk wrote:
+>> 
+>> BTW, what is the PDF viewer the screenshot from you sent?
+> 
+> It is Apple default "Preview" (PDFKit).
+> 
+> Bruce, thanks for the Pointer!
+> 
+> --max
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bgee at campercaver.net  Wed Jun 26 14:10:15 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 26 Jun 2019 07:10:15 -0500
+Subject: [Therion] BreakOut 3D cave viewer
+In-Reply-To: <1821984.1uquElkFjM@main2.billgee.local>
+References: <1821984.1uquElkFjM@main2.billgee.local>
+Message-ID: <2523094.dNBO0iC9nV@main2.billgee.local>
+
+Update:
+
+I installed Breakout Cave Survey Viewer on three different Fedora 30 systems.  It works on two of them.  It does not import the PLT files generated by Therion.  According to the documentation, when you import Compass data you must specify both a PLT and a MAK file.  Therion generates only the PLT.
+
+After much web searching, I think the problem on my laptop is not with Breakout itself but rather with the display driver.  Breakout requires GLX3, but the Intel i915 display driver for my Lenovo Thinkpad T410 does not provide that.  It only provides GLX2.
+
+The two systems that work are running nVidia and VirtualBox display drivers.  I have not tried it with Nouveau.  The nVidia display driver I use is the kmod packaged driver from the Fedora repository.
+
+Breakout Cave Survey Viewer duplicates much of the functionality provided by Aven and Loch.  The main new feature is searching.  You can tell Breakout to search for a particular survey station and it will take you there.  It can also search for a range of stations, a named passage or room, surveys by date and much more.
+
+On the other hand - Breakout does not provide a way to see the straight-line distance between any two survey stations.  It does not display the bounding box.
+
+-- 
+Bill Gee
+
+
+
+On Monday, June 24, 2019 11:15:33 AM CDT Bill Gee wrote:
+> Hello everyone -
+> 
+> I attended the NSS annual convention in Cookeville, TN last week.  There was a very interesting presentation on a 3D cave viewing software that might be interesting to this group.  The web site is
+> 
+> 	https://breakoutcavesurvey.com
+> 
+> The program is pure Java, so it requires a Java Runtime Environment of some kind.  The whole thing is just one .jar file.    The demonstration was on a Mac laptop.  It starts on my desktop running Fedora 30, but gives an OpenGL error on my laptop.  There are probably some missing libraries of some kind.  The developer said that it will run on Windows.
+> 
+> The viewer knows how to deal with Compass and Walls files.  Therion can output a Compass PLT file, so should be able to feed Breakout.  I have not tried this yet.
+> 
+> 
+
+
+
+
+
+
+From wookey at wookware.org  Wed Jun 26 15:27:37 2019
+From: wookey at wookware.org (Wookey)
+Date: Wed, 26 Jun 2019 14:27:37 +0100
+Subject: [Therion] BreakOut 3D cave viewer
+In-Reply-To: <2523094.dNBO0iC9nV@main2.billgee.local>
+References: <1821984.1uquElkFjM@main2.billgee.local>
+ <2523094.dNBO0iC9nV@main2.billgee.local>
+Message-ID: <20190626132737.meua4h3rsevhevoc@mail.wookware.org>
+
+On 2019-06-26 07:10 -0500, Bill Gee wrote:
+> Update:
+> 
+
+I tried it on Ubuntu 18.04 and debian stretch.  It runs on both, but
+the file menu is hidden behind the display pane (so the 'Import'
+option is not visible (I managed to get it to appear a couple of times
+with some twiddling).
+
+I see it comes from Mr Edwards, who's 'dewalls' package I have already
+packaged (a dependnecy of cavewhere). Guess I'd better do this one
+too.
+
+> After much web searching, I think the problem on my laptop is not with Breakout itself but rather with the display driver.  Breakout requires GLX3, but the Intel i915 display driver for my Lenovo Thinkpad T410 does not provide that.  It only provides GLX2.
+
+I'm using a thinkpad here with "Skylake GT2 [HD Graphics 520]" I guess
+that's a generation or two newer than an i915.
+ 
+> The two systems that work are running nVidia and VirtualBox display drivers.  I have not tried it with Nouveau.  The nVidia display driver I use is the kmod packaged driver from the Fedora repository.
+
+My Stretch machine is running nouveau. Seems to work the same (badly
+WRT menu visibility) as the intel driver)
+ 
+> Breakout Cave Survey Viewer duplicates much of the functionality
+> provided by Aven and Loch.  The main new feature is searching.  You
+> can tell Breakout to search for a particular survey station and it
+> will take you there.
+
+Aven has that already. Do you mean it is different in some significant way.
+
+I'll report the menu bug on the breakout github and do a bit of gentle packaging when I
+have some tuits.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190626/0112df72/attachment.sig>
+
+From bgee at campercaver.net  Wed Jun 26 18:09:27 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 26 Jun 2019 11:09:27 -0500
+Subject: [Therion] Loch fails on Fedora 30
+Message-ID: <3478665.rXhE9JVovK@main2.billgee.local>
+
+Hello everyone -
+
+I just noticed that Loch no longer works on Fedora 30.  I use the version that is packaged by JM Begley.
+
+Launching from a KDE menu spins an hourglass for about 2 seconds and then goes away.  When launched from a command shell, the only output is "Error: glXCreateContext failed".
+
+This happens on both my laptop and desktop, which have two different display drivers.  It also happens on a VirtualBox guest.
+
+Is there a way to get a more detailed log file?
+
+Thanks!
+
+-- 
+Bill Gee
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190626/d2ff4b5d/attachment.htm>
+
+From lists at group-s.sk  Thu Jun 27 19:20:23 2019
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 27 Jun 2019 19:20:23 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+ <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+ <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+Message-ID: <CAP35+gGBV+=JfqgeVGg7x0LvMaOsxpVGFWcTyQSpr0Aj0U4jLQ@mail.gmail.com>
+
+Hello,
+
+sorry for reopening this thread, but finally this feature (to ignore
+existing map structures) was added to therion. Just use
+
+maps off
+
+in your thconfig file, and it should work (in the latest development
+version). Also, selection (with scrap/map altitudes) was added to
+therion.log for debugging purposes.
+
+S.
+
+On Mon, 3 Jun 2019 at 08:21, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> Good morning,
+> thank you for that info!
+> Would it be a huge effort to make such an option available? Just asking.
+>
+> To define the top level hierarchies, it would be cool to somehow get the
+> altitude-sorted map names from some debug log or so. That list could be
+> used directly to construct the map-command block that reproduces the
+> current result. This would drastically reduce the effort.
+> Would it be possible to add a debug log output command, that produces such
+> a list? Or is it already possible to get that list somehow, for example
+> from the sql database output?
+>
+> Am 01.06.2019 um 22:44 schrieb Stacho Mudrak <lists at group-s.sk>:
+>
+> Unfortunately, there is no such option. Once a map is defined in your
+> dataset, it will be used with its average altitude in the export when only
+> surveys are selected for output. The idea behind is, that once you start
+> defining maps out of the scraps, you will build the whole tree of them
+> including top-level ones. So the only way how to overcome this problem is
+> to comment all your maps in the code until you define the whole hierarchy
+> of them.
+>
+> S.
+>
+> On Fri, 31 May 2019 at 22:15, Benedikt Hallinger <beni at hallinger.org>
+> wrote:
+>
+>> Thank you for your message, this helps alot.
+>> There is a way out tough, a middle ground: one can define custom maps in
+>> the thconfig file using source.
+>>
+>> I need to think about how this affects the projects structure.
+>>
+>> Besides that, is there a option to disable map-averaging and tell
+>> therion to use the scrap average for each scrap?
+>> That would solve this imho.
+>>
+>> Thanks, i understand i better now, how this works currently.
+>>
+>>
+>> Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+>> > Hello Beni,
+>> >
+>> > I am not 100% sure if I understand your problem correctly, but this is
+>> > how therion does average altitude calculations:
+>> >
+>> > the altitude of a scrap = arithmetic average of altitudes of its
+>> > stations
+>> > the altitude of a map = arithmetic average of altitudes of scraps
+>> >
+>> > And your observation is correct. If you have some maps defined in your
+>> > dataset, then maps of selected surveys are exported and sorted
+>> > according to their altitudes. If you have no maps defined, then scraps
+>> > in selected surveys are taken and altitude sorted.
+>> >
+>> > So if you are working on a large dataset and you do not want to define
+>> > upper-level maps, it is probably better not to define any maps at all
+>> > - then only scraps will be taken into consideration.
+>> >
+>> > Best regards, S.
+>> >
+>> > On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org>
+>> > wrote:
+>> >
+>> >> Hi Stacho,
+>> >> your infos did the trick.
+>> >> indeed the data showed at closer examination, that the parts where
+>> >> averaged lower than the part in question. The wrongly-lower part
+>> >> contains a steep slope but the average height was still some few
+>> >> meters
+>> >> below the average of the offending part.
+>> >>
+>> >> What puzzled me was that even splitting the scraps was not enough!
+>> >> I now have a scrap containing only the sloped part of the tunnel,
+>> >> and
+>> >> that is surely averaged above the lower part.
+>> >>
+>> >> What solved it was to also rearrange the map definitions that
+>> >> contain
+>> >> the sloped part: i put the low part prior the slope in question in
+>> >> another map like this:
+>> >> -------snip----------
+>> >> # This works instead:
+>> >> map working-priortunnel
+>> >> scrap-low-tunnel-before-slope
+>> >> endmap
+>> >> map working-slope
+>> >> scrap-slope-itself-with-followig-high-part
+>> >> endmap
+>> >>
+>> >> # this does NOT work lie intendet:
+>> >> #map notWorking-combined
+>> >> #  scrap-low-tunnel-before-slope
+>> >> #  scrap-slope-itself-with-followig-high-part
+>> >> #endmap
+>> >> -------snap----------
+>> >>
+>> >> It looks like therion currently uses the average height of the MAP,
+>> >> not
+>> >> the contained scraps, to calculate which part is above or below. In
+>> >> this
+>> >> example, it looks like it is getting the average height of the
+>> >> "notWorking-combined" combined map and comparing this to the
+>> >> uncorrelated below-tunnel.
+>> >> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+>> >> definition,
+>> >> the average calculation can only take the
+>> >> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+>> >>
+>> >> much higher average height.
+>> >>
+>> >> Can you confirm this from therions sourcecode, and is this really
+>> >> the
+>> >> intendet behaviour, since i think each scrap shopuld be averaged for
+>> >>
+>> >> itself, regardless of its map allocation...?
+>> >>
+>> >> Wih best regards,
+>> >> Beni
+>> >>
+>> >> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+>> >>> Hello,
+>> >>>
+>> >>> if you select just survey, then all maps consisting of scraps in
+>> >> this
+>> >>> and sub-surveys should be ordered by average altitude. But this
+>> >> may
+>> >>> easily cause that some overlapping is not done correctly. But it
+>> >> is
+>> >>> also possible, there is some bug and it is not done correctly. Are
+>> >> you
+>> >>> able to post some minimalistic sample, where depth sort fails?
+>> >>>
+>> >>> The only way how to manually order maps in the output is to create
+>> >>> upper-level maps (in your case probably what you mean by
+>> >>> <region>-Hautplan) consisting of lower level maps in the correct
+>> >>> order.
+>> >>>
+>> >>> HTH, S.
+>> >>>
+>> >>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+>> >> <beni at hallinger.org>
+>> >>> wrote:
+>> >>>
+>> >>>> Hello there,
+>> >>>> i have a very large dataset here. It is organised by regions like
+>> >>>> this
+>> >>>> (but much more leaf objects and regions):
+>> >>>>
+>> >>>> =====snip=====
+>> >>>> - survey TheCave
+>> >>>> - survey RegionWest
+>> >>>> - survey 1
+>> >>>> - survey 3
+>> >>>> - survey 5
+>> >>>> - survey RegionEast
+>> >>>> - survey 2
+>> >>>> - survey 4
+>> >>>> - survey 6
+>> >>>> =====snap=====
+>> >>>>
+>> >>>> I currently work from bottom to up, that is i draw the individual
+>> >>>> surveys as scraps, based on original material (sometimes they are
+>> >>>> really
+>> >>>> large and cosnsist of several many scraps).
+>> >>>>
+>> >>>> In each of they leaf surveys (the numbered ones) i make by
+>> >>>> convention a
+>> >>>> map called "<n>-Hauptplan". The main idea is that every leaf
+>> >> survey
+>> >>>> can
+>> >>>> be treaten modular and that i can compile varoius maps at upper
+>> >>>> levels
+>> >>>> (i.e regions).
+>> >>>>
+>> >>>> Currently, the regions have no "<region>-Hautplan". When i use
+>> >>>> "select
+>> >>>> RegionWest.TheCave", therion is instructed to select all scraps
+>> >>>> below
+>> >>>> it. For the most part, this works like intendet and the
+>> >> overlappings
+>> >>>> are
+>> >>>> calculated correctly. There are some places however, where the
+>> >> upper
+>> >>>>
+>> >>>> part of the passage is rendered below the lower part, which is
+>> >>>> wrong.
+>> >>>> This is with about 10-15% of the passages (so most is already
+>> >> ok).
+>> >>>>
+>> >>>> I know from the manuals that therion does this "randomly" so
+>> >> there
+>> >>>> is no
+>> >>>> real way to adjust this from my perspective (placing the "input
+>> >> 2.th [1]
+>> >>>> [1]"
+>> >>>> command in the region.th [2] [2] file, wich then inputs the
+>> >> scraps etc,
+>> >>>> lower in
+>> >>>> the list does not help - it seems random where it is).
+>> >>>> I think, however, that it would be a very great addition, if
+>> >> there
+>> >>>> would
+>> >>>> be some code in the renderer, that sorts the vertical
+>> >> presentation
+>> >>>> of
+>> >>>> the scraps/maps by average altitude of said scrap/map, and that
+>> >> this
+>> >>>>
+>> >>>> behavior is controllable by some configuration (cmdline option,
+>> >> or
+>> >>>> even
+>> >>>> better, thconfig parameter).
+>> >>>> => Is there maybe already something hidden like this i don't know
+>> >> so
+>> >>>>
+>> >>>> far?
+>> >>>> That would be very great, because when i look at the dataset, i
+>> >> face
+>> >>>>
+>> >>>> about 30-50 hours producing correctly manually sorted handcrafted
+>> >>>> maps
+>> >>>> at the region level...
+>> >>>>
+>> >>>> Sincerely, Beni
+>> >>>> _______________________________________________
+>> >>>> Therion mailing list
+>> >>>> Therion at speleo.sk
+>> >>>> https://mailman.speleo.sk/listinfo/therion
+>> >>>
+>> >>>
+>> >>> Links:
+>> >>> ------
+>> >>> [1] http://2.th
+>> >>> [2] http://region.th
+>> >>> _______________________________________________
+>> >>> Therion mailing list
+>> >>> Therion at speleo.sk
+>> >>> https://mailman.speleo.sk/listinfo/therion
+>> >> _______________________________________________
+>> >> Therion mailing list
+>> >> Therion at speleo.sk
+>> >> https://mailman.speleo.sk/listinfo/therion
+>> >
+>> >
+>> > Links:
+>> > ------
+>> > [1] http://2.th
+>> > [2] http://region.th
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190627/a4cbaba6/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Jun 27 21:49:18 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 28 Jun 2019 07:49:18 +1200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <CAP35+gGBV+=JfqgeVGg7x0LvMaOsxpVGFWcTyQSpr0Aj0U4jLQ@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+ <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+ <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+ <CAP35+gGBV+=JfqgeVGg7x0LvMaOsxpVGFWcTyQSpr0Aj0U4jLQ@mail.gmail.com>
+Message-ID: <000001d52d21$6a490a40$3edb1ec0$@tomo.co.nz>
+
+Thanks for following up on this Stacho, it is an important topic!
+
+I have just done a trial run, and it works, but there could be issues with exported pdf file sizes (7MB becomes 113MB) and with some of my scraps and maps that have strange elevations. Ie these are very common
+
+“
+
+M -8999999999999999900000000000000000000000000000000000000000000000000000000000000000000000000000000000.00 SL-SilentSumpPlan at MiddleEarth (SL-SilentSump Plan )
+
+S   379.51  SL-SilentSumpPlan-s2 at MiddleEarth ()
+
+S   387.63  SL-SilentSumpPlan-s1 at MiddleEarth ()
+
+“
+
+I need to research this before commenting further.  The average scrap elevations in the log looks like it will be helpful in planning map outputs.
+
+ 
+
+But the very best thing for me is that ‘maps off’ has the effect of disabling all passage offsets with a single switch.
+
+Something I have long been hoping for.
+
+ 
+
+Thanks, a great addition to Therion.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Friday, 28 June 2019 05:20
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Sorting scraps/maps by height in default mode
+
+ 
+
+Hello,
+
+ 
+
+sorry for reopening this thread, but finally this feature (to ignore existing map structures) was added to therion. Just use
+
+ 
+
+maps off
+
+ 
+
+in your thconfig file, and it should work (in the latest development version). Also, selection (with scrap/map altitudes) was added to therion.log for debugging purposes.
+
+ 
+
+S.
+
+ 
+
+On Mon, 3 Jun 2019 at 08:21, Benedikt Hallinger <beni at hallinger.org <mailto:beni at hallinger.org> > wrote:
+
+Good morning,
+
+thank you for that info!
+
+Would it be a huge effort to make such an option available? Just asking.
+
+ 
+
+To define the top level hierarchies, it would be cool to somehow get the altitude-sorted map names from some debug log or so. That list could be used directly to construct the map-command block that reproduces the current result. This would drastically reduce the effort.
+
+Would it be possible to add a debug log output command, that produces such a list? Or is it already possible to get that list somehow, for example from the sql database output?
+
+
+Am 01.06.2019 um 22:44 schrieb Stacho Mudrak <lists at group-s.sk <mailto:lists at group-s.sk> >:
+
+Unfortunately, there is no such option. Once a map is defined in your dataset, it will be used with its average altitude in the export when only surveys are selected for output. The idea behind is, that once you start defining maps out of the scraps, you will build the whole tree of them including top-level ones. So the only way how to overcome this problem is to comment all your maps in the code until you define the whole hierarchy of them.
+
+ 
+
+S.
+
+ 
+
+On Fri, 31 May 2019 at 22:15, Benedikt Hallinger <beni at hallinger.org <mailto:beni at hallinger.org> > wrote:
+
+Thank you for your message, this helps alot.
+There is a way out tough, a middle ground: one can define custom maps in 
+the thconfig file using source.
+
+I need to think about how this affects the projects structure.
+
+Besides that, is there a option to disable map-averaging and tell 
+therion to use the scrap average for each scrap?
+That would solve this imho.
+
+Thanks, i understand i better now, how this works currently.
+
+
+Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+> Hello Beni,
+> 
+> I am not 100% sure if I understand your problem correctly, but this is
+> how therion does average altitude calculations:
+> 
+> the altitude of a scrap = arithmetic average of altitudes of its
+> stations
+> the altitude of a map = arithmetic average of altitudes of scraps
+> 
+> And your observation is correct. If you have some maps defined in your
+> dataset, then maps of selected surveys are exported and sorted
+> according to their altitudes. If you have no maps defined, then scraps
+> in selected surveys are taken and altitude sorted.
+> 
+> So if you are working on a large dataset and you do not want to define
+> upper-level maps, it is probably better not to define any maps at all
+> - then only scraps will be taken into consideration.
+> 
+> Best regards, S.
+> 
+> On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org <mailto:beni at hallinger.org> >
+> wrote:
+> 
+>> Hi Stacho,
+>> your infos did the trick.
+>> indeed the data showed at closer examination, that the parts where
+>> averaged lower than the part in question. The wrongly-lower part
+>> contains a steep slope but the average height was still some few
+>> meters
+>> below the average of the offending part.
+>> 
+>> What puzzled me was that even splitting the scraps was not enough!
+>> I now have a scrap containing only the sloped part of the tunnel,
+>> and
+>> that is surely averaged above the lower part.
+>> 
+>> What solved it was to also rearrange the map definitions that
+>> contain
+>> the sloped part: i put the low part prior the slope in question in
+>> another map like this:
+>> -------snip----------
+>> # This works instead:
+>> map working-priortunnel
+>> scrap-low-tunnel-before-slope
+>> endmap
+>> map working-slope
+>> scrap-slope-itself-with-followig-high-part
+>> endmap
+>> 
+>> # this does NOT work lie intendet:
+>> #map notWorking-combined
+>> #  scrap-low-tunnel-before-slope
+>> #  scrap-slope-itself-with-followig-high-part
+>> #endmap
+>> -------snap----------
+>> 
+>> It looks like therion currently uses the average height of the MAP,
+>> not
+>> the contained scraps, to calculate which part is above or below. In
+>> this
+>> example, it looks like it is getting the average height of the
+>> "notWorking-combined" combined map and comparing this to the
+>> uncorrelated below-tunnel.
+>> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+>> definition,
+>> the average calculation can only take the
+>> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+>> 
+>> much higher average height.
+>> 
+>> Can you confirm this from therions sourcecode, and is this really
+>> the
+>> intendet behaviour, since i think each scrap shopuld be averaged for
+>> 
+>> itself, regardless of its map allocation...?
+>> 
+>> Wih best regards,
+>> Beni
+>> 
+>> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+>>> Hello,
+>>> 
+>>> if you select just survey, then all maps consisting of scraps in
+>> this
+>>> and sub-surveys should be ordered by average altitude. But this
+>> may
+>>> easily cause that some overlapping is not done correctly. But it
+>> is
+>>> also possible, there is some bug and it is not done correctly. Are
+>> you
+>>> able to post some minimalistic sample, where depth sort fails?
+>>> 
+>>> The only way how to manually order maps in the output is to create
+>>> upper-level maps (in your case probably what you mean by
+>>> <region>-Hautplan) consisting of lower level maps in the correct
+>>> order.
+>>> 
+>>> HTH, S.
+>>> 
+>>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+>> <beni at hallinger.org <mailto:beni at hallinger.org> >
+>>> wrote:
+>>> 
+>>>> Hello there,
+>>>> i have a very large dataset here. It is organised by regions like
+>>>> this
+>>>> (but much more leaf objects and regions):
+>>>> 
+>>>> =====snip=====
+>>>> - survey TheCave
+>>>> - survey RegionWest
+>>>> - survey 1
+>>>> - survey 3
+>>>> - survey 5
+>>>> - survey RegionEast
+>>>> - survey 2
+>>>> - survey 4
+>>>> - survey 6
+>>>> =====snap=====
+>>>> 
+>>>> I currently work from bottom to up, that is i draw the individual
+>>>> surveys as scraps, based on original material (sometimes they are
+>>>> really
+>>>> large and cosnsist of several many scraps).
+>>>> 
+>>>> In each of they leaf surveys (the numbered ones) i make by
+>>>> convention a
+>>>> map called "<n>-Hauptplan". The main idea is that every leaf
+>> survey
+>>>> can
+>>>> be treaten modular and that i can compile varoius maps at upper
+>>>> levels
+>>>> (i.e regions).
+>>>> 
+>>>> Currently, the regions have no "<region>-Hautplan". When i use
+>>>> "select
+>>>> RegionWest.TheCave", therion is instructed to select all scraps
+>>>> below
+>>>> it. For the most part, this works like intendet and the
+>> overlappings
+>>>> are
+>>>> calculated correctly. There are some places however, where the
+>> upper
+>>>> 
+>>>> part of the passage is rendered below the lower part, which is
+>>>> wrong.
+>>>> This is with about 10-15% of the passages (so most is already
+>> ok).
+>>>> 
+>>>> I know from the manuals that therion does this "randomly" so
+>> there
+>>>> is no
+>>>> real way to adjust this from my perspective (placing the "input
+>> 2.th <http://2.th>  [1]
+>>>> [1]"
+>>>> command in the region.th <http://region.th>  [2] [2] file, wich then inputs the
+>> scraps etc,
+>>>> lower in
+>>>> the list does not help - it seems random where it is).
+>>>> I think, however, that it would be a very great addition, if
+>> there
+>>>> would
+>>>> be some code in the renderer, that sorts the vertical
+>> presentation
+>>>> of
+>>>> the scraps/maps by average altitude of said scrap/map, and that
+>> this
+>>>> 
+>>>> behavior is controllable by some configuration (cmdline option,
+>> or
+>>>> even
+>>>> better, thconfig parameter).
+>>>> => Is there maybe already something hidden like this i don't know
+>> so
+>>>> 
+>>>> far?
+>>>> That would be very great, because when i look at the dataset, i
+>> face
+>>>> 
+>>>> about 30-50 hours producing correctly manually sorted handcrafted
+>>>> maps
+>>>> at the region level...
+>>>> 
+>>>> Sincerely, Beni
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>>> 
+>>> Links:
+>>> ------
+>>> [1] http://2.th
+>>> [2] http://region.th
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> Links:
+> ------
+> [1] http://2.th
+> [2] http://region.th
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+> https://mailman.speleo.sk/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/c2904472/attachment.htm>
+
+From beni at hallinger.org  Fri Jun 28 08:25:09 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 28 Jun 2019 08:25:09 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <000001d52d21$6a490a40$3edb1ec0$@tomo.co.nz>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+ <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+ <CAP35+gFCD16uTMyLB60KOxVA3iB0GFod_3R7fhbLwiJ0Opy5bA@mail.gmail.com>
+ <6A6A92C6-7FE2-4618-862F-FDC80C251207@hallinger.org>
+ <CAP35+gGBV+=JfqgeVGg7x0LvMaOsxpVGFWcTyQSpr0Aj0U4jLQ@mail.gmail.com>
+ <000001d52d21$6a490a40$3edb1ec0$@tomo.co.nz>
+Message-ID: <01EC8E14-9428-43BF-A52D-7E64968A6CA4@hallinger.org>
+
+Very nice,
+cant wait to try it out once it reaches release!
+
+> Am 27.06.2019 um 21:49 schrieb Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Thanks for following up on this Stacho, it is an important topic!
+> I have just done a trial run, and it works, but there could be issues with exported pdf file sizes (7MB becomes 113MB) and with some of my scraps and maps that have strange elevations. Ie these are very common
+> “
+> M -8999999999999999900000000000000000000000000000000000000000000000000000000000000000000000000000000000.00 SL-SilentSumpPlan at MiddleEarth (SL-SilentSump Plan )
+> S   379.51  SL-SilentSumpPlan-s2 at MiddleEarth ()
+> S   387.63  SL-SilentSumpPlan-s1 at MiddleEarth ()
+> “
+> I need to research this before commenting further.  The average scrap elevations in the log looks like it will be helpful in planning map outputs.
+>  
+> But the very best thing for me is that ‘maps off’ has the effect of disabling all passage offsets with a single switch.
+> Something I have long been hoping for.
+>  
+> Thanks, a great addition to Therion.
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+> Sent: Friday, 28 June 2019 05:20
+> To: List for Therion users <therion at speleo.sk>
+> Subject: Re: [Therion] Sorting scraps/maps by height in default mode
+>  
+> Hello,
+>  
+> sorry for reopening this thread, but finally this feature (to ignore existing map structures) was added to therion. Just use
+>  
+> maps off
+>  
+> in your thconfig file, and it should work (in the latest development version). Also, selection (with scrap/map altitudes) was added to therion.log for debugging purposes.
+>  
+> S.
+>  
+> On Mon, 3 Jun 2019 at 08:21, Benedikt Hallinger <beni at hallinger.org> wrote:
+> Good morning,
+> thank you for that info!
+> Would it be a huge effort to make such an option available? Just asking.
+>  
+> To define the top level hierarchies, it would be cool to somehow get the altitude-sorted map names from some debug log or so. That list could be used directly to construct the map-command block that reproduces the current result. This would drastically reduce the effort.
+> Would it be possible to add a debug log output command, that produces such a list? Or is it already possible to get that list somehow, for example from the sql database output?
+> 
+> Am 01.06.2019 um 22:44 schrieb Stacho Mudrak <lists at group-s.sk>:
+> 
+> Unfortunately, there is no such option. Once a map is defined in your dataset, it will be used with its average altitude in the export when only surveys are selected for output. The idea behind is, that once you start defining maps out of the scraps, you will build the whole tree of them including top-level ones. So the only way how to overcome this problem is to comment all your maps in the code until you define the whole hierarchy of them.
+>  
+> S.
+>  
+> On Fri, 31 May 2019 at 22:15, Benedikt Hallinger <beni at hallinger.org> wrote:
+> Thank you for your message, this helps alot.
+> There is a way out tough, a middle ground: one can define custom maps in 
+> the thconfig file using source.
+> 
+> I need to think about how this affects the projects structure.
+> 
+> Besides that, is there a option to disable map-averaging and tell 
+> therion to use the scrap average for each scrap?
+> That would solve this imho.
+> 
+> Thanks, i understand i better now, how this works currently.
+> 
+> 
+> Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+> > Hello Beni,
+> > 
+> > I am not 100% sure if I understand your problem correctly, but this is
+> > how therion does average altitude calculations:
+> > 
+> > the altitude of a scrap = arithmetic average of altitudes of its
+> > stations
+> > the altitude of a map = arithmetic average of altitudes of scraps
+> > 
+> > And your observation is correct. If you have some maps defined in your
+> > dataset, then maps of selected surveys are exported and sorted
+> > according to their altitudes. If you have no maps defined, then scraps
+> > in selected surveys are taken and altitude sorted.
+> > 
+> > So if you are working on a large dataset and you do not want to define
+> > upper-level maps, it is probably better not to define any maps at all
+> > - then only scraps will be taken into consideration.
+> > 
+> > Best regards, S.
+> > 
+> > On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org>
+> > wrote:
+> > 
+> >> Hi Stacho,
+> >> your infos did the trick.
+> >> indeed the data showed at closer examination, that the parts where
+> >> averaged lower than the part in question. The wrongly-lower part
+> >> contains a steep slope but the average height was still some few
+> >> meters
+> >> below the average of the offending part.
+> >> 
+> >> What puzzled me was that even splitting the scraps was not enough!
+> >> I now have a scrap containing only the sloped part of the tunnel,
+> >> and
+> >> that is surely averaged above the lower part.
+> >> 
+> >> What solved it was to also rearrange the map definitions that
+> >> contain
+> >> the sloped part: i put the low part prior the slope in question in
+> >> another map like this:
+> >> -------snip----------
+> >> # This works instead:
+> >> map working-priortunnel
+> >> scrap-low-tunnel-before-slope
+> >> endmap
+> >> map working-slope
+> >> scrap-slope-itself-with-followig-high-part
+> >> endmap
+> >> 
+> >> # this does NOT work lie intendet:
+> >> #map notWorking-combined
+> >> #  scrap-low-tunnel-before-slope
+> >> #  scrap-slope-itself-with-followig-high-part
+> >> #endmap
+> >> -------snap----------
+> >> 
+> >> It looks like therion currently uses the average height of the MAP,
+> >> not
+> >> the contained scraps, to calculate which part is above or below. In
+> >> this
+> >> example, it looks like it is getting the average height of the
+> >> "notWorking-combined" combined map and comparing this to the
+> >> uncorrelated below-tunnel.
+> >> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+> >> definition,
+> >> the average calculation can only take the
+> >> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+> >> 
+> >> much higher average height.
+> >> 
+> >> Can you confirm this from therions sourcecode, and is this really
+> >> the
+> >> intendet behaviour, since i think each scrap shopuld be averaged for
+> >> 
+> >> itself, regardless of its map allocation...?
+> >> 
+> >> Wih best regards,
+> >> Beni
+> >> 
+> >> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+> >>> Hello,
+> >>> 
+> >>> if you select just survey, then all maps consisting of scraps in
+> >> this
+> >>> and sub-surveys should be ordered by average altitude. But this
+> >> may
+> >>> easily cause that some overlapping is not done correctly. But it
+> >> is
+> >>> also possible, there is some bug and it is not done correctly. Are
+> >> you
+> >>> able to post some minimalistic sample, where depth sort fails?
+> >>> 
+> >>> The only way how to manually order maps in the output is to create
+> >>> upper-level maps (in your case probably what you mean by
+> >>> <region>-Hautplan) consisting of lower level maps in the correct
+> >>> order.
+> >>> 
+> >>> HTH, S.
+> >>> 
+> >>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+> >> <beni at hallinger.org>
+> >>> wrote:
+> >>> 
+> >>>> Hello there,
+> >>>> i have a very large dataset here. It is organised by regions like
+> >>>> this
+> >>>> (but much more leaf objects and regions):
+> >>>> 
+> >>>> =====snip=====
+> >>>> - survey TheCave
+> >>>> - survey RegionWest
+> >>>> - survey 1
+> >>>> - survey 3
+> >>>> - survey 5
+> >>>> - survey RegionEast
+> >>>> - survey 2
+> >>>> - survey 4
+> >>>> - survey 6
+> >>>> =====snap=====
+> >>>> 
+> >>>> I currently work from bottom to up, that is i draw the individual
+> >>>> surveys as scraps, based on original material (sometimes they are
+> >>>> really
+> >>>> large and cosnsist of several many scraps).
+> >>>> 
+> >>>> In each of they leaf surveys (the numbered ones) i make by
+> >>>> convention a
+> >>>> map called "<n>-Hauptplan". The main idea is that every leaf
+> >> survey
+> >>>> can
+> >>>> be treaten modular and that i can compile varoius maps at upper
+> >>>> levels
+> >>>> (i.e regions).
+> >>>> 
+> >>>> Currently, the regions have no "<region>-Hautplan". When i use
+> >>>> "select
+> >>>> RegionWest.TheCave", therion is instructed to select all scraps
+> >>>> below
+> >>>> it. For the most part, this works like intendet and the
+> >> overlappings
+> >>>> are
+> >>>> calculated correctly. There are some places however, where the
+> >> upper
+> >>>> 
+> >>>> part of the passage is rendered below the lower part, which is
+> >>>> wrong.
+> >>>> This is with about 10-15% of the passages (so most is already
+> >> ok).
+> >>>> 
+> >>>> I know from the manuals that therion does this "randomly" so
+> >> there
+> >>>> is no
+> >>>> real way to adjust this from my perspective (placing the "input
+> >> 2.th [1]
+> >>>> [1]"
+> >>>> command in the region.th [2] [2] file, wich then inputs the
+> >> scraps etc,
+> >>>> lower in
+> >>>> the list does not help - it seems random where it is).
+> >>>> I think, however, that it would be a very great addition, if
+> >> there
+> >>>> would
+> >>>> be some code in the renderer, that sorts the vertical
+> >> presentation
+> >>>> of
+> >>>> the scraps/maps by average altitude of said scrap/map, and that
+> >> this
+> >>>> 
+> >>>> behavior is controllable by some configuration (cmdline option,
+> >> or
+> >>>> even
+> >>>> better, thconfig parameter).
+> >>>> => Is there maybe already something hidden like this i don't know
+> >> so
+> >>>> 
+> >>>> far?
+> >>>> That would be very great, because when i look at the dataset, i
+> >> face
+> >>>> 
+> >>>> about 30-50 hours producing correctly manually sorted handcrafted
+> >>>> maps
+> >>>> at the region level...
+> >>>> 
+> >>>> Sincerely, Beni
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>> 
+> >>> 
+> >>> Links:
+> >>> ------
+> >>> [1] http://2.th
+> >>> [2] http://region.th
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> > 
+> > 
+> > Links:
+> > ------
+> > [1] http://2.th
+> > [2] http://region.th
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/418e350b/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Jun 28 12:16:22 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 28 Jun 2019 22:16:22 +1200
+Subject: [Therion] maps on off feature characteristics
+Message-ID: <003401d52d9a$8b39c450$a1ad4cf0$@tomo.co.nz>
+
+I've just been playing with the new maps on/off feature a little more.
+These are just some observations.
+
+There seems to be a bug regarding map altitudes in all cases, and scrap
+altitudes where the scraps are empty.  On the other hand it is a good way to
+highlight the existence of empty scraps!
+
+ 
+
+The notes below may not be particularly coherent, but together with the
+attached log files, you should be able to figure out what is going on.
+
+Setting maps to off quadruples compile time and increases pdf size by 15
+times (not sure why that should be).
+
+ 
+
+Maps off
+
+On running a project with 614 scraps reported;
+
+This log entry was caused by an empty scrap definition, regardless of
+whether the empty scrap appears in a map definition
+
+S
+-899999999999999990000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000.00  04-BangAndBeyondPlan-s2 at BlackSabbath ()
+
+ie
+
+scrap 04-BangAndBeyondPlan-s2 -projection plan -scale [0 0 787.4 787.4 0 0
+10 10 m]
+
+endscrap
+
+It seems I have 16 empty scraps in that project, a legacy of using
+topparser, and not always using all of the scrap definitions that it
+creates.
+
+ 
+
+Maps on
+
+On running same project with 254 scraps/maps reported;
+
+1. Empty Scrap causes map that contains it not to appear in log, sometimes
+
+04-BangAndBeyondPlan-s2 at BlackSabbath is empty and for some reason the
+following map is not reported in the log file at all.
+
+ 
+
+map 04-BangAndBeyondPlan -title "04 beyond the capped rock - black sabbath
+plan" -projection plan
+
+                04-BangAndBeyondPlan-s1
+
+                04-BangAndBeyondPlan-s2
+
+endmap
+
+ 
+
+2. All maps are reported with elevation of;
+
+M
+-899999999999999990000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000.00
+
+ 
+
+3.  Unexplained empty 'scrap' reported at high altitude.  Looking at my
+data, I cannot explain why this might happen.  In the 254 lines, there are
+only two of these.
+
+ 
+
+M
+-899999999999999990000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000.00 61-AngelicaPlan at MiddleEarth (61 Angelica plan)
+
+S   473.40  61-AngelicaPlan-s1 at MiddleEarth ()
+
+S   489.54  61-AngelicaPlan-s2 at MiddleEarth ()
+
+S  1219.69  @ ()
+
+ 
+
+map 61-AngelicaPlan -title "61 Angelica plan" -projection plan
+
+                61-AngelicaPlan-s1 #9C start surveying up pitch
+
+                61-AngelicaPlan-s2 # to base of 20C
+
+endmap
+
+ 
+
+4. Similar things happen with projected elevation outputs, but there are
+many more of empty report lines, as in 3. above, and the altitudes reported
+seem somewhat random and just wrong.  I wonder if the altitudes are really
+some measure of distance into or out of the 'page'?
+
+ 
+
+Behaviours seem to be the same whether maps or atlas are exported.  Very
+nice for disabling passage offsets and previews.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/fdce4045/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-maps on.log
+Type: application/octet-stream
+Size: 123456 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/fdce4045/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-maps off.log
+Type: application/octet-stream
+Size: 152594 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/fdce4045/attachment-0001.obj>
+
+From martinsluka at mac.com  Fri Jun 28 13:55:16 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 28 Jun 2019 13:55:16 +0200
+Subject: [Therion] maps on off feature characteristics
+In-Reply-To: <003401d52d9a$8b39c450$a1ad4cf0$@tomo.co.nz>
+References: <003401d52d9a$8b39c450$a1ad4cf0$@tomo.co.nz>
+Message-ID: <1A6458A0-75AD-4107-ACC7-8EE81E2636B6@mac.com>
+
+
+
+> 28. 6. 2019 v 12:16, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> There seems to be a bug regarding map altitudes in all cases, and scrap altitudes where the scraps are empty.  On the other hand it is a good way to highlight the existence of empty scraps!
+
+Several years ago there was publish a regular expression for removing empty objects from .th2 files here. Is it complicated to add check for empty object to compilation routine?
+
+Martin  Sluka
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190628/554e43c1/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Jun 28 22:52:01 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 29 Jun 2019 08:52:01 +1200
+Subject: [Therion] maps on off feature characteristics
+In-Reply-To: <1A6458A0-75AD-4107-ACC7-8EE81E2636B6@mac.com>
+References: <003401d52d9a$8b39c450$a1ad4cf0$@tomo.co.nz>
+ <1A6458A0-75AD-4107-ACC7-8EE81E2636B6@mac.com>
+Message-ID: <000001d52df3$57b32a00$07197e00$@tomo.co.nz>
+
+Hi Martin
+
+Yes, a regex is described on the wiki
+https://therion.speleo.sk/wiki/tips?s[]=empty#checking_and_erasing_empty_obj
+ects_in_th2_files
+<https://therion.speleo.sk/wiki/tips?s%5b%5d=empty#checking_and_erasing_empt
+y_objects_in_th2_files> 
+
+I use it from time to time when I feel the need.
+
+ 
+
+It does not find empty scraps however, probably because our empty scrap
+definitions are quite busy.  For example;
+
+ 
+
+scrap IH-InceptionPlan-s2 -projection plan -station-names ih @ih -author
+2011.02.23 "A Nonymous" -scale [-128.0 -128.0 10718.5511811 -128.0 0.0 0.0
+275.5024 0.0 m]
+
+ 
+
+endscrap
+
+ 
+
+If anyone is clever enough to improve the regex, please do.
+
+Although, because the empty scraps usually come from the particular way I
+use TopParser, there is almost always a maximum of one per th2 file. It is
+always at the end of the file, so using a semi-automated method of finding
+them within the file is unnecessary, if one is disciplined enough to check
+each file when the drawing is 'finished', or if, as there is now, a feature
+in Therion that (indirectly) highlights their existence.
+
+ 
+
+However adding a Therion log entry for each empty object would be helpful.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via
+Therion
+Sent: Friday, 28 June 2019 23:55
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] maps on off feature characteristics
+
+ 
+
+28. 6. 2019 v 12:16, Bruce Mutton <bruce at tomo.co.nz
+<mailto:bruce at tomo.co.nz> >:
+
+ 
+
+There seems to be a bug regarding map altitudes in all cases, and scrap
+altitudes where the scraps are empty.  On the other hand it is a good way to
+highlight the existence of empty scraps!
+
+ 
+
+Several years ago there was publish a regular expression for removing empty
+objects from .th2 files here. Is it complicated to add check for empty
+object to compilation routine?
+
+ 
+
+Martin  Sluka
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0a9a0b3a/attachment.htm>
+
+From bruce at tomo.co.nz  Sat Jun 29 01:08:37 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 29 Jun 2019 11:08:37 +1200
+Subject: [Therion] maps on off feature characteristics
+Message-ID: <000a01d52e06$6ca45c50$45ed14f0$@tomo.co.nz>
+
+In case anyone is interested, I have updated my standard commentary in my
+thconfig template, to account for the new 'maps' switch, as below.
+
+And I have some more observations on 'maps' behaviour below that.
+
+ 
+
+##SELECT SURVEY AND OR MAP OBJECTS to prepare for output
+
+#=======================================================
+
+# Default (nothing) selects all surveys/maps in 'sources'.
+
+# If a unique survey or map title can be inferred, map header includes the
+'title' 
+
+# List the specific surveys and or map objects that you wish to export
+
+# If no surveys are selected, then 'survey type exports' will include ALL
+surveys in 'sources'
+
+# If no map objects are selected, then 'map object type exports' will
+include ALL map objects in 'sources'
+
+# Surveys and map object selections are independent, the selections and
+outputs of one type have NO EFFECT on the other
+
+# For this reason, unless all surveys and all maps are (drawn and) selected,
+or
+
+#   unless selected map(s) are defined with an associated 'survey <id>'
+option,
+
+#   reported statistics for the different outputs almost always differ from
+each other.
+
+ 
+
+# select NameOfCavePlan
+
+# select NameOfCaveElevEXT
+
+ 
+
+maps on # [on] off ## Setting maps to off disables all previews and offsets,
+and only scraps from the selected maps are output.  Survey centrelines
+included as part of a map definition are not output. 
+
+ # As at Jun2019, maps off significantly increases compile time and pdf file
+size
+
+ 
+
+To demonstrate those last points, here is a work in progress including a
+selected map that includes a survey centreline with 'maps on'.
+
+
+
+Here is the same selected map including the same selected centreline with
+'maps off'. 
+
+
+
+The centreline component of the map definition is not output, which is
+consistent with the stated behaviour in the Therion Book that only scraps
+are output, but not necessarily what I was expecting.  It is a good
+behaviour though, as the general combination of effects is to simplify the
+output.  Still not sure why an output that contains less (no previews, no
+map-connections, less centreline) should be 15x bigger in file size.
+
+
+
+Interesting that the colouring differs between the two examples, as they are
+coloured by altitude, and nothing else has changed between compiles.  Here
+are log file excerpts that show that the scrap altitudes are unchanged,
+although Therion has reordered them.  With 'maps off' they appear in order
+of altitude, and with 'maps on' they are in the order that they appear in
+the map definition (or is that a coincidence?).  
+
+Maps Off
+
+
+
+Maps On
+
+
+
+I have not shown the map lines for the 'maps on' case here, but it is
+interesting that the maps comprised of centrelines only do not even appear
+in any of the log files.
+
+It looks to me like the maps are listed in order of average altitude
+(highest at top) when 'maps on' is set, but it is hard to tell, because at
+present they all report the altitude as -8999 etc.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 47251 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 35923 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 21097 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 7468 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 6959 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190629/0b9b5cab/attachment-0004.png>
+
+From bruce at tomo.co.nz  Sun Jun 30 05:33:59 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 30 Jun 2019 15:33:59 +1200
+Subject: [Therion] maps on off feature characteristics
+Message-ID: <000001d52ef4$a9d76060$fd862120$@tomo.co.nz>
+
+After a bit more experimentation with a smaller project.
+
+I think this situation arises from a map made from two survey centrelines
+(no scraps or maps in the map definition).
+
+ 
+
+With maps on
+
+ 
+
+M
+-899999999999999990000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000.00 DwarfsDoorElev290Map@ (Dwarfs Door<br>Elevation
+looking 290 deg)
+
+S   749.01  @ ()
+
+S   732.25  @ ()
+
+ 
+
+With maps off
+
+ 
+
+S
+-899999999999999990000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000.00  @ ()
+
+ 
+
+So the code needs to test for and either filter out centrelines and maps
+comprised only of centrelines, or better, correctly determine their name and
+namespace.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190630/aae2920c/attachment.htm>
+

@@ -1,0 +1,928 @@
+From ohc at vt.edu  Wed Mar 15 00:14:55 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 14 Mar 2006 18:14:55 -0500
+Subject: [Therion] tkImg - PNG
+Message-ID: <200603141814.55729.ohc@vt.edu>
+
+I am having trouble getting therion(3.10 - 2006-03-06 Snapshot) to recognize 
+png files.  I have installed tkImg 1.3... I am running gentoo on an AMD64.  
+Any suggestions?  How can I test that tkImg is really working? I havent 
+gotten it to work on any other versions of therion.
+
+Philip Schuchardt
+
+
+From wookey at aleph1.co.uk  Wed Mar 15 02:01:46 2006
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 15 Mar 2006 01:01:46 +0000
+Subject: [Therion] tkImg - PNG
+In-Reply-To: <200603141814.55729.ohc@vt.edu>
+References: <200603141814.55729.ohc@vt.edu>
+Message-ID: <20060315010146.GT6204@xios>
+
++++ Philip Schuchardt [06-03-14 18:14 -0500]:
+> I am having trouble getting therion(3.10 - 2006-03-06 Snapshot) to recognize 
+> png files.  
+
+Hmm, I hadn;t realise there was a new snapshot. What's new? I'm giving a
+demo of Therion this weekend so it's useful to know if there is anything
+significant I should be showing off.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From ohc at vt.edu  Wed Mar 15 02:16:51 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 14 Mar 2006 20:16:51 -0500
+Subject: [Therion] tkImg - PNG
+In-Reply-To: <20060315010146.GT6204@xios>
+References: <200603141814.55729.ohc@vt.edu> <20060315010146.GT6204@xios>
+Message-ID: <200603142016.51669.ohc@vt.edu>
+
+I think there are changes to get therion to work with AMD64.  I had no problem 
+compiling it.
+
+Philip Schuchardt 
+
+On Tuesday 14 March 2006 8:01 pm, Wookey wrote:
+> +++ Philip Schuchardt [06-03-14 18:14 -0500]:
+> > I am having trouble getting therion(3.10 - 2006-03-06 Snapshot) to
+> > recognize png files.
+>
+> Hmm, I hadn;t realise there was a new snapshot. What's new? I'm giving a
+> demo of Therion this weekend so it's useful to know if there is anything
+> significant I should be showing off.
+>
+> Wookey
+
+
+From ohc at vt.edu  Wed Mar 15 02:19:36 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 14 Mar 2006 20:19:36 -0500
+Subject: [Therion] Scaling issues with .3d files
+Message-ID: <200603142019.36462.ohc@vt.edu>
+
+I am trying to import a survex .3d file into therion. Currently, I am just 
+trying to get all survey point into a pdf file.  Anyway, I get a weird error 
+about scaling. Does anyone know how to fix this? 
+
+--------- thconfig ---------
+input layout.th
+source main.th
+
+export map -layout plan -output Alva_Blankenship_Cave.pdf
+
+---------- layout.th --------
+layout plan
+  scale 1 200
+  units imperial
+  legend on
+  color map-fg altitude
+  transparency on
+    
+  #PDF DOCUMENTION
+  doc-author "Philip Schuchardt"
+  code tex-map
+    \cavename={Alva Blankenship Cave}
+    \comment{Cartography By: Philip Balister and Philip Schuchardt  \copyright 
+2006 VPI Cave Club}
+  endcode
+  
+  code metapost
+    def l_wall_bedrock_AMER (expr P) =
+      T:=identity;
+      pickup PenA;
+      thdraw P;
+    enddef;  
+    
+    def p_gradient_AMER (expr pos,theta,sc,al) =
+        U:=(.15u, .4u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+                
+        #Left Hand side
+        thdraw (-.3u, -.2u) -- (-.7u, .1u);
+        thdraw (-.2u, -.1u) -- (-.4u, .6u);
+        
+        #Centerline
+        thdraw (0u, 0u) -- (0u, .9u);
+        
+        #Right side
+        thdraw (.3u, -.2u) -- (.7u, .1u);
+        thdraw (.2u, -.1u) -- (.4u, .6u);
+        
+    enddef;
+    
+  initsymbol ("p_gradient_AMER");
+  initsymbol ("l_wall_bedrock_AMER");
+  endcode
+  
+  symbol-assign line wall:bedrock AMER
+  symbol-assign point gradient AMER
+  
+endlayout
+
+--------- main.th ---------
+survey "EG3"
+import EG3.3d
+endsurvey "EG3"
+
+--------------------- Compile------------------------
+therion 0.3.10
+initialization file: /etc/therion.ini
+reading ... done
+configuration file: thconfig
+reading ... done
+reading source files ... done
+preprocessing database ... done
+scanning centreline tree ... done
+searching for centerline loops ... done
+calculating station coordinates ... done
+processing survey data ... 
+####################### cavern log file ########################
+ 1> Survex 1.0.38
+ 2> Copyright (C) 1990-2005 Olly Betts
+ 3> 
+ 4> Survey contains 772 survey stations, joined by 0 legs.
+ 5> There are 0 loops.
+ 6> Survey has 772 connected components.
+ 7> Total length of survey legs =    0.00m (   0.00m adjusted)
+ 8> Total plan length of survey legs =    0.00m
+ 9> Total vertical length of survey legs =    0.00m
+10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at 0.00m)
+11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21 at 0.00m)
+12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at 0.00m)
+13>  772 0-nodes.
+14> 
+######################### transcription ########################
+ 4> 772 : eg3.ah38 at EG3
+ 6> 772 : eg3.ah38 at EG3
+10> 20 : eg3.a2 at EG3 -- 21 : eg3.a1 at EG3
+11> 495 : eg3.a40 at EG3 -- 21 : eg3.a1 at EG3
+12> 15 : eg3.a8 at EG3 -- 21 : eg3.a1 at EG3
+13> 772 : eg3.ah38 at EG3
+#################### end of cavern log file ####################
+done
+calculating basic statistics ... done
+processing extended elevation ... done
+processing references ... done
+selecting export objects ... done
+processing projection plan ... done
+writing Alva_Blankenship_Cave.pdf ...
+therion: error -- scale too large -- maximal scale for this configuration is 
+1 : 928886
+
+
+From olly at survex.com  Wed Mar 15 02:59:47 2006
+From: olly at survex.com (Olly Betts)
+Date: Wed, 15 Mar 2006 01:59:47 +0000
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <200603142019.36462.ohc@vt.edu>
+References: <200603142019.36462.ohc@vt.edu>
+Message-ID: <20060315015947.GE23991@survex.com>
+
+On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+> 10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at 0.00m)
+> 11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21 at 0.00m)
+> 12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at 0.00m)
+
+This looks like some weird coordinate wrap-around, since 42949672.91m is
+0xfffffffb cm, which is -5cm if interpreted as a signed value.
+
+I think the problem must be in the data being fed into Survex, since
+Survex itself doesn't store coordinates in integer cm until after this
+point (they're used to store coordinates in the .3d file).
+
+Cheers,
+    Olly
+
+
+From ohc at vt.edu  Wed Mar 15 03:47:50 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 14 Mar 2006 21:47:50 -0500
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <20060315015947.GE23991@survex.com>
+References: <200603142019.36462.ohc@vt.edu> <20060315015947.GE23991@survex.com>
+Message-ID: <200603142147.50437.ohc@vt.edu>
+
+I took out must the data and only have 2 survey stations and I get same error.  
+Is there something wrong with this data?  Do I need to downgrade survex to 
+make it work? 
+
+---------- EG3.svx ------------
+*begin EG3
+
+*entrance A2
+
+*units tape feet
+
+*begin  ; Trip 1
+*date 2004.07.04
+*calibrate declination 7.55
+*team "Blah" Notes
+*team "Blah" Instruments
+*team "Blah" Lead Tape
+
+*data normal from to compass tape clino 
+
+;from	to	compass	tape	clino	
+A1	A2	285	7.6	-7
+
+*end
+
+*end EG3
+
+
+
+On Tuesday 14 March 2006 8:59 pm, Olly Betts wrote:
+> On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+> > 10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at
+> > 0.00m) 11> North-South range = 42949672.86m (from 495 at 42949672.86m to
+> > 21 at 0.00m) 12> East-West range = 42949672.91m (from 15 at 42949672.91m
+> > to 21 at 0.00m)
+>
+> This looks like some weird coordinate wrap-around, since 42949672.91m is
+> 0xfffffffb cm, which is -5cm if interpreted as a signed value.
+>
+> I think the problem must be in the data being fed into Survex, since
+> Survex itself doesn't store coordinates in integer cm until after this
+> point (they're used to store coordinates in the .3d file).
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+
+
+From olly at survex.com  Wed Mar 15 06:22:25 2006
+From: olly at survex.com (Olly Betts)
+Date: Wed, 15 Mar 2006 05:22:25 +0000
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <200603142147.50437.ohc@vt.edu>
+References: <200603142019.36462.ohc@vt.edu> <20060315015947.GE23991@survex.com>
+	<200603142147.50437.ohc@vt.edu>
+Message-ID: <20060315052225.GF23991@survex.com>
+
+On Tue, Mar 14, 2006 at 09:47:50PM -0500, Philip Schuchardt wrote:
+> I took out must the data and only have 2 survey stations and I get same error.  
+> Is there something wrong with this data?  Do I need to downgrade survex to 
+> make it work? 
+
+I don't think there's anything wrong with the data, or with survex.
+
+Hmm, in fact I've just realised exactly where the problem almost certainly
+lies.
+
+If you edit extern/img.c in the therion source code and change (at about line
+42):
+
+# define INT32_T long
+
+to read:
+
+# define INT32_T int
+
+And then recompile and reinstall therion, then I'm pretty confident everything
+will work.  If it does then let me know and I'll fix this in a better way.
+
+Cheers,
+    Olly
+
+
+From s.m at speleo.sk  Wed Mar 15 09:06:40 2006
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 15 Mar 2006 09:06:40 +0100
+Subject: [Therion]  Re: tkImg - PNG
+In-Reply-To: <1142409835.4417ca6b93727@mail.atlantis.sk>
+References: <200603141814.55729.ohc@vt.edu> <20060315010146.GT6204@xios>
+	<1142409835.4417ca6b93727@mail.atlantis.sk>
+Message-ID: <1142410000.4417cb10e2fa8@webmailer.sk>
+
+Quoting Wookey <wookey at aleph1.co.uk>:
+
+> Hmm, I hadn;t realise there was a new snapshot. What's new? I'm giving a
+> demo of Therion this weekend so it's useful to know if there is anything
+> significant I should be showing off.
+
+See CHANGES file. We didn't announced it, because within 2 weeks, we would like
+to release new version.
+
+S.
+
+
+
+
+From s.m at speleo.sk  Wed Mar 15 09:07:47 2006
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 15 Mar 2006 09:07:47 +0100
+Subject: [Therion]  Re: tkImg - PNG
+In-Reply-To: <1142409760.4417ca20a6a6f@mail.atlantis.sk>
+References: <200603141814.55729.ohc@vt.edu>
+	<1142409760.4417ca20a6a6f@mail.atlantis.sk>
+Message-ID: <1142410066.4417cb53026b0@webmailer.sk>
+
+Quoting Philip Schuchardt <ohc at vt.edu>:
+
+> png files.  I have installed tkImg 1.3... I am running gentoo on an AMD64.
+> Any suggestions?  How can I test that tkImg is really working?
+
+Run wish and try following commands:
+
+package require Img
+image create photo -file /path/image.png
+
+If it will not generate error, then tkImg is OK.
+
+> I havent
+> gotten it to work on any other versions of therion.
+
+Currently, I can not see "package require Img" command in xtherion script. May
+be, you should add it manually to xtherion script or your xtherion.ini. I am
+not sure, may it it should be "package require tkImg".
+
+S.
+
+
+From philip at balister.org  Wed Mar 15 13:32:49 2006
+From: philip at balister.org (Philip Balister)
+Date: Wed, 15 Mar 2006 07:32:49 -0500
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <20060315015947.GE23991@survex.com>
+References: <200603142019.36462.ohc@vt.edu> <20060315015947.GE23991@survex.com>
+Message-ID: <44180971.8000507@balister.org>
+
+Olly,
+
+Just for your info the 3d file Philip Schuchardt is working with has the 
+coordinate system for the cave set up so the station coordinates are 
+also the UTM coordinates. This makes overlays easy with geo-referenced 
+surface maps. This would explain why the x,y numbers are large.
+
+Philip
+
+Olly Betts wrote:
+> On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+> 
+>>10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at 0.00m)
+>>11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21 at 0.00m)
+>>12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at 0.00m)
+> 
+> 
+> This looks like some weird coordinate wrap-around, since 42949672.91m is
+> 0xfffffffb cm, which is -5cm if interpreted as a signed value.
+> 
+> I think the problem must be in the data being fed into Survex, since
+> Survex itself doesn't store coordinates in integer cm until after this
+> point (they're used to store coordinates in the .3d file).
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 3178 bytes
+Desc: S/MIME Cryptographic Signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20060315/b2c1257f/attachment.bin>
+
+From wolfgang.zillig at web.de  Wed Mar 15 13:38:25 2006
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Wed, 15 Mar 2006 13:38:25 +0100
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <44180971.8000507@balister.org>
+References: <200603142019.36462.ohc@vt.edu> <20060315015947.GE23991@survex.com>
+	<44180971.8000507@balister.org>
+Message-ID: <44180AC1.4080209@web.de>
+
+I don't think that this is UTM. UMT has usually 7digits in y-direction 
+and 6 in x-direction.
+
+Wolfgang
+
+Philip Balister schrieb:
+> Olly,
+>
+> Just for your info the 3d file Philip Schuchardt is working with has 
+> the coordinate system for the cave set up so the station coordinates 
+> are also the UTM coordinates. This makes overlays easy with 
+> geo-referenced surface maps. This would explain why the x,y numbers 
+> are large.
+>
+> Philip
+>
+> Olly Betts wrote:
+>> On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+>>
+>>> 10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at 
+>>> 0.00m)
+>>> 11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21 
+>>> at 0.00m)
+>>> 12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at 
+>>> 0.00m)
+>>
+>>
+>> This looks like some weird coordinate wrap-around, since 42949672.91m is
+>> 0xfffffffb cm, which is -5cm if interpreted as a signed value.
+>>
+>> I think the problem must be in the data being fed into Survex, since
+>> Survex itself doesn't store coordinates in integer cm until after this
+>> point (they're used to store coordinates in the .3d file).
+>>
+>> Cheers,
+>>     Olly
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.cz
+>> http://www.speleo.cz/mailman/listinfo/therion
+> ------------------------------------------------------------------------
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+>   
+
+
+
+From philip at balister.org  Wed Mar 15 13:43:59 2006
+From: philip at balister.org (Philip Balister)
+Date: Wed, 15 Mar 2006 07:43:59 -0500
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <44180AC1.4080209@web.de>
+References: <200603142019.36462.ohc@vt.edu>
+	<20060315015947.GE23991@survex.com>	<44180971.8000507@balister.org>
+	<44180AC1.4080209@web.de>
+Message-ID: <44180C0F.8020500@balister.org>
+
+Hmm, you are correct. I need to check whcih svx file Philip is working 
+with. The range in meters is confusing me. Guess I need to look closely 
+at what is going on.
+
+Philip
+
+Wolfgang Zillig wrote:
+> I don't think that this is UTM. UMT has usually 7digits in y-direction 
+> and 6 in x-direction.
+> 
+> Wolfgang
+> 
+> Philip Balister schrieb:
+> 
+>>Olly,
+>>
+>>Just for your info the 3d file Philip Schuchardt is working with has 
+>>the coordinate system for the cave set up so the station coordinates 
+>>are also the UTM coordinates. This makes overlays easy with 
+>>geo-referenced surface maps. This would explain why the x,y numbers 
+>>are large.
+>>
+>>Philip
+>>
+>>Olly Betts wrote:
+>>
+>>>On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+>>>
+>>>
+>>>>10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at 
+>>>>0.00m)
+>>>>11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21 
+>>>>at 0.00m)
+>>>>12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at 
+>>>>0.00m)
+>>>
+>>>
+>>>This looks like some weird coordinate wrap-around, since 42949672.91m is
+>>>0xfffffffb cm, which is -5cm if interpreted as a signed value.
+>>>
+>>>I think the problem must be in the data being fed into Survex, since
+>>>Survex itself doesn't store coordinates in integer cm until after this
+>>>point (they're used to store coordinates in the .3d file).
+>>>
+>>>Cheers,
+>>>    Olly
+>>>_______________________________________________
+>>>Therion mailing list
+>>>Therion at speleo.cz
+>>>http://www.speleo.cz/mailman/listinfo/therion
+>>
+>>------------------------------------------------------------------------
+>>
+>>_______________________________________________
+>>Therion mailing list
+>>Therion at speleo.cz
+>>http://www.speleo.cz/mailman/listinfo/therion
+>>  
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 3178 bytes
+Desc: S/MIME Cryptographic Signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20060315/dc5aa3ea/attachment.bin>
+
+From s.m at speleo.sk  Wed Mar 15 13:48:09 2006
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 15 Mar 2006 13:48:09 +0100
+Subject: [Therion]  Re: Scaling issues with .3d files
+In-Reply-To: <44180C0F.8020500@balister.org>
+References: <200603142019.36462.ohc@vt.edu> <20060315015947.GE23991@survex.com>
+	<44180971.8000507@balister.org> <44180AC1.4080209@web.de>
+	<44180C0F.8020500@balister.org>
+Message-ID: <1142426889.44180d09e8d56@webmailer.sk>
+
+As Olly mentioned before, the problem is not in the data - but how therion is
+compiled under 64bit.
+
+When therion uses routines from img.c to read .3d file, it reads them not
+correctly => number are so large. This problem has nothing to do with data or
+survex.
+
+Survex reports large ranges, because it recevies wrong information from therion.
+
+S.
+
+
+Quoting Philip Balister <philip at balister.org>:
+
+> Hmm, you are correct. I need to check whcih svx file Philip is working
+> with. The range in meters is confusing me. Guess I need to look closely
+> at what is going on.
+>
+> Philip
+>
+> Wolfgang Zillig wrote:
+> > I don't think that this is UTM. UMT has usually 7digits in y-direction
+> > and 6 in x-direction.
+> >
+> > Wolfgang
+> >
+> > Philip Balister schrieb:
+> >
+> >>Olly,
+> >>
+> >>Just for your info the 3d file Philip Schuchardt is working with has
+> >>the coordinate system for the cave set up so the station coordinates
+> >>are also the UTM coordinates. This makes overlays easy with
+> >>geo-referenced surface maps. This would explain why the x,y numbers
+> >>are large.
+> >>
+> >>Philip
+> >>
+> >>Olly Betts wrote:
+> >>
+> >>>On Tue, Mar 14, 2006 at 08:19:36PM -0500, Philip Schuchardt wrote:
+> >>>
+> >>>
+> >>>>10> Vertical range = 42949672.68m (from 20 at 42949672.68m to 21 at
+> >>>>0.00m)
+> >>>>11> North-South range = 42949672.86m (from 495 at 42949672.86m to 21
+> >>>>at 0.00m)
+> >>>>12> East-West range = 42949672.91m (from 15 at 42949672.91m to 21 at
+> >>>>0.00m)
+> >>>
+> >>>
+> >>>This looks like some weird coordinate wrap-around, since 42949672.91m is
+> >>>0xfffffffb cm, which is -5cm if interpreted as a signed value.
+> >>>
+> >>>I think the problem must be in the data being fed into Survex, since
+> >>>Survex itself doesn't store coordinates in integer cm until after this
+> >>>point (they're used to store coordinates in the .3d file).
+> >>>
+> >>>Cheers,
+> >>>    Olly
+> >>>_______________________________________________
+> >>>Therion mailing list
+> >>>Therion at speleo.cz
+> >>>http://www.speleo.cz/mailman/listinfo/therion
+> >>
+> >>------------------------------------------------------------------------
+> >>
+> >>_______________________________________________
+> >>Therion mailing list
+> >>Therion at speleo.cz
+> >>http://www.speleo.cz/mailman/listinfo/therion
+> >>
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.cz
+> > http://www.speleo.cz/mailman/listinfo/therion
+>
+
+
+
+
+
+From ohc at vt.edu  Wed Mar 15 14:51:15 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Wed, 15 Mar 2006 08:51:15 -0500
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <20060315052225.GF23991@survex.com>
+References: <200603142019.36462.ohc@vt.edu> <200603142147.50437.ohc@vt.edu>
+	<20060315052225.GF23991@survex.com>
+Message-ID: <200603150851.16121.ohc@vt.edu>
+
+Nope that didnt fix it.  When I ran it on ~x86 box it worked... I must be a 
+AMD64 issue... 
+
+therion 0.3.10
+initialization file: /etc/therion.ini
+reading ... done
+configuration file: thconfig
+reading ... done
+reading source files ... done
+preprocessing database ... done
+scanning centreline tree ... done
+searching for centerline loops ... done
+calculating station coordinates ... done
+processing survey data ... 
+####################### cavern log file ########################
+ 1> Survex 1.0.38
+ 2> Copyright (C) 1990-2005 Olly Betts
+ 3> 
+ 4> Survey contains 2 survey stations, joined by 0 legs.
+ 5> There are 0 loops.
+ 6> Survey has 2 connected components.
+ 7> Total length of survey legs =    0.00m (   0.00m adjusted)
+ 8> Total plan length of survey legs =    0.00m
+ 9> Total vertical length of survey legs =    0.00m
+10> Vertical range = 42949672.68m (from 2 at 42949672.68m to 1 at 0.00m)
+11> North-South range = 0.30m (from 2 at 0.30m to 1 at 0.00m)
+12> East-West range = 42949670.68m (from 2 at 42949670.68m to 1 at 0.00m)
+13>    2 0-nodes.
+14> 
+######################### transcription ########################
+ 4> 2 : eg3.a2 at EG3
+ 6> 2 : eg3.a2 at EG3
+10> 2 : eg3.a2 at EG3 -- 1 : eg3.a1 at EG3
+11> 2 : eg3.a2 at EG3 -- 1 : eg3.a1 at EG3
+12> 2 : eg3.a2 at EG3 -- 1 : eg3.a1 at EG3
+13> 2 : eg3.a2 at EG3
+#################### end of cavern log file ####################
+done
+calculating basic statistics ... done
+processing extended elevation ... done
+processing references ... done
+selecting export objects ... done
+processing projection plan ... done
+writing Alva_Blankenship_Cave.pdf ...
+therion: error -- scale too large -- maximal scale for this configuration is 
+1 : 928886
+
+On Wednesday 15 March 2006 12:22 am, Olly Betts wrote:
+> On Tue, Mar 14, 2006 at 09:47:50PM -0500, Philip Schuchardt wrote:
+> > I took out must the data and only have 2 survey stations and I get same
+> > error. Is there something wrong with this data?  Do I need to downgrade
+> > survex to make it work?
+>
+> I don't think there's anything wrong with the data, or with survex.
+>
+> Hmm, in fact I've just realised exactly where the problem almost certainly
+> lies.
+>
+> If you edit extern/img.c in the therion source code and change (at about
+> line 42):
+>
+> # define INT32_T long
+>
+> to read:
+>
+> # define INT32_T int
+>
+> And then recompile and reinstall therion, then I'm pretty confident
+> everything will work.  If it does then let me know and I'll fix this in a
+> better way.
+>
+> Cheers,
+>     Olly
+
+
+From olly at survex.com  Wed Mar 15 18:24:16 2006
+From: olly at survex.com (Olly Betts)
+Date: Wed, 15 Mar 2006 17:24:16 +0000
+Subject: [Therion] Patch to allow compilation with GCC 4.1
+Message-ID: <20060315172416.GI23991@survex.com>
+
+Therion fails to compile with GCC 4.1 due to a couple of problems.
+There's a patch in this bug report:
+
+http://bugs.debian.org/356875
+
+Direct link to the patch:
+
+http://bugs.debian.org/cgi-bin/bugreport.cgi/therion-0.3.9-ftbfs-with-gcc-4.1.patch?bug=356875;msg=14;att=1
+
+Cheers,
+    Olly
+
+
+From ohc at vt.edu  Wed Mar 15 22:25:43 2006
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Wed, 15 Mar 2006 16:25:43 -0500
+Subject: [Therion] Metapost changing warningcheck
+Message-ID: <200603151625.43123.ohc@vt.edu>
+
+With a big cave I have scale set to = 1 200.  Then I get these warnings from 
+metapost.  Is there anyway to set warningcheck to 0?  With metapost .60 and 
+above, 4096 isn't really an issue.
+
+------ Error Message -----
+The equation I just processed has given some variable
+a value of 4096 or more. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+Philip Schuchardt
+
+
+From olly at survex.com  Thu Mar 16 06:53:43 2006
+From: olly at survex.com (Olly Betts)
+Date: Thu, 16 Mar 2006 05:53:43 +0000
+Subject: [Therion] Scaling issues with .3d files
+In-Reply-To: <200603150851.16121.ohc@vt.edu>
+References: <200603142019.36462.ohc@vt.edu> <200603142147.50437.ohc@vt.edu>
+	<20060315052225.GF23991@survex.com> <200603150851.16121.ohc@vt.edu>
+Message-ID: <20060316055343.GE5895@survex.com>
+
+On Wed, Mar 15, 2006 at 08:51:15AM -0500, Philip Schuchardt wrote:
+> Nope that didnt fix it.
+
+Ah yes, I need to also fix the get32() function.  Can you try the
+attached patch?  To apply it:
+
+cd therion-0.3.9
+patch -p0 < img.patch
+
+(if you've already made the previous change it'll say the first hunk is
+already applied and ask if you want to reverse the patch - just say no
+and ignore the first hunk failing to apply).
+
+And then rebuild and reinstall.
+
+Cheers,
+    Olly
+-------------- next part --------------
+--- extern/img.c~	2006-03-16 05:48:23.623026392 +0000
++++ extern/img.c	2006-03-16 05:49:13.443452536 +0000
+@@ -38,7 +38,7 @@
+ # define TIMENA msg(/*Date and time not available.*/108)
+ # define TIMEFMT msg(/*%a,%Y.%m.%d %H:%M:%S %Z*/107)
+ #else
+-# define INT32_T long
++# define INT32_T int
+ # define TIMENA "Time not available."
+ # define TIMEFMT "%a,%Y.%m.%d %H:%M:%S %Z"
+ # define EXT_SVX_3D "3d"
+@@ -64,13 +64,13 @@
+ # define fputsnl(S, FH) do {fputs((S), (FH)); putc('\n', (FH));} while(0)
+ # define SVX_ASSERT(X)
+ 
+-static long
++static INT32_T
+ get32(FILE *fh)
+ {
+-   long w = getc(fh);
+-   w |= (long)getc(fh) << 8l;
+-   w |= (long)getc(fh) << 16l;
+-   w |= (long)getc(fh) << 24l;
++   INT32_T w = getc(fh);
++   w |= (INT32_T)getc(fh) << 8l;
++   w |= (INT32_T)getc(fh) << 16l;
++   w |= (INT32_T)getc(fh) << 24l;
+    return w;
+ }
+ 
+
+From m.b at speleo.sk  Thu Mar 16 10:03:37 2006
+From: m.b at speleo.sk (Martin Budaj)
+Date: Thu, 16 Mar 2006 10:03:37 +0100
+Subject: [Therion] Patch to allow compilation with GCC 4.1
+In-Reply-To: <20060315172416.GI23991@survex.com>
+References: <20060315172416.GI23991@survex.com>
+Message-ID: <f64c1c4a0603160103r7398ccdcic68ca591663d399f@mail.gmail.com>
+
+Thanks, it'll be applied.
+Martin
+
+On 3/15/06, Olly Betts <olly at survex.com> wrote:
+>
+> Therion fails to compile with GCC 4.1 due to a couple of problems.
+> There's a patch in this bug report:
+>
+> http://bugs.debian.org/356875
+>
+> Direct link to the patch:
+>
+>
+> http://bugs.debian.org/cgi-bin/bugreport.cgi/therion-0.3.9-ftbfs-with-gcc-4.1.patch?bug=356875;msg=14;att=1
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20060316/e80e8739/attachment.htm>
+
+From wookey at aleph1.co.uk  Fri Mar 17 14:24:55 2006
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 17 Mar 2006 13:24:55 +0000
+Subject: [Therion] Patch to allow compilation with GCC 4.1
+In-Reply-To: <20060315172416.GI23991@survex.com>
+References: <20060315172416.GI23991@survex.com>
+Message-ID: <20060317132454.GM19811@xios>
+
++++ Olly Betts [06-03-15 17:24 +0000]:
+> Therion fails to compile with GCC 4.1 due to a couple of problems.
+> There's a patch in this bug report:
+> 
+> http://bugs.debian.org/356875
+> 
+> Direct link to the patch:
+> 
+> http://bugs.debian.org/cgi-bin/bugreport.cgi/therion-0.3.9-ftbfs-with-gcc-4.1.patch?bug=356875;msg=14;att=1
+
+A new debian version (0.3.9-5) including this patch has been uploaded.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From wookey at aleph1.co.uk  Fri Mar 17 14:24:55 2006
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 17 Mar 2006 13:24:55 +0000
+Subject: [Therion] Patch to allow compilation with GCC 4.1
+In-Reply-To: <20060315172416.GI23991@survex.com>
+References: <20060315172416.GI23991@survex.com>
+Message-ID: <20060317132454.GM19811@xios>
+
++++ Olly Betts [06-03-15 17:24 +0000]:
+> Therion fails to compile with GCC 4.1 due to a couple of problems.
+> There's a patch in this bug report:
+> 
+> http://bugs.debian.org/356875
+> 
+> Direct link to the patch:
+> 
+> http://bugs.debian.org/cgi-bin/bugreport.cgi/therion-0.3.9-ftbfs-with-gcc-4.1.patch?bug=356875;msg=14;att=1
+
+A new debian version (0.3.9-5) including this patch has been uploaded.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From dormat at gmail.com  Wed Mar 22 03:34:37 2006
+From: dormat at gmail.com (Jonathan Prouty)
+Date: Tue, 21 Mar 2006 21:34:37 -0500
+Subject: [Therion] Therion Packages for Slackware 10.2
+Message-ID: <50d2a16a0603211834m39a24de8q6da8f9f327715f39@mail.gmail.com>
+
+Hello All,
+This is my first post to the list, so I guess I should introduce myself. My
+name is Jonny Prouty, I'm a geology student at the University of Tennessee
+Chattanooga, in (naturally) Chattanooga, Tennessee. I've just recently begun
+to use Therion and so far I think it's fantastic.
+
+Ok, now for the meat of my message. I've created packages for
+Slackware 10.2of the software that is require or suggested in order to
+run Survex and
+Therion. I made them so that I could easily remove the software in case the
+need should arise. They are binary packages, compiled on a fresh Slackware
+10.2 install on an IBM Thinkpad A21e (celeron). I have no idea whether they
+will work anywhere else. I offer them up just in case they might prove
+useful.
+
+If anyone has any luck with these, please let me know.
+
+http://juno.utc.edu/~gqv812/therion.html
+
+Sincerely,
+Jonny Prouty
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20060321/140dfa5a/attachment.htm>
+

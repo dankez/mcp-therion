@@ -1,0 +1,2432 @@
+From wookey at aleph1.co.uk  Tue Jan  2 02:59:57 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 2 Jan 2007 01:59:57 +0000
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+Message-ID: <20070102015956.GO10478@xios>
+
+On 2006-12-29 22:14 +0100, Martin Budaj wrote:
+> On 12/28/06, Martin Budaj <m.budaj at gmail.com> wrote:
+> > > This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4)
+> > > ! TeX capacity exceeded, sorry [main memory size=1000000].
+> > > l.47627 \PL{
+> > >             249.81 181.74 250.44 181.80 250.46 182.14 c}%
+> > >
+> > > Do I really need to change this (how?) or is it probably something else
+> > > that has gone wrong? That 'runaway text?' looks suggestive.
+> >
+> > This means that you have 1 MB of data in one scrap -- each scrap is
+> > processed separetely by pdftex.
+> 
+> Therion 0.4.0 automatically creates a scrap containing centreline if
+> no map is selected in the thconfig file. This scrap can easily exceed
+> 1 MB in size in large caves (e.g. 4.5 MB for Dead Bats Cave). You may
+> avoid its creation by selecting any of defined map objects in 'export
+> map' command.
+
+I have selects in my thconfig file:
+#Map(s) to include in output                          
+select toplevelplan at terikan                          
+select midlevelplan at terikan                          
+select aboveriverplan at terikan                          
+select riverlevelplan at terikan 
+
+which I assume is what you mean by the above?
+
+And the underlying data hasn't changed for months so I don't think this
+is the problem. 
+
+The one thing that seems to make a differnce is base-scale. If i
+change it from 1:1000 to 1:2000 then the error changes. Now I get:
+
+[319] [320] [321] [322] [323] [324] [325] [326] [327] [328]
+[Warning: text scaled down to fit the path in scrap
+soundriver2_s4 at terikan]
+[329] [330] [331] [332] [333]
+>> 0.7593dirs4+222.06123
+! Improper transformation argument.
+<to be read again> 
+                   endgroup
+<to be read again> 
+                   )
+<forever> ...+if.par:0.333*fi.l*unitvector(dir(a))
+                                                  );cas:=cas+mojkrok;par:=no...
+
+l_slope->...;exitif.cas>dlzka+0.3u+(krok/3);endfor
+                                                  ;if(EXPR1)=1:pickup.PenC;d...
+l.33489 ...2,225.273,33.9682),(3,208.773,33.5305))
+                                                  ;
+>> 0.7593lengths4+36.69966
+! Undefined x coordinate has been replaced by 0.
+<to be read again> 
+                   ;
+<forever> ...f.par:0.333*fi.l*unitvector(dir(a)));
+                                                  cas:=cas+mojkrok;par:=not....
+
+l_slope->...;exitif.cas>dlzka+0.3u+(krok/3);endfor
+                                                  ;if(EXPR1)=1:pickup.PenC;d...
+l.33489 ...2,225.273,33.9682),(3,208.773,33.5305))
+                                                  ;
+[334]
+
+I don't know if that is a clue at all. 
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Tue Jan  2 02:04:57 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 2 Jan 2007 01:04:57 +0000
+Subject: [Therion] texlive support in therion
+In-Reply-To: <458DB476.1000607@group-s.sk>
+References: <87fybci7cs.fsf@ID-223132.user.uni-berlin.de>
+	<20061219095908.GB1832@gamma.logic.tuwien.ac.at>
+	<20061219112006.GH1832@gamma.logic.tuwien.ac.at>
+	<20061223005950.GX9665@xios> <458DB476.1000607@group-s.sk>
+Message-ID: <20070102010457.GN10478@xios>
+
+On 2006-12-23 23:57 +0100, Stacho Mudrak wrote:
+
+> P.S. May be it helps, here is listing of all TeX files, we include in 
+> therion win32 binary distribution (i.e. all files therion really needs):
+> 
+[ includes a load of cs* fonts as wellas cm* fonts]
+
+OK, it seems that which texlive-base contains cm font it does not
+have cs font. I can't see anything which obviously does have this
+(what is cs?).
+
+If I change /etc/therion.ini to have
+tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10  
+in it then texlive seems to process caves fine. 
+
+In fact it barfs in exactly the same way as tetex does by running out
+of main-memory on one of my larger caves. (and ignoes me when I change 
+main_memory = 1000000 to 
+main_memory = 1500000  in /etc/texmf/texmf.cnf )
+
+still giving the error:  
+TeX capacity exceeded, sorry [main memory size=1000000]
+
+But I digress. If someone can explain the font issue in terms of
+dependencies or changes to therion then I think we have texlive
+support sorted. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Tue Jan  2 00:02:28 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 1 Jan 2007 23:02:28 +0000
+Subject: [Therion] texlive support in therion
+In-Reply-To: <458DB476.1000607@group-s.sk>
+References: <87fybci7cs.fsf@ID-223132.user.uni-berlin.de>
+	<20061219095908.GB1832@gamma.logic.tuwien.ac.at>
+	<20061219112006.GH1832@gamma.logic.tuwien.ac.at>
+	<20061223005950.GX9665@xios> <458DB476.1000607@group-s.sk>
+Message-ID: <20070101230228.GL10478@xios>
+
+On 2006-12-23 23:57 +0100, Stacho Mudrak wrote:
+> Wookey wrote:
+> >>I have seen comments on metafun, too, do you use context?
+> >
+> >I don't understand this question. Martin, Stacho? 
+> 
+> No, as far as I know, there are some macros copied from context, but it 
+> is definitely not used.
+> 
+> Therion is using:
+> plain metapost
+> plain pdfetex (because of memory requirements)
+> and by default, it has CM and CS (latin2) font mappings
+> 
+> >>As I said, the best option is to send me some medium complicated files
+> >>which should be do-able with the dependencies, and I will check them.
+> 
+> I am not sure, whether they are medium complicated, but here are TeX and 
+> metapost files generated by therion. Run:
+
+
+OK. I just tried installing texlive and seeing what happened if I
+processed something with it. I installed the package texlive
+
+which gave me:
+ tex-common     0.42
+ texlive        2005.dfsg.2-4
+ texlive-base
+ texlive-base-bin
+ texlive-common
+ texlive-context
+ texlive-doc-base
+ texlive-common
+ texlive-context
+ texlive-doc-base
+ texlive-generic-recommended
+ texlive-latex-base
+ texlive-latex-recommended
+ texlive-metapost
+ texlive-pdfetex
+ texlive-pstricks
+ 
+(sopme of these got pulled in by other deps on my system). 
+
+And when I ran a fairly simple case I got the log file below:
+
+This appears to be not working due to missing fonts or something.
+
+Clues welcome.
+
+My best guess as to the deps actually required is texlive-base-bin,
+texlive-pdftex, texlive-metapost. But it would appear there are others. 
+
+log:
+therion 0.4.1
+cavern - Survex 1.0.39
+initialization file: /etc/therion.ini
+reading ... done
+configuration file: thconfig
+reading ... done
+reading source files ... done
+preprocessing database ... done
+scanning centreline tree ... done
+searching for centerline loops ... done
+calculating station coordinates ... done
+processing survey data ... done
+calculating basic statistics ... done
+processing extended elevation ... done
+processing references ... done
+selecting export objects ... done
+processing projection plan ... done
+average distortion: 0.74%
+writing menagerie.pdf ...
+processing projection none ... done
+This is MetaPost, Version 0.901 (Web2C 7.5.5)
+(data.mp [4001] [4002] [4003] [4004] [4005]
+[1] [2] [3] [4]
+[Warning: scrap outline intersects itself in scrap menagerie84_s2 at menagerie]
+[5] [6]newer: target file `data.mpx' doesn't exist.
+kpathsea: Running mktextfm csr10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csr10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csr10
+
+! I can't find file `csr10'.
+<*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+                                                  
+Transcript written on mfput.log.
+grep: csr10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csr10' failed to make csr10.tfm.
+kpathsea: Appending font creation commands to missfont.log.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+kpathsea: Running mktextfm csss10
+mktextfm: Running mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10
+This is METAFONT, Version 2.71828 (Web2C 7.5.5)
+kpathsea: Running mktexmf csss10
+
+! I can't find file `csss10'.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Please type another input file name
+! Emergency stop.
+<*> ...:=ljfour; mag:=1; nonstopmode; input csss10
+                                                  
+Transcript written on mfput.log.
+grep: csss10.log: No such file or directory
+mktextfm: `mf-nowin -progname=mf \mode:=ljfour; mag:=1; nonstopmode; input csss10' failed to make csss10.tfm.
+/usr/bin/makempx: Command failed: tex --parse-first-line mpxerr.tex; see mpxerr.log
+
+>> data.mp
+>> data.mpx
+! Unable to make mpx file.
+l.7323 p_label(btex
+                    \thlabel\thnormalsize \thfa\char112 \char55 {} etex,(33....
+
+11 output files written: data.1 .. data.4005
+Transcript written on data.log.
+therion: error -- metapost exit code -- 256
+
+
+
+
+
+
+
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Mon Jan  1 21:39:11 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 1 Jan 2007 20:39:11 +0000
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+Message-ID: <20070101203911.GK10478@xios>
+
+On 2006-12-28 20:38 +0100, Martin Budaj wrote:
+> > This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4)
+> > ! TeX capacity exceeded, sorry [main memory size=1000000].
+> > l.47627 \PL{
+> >             249.81 181.74 250.44 181.80 250.46 182.14 c}%
+> >
+> > Do I really need to change this (how?) or is it probably something else
+> > that has gone wrong? That 'runaway text?' looks suggestive.
+> 
+> This means that you have 1 MB of data in one scrap -- each scrap is
+> processed separetely by pdftex. New sections should not influence it.
+> (It might be possible that ancient pdftex version (1.21a) you are
+> using does not flush the data to the pdf file after the scrap is
+> processed and keeps all the data in the memory. Try to find whether
+> the file th_formdef.tex reaches 1 MB on the problematic line 47627. 
+
+line 47627 is 0x17A850 or 1550416 bytes i.e. ~1.5Mb.
+
+Updating the pdftex version is a bit tricky. I ought to try texlive
+though, which I think is supposed to be more modern.
+
+> If
+> this is the case try to update pdftex.)
+> 
+> You may also increase the memory pdftex is using in the file
+> texmf/web2c/texmf.cnf by redefining the variable main_memory.
+
+OK. I tried this but I still get the same error: 
+! TeX capacity exceeded, sorry [main memory size=1000000].
+
+even though /etcx/texmf/texmf.cnf now has:
+main_memory = 2000000 % words of inimemory available; also applies to inimf&mp
+
+Why is it ignoring me - there is some other setting (there are lots in
+there like:
+main_memory.context = 1500000
+main_memory.mpost = 1500000
+
+but no others are 1000000
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From m.budaj at gmail.com  Tue Jan  2 11:52:17 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 2 Jan 2007 11:52:17 +0100
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <20070102015956.GO10478@xios>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+	<20070102015956.GO10478@xios>
+Message-ID: <f64c1c4a0701020252g9df1d3cj75974c454eea5c9c@mail.gmail.com>
+
+> > Therion 0.4.0 automatically creates a scrap containing centreline if
+> > no map is selected in the thconfig file. This scrap can easily exceed
+> > 1 MB in size in large caves (e.g. 4.5 MB for Dead Bats Cave). You may
+> > avoid its creation by selecting any of defined map objects in 'export
+> > map' command.
+>
+> I have selects in my thconfig file:
+> #Map(s) to include in output
+> select toplevelplan at terikan
+> select midlevelplan at terikan
+> select aboveriverplan at terikan
+> select riverlevelplan at terikan
+>
+> which I assume is what you mean by the above?
+
+yes, if   toplevelplan at terikan and others are maps, not surveys
+
+> And the underlying data hasn't changed for months so I don't think this
+> is the problem.
+
+right, but therion changed from 0.3.10 to 0.4.0 -- the automatic
+generation of scrap with all centreline data is a new feature
+
+
+> The one thing that seems to make a differnce is base-scale. If i
+> change it from 1:1000 to 1:2000 then the error changes. Now I get:
+>
+...
+> [329] [330] [331] [332] [333]
+>
+> l_slope->...;exitif.cas>dlzka+0.3u+(krok/3);endfor
+>                                                   ;if(EXPR1)=1:pickup.PenC;d...
+> l.33489 ...2,225.273,33.9682),(3,208.773,33.5305))
+
+It is some issue with the slope symbol definition in small scale maps
+-- I'll check it. Note that it occurs earlier than the out-of-memory
+problem (line 33489).
+
+Martin
+
+
+From m.budaj at gmail.com  Tue Jan  2 11:56:31 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 2 Jan 2007 11:56:31 +0100
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <20070101203911.GK10478@xios>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<20070101203911.GK10478@xios>
+Message-ID: <f64c1c4a0701020256k36fe93b6nf442fc35ea4bcaef@mail.gmail.com>
+
+> > You may also increase the memory pdftex is using in the file
+> > texmf/web2c/texmf.cnf by redefining the variable main_memory.
+>
+> OK. I tried this but I still get the same error:
+> ! TeX capacity exceeded, sorry [main memory size=1000000].
+>
+> even though /etcx/texmf/texmf.cnf now has:
+> main_memory = 2000000 % words of inimemory available; also applies to inimf&mp
+>
+> Why is it ignoring me
+
+You have probably modified not the same config file as texlive is
+reading. My texlive installation on windows has both
+texmf/web2c/texmf.cnf and texmf-var/web2c/texmf.cnf of which the
+former is ignored...
+
+Martin
+
+
+From wookey at aleph1.co.uk  Tue Jan  2 12:03:41 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 2 Jan 2007 11:03:41 +0000
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <f64c1c4a0701020252g9df1d3cj75974c454eea5c9c@mail.gmail.com>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+	<20070102015956.GO10478@xios>
+	<f64c1c4a0701020252g9df1d3cj75974c454eea5c9c@mail.gmail.com>
+Message-ID: <20070102110341.GC31021@xios>
+
+On 2007-01-02 11:52 +0100, Martin Budaj wrote:
+> > > Therion 0.4.0 automatically creates a scrap containing centreline if
+> > > no map is selected in the thconfig file. This scrap can easily exceed
+> > > 1 MB in size in large caves (e.g. 4.5 MB for Dead Bats Cave). You may
+> > > avoid its creation by selecting any of defined map objects in 'export
+> > > map' command.
+> >
+> > I have selects in my thconfig file:
+> > #Map(s) to include in output
+> > select toplevelplan at terikan
+> > select midlevelplan at terikan
+> > select aboveriverplan at terikan
+> > select riverlevelplan at terikan
+> >
+> > which I assume is what you mean by the above?
+> 
+> yes, if   toplevelplan at terikan and others are maps, not surveys
+
+they are yes. 
+
+> > And the underlying data hasn't changed for months so I don't think this
+> > is the problem.
+> 
+> right, but therion changed from 0.3.10 to 0.4.0 -- the automatic
+> generation of scrap with all centreline data is a new feature
+
+OK. But this dataset was being processed quite happily with 0.4.0,
+until I added some more cross sections (and some areas). It seems that
+either one of these changes made something genuinely too big, or there
+was some error introduced which is making tex run out of memory.
+ 
+> > The one thing that seems to make a differnce is base-scale. If i
+> > change it from 1:1000 to 1:2000 then the error changes. Now I get:
+> >
+> ...
+> > [329] [330] [331] [332] [333]
+> >
+> > l_slope->...;exitif.cas>dlzka+0.3u+(krok/3);endfor
+> >                                                   ;if(EXPR1)=1:pickup.PenC;d...
+> > l.33489 ...2,225.273,33.9682),(3,208.773,33.5305))
+> 
+> It is some issue with the slope symbol definition in small scale maps
+> -- I'll check it. Note that it occurs earlier than the out-of-memory
+> problem (line 33489).
+
+Ah, OK. so we may have both :-;
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From m.budaj at gmail.com  Tue Jan  2 14:23:39 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 2 Jan 2007 14:23:39 +0100
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <20070102110341.GC31021@xios>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+	<20070102015956.GO10478@xios>
+	<f64c1c4a0701020252g9df1d3cj75974c454eea5c9c@mail.gmail.com>
+	<20070102110341.GC31021@xios>
+Message-ID: <f64c1c4a0701020523g72d19aah75dd94d8224ae609@mail.gmail.com>
+
+On 1/2/07, Wookey <wookey at aleph1.co.uk> wrote:
+> > > I have selects in my thconfig file:
+> > > #Map(s) to include in output
+> > > select toplevelplan at terikan
+> > > select midlevelplan at terikan
+> > > select aboveriverplan at terikan
+> > > select riverlevelplan at terikan
+> > >
+> > > which I assume is what you mean by the above?
+> >
+> > yes, if   toplevelplan at terikan and others are maps, not surveys
+>
+> they are yes.
+
+are you sure that they are known to therion? in case of unexisting
+maps therion issues just the warning "survey not fond" in the log
+file.
+
+i selected
+select overall-map at Mulu
+and got a pdf file without problems
+
+> > > And the underlying data hasn't changed for months so I don't think this
+> > > is the problem.
+> >
+> > right, but therion changed from 0.3.10 to 0.4.0 -- the automatic
+> > generation of scrap with all centreline data is a new feature
+>
+> OK. But this dataset was being processed quite happily with 0.4.0,
+> until I added some more cross sections (and some areas). It seems that
+> either one of these changes made something genuinely too big, or there
+> was some error introduced which is making tex run out of memory.
+
+randomised areas can produce quite large amount of data, especially
+sand and debris.
+
+if you upload the recent dataset to your server, i might check where
+the problem is
+
+martin
+
+p.s. when processing your *.svx using cavern i got 4 errors concerning
+dates -- mixed day/month/year figures
+
+
+From wookey at aleph1.co.uk  Wed Jan  3 05:56:46 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 3 Jan 2007 04:56:46 +0000
+Subject: [Therion] Tex memory exceeded
+In-Reply-To: <f64c1c4a0701020523g72d19aah75dd94d8224ae609@mail.gmail.com>
+References: <20061228121724.GD9665@xios>
+	<f64c1c4a0612281138r5e730c44o9b5dfcc117db4acd@mail.gmail.com>
+	<f64c1c4a0612291314g3958f77cn9da9ea2d9255f359@mail.gmail.com>
+	<20070102015956.GO10478@xios>
+	<f64c1c4a0701020252g9df1d3cj75974c454eea5c9c@mail.gmail.com>
+	<20070102110341.GC31021@xios>
+	<f64c1c4a0701020523g72d19aah75dd94d8224ae609@mail.gmail.com>
+Message-ID: <20070103045646.GP31021@xios>
+
+On 2007-01-02 14:23 +0100, Martin Budaj wrote:
+> On 1/2/07, Wookey <wookey at aleph1.co.uk> wrote:
+> > > > I have selects in my thconfig file:
+> > > > #Map(s) to include in output
+> > > > select toplevelplan at terikan
+> > > > select midlevelplan at terikan
+> > > > select aboveriverplan at terikan
+> > > > select riverlevelplan at terikan
+> > > >
+> > > > which I assume is what you mean by the above?
+> > >
+> > > yes, if   toplevelplan at terikan and others are maps, not surveys
+> >
+> > they are yes.
+> 
+> are you sure that they are known to therion? in case of unexisting
+> maps therion issues just the warning "survey not fond" in the log
+> file.
+
+Pretty sure. I have processed terikan_only.th hundreds of times. It
+was selecting the above maps. I do have the above problem at the
+benarat level of the data, but not at the terikan level.
+
+> i selected
+> select overall-map at Mulu
+> and got a pdf file without problems
+
+This is at the top level thconfig file?
+
+Interesting - I can do that OK too, until right at the end where it is
+'writing MuluWalls.3d' and I get a segfault. 
+
+> > > > And the underlying data hasn't changed for months so I don't think this
+> > > > is the problem.
+> > >
+> > > right, but therion changed from 0.3.10 to 0.4.0 -- the automatic
+> > > generation of scrap with all centreline data is a new feature
+> >
+> > OK. But this dataset was being processed quite happily with 0.4.0,
+> > until I added some more cross sections (and some areas). It seems that
+> > either one of these changes made something genuinely too big, or there
+> > was some error introduced which is making tex run out of memory.
+> 
+> randomised areas can produce quite large amount of data, especially
+> sand and debris.
+> 
+> if you upload the recent dataset to your server, i might check where
+> the problem is
+
+It is in svn at svn://wookware.org/mulusurvery  
+I think martins has told you the password, or I can send you mail.
+
+I have now turned up my TeX memory to 2000000 and it all processes
+fine. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From s.m at group-s.sk  Wed Jan  3 10:14:11 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 03 Jan 2007 10:14:11 +0100
+Subject: [Therion] texlive support in therion
+In-Reply-To: <20070102010457.GN10478@xios>
+References: <87fybci7cs.fsf@ID-223132.user.uni-berlin.de>
+	<20061219095908.GB1832@gamma.logic.tuwien.ac.at>
+	<20061219112006.GH1832@gamma.logic.tuwien.ac.at>
+	<20061223005950.GX9665@xios> <458DB476.1000607@group-s.sk>
+	<20070102010457.GN10478@xios>
+Message-ID: <20070103101411.b77w29yx8g44k8sg@webmailer.sk>
+
+> OK, it seems that which texlive-base contains cm font it does not
+> have cs font. I can't see anything which obviously does have this
+> (what is cs?).
+
+CS are central european TeX fonts we use (cs is in fact former  
+czechoslovakia iso country code).
+
+> If I change /etc/therion.ini to have
+> tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+> in it then texlive seems to process caves fine.
+
+Correct. Then it does not use CS fonts any more.
+
+> But I digress. If someone can explain the font issue in terms of
+> dependencies or changes to therion then I think we have texlive
+> support sorted.
+
+There are two possibilities:
+
+1. Comment out line 79 in thtexfonts.cxx and it should no more depend  
+on CS fonts.
+
+2. Add dependency to texlive-lang-czechslovak package (which contains  
+CS fonts).
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Wed Jan  3 13:38:09 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 3 Jan 2007 12:38:09 +0000
+Subject: [Therion] texlive support in therion
+In-Reply-To: <20070103101411.b77w29yx8g44k8sg@webmailer.sk>
+References: <87fybci7cs.fsf@ID-223132.user.uni-berlin.de>
+	<20061219095908.GB1832@gamma.logic.tuwien.ac.at>
+	<20061219112006.GH1832@gamma.logic.tuwien.ac.at>
+	<20061223005950.GX9665@xios> <458DB476.1000607@group-s.sk>
+	<20070102010457.GN10478@xios>
+	<20070103101411.b77w29yx8g44k8sg@webmailer.sk>
+Message-ID: <20070103123808.GR31021@xios>
+
+On 2007-01-03 10:14 +0100, Stacho Mudrak wrote:
+> > OK, it seems that which texlive-base contains cm font it does not
+> > have cs font. I can't see anything which obviously does have this
+> > (what is cs?).
+> 
+> CS are central european TeX fonts we use (cs is in fact former  
+> czechoslovakia iso country code).
+> 
+> > If I change /etc/therion.ini to have
+> > tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+> > in it then texlive seems to process caves fine.
+> 
+> Correct. Then it does not use CS fonts any more.
+> 
+> > But I digress. If someone can explain the font issue in terms of
+> > dependencies or changes to therion then I think we have texlive
+> > support sorted.
+> 
+> There are two possibilities:
+> 
+> 1. Comment out line 79 in thtexfonts.cxx and it should no more depend  
+> on CS fonts.
+
+Is the /etc/therion.ini change not better than changing the code?
+
+> 2. Add dependency to texlive-lang-czechslovak package (which contains  
+> CS fonts).
+
+I am not sure what to do about these dependencies. For general debian
+use it seems to me that installing partitcular language fonts should
+be an option, rather than a requirement for everybody (it is an extra
+4MB for each language pack). The main reason to include them by
+default is that some of the example files need them (I presume?).
+
+I have currently set the dependencies to 
+suggest: texlive-lang-czechslovak and added info the to the debian readme to
+explain that you need this package for some of the examples, and to
+change the /etc/therion.ini back.
+
+Can therion recognise new fonts without having to add a line in the
+therion.ini file? Then it would just be a case of adding suitable
+langauge packs - that would be nicest, but presumably it has to be
+configured somewhere.
+
+I am not sure if perhaps it should be a 
+recommends: texlive-lang-czechslovak dependency. That way it will
+normally just get installed for users who don't know what they are
+doing.
+
+How do therion users on debian/ubuntu think this shoud be handled?
+
+And can someone at therion-central comment on my post about including
+the wiki docs - do you want to do this upstream or not?
+
+These are the two remaining issues affecting therion 0.4 packaging.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From m.budaj at gmail.com  Thu Jan  4 09:27:19 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 4 Jan 2007 09:27:19 +0100
+Subject: [Therion] Docs and debian packaging
+In-Reply-To: <20061227135338.GZ9665@xios>
+References: <20061227135338.GZ9665@xios>
+Message-ID: <f64c1c4a0701040027p5906065of6785dc1ff264ede@mail.gmail.com>
+
+On 12/27/06, Wookey <wookey at aleph1.co.uk> wrote:
+> I have made the 0.4.1~pre20061221 debian packaging of the latest
+> snapshot. This includes the wiki docs and the current source and debs
+> are available at:
+> http://wookware.org/files/therion/
+>
+> However I have a problem with the packaging.
+>
+[...]
+>
+> So, the question for therion authors/admins (who shouldn't really have to
+> worry about debian packaging), is do you think including the wiki docs
+> in either the main source tarball or a different docs one (and move
+> the thbook into that too) is a good idea or not?
+
+We see only one possibility (not mentioned by you) -- to make a
+separate therion-wikidocs package and leave the therion package as is,
+including the thbook sources. The reason is that we cannot guarantee
+the correctness of wiki pages and there _should_ be some official
+documentation in the main package. The split we suggest is between
+author- and user-contributed files, not between source and
+documentation.
+
+Martin
+
+
+From m.budaj at gmail.com  Thu Jan  4 09:47:28 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 4 Jan 2007 09:47:28 +0100
+Subject: [Therion] texlive support in therion
+In-Reply-To: <20070103123808.GR31021@xios>
+References: <87fybci7cs.fsf@ID-223132.user.uni-berlin.de>
+	<20061219095908.GB1832@gamma.logic.tuwien.ac.at>
+	<20061219112006.GH1832@gamma.logic.tuwien.ac.at>
+	<20061223005950.GX9665@xios> <458DB476.1000607@group-s.sk>
+	<20070102010457.GN10478@xios>
+	<20070103101411.b77w29yx8g44k8sg@webmailer.sk>
+	<20070103123808.GR31021@xios>
+Message-ID: <f64c1c4a0701040047m77e95999s66b25eb541a66146@mail.gmail.com>
+
+On 1/3/07, Wookey <wookey at aleph1.co.uk> wrote:
+> On 2007-01-03 10:14 +0100, Stacho Mudrak wrote:
+...
+> > There are two possibilities:
+> >
+> > 1. Comment out line 79 in thtexfonts.cxx and it should no more depend
+> > on CS fonts.
+>
+> Is the /etc/therion.ini change not better than changing the code?
+
+Yes.
+
+> > 2. Add dependency to texlive-lang-czechslovak package (which contains
+> > CS fonts).
+>
+> I am not sure what to do about these dependencies. For general debian
+> use it seems to me that installing partitcular language fonts should
+> be an option, rather than a requirement for everybody (it is an extra
+> 4MB for each language pack). The main reason to include them by
+> default is that some of the example files need them (I presume?).
+
+They are just needed for correct displaying of some latin-2 characters
+used in central Europe. If Therion is configured to use CM fonts only,
+the files containig these accented characters can be still processed
+and Therion makes an accented character as a combination of base
+character and accent (if the accent is present in the CM font).
+However, there are some special typographical rules how some accented
+character should look like (e.g. t with caron is displayed as t with
+comma above). So if therion makes a combination t + caron, it just
+does not look right. If the native CS fonts are used, therion des not
+need to make composite characters.
+
+> I have currently set the dependencies to
+> suggest: texlive-lang-czechslovak and added info the to the debian readme to
+> explain that you need this package for some of the examples, and to
+> change the /etc/therion.ini back.
+
+This is the correct way if you don't like therion to be dependent on
+CS fonts. The explanation should be that the fonts are needed for
+correct displaying of latin-2 characters.
+
+> Can therion recognise new fonts without having to add a line in the
+> therion.ini file? Then it would just be a case of adding suitable
+> langauge packs - that would be nicest, but presumably it has to be
+> configured somewhere.
+
+It cannot. We plan to find some unicode fonts to be included in the
+distribution. Than there would be no external dependency on other
+fonts or packages.
+
+> I am not sure if perhaps it should be a
+> recommends: texlive-lang-czechslovak dependency. That way it will
+> normally just get installed for users who don't know what they are
+> doing.
+
+They would need to change ini file anyway.
+
+Martin
+
+
+From lblazek at speleo.cz  Thu Jan  4 14:16:32 2007
+From: lblazek at speleo.cz (Ladislav Blazek)
+Date: Thu, 4 Jan 2007 14:16:32 +0100 (CET)
+Subject: [Therion] Docs and debian packaging
+In-Reply-To: <f64c1c4a0701040027p5906065of6785dc1ff264ede@mail.gmail.com>
+References: <20061227135338.GZ9665@xios>
+	<f64c1c4a0701040027p5906065of6785dc1ff264ede@mail.gmail.com>
+Message-ID: <39475.193.163.136.22.1167916592.squirrel@outsider.texxar.cz>
+
+
+Martin Budaj napsal(a):
+> On 12/27/06, Wookey <wookey at aleph1.co.uk> wrote:
+>> I have made the 0.4.1~pre20061221 debian packaging of the latest
+>> snapshot. This includes the wiki docs and the current source and debs
+>> are available at:
+>> http://wookware.org/files/therion/
+>>
+>> However I have a problem with the packaging.
+>>
+> [...]
+>>
+>> So, the question for therion authors/admins (who shouldn't really have
+>> to
+>> worry about debian packaging), is do you think including the wiki docs
+>> in either the main source tarball or a different docs one (and move
+>> the thbook into that too) is a good idea or not?
+>
+> We see only one possibility (not mentioned by you) -- to make a
+> separate therion-wikidocs package and leave the therion package as is,
+> including the thbook sources. The reason is that we cannot guarantee
+> the correctness of wiki pages and there _should_ be some official
+> documentation in the main package. The split we suggest is between
+> author- and user-contributed files, not between source and
+> documentation.
+
+I completely agree with Martin - wiki should be optional package. I think
+it is too big (and will be even bigger) for inclusion in therion package.
+I will prepare some script for generating wiki tarball nightly.
+
+Ladislav
+
+
+
+From wookey at aleph1.co.uk  Fri Jan  5 02:07:24 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 5 Jan 2007 01:07:24 +0000
+Subject: [Therion] Docs and debian packaging
+In-Reply-To: <39475.193.163.136.22.1167916592.squirrel@outsider.texxar.cz>
+References: <20061227135338.GZ9665@xios>
+	<f64c1c4a0701040027p5906065of6785dc1ff264ede@mail.gmail.com>
+	<39475.193.163.136.22.1167916592.squirrel@outsider.texxar.cz>
+Message-ID: <20070105010724.GT31021@xios>
+
+On 2007-01-04 14:16 +0100, Ladislav Blazek wrote:
+> 
+> Martin Budaj napsal(a):
+> > On 12/27/06, Wookey <wookey at aleph1.co.uk> wrote:
+> >> I have made the 0.4.1~pre20061221 debian packaging of the latest
+> >> snapshot. This includes the wiki docs and the current source and debs
+> >> are available at:
+> >> http://wookware.org/files/therion/
+> >>
+> >> However I have a problem with the packaging.
+> >>
+> > [...]
+> >>
+> >> So, the question for therion authors/admins (who shouldn't really have
+> >> to
+> >> worry about debian packaging), is do you think including the wiki docs
+> >> in either the main source tarball or a different docs one (and move
+> >> the thbook into that too) is a good idea or not?
+> >
+> > We see only one possibility (not mentioned by you) -- to make a
+> > separate therion-wikidocs package and leave the therion package as is,
+> > including the thbook sources. The reason is that we cannot guarantee
+> > the correctness of wiki pages and there _should_ be some official
+> > documentation in the main package. The split we suggest is between
+> > author- and user-contributed files, not between source and
+> > documentation.
+
+OK, thanx for getting back to me. I'm afraid I do not really agree
+with you: I think users would prefer to see 'tools' and 'docs'
+packages - they don't really care who wrote the docs, or expect some
+docs to be in docs package but others to be in tools package. They
+either already know the package and do not need docs, or they do need
+docs, in which case the wiki ones are definately the most useful. For
+new users the wiki docs are the ones they should be reading first, not
+the thbook. Lack of synchronisation between docs and code is an issue,
+but a manageable one. 
+
+But even though I do not entirely agree, I can work with your split. It
+is is simple for me, just not ideal for users (IMHO). 
+
+> I completely agree with Martin - wiki should be optional package. I think
+> it is too big (and will be even bigger) for inclusion in therion package.
+
+Exactly - that is why it should be in a separate docs package, and
+once you have one of those it seems to me that the thbook should
+ideally be in it too. 
+
+> I will prepare some script for generating wiki tarball nightly.
+
+OK. That would be great.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Sat Jan  6 00:32:00 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 5 Jan 2007 23:32:00 +0000
+Subject: [Therion] changing page size in atlas
+Message-ID: <20070105233200.GQ31021@xios>
+
+
+I tried to make an atlas with A3 sized pages, portrait mode so set
+size 42 29.7 cm
+in my layout. 
+
+This resulted in a lot of errors:
+Normal \count register pool exhausted, switching to extended pool.)
+(./th_pagedef.tex) (./th_pages.tex [1]
+Overfull \vbox (239.1945pt too high) has occurred while \output is
+active
+[2] [3]
+Overfull \vbox (239.1945pt too high) has occurred while \output is
+active
+[4] [5]
+down to [48]
+(see the transcript file for additional
+information)</usr/share/texmf-tetex/fon
+ts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf-tetex/fonts/type1/bluesky/cm/c
+mss10.pfb>
+Output written on data.pdf (48 pages, 2430010 bytes).
+
+In the finished atlas every other page is blank, and I get no
+navigator. Is this a bug, or did I do something wrong?
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From m.budaj at gmail.com  Sat Jan  6 08:01:10 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 6 Jan 2007 08:01:10 +0100
+Subject: [Therion] changing page size in atlas
+In-Reply-To: <20070105233200.GQ31021@xios>
+References: <20070105233200.GQ31021@xios>
+Message-ID: <f64c1c4a0701052301u66481cd8meb230ff833483acf@mail.gmail.com>
+
+On 1/6/07, Wookey <wookey at aleph1.co.uk> wrote:
+>
+> I tried to make an atlas with A3 sized pages, portrait mode so set
+> size 42 29.7 cm
+> in my layout.
+> This resulted in a lot of errors:
+> In the finished atlas every other page is blank, and I get no
+> navigator. Is this a bug, or did I do something wrong?
+
+Atlas setup is not very user friendly, you have to set 3 variables:
+size, overlap, page-setup. There is an illustration in thbook (p.45)
+explaining what they mean.
+
+When you changed size only, the result was larger map which didn't fit
+the same paper. This was the reason of TeX errors.
+
+Cheers
+Martin
+
+
+From wookey at aleph1.co.uk  Sat Jan  6 12:13:17 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Sat, 6 Jan 2007 11:13:17 +0000
+Subject: [Therion] changing page size in atlas
+In-Reply-To: <f64c1c4a0701052301u66481cd8meb230ff833483acf@mail.gmail.com>
+References: <20070105233200.GQ31021@xios>
+	<f64c1c4a0701052301u66481cd8meb230ff833483acf@mail.gmail.com>
+Message-ID: <20070106111316.GS31021@xios>
+
+On 2007-01-06 08:01 +0100, Martin Budaj wrote:
+> On 1/6/07, Wookey <wookey at aleph1.co.uk> wrote:
+> >
+> > I tried to make an atlas with A3 sized pages, portrait mode so set
+> > size 42 29.7 cm
+> > in my layout.
+> > This resulted in a lot of errors:
+> > In the finished atlas every other page is blank, and I get no
+> > navigator. Is this a bug, or did I do something wrong?
+> 
+> Atlas setup is not very user friendly, you have to set 3 variables:
+> size, overlap, page-setup. There is an illustration in thbook (p.45)
+> explaining what they mean.
+> 
+> When you changed size only, the result was larger map which didn't fit
+> the same paper. This was the reason of TeX errors.
+
+Ah. OK. I did wonder. The thbook docs imply that you only need to set two
+of those variables, the other one will be calculated. I'l try again.
+
+
+
+# size <width> <height> <units> . set map size in the atlas mode. If not specified, it                           
+#will be calculated from page-setup and overlap. In map mode applies iff page-grid                               
+#is on (M, A; default: 18 22.2 cm) 
+
+#overlap <value> <units>        
+# overlap <value> <units> .
+set overlap size in paper units in the atlas mode or map margin in the map mode (M, A; default: 1 cm)            
+                                        
+# page-setup <dimensions> <units>              
+# page-setup <dimensions> <units> . set page dimensions in this order: paper-width,                              
+#paper-height, page-width, page-height, left-margin and top-margin. If not specified, it                         
+#will be computed from size and overlap (A; default: 21 29.7 20 28.7 0.5 0.5 cm (A4))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Mon Jan  8 02:39:18 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 8 Jan 2007 01:39:18 +0000
+Subject: [Therion] Making map with centreline and scraps mixed
+Message-ID: <20070108013917.GF31021@xios>
+
+I wan't to make a large area overview map. We have centreline data
+for all of it, but only some caves have been drawn in therion. How (is
+it possible) to show the caves with therion data in outline form (i.e.
+walls only), but the other caves in centreline-only form.
+
+I can get it with them all showing centreline and therion caves
+showing walls, or walls only, and nothing at all for centreline-only
+caves, but not what I want. 
+
+Does the revise command help here?
+
+I know
+select terikanplan at terikan.Mulu
+selects the map terikanplan but I'm not sure what the correct syntax
+for selecting a centreline is:
+would it just be terikan.Mulu? or terikan at mulu?
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Mon Jan  8 04:58:52 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 8 Jan 2007 03:58:52 +0000
+Subject: [Therion] Moving section of cave aside
+Message-ID: <20070108035851.GG31021@xios>
+
+For drawing complex caves it is often useful to move a section of cave
+to one side so it doesn't obscure the passage below. I can't see an
+easy way to do this in therion, because everything is always
+positionned according to stations. Could we have some kind of scrap
+offset feature that would allow a scrap or map to be drawn in a
+different place?
+
+It would also be nice to have the scrap shown in outline (or shaded,
+etc) in the correct place, so the survey can be properly understood. 
+
+e.g. the terikan survey has numerous layers but also plenty of
+whitespace to move upper layers into so as to draw it all on one
+sheet but without complex overlapping passage.
+
+This is an alternative to the atlas scheme which therion has excllent
+support for. this alternative is very popular in the UK, and probably
+other places - it would be gfood if therion could support it. 
+
+It is useful for a very long thin cave, where you can get much better
+paper use by drawing the sections side-by-side instead of as a very
+long thin page. (e.g. this very long thin cave: moon cave:
+http://mulucaves.org/Pub_surveys/Moon_CaveBCRA.pdf)
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From s.m at group-s.sk  Mon Jan  8 15:25:51 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 08 Jan 2007 15:25:51 +0100
+Subject: [Therion] Making map with centreline and scraps mixed
+In-Reply-To: <20070108013917.GF31021@xios>
+References: <20070108013917.GF31021@xios>
+Message-ID: <20070108152551.gy3ob2aeooc4ock0@webmailer.sk>
+
+Just to be sure, I understand you correctly: Do you want to have  
+walls, where there are walls available (without centerline) and  
+centerline where there are no walls available?
+
+If you will select nothing, then centerline of entire system is drawn  
+on the background. But this is probably what you do not want.
+
+> I know
+> select terikanplan at terikan.Mulu
+> selects the map terikanplan but I'm not sure what the correct syntax
+> for selecting a centreline is:
+> would it just be terikan.Mulu? or terikan at mulu?
+
+Unfortunatelly, it is not yet possible to select surveys for map  
+output. Survey selection is valid only for model outputs :(
+
+S.
+
+
+
+
+
+From s.m at group-s.sk  Mon Jan  8 15:35:11 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 08 Jan 2007 15:35:11 +0100
+Subject: [Therion] Moving section of cave aside
+In-Reply-To: <20070108035851.GG31021@xios>
+References: <20070108035851.GG31021@xios>
+Message-ID: <20070108153511.4w82vaze2o08084w@webmailer.sk>
+
+This feature is already an item in the WOULD BE NICE LIST list, even  
+it is not described so precisely. OK, I will put it on the TODO list,  
+but I am afraid, it will take some time to support it :(
+
+S.
+
+
+Quoting Wookey <wookey at aleph1.co.uk>:
+
+> For drawing complex caves it is often useful to move a section of cave
+> to one side so it doesn't obscure the passage below. I can't see an
+> easy way to do this in therion, because everything is always
+> positionned according to stations. Could we have some kind of scrap
+> offset feature that would allow a scrap or map to be drawn in a
+> different place?
+>
+> It would also be nice to have the scrap shown in outline (or shaded,
+> etc) in the correct place, so the survey can be properly understood.
+>
+> e.g. the terikan survey has numerous layers but also plenty of
+> whitespace to move upper layers into so as to draw it all on one
+> sheet but without complex overlapping passage.
+>
+> This is an alternative to the atlas scheme which therion has excllent
+> support for. this alternative is very popular in the UK, and probably
+> other places - it would be gfood if therion could support it.
+>
+> It is useful for a very long thin cave, where you can get much better
+> paper use by drawing the sections side-by-side instead of as a very
+> long thin page. (e.g. this very long thin cave: moon cave:
+> http://mulucaves.org/Pub_surveys/Moon_CaveBCRA.pdf)
+>
+> Wookey
+> --
+> Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+> work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Jan  8 16:21:22 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 8 Jan 2007 15:21:22 +0000
+Subject: [Therion] Making map with centreline and scraps mixed
+In-Reply-To: <20070108152551.gy3ob2aeooc4ock0@webmailer.sk>
+References: <20070108013917.GF31021@xios>
+	<20070108152551.gy3ob2aeooc4ock0@webmailer.sk>
+Message-ID: <20070108152122.GP31021@xios>
+
+On 2007-01-08 15:25 +0100, Stacho Mudrak wrote:
+> Just to be sure, I understand you correctly: Do you want to have  
+> walls, where there are walls available (without centerline) and  
+> centerline where there are no walls available?
+
+Exactly. 
+
+> If you will select nothing, then centerline of entire system is drawn  
+> on the background. But this is probably what you do not want.
+
+Indeed. The other problem with this (worse than the 'extra'
+centerline) is that if you colour by map there is just colour. I want
+to 'colour by cave' which means either cave-level survey or cave-level
+map.
+
+(we also have some strange effects with maps appearing at the top
+level which should only appear lower down - this is probably the
+subject for another mail).
+
+> > I know
+> > select terikanplan at terikan.Mulu
+> > selects the map terikanplan but I'm not sure what the correct syntax
+> > for selecting a centreline is:
+> > would it just be terikan.Mulu? or terikan at mulu?
+> 
+> Unfortunatelly, it is not yet possible to select surveys for map  
+> output. Survey selection is valid only for model outputs :(
+
+Oh dear. OK. That's a new item for the wishlist, then.
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From wookey at aleph1.co.uk  Mon Jan  8 16:23:44 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 8 Jan 2007 15:23:44 +0000
+Subject: [Therion] Moving section of cave aside
+In-Reply-To: <20070108153511.4w82vaze2o08084w@webmailer.sk>
+References: <20070108035851.GG31021@xios>
+	<20070108153511.4w82vaze2o08084w@webmailer.sk>
+Message-ID: <20070108152344.GQ31021@xios>
+
+On 2007-01-08 15:35 +0100, Stacho Mudrak wrote:
+> This feature is already an item in the WOULD BE NICE LIST list, even  
+> it is not described so precisely. OK, I will put it on the TODO list,  
+> but I am afraid, it will take some time to support it :(
+
+OK. Understood. 
+
+This is not urgent at all. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From epsm at naex.sk  Mon Jan  8 16:13:43 2007
+From: epsm at naex.sk (Stacho Mudrak)
+Date: Mon, 08 Jan 2007 16:13:43 +0100
+Subject: [Therion] changing page size in atlas
+In-Reply-To: <20070106111316.GS31021@xios>
+References: <20070105233200.GQ31021@xios>
+	<f64c1c4a0701052301u66481cd8meb230ff833483acf@mail.gmail.com>
+	<20070106111316.GS31021@xios>
+Message-ID: <20070108161343.iw14wf7ix8o88g4s@webmailer.sk>
+
+Quoting Wookey <wookey at aleph1.co.uk>:
+> Ah. OK. I did wonder. The thbook docs imply that you only need to set two
+> of those variables, the other one will be calculated. I'l try again.
+
+I am sorry, it is a BUG in therion. Currently, it is automatically  
+calculated, when it is directly specified after export. E.g.
+
+export atlas -layout-size 20 20 cm
+
+I will try to fix it.
+
+S.
+
+
+
+From martinsluka at mac.com  Mon Jan  8 18:48:10 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 8 Jan 2007 18:48:10 +0100
+Subject: [Therion] Making map with centreline and scraps mixed
+In-Reply-To: <20070108152122.GP31021@xios>
+References: <20070108013917.GF31021@xios>
+	<20070108152551.gy3ob2aeooc4ock0@webmailer.sk>
+	<20070108152122.GP31021@xios>
+Message-ID: <4F2A8684-702D-4351-9326-A576F24D550B@mac.com>
+
+
+On 8.1.2007, at 16:21, Wookey wrote:
+
+>> Just to be sure, I understand you correctly: Do you want to have
+>> walls, where there are walls available (without centerline) and
+>> centerline where there are no walls available?
+>
+> Exactly.
+
+Stacho, just thinking in postscript - what about to combine two maps  
+- one only with centerline and second with walls on top of it.  It  
+will cover the centerline where are the walls. It is possible to do  
+in Illustrator. In therion...?
+
+Martin
+
+
+From stefan_oswald at gmx.at  Sun Jan 14 13:05:16 2007
+From: stefan_oswald at gmx.at (Stefan Oswald)
+Date: Sun, 14 Jan 2007 13:05:16 +0100
+Subject: [Therion] metapost symbols
+In-Reply-To: <mailman.5.1166914905.8284.therion@speleo.sk>
+References: <mailman.5.1166914905.8284.therion@speleo.sk>
+Message-ID: <20070114120516.59030@gmx.net>
+
+Hello, 
+
+here are the results of our Therion meeting yesterday; 
+An idea would be to add the factor for density/size of symbols in the source code and adjust these variables in the map editor by a -density {} command in the mapeditor\area\options. Also a -diameter {} command for block points would allow to change block size of each point individually.  
+
+
+#POINT BLOCK +size adjust (symbolsize)
+  
+code metapost
+     
+   def p_blocks_UIS (expr pos,theta,sc,al)=
+    symbolsize:=1.0u; %Factor*u; Factor=size of the blocks
+    U:=(.5u,.5u);
+    T:=identity aligned al rotated theta scaled sc shifted pos;
+    pickup PenC;
+    thdraw (.0symbolsize,.0symbolsize)--(1.0symbolsize,-.5symbolsize)--(0.0symbolsize,-1.5symbolsize)--(-1.0symbolsize,-1.0symbolsize)--cycle;
+    thdraw (.5symbolsize,-.25symbolsize)--(1.0symbolsize,.5symbolsize)--(0.0symbolsize,1.5symbolsize)--(-0.5symbolsize,.5symbolsize);
+    thdraw (.0symbolsize,.0symbolsize)--(.0symbolsize,.5symbolsize)--(-1.5symbolsize,.5symbolsize)--(-1.5symbolsize,-0.5symbolsize)--(-0.5symbolsize,-0.5symbolsize);
+   enddef;
+endcode
+
+#AREA BLOCK +density adjust (distance)
+
+code metapost
+      def a_blocks (expr p) =
+        distance:=1;
+        T:=identity;
+        pickup PenC;
+        path q, qq; q = bbox p;
+        picture tmp_pic; 
+        uu := max(u, (xpart urcorner q - xpart llcorner q)/100, (ypart urcorner q - ypart     llcorner q)/100);
+        tmp_pic := image(
+          for i = xpart llcorner q step distance*uu until xpart urcorner q:
+            for j = ypart llcorner q step distance*uu until ypart urcorner q:
+              qq := punked (((-.5uu,-.5uu)--(.5uu,-.5uu)--(.5uu,.5uu)--(-.5uu,.5uu)--cycle) 
+            randomized (uu/2))
+                   rotated uniformdeviate(360) 
+                   shifted ((i,j) randomized 1.0uu);
+        if xpart (p intersectiontimes qq) < 0:
+          thclean qq;
+          thdraw qq;
+        fi;
+            endfor;  
+          endfor;
+        );
+        clip tmp_pic to p;
+        draw tmp_pic;
+      enddef;  
+endcode
+
+
+greetings, 
+
+Stefan
+
+
+From joke.vansweevelt at gmail.com  Tue Jan 16 10:22:28 2007
+From: joke.vansweevelt at gmail.com (Joke Vansweevelt)
+Date: Tue, 16 Jan 2007 10:22:28 +0100
+Subject: [Therion] Flowstone problems
+Message-ID: <b18915c00701160122l75d7a4cfmb6fe24e9099967ef@mail.gmail.com>
+
+I'm working on a topo of a water-cave and I have two questions.
+
+- How can I stop a flowstone-feature to be filled with water?
+(In the water, defined by "area-water", I sometimes have features that I
+would like to stay clear of the water-filling-stripes. If I try to include
+the borders of this feature as borderlines of my "area-water", usually my
+whole image gets distorted (not-water areas suddenly become partly filled
+with water-filling-stripes etc.). It doesn't work either by defining these
+features as an area within the area-water (error). Objects defined by
+rock-border don't have to be specified as area border. Rocks are
+automatically not filled with water-filling-stripes. However, in the case of
+flowstone features, I would like to be able to define whether they should or
+should not be filled with water-filling-stripes. In case it isn't possible
+so far, a solution could maybe be to define flowstone that doesn't need to
+be filled with water as "line-rock-subtype flowstone"?!?)
+
+- How can I get the borders of "line-flowstone" in my X-Therion drawing to
+match the borders of my flowstone-feature in the produced pdf-file?
+(When some of my area borders are defined as "line-flowstone", in the
+produced pdf-file, the water tends to invade my flowstone (as far as the
+borders of the "line-flowstone" that I set within X-Therion). The problem
+here is that the produced drawing of the flowstone lines is larger than the
+borders one sets in X-Therion (the scale that I work with for the pdf-file
+is 1 1000).
+
+Regards,
+
+Joke
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20070116/46479af3/attachment.htm>
+
+From martinsluka at mac.com  Tue Jan 16 10:40:52 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 16 Jan 2007 10:40:52 +0100
+Subject: [Therion] Flowstone problems
+In-Reply-To: <b18915c00701160122l75d7a4cfmb6fe24e9099967ef@mail.gmail.com>
+References: <b18915c00701160122l75d7a4cfmb6fe24e9099967ef@mail.gmail.com>
+Message-ID: <0B1A5357-9D17-45EB-A8FF-F296E41BEA75@mac.com>
+
+Define new area, the border of area should be identical with border  
+of flowstone area and in type of area write "bedrock" It should be  
+under the flowstone area and above the water area. You may use the "- 
+place <bottom/default/top>" option.
+
+martin
+
+
+On 16.1.2007, at 10:22, Joke Vansweevelt wrote:
+
+> I'm working on a topo of a water-cave and I have two questions.
+>
+> - How can I stop a flowstone-feature to be filled with water?
+> (In the water, defined by "area-water", I sometimes have features  
+> that I would like to stay clear of the water-filling-stripes. If I  
+> try to include the borders of this feature as borderlines of my  
+> "area-water", usually my whole image gets distorted (not-water  
+> areas suddenly become partly filled with water-filling-stripes  
+> etc.). It doesn't work either by defining these features as an area  
+> within the area-water (error). Objects defined by rock-border don't  
+> have to be specified as area border. Rocks are automatically not  
+> filled with water-filling-stripes. However, in the case of  
+> flowstone features, I would like to be able to define whether they  
+> should or should not be filled with water-filling-stripes. In case  
+> it isn't possible so far, a solution could maybe be to define  
+> flowstone that doesn't need to be filled with water as "line-rock- 
+> subtype flowstone"?!?)
+>
+> - How can I get the borders of "line-flowstone" in my X-Therion  
+> drawing to match the borders of my flowstone-feature in the  
+> produced pdf-file?
+> (When some of my area borders are defined as "line-flowstone", in  
+> the produced pdf-file, the water tends to invade my flowstone (as  
+> far as the borders of the "line-flowstone" that I set within X- 
+> Therion). The problem here is that the produced drawing of the  
+> flowstone lines is larger than the borders one sets in X-Therion  
+> (the scale that I work with for the pdf-file is 1 1000).
+>
+> Regards,
+>
+> Joke
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From s.m at group-s.sk  Tue Jan 16 10:54:37 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 16 Jan 2007 10:54:37 +0100
+Subject: [Therion] Flowstone problems
+In-Reply-To: <b18915c00701160122l75d7a4cfmb6fe24e9099967ef@mail.gmail.com>
+References: <b18915c00701160122l75d7a4cfmb6fe24e9099967ef@mail.gmail.com>
+Message-ID: <20070116105437.ctihwbi8008kcwc4@webmailer.sk>
+
+I am sorry, but I am not sure whether I understand your questions  
+properly. Could you please send me two images for each of your  
+problems - to be sure we understand correctly:
+
+First: how does therion renders area flowstone in the water
+Second: how you would like it to be rendered
+
+But if I understand your questions correctly, you need to redefine  
+flowstone line symbol to
+- clean the area surrounded by line flowstone, if the line is closed  
+(same case as rock-border)
+- clean the area below small arcs
+
+If you will use following metapost code in your layout, it should at  
+least partially help you.
+
+code metapost
+def l_flowstone (expr P) =
+   if cycle P: thclean P fi;
+   T:=identity;
+   cas := 0;
+   dlzka := arclength P;
+   mojkrok:=adjust_step(dlzka, .7u);
+   pickup PenC;
+   t1:=0;
+   forever:
+     t2 := arctime (cas + mojkrok) of P;
+     thclean (point t1 of P){dir (angle(thdir(P,t1)) + 60)} ..
+            {dir (angle(thdir(P,t2)) - 60)}(point t2 of P) -- cycle;
+     thdraw (point t1 of P){dir (angle(thdir(P,t1)) + 60)} ..
+            {dir (angle(thdir(P,t2)) - 60)}(point t2 of P);
+     cas := cas + mojkrok;
+     exitif cas > dlzka + (mojkrok / 3); % for rounding errors
+     t1:=t2;
+   endfor;
+enddef;
+endcode
+
+HTH, S.
+
+Quoting Joke Vansweevelt <joke.vansweevelt at gmail.com>:
+
+> I'm working on a topo of a water-cave and I have two questions.
+>
+> - How can I stop a flowstone-feature to be filled with water?
+> (In the water, defined by "area-water", I sometimes have features that I
+> would like to stay clear of the water-filling-stripes. If I try to include
+> the borders of this feature as borderlines of my "area-water", usually my
+> whole image gets distorted (not-water areas suddenly become partly filled
+> with water-filling-stripes etc.). It doesn't work either by defining these
+> features as an area within the area-water (error). Objects defined by
+> rock-border don't have to be specified as area border. Rocks are
+> automatically not filled with water-filling-stripes. However, in the case of
+> flowstone features, I would like to be able to define whether they should or
+> should not be filled with water-filling-stripes. In case it isn't possible
+> so far, a solution could maybe be to define flowstone that doesn't need to
+> be filled with water as "line-rock-subtype flowstone"?!?)
+>
+> - How can I get the borders of "line-flowstone" in my X-Therion drawing to
+> match the borders of my flowstone-feature in the produced pdf-file?
+> (When some of my area borders are defined as "line-flowstone", in the
+> produced pdf-file, the water tends to invade my flowstone (as far as the
+> borders of the "line-flowstone" that I set within X-Therion). The problem
+> here is that the produced drawing of the flowstone lines is larger than the
+> borders one sets in X-Therion (the scale that I work with for the pdf-file
+> is 1 1000).
+>
+> Regards,
+>
+> Joke
+
+
+
+
+
+From m.budaj at gmail.com  Tue Jan 16 17:33:08 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 16 Jan 2007 17:33:08 +0100
+Subject: [Therion] metapost symbols
+In-Reply-To: <20070114120516.59030@gmx.net>
+References: <mailman.5.1166914905.8284.therion@speleo.sk>
+	<20070114120516.59030@gmx.net>
+Message-ID: <f64c1c4a0701160833t4cecdcb0h2370dd10bbc46218@mail.gmail.com>
+
+On 1/14/07, Stefan Oswald <stefan_oswald at gmx.at> wrote:
+> here are the results of our Therion meeting yesterday;
+> An idea would be to add the factor for density/size of symbols in the source code and adjust
+> these variables in the map editor by a -density {} command in the mapeditor\area\options.
+
+We also considered a similar idea. There is indeed an experimental
+implementation of area blocks macro (a_blocks_SKBB_ in the file
+thArea.mp) which allows not only density and size setting, but density
+and size may change along specified direction (there are 5 arguments:
+direction, starting size and density, ending size and density).
+
+It is perhaps too complicated and simple density/size settings (for
+all randomle generated areas) would be sufficient. What do others
+think?
+
+> Also a -diameter {} command for block points would allow to change block size of each point
+> individually.
+
+We intented point symbols to be just symbolic representation of
+passage fills. If there is a rock which is important for orientation,
+it should be drawn precisely as line brock-border, otherwise it is
+enough to give information that some blocks are there using point or
+area blocks symbols. (In addition point symbols can be scaled using
+-scale option).
+
+Cheers,
+Martin
+
+
+From eric.madelaine at speleologie.org  Sun Jan 21 22:40:57 2007
+From: eric.madelaine at speleologie.org (Eric Madelaine)
+Date: Sun, 21 Jan 2007 22:40:57 +0100
+Subject: [Therion] An extended elevation problem
+Message-ID: <45B3DDE9.20607@speleologie.org>
+
+Hello guys,
+
+    I have a problem with a cave on which I would like to have a partial 
+extended elevation.
+    The cave is small, but the centerline has a loop, and when I compole 
+an extended elevation, even with half of the loop flagged with a "extend 
+ignore", Therion thinks that the stations in my extended view are very 
+far, as if it did extend using another branch of the loop...
+
+Is there a trick to do a partial extended map ? (well, may be I could do 
+an elevation instead, but this is not what I wanted from the beginning...)
+How could I do several extended maps for different parts ?
+
+Eric.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 155-H-coupe.pdf
+Type: application/pdf
+Size: 29503 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20070121/c2f4ba3d/attachment.pdf>
+
+From epsm at naex.sk  Mon Jan 22 09:52:21 2007
+From: epsm at naex.sk (Stacho Mudrak)
+Date: Mon, 22 Jan 2007 09:52:21 +0100
+Subject: [Therion] An extended elevation problem
+In-Reply-To: <45B3DDE9.20607@speleologie.org>
+References: <45B3DDE9.20607@speleologie.org>
+Message-ID: <20070122095221.22rt0hzaskww8w8s@webmailer.sk>
+
+Quoting Eric Madelaine <eric.madelaine at speleologie.org>:
+> an extended elevation, even with half of the loop flagged with a
+> "extend ignore", Therion thinks that the stations in my extended view
+> are very far, as if it did extend using another branch of the loop...
+
+I have tried and there is a BUG somewhere. Obviously, it should not  
+extend via "ignored" shots. I will try to fix it ASAP.
+
+Thanks for pointing out, S.
+
+
+
+
+From W.CHADWICK at sky.com  Sat Jan 27 22:09:55 2007
+From: W.CHADWICK at sky.com (Bill Chadwick)
+Date: Sat, 27 Jan 2007 21:09:55 -0000
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+Message-ID: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+
+Hi,
+
+It is quite easy to create a web page that shows a cave survey overlay on
+top of Google / Virtual Earth maps.
+
+For an example go to
+
+http://www.bdcc.co.uk/mendip.html?Latitude=51.2988&Longitude=-2.7104&Zoom=18
+&MapType=Aerial
+
+and then select Caves in the overlays drop down (best in Firefox). You will
+find overlays for Upper Flood (exciting new extensions), Swildons Hole,
+Manor Farm and Longwood August.
+
+I use the Microsoft MapCruncher to generate the tile sets (256x256 pixel
+PNGs) for Google Maps from a single PDF or .png image.
+
+As this is quite a nice way of presenting cave surveys, perhaps a Google
+tile generator would be a good add on for Therion. The advantage of building
+the renderer into Therion would be that the overlay could be drawn
+separately for each Google Zoom level to achieve a good line width and text
+size.
+
+I am well informed in the areas of coordinate systems and map projections
+and able to program in C++. With some guidance I might be able to help with
+the coding of such an extension.
+
+Regards,
+
+Bill Chadwick
+
+
+
+
+From martinsluka at mac.com  Sun Jan 28 08:57:23 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 28 Jan 2007 08:57:23 +0100
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+Message-ID: <463D33EB-F3A3-4820-9F2A-14E0D093A567@mac.com>
+
+
+On 27.1.2007, at 22:09, Bill Chadwick wrote:
+
+> It is quite easy to create a web page that shows a cave survey  
+> overlay on
+> top of Google / Virtual Earth maps.
+
+Good work!
+
+There is only one problem - google doesn't calculate with underground  
+in 3D - so you may not see the vertical dependencies, the caves are  
+always on surface.
+
+Martin
+
+
+From julian at goatchurch.org.uk  Sun Jan 28 19:44:52 2007
+From: julian at goatchurch.org.uk (Julian Todd)
+Date: Sun, 28 Jan 2007 18:44:52 +0000
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <463D33EB-F3A3-4820-9F2A-14E0D093A567@mac.com>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+	<463D33EB-F3A3-4820-9F2A-14E0D093A567@mac.com>
+Message-ID: <45BCEF24.3060505@goatchurch.org.uk>
+
+Martin Sluka wrote:
+> On 27.1.2007, at 22:09, Bill Chadwick wrote:
+>
+>   
+>> It is quite easy to create a web page that shows a cave survey  
+>> overlay on
+>> top of Google / Virtual Earth maps.
+>>     
+>
+> Good work!
+>
+> There is only one problem - google doesn't calculate with underground  
+> in 3D - so you may not see the vertical dependencies, the caves are  
+> always on surface.
+>
+> Martin
+>   
+It looks like simultaneous invention all round.  I'm doing something on 
+this too.  I think it should work for any paper survey that you can scan 
+and upload, not just computerized ones output from therion or tunnel.  I 
+have a server which can do tile cutting of a large bitmap of a cave 
+survey.  It's going to be important to create a mask of transparencies 
+so you can see it overlayed without all the whitespace outside of the 
+cave passage. 
+
+Julian T.
+
+
+
+
+From s.m at group-s.sk  Tue Jan 30 14:56:29 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 30 Jan 2007 14:56:29 +0100
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+Message-ID: <20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+
+Quoting Bill Chadwick <W.CHADWICK at sky.com>:
+> As this is quite a nice way of presenting cave surveys, perhaps a Google
+> tile generator would be a good add on for Therion. The advantage of building
+> the renderer into Therion would be that the overlay could be drawn
+> separately for each Google Zoom level to achieve a good line width and text
+> size.
+
+Hmmm. Just one problem. Therion it self does not have any build-in  
+bitmap generator. All maps are generated as vector PDF. And generation  
+of bitmaps from PDF is very tricky (currently only Acrobat reader is  
+able to render these PDF files 100% correct).
+
+> I am well informed in the areas of coordinate systems and map projections
+> and able to program in C++. With some guidance I might be able to help with
+> the coding of such an extension.
+
+I have tried to generate Google Earth's KML files from therion and it  
+seems to work (scrap outlines for maps, centerline for model, try  
+latest developement snapshot). All you need is to have georeferenced  
+cave data (see "Coordinate Systems" in thbook). Then just
+
+export model -fmt kml
+
+will generate .kml file readable by Google Earth.
+
+If somebody will create a good rasterizer script for PDF files  
+generated by therion (using ghostscript or acroread), there is no  
+problem for us to add export of long-lat coordinates together with PDF  
+file to be used by this script.
+
+S.
+
+
+
+From martinsluka at mac.com  Tue Jan 30 15:12:52 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 30 Jan 2007 15:12:52 +0100
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+	<20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+Message-ID: <097BEB01-3772-48AE-BB69-69C7338EA2BE@mac.com>
+
+
+On 30.1.2007, at 14:56, Stacho Mudrak wrote:
+
+> And generation
+> of bitmaps from PDF is very tricky (currently only Acrobat reader is
+> able to render these PDF files 100% correct).
+
+Adobe Photoshop CS2 too, but for big maps to print quality it is  
+question of several hours on very fast machine
+
+m.
+
+
+From s.m at group-s.sk  Tue Jan 30 15:19:39 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 30 Jan 2007 15:19:39 +0100
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <45BF5143.1080709@web.de>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+	<20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+	<45BF5143.1080709@web.de>
+Message-ID: <20070130151939.kggppqv4qo4c0o4o@webmailer.sk>
+
+Quoting Wolfgang Zillig <wolfgang.zillig at web.de>:
+> perhaps one alternative would be to implement shapefile support and to
+> use gdarwarp and/or gdal_translate to create kml. But I don't have any
+> experience with the kml format.
+
+I have forgotten, shapefiles are also already implemented in the last  
+developement snapshot (including user defined object attributes) ;)
+
+export map|model -fmt esri
+
+should create a directory with shapefiles for different shapes. If you  
+have georeferenced data, also associated .prj files are created.  
+Tested on free QGIS and ArcExplorer. I am just not able to display 3D  
+triangle strips.
+
+S.
+
+
+
+>
+> But shapefile would be a nice link to the gis world!
+>
+> Greetings
+> Wolfgang
+>
+> Stacho Mudrak schrieb:
+>> Quoting Bill Chadwick <W.CHADWICK at sky.com>:
+>>
+>>> As this is quite a nice way of presenting cave surveys, perhaps a Google
+>>> tile generator would be a good add on for Therion. The advantage   
+>>> of building
+>>> the renderer into Therion would be that the overlay could be drawn
+>>> separately for each Google Zoom level to achieve a good line width and text
+>>> size.
+>>>
+>>
+>> Hmmm. Just one problem. Therion it self does not have any build-in   
+>>  bitmap generator. All maps are generated as vector PDF. And   
+>> generation of bitmaps from PDF is very tricky (currently only   
+>> Acrobat reader is  able to render these PDF files 100% correct).
+>>
+>>
+>>> I am well informed in the areas of coordinate systems and map projections
+>>> and able to program in C++. With some guidance I might be able to help with
+>>> the coding of such an extension.
+>>>
+>>
+>> I have tried to generate Google Earth's KML files from therion and   
+>> it  seems to work (scrap outlines for maps, centerline for model,   
+>> try  latest developement snapshot). All you need is to have   
+>> georeferenced  cave data (see "Coordinate Systems" in thbook). Then  
+>>  just
+>>
+>> export model -fmt kml
+>>
+>> will generate .kml file readable by Google Earth.
+>>
+>> If somebody will create a good rasterizer script for PDF files    
+>> generated by therion (using ghostscript or acroread), there is no    
+>> problem for us to add export of long-lat coordinates together with   
+>> PDF file to be used by this script.
+>>
+>> S.
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>
+
+
+
+
+
+From wolfgang.zillig at web.de  Tue Jan 30 15:08:03 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Tue, 30 Jan 2007 15:08:03 +0100
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+References: <000001c74257$7f97c7f0$0200a8c0@DBT92X1J>
+	<20070130145629.wwif58d1k4cwok0w@webmailer.sk>
+Message-ID: <45BF5143.1080709@web.de>
+
+Hi,
+
+perhaps one alternative would be to implement shapefile support and to 
+use gdarwarp and/or gdal_translate to create kml. But I don't have any 
+experience with the kml format.
+
+But shapefile would be a nice link to the gis world!
+
+Greetings
+Wolfgang
+
+Stacho Mudrak schrieb:
+> Quoting Bill Chadwick <W.CHADWICK at sky.com>:
+>   
+>> As this is quite a nice way of presenting cave surveys, perhaps a Google
+>> tile generator would be a good add on for Therion. The advantage of building
+>> the renderer into Therion would be that the overlay could be drawn
+>> separately for each Google Zoom level to achieve a good line width and text
+>> size.
+>>     
+>
+> Hmmm. Just one problem. Therion it self does not have any build-in  
+> bitmap generator. All maps are generated as vector PDF. And generation  
+> of bitmaps from PDF is very tricky (currently only Acrobat reader is  
+> able to render these PDF files 100% correct).
+>
+>   
+>> I am well informed in the areas of coordinate systems and map projections
+>> and able to program in C++. With some guidance I might be able to help with
+>> the coding of such an extension.
+>>     
+>
+> I have tried to generate Google Earth's KML files from therion and it  
+> seems to work (scrap outlines for maps, centerline for model, try  
+> latest developement snapshot). All you need is to have georeferenced  
+> cave data (see "Coordinate Systems" in thbook). Then just
+>
+> export model -fmt kml
+>
+> will generate .kml file readable by Google Earth.
+>
+> If somebody will create a good rasterizer script for PDF files  
+> generated by therion (using ghostscript or acroread), there is no  
+> problem for us to add export of long-lat coordinates together with PDF  
+> file to be used by this script.
+>
+> S.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From julian at goatchurch.org.uk  Wed Jan 31 12:18:56 2007
+From: julian at goatchurch.org.uk (Julian Todd)
+Date: Wed, 31 Jan 2007 11:18:56 +0000
+Subject: [Therion] wikipedia and cave surveying
+Message-ID: <45C07B20.2070201@goatchurch.org.uk>
+
+Hi folks,
+
+
+Anyone out there want to join me in trying to organize the caving 
+content for wikipedia?? 
+
+
+There's quite a bit of material floating around.  Get an idea by 
+drilling down from: http://en.wikipedia.org/wiki/Category:Caves_by_country
+
+
+The problems include the lack of a special page for cave surveying, 
+wherein some excellent examples of very old and new surveys should be 
+uploaded to show off their artistic and historical value.  Also, there 
+needs to be an infobox to make all the pages beautiful. 
+
+
+Further details are noted at: 
+http://en.wikipedia.org/wiki/User:Goatchurch#Caves
+
+
+Julian T.
+
+
+
+From wookey at aleph1.co.uk  Wed Jan 31 15:44:54 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 31 Jan 2007 14:44:54 +0000
+Subject: [Therion] wikipedia and cave surveying
+In-Reply-To: <45C07B20.2070201@goatchurch.org.uk>
+References: <45C07B20.2070201@goatchurch.org.uk>
+Message-ID: <20070131144453.GH12966@xios>
+
+On 2007-01-31 11:18 +0000, Julian Todd wrote:
+> Hi folks,
+> 
+> 
+> Anyone out there want to join me in trying to organize the caving 
+> content for wikipedia?? 
+
+In principle I would like to help. In practice I am snowed under
+trying to finish off old job and start new one and fix up house and
+manage GPF website. If I look I know I'll start changing things. poke
+me in a month or two. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/                 play: http://wookware.org/
+
+
+From W.CHADWICK at sky.com  Wed Jan 31 21:16:47 2007
+From: W.CHADWICK at sky.com (Bill Chadwick)
+Date: Wed, 31 Jan 2007 20:16:47 -0000
+Subject: [Therion] Cave Overlays on Google Maps Web Sites
+In-Reply-To: <45BCEF24.3060505@goatchurch.org.uk>
+Message-ID: <000401c74574$c1745ce0$0200a8c0@DBT92X1J>
+
+For Upper Flood I have been starting from a PDF with UKOS 100m grid ex
+Therion, converting it to a two colour White/Transparent and Magenta png and
+then using the free MS Mapcruncher (see my bit on the www.mapki.com on how
+to load Mapcruncher tiles into Google Maps). For Swildons etc, I simply
+scanned pages from Mendip Underground (I have asked Tony Jarratt!).
+Mapcruncher does a fair job at anti-aliased resizing. You can edit
+Mapcruncher's XML project file by hand to use known survey - WGS84 Lat/Lon
+correspondences.
+
+Ideally, for raster layers, the cave would be re-rendered with a decent line
+width and text size at different zoom levels, hence my suggestion for
+including the raster rendering into Therion. Also when showing a large map
+area with a raster cave overlay, some way of merging cave data from multiple
+source surveys onto a single Google overlay tile is needed. 
+
+A server based solution would be nifty. Surveyors could simply post their
+georefed survey (GeoTif/PDF/KML) and it would appear on a Google Maps or MS
+Virtual Earth website. It should not be too much trouble to generate the web
+page code automatically.
+
+Google Maps and MS VE use the same simple spherical Mercator projection. 
+
+Google Maps can display a KML file as an overlay (2Mbyte limit I think). I
+guess rendering cave overlays from KML might solve some the linewidth
+scaling and the survey merging problem of the raster solution. Does anyone
+have an online example ?
+
+Landowner / access controller sensitivities must be respected on any public
+website. For my Mendips page, I worked with the UK CSCC. We have a 'no
+location without access information' rule.
+
+Bill Chadwick
+
+-----Original Message-----
+From: Julian Todd [mailto:julian at goatchurch.org.uk] 
+Sent: 28 January 2007 18:45
+To: therion at speleo.sk
+Subject: Re: [Therion] Cave Overlays on Google Maps Web Sites
+
+
+Martin Sluka wrote:
+> On 27.1.2007, at 22:09, Bill Chadwick wrote:
+>
+>   
+>> It is quite easy to create a web page that shows a cave survey
+>> overlay on
+>> top of Google / Virtual Earth maps.
+>>     
+>
+> Good work!
+>
+> There is only one problem - google doesn't calculate with underground  
+> in 3D - so you may not see the vertical dependencies, the caves are  
+> always on surface.
+>
+> Martin
+>   
+It looks like simultaneous invention all round.  I'm doing something on 
+this too.  I think it should work for any paper survey that you can scan 
+and upload, not just computerized ones output from therion or tunnel.  I 
+have a server which can do tile cutting of a large bitmap of a cave 
+survey.  It's going to be important to create a mask of transparencies 
+so you can see it overlayed without all the whitespace outside of the 
+cave passage. 
+
+Julian T.
+
+
+
+
+
+
+

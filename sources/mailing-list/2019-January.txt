@@ -1,0 +1,3084 @@
+From bgee at campercaver.net  Thu Jan  3 03:20:46 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 02 Jan 2019 20:20:46 -0600
+Subject: [Therion] A bunch of symbols needed
+Message-ID: <11630581.8kVtgsTy2k@main2.billgee.local>
+
+Hello everyone -
+
+I have recently taken on the task of managing a survey project for a highly commercialized cave.  Roughly speaking, about half of the cave is tourist adapted and the other half is wild.  In total, my best guess is something around 2000 meters of cave.  
+
+The existing map was made around 1960 to 1962.  It was a good map for that time but is badly in need of update.  We are going to resurvey the whole cave from scratch.  The old map will serve as a reference for place names but otherwise will not be used.
+
+For the tourist parts of the cave I am going to need a bunch of symbols.  Before I go to the trouble of defining them myself, I want to ask if anyone has already created them.  If so, I would like to utilize some "best practice" ...  also known as "plagiarism"!  :-)  "On Station" has symbols for many of these items, but I do not see them called out in the Therion Book.
+
+I was at the cave a few days ago.  I think I will need symbols for the following items:
+
+Paved trail
+Tiled floor
+Bridge
+Hand rails
+Boardwalk - Raised walkway over a man-made lake
+Wood benches
+Artificial light fixtures
+Stairway
+Man-made dams
+Display cases
+Midden
+
+Does anyone have any of these already defined?
+
+If you are interested, there is a Web site for this cave.  https://starkcaverns.com/
+
+Thanks!
+
+-- 
+Bill Gee
+
+
+
+
+
+
+From andrew at wotcc.org.uk  Thu Jan  3 16:07:42 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 3 Jan 2019 15:07:42 +0000
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <11630581.8kVtgsTy2k@main2.billgee.local>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+Message-ID: <a7430bee-6eaf-c956-1b9a-f972d0bc5a8b@wotcc.org.uk>
+
+
+
+On 03/01/2019 02:20, Bill Gee via Therion wrote:
+> I was at the cave a few days ago.  I think I will need symbols for the following items:
+> 
+> Tiled floor
+
+You can use the blocks code I have been working on
+
+https://therion.speleo.sk/wiki/metapost#customisable_area_blocks_with_different_number_of_sides
+
+For squares use
+
+symbol_distance:=0.85; % Distance between the blocks as set out in a
+rectangular grid
+block_randomisation:=0; % Max each point of the base block can be moved.
+Too big and they can intersect themselves
+base_rotation:= 45; % Rotation from 0 of base block, can be used to set
+all blocks to the same angle
+random_rotation:= 0; % Rotation either side of base rotation eg 20 will
+be plus or minus 10 each side
+min_scale_factor:=1; % Minimum multiplier used for the base shape
+add_scale_factor:= 0; % Added to the minimum multiplier to get the
+maximum scale
+block_rectangle:=1; % How much longer the block is than it is wide,
+before randomising
+shift_randomisation:=0; % Max random amount block can be moved from the
+original grid
+%Now set the proportions of different sided block
+b_tri:=0;
+b_quad:=1;
+b_pent:=0;
+b_hex:=0;
+
+If you do not want the grouting (gaps) use symbol_distance:=0.707;
+
+This misses out all the ones on the edge
+
+To improve this a bit change
+
+exitif xpart (p intersectiontimes qq) < 0;
+
+to
+
+exitif xpart (p intersectiontimes qq) < 10;
+
+This does not fix if fully to do that you will need to comment out, or
+remove 2 more lines
+
+            %if pointinside((i,j),p,outside): % Cleans lines on border,
+assumably ones outside with just an edge touching
+               thclean qq;
+               thclean qq;
+               thclean qq;
+               thclean qq;
+               thdraw qq;
+            %fi;
+
+I really wish I knew exactly what this line did, but I just copied it
+from another area blocks.
+
+Hexagons also tessellate giving a nice effect, but need code
+modification to align
+
+These settings
+
+symbol_distance:=0.95; % Distance between the blocks as set out in a
+rectangular grid
+block_randomisation:=0; % Max each point of the base block can be moved.
+Too big and they can intersect themselves
+base_rotation:= 0; % Rotation from 0 of base block, can be used to set
+all blocks to the same angle
+random_rotation:= 0; % Rotation either side of base rotation eg 20 will
+be plus or minus 10 each side
+min_scale_factor:=1; % Minimum multiplier used for the base shape
+add_scale_factor:= 0; % Added to the minimum multiplier to get the
+maximum scale
+block_rectangle:=1; % How much longer the block is than it is wide,
+before randomising
+shift_randomisation:=0; % Max random amount block can be moved from the
+original grid
+%Now set the proportions of different sided block
+b_tri:=0;
+b_quad:=0;
+b_pent:=0;
+b_hex:=1;
+
+and put this bit of code in the appropriate place (first and last 2
+lines not modified
+
+iu := uu * block_rectangle;
+blocks := b_tri+b_quad + b_pent + b_hex;
+k:=0;
+tmp_pic := image(
+   for i = xpart llcorner q step (symbol_distance * block_rectangle *
+uu) until xpart urcorner q:
+      k:=k+1;
+      for j = ypart llcorner q step (symbol_distance*uu) until ypart
+urcorner q:
+        m:= j- (k mod 2) * 0.5 * uu * symbol_distance;
+        pick_sides := uniformdeviate(blocks);
+        if pick_sides < b_tri:
+
+Plus 16 lines later on change (j to an m)
+
+          shifted ((i ,j) randomized (shift_randomisation * uu));
+
+to
+
+          shifted ((i ,m) randomized (shift_randomisation * uu));
+
+
+> 
+> Hand rails
+
+https://therion.speleo.sk/wiki/metapost#line_-_hand_rail
+
+I've been meaning to put this one up for a while, so thanks for the prod
+
+Good luck
+
+Andrew
+
+
+From beni at hallinger.org  Fri Jan  4 12:19:01 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 04 Jan 2019 12:19:01 +0100
+Subject: [Therion] Showing qestion mark texts broken?
+In-Reply-To: <465d1004783b5ae0876804f5dabaefe5@hallinger.org>
+References: <CAJiQYo3SugczP7Y1hjnAq8kKG8xeP=5aMBOxER+tnM22+RhZ-w@mail.gmail.com>
+ <465d1004783b5ae0876804f5dabaefe5@hallinger.org>
+Message-ID: <ee0997bcaa56bfbdff3df51d2889902a@hallinger.org>
+
+Hi again,
+it was indeed the Underscore.
+
+This works (therion 5.4.1):
+--------
+        if ( known ATTR__text ):
+           % set labeling color to red
+           push_label_fill_color(1.0, 0.0, 0.0);
+
+           % draw filled label with text below station
+           p_label.bot(ATTR__text, pos shifted (0,-0.5u), 0.0, 8);
+
+           % restore original labeling color
+           pop_label_fill_color;
+         fi;
+-------
+
+Thank you everybody!
+
+
+
+Am 2018-12-26 23:20, schrieb Benedikt Hallinger via Therion:
+> Forwarding an off list mail to me that explains
+> 
+> Am 2018-12-24 11:27, schrieb Marco Corvi:
+>> benedikt,
+>> 
+>> from my tests,
+>> options, eg "-text", are referred as ATTR__text (double underscore),
+>> custom attributes, eg "-attr code", as
+>> ATTR_code (single underscore)
+>> 
+>> feel free to forward to the list.
+>> 
+>> thx for pointing out the error in my page,
+>> 
+>> marco
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Fri Jan  4 14:22:28 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 04 Jan 2019 07:22:28 -0600
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <a7430bee-6eaf-c956-1b9a-f972d0bc5a8b@wotcc.org.uk>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+ <a7430bee-6eaf-c956-1b9a-f972d0bc5a8b@wotcc.org.uk>
+Message-ID: <1846291.PI2uDlTf9t@main2.billgee.local>
+
+Hi Andrew -
+
+Thanks!  It will take me some time to absorb this.  The only question I have right now is how are the tile lines aligned with the cave?  Are they north-south?  On the centerline?  Do they take an "orientation" parameter?
+
+I looked over the symbols actually in Therion.  I found a suitable handrail symbol.  It is, in fact, exactly the symbol that is in "On Station".  
+
+There are also both line and point symbols for stairs.  The line symbol won't work.  I need to check the point symbol to see how it works.  The stairs in Stark Caverns go around several curves.  I might wind up using visible borders, or perhaps repurposing the rock edge symbol, and then just drawing the steps individually.
+
+The electric light symbol should be pretty easy to create.  I have created other point symbols.
+
+I found references to a boardwalk symbol in the Wiki, but I don't think it will be useful.  It looks like the symbol width is always the same regardless of how wide the actual feature is.
+
+-- 
+Bill Gee
+
+
+
+On Thursday, January 3, 2019 9:07:42 AM CST Andrew Atkinson via Therion wrote:
+> 
+> On 03/01/2019 02:20, Bill Gee via Therion wrote:
+> > I was at the cave a few days ago.  I think I will need symbols for the following items:
+> > 
+> > Tiled floor
+> 
+> You can use the blocks code I have been working on
+> 
+> https://therion.speleo.sk/wiki/metapost#customisable_area_blocks_with_different_number_of_sides
+> 
+> For squares use
+> 
+> symbol_distance:=0.85; % Distance between the blocks as set out in a
+> rectangular grid
+> block_randomisation:=0; % Max each point of the base block can be moved.
+> Too big and they can intersect themselves
+> base_rotation:= 45; % Rotation from 0 of base block, can be used to set
+> all blocks to the same angle
+> random_rotation:= 0; % Rotation either side of base rotation eg 20 will
+> be plus or minus 10 each side
+> min_scale_factor:=1; % Minimum multiplier used for the base shape
+> add_scale_factor:= 0; % Added to the minimum multiplier to get the
+> maximum scale
+> block_rectangle:=1; % How much longer the block is than it is wide,
+> before randomising
+> shift_randomisation:=0; % Max random amount block can be moved from the
+> original grid
+> %Now set the proportions of different sided block
+> b_tri:=0;
+> b_quad:=1;
+> b_pent:=0;
+> b_hex:=0;
+> 
+> If you do not want the grouting (gaps) use symbol_distance:=0.707;
+> 
+> This misses out all the ones on the edge
+> 
+> To improve this a bit change
+> 
+> exitif xpart (p intersectiontimes qq) < 0;
+> 
+> to
+> 
+> exitif xpart (p intersectiontimes qq) < 10;
+> 
+> This does not fix if fully to do that you will need to comment out, or
+> remove 2 more lines
+> 
+>             %if pointinside((i,j),p,outside): % Cleans lines on border,
+> assumably ones outside with just an edge touching
+>                thclean qq;
+>                thclean qq;
+>                thclean qq;
+>                thclean qq;
+>                thdraw qq;
+>             %fi;
+> 
+> I really wish I knew exactly what this line did, but I just copied it
+> from another area blocks.
+> 
+> Hexagons also tessellate giving a nice effect, but need code
+> modification to align
+> 
+> These settings
+> 
+> symbol_distance:=0.95; % Distance between the blocks as set out in a
+> rectangular grid
+> block_randomisation:=0; % Max each point of the base block can be moved.
+> Too big and they can intersect themselves
+> base_rotation:= 0; % Rotation from 0 of base block, can be used to set
+> all blocks to the same angle
+> random_rotation:= 0; % Rotation either side of base rotation eg 20 will
+> be plus or minus 10 each side
+> min_scale_factor:=1; % Minimum multiplier used for the base shape
+> add_scale_factor:= 0; % Added to the minimum multiplier to get the
+> maximum scale
+> block_rectangle:=1; % How much longer the block is than it is wide,
+> before randomising
+> shift_randomisation:=0; % Max random amount block can be moved from the
+> original grid
+> %Now set the proportions of different sided block
+> b_tri:=0;
+> b_quad:=0;
+> b_pent:=0;
+> b_hex:=1;
+> 
+> and put this bit of code in the appropriate place (first and last 2
+> lines not modified
+> 
+> iu := uu * block_rectangle;
+> blocks := b_tri+b_quad + b_pent + b_hex;
+> k:=0;
+> tmp_pic := image(
+>    for i = xpart llcorner q step (symbol_distance * block_rectangle *
+> uu) until xpart urcorner q:
+>       k:=k+1;
+>       for j = ypart llcorner q step (symbol_distance*uu) until ypart
+> urcorner q:
+>         m:= j- (k mod 2) * 0.5 * uu * symbol_distance;
+>         pick_sides := uniformdeviate(blocks);
+>         if pick_sides < b_tri:
+> 
+> Plus 16 lines later on change (j to an m)
+> 
+>           shifted ((i ,j) randomized (shift_randomisation * uu));
+> 
+> to
+> 
+>           shifted ((i ,m) randomized (shift_randomisation * uu));
+> 
+> 
+> > 
+> > Hand rails
+> 
+> https://therion.speleo.sk/wiki/metapost#line_-_hand_rail
+> 
+> I've been meaning to put this one up for a while, so thanks for the prod
+> 
+> Good luck
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+
+
+
+
+From andrew at wotcc.org.uk  Fri Jan  4 14:47:57 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 4 Jan 2019 13:47:57 +0000
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <1846291.PI2uDlTf9t@main2.billgee.local>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+ <a7430bee-6eaf-c956-1b9a-f972d0bc5a8b@wotcc.org.uk>
+ <1846291.PI2uDlTf9t@main2.billgee.local>
+Message-ID: <4d129839-2c88-900e-9deb-40dfa13c78f5@wotcc.org.uk>
+
+
+
+On 04/01/2019 13:22, Bill Gee via Therion wrote:
+> Thanks!  It will take me some time to absorb this.  The only question I have right now is how are the tile lines aligned with the cave?  Are they north-south?  On the centerline?  Do they take an "orientation" parameter?
+
+The orientation of grid comes from Therion, i and j which I believe is
+up down on the paper, but not sure, as it usually gets randomised for
+boulders when I use it. It does not take any parameters.
+The orientation of the tiles comes from the parameters in the coding of
+the symbol, but they only tessellate on the grid, I guess for squares
+this could be at 0 or 90 degrees with a bit of messing with the parameters.
+
+Andrew
+
+
+From martinsluka at me.com  Fri Jan  4 15:11:28 2019
+From: martinsluka at me.com (Martin Sluka)
+Date: Fri, 4 Jan 2019 15:11:28 +0100
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <1846291.PI2uDlTf9t@main2.billgee.local>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+ <a7430bee-6eaf-c956-1b9a-f972d0bc5a8b@wotcc.org.uk>
+ <1846291.PI2uDlTf9t@main2.billgee.local>
+Message-ID: <580FE7ED-00BB-41B2-9A11-5F8965014F2B@me.com>
+
+
+
+> 4. 1. 2019 v 14:22, Bill Gee via Therion <therion at speleo.sk>:
+> 
+> There are also both line and point symbols for stairs.  The line symbol won't work.  I need to check the point symbol to see how it works.  The stairs in Stark Caverns go around several curves.  I might wind up using visible borders, or perhaps repurposing the rock edge symbol, and then just drawing the steps individually.
+
+
+Hi Bill, check therion’s wiki - there are examples how the line symbol stairs/steps works.
+
+https://therion.speleo.sk/wiki/drawingchecklist#lines <https://therion.speleo.sk/wiki/drawingchecklist#lines>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190104/4f62bc89/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2019-01-04 v?15.10.26.png
+Type: image/png
+Size: 199123 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190104/4f62bc89/attachment.png>
+
+From bgee at campercaver.net  Fri Jan  4 21:22:18 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 04 Jan 2019 14:22:18 -0600
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <580FE7ED-00BB-41B2-9A11-5F8965014F2B@me.com>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+ <1846291.PI2uDlTf9t@main2.billgee.local>
+ <580FE7ED-00BB-41B2-9A11-5F8965014F2B@me.com>
+Message-ID: <1565152.ORINBWRRlo@main2.billgee.local>
+
+Hi Martin -
+
+Very nice!  Thanks, I had no idea how to make the steps work.  I tried this out and it works great.
+
+There is one little problem I discovered.  The "steps" line does not like to be crossed by other lines, especially floor steps.  I had a floor step going across part of the box, and that resulted in Therion throwing an error at compile about an invalid steps definition.  It took me a while to figure that one out.
+
+I also created a custom point symbol for electric lights.  The label on the legend is not right but everything else about it is working well.
+
+It occurs to me that the steps line could also be used for boardwalk.  I will take a look at the MetaPost for steps and see what might need to change.  That is a task for next week.
+
+Also I need to look at Andrew's code for tiled areas, and I need to make a new area fill for pavement.  There is always more stuff to do!  :-)
+
+-- 
+Bill Gee
+
+
+
+On Friday, January 4, 2019 8:11:28 AM CST Martin Sluka via Therion wrote:
+> 
+> > 4. 1. 2019 v 14:22, Bill Gee via Therion <therion at speleo.sk>:
+> > 
+> > There are also both line and point symbols for stairs.  The line symbol won't work.  I need to check the point symbol to see how it works.  The stairs in Stark Caverns go around several curves.  I might wind up using visible borders, or perhaps repurposing the rock edge symbol, and then just drawing the steps individually.
+> 
+> 
+> Hi Bill, check therion’s wiki - there are examples how the line symbol stairs/steps works.
+> 
+> https://therion.speleo.sk/wiki/drawingchecklist#lines <https://therion.speleo.sk/wiki/drawingchecklist#lines>
+> 
+
+
+
+
+
+
+From martinsluka at mac.com  Fri Jan  4 21:36:48 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 4 Jan 2019 21:36:48 +0100
+Subject: [Therion] A bunch of symbols needed
+In-Reply-To: <1565152.ORINBWRRlo@main2.billgee.local>
+References: <11630581.8kVtgsTy2k@main2.billgee.local>
+ <1846291.PI2uDlTf9t@main2.billgee.local>
+ <580FE7ED-00BB-41B2-9A11-5F8965014F2B@me.com>
+ <1565152.ORINBWRRlo@main2.billgee.local>
+Message-ID: <C84B45E5-BE3C-4EF2-A969-E81ADC7A666D@mac.com>
+
+Bill,
+
+I always put steps on top of all symbol.
+
+Don’t hesitate to add yours new symbols to Therion’s wiki. Ask Ladislav Blažek for log-in
+
+Martin
+
+
+> 4. 1. 2019 v 21:22, Bill Gee via Therion <therion at speleo.sk>:
+> 
+>  The "steps" line does not like to be crossed by other lines, especially floor steps.
+
+
+
+From bruce at tomo.co.nz  Sat Jan  5 00:03:05 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 5 Jan 2019 12:03:05 +1300
+Subject: [Therion] changed definition of drawing of centreline
+Message-ID: <001501d4a481$a88238f0$f986aad0$@tomo.co.nz>
+
+Hi
+
+Interested in the change
+<https://therion.speleo.sk/wiki/examples?do=diff&rev2%5B0%5D=1546628211&rev2
+%5B1%5D=1546628298&difftype=sidebyside>  to the line survey (centreline)
+examples in the wiki that Martin just made (I'm up for a modest amount of
+metapost learning).
+
+ 
+
+I can follow what the new more complicated metapost is doing, and can
+understand that it might be better practice to do it that way.
+
+But is there no place for the more direct and simpler 'draw p' approach?  Or
+did it not work? (I have not tested them).
+
+ 
+
+Perhaps both versions could be listed on the wiki, with some comment about
+pros and cons or why one approach is better than the other?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190105/ddc74fa0/attachment.htm>
+
+From martinsluka at mac.com  Sat Jan  5 08:27:36 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 5 Jan 2019 08:27:36 +0100
+Subject: [Therion] changed definition of drawing of centreline
+In-Reply-To: <001501d4a481$a88238f0$f986aad0$@tomo.co.nz>
+References: <001501d4a481$a88238f0$f986aad0$@tomo.co.nz>
+Message-ID: <5236D688-D514-4501-AF32-5918693071B2@mac.com>
+
+It was very old definition copied from former version of samples. I tried to use it again and it didn’t work. This code is from UIS definition of centerline. 
+
+It could be more simple symbol-assign the UIS centerline and change the color in layout.  
+
+Martin Sluka
+
+Odesláno z iPhonu
+
+5. 1. 2019 v 0:03, Bruce Mutton via Therion <therion at speleo.sk>:
+
+> Hi
+> Interested in the change to the line survey (centreline) examples in the wiki that Martin just made (I’m up for a modest amount of metapost learning).
+>  
+> I can follow what the new more complicated metapost is doing, and can understand that it might be better practice to do it that way.
+> But is there no place for the more direct and simpler ‘draw p’ approach?  Or did it not work? (I have not tested them).
+>  
+> Perhaps both versions could be listed on the wiki, with some comment about pros and cons or why one approach is better than the other?
+>  
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190105/89da8db6/attachment.htm>
+
+From beni at hallinger.org  Sat Jan  5 13:54:08 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 5 Jan 2019 13:54:08 +0100
+Subject: [Therion] Showing qestion mark texts broken?
+In-Reply-To: <ee0997bcaa56bfbdff3df51d2889902a@hallinger.org>
+References: <CAJiQYo3SugczP7Y1hjnAq8kKG8xeP=5aMBOxER+tnM22+RhZ-w@mail.gmail.com>
+ <465d1004783b5ae0876804f5dabaefe5@hallinger.org>
+ <ee0997bcaa56bfbdff3df51d2889902a@hallinger.org>
+Message-ID: <93AD4665-AC41-4C2E-AFCA-D24CA249FCA4@hallinger.org>
+
+Hello, just another question;
+how can i make the questionmark appear bold and red?
+
+> Am 04.01.2019 um 12:19 schrieb Benedikt Hallinger <beni at hallinger.org>:
+> 
+> Hi again,
+> it was indeed the Underscore.
+> 
+> This works (therion 5.4.1):
+> --------
+>       if ( known ATTR__text ):
+>          % set labeling color to red
+>          push_label_fill_color(1.0, 0.0, 0.0);
+> 
+>          % draw filled label with text below station
+>          p_label.bot(ATTR__text, pos shifted (0,-0.5u), 0.0, 8);
+> 
+>          % restore original labeling color
+>          pop_label_fill_color;
+>        fi;
+> -------
+> 
+> Thank you everybody!
+> 
+> 
+> 
+> Am 2018-12-26 23:20, schrieb Benedikt Hallinger via Therion:
+>> Forwarding an off list mail to me that explains
+>> Am 2018-12-24 11:27, schrieb Marco Corvi:
+>>> benedikt,
+>>> from my tests,
+>>> options, eg "-text", are referred as ATTR__text (double underscore),
+>>> custom attributes, eg "-attr code", as
+>>> ATTR_code (single underscore)
+>>> feel free to forward to the list.
+>>> thx for pointing out the error in my page,
+>>> marco
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Sun Jan  6 04:25:20 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 6 Jan 2019 16:25:20 +1300
+Subject: [Therion] Android emulator
+Message-ID: <000f01d4a56f$766f8540$634e8fc0$@tomo.co.nz>
+
+Has anyone used an Android Emulator on Windows to view or edit TopoDroid or
+SexyTopo files?
+
+My desire is to be able to view such files on any device that can process a
+Therion dataset, once they have been incorporated into the overall project.
+
+I see there are lots of them out there, but I may as well start with
+something that a Therion user has already successfully used.
+
+These two look reasonably interesting;
+
+ARChon <https://archon-runtime.github.io/> 
+
+Bliss OS <https://blissroms.com/> 
+
+ 
+
+Recommendations?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190106/3c61f55d/attachment.htm>
+
+From marco.menchise at gmail.com  Mon Jan  7 11:35:39 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Mon, 7 Jan 2019 11:35:39 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+Message-ID: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+
+Hello,
+does anybody know if such a converter is available?
+
+Thanks,
+Marco
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/a3518291/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Mon Jan  7 11:53:05 2019
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Mon, 7 Jan 2019 11:53:05 +0100 (CET)
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+Message-ID: <1406302769.81336.1546858386084@comcenter.netcologne.de>
+
+Hi Marco
+
+I have an excel macro tool which I use for such tasks.
+
+I have done this for my own and I'm using this Excel tool as my "database" for survey data.
+You can import different formats like compass, walls, therion, mnemo, pockettopo into Excel.
+And you can export to formats for Therion, Walls and Compass.
+This tool is still under progress but may be a help for your task.
+
+Unfortunately you can use it only with Windows and Excel.
+Let me know if you are interested.
+
+cheers,
+Torsten
+
+> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um 11:35 geschrieben:
+> 
+>     Hello, 
+>     does anybody know if such a converter is available?
+> 
+>     Thanks,
+>     Marco
+> 
+>     _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/1ce692d5/attachment.htm>
+
+From tokj86 at gmail.com  Mon Jan  7 12:09:16 2019
+From: tokj86 at gmail.com (Tom)
+Date: Mon, 7 Jan 2019 12:09:16 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <1406302769.81336.1546858386084@comcenter.netcologne.de>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+Message-ID: <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+
+Hi,
+
+in handling compass data I use the procedures described in this wiki page,
+written by Marco Corvi, which unfortunately I have found it only in italian
+language.
+In it is linked also a very nice perl script to convert dat files in
+therion.
+
+Tom
+
+Il giorno lun 7 gen 2019, 12:02 Torsten Schnitter via Therion <
+therion at speleo.sk> ha scritto:
+
+> Hi Marco
+>
+> I have an excel macro tool which I use for such tasks.
+>
+> I have done this for my own and I'm using this Excel tool as my "database"
+> for survey data.
+> You can import different formats like compass, walls, therion, mnemo,
+> pockettopo into Excel.
+> And you can export to formats for Therion, Walls and Compass.
+> This tool is still under progress but may be a help for your task.
+>
+> Unfortunately you can use it only with Windows and Excel.
+> Let me know if you are interested.
+>
+> cheers,
+> Torsten
+>
+> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um
+> 11:35 geschrieben:
+>
+> Hello,
+> does anybody know if such a converter is available?
+>
+> Thanks,
+> Marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/fc05970d/attachment.htm>
+
+From tokj86 at gmail.com  Mon Jan  7 12:11:08 2019
+From: tokj86 at gmail.com (Tom)
+Date: Mon, 7 Jan 2019 12:11:08 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+Message-ID: <CABBFCGgozsbbeq_P_tW+sMv06Dcy4PXzXZ5ZnPbQiVciboob7Q@mail.gmail.com>
+
+I'm sorry, the wiki page is
+https://therion.speleo.sk/wiki/it:compass?s[]=compass
+
+Tom
+
+Il giorno lun 7 gen 2019, 12:09 Tom <tokj86 at gmail.com> ha scritto:
+
+> Hi,
+>
+> in handling compass data I use the procedures described in this wiki page,
+> written by Marco Corvi, which unfortunately I have found it only in italian
+> language.
+> In it is linked also a very nice perl script to convert dat files in
+> therion.
+>
+> Tom
+>
+> Il giorno lun 7 gen 2019, 12:02 Torsten Schnitter via Therion <
+> therion at speleo.sk> ha scritto:
+>
+>> Hi Marco
+>>
+>> I have an excel macro tool which I use for such tasks.
+>>
+>> I have done this for my own and I'm using this Excel tool as my
+>> "database" for survey data.
+>> You can import different formats like compass, walls, therion, mnemo,
+>> pockettopo into Excel.
+>> And you can export to formats for Therion, Walls and Compass.
+>> This tool is still under progress but may be a help for your task.
+>>
+>> Unfortunately you can use it only with Windows and Excel.
+>> Let me know if you are interested.
+>>
+>> cheers,
+>> Torsten
+>>
+>> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um
+>> 11:35 geschrieben:
+>>
+>> Hello,
+>> does anybody know if such a converter is available?
+>>
+>> Thanks,
+>> Marco
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/f82825a6/attachment.htm>
+
+From marco.menchise at gmail.com  Mon Jan  7 12:14:24 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Mon, 7 Jan 2019 12:14:24 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <1406302769.81336.1546858386084@comcenter.netcologne.de>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+Message-ID: <CADzYBB6U997Wnkxhw-uhNfrwy8VvguGEdozvhuHVMHEQQ9MfBg@mail.gmail.com>
+
+Hello Torsten, thank you for the reply.
+Unfortunately (or luckily, I don't know) I don't have windows so I can't
+use excel. :-(
+
+I'll try some other way.
+Thanks again,
+Marco
+
+
+
+
+Il giorno lun 7 gen 2019 alle ore 12:03 Torsten Schnitter via Therion <
+therion at speleo.sk> ha scritto:
+
+> Hi Marco
+>
+> I have an excel macro tool which I use for such tasks.
+>
+> I have done this for my own and I'm using this Excel tool as my "database"
+> for survey data.
+> You can import different formats like compass, walls, therion, mnemo,
+> pockettopo into Excel.
+> And you can export to formats for Therion, Walls and Compass.
+> This tool is still under progress but may be a help for your task.
+>
+> Unfortunately you can use it only with Windows and Excel.
+> Let me know if you are interested.
+>
+> cheers,
+> Torsten
+>
+> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um
+> 11:35 geschrieben:
+>
+> Hello,
+> does anybody know if such a converter is available?
+>
+> Thanks,
+> Marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/1a37ca0b/attachment.htm>
+
+From marco.menchise at gmail.com  Mon Jan  7 12:18:16 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Mon, 7 Jan 2019 12:18:16 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+Message-ID: <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+
+Wow, I didn't know about that page, thanks...
+
+Maybe I missed it because I googled in English and Marco wrote it in
+Italian (quite unusual for him :-) )
+
+Thanks,
+Marco
+
+
+Il giorno lun 7 gen 2019 alle ore 12:09 Tom via Therion <therion at speleo.sk>
+ha scritto:
+
+> Hi,
+>
+> in handling compass data I use the procedures described in this wiki page,
+> written by Marco Corvi, which unfortunately I have found it only in italian
+> language.
+> In it is linked also a very nice perl script to convert dat files in
+> therion.
+>
+> Tom
+>
+> Il giorno lun 7 gen 2019, 12:02 Torsten Schnitter via Therion <
+> therion at speleo.sk> ha scritto:
+>
+>> Hi Marco
+>>
+>> I have an excel macro tool which I use for such tasks.
+>>
+>> I have done this for my own and I'm using this Excel tool as my
+>> "database" for survey data.
+>> You can import different formats like compass, walls, therion, mnemo,
+>> pockettopo into Excel.
+>> And you can export to formats for Therion, Walls and Compass.
+>> This tool is still under progress but may be a help for your task.
+>>
+>> Unfortunately you can use it only with Windows and Excel.
+>> Let me know if you are interested.
+>>
+>> cheers,
+>> Torsten
+>>
+>> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um
+>> 11:35 geschrieben:
+>>
+>> Hello,
+>> does anybody know if such a converter is available?
+>>
+>> Thanks,
+>> Marco
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/63f05a3f/attachment.htm>
+
+From drfootleg at gmail.com  Mon Jan  7 12:28:46 2019
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 7 Jan 2019 11:28:46 +0000
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+ <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+Message-ID: <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+
+You might also find the Cave Converter tool I wrote of some use. It doesn't
+convert to Therion, but it can read Compass.dat and convert to Survex. The
+survex files are not too difficult to then convert into Therion in a text
+editor:
+http://wscc.darkgem.com/caveconverter/
+
+Footleg
+
+On Mon, 7 Jan 2019 at 11:18, Marco Menchise via Therion <therion at speleo.sk>
+wrote:
+
+> Wow, I didn't know about that page, thanks...
+>
+> Maybe I missed it because I googled in English and Marco wrote it in
+> Italian (quite unusual for him :-) )
+>
+> Thanks,
+> Marco
+>
+>
+> Il giorno lun 7 gen 2019 alle ore 12:09 Tom via Therion <therion at speleo.sk>
+> ha scritto:
+>
+>> Hi,
+>>
+>> in handling compass data I use the procedures described in this wiki
+>> page, written by Marco Corvi, which unfortunately I have found it only in
+>> italian language.
+>> In it is linked also a very nice perl script to convert dat files in
+>> therion.
+>>
+>> Tom
+>>
+>> Il giorno lun 7 gen 2019, 12:02 Torsten Schnitter via Therion <
+>> therion at speleo.sk> ha scritto:
+>>
+>>> Hi Marco
+>>>
+>>> I have an excel macro tool which I use for such tasks.
+>>>
+>>> I have done this for my own and I'm using this Excel tool as my
+>>> "database" for survey data.
+>>> You can import different formats like compass, walls, therion, mnemo,
+>>> pockettopo into Excel.
+>>> And you can export to formats for Therion, Walls and Compass.
+>>> This tool is still under progress but may be a help for your task.
+>>>
+>>> Unfortunately you can use it only with Windows and Excel.
+>>> Let me know if you are interested.
+>>>
+>>> cheers,
+>>> Torsten
+>>>
+>>> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um
+>>> 11:35 geschrieben:
+>>>
+>>> Hello,
+>>> does anybody know if such a converter is available?
+>>>
+>>> Thanks,
+>>> Marco
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/e3c0b68b/attachment.htm>
+
+From marco.menchise at gmail.com  Mon Jan  7 12:33:59 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Mon, 7 Jan 2019 12:33:59 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+ <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+ <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+Message-ID: <CADzYBB7UrhpVyp=3a1JdMNmroOWW6DzcUqBif1aw-04xTZca6w@mail.gmail.com>
+
+Hello Footleg, thanks,
+That's was the way I was exploring (by a Java tool written by me) before
+being aware of Marco's page.
+
+Thanks for the CaveConverter :-)
+
+Marco
+
+Il giorno lun 7 gen 2019 alle ore 12:29 Footleg via Therion <
+therion at speleo.sk> ha scritto:
+
+> You might also find the Cave Converter tool I wrote of some use. It
+> doesn't convert to Therion, but it can read Compass.dat and convert to
+> Survex. The survex files are not too difficult to then convert into Therion
+> in a text editor:
+> http://wscc.darkgem.com/caveconverter/
+>
+> Footleg
+>
+> On Mon, 7 Jan 2019 at 11:18, Marco Menchise via Therion <therion at speleo.sk>
+> wrote:
+>
+>> Wow, I didn't know about that page, thanks...
+>>
+>> Maybe I missed it because I googled in English and Marco wrote it in
+>> Italian (quite unusual for him :-) )
+>>
+>> Thanks,
+>> Marco
+>>
+>>
+>> Il giorno lun 7 gen 2019 alle ore 12:09 Tom via Therion <
+>> therion at speleo.sk> ha scritto:
+>>
+>>> Hi,
+>>>
+>>> in handling compass data I use the procedures described in this wiki
+>>> page, written by Marco Corvi, which unfortunately I have found it only in
+>>> italian language.
+>>> In it is linked also a very nice perl script to convert dat files in
+>>> therion.
+>>>
+>>> Tom
+>>>
+>>> Il giorno lun 7 gen 2019, 12:02 Torsten Schnitter via Therion <
+>>> therion at speleo.sk> ha scritto:
+>>>
+>>>> Hi Marco
+>>>>
+>>>> I have an excel macro tool which I use for such tasks.
+>>>>
+>>>> I have done this for my own and I'm using this Excel tool as my
+>>>> "database" for survey data.
+>>>> You can import different formats like compass, walls, therion, mnemo,
+>>>> pockettopo into Excel.
+>>>> And you can export to formats for Therion, Walls and Compass.
+>>>> This tool is still under progress but may be a help for your task.
+>>>>
+>>>> Unfortunately you can use it only with Windows and Excel.
+>>>> Let me know if you are interested.
+>>>>
+>>>> cheers,
+>>>> Torsten
+>>>>
+>>>> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019
+>>>> um 11:35 geschrieben:
+>>>>
+>>>> Hello,
+>>>> does anybody know if such a converter is available?
+>>>>
+>>>> Thanks,
+>>>> Marco
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/3d3fbc3b/attachment.htm>
+
+From martinsluka at mac.com  Mon Jan  7 15:00:03 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 7 Jan 2019 15:00:03 +0100
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <1406302769.81336.1546858386084@comcenter.netcologne.de>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+Message-ID: <EAC2E2CF-F722-4087-A852-4CC7D90D7F4D@mac.com>
+
+There is free and multiplatform OpenOffice. Have you tried your macro in OO!
+
+Martin
+
+Odesláno z iPhonu
+
+7. 1. 2019 v 11:53, Torsten Schnitter via Therion <therion at speleo.sk>:
+
+> Hi Marco
+> 
+> I have an excel macro tool which I use for such tasks.
+> 
+> I have done this for my own and I'm using this Excel tool as my "database" for survey data.
+> You can import different formats like compass, walls, therion, mnemo, pockettopo into Excel.
+> And you can export to formats for Therion, Walls and Compass.
+> This tool is still under progress but may be a help for your task.
+> 
+> Unfortunately you can use it only with Windows and Excel.
+> Let me know if you are interested.
+> 
+> cheers,
+> Torsten
+> 
+>> Marco Menchise via Therion <therion at speleo.sk> hat am 7. Januar 2019 um 11:35 geschrieben: 
+>> 
+>> Hello, 
+>> does anybody know if such a converter is available?
+>> 
+>> Thanks,
+>> Marco
+>> 
+>> _______________________________________________ 
+>> Therion mailing list 
+>> Therion at speleo.sk 
+>> https://mailman.speleo.sk/listinfo/therion 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190107/2d46e1ed/attachment.htm>
+
+From wookey at wookware.org  Tue Jan  8 04:44:51 2019
+From: wookey at wookware.org (Wookey)
+Date: Tue, 8 Jan 2019 03:44:51 +0000
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+ <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+ <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+Message-ID: <20190108034451.hherj6czpmlatjec@mail.wookware.org>
+
+On 2019-01-07 11:28 +0000, Footleg via Therion wrote:
+> You might also find the Cave Converter tool I wrote of some use. It doesn't
+> convert to Therion, but it can read Compass.dat and convert to Survex. The
+> survex files are not too difficult to then convert into Therion in a text
+> editor:
+> http://wscc.darkgem.com/caveconverter/
+
+Hmm, that makes the man page out of date, which does not mention
+compass as an input format. Turns out that's my fault for not updating
+it to keep sync with the code. Just fixed and uploaded (to debian).
+
+($someone really should update caveconverter to output (and input)
+therion so it could do survex<->therion conversion because it's not
+hard but boring by hand)
+
+/me knows no java so I have resisted trying.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190108/a55f3147/attachment.sig>
+
+From torsten.schnitter at netcologne.de  Tue Jan  8 07:55:03 2019
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 8 Jan 2019 07:55:03 +0100 (CET)
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <EAC2E2CF-F722-4087-A852-4CC7D90D7F4D@mac.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <EAC2E2CF-F722-4087-A852-4CC7D90D7F4D@mac.com>
+Message-ID: <519595695.87417.1546930503838@comcenter.netcologne.de>
+
+Hi Martin
+
+I have not tried OpenOffice so far.
+But I doubt it will work.
+For example there is a difference in / and \ which is not coded in the macros so far.
+
+But anyhow I will give it a try.
+
+regards,
+Torsten
+
+> Martin Sluka via Therion <therion at speleo.sk> hat am 7. Januar 2019 um 15:00 geschrieben:
+> 
+>     There is free and multiplatform OpenOffice. Have you tried your macro in OO!
+> 
+>     Martin
+> 
+>     Odesláno z iPhonu
+> 
+>     7. 1. 2019 v 11:53, Torsten Schnitter via Therion < therion at speleo.sk mailto:therion at speleo.sk >:
+> 
+> 
+>         > > 
+> >         Hi Marco
+> > 
+> >         I have an excel macro tool which I use for such tasks.
+> > 
+> >         I have done this for my own and I'm using this Excel tool as my "database" for survey data.
+> >         You can import different formats like compass, walls, therion, mnemo, pockettopo into Excel.
+> >         And you can export to formats for Therion, Walls and Compass.
+> >         This tool is still under progress but may be a help for your task.
+> > 
+> >         Unfortunately you can use it only with Windows and Excel.
+> >         Let me know if you are interested.
+> > 
+> >         cheers,
+> >         Torsten
+> > 
+> >             > > > Marco Menchise via Therion < therion at speleo.sk mailto:therion at speleo.sk > hat am 7. Januar 2019 um 11:35 geschrieben:
+> > > 
+> > >             Hello, 
+> > >             does anybody know if such a converter is available?
+> > > 
+> > >             Thanks,
+> > >             Marco
+> > > 
+> > >             _______________________________________________
+> > >             Therion mailing list
+> > >             Therion at speleo.sk mailto:Therion at speleo.sk
+> > >             https://mailman.speleo.sk/listinfo/therion
+> > > 
+> > >         > > 
+> >     > 
+>         > >         _______________________________________________
+> >         Therion mailing list
+> >         Therion at speleo.sk mailto:Therion at speleo.sk
+> >         https://mailman.speleo.sk/listinfo/therion
+> > 
+> >     > 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190108/b375a5ca/attachment.htm>
+
+From andrew at wotcc.org.uk  Tue Jan  8 11:56:08 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 8 Jan 2019 10:56:08 +0000
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <20190108034451.hherj6czpmlatjec@mail.wookware.org>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+ <1406302769.81336.1546858386084@comcenter.netcologne.de>
+ <CABBFCGjUc+7L4r4iEkUZcBFCKSNngwH8Rop2yz7dNC6G5yiqxg@mail.gmail.com>
+ <CADzYBB5kb8K3jFQ+0o877-SLPSr6T6rtC+7Q+gOdF3J1d-vB0w@mail.gmail.com>
+ <CAJkGg4nqRwtkQeELBs0NS0Tg6_Hv1fP+SwBs11qavV5omtAnsQ@mail.gmail.com>
+ <20190108034451.hherj6czpmlatjec@mail.wookware.org>
+Message-ID: <037608c4-cf47-54c3-bec4-45caaa529fc0@wotcc.org.uk>
+
+
+
+On 08/01/2019 03:44, Wookey via Therion wrote:
+> ($someone really should update caveconverter to output (and input)
+> therion so it could do survex<->therion conversion because it's not
+> hard but boring by hand)
+I keep away from Java, however, I have written a very quick and dirty
+script to do the convert in python, about time I got round to putting it
+on line. Defiantly do not use with out a backup version of the data,
+although it should not write to the original files, it has not been
+tested much
+
+https://bitbucket.org/AndrewA/survex-to-therion/src/master/
+
+Andrew	
+
+
+From m.budaj at gmail.com  Tue Jan  8 19:41:51 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 8 Jan 2019 19:41:51 +0100
+Subject: [Therion] new Therion release
+Message-ID: <CALPsdSsDkZ+z-cMD3EzHXxPj42iW9C5JsUoteaxxo0wrQn-FvA@mail.gmail.com>
+
+Hi all,
+
+there is a new release of Therion, 5.4.2.
+
+See https://github.com/therion/therion/blob/v5.4.2/CHANGES for a list of
+changes.
+
+Best regards
+Therion team
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190108/01ec40c8/attachment.htm>
+
+From olly at survex.com  Wed Jan  9 01:12:49 2019
+From: olly at survex.com (Olly Betts)
+Date: Wed, 9 Jan 2019 00:12:49 +0000
+Subject: [Therion] Compass (.dat) to Therion (.th) converter?
+In-Reply-To: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+References: <CADzYBB76HZui-SDXCcFb2XwcFrXTBxyNwZZxvGoz6yi_-TBusA@mail.gmail.com>
+Message-ID: <20190109001249.7ruc6td2v7imnygh@survex.com>
+
+On Mon, Jan 07, 2019 at 11:35:39AM +0100, Marco Menchise via Therion wrote:
+> does anybody know if such a converter is available?
+
+Another approach would be to process the Compass data with Survex to
+get a .3d file, then use that .3d file in your Therion .th file with
+something like:
+
+import cave.3d -surveys create
+
+See the samples/survex/ directory of the Therion source for some
+examples demonstrating this.
+
+The major difference is you get to keep the data in Compass format,
+which may or may not be helpful (it's helpful if you're wanting to
+collaborate with somebody still using the data in Compass, but less so
+if you want to do a one-off conversion to move away from using Compass).
+
+Cheers,
+    Olly
+
+
+From knollesimage at t-online.de  Wed Jan  9 15:55:49 2019
+From: knollesimage at t-online.de (Michael)
+Date: Wed, 9 Jan 2019 15:55:49 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+Message-ID: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+
+Hello,
+Excited to see the new version being available, as not everyone is IT-savy enough to build it.
+Have installed (after removing 5.4.1.) and tested it on Win7. Seems to work fine, but –
+Producing a KML file for GoogleEarth results in the cave map being displaced towards NE by 100 meters or so.
+When I re-install Therion 5.4.1., the displacement is gone and the map is where it should be.
+Perhaps a glitch or change in the way coordinates are calculated?
+ 
+Regards,
+Michael.
+ 
+Von: Therion <therion-bounces at speleo.sk> Im Auftrag von Martin Budaj via Therion
+Gesendet: Dienstag, 8. Januar 2019 19:42
+An: List for Therion users <therion at speleo.sk>
+Cc: Martin Budaj <m.budaj at gmail.com>
+Betreff: [Therion] new Therion release
+ 
+Hi all,
+ 
+there is a new release of Therion, 5.4.2. 
+ 
+See https://github.com/therion/therion/blob/v5.4.2/CHANGES for a list of changes.
+ 
+Best regards
+Therion team
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190109/25ede5cd/attachment.htm>
+
+From m.budaj at gmail.com  Wed Jan  9 19:14:55 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 9 Jan 2019 19:14:55 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+Message-ID: <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+
+Hi,
+
+On Wed, Jan 9, 2019 at 4:03 PM Michael via Therion <therion at speleo.sk>
+wrote:
+
+> Excited to see the new version being available, as not everyone is IT-savy
+> enough to build it.
+>
+>
+actually there is always a windows installer for the most recent git commit
+at https://therion.speleo.sk/download.php; just look for "*current *Therion
+for Windows <https://therion.speleo.sk/downloads/therion-setup-dev.exe>".
+It should be available 30 minutes after the commit at the latest.
+
+
+> Producing a KML file for GoogleEarth results in the cave map being
+> displaced towards NE by 100 meters or so.
+>
+> When I re-install Therion 5.4.1., the displacement is gone and the map is
+> where it should be.
+>
+> Perhaps a glitch or change in the way coordinates are calculated?
+>
+
+Possibly yes, as we updated PROJ library from 4.7 to 5.1 for windows
+builds. Could you send a minimal example illustrating the issue?
+
+Best regards
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190109/70ce9e31/attachment.htm>
+
+From knollesimage at t-online.de  Wed Jan  9 19:42:40 2019
+From: knollesimage at t-online.de (Michael)
+Date: Wed, 9 Jan 2019 19:42:40 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+Message-ID: <000e01d4a84b$1a1b5740$4e5205c0$@t-online.de>
+
+Hello Martin,
+I only have really huge example. A small example I’d need to construct first.
+ 
+Michael.
+ 
+Von: Therion <therion-bounces at speleo.sk> Im Auftrag von Martin Budaj via Therion
+Gesendet: Mittwoch, 9. Januar 2019 19:15
+An: List for Therion users <therion at speleo.sk>
+Cc: Martin Budaj <m.budaj at gmail.com>
+Betreff: Re: [Therion] Therion 5.4.2. potential bug
+ 
+Hi,
+ 
+On Wed, Jan 9, 2019 at 4:03 PM Michael via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+Excited to see the new version being available, as not everyone is IT-savy enough to build it.
+ 
+actually there is always a windows installer for the most recent git commit at https://therion.speleo.sk/download.php; just look for "current  <https://therion.speleo.sk/downloads/therion-setup-dev.exe> Therion for Windows". It should be available 30 minutes after the commit at the latest.
+ 
+Producing a KML file for GoogleEarth results in the cave map being displaced towards NE by 100 meters or so.
+When I re-install Therion 5.4.1., the displacement is gone and the map is where it should be.
+Perhaps a glitch or change in the way coordinates are calculated?
+ 
+Possibly yes, as we updated PROJ library from 4.7 to 5.1 for windows builds. Could you send a minimal example illustrating the issue?
+ 
+Best regards
+Martin 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190109/7c7b0070/attachment.htm>
+
+From pennos4 at hotmail.com  Thu Jan 10 18:20:20 2019
+From: pennos4 at hotmail.com (chris pennos)
+Date: Thu, 10 Jan 2019 17:20:20 +0000
+Subject: [Therion]  Pocket Topo in windows 10 tablet
+Message-ID: <VI1PR0602MB3518F3EC1F647D5591CD9E86F2840@VI1PR0602MB3518.eurprd06.prod.outlook.com>
+
+Hi all,
+
+I have a brand new CAT T20 tablet and a DIstox2 the moment I am trying to connect the disto with the tablet pocketopo crashes… any ideas? I am stuck with a useless tablet pls help :)
+Excuse me since I am a bit off topic
+
+
+Cheers
+Christos
+
+From adampyka at gmail.com  Fri Jan 11 13:35:39 2019
+From: adampyka at gmail.com (Adam Pyka)
+Date: Fri, 11 Jan 2019 13:35:39 +0100
+Subject: [Therion] XVI and PocketTopo txt XTherion file formats
+Message-ID: <CAOEBQnknj1CJovRAcSgZ9ZaT-7WepByzBx6s3Azbo1biexzSJQ@mail.gmail.com>
+
+H All,
+
+Are there any documentation about the XTherion XVI file format (the
+structure, etc) and/or the .txt PocketTopo that can be imported?
+
+I know that I can do the reverse engeneering but it will be much more
+easier to find out the official source documentation.
+
+Cheers,
+Adam
+
+
+From andrew at wotcc.org.uk  Sat Jan 12 22:07:33 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 12 Jan 2019 21:07:33 +0000
+Subject: [Therion] XVI and PocketTopo txt XTherion file formats
+In-Reply-To: <CAOEBQnknj1CJovRAcSgZ9ZaT-7WepByzBx6s3Azbo1biexzSJQ@mail.gmail.com>
+References: <CAOEBQnknj1CJovRAcSgZ9ZaT-7WepByzBx6s3Azbo1biexzSJQ@mail.gmail.com>
+Message-ID: <27f4d283-e0aa-a197-c52b-b4c9242e00db@wotcc.org.uk>
+
+Yes it was a little tedious reverse engineering it. I had finished all
+but one part when Beat sent me the format
+
+https://bitbucket.org/AndrewA/topparser/src/default/PocketTopoFileFormat.txt
+
+The xvi format is easy to read, it looks like I did not write it down,
+but form memory.
+
+
+set XVIgrids {1.0 m}
+set XVIstations {
+  {0.00 0.00 1.0}
+....
+}
+set XVIshots {
+  {3199.45 -4991.65 2748.03 -4982.99}
+.....
+}
+set XVIsketchlines {
+  {black  1111.02 -2156.69  1007.09 -2100.00  917.32 -2019.69  841.73
+-1972.44}
+.....
+}
+set XVIgrid {-243.307086614 -5484.48818898 78.7401574803 0.0 0.0
+78.7401574803 72 75}
+
+
+XVIgrid is the size of the grid, not sure if other units than m is aceptable
+
+XVIStations is the coordinates of the stations
+XVIshots are lines joining the stations, ie legs
+XVIsketchlines points connected by lines, with the colour at the
+begining, I think that there are 7 colours black, gray, green, blue,
+red,orange, brown
+
+XVIgrids was something no obvious and might have involve DPI in the file
+Writeth2.py form topParser
+
+
+    #Grid is{bottom left x, bottom left y,
+    #x1 dist, y1 dist, x2 dist, y2 dist, number of x, number of y}
+
+See def XVIwrite( for more detail
+
+Hope that helps
+
+Andrew
+On 11/01/2019 12:35, Adam Pyka via Therion wrote:
+> H All,
+> 
+> Are there any documentation about the XTherion XVI file format (the
+> structure, etc) and/or the .txt PocketTopo that can be imported?
+> 
+> I know that I can do the reverse engeneering but it will be much more
+> easier to find out the official source documentation.
+> 
+> Cheers,
+> Adam
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+From m.budaj at gmail.com  Tue Jan 15 19:28:51 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 15 Jan 2019 19:28:51 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <000001d4aa5c$61816490$24842db0$@t-online.de>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+Message-ID: <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+
+On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de> wrote:
+
+> I have now attached a minimal cave sample produced  with 5.4.1. and one
+> produced with 5.4.2. to demonstrate the displacement.
+>
+
+Hi,
+
+the problem is that EPSG:31467 projection uses the "potsdam" datum and the
+PROJ library used by Therion changed the way how to transform potsdam datum
+to the standard WGS84 datum – it switched from a simple string parameter
+(towgs84) to using external grid file (see
+https://proj4.org/resource_files.html#transformation-grids for examples).
+
+No grid files are currently included in the windows Therion distribution,
+so the transformation is not correct in 5.4.2. Therion needs to be modified
+to include and use those files – hopefully soon.
+
+Best regards
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190115/4d1c176e/attachment.htm>
+
+From adampyka at gmail.com  Wed Jan 16 13:16:48 2019
+From: adampyka at gmail.com (Adam Pyka)
+Date: Wed, 16 Jan 2019 13:16:48 +0100
+Subject: [Therion] XVI and PocketTopo txt XTherion file formats
+In-Reply-To: <27f4d283-e0aa-a197-c52b-b4c9242e00db@wotcc.org.uk>
+References: <CAOEBQnknj1CJovRAcSgZ9ZaT-7WepByzBx6s3Azbo1biexzSJQ@mail.gmail.com>
+ <27f4d283-e0aa-a197-c52b-b4c9242e00db@wotcc.org.uk>
+Message-ID: <CAOEBQn=byuOxC+6iVGwwVvdpdHRRf4A-w_iSsJ2MXZvyibFC9g@mail.gmail.com>
+
+Andrew, thank You very much, that is what I needed.
+Best,
+Adam
+
+sob., 12 sty 2019 o 22:07 Andrew Atkinson via Therion
+<therion at speleo.sk> napisał(a):
+>
+> Yes it was a little tedious reverse engineering it. I had finished all
+> but one part when Beat sent me the format
+>
+> https://bitbucket.org/AndrewA/topparser/src/default/PocketTopoFileFormat.txt
+>
+> The xvi format is easy to read, it looks like I did not write it down,
+> but form memory.
+>
+>
+> set XVIgrids {1.0 m}
+> set XVIstations {
+>   {0.00 0.00 1.0}
+> ....
+> }
+> set XVIshots {
+>   {3199.45 -4991.65 2748.03 -4982.99}
+> .....
+> }
+> set XVIsketchlines {
+>   {black  1111.02 -2156.69  1007.09 -2100.00  917.32 -2019.69  841.73
+> -1972.44}
+> .....
+> }
+> set XVIgrid {-243.307086614 -5484.48818898 78.7401574803 0.0 0.0
+> 78.7401574803 72 75}
+>
+>
+> XVIgrid is the size of the grid, not sure if other units than m is aceptable
+>
+> XVIStations is the coordinates of the stations
+> XVIshots are lines joining the stations, ie legs
+> XVIsketchlines points connected by lines, with the colour at the
+> begining, I think that there are 7 colours black, gray, green, blue,
+> red,orange, brown
+>
+> XVIgrids was something no obvious and might have involve DPI in the file
+> Writeth2.py form topParser
+>
+>
+>     #Grid is{bottom left x, bottom left y,
+>     #x1 dist, y1 dist, x2 dist, y2 dist, number of x, number of y}
+>
+> See def XVIwrite( for more detail
+>
+> Hope that helps
+>
+> Andrew
+> On 11/01/2019 12:35, Adam Pyka via Therion wrote:
+> > H All,
+> >
+> > Are there any documentation about the XTherion XVI file format (the
+> > structure, etc) and/or the .txt PocketTopo that can be imported?
+> >
+> > I know that I can do the reverse engeneering but it will be much more
+> > easier to find out the official source documentation.
+> >
+> > Cheers,
+> > Adam
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> >
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From m.budaj at gmail.com  Thu Jan 17 19:25:30 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 17 Jan 2019 19:25:30 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+Message-ID: <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+
+Hi, it's fixed in d98a0a6.
+Martin
+
+On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de> wrote:
+>
+>> I have now attached a minimal cave sample produced  with 5.4.1. and one
+>> produced with 5.4.2. to demonstrate the displacement.
+>>
+>
+> Hi,
+>
+> the problem is that EPSG:31467 projection uses the "potsdam" datum and the
+> PROJ library used by Therion changed the way how to transform potsdam datum
+> to the standard WGS84 datum – it switched from a simple string parameter
+> (towgs84) to using external grid file (see
+> https://proj4.org/resource_files.html#transformation-grids for examples).
+>
+> No grid files are currently included in the windows Therion distribution,
+> so the transformation is not correct in 5.4.2. Therion needs to be modified
+> to include and use those files – hopefully soon.
+>
+> Best regards
+> Martin
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190117/83aba131/attachment.htm>
+
+From knollesimage at t-online.de  Fri Jan 18 09:32:45 2019
+From: knollesimage at t-online.de (Michael)
+Date: Fri, 18 Jan 2019 09:32:45 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+Message-ID: <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+
+Thank you, Martin, for the quick fix.
+Is it also fixed in 
+https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe
+?
+Regards,
+Michael.
+ 
+Von: Therion <therion-bounces at speleo.sk> Im Auftrag von Martin Budaj via Therion
+Gesendet: Donnerstag, 17. Januar 2019 19:26
+An: List for Therion users <therion at speleo.sk>
+Cc: Martin Budaj <m.budaj at gmail.com>
+Betreff: Re: [Therion] Therion 5.4.2. potential bug
+ 
+Hi, it's fixed in d98a0a6.
+Martin
+ 
+On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com <mailto:m.budaj at gmail.com> > wrote:
+On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de> > wrote:
+I have now attached a minimal cave sample produced  with 5.4.1. and one produced with 5.4.2. to demonstrate the displacement.
+ 
+Hi,
+ 
+the problem is that EPSG:31467 projection uses the "potsdam" datum and the PROJ library used by Therion changed the way how to transform potsdam datum to the standard WGS84 datum – it switched from a simple string parameter (towgs84) to using external grid file (see https://proj4.org/resource_files.html#transformation-grids for examples). 
+ 
+No grid files are currently included in the windows Therion distribution, so the transformation is not correct in 5.4.2. Therion needs to be modified to include and use those files – hopefully soon.
+ 
+Best regards
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190118/3b3142d4/attachment.htm>
+
+From martinsluka at mac.com  Fri Jan 18 11:42:04 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 18 Jan 2019 11:42:04 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+Message-ID: <C57215DE-70CD-4250-9F34-2B01B50C1363@mac.com>
+
+There us actual developers version of windows instalation available. 
+
+Martin Sluka
+
+Odesláno z iPhonu
+
+18. 1. 2019 v 9:32, Michael via Therion <therion at speleo.sk>:
+
+> Thank you, Martin, for the quick fix.
+> Is it also fixed in
+> https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe
+> ?
+> Regards,
+> Michael.
+>  
+> Von: Therion <therion-bounces at speleo.sk> Im Auftrag von Martin Budaj via Therion
+> Gesendet: Donnerstag, 17. Januar 2019 19:26
+> An: List for Therion users <therion at speleo.sk>
+> Cc: Martin Budaj <m.budaj at gmail.com>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+>  
+> Hi, it's fixed in d98a0a6.
+> Martin
+>  
+> On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com> wrote:
+> On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de> wrote:
+> I have now attached a minimal cave sample produced  with 5.4.1. and one produced with 5.4.2. to demonstrate the displacement.
+>  
+> Hi,
+>  
+> the problem is that EPSG:31467 projection uses the "potsdam" datum and the PROJ library used by Therion changed the way how to transform potsdam datum to the standard WGS84 datum – it switched from a simple string parameter (towgs84) to using external grid file (see https://proj4.org/resource_files.html#transformation-grids for examples). 
+>  
+> No grid files are currently included in the windows Therion distribution, so the transformation is not correct in 5.4.2. Therion needs to be modified to include and use those files – hopefully soon.
+>  
+> Best regards
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190118/30c9572a/attachment.htm>
+
+From m.budaj at gmail.com  Fri Jan 18 14:33:13 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Fri, 18 Jan 2019 14:33:13 +0100
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+Message-ID: <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+
+No, we don't modify existing releases. The fix will be included in 5.4.3
+eventually, but until then you can use the latest snapshot (
+https://therion.speleo.sk/downloads/therion-setup-dev.exe).
+
+Martin
+
+On Fri, Jan 18, 2019 at 9:32 AM Michael <knollesimage at t-online.de> wrote:
+
+> Thank you, Martin, for the quick fix.
+>
+> Is it also fixed in
+>
+> https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe
+>
+> ?
+>
+> Regards,
+>
+> Michael.
+>
+>
+>
+> *Von:* Therion <therion-bounces at speleo.sk> *Im Auftrag von *Martin Budaj
+> via Therion
+> *Gesendet:* Donnerstag, 17. Januar 2019 19:26
+> *An:* List for Therion users <therion at speleo.sk>
+> *Cc:* Martin Budaj <m.budaj at gmail.com>
+> *Betreff:* Re: [Therion] Therion 5.4.2. potential bug
+>
+>
+>
+> Hi, it's fixed in d98a0a6.
+>
+> Martin
+>
+>
+>
+> On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>
+> On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de> wrote:
+>
+> I have now attached a minimal cave sample produced  with 5.4.1. and one
+> produced with 5.4.2. to demonstrate the displacement.
+>
+>
+>
+> Hi,
+>
+>
+>
+> the problem is that EPSG:31467 projection uses the "potsdam" datum and the
+> PROJ library used by Therion changed the way how to transform potsdam datum
+> to the standard WGS84 datum – it switched from a simple string parameter
+> (towgs84) to using external grid file (see
+> https://proj4.org/resource_files.html#transformation-grids for examples).
+>
+>
+>
+> No grid files are currently included in the windows Therion distribution,
+> so the transformation is not correct in 5.4.2. Therion needs to be modified
+> to include and use those files – hopefully soon.
+>
+>
+>
+> Best regards
+>
+> Martin
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190118/2cda99da/attachment.htm>
+
+From drunews at mail.ru  Sat Jan 19 20:30:51 2019
+From: drunews at mail.ru (=?UTF-8?B?QW5kcmV5?=)
+Date: Sat, 19 Jan 2019 22:30:51 +0300
+Subject: [Therion] =?utf-8?q?Troubles_with_the_3D_generation?=
+In-Reply-To: <000001d2a207$6dc8e980$495abc80$@tomo.co.nz>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <4ECEE642-A85D-44F8-A982-77BB67C23E8C@mac.com>
+ <000001d2a207$6dc8e980$495abc80$@tomo.co.nz>
+Message-ID: <1547926251.559588996@f437.i.mail.ru>
+
+Hello Therion users,
+
+I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+
+In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+
+Maybe someone can point out what am I doing wrong?
+
+Project files attached.
+
+
+Thanks,
+Andrey
+
+
+
+>Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion <therion at speleo.sk>:
+>
+>I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+>https://therion.speleo.sk/wiki/drawingchecklist#points
+>under the heading  Passage Size, Fills and Speleothems
+>and discussed an anomaly.  Any corrections or comments welcome.
+> 
+>Bruce
+> 
+> 
+>-----Original Message-----
+>From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Sluka via Therion
+>Sent: Tuesday, 21 March 2017 10:23 AM
+>To: List for Therion users < therion at speleo.sk >
+>Cc: Martin Sluka < martinsluka at mac.com >
+>Subject: Re: [Therion] Troubles with the 3D generation
+> 
+> 
+>> 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion < therion at speleo.sk >:
+>> 
+>> What is the different between "point dimensions" and "point passage-height"?
+>> 
+>> If i understand the therion book correctly:
+>> - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+>> - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+>> 
+> 
+>...<clipped>...
+> 
+>A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+>But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+>m.s.
+> 
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+
+-- 
+Kind regards,
+Andrey
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190119/8a86149f/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Survey_01.zip
+Type: application/zip
+Size: 29943 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190119/8a86149f/attachment.zip>
+
+From martinsluka at mac.com  Sun Jan 20 13:59:31 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 20 Jan 2019 13:59:31 +0100
+Subject: [Therion] Troubles with the 3D generation
+In-Reply-To: <1547926251.559588996@f437.i.mail.ru>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <4ECEE642-A85D-44F8-A982-77BB67C23E8C@mac.com>
+ <000001d2a207$6dc8e980$495abc80$@tomo.co.nz>
+ <1547926251.559588996@f437.i.mail.ru>
+Message-ID: <941BE848-26D8-4D38-B193-9E6DD09C1A01@mac.com>
+
+Only one very-very small dummy wall line there, check attached screen-shot. It will be all OK when you delete it.
+
+Martin
+
+
+
+
+> 19. 1. 2019 v 20:30, Andrey via Therion <therion at speleo.sk>:
+> 
+> Hello Therion users,
+> 
+> I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+> 
+> In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+> If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+> 
+> Maybe someone can point out what am I doing wrong?
+> 
+> Project files attached.
+> 
+> 
+> Thanks,
+> Andrey
+> 
+> 
+> 
+> Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion <therion at speleo.sk>:
+> 
+> I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+> 
+> https://therion.speleo.sk/wiki/drawingchecklist#points <https://therion.speleo.sk/wiki/drawingchecklist#points>
+> under the heading Passage Size, Fills and Speleothems
+> 
+> and discussed an anomaly.  Any corrections or comments welcome.
+> 
+>  
+> Bruce
+> 
+>  
+>  
+> -----Original Message-----
+> From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Sluka via Therion
+> Sent: Tuesday, 21 March 2017 10:23 AM
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] Troubles with the 3D generation
+> 
+>  
+>  
+> > 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+> 
+> > 
+> 
+> > What is the different between "point dimensions" and "point passage-height"?
+> 
+> > 
+> 
+> > If i understand the therion book correctly:
+> 
+> > - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+> 
+> > - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+> 
+> > 
+> 
+>  
+> ...<clipped>...
+> 
+>  
+> A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+> 
+> But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+> 
+> m.s.
+> 
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> Kind regards,
+> Andrey
+> <Survey_01.zip>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/008cde87/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2019-01-20 v?13.55.33.png
+Type: image/png
+Size: 78900 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/008cde87/attachment.png>
+
+From martinsluka at mac.com  Sun Jan 20 14:03:40 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 20 Jan 2019 14:03:40 +0100
+Subject: [Therion] Troubles with the 3D generation
+In-Reply-To: <1547926251.559588996@f437.i.mail.ru>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <4ECEE642-A85D-44F8-A982-77BB67C23E8C@mac.com>
+ <000001d2a207$6dc8e980$495abc80$@tomo.co.nz>
+ <1547926251.559588996@f437.i.mail.ru>
+Message-ID: <B6200CA5-77C8-42F4-AEC5-0EBDC6AF37FF@mac.com>
+
+Sorry, it is near station a69
+
+Martin Sluka
+> 19. 1. 2019 v
+
+> 20:30, Andrey via Therion <therion at speleo.sk>:
+> 
+> Hello Therion users,
+> 
+> I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+> 
+> In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+> If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+> 
+> Maybe someone can point out what am I doing wrong?
+> 
+> Project files attached.
+> 
+> 
+> Thanks,
+> Andrey
+> 
+> 
+> 
+> Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion <therion at speleo.sk>:
+> 
+> I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+> 
+> https://therion.speleo.sk/wiki/drawingchecklist#points <https://therion.speleo.sk/wiki/drawingchecklist#points>
+> under the heading Passage Size, Fills and Speleothems
+> 
+> and discussed an anomaly.  Any corrections or comments welcome.
+> 
+>  
+> Bruce
+> 
+>  
+>  
+> -----Original Message-----
+> From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Sluka via Therion
+> Sent: Tuesday, 21 March 2017 10:23 AM
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] Troubles with the 3D generation
+> 
+>  
+>  
+> > 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+> 
+> > 
+> 
+> > What is the different between "point dimensions" and "point passage-height"?
+> 
+> > 
+> 
+> > If i understand the therion book correctly:
+> 
+> > - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+> 
+> > - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+> 
+> > 
+> 
+>  
+> ...<clipped>...
+> 
+>  
+> A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+> 
+> But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+> 
+> m.s.
+> 
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> Kind regards,
+> Andrey
+> <Survey_01.zip>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/c2d5bb07/attachment.htm>
+
+From drunews at mail.ru  Sun Jan 20 14:41:40 2019
+From: drunews at mail.ru (=?UTF-8?B?QW5kcmV5?=)
+Date: Sun, 20 Jan 2019 16:41:40 +0300
+Subject: [Therion] =?utf-8?q?Troubles_with_the_3D_generation?=
+In-Reply-To: <941BE848-26D8-4D38-B193-9E6DD09C1A01@mac.com>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <1547926251.559588996@f437.i.mail.ru>
+ <941BE848-26D8-4D38-B193-9E6DD09C1A01@mac.com>
+Message-ID: <1547991700.160367205@f361.i.mail.ru>
+
+
+Thank you very much for catching that!   Now model looks perfect!
+
+This "invalid scrap outline" warning was ringing some bells but I was too impatient when tidying up the scrap.
+
+
+It would be a great enhancement if there will be an option for walls to cut the spaly triangles in case if splays are not stiking through the wall lines.
+
+
+
+
+>Воскресенье, 20 января 2019, 12:59 UTC от Martin Sluka via Therion <therion at speleo.sk>:
+>
+>Only one very-very small dummy wall line there, check attached screen-shot. It will be all OK when you delete it.
+>
+>Martin
+>
+>
+>
+>>19. 1. 2019 v 20:30, Andrey via Therion < therion at speleo.sk >:
+>>Hello Therion users,
+>>
+>>I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+>>
+>>In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+>>If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+>>
+>>Maybe someone can point out what am I doing wrong?
+>>
+>>Project files attached.
+>>
+>>
+>>Thanks,
+>>Andrey
+>>
+>>
+>>
+>>>Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion < therion at speleo.sk >:
+>>>
+>>>I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+>>>https://therion.speleo.sk/wiki/drawingchecklist#points
+>>>under the heading   Passage Size, Fills and Speleothems
+>>>and discussed an anomaly.  Any corrections or comments welcome.
+>>> 
+>>>Bruce
+>>> 
+>>> 
+>>>-----Original Message-----
+>>>From: Therion [ mailto:therion-bounces at speleo.sk ] On Behalf Of Martin Sluka via Therion
+>>>Sent: Tuesday, 21 March 2017 10:23 AM
+>>>To: List for Therion users < therion at speleo.sk >
+>>>Cc: Martin Sluka < martinsluka at mac.com >
+>>>Subject: Re: [Therion] Troubles with the 3D generation
+>>> 
+>>> 
+>>>> 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion < therion at speleo.sk >:
+>>>>  
+>>>> What is the different between "point dimensions" and "point passage-height"?
+>>>>  
+>>>> If i understand the therion book correctly:
+>>>> - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+>>>> - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+>>>>  
+>>> 
+>>>...<clipped>...
+>>> 
+>>>A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+>>>But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+>>>m.s.
+>>> 
+>>>_______________________________________________
+>>>Therion mailing list
+>>>Therion at speleo.sk
+>>>https://mailman.speleo.sk/listinfo/therion
+>>
+>>
+>>--  
+>>Kind regards,
+>>Andrey
+>><Survey_01.zip> _______________________________________________
+>>Therion mailing list
+>>Therion at speleo.sk
+>>https://mailman.speleo.sk/listinfo/therion
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+
+-- 
+Kind regards,
+Andrey
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/32f2d0bc/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 394714 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/32f2d0bc/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 225590 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/32f2d0bc/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Snímek obrazovky 2019-01-20 v 13.55.33.png
+Type: image/png
+Size: 78900 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/32f2d0bc/attachment-0002.png>
+
+From martinsluka at mac.com  Sun Jan 20 16:39:14 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 20 Jan 2019 16:39:14 +0100
+Subject: [Therion] Troubles with the 3D generation
+In-Reply-To: <1547991700.160367205@f361.i.mail.ru>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <1547926251.559588996@f437.i.mail.ru>
+ <941BE848-26D8-4D38-B193-9E6DD09C1A01@mac.com>
+ <1547991700.160367205@f361.i.mail.ru>
+Message-ID: <4114978E-2BD1-4C32-A92B-8F3C581A40C4@mac.com>
+
+I divided it to several smaller scraps and checked, where is the problem. 
+
+Martin
+
+
+
+> 20. 1. 2019 v 14:41, Andrey via Therion <therion at speleo.sk>:
+> 
+> Thank you very much for catching that!   Now model looks perfect!
+> 
+> This "invalid scrap outline" warning was ringing some bells but I was too impatient when tidying up the scrap.
+> 
+> 
+> It would be a great enhancement if there will be an option for walls to cut the spaly triangles in case if splays are not stiking through the wall lines.
+> 
+> <image.png>
+> 
+> 
+> <image.png>
+> 
+> Воскресенье, 20 января 2019, 12:59 UTC от Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> Only one very-very small dummy wall line there, check attached screen-shot. It will be all OK when you delete it.
+> 
+> Martin
+> 
+> <Snímek obrazovky 2019-01-20 v 13.55.33.png>
+> 
+> 
+>> 19. 1. 2019 v 20:30, Andrey via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+>> 
+>> Hello Therion users,
+>> 
+>> I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+>> 
+>> In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+>> If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+>> 
+>> Maybe someone can point out what am I doing wrong?
+>> 
+>> Project files attached.
+>> 
+>> 
+>> Thanks,
+>> Andrey
+>> 
+>> 
+>> 
+>> Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+>> 
+>> I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+>> 
+>> https://therion.speleo.sk/wiki/drawingchecklist#points <https://therion.speleo.sk/wiki/drawingchecklist#points>
+>> under the heading Passage Size, Fills and Speleothems
+>> 
+>> and discussed an anomaly.  Any corrections or comments welcome.
+>> 
+>>  
+>> Bruce
+>> 
+>>  
+>>  
+>> -----Original Message-----
+>> From: Therion [mailto:therion-bounces at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion%2dbounces at speleo.sk>] On Behalf Of Martin Sluka via Therion
+>> Sent: Tuesday, 21 March 2017 10:23 AM
+>> To: List for Therion users <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>
+>> Cc: Martin Sluka <martinsluka at mac.com <x-msg://e.mail.ru/compose/?mailto=mailto%3amartinsluka at mac.com>>
+>> Subject: Re: [Therion] Troubles with the 3D generation
+>> 
+>>  
+>>  
+>> > 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion <therion at speleo.sk <>>:
+>> 
+>> > 
+>> 
+>> > What is the different between "point dimensions" and "point passage-height"?
+>> 
+>> > 
+>> 
+>> > If i understand the therion book correctly:
+>> 
+>> > - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+>> 
+>> > - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+>> 
+>> > 
+>> 
+>>  
+>> ...<clipped>...
+>> 
+>>  
+>> A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+>> 
+>> But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+>> 
+>> m.s.
+>> 
+>>  
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3aTherion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+>> 
+>> 
+>> -- 
+>> Kind regards,
+>> Andrey
+>> <Survey_01.zip>_______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3aTherion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> Kind regards,
+> Andrey
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/8f9b548d/attachment.htm>
+
+From nehili at hotmail.com  Sat Jan 19 19:27:30 2019
+From: nehili at hotmail.com (ayoub nehili)
+Date: Sat, 19 Jan 2019 18:27:30 +0000
+Subject: [Therion] Georeferenced 3D map
+Message-ID: <LO2P123MB1869B35807C0022BA3F0A7A2C09D0@LO2P123MB1869.GBRP123.PROD.OUTLOOK.COM>
+
+Hello,
+
+can anyone help me to create a georeferenced 3d map for a cave, that can be exported to ArcGIS or QGIS.
+
+thanks
+Ayoub
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190119/3009e082/attachment.htm>
+
+From martinsluka at mac.com  Sun Jan 20 23:50:55 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 20 Jan 2019 23:50:55 +0100
+Subject: [Therion] Troubles with the 3D generation
+In-Reply-To: <1547991700.160367205@f361.i.mail.ru>
+References: <CAGtxEvWnTu5X=uFfKr=uv3Q1UXvikWX0tqJ79v4vLtwGJ2RdWA@mail.gmail.com>
+ <1547926251.559588996@f437.i.mail.ru>
+ <941BE848-26D8-4D38-B193-9E6DD09C1A01@mac.com>
+ <1547991700.160367205@f361.i.mail.ru>
+Message-ID: <F1B78362-EC2D-4104-A4D0-FC1A0F8A9E8E@mac.com>
+
+Maybe the most simple way could be in layout: 
+
+symbol-hide group all 
+symbol-show line wall
+
+Martin S.
+
+> 20. 1. 2019 v 14:41, Andrey via Therion <therion at speleo.sk>:
+> 
+> Thank you very much for catching that!   Now model looks perfect!
+> 
+> This "invalid scrap outline" warning was ringing some bells but I was too impatient when tidying up the scrap.
+> 
+> 
+> It would be a great enhancement if there will be an option for walls to cut the spaly triangles in case if splays are not stiking through the wall lines.
+> 
+> <image.png>
+> 
+> 
+> <image.png>
+> 
+> Воскресенье, 20 января 2019, 12:59 UTC от Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> Only one very-very small dummy wall line there, check attached screen-shot. It will be all OK when you delete it.
+> 
+> Martin
+> 
+> <Snímek obrazovky 2019-01-20 v 13.55.33.png>
+> 
+> 
+>> 19. 1. 2019 v 20:30, Andrey via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+>> 
+>> Hello Therion users,
+>> 
+>> I am trying to make a 3D model for a small horizontal cave where only plan had been drawn up.
+>> 
+>> In case if I use splays for model generation it cuts through the wall surfaces and looks not very nice.
+>> If I use just walls with option "export model -wall-source maps"  and bunch of "point dimensions"  model comes out without floor and cealing.
+>> 
+>> Maybe someone can point out what am I doing wrong?
+>> 
+>> Project files attached.
+>> 
+>> 
+>> Thanks,
+>> Andrey
+>> 
+>> 
+>> 
+>> Вторник, 21 марта 2017, 5:53 UTC от Bruce Mutton via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>:
+>> 
+>> I had put my understandings (about ‘point dimensions’ and ‘point passage-height’) in the wiki
+>> 
+>> https://therion.speleo.sk/wiki/drawingchecklist#points <https://therion.speleo.sk/wiki/drawingchecklist#points>
+>> under the heading Passage Size, Fills and Speleothems
+>> 
+>> and discussed an anomaly.  Any corrections or comments welcome.
+>> 
+>>  
+>> Bruce
+>> 
+>>  
+>>  
+>> -----Original Message-----
+>> From: Therion [mailto:therion-bounces at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion%2dbounces at speleo.sk>] On Behalf Of Martin Sluka via Therion
+>> Sent: Tuesday, 21 March 2017 10:23 AM
+>> To: List for Therion users <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>>
+>> Cc: Martin Sluka <martinsluka at mac.com <x-msg://e.mail.ru/compose/?mailto=mailto%3amartinsluka at mac.com>>
+>> Subject: Re: [Therion] Troubles with the 3D generation
+>> 
+>>  
+>>  
+>> > 20. 3. 2017 v 20:48, Benedikt Hallinger via Therion <therion at speleo.sk <>>:
+>> 
+>> > 
+>> 
+>> > What is the different between "point dimensions" and "point passage-height"?
+>> 
+>> > 
+>> 
+>> > If i understand the therion book correctly:
+>> 
+>> > - dimensions is ONLY for the 3D-tube generation and invisible in rendered maps
+>> 
+>> > - otherwise behaves as if "point passage-height [+<up> -<down>] would have been given.
+>> 
+>> > 
+>> 
+>>  
+>> ...<clipped>...
+>> 
+>>  
+>> A bit difficult to understand. I understand passage-height [+8 -3] From water level to ceiling 8 m, depth of water 3 m.
+>> 
+>> But what it means:  "-<number> (the depth of the floor" or "[+<number> -<number>] (the distance to ceiling and distance to floor)"? Has floor any depth? Or it means the situation if the point „height“ is on edge of step or pit?
+>> 
+>> m.s.
+>> 
+>>  
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3aTherion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+>> 
+>> 
+>> -- 
+>> Kind regards,
+>> Andrey
+>> <Survey_01.zip>_______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3aTherion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> Kind regards,
+> Andrey
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190120/b768a96e/attachment.htm>
+
+From marco.menchise at gmail.com  Wed Jan 23 10:25:05 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Wed, 23 Jan 2019 10:25:05 +0100
+Subject: [Therion] Therion and DEM
+In-Reply-To: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+References: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+Message-ID: <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+
+Hello,
+I'm facing same problem.
+
+Any hint/answer?
+Thanks,
+Marco
+
+
+Il giorno ven 29 giu 2018 alle ore 00:38 Xavier Robert via Therion <
+therion at speleo.sk> ha scritto:
+
+> Dear all,
+>
+> For a quite large project, I am using a relatively high-resolution DEM
+> (i.e. 1 px = 1 m), and I am trying to use it within Therion to produce a
+> .lox-3D file. I am however facing some problems:
+>
+>    - If I export the full resolution DEM to a .th file (6540*4307 cells)
+>    with the line "grid 325816.2990788577 5106250.599820679 1 1 6540
+>    4307 ». I have the error « therion: error -- dem.th [14] -- line too
+>    long ». This line 14 correspond to the first row of the DEM. ASC
+>    parameters are « #NCOLS = 6540, NROWS   = 4307, XLLCORNER =
+>    325816.2990788577, YLLCORNER =5106250.599820679, CELLSIZE = 1.0 »
+>    - If I export the DEM with a 5 m pixel resolution (1308*861 cells)
+>    (with the line "grid 325816.299079 5106250.59982 5.001161440185831
+>    5.001161440185831 1308 861 », I get the same error,
+>    - If I export the DEM with a 10 m pixel resolution (654 * 431 cells)
+>    (with the line « grid 325816.299079 5106250.59982 9.996519721577727
+>    9.996519721577727 654 431 »), everything compiles OK and the result is
+>    quite OK (
+>    https://www.groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html
+>    ; be patient, it takes time to load), but not with the full resolution.
+>
+>
+> The process to build each .th DEM is exactly the same, I do not touch any
+> end of line. I edit the .asc DEM with vi to translate it into a .th file.
+>
+> I thus suspect that there is a size limitation for the DEM in Therion, I
+> imagine a limitation in the number of row/columns of the DEM.
+>
+>    - Is that true ?
+>    - If yes, what is this size limit for DEMs ?
+>    - As anyone an idea how to overtake that and use the full resolution
+>    DEM ?
+>
+>
+> Cheers,
+>
+> Xavier
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190123/51b3286f/attachment.htm>
+
+From herich at speleodd.sk  Wed Jan 23 10:48:14 2019
+From: herich at speleodd.sk (Pavel Herich)
+Date: Wed, 23 Jan 2019 10:48:14 +0100
+Subject: [Therion] Therion and DEM
+In-Reply-To: <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+References: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+ <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+Message-ID: <cad590bbea87cd61fe311d1bc4eeba0c@speleodd.sk>
+
+Hi,
+I do strugle with the same problem, if I understand well; partly there 
+is solution tu cut all grid values after f.e. second number behind point 
+(if you have values like I do - 1205.648971354 and so), you fit almost 
+twice of values into the line.
+I did not experiece any troubles with number of columns, so
+I suppose real solution would be to extend line in Therion, but I don´t 
+know, if it´s possible.
+Pavel
+
+
+Dňa 2019-01-23 10:25 Marco Menchise via Therion napísal(a):
+> Hello,
+> I'm facing same problem.
+> 
+> Any hint/answer?
+> Thanks,
+> Marco
+> 
+> Il giorno ven 29 giu 2018 alle ore 00:38 Xavier Robert via Therion
+> <therion at speleo.sk> ha scritto:
+> 
+>> Dear all,
+>> 
+>> For a quite large project, I am using a relatively high-resolution
+>> DEM (i.e. 1 px = 1 m), and I am trying to use it within Therion to
+>> produce a .lox-3D file. I am however facing some problems:
+>> 
+>> * If I export the full resolution DEM to a .th file (6540*4307
+>> cells) with the line "grid 325816.2990788577 5106250.599820679 1 1
+>> 6540 4307 ». I have the error « therion: error -- dem.th [1] [14]
+>> -- line too long ». This line 14 correspond to the first row of the
+>> DEM. ASC parameters are « #NCOLS = 6540, NROWS   = 4307, XLLCORNER
+>> = 325816.2990788577, YLLCORNER =5106250.599820679, CELLSIZE = 1.0 »
+>> * If I export the DEM with a 5 m pixel resolution (1308*861 cells)
+>> (with the line "grid 325816.299079 5106250.59982 5.001161440185831
+>> 5.001161440185831 1308 861 », I get the same error,
+>> * If I export the DEM with a 10 m pixel resolution (654 * 431
+>> cells) (with the line « grid 325816.299079 5106250.59982
+>> 9.996519721577727 9.996519721577727 654 431 »), everything compiles
+>> OK and the result is quite OK
+>> 
+> (https://www.groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html
+>> ; be patient, it takes time to load), but not with the full
+>> resolution.
+>> 
+>> The process to build each .th DEM is exactly the same, I do not
+>> touch any end of line. I edit the .asc DEM with vi to translate it
+>> into a .th file.
+>> 
+>> I thus suspect that there is a size limitation for the DEM in
+>> Therion, I imagine a limitation in the number of row/columns of the
+>> DEM.
+>> 
+>> * Is that true ?
+>> * If yes, what is this size limit for DEMs ?
+>> * As anyone an idea how to overtake that and use the full
+>> resolution DEM ?
+>> 
+>> Cheers,
+>> 
+>> Xavier
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> Links:
+> ------
+> [1] http://dem.th
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From marco.menchise at gmail.com  Wed Jan 23 11:44:36 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Wed, 23 Jan 2019 11:44:36 +0100
+Subject: [Therion] Therion and DEM
+In-Reply-To: <cad590bbea87cd61fe311d1bc4eeba0c@speleodd.sk>
+References: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+ <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+ <cad590bbea87cd61fe311d1bc4eeba0c@speleodd.sk>
+Message-ID: <CADzYBB7qAO2oz_5TTbtpn7sLxia=LtnDndjh6ha7QWHv+_kpQQ@mail.gmail.com>
+
+Hi,I also tried to lower the DEM accuracy by cutting digits after the point
+but I got same error:  line too long. In my case I have only 3 digits.
+
+I would know if it is a Therion limit and if it is somewhat possible to
+overcome it by, for example, recompiling Therion.
+
+Marco
+
+
+
+
+Il giorno mer 23 gen 2019 alle ore 11:32 Pavel Herich via Therion <
+therion at speleo.sk> ha scritto:
+
+> Hi,
+> I do strugle with the same problem, if I understand well; partly there
+> is solution tu cut all grid values after f.e. second number behind point
+> (if you have values like I do - 1205.648971354 and so), you fit almost
+> twice of values into the line.
+> I did not experiece any troubles with number of columns, so
+> I suppose real solution would be to extend line in Therion, but I don´t
+> know, if it´s possible.
+> Pavel
+>
+>
+> Dňa 2019-01-23 10:25 Marco Menchise via Therion napísal(a):
+> > Hello,
+> > I'm facing same problem.
+> >
+> > Any hint/answer?
+> > Thanks,
+> > Marco
+> >
+> > Il giorno ven 29 giu 2018 alle ore 00:38 Xavier Robert via Therion
+> > <therion at speleo.sk> ha scritto:
+> >
+> >> Dear all,
+> >>
+> >> For a quite large project, I am using a relatively high-resolution
+> >> DEM (i.e. 1 px = 1 m), and I am trying to use it within Therion to
+> >> produce a .lox-3D file. I am however facing some problems:
+> >>
+> >> * If I export the full resolution DEM to a .th file (6540*4307
+> >> cells) with the line "grid 325816.2990788577 5106250.599820679 1 1
+> >> 6540 4307 ». I have the error « therion: error -- dem.th [1] [14]
+> >> -- line too long ». This line 14 correspond to the first row of the
+> >> DEM. ASC parameters are « #NCOLS = 6540, NROWS   = 4307, XLLCORNER
+> >> = 325816.2990788577, YLLCORNER =5106250.599820679, CELLSIZE = 1.0 »
+> >> * If I export the DEM with a 5 m pixel resolution (1308*861 cells)
+> >> (with the line "grid 325816.299079 5106250.59982 5.001161440185831
+> >> 5.001161440185831 1308 861 », I get the same error,
+> >> * If I export the DEM with a 10 m pixel resolution (654 * 431
+> >> cells) (with the line « grid 325816.299079 5106250.59982
+> >> 9.996519721577727 9.996519721577727 654 431 »), everything compiles
+> >> OK and the result is quite OK
+> >>
+> > (
+> https://www.groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html
+> >> ; be patient, it takes time to load), but not with the full
+> >> resolution.
+> >>
+> >> The process to build each .th DEM is exactly the same, I do not
+> >> touch any end of line. I edit the .asc DEM with vi to translate it
+> >> into a .th file.
+> >>
+> >> I thus suspect that there is a size limitation for the DEM in
+> >> Therion, I imagine a limitation in the number of row/columns of the
+> >> DEM.
+> >>
+> >> * Is that true ?
+> >> * If yes, what is this size limit for DEMs ?
+> >> * As anyone an idea how to overtake that and use the full
+> >> resolution DEM ?
+> >>
+> >> Cheers,
+> >>
+> >> Xavier
+> >>
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> >
+> >
+> > Links:
+> > ------
+> > [1] http://dem.th
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190123/e0df8d27/attachment.htm>
+
+From olly at survex.com  Wed Jan 23 20:38:44 2019
+From: olly at survex.com (Olly Betts)
+Date: Wed, 23 Jan 2019 19:38:44 +0000
+Subject: [Therion] Therion and DEM
+In-Reply-To: <CADzYBB7qAO2oz_5TTbtpn7sLxia=LtnDndjh6ha7QWHv+_kpQQ@mail.gmail.com>
+References: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+ <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+ <cad590bbea87cd61fe311d1bc4eeba0c@speleodd.sk>
+ <CADzYBB7qAO2oz_5TTbtpn7sLxia=LtnDndjh6ha7QWHv+_kpQQ@mail.gmail.com>
+Message-ID: <20190123193844.6l2qrozuyhpz2lv6@survex.com>
+
+On Wed, Jan 23, 2019 at 11:44:36AM +0100, Marco Menchise via Therion wrote:
+> I would know if it is a Therion limit and if it is somewhat possible to
+> overcome it by, for example, recompiling Therion.
+
+It looks like this line length limit is specified in thinput.cxx:
+
+    const long thinput::max_line_size = 8128;
+
+So changing that and recompiling should help.
+
+Cheers,
+    Olly
+
+
+From marco.menchise at gmail.com  Thu Jan 24 10:55:24 2019
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Thu, 24 Jan 2019 10:55:24 +0100
+Subject: [Therion] Therion and DEM
+In-Reply-To: <20190123193844.6l2qrozuyhpz2lv6@survex.com>
+References: <4D985966-D949-42B6-BB3C-310F34450A75@univ-grenoble-alpes.fr>
+ <CADzYBB4p9Piumqd45P0o2x1=G4gk0S5ytuwzP6_eupvZNFMKig@mail.gmail.com>
+ <cad590bbea87cd61fe311d1bc4eeba0c@speleodd.sk>
+ <CADzYBB7qAO2oz_5TTbtpn7sLxia=LtnDndjh6ha7QWHv+_kpQQ@mail.gmail.com>
+ <20190123193844.6l2qrozuyhpz2lv6@survex.com>
+Message-ID: <CADzYBB7v9JtTBBGDcvK+L8K2ZUbYUtxgqRP29wrk6H+JxP4-5g@mail.gmail.com>
+
+Hello, I recompiled Therion with a new limit and I generated the .lox
+model. No "line too long" error anymore.
+
+Unfortunately, I wasn't able to overlay a .jpg image. Therion overlayed
+only part of it over the whole DEM. Sligthly changing calibration data
+produce even weird result ..
+
+I'm starting tho think that there are some other constants to tweak
+somewhere else.
+
+I cannot attach the model because it is very large (about 200M).
+
+Marco
+
+
+Il giorno mer 23 gen 2019 alle ore 20:38 Olly Betts <olly at survex.com> ha
+scritto:
+
+> On Wed, Jan 23, 2019 at 11:44:36AM +0100, Marco Menchise via Therion wrote:
+> > I would know if it is a Therion limit and if it is somewhat possible to
+> > overcome it by, for example, recompiling Therion.
+>
+> It looks like this line length limit is specified in thinput.cxx:
+>
+>     const long thinput::max_line_size = 8128;
+>
+> So changing that and recompiling should help.
+>
+> Cheers,
+>     Olly
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190124/024ef4ff/attachment.htm>
+

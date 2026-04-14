@@ -1,0 +1,503 @@
+From magnu213 at umn.edu  Tue Dec  1 04:55:57 2009
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Mon, 30 Nov 2009 21:55:57 -0600
+Subject: [Therion] Increasing Metapost 4096 scrap limit
+Message-ID: <FE927B5F-C44F-490D-B39B-432DB29CF8A7@umn.edu>
+
+I am getting close to the limit of 4096 scraps for Metapost which is mentioned in the Therion book and I have ran into it in some cases.  It looks like this is a setting in Metapost that must be changed and not Therion, but I was hoping maybe others had ran into this and knew what modifications are needed to Metapost to accept more scraps.
+
+Thanks,
+
+Carl
+
+From magnu213 at umn.edu  Tue Dec  1 17:26:19 2009
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Tue, 1 Dec 2009 10:26:19 -0600
+Subject: [Therion] Increasing Metapost 4096 scrap limit
+In-Reply-To: <FE927B5F-C44F-490D-B39B-432DB29CF8A7@umn.edu>
+References: <FE927B5F-C44F-490D-B39B-432DB29CF8A7@umn.edu>
+Message-ID: <5BC29040-97D6-4081-AEEF-E0618842D1B5@umn.edu>
+
+It looks like the solution is to issue the following metapost command:
+warningcheck := 0;
+
+However adding it in a
+code metapost
+warningcheck := 0;
+endcode
+block seems to have no effect, mpost still fails on more then 4096 scraps.
+
+Carl
+
+
+
+
+On Nov 30, 2009, at 9:55 PM, Carl Magnuson wrote:
+
+> I am getting close to the limit of 4096 scraps for Metapost which is mentioned in the Therion book and I have ran into it in some cases.  It looks like this is a setting in Metapost that must be changed and not Therion, but I was hoping maybe others had ran into this and knew what modifications are needed to Metapost to accept more scraps.
+> 
+> Thanks,
+> 
+> Carl
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20091201/fe415c4a/attachment.htm>
+
+From m.budaj at gmail.com  Tue Dec  1 18:43:02 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 1 Dec 2009 18:43:02 +0100
+Subject: [Therion] Increasing Metapost 4096 scrap limit
+In-Reply-To: <5BC29040-97D6-4081-AEEF-E0618842D1B5@umn.edu>
+References: <FE927B5F-C44F-490D-B39B-432DB29CF8A7@umn.edu>
+	<5BC29040-97D6-4081-AEEF-E0618842D1B5@umn.edu>
+Message-ID: <f64c1c4a0912010943q655091d7n61031defe7978093@mail.gmail.com>
+
+On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu> wrote:
+> It looks like the solution is to issue the following metapost command:
+> warningcheck := 0;
+
+Indeed. The new limit will be 32768 and could not be increased further
+in Metapost itself.
+
+The solution would be modification of how therion manages metapost
+pictures (currently they are stored in files data.1 to data.4000, with
+files data.4001 to data.4095 reserved for pattern definitions). This
+numbering scheme could be modified to allow more file name prefixes
+and consequently theoretically unlimited number of scraps processed by
+metapost.
+
+On the other hand there is still pdfTeX limit which would not allow
+much more scraps. PdfTeX uses internal registers for scraps
+referencing (scrap data is included only once in pdf file and can be
+referenced on multiple pages). You could avoid pdftex limit by using
+SVG output (if SVG viewers would process large number of internal
+references).
+
+In the longer-term future (a few years) I would like to use metapost
+as a library instead of external metapost executable, which would
+solve the problems with temporary files (and other problems as well).
+
+> However adding it in a
+> code metapost
+> warningcheck := 0;
+> endcode
+> block seems to have no effect, mpost still fails on more then 4096 scraps.
+
+Therion currently inserts warningcheck:=1; before scraps without good
+reason, so it will be fixed soon.
+
+If the new warningcheck setting would work for you, I would prefer not
+to modify current file numbering scheme for metapost pictures and have
+it fixed later with implementation of metapost library.
+
+Martin
+
+
+From magnu213 at umn.edu  Tue Dec  1 19:48:39 2009
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Tue, 1 Dec 2009 12:48:39 -0600
+Subject: [Therion] Increasing Metapost 4096 scrap limit
+In-Reply-To: <f64c1c4a0912010943q655091d7n61031defe7978093@mail.gmail.com>
+References: <FE927B5F-C44F-490D-B39B-432DB29CF8A7@umn.edu>
+	<5BC29040-97D6-4081-AEEF-E0618842D1B5@umn.edu>
+	<f64c1c4a0912010943q655091d7n61031defe7978093@mail.gmail.com>
+Message-ID: <1C2CF94E-722C-43BC-A95A-CC8311AF0232@umn.edu>
+
+
+On Dec 1, 2009, at 11:43 AM, Martin Budaj wrote:
+
+> Therion currently inserts warningcheck:=1; before scraps without good
+> reason, so it will be fixed soon.
+> 
+> If the new warningcheck setting would work for you, I would prefer not
+> to modify current file numbering scheme for metapost pictures and have
+> it fixed later with implementation of metapost library.
+
+That will work great.  I did a search and found the command on lines 1933 and 1948 of thexpmap.cxx (5.2.12), I changed it to 0 and recompiled Therion and now my map compiles without error!
+
+Thanks,
+
+Carl
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20091201/d0bc9661/attachment.htm>
+
+From v_su at inbox.ru  Wed Dec  2 14:44:52 2009
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Wed, 02 Dec 2009 16:44:52 +0300
+Subject: [Therion] bug report
+Message-ID: <E1NFpVk-0000yN-00.v_su-inbox-ru@f271.mail.ru>
+
+Hello
+
+I am found some bugs, 5.2.14
+
+XTherion
+
+1) text in "Help->Controls..." for russian translation must be in CP-1251 (now in UTF-8)
+2) slash in "command line options" editbox now must be doubled, example: -p ..\\.. 
+3) scrollbar of side panel initialized incorrect at first time after .th2 file opened 
+4) jumping from compiler log cause error when jump target (line nember in .th2) denote on line without line points
+5) after change point type to "station" the field "orientation" not cleared
+6) short-cuts not worked when I switch keyboard to native language
+7) points changed their types to "station" when I set them close to XVI station node
+
+
+Therion
+
+1) line command whth one line point cause infinite loop while compiling with message:
+[Warning: unable to determine direction on zero-length path in scrap S-800-1@]
+2) When station connects to other stations which not present as point:station in map(but present in centerline) Therion draw line:survey anyway
+
+
+and some features be good to implement:
+
+1) multiple installations of Therion at one system (at this time second installation to different folder corrupt the first one)
+2) new command in thconfig, analogue to "-p" Therion command line option
+
+-- WBR, Vasily
+
+
+From magnu213 at umn.edu  Tue Dec 15 05:21:01 2009
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Mon, 14 Dec 2009 22:21:01 -0600
+Subject: [Therion] Transparent Labels and Hyperlinks in Labels
+Message-ID: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+
+These are two features that I would like to make use of and may already be possible, I just don't know how its done.  I have played around with custom metapost cide for making labels with a transparent background and can either make a therion label with a colored background or a label with a transparent background but none of the Therion text formatting.  Has anybody coded a transparent label for Therion?
+
+My second thought is about hyperlinks from within a label.  For example one may want to label a significant feature and also include a link to a flickr photo or online video of the feature. This may already be possible by just inserting some Latex code, but I'm not sure what kind of processing Therion does on the label text.
+
+Thanks,
+
+Carl
+
+From dangle at tomo.co.nz  Tue Dec 15 06:34:05 2009
+From: dangle at tomo.co.nz (Bruce)
+Date: Tue, 15 Dec 2009 18:34:05 +1300
+Subject: [Therion]  Transparent Labels and Hyperlinks in Labels
+In-Reply-To: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+Message-ID: <05F4F5C9E765419DA1F7317CC4040CBD@JUICEBRAIN>
+
+I second the hyperlink request.
+
+Pdf map and atlas links to web pages and to local files on a relative path
+would be most useful.
+
+Bruce
+
+
+
+From kuku1964 at abv.bg  Wed Dec 16 23:10:05 2009
+From: kuku1964 at abv.bg (Kiril Stoyankov)
+Date: Thu, 17 Dec 2009 00:10:05 +0200 (EET)
+Subject: [Therion] windows_7_and_cave_survey_programs
+Message-ID: <767897029.103820.1261001405130.JavaMail.apache@mail44.abv.bg>
+
+ Cave mapping software and Windows 7
+
+I am planning to install the new Windows 7, and I wanted to ask if anyone has tried some cave mapping programs with it.
+Do you know if any of these work or don't work with Windows 7?
+
+TunnelX
+Tunnel2
+Compass
+Walls
+Survex
+Therion
+VisualTopo
+Onstation
+Speleoliti
+GHTopo
+
+...
+Regards
+Kiril
+
+-----------------------------------------------------------------
+Вижте водещите новини от Vesti.bg!
+http://www.vesti.bg
+
+
+From piotr_szukala at o2.pl  Thu Dec 17 11:28:11 2009
+From: piotr_szukala at o2.pl (=?UTF-8?Q?piotr=5Fszukala?=)
+Date: Thu, 17 Dec 2009 11:28:11 +0100
+Subject: [Therion] =?utf-8?q?Cubic_meters_as_a_new_parameter_in_caves_docu?=
+	=?utf-8?q?mentation?=
+Message-ID: <1d1f8f74.134fac33.4b2a07bb.d3a9b@o2.pl>
+
+Hi!
+I’m trying to apply new parameter in caves documentation in Austrian Tennengebirge Ost and Polish Tatra Mountains. It could occur how big actually is a cave system and could help in a few scientific investigations as a cracks and hiatuses in limestone massif.
+
+Is there any possibility to read off cubic capacity in m3 from model 3D? 
+
+Best regards 
+Piotr Szukała
+Poland
+
+
+
+
+From piotr_szukala at o2.pl  Sat Dec 26 12:40:41 2009
+From: piotr_szukala at o2.pl (=?UTF-8?Q?piotr=5Fszukala?=)
+Date: Sat, 26 Dec 2009 12:40:41 +0100
+Subject: [Therion] =?utf-8?q?Problems_with_export_pdf_file?=
+Message-ID: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+
+Hi!
+I have been using Therion for some time and during surveying one map I met a problem with exporting pdf files. Everything  is OK when I'm exporting lox file, even with full models of corridors, but during exporting pdf file the error has occured:
+
+##################### end of pdftex log file #####################
+C:\Program Files\Therion\therion.exe: error -- cp exit code -- 1
+writing xtherion file ... done
+
+What does it mean and how to resolve this problem?
+
+Best regards
+Piotr Szukała
+Poland
+
+
+From riza at sbox.tugraz.at  Sat Dec 26 14:07:57 2009
+From: riza at sbox.tugraz.at (Paul Karoshi)
+Date: Sat, 26 Dec 2009 14:07:57 +0100
+Subject: [Therion] Problems with export pdf file
+In-Reply-To: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+References: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+Message-ID: <20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+
+Hello Piotr,
+
+this error usually occurrs if you do not close the .pdf in acrobat  
+reader before compiling.
+
+With other pdf-readers (e.g. foxit reader) you can leave the pdf-file open.
+
+
+Best regards, Paul
+Höhlenbären
+Austria
+
+Zitat von piotr_szukala <piotr_szukala at o2.pl>:
+
+> Hi!
+> I have been using Therion for some time and during surveying one map  
+> I met a problem with exporting pdf files. Everything  is OK when I'm  
+> exporting lox file, even with full models of corridors, but during  
+> exporting pdf file the error has occured:
+>
+> ##################### end of pdftex log file #####################
+> C:\Program Files\Therion\therion.exe: error -- cp exit code -- 1
+> writing xtherion file ... done
+>
+> What does it mean and how to resolve this problem?
+>
+> Best regards
+> Piotr Szukała
+> Poland
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+
+
+From piotr_szukala at o2.pl  Sun Dec 27 11:42:28 2009
+From: piotr_szukala at o2.pl (=?UTF-8?Q?piotr=5Fszukala?=)
+Date: Sun, 27 Dec 2009 11:42:28 +0100
+Subject: [Therion] =?utf-8?q?Problems_with_export_pdf_file?=
+In-Reply-To: <20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+References: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+	<20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+Message-ID: <584c567.4d5be3a2.4b373a14.588d9@o2.pl>
+
+Hello!
+I know that basicly this error refers to opened .pdf file but this time problem is more composed because I've never made any .pdf for this cave. This is huge and made of multiple scraps cave. Perhaps some one allready had this problem? 
+
+
+Dnia 26 grudnia 2009 14:07 Paul Karoshi <riza at sbox.tugraz.at> napisał(a):
+
+> Hello Piotr,
+> 
+> this error usually occurrs if you do not close the .pdf in acrobat  
+> reader before compiling.
+> 
+> With other pdf-readers (e.g. foxit reader) you can leave the pdf-file open.
+> 
+> 
+> Best regards, Paul
+> Höhlenbären
+> Austria
+> 
+> Zitat von piotr_szukala <piotr_szukala at o2.pl>:
+> 
+> > Hi!
+> > I have been using Therion for some time and during surveying one map  
+> > I met a problem with exporting pdf files. Everything  is OK when I'm  
+> > exporting lox file, even with full models of corridors, but during  
+> > exporting pdf file the error has occured:
+> >
+> > ##################### end of pdftex log file #####################
+> > C:\Program Files\Therion\therion.exe: error -- cp exit code -- 1
+> > writing xtherion file ... done
+> >
+> > What does it mean and how to resolve this problem?
+> >
+> > Best regards
+> > Piotr Szukała
+> > Poland
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> >
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From martinsluka at mac.com  Sun Dec 27 11:51:55 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 27 Dec 2009 11:51:55 +0100
+Subject: [Therion] Problems with export pdf file
+In-Reply-To: <584c567.4d5be3a2.4b373a14.588d9@o2.pl>
+References: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+	<20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+	<584c567.4d5be3a2.4b373a14.588d9@o2.pl>
+Message-ID: <510EBFFC-FCFE-4CCE-8F85-BD524220D81A@mac.com>
+
+
+On 27.12.2009, at 11:42, piotr_szukala wrote:
+
+> Perhaps some one allready had this problem?
+>
+
+It could be many things. run therion with parameter   -d . It means:  
+Turn on debugging mode. The current implementation creates a  
+temporary directory
+named thTMPDIR (in your system temporary directory) and does not  
+delete any temporary  files.
+
+Write this -d before compiling in compilers window in "Command line  
+option" field on right side of window.
+
+May you send your thconfig file and the thTMPDIR directory?
+
+m.
+
+
+From s.m at group-s.sk  Sun Dec 27 14:28:09 2009
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Sun, 27 Dec 2009 14:28:09 +0100
+Subject: [Therion] Problems with export pdf file
+In-Reply-To: <510EBFFC-FCFE-4CCE-8F85-BD524220D81A@mac.com>
+References: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+	<20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+	<584c567.4d5be3a2.4b373a14.588d9@o2.pl>
+	<510EBFFC-FCFE-4CCE-8F85-BD524220D81A@mac.com>
+Message-ID: <55e5b7b50912270528o24faa1d3w29bc173f56da96d0@mail.gmail.com>
+
+This issue occurs sometimes on Windows system, when some accented
+letters are in the paths (either path of temporary directory or path
+to data files). Sometimes setting tmp-path to e.g. C:/Temp in
+therion.ini helps.
+
+Best regards, S.
+
+On Sun, Dec 27, 2009 at 11:51 AM, Martin Sluka <martinsluka at mac.com> wrote:
+>
+> On 27.12.2009, at 11:42, piotr_szukala wrote:
+>
+>> Perhaps some one allready had this problem?
+>>
+>
+> It could be many things. run therion with parameter   -d . It means: Turn on
+> debugging mode. The current implementation creates a temporary directory
+> named thTMPDIR (in your system temporary directory) and does not delete any
+> temporary  files.
+>
+> Write this -d before compiling in compilers window in "Command line option"
+> field on right side of window.
+>
+> May you send your thconfig file and the thTMPDIR directory?
+>
+> m.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From piotr_szukala at o2.pl  Sun Dec 27 14:49:01 2009
+From: piotr_szukala at o2.pl (=?UTF-8?Q?piotr=5Fszukala?=)
+Date: Sun, 27 Dec 2009 14:49:01 +0100
+Subject: [Therion] =?utf-8?q?Problems_with_export_pdf_file?=
+In-Reply-To: <510EBFFC-FCFE-4CCE-8F85-BD524220D81A@mac.com>
+References: <67cec86e.4f0b6b7f.4b35f639.f971@o2.pl>
+	<20091226140757.90464nti6oaa84g0@webmail.tugraz.at>
+	<584c567.4d5be3a2.4b373a14.588d9@o2.pl>
+	<510EBFFC-FCFE-4CCE-8F85-BD524220D81A@mac.com>
+Message-ID: <6a660f0.657513fa.4b3765cd.7db6a@o2.pl>
+
+I've made what you said and these are files which I've got. At the very begining I checked .pdf file in thTMPDIR directory and Therion exported it despite there is an error in therion.log
+
+
+Dnia 27 grudnia 2009 11:51 Martin Sluka <martinsluka at mac.com> napisał(a):
+
+> 
+> On 27.12.2009, at 11:42, piotr_szukala wrote:
+> 
+> > Perhaps some one allready had this problem?
+> >
+> 
+> It could be many things. run therion with parameter   -d . It means:  
+> Turn on debugging mode. The current implementation creates a  
+> temporary directory
+> named thTMPDIR (in your system temporary directory) and does not  
+> delete any temporary  files.
+> 
+> Write this -d before compiling in compilers window in "Command line  
+> option" field on right side of window.
+> 
+> May you send your thconfig file and the thTMPDIR directory?
+> 
+> m.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thTMPDIR.rar
+Type: application/octet-stream
+Size: 592384 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20091227/f67aa629/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.log
+Type: application/octet-stream
+Size: 5510 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20091227/f67aa629/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig
+Type: application/octet-stream
+Size: 527 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20091227/f67aa629/attachment-0002.obj>
+

@@ -1,0 +1,584 @@
+From wookey at aleph1.co.uk  Wed May 14 17:00:40 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 14 May 2003 16:00:40 +0100 (BST)
+Subject: [therion-users] 0.2.10
+In-Reply-To: <000d01c2fe77$d0208270$2401a8c0@sm>
+Message-ID: <Marcel-1.50-0514150040-572h+Ty@chewy.aleph1.co.uk>
+
+On Wed 09 Apr, Stacho Mudrak wrote:
+> Hello everybody,
+
+> yesterday I've finally finished version 0.2.10. You can download it from the
+> web site. There is a huge amount of bugs fixed, some nice improvements in
+> xtherion. If your previous data will not work with 0.2.9, you can try
+> running "perl makeconvert2.pl" in your data root directory. (data command
+> was renamed to centerline).
+
+> Configuration file syntax has changed a bit (projection has to be specified
+> via -proj option).
+
+> Documentation is included in source code (can be compiled using "make doc").
+
+> Now you also do not need to do make in three steps, just "make" will compile
+> also xtherion and thpdf (also on Win32).
+
+OK - I packaged this a couple of weeks ago but haven't had time to get back
+to you with the queries I had. This new packaging means that environment
+variables are no longer required for normal installation.
+
+The interim results are here:
+html://www.chaos.org.uk/~wookey/software/therion/
+
+0) what does makeconvert2.pl do? It needs a description/man page of
+exactly what it changes. It looks a lot like makeconvert.pl (which ships in
+debian as thconvert) - can we combine both of them into one 'thconvert'
+which will update your files if necessary.
+
+1) What has actually changed this version? Some details would be useful -
+doc/Update is not very detailed. I have incorporated the make change in the
+debian packaging and chapter 6 (which used to say that it would not build
+on windows).
+
+But what about the transparency/opaciry options - are they explained anywhere?
+
+And I see that you have added xtherion.ini which looks like it controls
+some font options. Does this makes the font sizes configurable as I
+previously requested? Which options for which text? Does this make my patch
+to change the font sizes in src/xtherion/global.tcl unecessary?:
+--- therion-0.2.9.orig/src/xtherion/global.tcl
++++ therion-0.2.9/src/xtherion/global.tcl
+@@ -146,13 +146,13 @@
+   unix {
+     set xth(gui,sbwidth) 9
+     set xth(gui,sbwidthb) 1
+-    set xth(gui,lfont) "Helvetica 12"
+-    set xth(gui,efont) {fixed 14 roman bold}
++    set xth(gui,lfont) "Helvetica 10"
++    set xth(gui,efont) {fixed 12 roman bold}
+     set xth(gui,platform) unix
+     set xth(gui,cursor) top_left_arrow
+   }
+   windows {
+-    set xth(gui,efont) "Courier 16 roman bold"
++    set xth(gui,efont) "Courier 14 roman bold"
+     set xth(gui,platform) windows
+     set xth(gui,cursor) arrow
+     set xth(app,sencoding) cp1250
+
+2) what is the executable threpair-files - is it needed for linux or only
+for some other OS?
+
+3) I patched all the C++ warnings. Most of these do not actually cause
+problems (maybe none of these) but it is good to have no warnings in a
+normal compile so that real warnings become obvious. Attached.
+
+4) There are still a couple of files in the source tarball that probably
+shouldn't be there:
+src/index.html
+src/test/map_elev.th (null file)
+
+5) HISTORY and AUTHORS have been removed from doc. Is there a reason for
+this - they seem like a good idea to me (and I've put them back in the
+Debian version)
+
+6) This file does not have carriage returns on the end and really ought to:
+doc/UPDATE
+
+OK, I think that was all.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+-------------- next part --------------
+--- therion-0.2.10.orig/src/thchenc.cxx
++++ therion-0.2.10/src/thchenc.cxx
+@@ -104,7 +104,7 @@
+   dest->guarantee(srcln);  // check buffer size
+   dstp = (unsigned char*) dest->get_buffer();
+   srcp = (unsigned char*) src;
+-  wchar_t sch;    
++  wchar_t sch = 0;    
+   
+   while (srcx < srcln) {
+   
+--- therion-0.2.10.orig/src/thdatareader.cxx
++++ therion-0.2.10/src/thdatareader.cxx
+@@ -50,7 +50,7 @@
+ void thdatareader::read(char * ifname, char * spath, thdatabase * dbptr)
+ {
+ 
+-  thdataobject * objptr;  // pointer to the newly created object
++  thdataobject * objptr = NULL;  // pointer to the newly created object
+   thcmd_option_desc optd;  // option descriptor
+   bool inside_cmd = false;
+   bool configure_cmd = false;
+--- therion-0.2.10.orig/src/thdb1d.cxx
++++ therion-0.2.10/src/thdb1d.cxx
+@@ -414,7 +414,7 @@
+   this->tree_nodes = nodes;
+   thdb1d_tree_arrow * arrows = new thdb1d_tree_arrow [2 * tn_legs];
+   this->tree_arrows = arrows;
+-  thdb1d_tree_node * n1, * n2, * current_node;
++  thdb1d_tree_node * n1, * n2, * current_node = NULL;
+   thdb1d_tree_arrow * a1, * a2;
+   unsigned long i, ii;
+   
+--- therion-0.2.10.orig/src/thinit.cxx
++++ therion-0.2.10/src/thinit.cxx
+@@ -85,7 +85,7 @@
+ 
+ void thinit::load()
+ {
+-  this->ini_file.set_search_path(thcfg.get_search_path());
++  this->ini_file.set_search_path("/etc/");
+   this->ini_file.set_file_name("therion.ini");
+   this->ini_file.sp_scan_on();
+   this->ini_file.cmd_sensitivity_off();
+--- therion-0.2.10.orig/src/thparse.cxx
++++ therion-0.2.10/src/thparse.cxx
+@@ -68,7 +68,7 @@
+     idx = 0,
+     idx0 = 0;
+   short state = -1; // -1 before, 0 in, 1 out, 2 on the rest, 3 out
+-  unsigned char * s1, * s2 = (unsigned char *) src;
++  unsigned char * s1 = NULL, * s2 = (unsigned char *) src;
+   while ((state < 2) && (idx < srcl)) {
+     switch (state) {
+       case -1: 
+@@ -124,10 +124,10 @@
+ {
+   long srcl = strlen(src),
+     idx = 0,
+-    idx0;
++    idx0 = 0;
+   dest->clear();
+   short state = 0; // 0 before, 1 in
+-  unsigned char * s1, * s2 = (unsigned char *) src;
++  unsigned char * s1 = NULL, * s2 = (unsigned char *) src;
+   while (idx < srcl) {
+     switch (state) {
+       case 0:
+@@ -157,10 +157,10 @@
+ {
+   long srcl = strlen(src),
+     idx = 0,
+-    idx0;
++    idx0 = 0;
+   dest->clear();
+   short state = 0; // 0 before, 1 in
+-  unsigned char * s1, * s2 = (unsigned char *) src;
++  unsigned char * s1 = NULL, * s2 = (unsigned char *) src;
+   while (idx < srcl) {
+     switch (state) {
+       case 0:
+@@ -189,10 +189,10 @@
+ {
+   long srcl = strlen(src),
+     idx = 0,
+-    idx0;
++    idx0 = 0 ;
+   dest->clear();
+   short state = 0; // 0 before, 1 in
+-  unsigned char * s1, * s2 = (unsigned char *) src;
++  unsigned char * s1 = NULL, * s2 = (unsigned char *) src;
+   while (idx < srcl) {
+     switch (state) {
+       case 0:
+@@ -242,12 +242,12 @@
+ {
+   long srcl = strlen(src),
+     idx = 0,
+-    idx0;
++    idx0 = 0;
+   dest->clear();
+   short state = 0; // 0 before, 1 in word, 2 in "", 3 in []
+-  unsigned char * s1, * s2 = (unsigned char *) src;
+-  bool postp_quotes;
+-  char * postp_ptr;
++  unsigned char * s1 = NULL, * s2 = (unsigned char *) src;
++  bool postp_quotes = 0;
++  char * postp_ptr = NULL;
+   while (idx < srcl) {
+     switch (state) {
+       case 0:
+--- therion-0.2.10.orig/src/thsvxctrl.cxx
++++ therion-0.2.10/src/thsvxctrl.cxx
+@@ -515,7 +515,7 @@
+     fonline = true;
+     csn = 0;
+     chidx = 0;
+-    char * start_ch; //, * test_ch;
++    char * start_ch = 0; //, * test_ch;
+     int num_type;
+     thsvxctrl_src_maptype::iterator srcmi;
+ //    if (*lnbuff == 13) lnbuff++;
+--- therion-0.2.10.orig/src/thselector.cxx
++++ therion-0.2.10/src/thselector.cxx
+@@ -318,10 +318,10 @@
+ void thselector::select_db(class thdatabase * db)
+ {
+   thmbuffer mbf;
+-  char ** nms, * nobj, * nsrv;
+-  int nn;
+-  thsurvey * objsrv;
+-  thdataobject * objptr;
++  char ** nms, * nobj = 0, * nsrv = 0;
++  int nn = 0;
++  thsurvey * objsrv = NULL;
++  thdataobject * objptr = NULL;
+   bool to_cont, select_all, has_selected_survey = false;
+   thselector_list::iterator ii = this->data.begin();
+   if (this->data.empty()) {
+--- therion-0.2.10.orig/src/thexpmodel.cxx
++++ therion-0.2.10/src/thexpmodel.cxx
+@@ -229,7 +229,7 @@
+   }
+ 
+   unsigned long last_st = nstat, cur_st;
+-  double xmin, xmax, ymin, ymax, zmin, zmax, avx, avy;
++  double xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0, avx, avy;
+   
+ #define minmaxvar(min,max,var) \
+ if (var < min) min = var;\
+--- therion-0.2.10.orig/src/thscrap.cxx
++++ therion-0.2.10/src/thscrap.cxx
+@@ -309,7 +309,7 @@
+   
+   th2ddataobject * obj = this->fs2doptr;
+ //  thline * pln;
+-  thscraplo * co, * co2, * co3, * co3last, * lo, ** pco3;
++  thscraplo * co, * co2, * co3, * co3last, * lo = NULL, ** pco3;
+   double cdist, mindist;
+ 
+   while (obj != NULL) {
+@@ -359,7 +359,7 @@
+     obj = obj->nscrapoptr;
+   }
+   
+-  bool still_in_line, co3_normal;
++  bool still_in_line, co3_normal = false;
+   thdb2dpt * first_pt, * last_pt;
+   if (this->outline_first != NULL) {
+     co = this->outline_first;
+@@ -464,7 +464,7 @@
+   if (!this->proj->processed)
+     this->db->db2d.process_projection(this->proj);
+ 
+-  double sina, cosa;
++  double sina = 0.0, cosa = 0.0;
+   switch (this->proj->type) {
+     case TT_2DPROJ_ELEV:
+       sina = sin(this->proj->pp1 / 180.0 * 3.14159265358);
+@@ -622,7 +622,7 @@
+ thscrapen * thscrap::get_ends() {
+   if (this->ends_parsed)
+     return this->ends_first;
+-  bool search_inv, cont, rev, lastvis, cvis, try_next_line;
++  bool search_inv, cont, rev, lastvis, cvis = false, try_next_line;
+   thdb2dlp * first_point, * clp;
+   thscrapen * res = NULL, * cres;
+   thscraplo * lo = this->get_outline(), * lo2, * nextlo;
+--- therion-0.2.10.orig/src/thdb2d.cxx
++++ therion-0.2.10/src/thdb2d.cxx
+@@ -975,14 +975,13 @@
+ 
+ void thdb2d::pp_calc_stations(thdb2dprj * prj)
+ {
+-  double minx, miny, minz, maxx, maxy, maxz, shift_x, shift_y, shift_z;
+-  minx = thnan;
++  double minx = thnan, miny = 0, minz = 0, maxx = 0, maxy = 0, maxz =0, shift_x, shift_y, shift_z;
+   
+   // prejde vsetky objekty a urobi nasledovne veci
+-  thscrap * pps;
+-  thpoint * ppp;
+-  thdb2dcp * cp, * scancp, * rootcp;
+-  bool has_root = false, some_attached;
++  thscrap * pps = NULL;
++  thpoint * ppp = NULL;
++  thdb2dcp * cp = NULL, * scancp = NULL, * rootcp = NULL;
++  bool has_root = false, some_attached = false;
+   unsigned long nattached, numcps = 0, numscraps = 0;
+   thdb_object_list_type::iterator obi = this->db->object_list.begin();
+   unsigned long searchid;
+@@ -1049,7 +1048,7 @@
+   
+   // now let's calculate projection coordinates for all points
+   // first scrap by scrap
+-  double sina, cosa, dxy;
++  double sina = 0, cosa = 0, dxy = 0;
+   switch (prj->type) {
+     case TT_2DPROJ_ELEV:
+       sina = sin(prj->pp1 / 180.0 * 3.14159265358);
+@@ -1247,7 +1246,7 @@
+ 
+     unsigned long numstations = this->db->db1d.station_vec.size();
+     thprjx_station * xstations = new thprjx_station [numstations],
+-      * xstation;
++      * xstation = NULL;
+       
+ //    unsigned long cuid;
+     
+@@ -1926,13 +1925,13 @@
+   thjoin * jptr = prj->first_join, * tjptr;
+   prj->first_join_list = NULL;
+   prj->last_join_list = NULL;
+-  thscrap * sc1, * sc2;
+-  thdb2dji * ji, * tji;
+-  thdb2dpt * searchpt;
+-  thscrapen * se1, * se2, * fse1, * fse2;
+-  thline * l1, * l2;
+-  double mindst, cdst;
+-  unsigned long nactive;
++  thscrap * sc1 = NULL, * sc2 = NULL;
++  thdb2dji * ji = NULL, * tji = NULL;
++  thdb2dpt * searchpt = NULL;
++  thscrapen * se1 = NULL, * se2 = NULL, * fse1 = NULL, * fse2 = NULL;
++  thline * l1 = NULL, * l2 = NULL;
++  double mindst = 0, cdst = 0;
++  unsigned long nactive = 0;
+   while (jptr != NULL) {
+     nactive = 0;
+     ji = jptr->first_item;
+@@ -2152,7 +2151,7 @@
+       // now let's create and insert new list
+       
+       thdb2dji * target_item = NULL, * first_active_item = NULL,
+-        * ccitem, * ppitem;
++        * ccitem = NULL, * ppitem = NULL;
+       ji = jptr->first_item;
+       while ((ji != NULL) && (target_item == NULL)) {
+         if (ji->is_active) {
+@@ -2178,7 +2177,7 @@
+       
+       // teraz pridame itemy leziace okolo target
+       bool ideme_nahor = true;
+-      thdb2dji * newlist;
++      thdb2dji * newlist = NULL;
+       ppitem = target_item;
+       ccitem = target_item->prev_item;
+       while ((ccitem != NULL) || ideme_nahor) {
+@@ -2228,7 +2227,7 @@
+   
+   thdb2dji * jlist = prj->first_join_list;
+   bool has_target;
+-  double tx, ty, tn;
++  double tx = 0.0, ty = 0.0, tn = 0.0;
+   while (jlist != NULL) {
+     has_target = false;
+     ji = jlist;
+@@ -2348,7 +2347,7 @@
+ 
+ void thdb2d::pp_smooth_joins(thdb2dprj * prj) 
+ {
+-  double x1,x2,y1,y2,d1,d2,tmpx,tmpy,testx,testy,dt;
++  double x1,x2,y1,y2,d1,d2,tmpx,tmpy,testx = 0.0,testy = 0.0,dt;
+   bool has_test;
+   unsigned long ncp, ncp1, ncp2;
+   thdb2dji * jlist = prj->first_join_list, * ji;
+--- therion-0.2.10.orig/src/thline.cxx
++++ therion-0.2.10/src/thline.cxx
+@@ -315,7 +315,7 @@
+   
+   double cp1x, cp1y, cp2x, cp2y, x, y;
+   int pidx = 0, sv;
+-  char * invs;
++  char * invs = NULL;
+   bool invnum = false;
+   
+   if (nargs == 6) {
+@@ -1087,7 +1087,7 @@
+   double sz;
+   if (this->last_point == NULL)
+     ththrow(("no line point specified"))
+-  char * sizestr;
++  char * sizestr = NULL;
+   switch (w) {
+     case TT_LINE_SIZE:
+       sizestr = "size";
+--- therion-0.2.10.orig/src/thdb2d00.cxx
++++ therion-0.2.10/src/thdb2d00.cxx
+@@ -45,8 +45,8 @@
+ 
+ 
+ void thdb2d::insert_basic_maps(thdb2dxm * fmap, thmap * map, int mode) {
+-  thdb2dxs * xs, * txs;
+-  thdb2dmi * mi;
++  thdb2dxs * xs = NULL, * txs = NULL;
++  thdb2dmi * mi = NULL;
+   bool found = false;
+   if (map->is_basic) {
+     xs = fmap->first_bm;
+@@ -120,7 +120,7 @@
+ thdb2dxm * thdb2d::insert_maps(thdb2dxm * selection,thdb2dxm * insert_after,thmap * map, 
+     unsigned long selection_level, int level, int title_level, int map_level) {
+   thdb2dxm * cxm = NULL;
+-  thdb2dmi * mi;
++  thdb2dmi * mi = NULL;
+   if ((level == title_level) || (level == map_level) || (map->is_basic)) {
+     cxm = this->insert_xm();
+     cxm->map = map;
+@@ -242,9 +242,9 @@
+ {
+ 
+   // najde vsetky mapy ktore mame oznacene, resp. vyberie vsetky zakladne  
+-  thdb2dxm * selection = NULL, * cxm, * lxm, * * new_selection, **nsi;
+-  thdb2dxs * pcxs;
+-  unsigned long nmaps = 0, imap;
++  thdb2dxm * selection = NULL, * cxm, * lxm = NULL, * * new_selection, **nsi;
++  thdb2dxs * pcxs = NULL;
++  unsigned long nmaps = 0, imap = 0;
+ //  bool chapters = false, onemap = false;
+ //  thmap * pmap, * prev_pmap;
+ //  thdb2dmi * pmapitem;
+
+From s.m at group-s.sk  Thu May 15 09:33:49 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 15 May 2003 09:33:49 +0200
+Subject: [therion-users] 0.2.10
+References: <Marcel-1.50-0514150040-572h+Ty@chewy.aleph1.co.uk>
+Message-ID: <003301c31ab4$f6a52780$2101a8c0@sm>
+
+Uff, so many things in one mail... But anyway, thanks.
+
+So...
+
+> OK - I packaged this a couple of weeks ago but haven't had time to get
+back
+> to you with the queries I had. This new packaging means that environment
+> variables are no longer required for normal installation.
+>
+> The interim results are here:
+> html://www.chaos.org.uk/~wookey/software/therion/
+
+I would like to have a look at it, but in fact I'm a RPM user, so firstly I
+should download some DEB2RPM converter... :-(
+
+> 0) what does makeconvert2.pl do? It needs a description/man page of
+> exactly what it changes. It looks a lot like makeconvert.pl (which ships
+in
+> debian as thconvert) - can we combine both of them into one 'thconvert'
+> which will update your files if necessary.
+
+We've changed the object with survey data named "data" to "centerline" =>
+it's more natural. This script convert all input files from old to new
+format.
+
+> 1) What has actually changed this version? Some details would be useful -
+> doc/Update is not very detailed. I have incorporated the make change in
+the
+> debian packaging and chapter 6 (which used to say that it would not build
+> on windows).
+
+In fact, a lot of BUGs have been fixed - that users probably didn't noticed
+and lot of internal changes were done, that are not visible for the user
+(the comunication between mpost and pdftex).
+
+> But what about the transparency/opaciry options - are they explained
+anywhere?
+
+OK, so:
+transparency -> turn on/off transparency in PDF files
+opacity -> set the opacity value for scrap fillings
+
+> And I see that you have added xtherion.ini which looks like it controls
+> some font options. Does this makes the font sizes configurable as I
+> previously requested? Which options for which text? Does this make my
+patch
+> to change the font sizes in src/xtherion/global.tcl unecessary?:
+
+I don't think so. This patch is still usefull, when you want to have in your
+package the default font set to Helvetica 10. But xtherion.ini is in fact
+the configuration TCL skript, that is readed (if this file is found) when
+xtherion starts. This enables us to configure fonts and other options in
+this file. It take us one code line more to program and now every user is
+able to configure xtherion clean way. efont = editor font, lfont = label
+(and text entry) font.
+
+In fact, now only a very few changes are needed to complete xtherion
+developement. When this will be done, I would like to write the xtherion
+manual.
+
+> 2) what is the executable threpair-files - is it needed for linux or only
+> for some other OS?
+
+This is only a test thing. On MAC OS X, there were some problems with EOLN
+characters. So this script reads files and convert EOLNs to UNIX standard.
+This executable will be removed immediately, when we will find the core of
+the problems...
+
+> 3) I patched all the C++ warnings. Most of these do not actually cause
+> problems (maybe none of these) but it is good to have no warnings in a
+> normal compile so that real warnings become obvious. Attached.
+
+Thanks a lot, I've add initializations yesterday evening ;-))). All others
+I'll study.
+
+> 4) There are still a couple of files in the source tarball that probably
+> shouldn't be there:
+> src/index.html
+> src/test/map_elev.th (null file)
+
+OK, I'll remove them.
+
+> 5) HISTORY and AUTHORS have been removed from doc. Is there a reason for
+> this - they seem like a good idea to me (and I've put them back in the
+> Debian version)
+
+We've put these in the thbook file.
+
+> 6) This file does not have carriage returns on the end and really ought
+to:
+> doc/UPDATE
+
+OK.
+
+> OK, I think that was all.
+>
+> Wookey
+
+Thanks a lot. I'll try to incorporate those changes, but it may take week or
+two weeks to proceed. Now we're making a huge simplification of map
+compilation process, which in fact means, that theps2pdf and perl will not
+be needed any more - all will be done by therion.
+
+Also we would like to remove dependency on survex executables. Do you know
+what is the state of "survex library", that we could link to therion? (it's
+mentioned in survex TODO). Anyway, until it will be done, we can link survex
+source files (with simple modifications) directly to therion (like img.c
+is). When we will add SVG map output, no other programs will be needed to
+compile therion files. What do you think?
+
+Until next release, it may take (I suppose) one month, because we're now
+changing our web hosting service provider. The new WEB page should be more
+accessible from the world and we should have our own mailing list. So the
+new release will come with the new web page.
+
+Best regards, S.
+
+
+
+
+
+From s.m at group-s.sk  Thu May 22 11:30:24 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 22 May 2003 11:30:24 +0200
+Subject: [therion-users] New WEB adress.
+Message-ID: <006801c32045$ee8ee400$2101a8c0@sm>
+
+Hello everybody,
+
+we've probably now found the final place, where therion will stay. The
+adress is:
+
+http://therion.speleo.sk
+
+Pying our own 2nd-level domain became too expensive in Slovakia.
+I hope, now the file transfers will be fast and without errors.
+
+Best regards, S.
+
+
+
+
+

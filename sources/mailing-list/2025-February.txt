@@ -1,0 +1,2467 @@
+From bruce at tomo.co.nz  Wed Feb  5 08:47:56 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 5 Feb 2025 20:47:56 +1300
+Subject: [Therion] XTherion.ini not behaving
+Message-ID: <000b01db77a2$472eac50$d58c04f0$@tomo.co.nz>
+
+I have long customised my XTherion.ini file, and particularly in the last
+few years with higher resolution monitors making real-life size of rendered
+objects smaller, I've enlarged the point sizes.  And I've adjusted colours
+to make the interface easier to 'read'.
+
+Over the last few months I have not used the XTherion drawing editor much,
+being mainly involved in editing maps and layouts.  Somewhere in that period
+I've noticed my customisations have mostly been reset to defaults, making it
+harder to see points and harder to snap to them.
+
+
+
+Thinking my xtherion.ini was over written I checked it, and it seems OK.
+Have searched around my machine (Windows 10), and can find no other copies
+(sometimes such things hide in C:\Users\.
+
+I've tried installing Therion 6.2.1, 89c0406, 6.3.1 and 6.3.3 and all behave
+the same.
+
+ 
+
+It looks as though some xtherion.ini statements have become ineffective,
+while others continue to behave as they should.
+
+Eg, this RHS  toolbar setting works, smaller numbers give me smaller
+toolbars while larger numbers give larger toolbars;
+
+set xth(app,me,tbwidth) 800
+
+ 
+
+However line colours and point sizes are ineffective;
+
+set xth(gui,xvi_shot_clr) lavender # continues to give grey shots as in the
+image above, and 
+
+set xth(gui,me,stationcolor) green
+
+set xth(gui,me,wallcolor) green # continue to give orange and blue
+points/lines, and
+
+ 
+
+set xth(gui,xvi_station_size) 7.0 # provides tiny dots regardless of numbers
+from 1 to 17 entered.
+
+ 
+
+So what am I missing here?
+
+Has the xtherion.ini behaviour changed or have I just forgotten something?
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250205/cf5dd073/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 104152 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250205/cf5dd073/attachment-0001.png>
+
+From bruce at tomo.co.nz  Mon Feb 10 05:35:53 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 10 Feb 2025 17:35:53 +1300
+Subject: [Therion] preview symbol rendering in legend
+Message-ID: <000001db7b75$467b08e0$d3711aa0$@tomo.co.nz>
+
+Someone just confused the preview above rendering on a map for preview
+below, and vice versa.
+
+I have often wondered why this is not available as a legend entry, and just
+assumed it was 'obvious' to us Therion users.  But of course that is not
+always the case.
+
+Has anyone worked out how to create a legend entry? say.
+
+ passage below/above
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250210/9d31572f/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 824 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250210/9d31572f/attachment.png>
+
+From bgee at campercaver.net  Wed Feb 12 16:48:47 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 12 Feb 2025 09:48:47 -0600
+Subject: [Therion] Embedded image does not appear in some layouts
+Message-ID: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+
+Here is a puzzle ...  I have set up a thconfig file to create a profiles 
+map, then used the "map-image" layout directive to include it in the 
+output files.  It works ...  SOMETIMES!
+
+Take a look at the thconfig file embedded below.  The profiles image 
+appears on the files produced from the MainMap and MainMapNoColor 
+layouts.  It does not appear on MainMapPrint.
+
+Why?  Does it have something to do with the TeX code in MainMapPrint?
+
+Thanks!
+
+-- 
+===============
+Bill Gee
+
+
+
+
+encoding  utf-8
+
+# Bring in the main configuration file
+source GeronimoSpringsCave.th
+
+# Used for most of the maps
+select GeronimoSpringsCave
+
+# Load the Metapost code for custom symbols
+input ../TherionMasterFiles/CustomSymbolsCode.txt
+
+# Bring in the code for custom scale bar
+input ../TherionMasterFiles/ScaleBarCode.txt
+
+# This layout is for the main 2D map, all on one page
+layout basics
+     language en_US
+	units imperial
+	scale-bar 50 feet
+	page-numbers on
+	scale 1 200
+	north true
+     symbol-color area water [0 0 100]
+	map-comment "A DistoX survey of Geronimo Springs Cave (CAM-086),  Missouri"
+	statistics explo all
+	legend on
+	map-header 3 60 w
+	symbol-set UIS
+# Set point height symbols to be enclosed in boxes
+     code metapost
+       p_label_mode_height:=6;
+     endcode
+
+# Section for PDF properties
+	doc-author "Bill Gee"
+	doc-title "Map of Geronimo Springs Cave (CAM-086)"
+     doc-subject "Plan map of Geronimo Springs Cave (CAM-086)"
+
+# Section for map photos
+
+# Add in the elevations maps
+
+# Bring in the custom symbols
+   copy CustomSymbols
+
+# Bring in the custom scale bar
+   copy CustomScaleBar
+
+# Reassign names
+   symbol-assign point gradient AMER
+   symbol-assign point stalagmite AMER
+   symbol-assign point stalactite AMER
+   symbol-assign point pillar AMER
+   symbol-assign point popcorn AMER
+
+endlayout
+
+# This layout is for profile maps.  It turns off the legend and other stuff
+layout profiles
+    legend off
+    map-header 0 0 off
+    symbol-hide group centerline
+    color map-fg [100 86 66]
+endlayout
+
+layout MainMapPrint
+   copy basics
+   scale 1 200
+   debug off
+   symbol-hide group centerline
+   color map-fg [100 86 66]
+   # Entrance passage profile
+   map-image 0 0 sw GeronimoSpringsCave-Profiles.pdf
+
+   # Change the size of the legend
+code metapost
+    tmpscale=1.3;
+    def draw_legend_box =
+        % Next line controls size of symbol in each symbol table box
+         currentpicture := currentpicture scaled tmpscale;
+         % Next line controls size of symbol table box background
+         clip currentpicture to unitsquare inscale xscaled tmpscale 
+yscaled tmpscale;
+         drawoptions();
+         pickup PenB;
+         % I think the next line controls the size of each symbol table box
+         draw unitsquare inscale xscaled tmpscale yscaled tmpscale;
+     enddef;
+
+     %clear the background of the larger legend boxes
+     def clean_legend_box =
+         unfill unitsquare inscale xscaled tmpscale yscaled tmpscale;
+     enddef;
+
+     %change the value of inscale to fill the legend boxes
+     def inscale =
+         xscaled (legend_scale*tmpscale) yscaled 
+(0.618*legend_scale*tmpscale)
+     enddef;
+endcode
+
+code tex-map
+   \def\maplayout{
+     \legendbox{3}{85}{W}{
+       \def\txtsize{16}  % Define the default text size
+       \legendwidth=20 cm
+       \legendtextsectionsize={\size[\txtsize]}
+       \legendtextsize={\size[\txtsize]}
+       \legendtextheadersize={\size[40]}
+       \hsize=\legendwidth
+       \the\legendcontent={\size[\txtsize]}
+       \the\legendtextsize\ Map generated at \the\time 
+\the\currentdate\medskip
+       \the\legendtextsize\ Therion version \the\thversion
+       }
+   }
+endcode
+#end of TeX code to change legend size
+
+endlayout
+
+# Layouts to specify colors
+layout MainMapNoColor
+   copy basics
+   color map-fg [100 86 66]
+   # Entrance passage profile
+   map-image 0 0 sw GeronimoSpringsCave-Profiles.pdf
+endlayout
+
+layout MainMapColorized
+   copy basics
+   color map-fg altitude
+   # Entrance passage profile
+   map-image 0 0 sw GeronimoSpringsCave-Profiles.pdf
+endlayout
+
+# Change the legend callouts
+input ../TherionMasterFiles/LegendCallouts.txt
+
+# Profiles map
+export map -proj elevation -layout profiles -o 
+GeronimoSpringsCave-Profiles.pdf
+
+# Basic plan map, normal colors
+export map -proj plan -layout MainMapNoColor -o GeronimoSpringsCave.pdf
+
+# Map with no centerline
+export map -proj plan -layout MainMapPrint -o GeronimoSpringsCave-Print.pdf
+
+# Basic plan map, colorized for elevations
+export map -proj plan -layout MainMapColorized -o 
+GeronimoSpringsCaveColored.pdf
+
+# 3D map for use with Loch
+export model -fmt loch -o GeronimoSpringsCave.lox
+
+# 3D map for use with Aven
+export model -fmt 3d -o GeronimoSpringsCave.3d
+
+# 3D map for use with ArcGIS
+export model -fmt esri -o ./GeronimoSpringsCave-ESRI
+
+# KML file for overlay in Google Earth - Requires lat-long specified in 
+the survey data file
+export map -proj plan -fmt kml -o GeronimoSpringsCave.kml
+
+# Produce the debug maps
+system "/usr/local/bin/therion -l therion-Debug.log thconfig-Debug"
+
+
+From bruce at tomo.co.nz  Thu Feb 13 08:40:03 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 13 Feb 2025 20:40:03 +1300
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+Message-ID: <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+
+Bill
+I think def\maplayout{ redefines completely what is exported, and so any
+map-image statements will silently fail.  Page 76 of the Therion Book
+explains somewhat.
+So if your def\maplayout does not have an equivalent of map-image , then
+each time it is called your map-image will be ignored.
+
+Here is an example where I have done what I think you are after. 
+
+  code tex-map #this snippet intended for a minimal plan pdf with
+'map-image' that will later be inserted into an elevation pdf
+	\savepath{mypath1}{"Laghu-kmlSurface-Dec2022.png"} %#save relative
+path to file to absolute path
+	\def\maplayout{
+	\legendbox{73}{120}{NW}{\loadpicture{mypath1}} %#equivalent of
+map-image
+    \ifnortharrow\legendbox{130}{20}{E}{\northarrow}\fi	%#now insert a north
+arrow if appropriate
+	}	
+ endcode
+
+A slightly less elegant version of this solution is described here
+https://therion.speleo.sk/wiki/tex?s%5b%5d=tex&s%5b%5d=map#changing_the_look
+_or_layout_of_a_map_output 
+
+I hope one day to be completely free of the constraints imposed of
+'map-header', and it is possible that the example above is the last missing
+piece of the puzzle for me.  However doing everything by def/maplayout does
+make it complicated when the boundaries of the cave are extended or multiple
+outputs at different scales are required.  There are a lot of {x}{y}{anchor}
+parameters to juggle.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Thursday, 13 February 2025 04:49
+To: Therion Mail List <therion at speleo.sk>
+Subject: [Therion] Embedded image does not appear in some layouts
+
+Here is a puzzle ...  I have set up a thconfig file to create a profiles
+map, then used the "map-image" layout directive to include it in the output
+files.  It works ...  SOMETIMES!
+
+Take a look at the thconfig file embedded below.  The profiles image appears
+on the files produced from the MainMap and MainMapNoColor layouts.  It does
+not appear on MainMapPrint.
+
+Why?  Does it have something to do with the TeX code in MainMapPrint?
+
+Thanks!
+
+--
+===============
+Bill Gee
+
+...
+code tex-map
+   \def\maplayout{
+     \legendbox{3}{85}{W}{
+       \def\txtsize{16}  % Define the default text size
+       \legendwidth=20 cm
+       \legendtextsectionsize={\size[\txtsize]}
+       \legendtextsize={\size[\txtsize]}
+       \legendtextheadersize={\size[40]}
+       \hsize=\legendwidth
+       \the\legendcontent={\size[\txtsize]}
+       \the\legendtextsize\ Map generated at \the\time 
+\the\currentdate\medskip
+       \the\legendtextsize\ Therion version \the\thversion
+       }
+   }
+endcode
+
+
+
+From bgee at campercaver.net  Thu Feb 13 14:41:48 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 13 Feb 2025 07:41:48 -0600
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+Message-ID: <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+
+Hi Bruce -
+
+Thanks!  I had to fiddle with it a bit, but it works exactly as I want. 
+Here is the TeX code I came up with:
+
+=====================
+code tex-map
+   \savepath{ProfilesPath1}{"GeronimoSpringsCave-Profiles.pdf"}
+   \def\maplayout{
+     \legendbox{3}{85}{W}{
+       \def\txtsize{16}  % Define the default text size
+       \legendwidth=20 cm
+       \legendtextsectionsize={\size[\txtsize]}
+       \legendtextsize={\size[\txtsize]}
+       \legendtextheadersize={\size[40]}
+       \hsize=\legendwidth
+       \the\legendcontent={\size[\txtsize]}
+       \the\legendtextsize\ Map generated at \the\time 
+\the\currentdate\medskip
+       \the\legendtextsize\ Therion version \the\thversion
+       }
+     \legendbox{0}{0}{SW}{\loadpicture{ProfilesPath1}}
+   }
+endcode
+=====================
+
+You mentioned constant fiddling with the {x}{y}{anchor} parameters as 
+the map changes.  That is the reason I save photos and profiles for the 
+very end of a cartography project.  I really like Therion, but its 
+handling of profiles leaves a LOT to be desired.
+
+I have done several maps where the profiles were treated like 
+cross-sections.  In a way they are a cross-section, so that method is 
+not entirely wrong.  The main problem with it is when I want to join 
+multiple profile scraps.
+
+So far I have drawn only one section of profile for this map.  I will 
+have some others.  Finding a way to create a different .pdf file for 
+them could be interesting.  I suspect I will have to create thconfig/.th 
+files specifically for the profiles, and each different section of 
+profile will have to be defined in a "map" directive.
+
+For this map I am already doing that to generate a debug version of the 
+map.  A thconfig file can have exactly ONE "select" directive, and that 
+does not work when generating a debug map.
+
+===============
+Bill Gee
+
+On 2/13/25 01:40, Bruce Mutton wrote:
+> Bill
+> I think def\maplayout{ redefines completely what is exported, and so any
+> map-image statements will silently fail.  Page 76 of the Therion Book
+> explains somewhat.
+> So if your def\maplayout does not have an equivalent of map-image , then
+> each time it is called your map-image will be ignored.
+> 
+> Here is an example where I have done what I think you are after.
+> 
+>    code tex-map #this snippet intended for a minimal plan pdf with
+> 'map-image' that will later be inserted into an elevation pdf
+> 	\savepath{mypath1}{"Laghu-kmlSurface-Dec2022.png"} %#save relative
+> path to file to absolute path
+> 	\def\maplayout{
+> 	\legendbox{73}{120}{NW}{\loadpicture{mypath1}} %#equivalent of
+> map-image
+>      \ifnortharrow\legendbox{130}{20}{E}{\northarrow}\fi	%#now insert a north
+> arrow if appropriate
+> 	}	
+>   endcode
+> 
+> A slightly less elegant version of this solution is described here
+> https://therion.speleo.sk/wiki/tex?s%5b%5d=tex&s%5b%5d=map#changing_the_look
+> _or_layout_of_a_map_output
+> 
+> I hope one day to be completely free of the constraints imposed of
+> 'map-header', and it is possible that the example above is the last missing
+> piece of the puzzle for me.  However doing everything by def/maplayout does
+> make it complicated when the boundaries of the cave are extended or multiple
+> outputs at different scales are required.  There are a lot of {x}{y}{anchor}
+> parameters to juggle.
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> Sent: Thursday, 13 February 2025 04:49
+> To: Therion Mail List <therion at speleo.sk>
+> Subject: [Therion] Embedded image does not appear in some layouts
+> 
+> Here is a puzzle ...  I have set up a thconfig file to create a profiles
+> map, then used the "map-image" layout directive to include it in the output
+> files.  It works ...  SOMETIMES!
+> 
+> Take a look at the thconfig file embedded below.  The profiles image appears
+> on the files produced from the MainMap and MainMapNoColor layouts.  It does
+> not appear on MainMapPrint.
+> 
+> Why?  Does it have something to do with the TeX code in MainMapPrint?
+> 
+> Thanks!
+> 
+> --
+> ===============
+> Bill Gee
+> 
+> ...
+> code tex-map
+>     \def\maplayout{
+>       \legendbox{3}{85}{W}{
+>         \def\txtsize{16}  % Define the default text size
+>         \legendwidth=20 cm
+>         \legendtextsectionsize={\size[\txtsize]}
+>         \legendtextsize={\size[\txtsize]}
+>         \legendtextheadersize={\size[40]}
+>         \hsize=\legendwidth
+>         \the\legendcontent={\size[\txtsize]}
+>         \the\legendtextsize\ Map generated at \the\time
+> \the\currentdate\medskip
+>         \the\legendtextsize\ Therion version \the\thversion
+>         }
+>     }
+> endcode
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Feb 13 15:08:19 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 13 Feb 2025 14:08:19 +0000
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+Message-ID: <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+
+> The main problem with it is when I want to join 
+> multiple profile scraps.
+
+
+This is no different than plan view. I have plenty of profile scraps. I 
+just make sure to avoid confusion by naming my scraps with their 
+orientation in the scrap names to keep it clear to myself which belong 
+where:
+
+fooSE256
+
+Then the parent file has:
+join fooSE256 at entarea barSE256 at longbypass
+and:
+map elevationME256 -projection [elevation 256] -title "MyCave Elevation"
+   entareaME256 at entarea #map of the scraps in entarea
+   longbypassME256 at longbypass
+endmap
+
+> So far I have drawn only one section of profile for this map.? I will 
+> have some others.? Finding a way to create a different .pdf file for 
+> them could be interesting.
+
+
+I have a separate .thconfig for each, which selects the relevant map and 
+exports it as a PDF:
+Elevation256.thconfig
+Elevation120.thconfig
+
+Then I have AllVersions.thconfig which contains this:
+
+system """C:\Program Files (x86)\Therion\therion.exe"" 
+Elevation256.thconfig"
+system """C:\Program Files (x86)\Therion\therion.exe"" 
+Elevation120.thconfig"
+...
+
+(These commands are a lot more readable if you put Therion in your 
+%PATH%, or if you are using Linux.)
+
+Then I combine these into a single survey PDF by embedding the images, 
+or into a PDF with one survey per page (using pdftk or pdfjam). 
+Whichever .thconfig file produces the combined PDF is always the last 
+one that gets run by AllVersions.thconfig
+
+From bgee at campercaver.net  Thu Feb 13 16:56:45 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 13 Feb 2025 09:56:45 -0600
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+Message-ID: <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+
+Hi Tarquin -
+
+I dislike using extended elevations.  The folding that is done to create 
+the perspective really messes with the presentation.  Plain unfolded 
+elevations are, I think, much more useful.
+
+My comment about joining elevations was related to treating them like 
+cross-sections.  I suspect that scraps of "projection none" cannot be 
+joined.  If they can be joined, then what is the scrap name to use as 
+parameter to the section point?
+
+Keeping track of multiple thconfig files is a pain.  As a big-picture 
+item - I think that should not be necessary.  The fact that it IS 
+necessary points to some needed improvements.  In an ideal world there 
+should never be a need for more than one thconfig file for each map project.
+
+I use Linux, so the issues with system path are less of a problem for me.
+
+===============
+Bill Gee
+
+On 2/13/25 08:08, Tarquin Wilton-Jones via Therion wrote:
+>> The main problem with it is when I want to join multiple profile scraps.
+> 
+> 
+> This is no different than plan view. I have plenty of profile scraps. I 
+> just make sure to avoid confusion by naming my scraps with their 
+> orientation in the scrap names to keep it clear to myself which belong 
+> where:
+> 
+> fooSE256
+> 
+> Then the parent file has:
+> join fooSE256 at entarea barSE256 at longbypass
+> and:
+> map elevationME256 -projection [elevation 256] -title "MyCave Elevation"
+>  ? entareaME256 at entarea #map of the scraps in entarea
+>  ? longbypassME256 at longbypass
+> endmap
+> 
+>> So far I have drawn only one section of profile for this map.? I will 
+>> have some others.? Finding a way to create a different .pdf file for 
+>> them could be interesting.
+> 
+> 
+> I have a separate .thconfig for each, which selects the relevant map and 
+> exports it as a PDF:
+> Elevation256.thconfig
+> Elevation120.thconfig
+> 
+> Then I have AllVersions.thconfig which contains this:
+> 
+> system """C:\Program Files (x86)\Therion\therion.exe"" 
+> Elevation256.thconfig"
+> system """C:\Program Files (x86)\Therion\therion.exe"" 
+> Elevation120.thconfig"
+> ...
+> 
+> (These commands are a lot more readable if you put Therion in your 
+> %PATH%, or if you are using Linux.)
+> 
+> Then I combine these into a single survey PDF by embedding the images, 
+> or into a PDF with one survey per page (using pdftk or pdfjam). 
+> Whichever .thconfig file produces the combined PDF is always the last 
+> one that gets run by AllVersions.thconfig
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Feb 13 17:14:50 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 13 Feb 2025 16:14:50 +0000
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+Message-ID: <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+
+> I dislike using extended elevations.? The folding that is done to create 
+> the perspective really messes with the presentation.? Plain unfolded 
+> elevations are, I think, much more useful.
+
+
+I was not talking about extended elevations. I was talking about 
+projected elevations. They are projected on a specific bearing. That is 
+exactly what you are asking for, I think.
+
+I export a new .xvi on my chosen bearing:
+export map -projection [elevation 256] -fmt xvi -output 
+"somesurvey/somesurvey elevation256.xvi"
+Then I create a new .th2 for that, and draw the passage ceiling and 
+floor as scraps, the same way you would normally draw walls in plan 
+view. Make sure each scrap has "-projection [elevation 256]", and I name 
+my scraps accordingly. Input that in my .th:
+input "somesurvey elevation256.th2"
+Add a map with "-projection [elevation 256]" and add all the relevant 
+scraps to it.
+
+Extended elevation ("-projection extended") normally for potholes and 
+some caves.
+
+Projected elevation ("-projection [elevation 256]") for caves where you 
+want to maintain the horizontal relationship between passages. I use it 
+for metal mines with multiple levels.
+
+> My comment about joining elevations was related to treating them like 
+> cross-sections.? I suspect that scraps of "projection none" cannot be 
+> joined.
+
+
+I don't know if you can. I have never done so. Since it relies on you 
+positioning them at certain coordinates within other scraps of the main 
+projection, it probably would not be possible.
+
+> Keeping track of multiple thconfig files is a pain.? As a big-picture 
+> item - I think that should not be necessary.? The fact that it IS 
+> necessary points to some needed improvements.
+
+
+I very much agree. I would dearly love for .thconfig to have something like:
+
+selection
+   select map1 at mycave
+   ...do things...
+endselection
+selection
+   select map2 at mycave
+   ...do things...
+endselection
+
+Really hate having to maintain several different .thconfig files and 
+link them together. But until such a thing exists, I use what I use :)
+
+From bruce at tomo.co.nz  Thu Feb 13 20:39:36 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 14 Feb 2025 08:39:36 +1300
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+Message-ID: <001601db7e4f$0667e570$1337b050$@tomo.co.nz>
+
+Kia ora!
+
+> You mentioned constant fiddling with the {x}{y}{anchor} parameters as the
+map changes.  That is the reason I save photos and profiles for the very end
+of a cartography project.
+
+You have projects that have an end?
+
+>  A thconfig file can have exactly ONE "select" directive.
+
+Um, I think there is plenty of flexibility with select and thconfig usage.
+For almost all of my projects I manage one thconfig and multiple select
+statements within that (perhaps you are counting these select collections as
+'one').  Admittedly I usually amalgamate map definitions to reduce these to
+a single select requirement per projection per run just for convenience.
+But multiple selects per projection work just fine, at least they did a few
+versions ago.
+
+And selects for each projection in a single thconfig per run are my norm. ie
+select mapPlan
+select mapExtended
+select mapProjection256 (I don't tend to use projected elevations these days
+- none of my caves are straight)
+select mapProjection135 etc
+
+There is also the possibility to use indexes to manage multiple variants of
+a single projection in a single thconfig*. 
+select mapPlan
+select mapPlan:Enlargement
+
+* It might be possible to change the projection of plan maps to
+plan:enlargement on the fly with revise, but I haven't actually pulled this
+off.  Were I try to this, I would currently draw the enlarged passage a
+second time (tracing over the original drawing, possibly in the same th2,
+but with an index added to the projection), but that is a bit of a hack.
+
+But as Tarquin mentioned, it is not possible to export based on one
+projection's set of selects and then choose another set of selects for that
+projection in the same thconfig run  (The existence of unselect suggests
+this might be possible, but I have not had any luck with it and while some
+have talked of it, I don't recall an example where unselect has been used
+successfully for any purpose).
+This is a case where multiple thconfigs can be used with a script to wrap
+them all together as Tarquin describes.
+I have chosen a simpler, limited approach without automation and manage a
+single thconfig, manually commenting and uncommenting lines to get bespoke
+outputs on a run by run basis.
+Either approach seems to be fine, and what works best likely depends on
+preference and objectives.
+
+Bruce
+
+
+
+From bgee at campercaver.net  Sat Feb 15 16:37:57 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 15 Feb 2025 09:37:57 -0600
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+Message-ID: <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+
+Tarquin, I had confused the meaning of "extended" and "elevation" 
+scraps.  What I really want is "elevation" where there is no projection 
+on a specific bearing.
+
+I completely agree with your wish about the handling of select/unselect 
+pairs.  Maybe in version 7 ???
+
+===============
+Bill Gee
+
+On 2/13/25 10:14, Tarquin Wilton-Jones via Therion wrote:
+>> I dislike using extended elevations.? The folding that is done to 
+>> create the perspective really messes with the presentation.? Plain 
+>> unfolded elevations are, I think, much more useful.
+> 
+> 
+> I was not talking about extended elevations. I was talking about 
+> projected elevations. They are projected on a specific bearing. That is 
+> exactly what you are asking for, I think.
+> 
+> I export a new .xvi on my chosen bearing:
+> export map -projection [elevation 256] -fmt xvi -output "somesurvey/ 
+> somesurvey elevation256.xvi"
+> Then I create a new .th2 for that, and draw the passage ceiling and 
+> floor as scraps, the same way you would normally draw walls in plan 
+> view. Make sure each scrap has "-projection [elevation 256]", and I name 
+> my scraps accordingly. Input that in my .th:
+> input "somesurvey elevation256.th2"
+> Add a map with "-projection [elevation 256]" and add all the relevant 
+> scraps to it.
+> 
+> Extended elevation ("-projection extended") normally for potholes and 
+> some caves.
+> 
+> Projected elevation ("-projection [elevation 256]") for caves where you 
+> want to maintain the horizontal relationship between passages. I use it 
+> for metal mines with multiple levels.
+> 
+>> My comment about joining elevations was related to treating them like 
+>> cross-sections.? I suspect that scraps of "projection none" cannot be 
+>> joined.
+> 
+> 
+> I don't know if you can. I have never done so. Since it relies on you 
+> positioning them at certain coordinates within other scraps of the main 
+> projection, it probably would not be possible.
+> 
+>> Keeping track of multiple thconfig files is a pain.? As a big-picture 
+>> item - I think that should not be necessary.? The fact that it IS 
+>> necessary points to some needed improvements.
+> 
+> 
+> I very much agree. I would dearly love for .thconfig to have something 
+> like:
+> 
+> selection
+>  ? select map1 at mycave
+>  ? ...do things...
+> endselection
+> selection
+>  ? select map2 at mycave
+>  ? ...do things...
+> endselection
+> 
+> Really hate having to maintain several different .thconfig files and 
+> link them together. But until such a thing exists, I use what I use :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Sat Feb 15 16:37:59 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 15 Feb 2025 09:37:59 -0600
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <001601db7e4f$0667e570$1337b050$@tomo.co.nz>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <001601db7e4f$0667e570$1337b050$@tomo.co.nz>
+Message-ID: <9d40301f-10ab-46ef-8e3e-535db7466dba@campercaver.net>
+
+LOL!  Yes, that is a good point about map projects that end.  You never 
+know when someone will turn over a rock and find 20km of cave.
+
+I tried using a sequence of select and unselect directives, but it 
+appeared as if the unselects were ignored and only the last select was 
+actually used.  I asked a question a few weeks ago about the scope of 
+select, but never got an answer.  As near as I can figure, the scope of 
+select is the entire thconfig file regardless of where select appears.
+
+Some years ago I created a shell script to string together calls to 
+therion with different thconfig files.  It worked and was a bit of a 
+bother to maintain.  With my current project I use a system call in 
+thconfig.
+
+I agree about projected elevations not being all that useful.  It turns 
+out I had confused "elevation" and "extended".  What I really want is 
+"extended".  It was an easy change to redefine the scraps and the export 
+command.
+
+===============
+Bill Gee
+
+On 2/13/25 13:39, Bruce Mutton wrote:
+> Kia ora!
+> 
+>> You mentioned constant fiddling with the {x}{y}{anchor} parameters as the
+> map changes.  That is the reason I save photos and profiles for the very end
+> of a cartography project.
+> 
+> You have projects that have an end?
+> 
+>>   A thconfig file can have exactly ONE "select" directive.
+> 
+> Um, I think there is plenty of flexibility with select and thconfig usage.
+> For almost all of my projects I manage one thconfig and multiple select
+> statements within that (perhaps you are counting these select collections as
+> 'one').  Admittedly I usually amalgamate map definitions to reduce these to
+> a single select requirement per projection per run just for convenience.
+> But multiple selects per projection work just fine, at least they did a few
+> versions ago.
+> 
+> And selects for each projection in a single thconfig per run are my norm. ie
+> select mapPlan
+> select mapExtended
+> select mapProjection256 (I don't tend to use projected elevations these days
+> - none of my caves are straight)
+> select mapProjection135 etc
+> 
+> There is also the possibility to use indexes to manage multiple variants of
+> a single projection in a single thconfig*.
+> select mapPlan
+> select mapPlan:Enlargement
+> 
+> * It might be possible to change the projection of plan maps to
+> plan:enlargement on the fly with revise, but I haven't actually pulled this
+> off.  Were I try to this, I would currently draw the enlarged passage a
+> second time (tracing over the original drawing, possibly in the same th2,
+> but with an index added to the projection), but that is a bit of a hack.
+> 
+> But as Tarquin mentioned, it is not possible to export based on one
+> projection's set of selects and then choose another set of selects for that
+> projection in the same thconfig run  (The existence of unselect suggests
+> this might be possible, but I have not had any luck with it and while some
+> have talked of it, I don't recall an example where unselect has been used
+> successfully for any purpose).
+> This is a case where multiple thconfigs can be used with a script to wrap
+> them all together as Tarquin describes.
+> I have chosen a simpler, limited approach without automation and manage a
+> single thconfig, manually commenting and uncommenting lines to get bespoke
+> outputs on a run by run basis.
+> Either approach seems to be fine, and what works best likely depends on
+> preference and objectives.
+> 
+> Bruce
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Sat Feb 15 19:57:02 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 15 Feb 2025 18:57:02 +0000
+Subject: [Therion] Embedded image does not appear in some layouts
+In-Reply-To: <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+Message-ID: <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+
+> Tarquin, I had confused the meaning of "extended" and "elevation" 
+> scraps.? What I really want is "elevation" where there is no projection 
+> on a specific bearing.
+
+
+OK, this is only slightly different. Much of the process is the same 
+though. If you have a very simple cave, and you have already drawn a 
+perfect extended elevation while you were in the cave, great, you can 
+skip a bunch of steps. However, I find that in the cave, I have no idea 
+how the extended elevation will end up being drawn, so I don't have 
+anything useful, and need to redraw it all when I get out.
+
+Firstly, you need to decide whether you start on the left or right of 
+the survey. You probably decided this while you were in the cave (or 
+maybe not), but you will need to re-decide now that you have enough cave 
+data to work out where nasty overlaps happen, and what direction makes 
+most sense. You add the "extend start" and "extend left" or "right" 
+commands for your survey.
+
+Then decide where to fold left and right to make the cave most 
+understandable - this is an art form. Decide if some passages need to be 
+shortened or lengthened. Add the commands to change the extend direction 
+as needed, or to scale legs as needed. Keep exporting it as a PDF so you 
+can see how your design looks. It really helps to do this before you 
+have drawn scraps. If you have already drawn scraps ... well ... I have 
+a map like this:
+
+map skeletonMEE
+   thecave # that is the survey *not* a map
+endmap
+
+Then this thconfig:
+layout local
+   code metapost
+     def l_survey_cave (expr P) =
+       T:=identity;
+       pickup PenC;
+       if ATTR__shotflag_splay:
+         thdraw P withcolor (1,0.5,0.5);
+       else:
+         thdraw P;
+       fi;
+     enddef;
+   endcode
+endlayout
+source "thecavearea.th"
+select skeletonMEE at thecavearea
+export map -proj extended -layout local -o "thecave-skeleton.pdf"
+
+That gives me a PDF to see my design.
+
+Now, once you are done, export a new XVI, just like I said for the 
+projected elevation, but this time use "extended" as your -projection. 
+Add a .th2 and add it to your .th in the same way (I call mine 
+"surveyeecustom" to show it is one I have customised), create scraps in 
+it as you would for a plan (I name mine somescrapSEE for Scrap Extended 
+Elevation, and use MEE for the maps). From there on, the instructions 
+are basically the same. However, I find that all too often, the 
+extending algorithm points a leg in completely the wrong direction. It 
+is much better than it used to be, but just randomly, it is nonsense. Or 
+it just scales the splays weird. So I often end up looking at it in 
+Survex Aven, seeing "that one looks wrong", then measuring from station 
+to splay in elevation or plan, to work out where it should have pointed, 
+and how far away. (It really depends how much you care.)
+
+You will need to refer to the instructions for extended elevations, to 
+see what the "extend" options are. Some really useful stuff got added 
+relatively recently for scaling legs, so you can shrink a passage to 50% 
+of its natural length. And a tonne of other useful options.
+
+If you want more than one variation of the extended elevation, eg. with 
+the leg folded left in one, and right in the other ... you are in for a 
+small nightmare, and I will let Bruce help you out, because he has a way 
+to do it. It is not straightforward, because Therion is really designed 
+to have just one extended elevation.
+
+From bruce at tomo.co.nz  Sat Feb 15 23:03:19 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 16 Feb 2025 11:03:19 +1300
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+Message-ID: <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+
+> If you want more than one variation of the extended elevation, eg. with the leg folded left in one, and right in the other ... you are in for a small nightmare, and I will let Bruce help you out, because he has a way to do it. 
+> It is not straightforward, because Therion is really designed to have just one extended elevation.
+
+I've been on a journey.
+In 2018 I decided that extend options in-line with the survey data was inadequate and I experimented with moving all extend controls to a separate extended elevation centreline.  The reasons and details of how are in https://therion.speleo.sk/wiki/extend?s[]=extend#extended_elevations 
+
+Almost immediately I started having problems as loops were added to ongoing survey projects.  New loops cause existing extended centrelines and drawings to be broken, requiring careful (often time consuming) extend control edits to resolve.  Until a few weeks ago I thought the problems were due to my choice to move extend control to separate centrelines outside of the primary survey data enumeration.
+
+With my most recent project I decided to go back to leaving extend statements in-line with survey data, for simplicities sake (so I thought).  Then I started adding some loops.  What I have found leads me to suspect that the in-line and separate centreline choice makes no difference to the problems caused by use of ignore and addition of loops to existing extended centreline development.  The 'extended elevation additional loops breaks previous loops' problem is a Therion problem, not 'the way we use Therion' problem.  The 'small (extended elevation) nightmare' is associated with multiple loops, not with multiple extended elevations.
+
+Which leads me to thinking that the ultimate solution will be to add to Therion a new extended elevation control set when it comes to 'extend ignore'.  Rather than saying 'when there is a choice, don't take this path' we should instead say, 'when there is a choice, TAKE this path'.  I feel like this would reduce the uncertainty of implying what we want by specifying only one of the options (at a time) that we don't want.  Better to directly specify the ONE option we DO want and not care about the possibly many options we don't want.  This is especially the case when there are more than three legs meeting at a station. If such a change would make all existing extended elevations incompatible, then having a 'UseNewExtendControl' control in Therion would seem to be a tolerable mitigation.  And Therion continues with two extended elevation control sets.
+So yes, it's not straight forward! :-)
+Bruce
+
+
+From bgee at campercaver.net  Wed Feb 19 16:58:27 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 19 Feb 2025 09:58:27 -0600
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+ <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+Message-ID: <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+
+Wow, that is a serious deep dive!  It looks like far more than I need. 
+I don't like to put every single profile on the map, especially for 
+longer caves.  It just gets to be too much.  You can't see the cave for 
+the profiles!  And the cross-sections!
+
+As long as we are dreaming about future features - How about a way to 
+spit out a multi-page PDF file with the plan map on one page.  A second 
+page (maybe more) can contain the profiles, cross-sections, photos, 
+legend and perhaps other stuff.
+
+It would be nice to have a way to break extended profiles into sections 
+so they can be placed at different points around the map.  That can sort 
+of be done with elevation profiles by specifying a different perspective 
+angle for each piece.  It's a lot of work, though, to keep track of 
+which angle was specified for each section of profile.
+
+Another thing that would be nice - A way to draw a line on the plan map 
+which indicates the path shown in a profile.  I think it could be done 
+with either a border or a section line with no arrows.
+
+I would also like a way to produce a map which has SOME (not all) 
+cross-sections.  Right now it is all or nothing.  You either get every 
+cross-section or you get no cross-sections.  This might be done by using 
+PDF layers and letting the cross-section scrap specify the layer it goes on.
+
+How about a new directive called "layer"?   This gives the layer a name 
+and perhaps some other properties.  Then the layout section can give a 
+list of layers to include.  Scraps would have an option to name the 
+layer they go on.
+
+===============
+Bill Gee
+
+On 2/15/25 16:03, Bruce Mutton wrote:
+>> If you want more than one variation of the extended elevation, eg. with the leg folded left in one, and right in the other ... you are in for a small nightmare, and I will let Bruce help you out, because he has a way to do it.
+>> It is not straightforward, because Therion is really designed to have just one extended elevation.
+> 
+> I've been on a journey.
+> In 2018 I decided that extend options in-line with the survey data was inadequate and I experimented with moving all extend controls to a separate extended elevation centreline.  The reasons and details of how are in https://therion.speleo.sk/wiki/extend?s[]=extend#extended_elevations
+> 
+> Almost immediately I started having problems as loops were added to ongoing survey projects.  New loops cause existing extended centrelines and drawings to be broken, requiring careful (often time consuming) extend control edits to resolve.  Until a few weeks ago I thought the problems were due to my choice to move extend control to separate centrelines outside of the primary survey data enumeration.
+> 
+> With my most recent project I decided to go back to leaving extend statements in-line with survey data, for simplicities sake (so I thought).  Then I started adding some loops.  What I have found leads me to suspect that the in-line and separate centreline choice makes no difference to the problems caused by use of ignore and addition of loops to existing extended centreline development.  The 'extended elevation additional loops breaks previous loops' problem is a Therion problem, not 'the way we use Therion' problem.  The 'small (extended elevation) nightmare' is associated with multiple loops, not with multiple extended elevations.
+> 
+> Which leads me to thinking that the ultimate solution will be to add to Therion a new extended elevation control set when it comes to 'extend ignore'.  Rather than saying 'when there is a choice, don't take this path' we should instead say, 'when there is a choice, TAKE this path'.  I feel like this would reduce the uncertainty of implying what we want by specifying only one of the options (at a time) that we don't want.  Better to directly specify the ONE option we DO want and not care about the possibly many options we don't want.  This is especially the case when there are more than three legs meeting at a station. If such a change would make all existing extended elevations incompatible, then having a 'UseNewExtendControl' control in Therion would seem to be a tolerable mitigation.  And Therion continues with two extended elevation control sets.
+> So yes, it's not straight forward! :-)
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Feb 19 17:21:58 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 19 Feb 2025 16:21:58 +0000
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+ <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+ <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+Message-ID: <ca97668f-3940-4fb8-9673-b41ab70351e6@ntlworld.com>
+
+> It would be nice to have a way to break extended profiles into sections 
+> so they can be placed at different points around the map.
+
+
+Sure, easy enough. Create them as maps, just like you would do if you 
+wanted partial plans.
+
+map shiningcave -projection extended -title "Shining Cave elevation"
+   entareaMEE at entarea
+   shiningpitchesMEE at shiningpitches
+   ...
+endmap
+
+map beetlecave -projection extended -title "Beetle Cave elevation"
+   crayonsMEE at crayons
+   wetcrawlsMEE at wetcrawls
+   ...
+endmap
+
+In your .thconfig, select whichever map you want to output. Output it as 
+a PDF. Embed it in your main plan view, just like you would embed any 
+other image.
+
+> which angle was specified for each section of profile.
+
+
+Extended elevations have no angle. They are an *extended* side view.
+
+Projected elevations have an angle - the cave from a specific direction. 
+With a projected elevation, you need to make sure you always export the 
+same bearing. It's awkward with big caves.
+
+> I think it could be done 
+> with either a border or a section line with no arrows.
+
+
+I created a l-u-route for showing routes. It draws dots along the route. 
+You could do something similar. If you just want to draw it as a solid 
+line, then the MetaPost can just pick up a pen, and draw the path with 
+it. (That's the easiest. Dots is a dashed line, but I have done a load 
+of calculations in the MetaPost to avoid drawing half a dot, so the code 
+is quite long.)
+
+> I would also like a way to produce a map which has SOME (not all) 
+> cross-sections.
+
+
+Put them in different scraps instead of putting them all in the main 
+plan scraps. Eg. "mainsectionsSP" and "lessersectionsSP". Each scrap you 
+put them in should reuse a few stations so they all get scaled and 
+positioned correctly.
+
+Then your map should add the appropriate scrap just like it adds any 
+other scrap.
+
+From andrew at wotcc.org.uk  Wed Feb 19 17:29:20 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 19 Feb 2025 16:29:20 +0000
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+ <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+ <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+Message-ID: <f9ed6c3a-1647-4444-84d9-72be26034473@wotcc.org.uk>
+
+
+
+On 19/02/2025 15:58, Bill Gee wrote:
+> I would also like a way to produce a map which has SOME (not all) cross- 
+> sections.? Right now it is all or nothing.? You either get every cross- 
+> section or you get no cross-sections.? This might be done by using PDF 
+> layers and letting the cross-section scrap specify the layer it goes on.
+
+You can sort of do this with
+-attr <name> <value>. <name>
+Then use this in metapost
+
+p36 thbook
+You can test presence of such a variable using if known ATTR_<name>: ... fi.
+
+However, my metapost was not good enough and I kept getting bugs. So I 
+used python to pull them out, then removed the ones I wanted. I thought 
+I had put the code online, but cannot find it!
+
+However, the use of attr would work better if symbol-hide worked for it. 
+Unfortunately I do not think that it does.
+
+You could abuse the system by abusing the -context option and setting it 
+to a symbol you do not use then turn that off with symbol-hide.
+
+
+Andrew
+
+From beni at hallinger.org  Wed Feb 19 18:02:19 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 19 Feb 2025 18:02:19 +0100
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <f9ed6c3a-1647-4444-84d9-72be26034473@wotcc.org.uk>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+ <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+ <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+ <f9ed6c3a-1647-4444-84d9-72be26034473@wotcc.org.uk>
+Message-ID: <ae76189f4c2ef667567c70a33c495684@hallinger.org>
+
+I really feel, we need a "true" way of specifying how to hide/select 
+things for various outputs.
+Some kind of optional selector attribute inherent to any symbol, without 
+affecting or misuing the other settings.
+This cuold also be used to hide/select symbols based on scale (which is 
+currently kind-of-supported by using the symbol size - which I cannot 
+use beause I need that for actual sizing of stuff).
+
+A quick Idea could be:
+1. untagged elements are always printed
+
+2. tagged elements only if they are selected in the thconfig
+
+3. actual systematic is user-defined, so we have maximum flexibility.
+For example, I could imagine mixing several systematics, one for desired 
+output scale and another for special purposes:
+
+--------- thconfig --------
+select tag scale:250
+select tag scale:500
+select tag remarks
+select tag crossSections:abc
+export map ....
+---------------------------
+In the th2's I just tag the items with "-tag scale:500" or "-tag 
+crossSections:abc" (or both).
+This would completely (and optionally) decouple the show/hide from 
+internal magic and support various usecases out of the box. One just 
+needs to think of a good tagging systematic for his usecases/dataset.
+
+
+
+
+Am 2025-02-19 17:29, schrieb Andrew Atkinson:
+> On 19/02/2025 15:58, Bill Gee wrote:
+>> I would also like a way to produce a map which has SOME (not all) 
+>> cross- sections.? Right now it is all or nothing.? You either get 
+>> every cross- section or you get no cross-sections.? This might be done 
+>> by using PDF layers and letting the cross-section scrap specify the 
+>> layer it goes on.
+> 
+> You can sort of do this with
+> -attr <name> <value>. <name>
+> Then use this in metapost
+> 
+> p36 thbook
+> You can test presence of such a variable using if known ATTR_<name>: 
+> ... fi.
+> 
+> However, my metapost was not good enough and I kept getting bugs. So I 
+> used python to pull them out, then removed the ones I wanted. I thought 
+> I had put the code online, but cannot find it!
+> 
+> However, the use of attr would work better if symbol-hide worked for 
+> it. Unfortunately I do not think that it does.
+> 
+> You could abuse the system by abusing the -context option and setting 
+> it to a symbol you do not use then turn that off with symbol-hide.
+> 
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From andrew at wotcc.org.uk  Wed Feb 19 18:11:56 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 19 Feb 2025 17:11:56 +0000
+Subject: [Therion] Tags/Attr split from [Extended elevation control -
+ Embedded image does not appear in some layouts]
+Message-ID: <b4c4361c-a392-4b5c-8acd-b9cfe91981a6@wotcc.org.uk>
+
+On 19/02/2025 17:02, Benedikt Hallinger wrote:
+ > 2. tagged elements only if they are selected in the thconfig
+ >
+ > 3. actual systematic is user-defined, so we have maximum flexibility.
+ > For example, I could imagine mixing several systematics, one for desired
+ > output scale and another for special purposes:
+ >
+ > --------- thconfig --------
+ > select tag scale:250
+ > select tag scale:500
+ > select tag remarks
+ > select tag crossSections:abc
+ > export map ....
+ > ---------------------------
+ > In the th2's I just tag the items with "-tag scale:500" or "-tag
+ > crossSections:abc" (or both).
+ > This would completely (and optionally) decouple the show/hide from
+ > internal magic and support various usecases out of the box. One just
+ > needs to think of a good tagging systematic for his usecases/dataset.
+
+
+I agree the attr so nearly does this, you can set attr like
+-attr scale 250
+-attr crossSection abc
+However, it is not exposed to the select or the symbol-hide/show. It 
+appears to be only accessible from metapost and the database export (the 
+thbook also says it is exported in shape files)
+
+Andrew
+
+From andrew at wotcc.org.uk  Wed Feb 19 19:29:42 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 19 Feb 2025 18:29:42 +0000
+Subject: [Therion] Date before 1900 error - but where?
+Message-ID: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+
+Hi all
+
+I could really do with some help searching for a problem.
+
+In the data
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/
+
+(downloadable svn repository)
+
+Trying to run any of the thconfig (well I've tried most) files leads to 
+this error
+
+configuration file: LongWoodValley.thcfg
+reading ... done
+reading source files ... done
+preprocessing database ... done
+therion: error -- automatic declination calculation before 1900 not 
+supported, please specify declination explicitly
+writing xtherion file ... done
+
+This is not a useful error. This data set use to work, I've produced 
+lots of surveys from it.
+
+It seems to indicate a date in the error message. Although grep has 
+shown up a couple that I needed to fix for other reasons, none have 
+shown dates before 1900. So I have no idea how to track down this error
+
+What else should I be looking for? Running therion with -d does not give 
+any further information
+
+Help!
+
+thanks
+
+Andrew
+
+From beni at hallinger.org  Wed Feb 19 19:49:10 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 19 Feb 2025 19:49:10 +0100
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+Message-ID: <109E6708-A79C-4314-A3CA-9333E9186707@hallinger.org>
+
+Hi,
+I recently had the same issue.
+The reason here was, that I had added a small separate centerline to just tell the system, that there is line-of-sight between two stations.
+Turned out that this of course was also a normal valid centerline, and I had no date nor declination added.
+
+Maybe that is oh some help.
+Our human brains are sometimes filtering out information at the wrong place, so we dont recognize such issues as issue.
+
+> Am 19.02.2025 um 19:29 schrieb Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> ?Hi all
+> 
+> I could really do with some help searching for a problem.
+> 
+> In the data
+> 
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/
+> 
+> (downloadable svn repository)
+> 
+> Trying to run any of the thconfig (well I've tried most) files leads to this error
+> 
+> configuration file: LongWoodValley.thcfg
+> reading ... done
+> reading source files ... done
+> preprocessing database ... done
+> therion: error -- automatic declination calculation before 1900 not supported, please specify declination explicitly
+> writing xtherion file ... done
+> 
+> This is not a useful error. This data set use to work, I've produced lots of surveys from it.
+> 
+> It seems to indicate a date in the error message. Although grep has shown up a couple that I needed to fix for other reasons, none have shown dates before 1900. So I have no idea how to track down this error
+> 
+> What else should I be looking for? Running therion with -d does not give any further information
+> 
+> Help!
+> 
+> thanks
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Wed Feb 19 20:11:00 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 19 Feb 2025 19:11:00 +0000
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+Message-ID: <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+
+Reservoir\CeilingAround\CeilingAround.th
+
+date 2013.04.12-13
+
+You meant:
+
+date 2013.04.12-2013.04.13
+
+From andrew at wotcc.org.uk  Wed Feb 19 20:39:17 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 19 Feb 2025 19:39:17 +0000
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+ <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+Message-ID: <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+
+Thank you very much
+
+That must be a change in Therion (Survex) as that file has not been 
+edited since 2013.05.11 and it has been used many many times since then.
+
+I should probably file this as a bug, well the lack of reporting an error.
+
+How did you find it, and so quickly? I need that sort of skill set
+
+thanks
+
+Andrew
+
+On 19/02/2025 19:11, Tarquin Wilton-Jones via Therion wrote:
+> Reservoir\CeilingAround\CeilingAround.th
+> 
+> date 2013.04.12-13
+> 
+> You meant:
+> 
+> date 2013.04.12-2013.04.13
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Feb 19 21:02:46 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 19 Feb 2025 20:02:46 +0000
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+ <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+ <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+Message-ID: <c6c71ce1-eacf-4f69-b2a0-52d2ed47a31c@ntlworld.com>
+
+> How did you find it, and so quickly? I need that sort of skill set
+
+Same basic way I debug CSS.
+
+Make a copy of the codebase. Delete 50% of the inputs (caves). Did it go 
+away? If not, try deleting the other half instead. Repeat with smaller 
+and smaller chunks until you get which change made it go away. Don't 
+delete anything that looks like it contains fixed points that everything 
+else relies on.
+
+A few caves rely on .3d files which are not on SVN (eg. GB, Rhino). I 
+deleted those first, and fortunately it wasn't in any of those (I would 
+not have been able to debug otherwise).
+
+Now I know the cave.
+
+Delete contents of all maps and all joins, to remove dependencies.
+
+Now find inputs that are only used by one equate. Delete both. Repeat. 
+Eventually, there was a loop of equates. Delete one to break the loop. 
+Now continue deleting file+equate until deleting one input causes it to 
+show a different error or no error (other than "could not open file for 
+input).
+
+Now I know the file.
+
+The mistake was pretty obvious, but if there were lots of centrelines, I 
+would just have deleted their data in reverse order.
+
+As it was, it was trying to work with "13" as a year 0013. I wonder if 
+this broke your loop closure...
+
+The change in behaviour is a largely good thing. Personally, I would 
+dearly love a warning of "date range is backwards", or "date looks 
+insane", since if you managed to get some pre-Roman survey data, it 
+would be very impressive indeed, and probably deserves a special config 
+option "mindate 0001.01.01". However, the error message was not at all 
+useful as a pointer, and needs to be corrected.
+
+From andrew at wotcc.org.uk  Wed Feb 19 21:17:39 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 19 Feb 2025 20:17:39 +0000
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <c6c71ce1-eacf-4f69-b2a0-52d2ed47a31c@ntlworld.com>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+ <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+ <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+ <c6c71ce1-eacf-4f69-b2a0-52d2ed47a31c@ntlworld.com>
+Message-ID: <cbbe024a-cdce-475e-b16a-a17d90037785@wotcc.org.uk>
+
+
+
+On 19/02/2025 20:02, Tarquin Wilton-Jones via Therion wrote:
+> A few caves rely on .3d files which are not on SVN (eg. GB, Rhino). I 
+> deleted those first, and fortunately it wasn't in any of those (I would 
+> not have been able to debug otherwise).
+
+I have a script that processes the svx files that are needed, I should 
+probably add that to the repository to save people doing it manually. 
+The svx files are slowly being removed, all historic stuff.
+
+I was going through the same process, but obviously slower than you
+
+thanks again
+
+Andrew
+
+
+From olly at survex.com  Thu Feb 20 02:01:16 2025
+From: olly at survex.com (Olly Betts)
+Date: Thu, 20 Feb 2025 01:01:16 +0000
+Subject: [Therion] Date before 1900 error - but where?
+In-Reply-To: <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+References: <d22a4d68-9c8f-43bd-a20c-497f61c393bd@wotcc.org.uk>
+ <b0040abd-67d1-437c-9a39-103c84872e44@ntlworld.com>
+ <49655b6a-2ff1-4e53-8df8-969b60af8532@wotcc.org.uk>
+Message-ID: <20250220010116.GN3418@survex.com>
+
+On Wed, Feb 19, 2025 at 07:39:17PM +0000, Andrew Atkinson wrote:
+> That must be a change in Therion (Survex) as that file has not been edited
+> since 2013.05.11 and it has been used many many times since the
+
+Nothing to do with Survex here.
+
+Indeed Survex handles the equivalent situation with a clear warning and error
+which highlight exactly how this is interpreted and what's wrong with it:
+
+baddaterange.svx:1:18: warning: Assuming 2 digit year is 1913
+ *date 2013.04.12-13
+                  ^~
+baddaterange.svx:1:7: error: End of date range is before the start
+ *date 2013.04.12-13
+       ^~~~~~~~~~~~~
+
+Cheers,
+    Olly
+
+From andrew at wotcc.org.uk  Thu Feb 20 12:57:51 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 20 Feb 2025 11:57:51 +0000
+Subject: [Therion] 3d to QGIS - different alignment
+Message-ID: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+
+Hi all
+
+Not strictly a Therion question, but the answer is likely to be in the 
+data entry or the interpretation of data in Therion.
+
+I'm slowly incorporating QGIS into my workflow, and trying to automate it.
+
+As such I'm using a modified version of the survex 3d importer
+
+https://github.com/AndrewAkinson/qgis3-survex-import_amend
+
+So that items can be easily switched on and off I'm going down the line 
+of importing the 3d files by cave rather than the generated one for the 
+whole catchment
+
+For now I'm doing it with the data in
+http://www.cave-registry.org.uk/svn/CheddarCatchment/
+
+Currently I'm working on the Longwood Valley area as Longwood Valley 
+Sink has been recently discovered.
+
+The directories I'm using
+
+RRift/ (3d needs to be generated from survex)
+LongwoodValleySink/
+Longwood/ (Fake data with calibrate compass -90!)
+Toothache/ (single leg)
+
+In each of these directories the .th file generates a survex 3d file
+
+Also in the the root there is a LongwoodValley.thcfg which has the above 
+caves (plus maybe Charterhouse, GB, TynningsGS and Reads depending on 
+how I left it)
+
+In the diagram attached (hopefully this list does attachments!)
+
+The Dark purple dots are the import of the 3d file that has Rhino, 
+Longwood, LongwoodValley Sink and Toothache together. The light pink, 
+yellow dots are the individual imports (and entrances from the MCRA 
+database.) Also included is an overlay of a scree shot from aven, which 
+agrees with the group import.
+
+The question is why is Longwood different when imported as a 3d on its 
+own compared with as a group? They are both using the same data!
+
+Andrew
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LongwoodValley_both.jpg
+Type: image/jpeg
+Size: 39897 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250220/d15a0c77/attachment-0001.jpg>
+
+From andrew at wotcc.org.uk  Thu Feb 20 14:09:44 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 20 Feb 2025 13:09:44 +0000
+Subject: [Therion] 3d to QGIS - different alignment
+In-Reply-To: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+References: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+Message-ID: <f1b94a76-e172-4f51-bbc4-071d68222a61@wotcc.org.uk>
+
+Found the problem.
+
+As it, is fake data, it does not have a date. It appears Therion use the 
+earliest date for the data is has for undated surveys. This is nearly 9? 
+difference between 1965 to today, which is quiet a swing. (I don't know 
+what if Therion uses today as the declination if it processes data none 
+of which has a date. I guess it just doesn't apply declination, which 
+currently for the UK is nearly the same thing)
+
+Solved by setting declination to zero, as the fake data is aligned with 
+true north.
+
+Not sure processing surveys that do not have a date with the oldest date 
+is the best option. This changes the answer depending on what caves it 
+is processed with. Not sure what the right answer is, but I fell 
+applying no declination is probably best. Then it either is broken or 
+acceptable where ever it is processed.
+
+This leads to the problem that I have lots of old data that I do not 
+know the date of, I need to think of the best way to handle this.
+
+thanks
+
+Andrew
+On 20/02/2025 11:57, Andrew Atkinson wrote:
+> Hi all
+> 
+> Not strictly a Therion question, but the answer is likely to be in the 
+> data entry or the interpretation of data in Therion.
+> 
+> I'm slowly incorporating QGIS into my workflow, and trying to automate it.
+> 
+> As such I'm using a modified version of the survex 3d importer
+> 
+> https://github.com/AndrewAkinson/qgis3-survex-import_amend
+> 
+> So that items can be easily switched on and off I'm going down the line 
+> of importing the 3d files by cave rather than the generated one for the 
+> whole catchment
+> 
+> For now I'm doing it with the data in
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/
+> 
+> Currently I'm working on the Longwood Valley area as Longwood Valley 
+> Sink has been recently discovered.
+> 
+> The directories I'm using
+> 
+> RRift/ (3d needs to be generated from survex)
+> LongwoodValleySink/
+> Longwood/ (Fake data with calibrate compass -90!)
+> Toothache/ (single leg)
+> 
+> In each of these directories the .th file generates a survex 3d file
+> 
+> Also in the the root there is a LongwoodValley.thcfg which has the above 
+> caves (plus maybe Charterhouse, GB, TynningsGS and Reads depending on 
+> how I left it)
+> 
+> In the diagram attached (hopefully this list does attachments!)
+> 
+> The Dark purple dots are the import of the 3d file that has Rhino, 
+> Longwood, LongwoodValley Sink and Toothache together. The light pink, 
+> yellow dots are the individual imports (and entrances from the MCRA 
+> database.) Also included is an overlay of a scree shot from aven, which 
+> agrees with the group import.
+> 
+> The question is why is Longwood different when imported as a 3d on its 
+> own compared with as a group? They are both using the same data!
+> 
+> Andrew
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From andrew at wotcc.org.uk  Thu Feb 20 14:47:24 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 20 Feb 2025 13:47:24 +0000
+Subject: [Therion] Automatic declination correction by date to Eastings and
+ Northings different to survex
+Message-ID: <5cb78600-3eed-48c3-a63c-37a85f453d66@wotcc.org.uk>
+
+I have a few files that are fake data made from paper surveys. These 
+come in various formats but a common one, and the one I tend to make if 
+I do it is in the form of
+
+data cartesian station easting northing altitude
+
+It appears that Therion applies automatic declination by date to this 
+form of data, so it defaulting to cartesian magnetic
+This is not the same default as Survex
+
+"By default, the North used is True North, but you can specify to use 
+Magnetic or Grid North (in the input coordinate system) with the 
+*cartesian command, and also specify an additional rotation to apply "
+
+The cartesian command does not seem to work in Therion. For now I've 
+bodged it buy applying declination 0 degrees but it would be better if 
+Therion followed the Survex manual to which the Therion book refers to 
+for commands.
+
+An example file is
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Longwood/Renolds/Renolds.th
+  You will need revision 479, otherwise you will get the bodge fix
+
+thanks
+
+Andrew
+
+
+From bgee at campercaver.net  Thu Feb 20 15:32:48 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 20 Feb 2025 08:32:48 -0600
+Subject: [Therion] 3d to QGIS - different alignment
+In-Reply-To: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+References: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+Message-ID: <e99b15a9-2bba-4cc7-93f4-fdc1245a2c71@campercaver.net>
+
+Hi Andrew -
+
+What a coincidence this is!  I have been struggling with QGIS for a 
+couple of weeks.  It has a VERY steep learning curve.  I am beginning to 
+think that our future as cave cartographers will include some kind of 
+GIS work.  Some sort of tutorial would be very useful for complete GIS 
+newbies like me
+
+I got your Survex plugin loaded.  That was easy.  It will open and view 
+a .3d file which is produced by Therion.  QGIS shows centerline and 
+survey stations, but no walls.  Nothing from LRUD.  I suspect that 
+Therion does not create the same kind of file as Survex.  Viewing the 
+file in Aven also does not show any kind of walls or passage polygons.
+
+I have struggled to get some sort of DEM file.  That is another learning 
+curve!  I have a GeoTIFF file which covers several square miles around 
+the current cave project.  The web site I got it from (USGS) would not 
+zoom in any further.  I was able to add another layer which is the .shp 
+file from Therion's ESRI output.  Also a .kml file.  Neither the .shp 
+nor the .kml file is visible
+
+This cave runs directly under the owner's house.  We would very much 
+like to see some sort of 3D view which shows how the cave and surface 
+are related.  I suspect there is only 20 feet or so between the house 
+and the cave.  Not much!  The owner has some ideas for renovation which 
+would reduce that, possibly to something that is not safe.
+
+
+===============
+Bill Gee
+
+On 2/20/25 05:57, Andrew Atkinson wrote:
+> Hi all
+> 
+> Not strictly a Therion question, but the answer is likely to be in the 
+> data entry or the interpretation of data in Therion.
+> 
+> I'm slowly incorporating QGIS into my workflow, and trying to automate it.
+> 
+> As such I'm using a modified version of the survex 3d importer
+> 
+> https://github.com/AndrewAkinson/qgis3-survex-import_amend
+> 
+> So that items can be easily switched on and off I'm going down the line 
+> of importing the 3d files by cave rather than the generated one for the 
+> whole catchment
+> 
+> For now I'm doing it with the data in
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/
+> 
+> Currently I'm working on the Longwood Valley area as Longwood Valley 
+> Sink has been recently discovered.
+> 
+> The directories I'm using
+> 
+> RRift/ (3d needs to be generated from survex)
+> LongwoodValleySink/
+> Longwood/ (Fake data with calibrate compass -90!)
+> Toothache/ (single leg)
+> 
+> In each of these directories the .th file generates a survex 3d file
+> 
+> Also in the the root there is a LongwoodValley.thcfg which has the above 
+> caves (plus maybe Charterhouse, GB, TynningsGS and Reads depending on 
+> how I left it)
+> 
+> In the diagram attached (hopefully this list does attachments!)
+> 
+> The Dark purple dots are the import of the 3d file that has Rhino, 
+> Longwood, LongwoodValley Sink and Toothache together. The light pink, 
+> yellow dots are the individual imports (and entrances from the MCRA 
+> database.) Also included is an overlay of a scree shot from aven, which 
+> agrees with the group import.
+> 
+> The question is why is Longwood different when imported as a 3d on its 
+> own compared with as a group? They are both using the same data!
+> 
+> Andrew
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Feb 20 16:06:48 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 20 Feb 2025 16:06:48 +0100
+Subject: [Therion] Therion & QGIS Styles
+Message-ID: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+
+Dear all,
+
+Some months ago, I told you that Alex Pont and me were working on setting GIS solution using shapefiles exported from Therion. Since some days, we have uploaded on GitHub the styles we are applying in QGIS for the shapefiles that we export from Therion. You will find them here : https://github.com/Alex38Lyon/QGis_Therion. 
+You should install them in QGIS with the plugin : QGIS Ressources Sharing.
+Feel free to use it !
+
+Doing that, we have found that some informations given in the th2 are missing in the shapefiles produced by Therion. An issue has been open there : https://github.com/therion/therion/issues/635
+
+Cheers,
+
+Xavier
+
+From bgee at campercaver.net  Thu Feb 20 16:25:44 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 20 Feb 2025 09:25:44 -0600
+Subject: [Therion] Therion & QGIS Styles
+In-Reply-To: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+References: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+Message-ID: <a5411b8b-28c5-4142-a1d0-3c3cb8226fba@campercaver.net>
+
+Hi Xavier -
+
+Nice!  Except that I cannot figure out how to install this plugin.  When 
+I search plugins in QGIS, the closest I find is called "QGIS Resource 
+Sharing" and has this description:
+
+"Search for published collections and install them for use with QGIS. 
+Symbology (SVG, images, styles), Processing scripts, Processing models, 
+R scripts and checklists are supported. There are several options for 
+repositories: Github, Bitbucket, local file system and HTTP(S)."
+
+The authors listed do not include either you or Alexander Pont
+
+Is this the right plugin?
+
+===============
+Bill Gee
+
+On 2/20/25 09:06, Xavier Robert wrote:
+> Dear all,
+> 
+> Some months ago, I told you that Alex Pont and me were working on setting GIS solution using shapefiles exported from Therion. Since some days, we have uploaded on GitHub the styles we are applying in QGIS for the shapefiles that we export from Therion. You will find them here : https://github.com/Alex38Lyon/QGis_Therion.
+> You should install them in QGIS with the plugin : QGIS Ressources Sharing.
+> Feel free to use it !
+> 
+> Doing that, we have found that some informations given in the th2 are missing in the shapefiles produced by Therion. An issue has been open there : https://github.com/therion/therion/issues/635
+> 
+> Cheers,
+> 
+> Xavier
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From andrew at wotcc.org.uk  Thu Feb 20 18:33:23 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 20 Feb 2025 17:33:23 +0000
+Subject: [Therion] 3d to QGIS - different alignment
+In-Reply-To: <e99b15a9-2bba-4cc7-93f4-fdc1245a2c71@campercaver.net>
+References: <aafce068-0e8d-4afd-9b04-39266aeb53c1@wotcc.org.uk>
+ <e99b15a9-2bba-4cc7-93f4-fdc1245a2c71@campercaver.net>
+Message-ID: <a8173a61-1ff6-4dc9-9442-2f11c14d9eb2@wotcc.org.uk>
+
+
+
+On 20/02/2025 14:32, Bill Gee wrote:
+> Hi Andrew -
+> 
+> What a coincidence this is!? I have been struggling with QGIS for a 
+> couple of weeks.? It has a VERY steep learning curve.? I am beginning to 
+> think that our future as cave cartographers will include some kind of 
+> GIS work.? Some sort of tutorial would be very useful for complete GIS 
+> newbies like me
+
+I agree it is a very steep learning curve, I'm still very much on it, 
+just not sure how high it is, but I'm getting to the stage I can do some 
+useful stuff. I think some sort of GIS will be the front end for 
+cavesurveying. Then we can concentrate on the cave data and the rest of 
+the world will deal with viewing the rest of the world for us
+> 
+> I got your Survex plugin loaded.? That was easy.? It will open and view 
+> a .3d file which is produced by Therion.? QGIS shows centerline and 
+> survey stations, but no walls.? Nothing from LRUD.? I suspect that 
+> Therion does not create the same kind of file as Survex.? Viewing the 
+> file in Aven also does not show any kind of walls or passage polygons.
+
+It is by no means mine, it is Patrick warren's I've done some 
+modification so that it opens up the 3d file in aven. It is also ready 
+to open the original data file. Currently there is a ticket so this 
+information gets included into the 3d file to make full automation 
+possible. Currently it assumes a one survey to one file each in their 
+own directory, which works for me and many that I've delivered courses 
+too, but there are many valid arrangements out there, hence needing the 
+information in the 3d file.
+> 
+> I have struggled to get some sort of DEM file.? That is another learning 
+> curve!? I have a GeoTIFF file which covers several square miles around 
+> the current cave project.? The web site I got it from (USGS) would not 
+> zoom in any further.? I was able to add another layer which is the .shp 
+> file from Therion's ESRI output.? Also a .kml file.? Neither the .shp 
+> nor the .kml file is visible
+
+DEM is confusing, and often treated differently. The native 3d view 
+handles WMS/WMTS served files but the QGIS2threejs needs downloaded 
+tiles and cannot do 3D across tile boundaries. Joining tiles is a dark 
+art I don't think I've mastered.
+
+
+> This cave runs directly under the owner's house.  We would very much
+> like to see some sort of 3D view which shows how the cave and surface
+> are related.  I suspect there is only 20 feet or so between the house
+> and the cave.  Not much!  The owner has some ideas for renovation
+> which would reduce that, possibly to something that is not safe.
+
+QGIS2threejs is very good. Main advantage is that it can be put on a web 
+page. The native 3D view has other benefits.
+
+This sort of thing is easy to produce once you've got over the initial 
+learning curve. Happy to help, either on the list or privately, 
+depending how much spam this list might want.
+
+http://goodlife.org.uk/__Survey/LVS/
+
+This link is likely to disappear over time.
+
+What I really like is the ease of sending, I have multiple sources of 
+data, I could do google/bing views, but need to sort the copyright 
+acknowledgement. So currently you only get OSM with and without the dots 
+on the surface and the 1795/1815 or there abouts map. (I need to fix the 
+acknowledgements on them.)
+But it has most of the tools you need, including measurement and 
+transparency. Beat aven (sorry Olly)
+
+enjoy
+
+Andrew
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Feb 20 18:36:28 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 20 Feb 2025 18:36:28 +0100
+Subject: [Therion] Therion & QGIS Styles
+In-Reply-To: <a5411b8b-28c5-4142-a1d0-3c3cb8226fba@campercaver.net>
+References: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+ <a5411b8b-28c5-4142-a1d0-3c3cb8226fba@campercaver.net>
+Message-ID: <7EDB0ABC-DBE1-470B-A20B-7970C46F1ECB@univ-grenoble-alpes.fr>
+
+Hi,
+
+Yes, this is this one. You should normally be able to directly connect to the github repo. This is not in the official QGIS repositories, but there is an option where you can give the link to a custom repository.
+
+Cheers,
+
+Xavier
+
+> Le 20 f?vr. 2025 ? 16:25, Bill Gee <bgee at campercaver.net> a ?crit :
+> 
+> Hi Xavier -
+> 
+> Nice!  Except that I cannot figure out how to install this plugin.  When I search plugins in QGIS, the closest I find is called "QGIS Resource Sharing" and has this description:
+> 
+> "Search for published collections and install them for use with QGIS. Symbology (SVG, images, styles), Processing scripts, Processing models, R scripts and checklists are supported. There are several options for repositories: Github, Bitbucket, local file system and HTTP(S)."
+> 
+> The authors listed do not include either you or Alexander Pont
+> 
+> Is this the right plugin?
+> 
+> ===============
+> Bill Gee
+> 
+> On 2/20/25 09:06, Xavier Robert wrote:
+>> Dear all,
+>> Some months ago, I told you that Alex Pont and me were working on setting GIS solution using shapefiles exported from Therion. Since some days, we have uploaded on GitHub the styles we are applying in QGIS for the shapefiles that we export from Therion. You will find them here : https://github.com/Alex38Lyon/QGis_Therion.
+>> You should install them in QGIS with the plugin : QGIS Ressources Sharing.
+>> Feel free to use it !
+>> Doing that, we have found that some informations given in the th2 are missing in the shapefiles produced by Therion. An issue has been open there : https://github.com/therion/therion/issues/635
+>> Cheers,
+>> Xavier
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Feb 20 18:38:19 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 20 Feb 2025 18:38:19 +0100
+Subject: [Therion] Therion & QGIS Styles
+In-Reply-To: <7EDB0ABC-DBE1-470B-A20B-7970C46F1ECB@univ-grenoble-alpes.fr>
+References: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+ <a5411b8b-28c5-4142-a1d0-3c3cb8226fba@campercaver.net>
+ <7EDB0ABC-DBE1-470B-A20B-7970C46F1ECB@univ-grenoble-alpes.fr>
+Message-ID: <09D72FAD-CD2E-4FC1-8041-FE0243636D60@univ-grenoble-alpes.fr>
+
+See this help : https://qgis-contribution.github.io/QGIS-ResourceSharing/
+
+Xav
+
+> Le 20 f?vr. 2025 ? 18:36, Xavier Robert <xavier.robert at univ-grenoble-alpes.fr> a ?crit :
+> 
+> Hi,
+> 
+> Yes, this is this one. You should normally be able to directly connect to the github repo. This is not in the official QGIS repositories, but there is an option where you can give the link to a custom repository.
+> 
+> Cheers,
+> 
+> Xavier
+> 
+>> Le 20 f?vr. 2025 ? 16:25, Bill Gee <bgee at campercaver.net> a ?crit :
+>> 
+>> Hi Xavier -
+>> 
+>> Nice!  Except that I cannot figure out how to install this plugin.  When I search plugins in QGIS, the closest I find is called "QGIS Resource Sharing" and has this description:
+>> 
+>> "Search for published collections and install them for use with QGIS. Symbology (SVG, images, styles), Processing scripts, Processing models, R scripts and checklists are supported. There are several options for repositories: Github, Bitbucket, local file system and HTTP(S)."
+>> 
+>> The authors listed do not include either you or Alexander Pont
+>> 
+>> Is this the right plugin?
+>> 
+>> ===============
+>> Bill Gee
+>> 
+>> On 2/20/25 09:06, Xavier Robert wrote:
+>>> Dear all,
+>>> Some months ago, I told you that Alex Pont and me were working on setting GIS solution using shapefiles exported from Therion. Since some days, we have uploaded on GitHub the styles we are applying in QGIS for the shapefiles that we export from Therion. You will find them here : https://github.com/Alex38Lyon/QGis_Therion.
+>>> You should install them in QGIS with the plugin : QGIS Ressources Sharing.
+>>> Feel free to use it !
+>>> Doing that, we have found that some informations given in the th2 are missing in the shapefiles produced by Therion. An issue has been open there : https://github.com/therion/therion/issues/635
+>>> Cheers,
+>>> Xavier
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Thu Feb 20 21:54:59 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 20 Feb 2025 21:54:59 +0100
+Subject: [Therion] Generating list of drawers
+Message-ID: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+
+Hi,
+before I dig into SQL myself, does by chance somebody already made a 
+script or SQL to generate a list showing: "who has drawn how much length 
+of the surveys".
+
+Something along:
+Person A: 250m
+Person B:  199m
+Person C: 80m
+...
+
+
+Thank you :)
+
+From beni at hallinger.org  Thu Feb 20 21:56:26 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 20 Feb 2025 21:56:26 +0100
+Subject: [Therion] Extended elevation control - Embedded image does not
+ appear in some layouts
+In-Reply-To: <ae76189f4c2ef667567c70a33c495684@hallinger.org>
+References: <1407d3fe-8701-4509-970a-125501c33f07@campercaver.net>
+ <000201db7dea$820de6d0$8629b470$@tomo.co.nz>
+ <30611879-beff-4fa3-808f-c4977420ff05@campercaver.net>
+ <ef1c971f-bc8d-47f0-a4b4-b8e4cff908c7@ntlworld.com>
+ <9140258b-078b-4909-b972-3254073ef7b8@campercaver.net>
+ <d68d8a69-d682-434f-a3c4-1ca695d2738a@ntlworld.com>
+ <8f1d994c-32f6-467e-9c6a-12a4327704ef@campercaver.net>
+ <2adcbc1a-a29a-4e15-9683-b95ac048bb1a@ntlworld.com>
+ <000001db7ff5$6e72e460$4b58ad20$@tomo.co.nz>
+ <cfafe227-2173-43b2-8eda-3fd05d961599@campercaver.net>
+ <f9ed6c3a-1647-4444-84d9-72be26034473@wotcc.org.uk>
+ <ae76189f4c2ef667567c70a33c495684@hallinger.org>
+Message-ID: <028b603c54962b59e510ab913ffcf5e7@hallinger.org>
+
+To follow up on this "tas" idea; I really want to discuss this and 
+opened an issue ticket for that:
+https://github.com/therion/therion/issues/640
+
+What is your opinion on such a feature?
+
+
+Am 2025-02-19 18:02, schrieb Benedikt Hallinger via Therion:
+> I really feel, we need a "true" way of specifying how to hide/select 
+> things for various outputs.
+> Some kind of optional selector attribute inherent to any symbol, 
+> without affecting or misuing the other settings.
+> This cuold also be used to hide/select symbols based on scale (which is 
+> currently kind-of-supported by using the symbol size - which I cannot 
+> use beause I need that for actual sizing of stuff).
+> 
+> A quick Idea could be:
+> 1. untagged elements are always printed
+> 
+> 2. tagged elements only if they are selected in the thconfig
+> 
+> 3. actual systematic is user-defined, so we have maximum flexibility.
+> For example, I could imagine mixing several systematics, one for 
+> desired output scale and another for special purposes:
+> 
+> --------- thconfig --------
+> select tag scale:250
+> select tag scale:500
+> select tag remarks
+> select tag crossSections:abc
+> export map ....
+> ---------------------------
+> In the th2's I just tag the items with "-tag scale:500" or "-tag 
+> crossSections:abc" (or both).
+> This would completely (and optionally) decouple the show/hide from 
+> internal magic and support various usecases out of the box. One just 
+> needs to think of a good tagging systematic for his usecases/dataset.
+> 
+> 
+> 
+> 
+> Am 2025-02-19 17:29, schrieb Andrew Atkinson:
+>> On 19/02/2025 15:58, Bill Gee wrote:
+>>> I would also like a way to produce a map which has SOME (not all) 
+>>> cross- sections.? Right now it is all or nothing.? You either get 
+>>> every cross- section or you get no cross-sections.? This might be 
+>>> done by using PDF layers and letting the cross-section scrap specify 
+>>> the layer it goes on.
+>> 
+>> You can sort of do this with
+>> -attr <name> <value>. <name>
+>> Then use this in metapost
+>> 
+>> p36 thbook
+>> You can test presence of such a variable using if known ATTR_<name>: 
+>> ... fi.
+>> 
+>> However, my metapost was not good enough and I kept getting bugs. So I 
+>> used python to pull them out, then removed the ones I wanted. I 
+>> thought I had put the code online, but cannot find it!
+>> 
+>> However, the use of attr would work better if symbol-hide worked for 
+>> it. Unfortunately I do not think that it does.
+>> 
+>> You could abuse the system by abusing the -context option and setting 
+>> it to a symbol you do not use then turn that off with symbol-hide.
+>> 
+>> 
+>> Andrew
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Fri Feb 21 01:27:15 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 20 Feb 2025 18:27:15 -0600
+Subject: [Therion] Therion & QGIS Styles
+In-Reply-To: <09D72FAD-CD2E-4FC1-8041-FE0243636D60@univ-grenoble-alpes.fr>
+References: <DC9D3F94-BA24-41AD-A5BD-E29E4DBB0C0D@univ-grenoble-alpes.fr>
+ <a5411b8b-28c5-4142-a1d0-3c3cb8226fba@campercaver.net>
+ <7EDB0ABC-DBE1-470B-A20B-7970C46F1ECB@univ-grenoble-alpes.fr>
+ <09D72FAD-CD2E-4FC1-8041-FE0243636D60@univ-grenoble-alpes.fr>
+Message-ID: <6a9379ca-c486-4a08-a272-682dfa57efdb@campercaver.net>
+
+What did I say about QGIS having a steep learning curve??
+
+I finally did figure this out.  The key point I was missing is that 
+"QGIS Resource Sharing" is NOT the Therion symbols and styles.  It is 
+the tool which can install the Therion symbols and styles.
+
+"QGIS Resource Sharing" was easy to install from the QGIS menu for 
+managing plugins.  It shows up as a new item under the Plugins pull-down 
+menu.  Once it is launched, you have to install a new repository.  The 
+repository URL is what Xavier sent out in his first missive.  Repeating 
+here for documentation purposes:
+
+https://github.com/Alex38Lyon/QGis_Therion
+
+The last step is to install the collection from the new repository.
+
+Now I need to figure out how to use the styles.
+
+===============
+Bill Gee
+
+On 2/20/25 11:38, Xavier Robert wrote:
+> See this help : https://qgis-contribution.github.io/QGIS-ResourceSharing/
+> 
+> Xav
+> 
+>> Le 20 f?vr. 2025 ? 18:36, Xavier Robert <xavier.robert at univ-grenoble-alpes.fr> a ?crit :
+>>
+>> Hi,
+>>
+>> Yes, this is this one. You should normally be able to directly connect to the github repo. This is not in the official QGIS repositories, but there is an option where you can give the link to a custom repository.
+>>
+>> Cheers,
+>>
+>> Xavier
+>>
+>>> Le 20 f?vr. 2025 ? 16:25, Bill Gee <bgee at campercaver.net> a ?crit :
+>>>
+>>> Hi Xavier -
+>>>
+>>> Nice!  Except that I cannot figure out how to install this plugin.  When I search plugins in QGIS, the closest I find is called "QGIS Resource Sharing" and has this description:
+>>>
+>>> "Search for published collections and install them for use with QGIS. Symbology (SVG, images, styles), Processing scripts, Processing models, R scripts and checklists are supported. There are several options for repositories: Github, Bitbucket, local file system and HTTP(S)."
+>>>
+>>> The authors listed do not include either you or Alexander Pont
+>>>
+>>> Is this the right plugin?
+>>>
+>>> ===============
+>>> Bill Gee
+>>>
+>>> On 2/20/25 09:06, Xavier Robert wrote:
+>>>> Dear all,
+>>>> Some months ago, I told you that Alex Pont and me were working on setting GIS solution using shapefiles exported from Therion. Since some days, we have uploaded on GitHub the styles we are applying in QGIS for the shapefiles that we export from Therion. You will find them here : https://github.com/Alex38Lyon/QGis_Therion.
+>>>> You should install them in QGIS with the plugin : QGIS Ressources Sharing.
+>>>> Feel free to use it !
+>>>> Doing that, we have found that some informations given in the th2 are missing in the shapefiles produced by Therion. An issue has been open there : https://github.com/therion/therion/issues/635
+>>>> Cheers,
+>>>> Xavier
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From vpicaver at gmail.com  Tue Feb 25 22:32:11 2025
+From: vpicaver at gmail.com (Philip Schuchardt)
+Date: Tue, 25 Feb 2025 13:32:11 -0800
+Subject: [Therion] Need help installing Therion on windows arm64
+Message-ID: <CAPKHzkm5WrN9UKhPVJA895dMAC3aUZqM8AZNfdQ1qKbkA7y-3w@mail.gmail.com>
+
+I have a mac. I have therion install on my mac, but I want to try out *csurvey.
+*csurvey only runs on Windows, which I've installed in a Windows 11 VM
+(arm64), but when I go to install therion I get this error:
+
+[image: Screenshot 2025-02-25 at 1.24.51?PM.png]
+Most x64 software will run just fine on arm windows, it just goes through
+an emulation layer. I think this is just a check in the installer. Do you
+all have any ideas? Or should I try to build Therion from source on windows?
+
+It would be nice if the windows binary was sign so you don't get this
+message (I know it spendy and annoying to get EV certification):
+[image: Screenshot 2025-02-25 at 1.24.23?PM.png]
+
+Thanks!
+Phi|ip
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250225/f5ba1266/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot 2025-02-25 at 1.24.51?PM.png
+Type: image/png
+Size: 14405 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250225/f5ba1266/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot 2025-02-25 at 1.24.23?PM.png
+Type: image/png
+Size: 29858 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250225/f5ba1266/attachment-0003.png>
+
+From rsev at pm.me  Fri Feb 28 09:08:19 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Fri, 28 Feb 2025 08:08:19 +0000
+Subject: [Therion] smooth option details
+Message-ID: <75qOCVJWVgiRfZsheCY_Vyx9YK-xgnZ2m4KDd0oECvjKMrYgF6wwR-4b9F0ftir7-Dw9xnuMcZ_CHHKXwfcqO65S-7OMVmOlnhYbwtVv5EQ=@pm.me>
+
+Hi,
+
+I am trying to better uderstand the line segment smooth option. Therion Book currently states that:
+
+"* smooth <on/off/auto> -> whether the line is smooth at the given point. Auto is default."
+
+From some tests I believe that the resulting behaviour could be explained in details as:
+
+"* smooth <on/off/auto> -> whether the line is smooth at the given point. Auto is default. This setting only has any effect if both segments that passes through the point affected by the smooth setting are Bezier Curves (the one arriving at it and the one leaving it). On means that the line connection at this point will be smoothed, both by therion and by xTherion. Off means that smoothness at the point is not guaranteded. Auto means that, if both segments that passes through the point are Bezier Curves, Therion will automatically detected if they are smooth and, if they are detected as smooth, Therion will keep them smooth in it's transformations. xTherion always creates Bezier Curves as smooth, even if the previous segment was a straight one."
+
+Is this detailed explanation correct? Is there any correction or inclusion that would be appropriate?
+
+Regards,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250228/65b28808/attachment.htm>
+

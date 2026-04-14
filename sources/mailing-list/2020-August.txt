@@ -1,0 +1,3088 @@
+From bruce at tomo.co.nz  Sat Aug  1 03:04:32 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 1 Aug 2020 13:04:32 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82).
+Message-ID: <004d01d6679f$b8fbd0a0$2af371e0$@tomo.co.nz>
+
+Thanks Stacho
+
+This is much appreciated.  Might take me a while to work through testing it.
+
+ 
+
+Regarding ‘extend <number>’, can this be used as ‘extend <number> [<station> | <leg>]’?
+
+Or can it only be used in-line with the survey data? Or can it apply to groups of extend statements defined in a block separate to the survey data?
+
+ 
+
+Just starting to compare before and after (extend splay and loop bugs resolution) by looking through my datasets.
+
+A sample of one with no loops suggests the splay fix is good, or at least credible.
+
+A sample of one other with some loops that caused me pain when originally drawn, suggests that the difficult loops may have remained unchanged, but there is at least one unexpected change as illustrated below.  There is an unexpected and unwanted display of station 6.3
+
+ 
+
+The extend control for this part of the cave follows.
+
+
+
+
+
+This is how Aven interprets the loops (shown in (projected) elevation) ie a loop within a loop within a loop.
+
+Curious how Aven does not seem to recognise the two ignored legs within the loop, as being within a loop ie they are coloured grey, and not blue to reflect the std deviation of the closure error.
+
+
+
+ 
+
+Therion original incorrect extended splay behaviour
+
+
+
+New Therion 5.5.1+9860f82 splay behaviour
+
+
+
+PocketTopo extended drawing and splays
+
+
+
+PocketTopo drawn and TopParser generated xvi on which above drawings are based
+
+
+
+ 
+
+Station 6.15 has the same map-connection line in each Therion export, but station 6.3 pops up with a spurious map-connection in 6860f82.
+
+Notice how the xvi splays are different in all of the above.  It has long been my suspicion that each application produces quite different extended splay interpretations, so I am not surprised or necessarily troubled by this.
+
+When drawing in a cave I often think that PocketTopo gets it quite wrong (and it changes splays dynamically when the next leg is surveyed – which is disturbing at the time, but is adhering to the paradigm whereby splays are allocated to the leg with the closest bearing).
+
+It looks like the new Therion 6860f82 extended splays are quite similar to PocketTopo but not so much like the xvi.  I presume the xvi is incorrect.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Thursday, 30 July 2020 22:45
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Splays - Revisiting Breaking extended elevations
+
+ 
+
+I have tried to fix all the extended elevation issues in the latest development snapshot (commit 6860f82 <https://github.com/therion/therion/commit/6860f82e616edb5e0fc7b35120cfc68eb682897a> ).
+
+ 
+
+1. splay shots should be extended relatively to survey shot with closest (horizontal) bearing
+
+ 
+
+2. there is a possibility to specify reduction ratio for extended elevation (0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+ 
+
+3. extend ignore via path of 3 points should now work -- use "extend ignore <s1> <s2> <s3>". I think this should allow all crazy loop configurations to be solved, but I am not still 100% sure.
+
+ 
+
+Unfortunately (but not surprisingly :/), there was a bug with the extended elevation algorithm. In the case there were loops present in the centerline, it caused some random behaviour.
+
+ 
+
+I have tried to fix this bug, but it required quite a deep change to the code. My data seems to work, but I suppose, there may be some cases when it still can fail. Could you please try your datasets?
+
+ 
+
+Thanks, S
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 154350 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 18184 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image013.png
+Type: image/png
+Size: 230646 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image014.png
+Type: image/png
+Size: 395845 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image018.png
+Type: image/png
+Size: 429634 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image019.png
+Type: image/png
+Size: 158275 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image020.png
+Type: image/png
+Size: 257217 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/2463e4f9/attachment-0006.png>
+
+From bruce at tomo.co.nz  Sat Aug  1 04:57:55 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 1 Aug 2020 14:57:55 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+Message-ID: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+
+> there is a possibility to specify reduction ratio for extended elevation
+(0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+ 
+
+I have a project that is just perfect for this, but have not been able to
+make it work.  I expect I have not understood how the syntax is intended to
+be used.
+
+The statements below relate to only a small part of the selected survey
+centreline, and cause this error
+
+":\Program Files (x86)\Therion\therion.exe: error --
+Extend-DwarfsDoorElevEXT.th [120] -- station doesn't exist - 1"
+
+ 
+
+If I remove the group endgroup pair, the project compiles just fine, however
+this branch (and the whole extended elevation) is compiled full size without
+the 85% reduction specified.  The 'extend 85' statement is ignored.
+
+Also there seems to be a problem in that a group block is somehow cancelling
+the station-names specification (whether or not it is moved inside or
+outside of the group block).  I have never really used group blocks, so am
+not familiar with their limitations.
+
+ 
+
+centreline 
+
+  group
+
+    station-names []@D-K6 #DwarfsD-K6-Stream.th
+
+    # now foreshorten this passage so station 13 appears near to station 2
+(the red branch in the diagram below)
+
+    # they could have been a loop, but the surveyor did not close to the
+same locations
+
+    extend 85
+
+    extend left 1
+
+  endgroup
+
+endcentreline
+
+ 
+
+
+
+ 
+
+ 
+
+If I try
+
+    extend 85 left 1
+
+ 
+
+then I get the error
+
+"C:\Program Files (x86)\Therion\therion.exe: error --
+Extend-DwarfsDoorElevEXT.th [120] -- unknown extend flag - 85"
+
+ 
+
+BTW I assume the reduction and the three-station path ignores will be
+reported when log extend is added to the thconfig?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/1547b538/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 100132 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/1547b538/attachment.png>
+
+From tarquin.wilton-jones at ntlworld.com  Sat Aug  1 09:12:42 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 1 Aug 2020 08:12:42 +0100
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+In-Reply-To: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+References: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+Message-ID: <dc9e20af-fc8d-f333-6d28-0cb91f6bd8a0@ntlworld.com>
+
+>     extend 85
+> 
+>     extend left 1
+> 
+>   endgroup
+
+Not sure how that would even work, since you start and end a group
+without ever having a station 1 (or any legs) within it. Shouldn't the
+legs be specified before the "endgroup"?
+
+>     extend 85 left 1
+
+I had assumed you would use it with two separate commands like this:
+
+extend 85 1
+extend left 1
+
+or
+
+extend 85 1 2
+extend left 1 2
+
+That is to say; you use the scaling number in the <spec> position.
+<spec> therefore becomes one of these:
+
+normal
+reverse
+left
+right
+vertical
+start
+ignore
+hide
+<number>
+
+Not yet had a chance to test how scaling behaves though.
+
+
+From bruce at tomo.co.nz  Sat Aug  1 10:05:48 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 1 Aug 2020 20:05:48 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+In-Reply-To: <dc9e20af-fc8d-f333-6d28-0cb91f6bd8a0@ntlworld.com>
+References: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+ <dc9e20af-fc8d-f333-6d28-0cb91f6bd8a0@ntlworld.com>
+Message-ID: <000201d667da$92977820$b7c66860$@tomo.co.nz>
+
+> Not sure how that would even work, since you start and end a group without ever having a station 1 (or any legs) within it. Shouldn't the legs be specified before the "endgroup"?
+Guess I'm misunderstanding group blocks.
+
+> I had assumed you would use it with two separate commands like this:
+> extend 85 1
+> extend left 1
+> or
+> extend 85 1 2
+> extend left 1 2
+
+Nope, still gets the unknown extend flag error.
+Bruce
+
+
+
+From bruce at tomo.co.nz  Wed Aug 12 12:17:53 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 12 Aug 2020 22:17:53 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+In-Reply-To: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+References: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+Message-ID: <000001d67091$d9608ac0$8c21a040$@tomo.co.nz>
+
+Stacho
+
+> there is a possibility to specify reduction ratio for extended elevation
+(0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+ 
+
+I have made this work, by placing 'extend <number>' statements in-line with
+the survey data, but that seems to be the only way it will work.  Every
+combination I could think of with the extend controls in a separate
+centreline or block results in an error.
+
+ 
+
+For an example I have managed to make this extended centreline.
+
+ 
+
+
+
+ 
+
+.into this by using strategically placed 'extend 50', 'extend 100', and
+'extend 75', as well as an 'extend vertical'.  It now matches more closely
+what one would expect by looking at the plan view.
+
+ 
+
+
+
+ 
+
+So it works very well, but the difficulty I have is that to make the
+extended elevation control manageable, it needs to be separated out (in one
+place) from the survey data, but now any control of the extend ratio must be
+in-line with the data.  This makes it very confusing and difficult to
+manage.  
+
+ 
+
+Is there any chance that the ratio could be controlled by statements in
+separate centrelines, as with left/right/vertical etc?
+
+ 
+
+Maybe by allowing the form 'extend [left <ratio>] <station1> <station2>' as
+an equivalent to the in-line statements 'extend <ratio>' and then 'extend
+left'?
+
+(I am thinking of similar syntax to 'export map -projection [elevation 290
+deg]' where the square brackets are required if the default is not what is
+wanted).
+
+ 
+
+ 
+
+The extend ratios are applied to splays as well as to legs, which is usually
+desirable, except sometimes where the ratio approaches zero.  If the user is
+to control splay ratios separately to the legs, then I guess the only option
+is to put the extend ratio statements in-line.
+
+ 
+
+And one more thing.  The range is limited from 0 to 100%.  If we are going
+to allow distortion of the extended elevation, then I think the upper limit
+should be something like 150% or 200%.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/9637f589/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 109111 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/9637f589/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 92204 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/9637f589/attachment-0001.png>
+
+From bruce at tomo.co.nz  Wed Aug 12 12:25:16 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 12 Aug 2020 22:25:16 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+In-Reply-To: <000001d67091$d9608ac0$8c21a040$@tomo.co.nz>
+References: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+ <000001d67091$d9608ac0$8c21a040$@tomo.co.nz>
+Message-ID: <000b01d67092$e047db30$a0d79190$@tomo.co.nz>
+
+And it looks like the extend ratio is not reported when 'log extend' is set.
+
+It would be nice to have that if it is possible.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Wednesday, 12 August 2020 22:18
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Extended elevations - development snapshot (commit
+6860f82)
+
+ 
+
+Stacho
+
+> there is a possibility to specify reduction ratio for extended elevation
+(0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+ 
+
+I have made this work, by placing 'extend <number>' statements in-line with
+the survey data, but that seems to be the only way it will work.  Every
+combination I could think of with the extend controls in a separate
+centreline or block results in an error.
+
+ 
+
+For an example I have managed to make this extended centreline.
+
+ 
+
+
+
+ 
+
+.into this by using strategically placed 'extend 50', 'extend 100', and
+'extend 75', as well as an 'extend vertical'.  It now matches more closely
+what one would expect by looking at the plan view.
+
+ 
+
+
+
+ 
+
+So it works very well, but the difficulty I have is that to make the
+extended elevation control manageable, it needs to be separated out (in one
+place) from the survey data, but now any control of the extend ratio must be
+in-line with the data.  This makes it very confusing and difficult to
+manage.  
+
+ 
+
+Is there any chance that the ratio could be controlled by statements in
+separate centrelines, as with left/right/vertical etc?
+
+ 
+
+Maybe by allowing the form 'extend [left <ratio>] <station1> <station2>' as
+an equivalent to the in-line statements 'extend <ratio>' and then 'extend
+left'?
+
+(I am thinking of similar syntax to 'export map -projection [elevation 290
+deg]' where the square brackets are required if the default is not what is
+wanted).
+
+ 
+
+ 
+
+The extend ratios are applied to splays as well as to legs, which is usually
+desirable, except sometimes where the ratio approaches zero.  If the user is
+to control splay ratios separately to the legs, then I guess the only option
+is to put the extend ratio statements in-line.
+
+ 
+
+And one more thing.  The range is limited from 0 to 100%.  If we are going
+to allow distortion of the extended elevation, then I think the upper limit
+should be something like 150% or 200%.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/2e490789/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 109111 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/2e490789/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 100011 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/2e490789/attachment-0001.png>
+
+From thorirmar at gmail.com  Wed Aug 12 19:30:41 2020
+From: thorirmar at gmail.com (=?UTF-8?B?w57Ds3JpciBNw6FyIErDs25zc29u?=)
+Date: Wed, 12 Aug 2020 17:30:41 +0000
+Subject: [Therion] Building Therion on Centos 8 (stream)
+Message-ID: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+
+I am building Therion for the first time and getting one Proj related error
+when running make:
+
+-------------------------------------------------------------------------------
+projections: EPSG label
+-------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 &&
+strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+with expansion:*  false*
+*====*===========================================================================
+test cases: 18 | 17 passed | *1 failed*
+assertions: 44 | 43 passed | *1 failed*
+
+make: *** [Makefile:184: tests] Error 1
+
+Is this an error I can ignore or something I need to fix? If so, do
+you have any pointers to how I might do that?
+
+
+Best regards,
+
+Þórir Már
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/c0338229/attachment.htm>
+
+From m.budaj at gmail.com  Wed Aug 12 22:01:23 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 12 Aug 2020 22:01:23 +0200
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+Message-ID: <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+
+Hi,
+
+check if you have libsqlite3-tcl (or equivalent) installed and working.
+It's required for correct parsing of projection names from the EPSG
+database.
+
+Best regards
+Martin
+
+
+On Wed, Aug 12, 2020, 19:34 Þórir Már Jónsson <thorirmar at gmail.com> wrote:
+
+> I am building Therion for the first time and getting one Proj related
+> error when running make:
+>
+> -------------------------------------------------------------------------------
+> projections: EPSG label
+> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+> with expansion:*  false*
+> *====*===========================================================================
+> test cases: 18 | 17 passed | *1 failed*
+> assertions: 44 | 43 passed | *1 failed*
+>
+> make: *** [Makefile:184: tests] Error 1
+>
+> Is this an error I can ignore or something I need to fix? If so, do you have any pointers to how I might do that?
+>
+>
+> Best regards,
+>
+> Þórir Már
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/77939315/attachment.htm>
+
+From lists at group-s.sk  Wed Aug 12 22:49:48 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 12 Aug 2020 22:49:48 +0200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ 6860f82)
+In-Reply-To: <000b01d67092$e047db30$a0d79190$@tomo.co.nz>
+References: <005c01d667af$9019dc80$b04d9580$@tomo.co.nz>
+ <000001d67091$d9608ac0$8c21a040$@tomo.co.nz>
+ <000b01d67092$e047db30$a0d79190$@tomo.co.nz>
+Message-ID: <CAP35+gEOJB+OdL47PHAJBaOs2RCqQxheu36K-i+ZV6Rz+qSm9g@mail.gmail.com>
+
+Hi Bruce, thanks a lot for your feedback.
+
+I have added logging of extend ratio, when it is not 100%. Also I hope, I
+have enabled specification of ratio for given station/shot:
+
+extend <ratio> <from> <to>
+extend <ratio> <station>
+
+Allowing the form extend [left <ratio>] would be much more parsing. I have
+also changed the allowed range to 0 - 200%.
+
+Extend ratios are applied to spays also - but in this case - extend ratio
+of nearest shot is taken for splay. I think, this way it is OK.
+
+Could you please check whether it is working now as expected (commit c7d41d9
+<https://github.com/therion/therion/commit/c7d41d96ebc47a652243711489813635e58c64d3>
+<https://github.com/therion/therion/commit/c7d41d96ebc47a652243711489813635e58c64d3>
+)?
+
+Thanks, S.
+
+
+
+
+
+
+
+On Wed, 12 Aug 2020 at 12:25, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> And it looks like the extend ratio is not reported when ‘log extend’ is
+> set.
+>
+> It would be nice to have that if it is possible.
+>
+> Bruce
+>
+>
+>
+> *From:* Therion <therion-bounces at speleo.sk> *On Behalf Of *Bruce Mutton
+> *Sent:* Wednesday, 12 August 2020 22:18
+> *To:* 'List for Therion users' <therion at speleo.sk>
+> *Subject:* [Therion] Extended elevations - development snapshot (commit
+> 6860f82)
+>
+>
+>
+> Stacho
+>
+> > there is a possibility to specify reduction ratio for extended elevation
+> (0 = vertical, 100 = normal left/right) - just use "extend <number>"
+>
+>
+>
+> I have made this work, by placing ‘extend <number>’ statements in-line
+> with the survey data, but that seems to be the only way it will work.
+> Every combination I could think of with the extend controls in a separate
+> centreline or block results in an error.
+>
+>
+>
+> For an example I have managed to make this extended centreline…
+>
+>
+>
+>
+>
+> …into this by using strategically placed ‘extend 50’, ‘extend 100’, and
+> ‘extend 75’, as well as an ‘extend vertical’.  It now matches more closely
+> what one would expect by looking at the plan view.
+>
+>
+>
+>
+>
+> So it works very well, but the difficulty I have is that to make the
+> extended elevation control manageable, it needs to be separated out (in one
+> place) from the survey data, but now any control of the extend ratio must
+> be in-line with the data.  This makes it very confusing and difficult to
+> manage.
+>
+>
+>
+> Is there any chance that the ratio could be controlled by statements in
+> separate centrelines, as with left/right/vertical etc?
+>
+>
+>
+> Maybe by allowing the form ‘extend [left <ratio>] <station1> <station2>’
+> as an equivalent to the in-line statements ‘extend <ratio>’ and then
+> ‘extend left’?
+>
+> (I am thinking of similar syntax to ‘export map -projection [elevation 290
+> deg]’ where the square brackets are required if the default is not what is
+> wanted).
+>
+>
+>
+>
+>
+> The extend ratios are applied to splays as well as to legs, which is
+> usually desirable, except sometimes where the ratio approaches zero.  If
+> the user is to control splay ratios separately to the legs, then I guess
+> the only option is to put the extend ratio statements in-line.
+>
+>
+>
+> And one more thing.  The range is limited from 0 to 100%.  If we are going
+> to allow distortion of the extended elevation, then I think the upper limit
+> should be something like 150% or 200%.
+>
+>
+>
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/f85da698/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 109111 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/f85da698/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 100011 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200812/f85da698/attachment-0001.png>
+
+From wookey at wookware.org  Thu Aug 13 01:18:16 2020
+From: wookey at wookware.org (Wookey)
+Date: Thu, 13 Aug 2020 00:18:16 +0100
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+Message-ID: <20200812231815.GZ1006@mail.wookware.org>
+
+On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>    Hi,
+>    check if you have libsqlite3-tcl (or equivalent) installed and working.
+>    It's required for correct parsing of projection names from the EPSG
+>    database.
+
+Is this a build-time only dependency or should it also be present at runtime?
+
+It gets pulled in on debian builds but I'm not quite sure why. It
+should perhaps be explicitly specified. Is this new or has it been true for years?
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/918b106b/attachment.sig>
+
+From m.budaj at gmail.com  Thu Aug 13 08:34:11 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 13 Aug 2020 08:34:11 +0200
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <20200812231815.GZ1006@mail.wookware.org>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+Message-ID: <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+
+Hi,
+just build-time, introduced in 5.4.4. It's used to generate parts of
+thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+which uses sqlite3 format of its database (older versions used plain text
+files).
+Martin
+
+On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+
+> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+> >    Hi,
+> >    check if you have libsqlite3-tcl (or equivalent) installed and
+> working.
+> >    It's required for correct parsing of projection names from the EPSG
+> >    database.
+>
+> Is this a build-time only dependency or should it also be present at
+> runtime?
+>
+> It gets pulled in on debian builds but I'm not quite sure why. It
+> should perhaps be explicitly specified. Is this new or has it been true
+> for years?
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Debian, Wookware, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/e82b2f07/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Aug 13 12:20:47 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 13 Aug 2020 22:20:47 +1200
+Subject: [Therion] Extended elevations - development snapshot (commit
+ c7d41d9)
+Message-ID: <000001d6715b$6b9ecc20$42dc6460$@tomo.co.nz>
+
+Thanks Stacho, fast work.
+
+ 
+
+The extend logging works, the scaled legs stand out nicely.
+
+
+
+ 
+
+My current project behaved exactly the same with c7d41d9 so I don’t think it broke anything.
+
+Moving the scaled legs from in-line with the survey data, out to a separate centreline using…
+
+extend <ratio> <from> <to>
+
+extend <ratio> <station>
+
+…also worked perfectly.
+
+ 
+
+I got a slight surprise in that ‘extend <ratio> <station>’ scales both the incoming and outgoing legs to and from that station, but then I realised that this is consistent with Therion’s treatment of other extend options ie as described in /wiki/extend <https://therion.speleo.sk/wiki/extend#summary_of_all_extend_options_for_survey_centrelines>  ‘important note’ part way down the page.
+
+ 
+
+I have not tried extend ignore <3 station path> yet, but otherwise I think all the recent changes are sound.
+
+I only noticed one slight change in ‘breaking’ behaviour when checking a sample of old projects.  It is an unfinished project, so it is not too late for me to tidy up the change.
+
+ 
+
+I may be out in a Therion desert for the next 10 days, but some time after that I should update the wiki extend page.  Prod me if I forget.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Thursday, 13 August 2020 08:50
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Extended elevations - development snapshot (commit 6860f82)
+
+ 
+
+Hi Bruce, thanks a lot for your feedback.
+
+ 
+
+I have added logging of extend ratio, when it is not 100%. Also I hope, I have enabled specification of ratio for given station/shot:
+
+ 
+
+extend <ratio> <from> <to>
+
+extend <ratio> <station>
+
+ 
+
+Allowing the form extend [left <ratio>] would be much more parsing. I have also changed the allowed range to 0 - 200%.
+
+ 
+
+Extend ratios are applied to splays also - but in this case - extend ratio of nearest shot is taken for splay. I think, this way it is OK.
+
+ 
+
+Could you please check whether it is working now as expected (commit c7d41d9 <https://github.com/therion/therion/commit/c7d41d96ebc47a652243711489813635e58c64d3> )?
+
+ 
+
+Thanks, S.
+
+ 
+
+ 
+
+On Wed, 12 Aug 2020 at 12:25, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+And it looks like the extend ratio is not reported when ‘log extend’ is set.
+
+It would be nice to have that if it is possible.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Bruce Mutton
+Sent: Wednesday, 12 August 2020 22:18
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: [Therion] Extended elevations - development snapshot (commit 6860f82)
+
+ 
+
+Stacho
+
+> there is a possibility to specify reduction ratio for extended elevation (0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+ 
+
+I have made this work, by placing ‘extend <number>’ statements in-line with the survey data, but that seems to be the only way it will work.  Every combination I could think of with the extend controls in a separate centreline or block results in an error.
+
+ 
+
+For an example I have managed to make this extended centreline…
+
+ 
+
+
+
+ 
+
+…into this by using strategically placed ‘extend 50’, ‘extend 100’, and ‘extend 75’, as well as an ‘extend vertical’.  It now matches more closely what one would expect by looking at the plan view.
+
+ 
+
+
+
+ 
+
+So it works very well, but the difficulty I have is that to make the extended elevation control manageable, it needs to be separated out (in one place) from the survey data, but now any control of the extend ratio must be in-line with the data.  This makes it very confusing and difficult to manage.  
+
+ 
+
+Is there any chance that the ratio could be controlled by statements in separate centrelines, as with left/right/vertical etc?
+
+ 
+
+Maybe by allowing the form ‘extend [left <ratio>] <station1> <station2>’ as an equivalent to the in-line statements ‘extend <ratio>’ and then ‘extend left’?
+
+(I am thinking of similar syntax to ‘export map -projection [elevation 290 deg]’ where the square brackets are required if the default is not what is wanted).
+
+ 
+
+ 
+
+The extend ratios are applied to splays as well as to legs, which is usually desirable, except sometimes where the ratio approaches zero.  If the user is to control splay ratios separately to the legs, then I guess the only option is to put the extend ratio statements in-line.
+
+ 
+
+And one more thing.  The range is limited from 0 to 100%.  If we are going to allow distortion of the extended elevation, then I think the upper limit should be something like 150% or 200%.
+
+ 
+
+Bruce
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/6e0315f2/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 115110 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/6e0315f2/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 109111 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/6e0315f2/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 100011 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200813/6e0315f2/attachment-0002.png>
+
+From tarquin.wilton-jones at ntlworld.com  Fri Aug 14 20:47:48 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 14 Aug 2020 19:47:48 +0100
+Subject: [Therion] Difference between Therion and Survex when calibrating
+ tape
+Message-ID: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+
+Hi folks,
+
+Think I may have uncovered a bug in Therion's parsing of the "calibrate
+tape" command.
+
+Survex:
+*calibrate tape 0 0.5
+*calibrate tape 0
+1 2 10 0 0
+*calibrate tape 0 1
+2 3 10 90 0
+
+Therion:
+calibrate tape 0 0.5
+calibrate tape 0
+1 2 10 0 0
+calibrate tape 0 1
+2 3 10 90 0
+
+In Survex, both legs are 10 m long. In Therion, the first leg is 5 m
+long and the second is 10 m long.
+
+Therion book:
+"The syntax is borrowed from Survex with minor modifications; the Survex
+manual may be useful as an additional reference for the user."
+
+Survex manual does not say what happens to the scale value when it is
+omitted, but it does say "By default, the zero error is 0.0 and the
+scale factor 1.0 for all quantities." This implies that the scale value
+should reset to 1 whenever it is omitted.
+
+Assuming Survex is "right" with this behaviour, does that mean Therion
+is wrong? Or is this one of those "minor differences"?
+
+Or if I just messed up, someone please shout at me ;)
+
+Cheers,
+
+Tarquin
+
+
+From olly at survex.com  Fri Aug 14 22:22:24 2020
+From: olly at survex.com (Olly Betts)
+Date: Fri, 14 Aug 2020 21:22:24 +0100
+Subject: [Therion] Difference between Therion and Survex when
+ calibrating tape
+In-Reply-To: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+References: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+Message-ID: <20200814202224.GC12026@survex.com>
+
+On Fri, Aug 14, 2020 at 07:47:48PM +0100, Tarquin Wilton-Jones via Therion wrote:
+> Survex manual does not say what happens to the scale value when it is
+> omitted, but it does say "By default, the zero error is 0.0 and the
+> scale factor 1.0 for all quantities." This implies that the scale value
+> should reset to 1 whenever it is omitted.
+
+Yes.  It also explicitly says lower down "(Scale defaults to 1.0)"
+(where the formulae used are given.)
+
+Both for this and in general, if you see something in the manual which
+could be clearer, please do send a suggested patch (or just a
+replacement paragraph to copy in if you don't know how to make a patch).
+
+Cheers,
+    Olly
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Aug 14 22:36:34 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 14 Aug 2020 21:36:34 +0100
+Subject: [Therion] Difference between Therion and Survex when
+ calibrating tape
+In-Reply-To: <20200814202224.GC12026@survex.com>
+References: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+ <20200814202224.GC12026@survex.com>
+Message-ID: <8bbe295e-5261-e704-a057-e7bcf5c5ef8f@ntlworld.com>
+
+> Yes.  It also explicitly says lower down "(Scale defaults to 1.0)"
+> (where the formulae used are given.)
+
+Aha, excellent :)
+
+OK, so then either Therion is wrong, or this should be explicitly stated
+as a difference between Therion and Survex, since at this point, the
+Therion book refers to the Survex manual.
+
+https://github.com/therion/therion/issues/263
+
+/me gets back to updating surveys accordingly.
+
+
+From martinsluka at me.com  Sat Aug 15 14:26:52 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Sat, 15 Aug 2020 14:26:52 +0200
+Subject: [Therion] Difference between Therion and Survex when
+ calibrating tape
+In-Reply-To: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+References: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+Message-ID: <38355D00-BDC0-4457-9A24-A76E4D491AE4@me.com>
+
+Tarquin,
+
+sorry, but what is the reason to use two calibrate commands in two consecutive lines in your example?
+
+calibrate tape 0 0.5
+calibrate tape 0
+
+Martin
+
+
+> 14. 8. 2020 v 20:47, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> Hi folks,
+> 
+> Think I may have uncovered a bug in Therion's parsing of the "calibrate
+> tape" command.
+> 
+> Survex:
+> *calibrate tape 0 0.5
+> *calibrate tape 0
+> 1 2 10 0 0
+> *calibrate tape 0 1
+> 2 3 10 90 0
+> 
+> Therion:
+> calibrate tape 0 0.5
+> calibrate tape 0
+> 1 2 10 0 0
+> calibrate tape 0 1
+> 2 3 10 90 0
+> 
+> In Survex, both legs are 10 m long. In Therion, the first leg is 5 m
+> long and the second is 10 m long.
+> 
+> Therion book:
+> "The syntax is borrowed from Survex with minor modifications; the Survex
+> manual may be useful as an additional reference for the user."
+> 
+> Survex manual does not say what happens to the scale value when it is
+> omitted, but it does say "By default, the zero error is 0.0 and the
+> scale factor 1.0 for all quantities." This implies that the scale value
+> should reset to 1 whenever it is omitted.
+> 
+> Assuming Survex is "right" with this behaviour, does that mean Therion
+> is wrong? Or is this one of those "minor differences"?
+> 
+> Or if I just messed up, someone please shout at me ;)
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Sat Aug 15 20:59:29 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 15 Aug 2020 19:59:29 +0100
+Subject: [Therion] Difference between Therion and Survex when
+ calibrating tape
+In-Reply-To: <38355D00-BDC0-4457-9A24-A76E4D491AE4@me.com>
+References: <4fabb31f-8c24-9cd5-604c-6829d6d7a8f3@ntlworld.com>
+ <38355D00-BDC0-4457-9A24-A76E4D491AE4@me.com>
+Message-ID: <a30a5b9b-8817-7fab-dd17-4051c6d74564@ntlworld.com>
+
+> sorry, but what is the reason to use two calibrate commands in two consecutive lines in your example?
+
+In reality I had a load of legs and splays in between the two commands.
+Several were shot with a Disto through water, to allow me to accurately
+render a sump. Water exaggerates the lengths, but that can be corrected
+with a scaling factor (refraction ignored) so my actual data looks like
+this:
+
+calibrate tape 0 0.92 # shot through water
+4 - 2.23 97 -45
+...loads more splays...
+4 5 6.52 123 -87
+calibrate tape 0 # back to regular stuff
+3 6 8.78 74 12
+
+It got all the lengths wrong from that 3-6 leg onwards.
+
+
+
+
+
+From markus.boldt at gmx.net  Sun Aug 16 22:27:17 2020
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sun, 16 Aug 2020 22:27:17 +0200
+Subject: [Therion] Staion point should not go to the calculated lenght of
+ the cave
+Message-ID: <002501d6740b$a361db90$ea2592b0$@gmx.net>
+
+Hi,
+
+hopefully someone can give me an idea, what I have to do in therion, when I
+have a point station, which should not go to the calculated length of the
+cave. But this point station should shown in the
+
+In my sample there is a doline in the near of my cave entrance with a point
+station.
+
+Thanks!
+
+Best
+
+Markus
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200816/1c83dfee/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Aug 16 22:49:16 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 16 Aug 2020 21:49:16 +0100
+Subject: [Therion] Staion point should not go to the calculated lenght
+ of the cave
+In-Reply-To: <002501d6740b$a361db90$ea2592b0$@gmx.net>
+References: <002501d6740b$a361db90$ea2592b0$@gmx.net>
+Message-ID: <b25582db-b0ce-19c1-297d-4910320e150a@ntlworld.com>
+
+> hopefully someone can give me an idea, what I have to do in therion,
+> when I have a point station, which should not go to the calculated
+> length of the cave.
+
+1 2 12 123 12
+flags surface
+2 3 22 230 45
+flags not surface
+2 4 14 300 -22.5
+
+Be warned that due to a bug, Therion will include the *depth* of that
+leg in the cave depth, if the surface legs appear first. Put them at the
+end of your survey to avoid that bug.
+
+https://github.com/therion/therion/issues/165
+
+> But this point station should shown in the
+
+Text truncated.
+
+Perhaps you were asking about this:
+https://therion.speleo.sk/wiki/surfacefeatures
+
+
+From thorirmar at gmail.com  Mon Aug 17 04:31:42 2020
+From: thorirmar at gmail.com (=?UTF-8?B?w57Ds3JpciBNw6FyIErDs25zc29u?=)
+Date: Mon, 17 Aug 2020 02:31:42 +0000
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+Message-ID: <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+
+With some difficulty I've managed to find and install libsqlite-tcl. This
+package was apparently dropped when CentOs went from version 7 to 8, but it
+is still built for CloudLinux which happens to be based on CentOs 8, saving
+me from having to find the source and building it myself. Nevertheless make
+is still failing on the same test as before:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest
+is a Catch v2.11.3 host application.Run with -? for options
+
+-------------------------------------------------------------------------------
+projections: EPSG label
+-------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 &&
+strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+with expansion:*  false*
+*====*===========================================================================
+test cases: 18 | 17 passed | *1 failed*
+assertions: 44 | 43 passed | *1 failed*
+
+make: *** [Makefile:184: tests] Error 1
+
+
+I went to through the dependencies listed in the Appendix of the book just
+to make sure I had not missed anything; here is what I have installed:
+
+   - gcc-8.3.1-5.1.el8.x86_64
+   - gcc-c++-8.3.1-5.1.el8.x86_64
+   - make-4.2.1-10.el8.x86_64
+   - Perl (I'm not sure which of these are relevant, but these are the once
+   I have installed):
+      - perl-Carp-1.42-396.el8.noarch
+      - perl-constant-1.33-396.el8.noarch
+      - perl-CPAN-Meta-2.150010-396.el8.noarch
+      - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+      - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+      - perl-Data-Dumper-2.167-399.el8.x86_64
+      - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+      - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+      - perl-devel-5.26.3-416.el8.x86_64
+      - perl-Digest-1.17-395.el8.noarch
+      - perl-Digest-MD5-2.55-396.el8.x86_64
+      - perl-Encode-2.97-3.el8.x86_64
+      - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+      - perl-encoding-2.22-3.el8.x86_64
+      - perl-Errno-1.28-416.el8.x86_64
+      - perl-Error-0.17025-2.el8.noarch
+      - perl-Exporter-5.72-396.el8.noarch
+      - perl-ExtUtils-Command-7.34-1.el8.noarch
+      - perl-ExtUtils-Install-2.14-4.el8.noarch
+      - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+      - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+      - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+      - perl-Fedora-VSP-0.001-9.el8.noarch
+      - perl-File-Path-2.15-2.el8.noarch
+      - perl-File-Temp-0.230.600-1.el8.noarch
+      - perl-Filter-1.58-2.el8.x86_64
+      - perl-generators-1.10-9.el8.noarch
+      - perl-Getopt-Long-2.50-4.el8.noarch
+      - perl-Git-2.27.0-1.el8.noarch
+      - perl-HTTP-Tiny-0.074-1.el8.noarch
+      - perl-interpreter-5.26.3-416.el8.x86_64
+      - perl-IO-1.38-416.el8.x86_64
+      - perl-IO-Socket-IP-0.39-5.el8.noarch
+      - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+      - perl-JSON-PP-2.97.001-3.el8.noarch
+      - perl-libnet-3.11-3.el8.noarch
+      - perl-libs-5.26.3-416.el8.x86_64
+      - perl-macros-5.26.3-416.el8.x86_64
+      - perl-Math-BigInt-1.9998.11-7.el8.noarch
+      - perl-Math-Complex-1.59-416.el8.noarch
+      - perl-MIME-Base64-3.15-396.el8.x86_64
+      - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+      - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+      - perl-open-1.11-416.el8.noarch
+      - perl-parent-0.237-1.el8.noarch
+      - perl-PathTools-3.74-1.el8.x86_64
+      - perl-Pod-Escapes-1.07-395.el8.noarch
+      - perl-podlators-4.11-1.el8.noarch
+      - perl-Pod-Perldoc-3.28-396.el8.noarch
+      - perl-Pod-Simple-3.35-395.el8.noarch
+      - perl-Pod-Usage-1.69-395.el8.noarch
+      - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+      - perl-Socket-2.027-3.el8.x86_64
+      - perl-srpm-macros-1-25.el8.noarch
+      - perl-Storable-3.11-3.el8.x86_64
+      - perl-Term-ANSIColor-4.06-396.el8.noarch
+      - perl-Term-Cap-1.17-395.el8.noarch
+      - perl-TermReadKey-2.37-7.el8.x86_64
+      - perl-Test-Harness-3.42-1.el8.noarch
+      - perl-Text-ParseWords-3.30-395.el8.noarch
+      - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+      - perl-Text-Unidecode-1.30-5.el8.noarch
+      - perl-Thread-Queue-3.13-1.el8.noarch
+      - perl-threads-2.21-2.el8.x86_64
+      - perl-threads-shared-1.58-2.el8.x86_64
+      - perl-Time-HiRes-1.9758-1.el8.x86_64
+      - perl-Time-Local-1.280-1.el8.noarch
+      - perl-Unicode-Normalize-1.25-396.el8.x86_64
+      - perl-URI-1.73-3.el8.noarch
+      - perl-version-0.99.24-1.el8.x86_64
+      - perl-XML-Parser-2.44-11.el8.x86_64
+      - perl-XML-XPath-1.42-3.el8.noarch
+   - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+   - PROJ:
+   - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+      - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+      - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+      - proj-static-6.3.2-4.epel8.playground.x86_64
+      - proj-devel-6.3.2-4.epel8.playground.x86_64
+      - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+      - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+      - proj-6.3.2-4.epel8.playground.x86_64
+      - tcl/tk:
+      - tcl-8.6.8-2.el8.x86_64
+      - tcl-devel-8.6.8-2.el8.x86_64
+      - tcllib-1.19-3.el8.noarch
+      - BWidget-1.9.14 I had to manually download this library, I copied
+   the tarball to /usr/lib64/tcl-8.6/ and extracted it there in accordance
+   with the included README file.
+   - sqlite:
+      - sqlite-3.26.0-6.el8.x86_64
+      - sqlite-devel-3.26.0-6.el8.x86_64
+      - sqlite-libs-3.26.0-6.el8.x86_64
+      - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+   - tkImg-1.4.11 I also had to manually download this library. No README
+   was included in the file, and no documentation is to be found on the
+   projects github page, so I did the same as with BWidget and copied the
+   folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+   - TeX:
+      - texlive-20180414-17.el8.x86_64
+      - texlive-metapost-20180414-17.el8.x86_64/pdf
+      - texlive-pdftex-20180414-17.el8.x86_64
+      - and a host of other texlive packages (211 in total)
+   - LCDF Typetools 2.108 (this one I had to download and build from
+   source, for some reason I was unable to configure it for kpathsea, despite
+   it already being installed. I ended up needing to use the –without-kpathsea
+   option during the configuration to get it work – I hope this is not
+   important for the Therion installation).
+   - ImageMagick:
+      - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+      - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+      - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+      - ImageMagick-6.9.10.86-1.el8.x86_64
+      - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+      - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+   - ghostscript-9.25-7.el8.x86_64
+   - freetype:
+      - freetype-2.9.1-4.el8.x86_64
+      - freetype-devel-2.9.1-4.el8.x86_64
+   - VTK 9.0.1 (built from source)
+   - libjpeg-turbo-1.5.3-10.el8.x86_64
+   - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+   - libpng-1.6.34-5.el8.x86_64
+   - libpng-devel-1.6.34-5.el8.x86_64
+   - zlib-1.2.11-15.el8.x86_64
+   - zlib-devel-1.2.11-15.el8.x86_64
+
+
+Is there anything obvious that I am missing? I don't know what to try next.
+
+
+
+
+   - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+   wrote:Hi,
+
+just build-time, introduced in 5.4.4. It's used to generate parts of
+> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+> which uses sqlite3 format of its database (older versions used plain text
+> files).
+> Martin
+>
+> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>
+>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>> >    Hi,
+>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>> working.
+>> >    It's required for correct parsing of projection names from the EPSG
+>> >    database.
+>>
+>> Is this a build-time only dependency or should it also be present at
+>> runtime?
+>>
+>> It gets pulled in on debian builds but I'm not quite sure why. It
+>> should perhaps be explicitly specified. Is this new or has it been true
+>> for years?
+>>
+>> Wookey
+>> --
+>> Principal hats:  Linaro, Debian, Wookware, ARM
+>> http://wookware.org/
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200817/74d0da7c/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Mon Aug 17 08:51:45 2020
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Mon, 17 Aug 2020 08:51:45 +0200 (CEST)
+Subject: [Therion] Staion point should not go to the calculated lenght
+ of the cave
+In-Reply-To: <b25582db-b0ce-19c1-297d-4910320e150a@ntlworld.com>
+References: <002501d6740b$a361db90$ea2592b0$@gmx.net>
+ <b25582db-b0ce-19c1-297d-4910320e150a@ntlworld.com>
+Message-ID: <1242581396.234993.1597647105416@comcenter.netcologne.de>
+
+Hi
+I'm using for that purpose:
+flags duplicate
+Or is there a reason not using this for that?
+regards,
+Torsten
+
+> Tarquin Wilton-Jones via Therion <therion at speleo.sk> hat am 16.08.2020 22:49 geschrieben:
+> 
+>  
+> > hopefully someone can give me an idea, what I have to do in therion,
+> > when I have a point station, which should not go to the calculated
+> > length of the cave.
+> 
+> 1 2 12 123 12
+> flags surface
+> 2 3 22 230 45
+> flags not surface
+> 2 4 14 300 -22.5
+> 
+> Be warned that due to a bug, Therion will include the *depth* of that
+> leg in the cave depth, if the surface legs appear first. Put them at the
+> end of your survey to avoid that bug.
+> 
+> https://github.com/therion/therion/issues/165
+> 
+> > But this point station should shown in the
+> 
+> Text truncated.
+> 
+> Perhaps you were asking about this:
+> https://therion.speleo.sk/wiki/surfacefeatures
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Mon Aug 17 09:20:20 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 17 Aug 2020 08:20:20 +0100
+Subject: [Therion] Staion point should not go to the calculated lenght
+ of the cave
+In-Reply-To: <1242581396.234993.1597647105416@comcenter.netcologne.de>
+References: <002501d6740b$a361db90$ea2592b0$@gmx.net>
+ <b25582db-b0ce-19c1-297d-4910320e150a@ntlworld.com>
+ <1242581396.234993.1597647105416@comcenter.netcologne.de>
+Message-ID: <b9c7da6a-77da-c555-0691-2bda51010912@ntlworld.com>
+
+> I'm using for that purpose:
+> flags duplicate
+> Or is there a reason not using this for that?
+
+"flags duplicate" means "Hi Therion, this is an underground leg. It goes
+down a passage that we have already surveyed. Please do not add it to
+the surveyed length."
+
+Duplicate legs therefore do not add to the cave length. But they
+definitely do contribute to the cave depth (if they happen to be the
+highest or lowest point). And when you generate a .lox file or .3d file,
+they will be treated as a cave passage, not a surface leg. Therion will
+draw walls around them, and use them to determine the size of a cave
+passage. Survex Aven will show them as an underground (but dashed) leg,
+and will therefore make it look like the cave goes that way.
+
+Similarly, "flags splay" for named stations will also not add to the
+cave length. Therion will also not consider them to be part of the cave
+depth (even though they could be the only way you measured up the
+tallest aven, unfortunately). But they will tell Therion how to build
+the cave walls with .lox files. They also get treated differently when
+outputting extended elevations.
+
+"flags surface" is the right thing to use for surface. You can even use
+"flags surface duplicate" for surface legs that are duplicated, which
+has no practical effect (except I think it might give different
+calculations when you export a survey list).
+
+
+From m.budaj at gmail.com  Mon Aug 17 21:37:38 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 17 Aug 2020 21:37:38 +0200
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+ <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+Message-ID: <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+
+Hi,
+check the definition of map<int, const char *> epsg_labels in the
+file thcsdata.cxx (the file is generated by make). Is there a key/value
+pair with a key 32634? What's the value associated with the key? There
+should be a line containing something like
+     {32634, "WGS 84 / UTM zone 34N"},
+
+Also check the terminal output when you run
+tclsh thcsdata.tcl
+
+Martin
+
+On Mon, Aug 17, 2020 at 4:35 AM Þórir Már Jónsson <thorirmar at gmail.com>
+wrote:
+
+> With some difficulty I've managed to find and install libsqlite-tcl. This
+> package was apparently dropped when CentOs went from version 7 to 8, but it
+> is still built for CloudLinux which happens to be based on CentOs 8, saving
+> me from having to find the source and building it myself. Nevertheless make
+> is still failing on the same test as before:
+>
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest is a Catch v2.11.3 host application.Run with -? for options
+>
+> -------------------------------------------------------------------------------
+> projections: EPSG label
+> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+> with expansion:*  false*
+> *====*===========================================================================
+> test cases: 18 | 17 passed | *1 failed*
+> assertions: 44 | 43 passed | *1 failed*
+>
+> make: *** [Makefile:184: tests] Error 1
+>
+>
+> I went to through the dependencies listed in the Appendix of the book just
+> to make sure I had not missed anything; here is what I have installed:
+>
+>    - gcc-8.3.1-5.1.el8.x86_64
+>    - gcc-c++-8.3.1-5.1.el8.x86_64
+>    - make-4.2.1-10.el8.x86_64
+>    - Perl (I'm not sure which of these are relevant, but these are the
+>    once I have installed):
+>       - perl-Carp-1.42-396.el8.noarch
+>       - perl-constant-1.33-396.el8.noarch
+>       - perl-CPAN-Meta-2.150010-396.el8.noarch
+>       - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+>       - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+>       - perl-Data-Dumper-2.167-399.el8.x86_64
+>       - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+>       - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+>       - perl-devel-5.26.3-416.el8.x86_64
+>       - perl-Digest-1.17-395.el8.noarch
+>       - perl-Digest-MD5-2.55-396.el8.x86_64
+>       - perl-Encode-2.97-3.el8.x86_64
+>       - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+>       - perl-encoding-2.22-3.el8.x86_64
+>       - perl-Errno-1.28-416.el8.x86_64
+>       - perl-Error-0.17025-2.el8.noarch
+>       - perl-Exporter-5.72-396.el8.noarch
+>       - perl-ExtUtils-Command-7.34-1.el8.noarch
+>       - perl-ExtUtils-Install-2.14-4.el8.noarch
+>       - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+>       - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+>       - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+>       - perl-Fedora-VSP-0.001-9.el8.noarch
+>       - perl-File-Path-2.15-2.el8.noarch
+>       - perl-File-Temp-0.230.600-1.el8.noarch
+>       - perl-Filter-1.58-2.el8.x86_64
+>       - perl-generators-1.10-9.el8.noarch
+>       - perl-Getopt-Long-2.50-4.el8.noarch
+>       - perl-Git-2.27.0-1.el8.noarch
+>       - perl-HTTP-Tiny-0.074-1.el8.noarch
+>       - perl-interpreter-5.26.3-416.el8.x86_64
+>       - perl-IO-1.38-416.el8.x86_64
+>       - perl-IO-Socket-IP-0.39-5.el8.noarch
+>       - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+>       - perl-JSON-PP-2.97.001-3.el8.noarch
+>       - perl-libnet-3.11-3.el8.noarch
+>       - perl-libs-5.26.3-416.el8.x86_64
+>       - perl-macros-5.26.3-416.el8.x86_64
+>       - perl-Math-BigInt-1.9998.11-7.el8.noarch
+>       - perl-Math-Complex-1.59-416.el8.noarch
+>       - perl-MIME-Base64-3.15-396.el8.x86_64
+>       - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+>       - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+>       - perl-open-1.11-416.el8.noarch
+>       - perl-parent-0.237-1.el8.noarch
+>       - perl-PathTools-3.74-1.el8.x86_64
+>       - perl-Pod-Escapes-1.07-395.el8.noarch
+>       - perl-podlators-4.11-1.el8.noarch
+>       - perl-Pod-Perldoc-3.28-396.el8.noarch
+>       - perl-Pod-Simple-3.35-395.el8.noarch
+>       - perl-Pod-Usage-1.69-395.el8.noarch
+>       - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+>       - perl-Socket-2.027-3.el8.x86_64
+>       - perl-srpm-macros-1-25.el8.noarch
+>       - perl-Storable-3.11-3.el8.x86_64
+>       - perl-Term-ANSIColor-4.06-396.el8.noarch
+>       - perl-Term-Cap-1.17-395.el8.noarch
+>       - perl-TermReadKey-2.37-7.el8.x86_64
+>       - perl-Test-Harness-3.42-1.el8.noarch
+>       - perl-Text-ParseWords-3.30-395.el8.noarch
+>       - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+>       - perl-Text-Unidecode-1.30-5.el8.noarch
+>       - perl-Thread-Queue-3.13-1.el8.noarch
+>       - perl-threads-2.21-2.el8.x86_64
+>       - perl-threads-shared-1.58-2.el8.x86_64
+>       - perl-Time-HiRes-1.9758-1.el8.x86_64
+>       - perl-Time-Local-1.280-1.el8.noarch
+>       - perl-Unicode-Normalize-1.25-396.el8.x86_64
+>       - perl-URI-1.73-3.el8.noarch
+>       - perl-version-0.99.24-1.el8.x86_64
+>       - perl-XML-Parser-2.44-11.el8.x86_64
+>       - perl-XML-XPath-1.42-3.el8.noarch
+>    - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+>    - PROJ:
+>    - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+>       - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+>       - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+>       - proj-static-6.3.2-4.epel8.playground.x86_64
+>       - proj-devel-6.3.2-4.epel8.playground.x86_64
+>       - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+>       - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+>       - proj-6.3.2-4.epel8.playground.x86_64
+>       - tcl/tk:
+>       - tcl-8.6.8-2.el8.x86_64
+>       - tcl-devel-8.6.8-2.el8.x86_64
+>       - tcllib-1.19-3.el8.noarch
+>       - BWidget-1.9.14 I had to manually download this library, I copied
+>    the tarball to /usr/lib64/tcl-8.6/ and extracted it there in accordance
+>    with the included README file.
+>    - sqlite:
+>       - sqlite-3.26.0-6.el8.x86_64
+>       - sqlite-devel-3.26.0-6.el8.x86_64
+>       - sqlite-libs-3.26.0-6.el8.x86_64
+>       - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+>    - tkImg-1.4.11 I also had to manually download this library. No README
+>    was included in the file, and no documentation is to be found on the
+>    projects github page, so I did the same as with BWidget and copied the
+>    folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+>    - TeX:
+>       - texlive-20180414-17.el8.x86_64
+>       - texlive-metapost-20180414-17.el8.x86_64/pdf
+>       - texlive-pdftex-20180414-17.el8.x86_64
+>       - and a host of other texlive packages (211 in total)
+>    - LCDF Typetools 2.108 (this one I had to download and build from
+>    source, for some reason I was unable to configure it for kpathsea, despite
+>    it already being installed. I ended up needing to use the –without-kpathsea
+>    option during the configuration to get it work – I hope this is not
+>    important for the Therion installation).
+>    - ImageMagick:
+>       - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+>       - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+>       - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+>       - ImageMagick-6.9.10.86-1.el8.x86_64
+>       - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+>       - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+>    - ghostscript-9.25-7.el8.x86_64
+>    - freetype:
+>       - freetype-2.9.1-4.el8.x86_64
+>       - freetype-devel-2.9.1-4.el8.x86_64
+>    - VTK 9.0.1 (built from source)
+>    - libjpeg-turbo-1.5.3-10.el8.x86_64
+>    - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+>    - libpng-1.6.34-5.el8.x86_64
+>    - libpng-devel-1.6.34-5.el8.x86_64
+>    - zlib-1.2.11-15.el8.x86_64
+>    - zlib-devel-1.2.11-15.el8.x86_64
+>
+>
+> Is there anything obvious that I am missing? I don't know what to try next.
+>
+>
+>
+>
+>    - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+>    wrote:Hi,
+>
+> just build-time, introduced in 5.4.4. It's used to generate parts of
+>> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+>> which uses sqlite3 format of its database (older versions used plain text
+>> files).
+>> Martin
+>>
+>> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>>
+>>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>>> >    Hi,
+>>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>>> working.
+>>> >    It's required for correct parsing of projection names from the EPSG
+>>> >    database.
+>>>
+>>> Is this a build-time only dependency or should it also be present at
+>>> runtime?
+>>>
+>>> It gets pulled in on debian builds but I'm not quite sure why. It
+>>> should perhaps be explicitly specified. Is this new or has it been true
+>>> for years?
+>>>
+>>> Wookey
+>>> --
+>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>> http://wookware.org/
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200817/7b274352/attachment.htm>
+
+From thorirmar at gmail.com  Mon Aug 17 22:06:25 2020
+From: thorirmar at gmail.com (=?UTF-8?B?w57Ds3JpciBNw6FyIErDs25zc29u?=)
+Date: Mon, 17 Aug 2020 20:06:25 +0000
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+ <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+ <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+Message-ID: <CALTmSs+rt3kN43zvN+a3qgMTZBo8M8uQvbmqqizJTuiZjAma+g@mail.gmail.com>
+
+There is only one line with each of these values:
+
+The last line of the file contains epsg_labels:
+
+map<int, const char *> epsg_labels = {};
+
+and line 738 contains 32634:
+
+{false, true, false, "+init=epsg:32634",
+"PROJCS[\"WGS_1984_UTM_Zone_34N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",21.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+"WGS84 / UTM zone 34N"},
+
+There is no output when I run tclsh thcsdata.tcl. The script seems to exit
+normally, but without printing anything.
+
+Þórir Már
+
+
+On Mon, Aug 17, 2020 at 7:38 PM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> Hi,
+> check the definition of map<int, const char *> epsg_labels in the
+> file thcsdata.cxx (the file is generated by make). Is there a key/value
+> pair with a key 32634? What's the value associated with the key? There
+> should be a line containing something like
+>      {32634, "WGS 84 / UTM zone 34N"},
+>
+> Also check the terminal output when you run
+> tclsh thcsdata.tcl
+>
+> Martin
+>
+> On Mon, Aug 17, 2020 at 4:35 AM Þórir Már Jónsson <thorirmar at gmail.com>
+> wrote:
+>
+>> With some difficulty I've managed to find and install libsqlite-tcl. This
+>> package was apparently dropped when CentOs went from version 7 to 8, but it
+>> is still built for CloudLinux which happens to be based on CentOs 8, saving
+>> me from having to find the source and building it myself. Nevertheless make
+>> is still failing on the same test as before:
+>>
+>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest is a Catch v2.11.3 host application.Run with -? for options
+>>
+>> -------------------------------------------------------------------------------
+>> projections: EPSG label
+>> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+>> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+>> with expansion:*  false*
+>> *====*===========================================================================
+>> test cases: 18 | 17 passed | *1 failed*
+>> assertions: 44 | 43 passed | *1 failed*
+>>
+>> make: *** [Makefile:184: tests] Error 1
+>>
+>>
+>> I went to through the dependencies listed in the Appendix of the book
+>> just to make sure I had not missed anything; here is what I have installed:
+>>
+>>    - gcc-8.3.1-5.1.el8.x86_64
+>>    - gcc-c++-8.3.1-5.1.el8.x86_64
+>>    - make-4.2.1-10.el8.x86_64
+>>    - Perl (I'm not sure which of these are relevant, but these are the
+>>    once I have installed):
+>>       - perl-Carp-1.42-396.el8.noarch
+>>       - perl-constant-1.33-396.el8.noarch
+>>       - perl-CPAN-Meta-2.150010-396.el8.noarch
+>>       - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+>>       - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+>>       - perl-Data-Dumper-2.167-399.el8.x86_64
+>>       - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+>>       - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+>>       - perl-devel-5.26.3-416.el8.x86_64
+>>       - perl-Digest-1.17-395.el8.noarch
+>>       - perl-Digest-MD5-2.55-396.el8.x86_64
+>>       - perl-Encode-2.97-3.el8.x86_64
+>>       - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+>>       - perl-encoding-2.22-3.el8.x86_64
+>>       - perl-Errno-1.28-416.el8.x86_64
+>>       - perl-Error-0.17025-2.el8.noarch
+>>       - perl-Exporter-5.72-396.el8.noarch
+>>       - perl-ExtUtils-Command-7.34-1.el8.noarch
+>>       - perl-ExtUtils-Install-2.14-4.el8.noarch
+>>       - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+>>       - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+>>       - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+>>       - perl-Fedora-VSP-0.001-9.el8.noarch
+>>       - perl-File-Path-2.15-2.el8.noarch
+>>       - perl-File-Temp-0.230.600-1.el8.noarch
+>>       - perl-Filter-1.58-2.el8.x86_64
+>>       - perl-generators-1.10-9.el8.noarch
+>>       - perl-Getopt-Long-2.50-4.el8.noarch
+>>       - perl-Git-2.27.0-1.el8.noarch
+>>       - perl-HTTP-Tiny-0.074-1.el8.noarch
+>>       - perl-interpreter-5.26.3-416.el8.x86_64
+>>       - perl-IO-1.38-416.el8.x86_64
+>>       - perl-IO-Socket-IP-0.39-5.el8.noarch
+>>       - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+>>       - perl-JSON-PP-2.97.001-3.el8.noarch
+>>       - perl-libnet-3.11-3.el8.noarch
+>>       - perl-libs-5.26.3-416.el8.x86_64
+>>       - perl-macros-5.26.3-416.el8.x86_64
+>>       - perl-Math-BigInt-1.9998.11-7.el8.noarch
+>>       - perl-Math-Complex-1.59-416.el8.noarch
+>>       - perl-MIME-Base64-3.15-396.el8.x86_64
+>>       - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+>>       - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+>>       - perl-open-1.11-416.el8.noarch
+>>       - perl-parent-0.237-1.el8.noarch
+>>       - perl-PathTools-3.74-1.el8.x86_64
+>>       - perl-Pod-Escapes-1.07-395.el8.noarch
+>>       - perl-podlators-4.11-1.el8.noarch
+>>       - perl-Pod-Perldoc-3.28-396.el8.noarch
+>>       - perl-Pod-Simple-3.35-395.el8.noarch
+>>       - perl-Pod-Usage-1.69-395.el8.noarch
+>>       - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+>>       - perl-Socket-2.027-3.el8.x86_64
+>>       - perl-srpm-macros-1-25.el8.noarch
+>>       - perl-Storable-3.11-3.el8.x86_64
+>>       - perl-Term-ANSIColor-4.06-396.el8.noarch
+>>       - perl-Term-Cap-1.17-395.el8.noarch
+>>       - perl-TermReadKey-2.37-7.el8.x86_64
+>>       - perl-Test-Harness-3.42-1.el8.noarch
+>>       - perl-Text-ParseWords-3.30-395.el8.noarch
+>>       - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+>>       - perl-Text-Unidecode-1.30-5.el8.noarch
+>>       - perl-Thread-Queue-3.13-1.el8.noarch
+>>       - perl-threads-2.21-2.el8.x86_64
+>>       - perl-threads-shared-1.58-2.el8.x86_64
+>>       - perl-Time-HiRes-1.9758-1.el8.x86_64
+>>       - perl-Time-Local-1.280-1.el8.noarch
+>>       - perl-Unicode-Normalize-1.25-396.el8.x86_64
+>>       - perl-URI-1.73-3.el8.noarch
+>>       - perl-version-0.99.24-1.el8.x86_64
+>>       - perl-XML-Parser-2.44-11.el8.x86_64
+>>       - perl-XML-XPath-1.42-3.el8.noarch
+>>    - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+>>    - PROJ:
+>>    - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+>>       - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+>>       - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+>>       - proj-static-6.3.2-4.epel8.playground.x86_64
+>>       - proj-devel-6.3.2-4.epel8.playground.x86_64
+>>       - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+>>       - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+>>       - proj-6.3.2-4.epel8.playground.x86_64
+>>       - tcl/tk:
+>>       - tcl-8.6.8-2.el8.x86_64
+>>       - tcl-devel-8.6.8-2.el8.x86_64
+>>       - tcllib-1.19-3.el8.noarch
+>>       - BWidget-1.9.14 I had to manually download this library, I copied
+>>    the tarball to /usr/lib64/tcl-8.6/ and extracted it there in accordance
+>>    with the included README file.
+>>    - sqlite:
+>>       - sqlite-3.26.0-6.el8.x86_64
+>>       - sqlite-devel-3.26.0-6.el8.x86_64
+>>       - sqlite-libs-3.26.0-6.el8.x86_64
+>>       - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+>>    - tkImg-1.4.11 I also had to manually download this library. No
+>>    README was included in the file, and no documentation is to be found on the
+>>    projects github page, so I did the same as with BWidget and copied the
+>>    folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+>>    - TeX:
+>>       - texlive-20180414-17.el8.x86_64
+>>       - texlive-metapost-20180414-17.el8.x86_64/pdf
+>>       - texlive-pdftex-20180414-17.el8.x86_64
+>>       - and a host of other texlive packages (211 in total)
+>>    - LCDF Typetools 2.108 (this one I had to download and build from
+>>    source, for some reason I was unable to configure it for kpathsea, despite
+>>    it already being installed. I ended up needing to use the –without-kpathsea
+>>    option during the configuration to get it work – I hope this is not
+>>    important for the Therion installation).
+>>    - ImageMagick:
+>>       - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+>>       - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+>>       - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+>>       - ImageMagick-6.9.10.86-1.el8.x86_64
+>>       - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+>>       - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+>>    - ghostscript-9.25-7.el8.x86_64
+>>    - freetype:
+>>       - freetype-2.9.1-4.el8.x86_64
+>>       - freetype-devel-2.9.1-4.el8.x86_64
+>>    - VTK 9.0.1 (built from source)
+>>    - libjpeg-turbo-1.5.3-10.el8.x86_64
+>>    - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+>>    - libpng-1.6.34-5.el8.x86_64
+>>    - libpng-devel-1.6.34-5.el8.x86_64
+>>    - zlib-1.2.11-15.el8.x86_64
+>>    - zlib-devel-1.2.11-15.el8.x86_64
+>>
+>>
+>> Is there anything obvious that I am missing? I don't know what to try
+>> next.
+>>
+>>
+>>
+>>
+>>    - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+>>    wrote:Hi,
+>>
+>> just build-time, introduced in 5.4.4. It's used to generate parts of
+>>> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+>>> which uses sqlite3 format of its database (older versions used plain text
+>>> files).
+>>> Martin
+>>>
+>>> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>>>
+>>>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>>>> >    Hi,
+>>>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>>>> working.
+>>>> >    It's required for correct parsing of projection names from the EPSG
+>>>> >    database.
+>>>>
+>>>> Is this a build-time only dependency or should it also be present at
+>>>> runtime?
+>>>>
+>>>> It gets pulled in on debian builds but I'm not quite sure why. It
+>>>> should perhaps be explicitly specified. Is this new or has it been true
+>>>> for years?
+>>>>
+>>>> Wookey
+>>>> --
+>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>> http://wookware.org/
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200817/a4ef45c1/attachment.htm>
+
+From m.budaj at gmail.com  Wed Aug 19 08:08:50 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 19 Aug 2020 08:08:50 +0200
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALTmSs+rt3kN43zvN+a3qgMTZBo8M8uQvbmqqizJTuiZjAma+g@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+ <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+ <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+ <CALTmSs+rt3kN43zvN+a3qgMTZBo8M8uQvbmqqizJTuiZjAma+g@mail.gmail.com>
+Message-ID: <CALPsdSu0Dj2qcoutcy7vm96jXQgphiUt95kJ+P=EQ9wQMCYv2A@mail.gmail.com>
+
+Hi,
+check out the latest commit in the master branch. It uses a different
+approach to labels handling for newer Proj versions.
+M.
+
+On Mon, Aug 17, 2020 at 10:10 PM Þórir Már Jónsson <thorirmar at gmail.com>
+wrote:
+
+> There is only one line with each of these values:
+>
+> The last line of the file contains epsg_labels:
+>
+> map<int, const char *> epsg_labels = {};
+>
+> and line 738 contains 32634:
+>
+> {false, true, false, "+init=epsg:32634", "PROJCS[\"WGS_1984_UTM_Zone_34N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",21.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]", "WGS84 / UTM zone 34N"},
+>
+> There is no output when I run tclsh thcsdata.tcl. The script seems to exit
+> normally, but without printing anything.
+>
+> Þórir Már
+>
+>
+> On Mon, Aug 17, 2020 at 7:38 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>
+>> Hi,
+>> check the definition of map<int, const char *> epsg_labels in the
+>> file thcsdata.cxx (the file is generated by make). Is there a key/value
+>> pair with a key 32634? What's the value associated with the key? There
+>> should be a line containing something like
+>>      {32634, "WGS 84 / UTM zone 34N"},
+>>
+>> Also check the terminal output when you run
+>> tclsh thcsdata.tcl
+>>
+>> Martin
+>>
+>> On Mon, Aug 17, 2020 at 4:35 AM Þórir Már Jónsson <thorirmar at gmail.com>
+>> wrote:
+>>
+>>> With some difficulty I've managed to find and install libsqlite-tcl.
+>>> This package was apparently dropped when CentOs went from version 7 to 8,
+>>> but it is still built for CloudLinux which happens to be based on CentOs 8,
+>>> saving me from having to find the source and building it myself.
+>>> Nevertheless make is still failing on the same test as before:
+>>>
+>>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest is a Catch v2.11.3 host application.Run with -? for options
+>>>
+>>> -------------------------------------------------------------------------------
+>>> projections: EPSG label
+>>> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+>>> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+>>> with expansion:*  false*
+>>> *====*===========================================================================
+>>> test cases: 18 | 17 passed | *1 failed*
+>>> assertions: 44 | 43 passed | *1 failed*
+>>>
+>>> make: *** [Makefile:184: tests] Error 1
+>>>
+>>>
+>>> I went to through the dependencies listed in the Appendix of the book
+>>> just to make sure I had not missed anything; here is what I have installed:
+>>>
+>>>    - gcc-8.3.1-5.1.el8.x86_64
+>>>    - gcc-c++-8.3.1-5.1.el8.x86_64
+>>>    - make-4.2.1-10.el8.x86_64
+>>>    - Perl (I'm not sure which of these are relevant, but these are the
+>>>    once I have installed):
+>>>       - perl-Carp-1.42-396.el8.noarch
+>>>       - perl-constant-1.33-396.el8.noarch
+>>>       - perl-CPAN-Meta-2.150010-396.el8.noarch
+>>>       - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+>>>       - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+>>>       - perl-Data-Dumper-2.167-399.el8.x86_64
+>>>       - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+>>>       - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+>>>       - perl-devel-5.26.3-416.el8.x86_64
+>>>       - perl-Digest-1.17-395.el8.noarch
+>>>       - perl-Digest-MD5-2.55-396.el8.x86_64
+>>>       - perl-Encode-2.97-3.el8.x86_64
+>>>       - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+>>>       - perl-encoding-2.22-3.el8.x86_64
+>>>       - perl-Errno-1.28-416.el8.x86_64
+>>>       - perl-Error-0.17025-2.el8.noarch
+>>>       - perl-Exporter-5.72-396.el8.noarch
+>>>       - perl-ExtUtils-Command-7.34-1.el8.noarch
+>>>       - perl-ExtUtils-Install-2.14-4.el8.noarch
+>>>       - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+>>>       - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+>>>       - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+>>>       - perl-Fedora-VSP-0.001-9.el8.noarch
+>>>       - perl-File-Path-2.15-2.el8.noarch
+>>>       - perl-File-Temp-0.230.600-1.el8.noarch
+>>>       - perl-Filter-1.58-2.el8.x86_64
+>>>       - perl-generators-1.10-9.el8.noarch
+>>>       - perl-Getopt-Long-2.50-4.el8.noarch
+>>>       - perl-Git-2.27.0-1.el8.noarch
+>>>       - perl-HTTP-Tiny-0.074-1.el8.noarch
+>>>       - perl-interpreter-5.26.3-416.el8.x86_64
+>>>       - perl-IO-1.38-416.el8.x86_64
+>>>       - perl-IO-Socket-IP-0.39-5.el8.noarch
+>>>       - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+>>>       - perl-JSON-PP-2.97.001-3.el8.noarch
+>>>       - perl-libnet-3.11-3.el8.noarch
+>>>       - perl-libs-5.26.3-416.el8.x86_64
+>>>       - perl-macros-5.26.3-416.el8.x86_64
+>>>       - perl-Math-BigInt-1.9998.11-7.el8.noarch
+>>>       - perl-Math-Complex-1.59-416.el8.noarch
+>>>       - perl-MIME-Base64-3.15-396.el8.x86_64
+>>>       - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+>>>       - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+>>>       - perl-open-1.11-416.el8.noarch
+>>>       - perl-parent-0.237-1.el8.noarch
+>>>       - perl-PathTools-3.74-1.el8.x86_64
+>>>       - perl-Pod-Escapes-1.07-395.el8.noarch
+>>>       - perl-podlators-4.11-1.el8.noarch
+>>>       - perl-Pod-Perldoc-3.28-396.el8.noarch
+>>>       - perl-Pod-Simple-3.35-395.el8.noarch
+>>>       - perl-Pod-Usage-1.69-395.el8.noarch
+>>>       - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+>>>       - perl-Socket-2.027-3.el8.x86_64
+>>>       - perl-srpm-macros-1-25.el8.noarch
+>>>       - perl-Storable-3.11-3.el8.x86_64
+>>>       - perl-Term-ANSIColor-4.06-396.el8.noarch
+>>>       - perl-Term-Cap-1.17-395.el8.noarch
+>>>       - perl-TermReadKey-2.37-7.el8.x86_64
+>>>       - perl-Test-Harness-3.42-1.el8.noarch
+>>>       - perl-Text-ParseWords-3.30-395.el8.noarch
+>>>       - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+>>>       - perl-Text-Unidecode-1.30-5.el8.noarch
+>>>       - perl-Thread-Queue-3.13-1.el8.noarch
+>>>       - perl-threads-2.21-2.el8.x86_64
+>>>       - perl-threads-shared-1.58-2.el8.x86_64
+>>>       - perl-Time-HiRes-1.9758-1.el8.x86_64
+>>>       - perl-Time-Local-1.280-1.el8.noarch
+>>>       - perl-Unicode-Normalize-1.25-396.el8.x86_64
+>>>       - perl-URI-1.73-3.el8.noarch
+>>>       - perl-version-0.99.24-1.el8.x86_64
+>>>       - perl-XML-Parser-2.44-11.el8.x86_64
+>>>       - perl-XML-XPath-1.42-3.el8.noarch
+>>>    - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+>>>    - PROJ:
+>>>    - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+>>>       - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+>>>       - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+>>>       - proj-static-6.3.2-4.epel8.playground.x86_64
+>>>       - proj-devel-6.3.2-4.epel8.playground.x86_64
+>>>       - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+>>>       - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+>>>       - proj-6.3.2-4.epel8.playground.x86_64
+>>>       - tcl/tk:
+>>>       - tcl-8.6.8-2.el8.x86_64
+>>>       - tcl-devel-8.6.8-2.el8.x86_64
+>>>       - tcllib-1.19-3.el8.noarch
+>>>       - BWidget-1.9.14 I had to manually download this library, I
+>>>    copied the tarball to /usr/lib64/tcl-8.6/ and extracted it there in
+>>>    accordance with the included README file.
+>>>    - sqlite:
+>>>       - sqlite-3.26.0-6.el8.x86_64
+>>>       - sqlite-devel-3.26.0-6.el8.x86_64
+>>>       - sqlite-libs-3.26.0-6.el8.x86_64
+>>>       - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+>>>    - tkImg-1.4.11 I also had to manually download this library. No
+>>>    README was included in the file, and no documentation is to be found on the
+>>>    projects github page, so I did the same as with BWidget and copied the
+>>>    folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+>>>    - TeX:
+>>>       - texlive-20180414-17.el8.x86_64
+>>>       - texlive-metapost-20180414-17.el8.x86_64/pdf
+>>>       - texlive-pdftex-20180414-17.el8.x86_64
+>>>       - and a host of other texlive packages (211 in total)
+>>>    - LCDF Typetools 2.108 (this one I had to download and build from
+>>>    source, for some reason I was unable to configure it for kpathsea, despite
+>>>    it already being installed. I ended up needing to use the –without-kpathsea
+>>>    option during the configuration to get it work – I hope this is not
+>>>    important for the Therion installation).
+>>>    - ImageMagick:
+>>>       - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+>>>       - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+>>>       - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+>>>       - ImageMagick-6.9.10.86-1.el8.x86_64
+>>>       - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+>>>       - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+>>>    - ghostscript-9.25-7.el8.x86_64
+>>>    - freetype:
+>>>       - freetype-2.9.1-4.el8.x86_64
+>>>       - freetype-devel-2.9.1-4.el8.x86_64
+>>>    - VTK 9.0.1 (built from source)
+>>>    - libjpeg-turbo-1.5.3-10.el8.x86_64
+>>>    - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+>>>    - libpng-1.6.34-5.el8.x86_64
+>>>    - libpng-devel-1.6.34-5.el8.x86_64
+>>>    - zlib-1.2.11-15.el8.x86_64
+>>>    - zlib-devel-1.2.11-15.el8.x86_64
+>>>
+>>>
+>>> Is there anything obvious that I am missing? I don't know what to try
+>>> next.
+>>>
+>>>
+>>>
+>>>
+>>>    - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+>>>    wrote:Hi,
+>>>
+>>> just build-time, introduced in 5.4.4. It's used to generate parts of
+>>>> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+>>>> which uses sqlite3 format of its database (older versions used plain text
+>>>> files).
+>>>> Martin
+>>>>
+>>>> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>>>>
+>>>>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>>>>> >    Hi,
+>>>>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>>>>> working.
+>>>>> >    It's required for correct parsing of projection names from the
+>>>>> EPSG
+>>>>> >    database.
+>>>>>
+>>>>> Is this a build-time only dependency or should it also be present at
+>>>>> runtime?
+>>>>>
+>>>>> It gets pulled in on debian builds but I'm not quite sure why. It
+>>>>> should perhaps be explicitly specified. Is this new or has it been
+>>>>> true for years?
+>>>>>
+>>>>> Wookey
+>>>>> --
+>>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>>> http://wookware.org/
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200819/9f2dc523/attachment.htm>
+
+From thorirmar at gmail.com  Wed Aug 19 23:15:27 2020
+From: thorirmar at gmail.com (=?UTF-8?B?w57Ds3JpciBNw6FyIErDs25zc29u?=)
+Date: Wed, 19 Aug 2020 21:15:27 +0000
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALPsdSu0Dj2qcoutcy7vm96jXQgphiUt95kJ+P=EQ9wQMCYv2A@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+ <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+ <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+ <CALTmSs+rt3kN43zvN+a3qgMTZBo8M8uQvbmqqizJTuiZjAma+g@mail.gmail.com>
+ <CALPsdSu0Dj2qcoutcy7vm96jXQgphiUt95kJ+P=EQ9wQMCYv2A@mail.gmail.com>
+Message-ID: <CALTmSsKH=ejuJ2n77mtrLByfdfjYoRm9+ka=Sr1YUhh9yOPO2w@mail.gmail.com>
+
+All tests are now passing:
+
+*===============================================================================**All
+tests passed* (47 assertions in 19 test cases)
+
+
+but I am getting a vtk error during the loch make:
+
+
+make -C ./loch
+make[1]: Entering directory '/home/user/Downloads/therion-master/loch'
+gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+-I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0
+-D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -O2 -o
+/home/user/Downloads/therion.bin/loch/lxR2P.o lxR2P.c
+gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+-I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0
+-D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -O2 -o
+/home/user/Downloads/therion.bin/loch/lxTR.o lxTR.c
+c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -std=c++11
+-I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0
+-D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread
+-Wno-deprecated -I/usr/include/freetype2 -I/usr/include/libpng16
+-I/usr/local/include/vtk-5.4 -O2 -o
+/home/user/Downloads/therion.bin/loch/lxOGLFT.o lxOGLFT.cxx
+c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -std=c++11
+-I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0
+-D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread
+-Wno-deprecated -I/usr/include/freetype2 -I/usr/include/libpng16
+-I/usr/local/include/vtk-5.4 -O2 -o
+/home/user/Downloads/therion.bin/loch/lxSetup.o lxSetup.cxx
+In file included from *lxSetup.h:23*,
+                 from *lxSetup.cxx:38*:*lxData.h:34:10:* *fatal error:
+*vtkPolyData.h: No such file or directory
+ #include *<vtkPolyData.h>*
+          *^~~~~~~~~~~~~~~*
+compilation terminated.
+make[1]: *** [Makefile:174:
+/home/user/Downloads/therion.bin/loch/lxSetup.o] Error 1
+make[1]: Leaving directory '/home/user/Downloads/therion-master/loch'
+make: *** [Makefile:228: loch/loch] Error 2
+
+
+Is this an error in my VTK installation or the loch files? I had to
+build VTK from source so there may be something missing or incorrectly
+configured there.
+
+I'm sorry I keep coming back with more questions, but I would really
+like to get this up and running on this machine, I really appreciate
+the time and effort you are putting into helping me Martin.
+
+
+Best regards,
+
+Þórir Már
+
+
+On Wed, Aug 19, 2020 at 6:09 AM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> Hi,
+> check out the latest commit in the master branch. It uses a different
+> approach to labels handling for newer Proj versions.
+> M.
+>
+> On Mon, Aug 17, 2020 at 10:10 PM Þórir Már Jónsson <thorirmar at gmail.com>
+> wrote:
+>
+>> There is only one line with each of these values:
+>>
+>> The last line of the file contains epsg_labels:
+>>
+>> map<int, const char *> epsg_labels = {};
+>>
+>> and line 738 contains 32634:
+>>
+>> {false, true, false, "+init=epsg:32634", "PROJCS[\"WGS_1984_UTM_Zone_34N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",21.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]", "WGS84 / UTM zone 34N"},
+>>
+>> There is no output when I run tclsh thcsdata.tcl. The script seems to
+>> exit normally, but without printing anything.
+>>
+>> Þórir Már
+>>
+>>
+>> On Mon, Aug 17, 2020 at 7:38 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>>
+>>> Hi,
+>>> check the definition of map<int, const char *> epsg_labels in the
+>>> file thcsdata.cxx (the file is generated by make). Is there a key/value
+>>> pair with a key 32634? What's the value associated with the key? There
+>>> should be a line containing something like
+>>>      {32634, "WGS 84 / UTM zone 34N"},
+>>>
+>>> Also check the terminal output when you run
+>>> tclsh thcsdata.tcl
+>>>
+>>> Martin
+>>>
+>>> On Mon, Aug 17, 2020 at 4:35 AM Þórir Már Jónsson <thorirmar at gmail.com>
+>>> wrote:
+>>>
+>>>> With some difficulty I've managed to find and install libsqlite-tcl.
+>>>> This package was apparently dropped when CentOs went from version 7 to 8,
+>>>> but it is still built for CloudLinux which happens to be based on CentOs 8,
+>>>> saving me from having to find the source and building it myself.
+>>>> Nevertheless make is still failing on the same test as before:
+>>>>
+>>>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest is a Catch v2.11.3 host application.Run with -? for options
+>>>>
+>>>> -------------------------------------------------------------------------------
+>>>> projections: EPSG label
+>>>> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+>>>> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+>>>> with expansion:*  false*
+>>>> *====*===========================================================================
+>>>> test cases: 18 | 17 passed | *1 failed*
+>>>> assertions: 44 | 43 passed | *1 failed*
+>>>>
+>>>> make: *** [Makefile:184: tests] Error 1
+>>>>
+>>>>
+>>>> I went to through the dependencies listed in the Appendix of the book
+>>>> just to make sure I had not missed anything; here is what I have installed:
+>>>>
+>>>>    - gcc-8.3.1-5.1.el8.x86_64
+>>>>    - gcc-c++-8.3.1-5.1.el8.x86_64
+>>>>    - make-4.2.1-10.el8.x86_64
+>>>>    - Perl (I'm not sure which of these are relevant, but these are the
+>>>>    once I have installed):
+>>>>       - perl-Carp-1.42-396.el8.noarch
+>>>>       - perl-constant-1.33-396.el8.noarch
+>>>>       - perl-CPAN-Meta-2.150010-396.el8.noarch
+>>>>       - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+>>>>       - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+>>>>       - perl-Data-Dumper-2.167-399.el8.x86_64
+>>>>       - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+>>>>       - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+>>>>       - perl-devel-5.26.3-416.el8.x86_64
+>>>>       - perl-Digest-1.17-395.el8.noarch
+>>>>       - perl-Digest-MD5-2.55-396.el8.x86_64
+>>>>       - perl-Encode-2.97-3.el8.x86_64
+>>>>       - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+>>>>       - perl-encoding-2.22-3.el8.x86_64
+>>>>       - perl-Errno-1.28-416.el8.x86_64
+>>>>       - perl-Error-0.17025-2.el8.noarch
+>>>>       - perl-Exporter-5.72-396.el8.noarch
+>>>>       - perl-ExtUtils-Command-7.34-1.el8.noarch
+>>>>       - perl-ExtUtils-Install-2.14-4.el8.noarch
+>>>>       - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+>>>>       - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+>>>>       - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+>>>>       - perl-Fedora-VSP-0.001-9.el8.noarch
+>>>>       - perl-File-Path-2.15-2.el8.noarch
+>>>>       - perl-File-Temp-0.230.600-1.el8.noarch
+>>>>       - perl-Filter-1.58-2.el8.x86_64
+>>>>       - perl-generators-1.10-9.el8.noarch
+>>>>       - perl-Getopt-Long-2.50-4.el8.noarch
+>>>>       - perl-Git-2.27.0-1.el8.noarch
+>>>>       - perl-HTTP-Tiny-0.074-1.el8.noarch
+>>>>       - perl-interpreter-5.26.3-416.el8.x86_64
+>>>>       - perl-IO-1.38-416.el8.x86_64
+>>>>       - perl-IO-Socket-IP-0.39-5.el8.noarch
+>>>>       - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+>>>>       - perl-JSON-PP-2.97.001-3.el8.noarch
+>>>>       - perl-libnet-3.11-3.el8.noarch
+>>>>       - perl-libs-5.26.3-416.el8.x86_64
+>>>>       - perl-macros-5.26.3-416.el8.x86_64
+>>>>       - perl-Math-BigInt-1.9998.11-7.el8.noarch
+>>>>       - perl-Math-Complex-1.59-416.el8.noarch
+>>>>       - perl-MIME-Base64-3.15-396.el8.x86_64
+>>>>       - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+>>>>       - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+>>>>       - perl-open-1.11-416.el8.noarch
+>>>>       - perl-parent-0.237-1.el8.noarch
+>>>>       - perl-PathTools-3.74-1.el8.x86_64
+>>>>       - perl-Pod-Escapes-1.07-395.el8.noarch
+>>>>       - perl-podlators-4.11-1.el8.noarch
+>>>>       - perl-Pod-Perldoc-3.28-396.el8.noarch
+>>>>       - perl-Pod-Simple-3.35-395.el8.noarch
+>>>>       - perl-Pod-Usage-1.69-395.el8.noarch
+>>>>       - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+>>>>       - perl-Socket-2.027-3.el8.x86_64
+>>>>       - perl-srpm-macros-1-25.el8.noarch
+>>>>       - perl-Storable-3.11-3.el8.x86_64
+>>>>       - perl-Term-ANSIColor-4.06-396.el8.noarch
+>>>>       - perl-Term-Cap-1.17-395.el8.noarch
+>>>>       - perl-TermReadKey-2.37-7.el8.x86_64
+>>>>       - perl-Test-Harness-3.42-1.el8.noarch
+>>>>       - perl-Text-ParseWords-3.30-395.el8.noarch
+>>>>       - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+>>>>       - perl-Text-Unidecode-1.30-5.el8.noarch
+>>>>       - perl-Thread-Queue-3.13-1.el8.noarch
+>>>>       - perl-threads-2.21-2.el8.x86_64
+>>>>       - perl-threads-shared-1.58-2.el8.x86_64
+>>>>       - perl-Time-HiRes-1.9758-1.el8.x86_64
+>>>>       - perl-Time-Local-1.280-1.el8.noarch
+>>>>       - perl-Unicode-Normalize-1.25-396.el8.x86_64
+>>>>       - perl-URI-1.73-3.el8.noarch
+>>>>       - perl-version-0.99.24-1.el8.x86_64
+>>>>       - perl-XML-Parser-2.44-11.el8.x86_64
+>>>>       - perl-XML-XPath-1.42-3.el8.noarch
+>>>>    - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+>>>>    - PROJ:
+>>>>    - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+>>>>       - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+>>>>       - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+>>>>       - proj-static-6.3.2-4.epel8.playground.x86_64
+>>>>       - proj-devel-6.3.2-4.epel8.playground.x86_64
+>>>>       - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+>>>>       - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+>>>>       - proj-6.3.2-4.epel8.playground.x86_64
+>>>>       - tcl/tk:
+>>>>       - tcl-8.6.8-2.el8.x86_64
+>>>>       - tcl-devel-8.6.8-2.el8.x86_64
+>>>>       - tcllib-1.19-3.el8.noarch
+>>>>       - BWidget-1.9.14 I had to manually download this library, I
+>>>>    copied the tarball to /usr/lib64/tcl-8.6/ and extracted it there in
+>>>>    accordance with the included README file.
+>>>>    - sqlite:
+>>>>       - sqlite-3.26.0-6.el8.x86_64
+>>>>       - sqlite-devel-3.26.0-6.el8.x86_64
+>>>>       - sqlite-libs-3.26.0-6.el8.x86_64
+>>>>       - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+>>>>    - tkImg-1.4.11 I also had to manually download this library. No
+>>>>    README was included in the file, and no documentation is to be found on the
+>>>>    projects github page, so I did the same as with BWidget and copied the
+>>>>    folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+>>>>    - TeX:
+>>>>       - texlive-20180414-17.el8.x86_64
+>>>>       - texlive-metapost-20180414-17.el8.x86_64/pdf
+>>>>       - texlive-pdftex-20180414-17.el8.x86_64
+>>>>       - and a host of other texlive packages (211 in total)
+>>>>    - LCDF Typetools 2.108 (this one I had to download and build from
+>>>>    source, for some reason I was unable to configure it for kpathsea, despite
+>>>>    it already being installed. I ended up needing to use the –without-kpathsea
+>>>>    option during the configuration to get it work – I hope this is not
+>>>>    important for the Therion installation).
+>>>>    - ImageMagick:
+>>>>       - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+>>>>       - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+>>>>       - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+>>>>       - ImageMagick-6.9.10.86-1.el8.x86_64
+>>>>       - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+>>>>       - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+>>>>    - ghostscript-9.25-7.el8.x86_64
+>>>>    - freetype:
+>>>>       - freetype-2.9.1-4.el8.x86_64
+>>>>       - freetype-devel-2.9.1-4.el8.x86_64
+>>>>    - VTK 9.0.1 (built from source)
+>>>>    - libjpeg-turbo-1.5.3-10.el8.x86_64
+>>>>    - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+>>>>    - libpng-1.6.34-5.el8.x86_64
+>>>>    - libpng-devel-1.6.34-5.el8.x86_64
+>>>>    - zlib-1.2.11-15.el8.x86_64
+>>>>    - zlib-devel-1.2.11-15.el8.x86_64
+>>>>
+>>>>
+>>>> Is there anything obvious that I am missing? I don't know what to try
+>>>> next.
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>    - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+>>>>    wrote:Hi,
+>>>>
+>>>> just build-time, introduced in 5.4.4. It's used to generate parts of
+>>>>> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+>>>>> which uses sqlite3 format of its database (older versions used plain text
+>>>>> files).
+>>>>> Martin
+>>>>>
+>>>>> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>>>>>
+>>>>>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>>>>>> >    Hi,
+>>>>>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>>>>>> working.
+>>>>>> >    It's required for correct parsing of projection names from the
+>>>>>> EPSG
+>>>>>> >    database.
+>>>>>>
+>>>>>> Is this a build-time only dependency or should it also be present at
+>>>>>> runtime?
+>>>>>>
+>>>>>> It gets pulled in on debian builds but I'm not quite sure why. It
+>>>>>> should perhaps be explicitly specified. Is this new or has it been
+>>>>>> true for years?
+>>>>>>
+>>>>>> Wookey
+>>>>>> --
+>>>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>>>> http://wookware.org/
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200819/d5d67d35/attachment.htm>
+
+From lists at group-s.sk  Thu Aug 20 10:11:06 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 20 Aug 2020 10:11:06 +0200
+Subject: [Therion] Building Therion on Centos 8 (stream)
+In-Reply-To: <CALTmSsKH=ejuJ2n77mtrLByfdfjYoRm9+ka=Sr1YUhh9yOPO2w@mail.gmail.com>
+References: <CALTmSsLj_oN288zT9DeEnKGxDAp4juh=V9=5D3b+zbXh3Ht5EA@mail.gmail.com>
+ <CALPsdSv=oddEwgkCjOKFLv0OV8r0tvVQhGguM1Ghe8t3Op=i5w@mail.gmail.com>
+ <20200812231815.GZ1006@mail.wookware.org>
+ <CALPsdStgTWCBTzFLKmgc2K9+wD2XMgpSwRGTuEg+3bVti841bg@mail.gmail.com>
+ <CALTmSsJn6RVgX-RiEgnP1R7caBSUe_ew3iMT6GARy7fpcZZ3UA@mail.gmail.com>
+ <CALPsdSvv1HM=NPfAVCB05R2KdgfYNwSDn=9oNF=TyiW+cK52+A@mail.gmail.com>
+ <CALTmSs+rt3kN43zvN+a3qgMTZBo8M8uQvbmqqizJTuiZjAma+g@mail.gmail.com>
+ <CALPsdSu0Dj2qcoutcy7vm96jXQgphiUt95kJ+P=EQ9wQMCYv2A@mail.gmail.com>
+ <CALTmSsKH=ejuJ2n77mtrLByfdfjYoRm9+ka=Sr1YUhh9yOPO2w@mail.gmail.com>
+Message-ID: <CAP35+gHwTiosqJBHiYHPozwCS6zT1Nt3cfoe98rzBC6MJUewKA@mail.gmail.com>
+
+Hi,
+
+it looks like a problem with VTK installation. That vtkPolyData.h header
+file is not where it is expected. Therion looks for VTK in
+/usr/include/vtk* and /usr/local/include/vtk* directories. How did you
+install your VTK? Maybe, some other standard location can be added to the
+VTK search paths.
+
+S.
+
+On Wed, 19 Aug 2020 at 23:19, Þórir Már Jónsson <thorirmar at gmail.com> wrote:
+
+> All tests are now passing:
+>
+> *===============================================================================**All tests passed* (47 assertions in 19 test cases)
+>
+>
+> but I am getting a vtk error during the loch make:
+>
+>
+> make -C ./loch
+> make[1]: Entering directory '/home/user/Downloads/therion-master/loch'
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -O2 -o /home/user/Downloads/therion.bin/loch/lxR2P.o lxR2P.c
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -O2 -o /home/user/Downloads/therion.bin/loch/lxTR.o lxTR.c
+> c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -std=c++11 -I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/include/libpng16  -I/usr/local/include/vtk-5.4 -O2 -o /home/user/Downloads/therion.bin/loch/lxOGLFT.o lxOGLFT.cxx
+> c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -std=c++11 -I/usr/lib64/wx/include/gtk3-unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/include/libpng16  -I/usr/local/include/vtk-5.4 -O2 -o /home/user/Downloads/therion.bin/loch/lxSetup.o lxSetup.cxx
+> In file included from *lxSetup.h:23*,
+>                  from *lxSetup.cxx:38*:*lxData.h:34:10:* *fatal error: *vtkPolyData.h: No such file or directory
+>  #include *<vtkPolyData.h>*
+>           *^~~~~~~~~~~~~~~*
+> compilation terminated.
+> make[1]: *** [Makefile:174: /home/user/Downloads/therion.bin/loch/lxSetup.o] Error 1
+> make[1]: Leaving directory '/home/user/Downloads/therion-master/loch'
+> make: *** [Makefile:228: loch/loch] Error 2
+>
+>
+> Is this an error in my VTK installation or the loch files? I had to build VTK from source so there may be something missing or incorrectly configured there.
+>
+> I'm sorry I keep coming back with more questions, but I would really like to get this up and running on this machine, I really appreciate the time and effort you are putting into helping me Martin.
+>
+>
+> Best regards,
+>
+> Þórir Már
+>
+>
+> On Wed, Aug 19, 2020 at 6:09 AM Martin Budaj <m.budaj at gmail.com> wrote:
+>
+>> Hi,
+>> check out the latest commit in the master branch. It uses a different
+>> approach to labels handling for newer Proj versions.
+>> M.
+>>
+>> On Mon, Aug 17, 2020 at 10:10 PM Þórir Már Jónsson <thorirmar at gmail.com>
+>> wrote:
+>>
+>>> There is only one line with each of these values:
+>>>
+>>> The last line of the file contains epsg_labels:
+>>>
+>>> map<int, const char *> epsg_labels = {};
+>>>
+>>> and line 738 contains 32634:
+>>>
+>>> {false, true, false, "+init=epsg:32634", "PROJCS[\"WGS_1984_UTM_Zone_34N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",21.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]", "WGS84 / UTM zone 34N"},
+>>>
+>>> There is no output when I run tclsh thcsdata.tcl. The script seems to
+>>> exit normally, but without printing anything.
+>>>
+>>> Þórir Már
+>>>
+>>>
+>>> On Mon, Aug 17, 2020 at 7:38 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>>>
+>>>> Hi,
+>>>> check the definition of map<int, const char *> epsg_labels in the
+>>>> file thcsdata.cxx (the file is generated by make). Is there a key/value
+>>>> pair with a key 32634? What's the value associated with the key? There
+>>>> should be a line containing something like
+>>>>      {32634, "WGS 84 / UTM zone 34N"},
+>>>>
+>>>> Also check the terminal output when you run
+>>>> tclsh thcsdata.tcl
+>>>>
+>>>> Martin
+>>>>
+>>>> On Mon, Aug 17, 2020 at 4:35 AM Þórir Már Jónsson <thorirmar at gmail.com>
+>>>> wrote:
+>>>>
+>>>>> With some difficulty I've managed to find and install libsqlite-tcl.
+>>>>> This package was apparently dropped when CentOs went from version 7 to 8,
+>>>>> but it is still built for CloudLinux which happens to be based on CentOs 8,
+>>>>> saving me from having to find the source and building it myself.
+>>>>> Nevertheless make is still failing on the same test as before:
+>>>>>
+>>>>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~utest is a Catch v2.11.3 host application.Run with -? for options
+>>>>>
+>>>>> -------------------------------------------------------------------------------
+>>>>> projections: EPSG label
+>>>>> -------------------------------------------------------------------------------utest-proj.cxx:77...............................................................................
+>>>>> utest-proj.cxx:78: *FAILED:*  CHECK( (epsg_labels.count(32634) > 0 && strcmp(epsg_labels[32634],"WGS 84 / UTM zone 34N") == 0) )
+>>>>> with expansion:*  false*
+>>>>> *====*===========================================================================
+>>>>> test cases: 18 | 17 passed | *1 failed*
+>>>>> assertions: 44 | 43 passed | *1 failed*
+>>>>>
+>>>>> make: *** [Makefile:184: tests] Error 1
+>>>>>
+>>>>>
+>>>>> I went to through the dependencies listed in the Appendix of the book
+>>>>> just to make sure I had not missed anything; here is what I have installed:
+>>>>>
+>>>>>    - gcc-8.3.1-5.1.el8.x86_64
+>>>>>    - gcc-c++-8.3.1-5.1.el8.x86_64
+>>>>>    - make-4.2.1-10.el8.x86_64
+>>>>>    - Perl (I'm not sure which of these are relevant, but these are
+>>>>>    the once I have installed):
+>>>>>       - perl-Carp-1.42-396.el8.noarch
+>>>>>       - perl-constant-1.33-396.el8.noarch
+>>>>>       - perl-CPAN-Meta-2.150010-396.el8.noarch
+>>>>>       - perl-CPAN-Meta-Requirements-2.140-396.el8.noarch
+>>>>>       - perl-CPAN-Meta-YAML-0.018-397.el8.noarch
+>>>>>       - perl-Data-Dumper-2.167-399.el8.x86_64
+>>>>>       - perl-DBD-MySQL-4.046-3.module_el8.3.0+419+c2dec72b.x86_64
+>>>>>       - perl-DBI-1.641-3.module_el8.3.0+413+9be2aeb5.x86_64
+>>>>>       - perl-devel-5.26.3-416.el8.x86_64
+>>>>>       - perl-Digest-1.17-395.el8.noarch
+>>>>>       - perl-Digest-MD5-2.55-396.el8.x86_64
+>>>>>       - perl-Encode-2.97-3.el8.x86_64
+>>>>>       - perl-Encode-Locale-1.05-10.module_el8.3.0+416+dee7bcef.noarch
+>>>>>       - perl-encoding-2.22-3.el8.x86_64
+>>>>>       - perl-Errno-1.28-416.el8.x86_64
+>>>>>       - perl-Error-0.17025-2.el8.noarch
+>>>>>       - perl-Exporter-5.72-396.el8.noarch
+>>>>>       - perl-ExtUtils-Command-7.34-1.el8.noarch
+>>>>>       - perl-ExtUtils-Install-2.14-4.el8.noarch
+>>>>>       - perl-ExtUtils-MakeMaker-7.34-1.el8.noarch
+>>>>>       - perl-ExtUtils-Manifest-1.70-395.el8.noarch
+>>>>>       - perl-ExtUtils-ParseXS-3.35-2.el8.noarch
+>>>>>       - perl-Fedora-VSP-0.001-9.el8.noarch
+>>>>>       - perl-File-Path-2.15-2.el8.noarch
+>>>>>       - perl-File-Temp-0.230.600-1.el8.noarch
+>>>>>       - perl-Filter-1.58-2.el8.x86_64
+>>>>>       - perl-generators-1.10-9.el8.noarch
+>>>>>       - perl-Getopt-Long-2.50-4.el8.noarch
+>>>>>       - perl-Git-2.27.0-1.el8.noarch
+>>>>>       - perl-HTTP-Tiny-0.074-1.el8.noarch
+>>>>>       - perl-interpreter-5.26.3-416.el8.x86_64
+>>>>>       - perl-IO-1.38-416.el8.x86_64
+>>>>>       - perl-IO-Socket-IP-0.39-5.el8.noarch
+>>>>>       - perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+>>>>>       - perl-JSON-PP-2.97.001-3.el8.noarch
+>>>>>       - perl-libnet-3.11-3.el8.noarch
+>>>>>       - perl-libs-5.26.3-416.el8.x86_64
+>>>>>       - perl-macros-5.26.3-416.el8.x86_64
+>>>>>       - perl-Math-BigInt-1.9998.11-7.el8.noarch
+>>>>>       - perl-Math-Complex-1.59-416.el8.noarch
+>>>>>       - perl-MIME-Base64-3.15-396.el8.x86_64
+>>>>>       - perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+>>>>>       - perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+>>>>>       - perl-open-1.11-416.el8.noarch
+>>>>>       - perl-parent-0.237-1.el8.noarch
+>>>>>       - perl-PathTools-3.74-1.el8.x86_64
+>>>>>       - perl-Pod-Escapes-1.07-395.el8.noarch
+>>>>>       - perl-podlators-4.11-1.el8.noarch
+>>>>>       - perl-Pod-Perldoc-3.28-396.el8.noarch
+>>>>>       - perl-Pod-Simple-3.35-395.el8.noarch
+>>>>>       - perl-Pod-Usage-1.69-395.el8.noarch
+>>>>>       - perl-Scalar-List-Utils-1.49-2.el8.x86_64
+>>>>>       - perl-Socket-2.027-3.el8.x86_64
+>>>>>       - perl-srpm-macros-1-25.el8.noarch
+>>>>>       - perl-Storable-3.11-3.el8.x86_64
+>>>>>       - perl-Term-ANSIColor-4.06-396.el8.noarch
+>>>>>       - perl-Term-Cap-1.17-395.el8.noarch
+>>>>>       - perl-TermReadKey-2.37-7.el8.x86_64
+>>>>>       - perl-Test-Harness-3.42-1.el8.noarch
+>>>>>       - perl-Text-ParseWords-3.30-395.el8.noarch
+>>>>>       - perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+>>>>>       - perl-Text-Unidecode-1.30-5.el8.noarch
+>>>>>       - perl-Thread-Queue-3.13-1.el8.noarch
+>>>>>       - perl-threads-2.21-2.el8.x86_64
+>>>>>       - perl-threads-shared-1.58-2.el8.x86_64
+>>>>>       - perl-Time-HiRes-1.9758-1.el8.x86_64
+>>>>>       - perl-Time-Local-1.280-1.el8.noarch
+>>>>>       - perl-Unicode-Normalize-1.25-396.el8.x86_64
+>>>>>       - perl-URI-1.73-3.el8.noarch
+>>>>>       - perl-version-0.99.24-1.el8.x86_64
+>>>>>       - perl-XML-Parser-2.44-11.el8.x86_64
+>>>>>       - perl-XML-XPath-1.42-3.el8.noarch
+>>>>>    - python36-3.6.8-2.module_el8.3.0+389+6a62c88d.x86_64
+>>>>>    - PROJ:
+>>>>>    - proj-datumgrid-1.8-6.3.2.4.epel8.playground.noarch
+>>>>>       - proj-datumgrid-north-america-1.4-1.epel8.playground.noarch
+>>>>>       - proj-datumgrid-europe-1.6-1.epel8.playground.noarch
+>>>>>       - proj-static-6.3.2-4.epel8.playground.x86_64
+>>>>>       - proj-devel-6.3.2-4.epel8.playground.x86_64
+>>>>>       - proj-datumgrid-world-1.0-3.epel8.playground.noarch
+>>>>>       - proj-datumgrid-oceania-1.2-1.epel8.playground.noarch
+>>>>>       - proj-6.3.2-4.epel8.playground.x86_64
+>>>>>       - tcl/tk:
+>>>>>       - tcl-8.6.8-2.el8.x86_64
+>>>>>       - tcl-devel-8.6.8-2.el8.x86_64
+>>>>>       - tcllib-1.19-3.el8.noarch
+>>>>>       - BWidget-1.9.14 I had to manually download this library, I
+>>>>>    copied the tarball to /usr/lib64/tcl-8.6/ and extracted it there in
+>>>>>    accordance with the included README file.
+>>>>>    - sqlite:
+>>>>>       - sqlite-3.26.0-6.el8.x86_64
+>>>>>       - sqlite-devel-3.26.0-6.el8.x86_64
+>>>>>       - sqlite-libs-3.26.0-6.el8.x86_64
+>>>>>       - sqlite-tcl-3.26.0-6.el8.x86_64 (from CloudLinux repository)
+>>>>>    - tkImg-1.4.11 I also had to manually download this library. No
+>>>>>    README was included in the file, and no documentation is to be found on the
+>>>>>    projects github page, so I did the same as with BWidget and copied the
+>>>>>    folder into the tk library directory: (/usr/share/lib64/tk8.6/Img1.4.11/).
+>>>>>    - TeX:
+>>>>>       - texlive-20180414-17.el8.x86_64
+>>>>>       - texlive-metapost-20180414-17.el8.x86_64/pdf
+>>>>>       - texlive-pdftex-20180414-17.el8.x86_64
+>>>>>       - and a host of other texlive packages (211 in total)
+>>>>>    - LCDF Typetools 2.108 (this one I had to download and build from
+>>>>>    source, for some reason I was unable to configure it for kpathsea, despite
+>>>>>    it already being installed. I ended up needing to use the –without-kpathsea
+>>>>>    option during the configuration to get it work – I hope this is not
+>>>>>    important for the Therion installation).
+>>>>>    - ImageMagick:
+>>>>>       - ImageMagick-perl-6.9.10.86-1.el8.x86_64
+>>>>>       - ImageMagick-libs-6.9.10.86-1.el8.x86_64
+>>>>>       - ImageMagick-doc-6.9.10.86-1.el8.x86_64
+>>>>>       - ImageMagick-6.9.10.86-1.el8.x86_64
+>>>>>       - ImageMagick-devel-6.9.10.86-1.el8.x86_64
+>>>>>       - ImageMagick-c++-6.9.10.86-1.el8.x86_64
+>>>>>    - ghostscript-9.25-7.el8.x86_64
+>>>>>    - freetype:
+>>>>>       - freetype-2.9.1-4.el8.x86_64
+>>>>>       - freetype-devel-2.9.1-4.el8.x86_64
+>>>>>    - VTK 9.0.1 (built from source)
+>>>>>    - libjpeg-turbo-1.5.3-10.el8.x86_64
+>>>>>    - libjpeg-turbo-devel-1.5.3-10.el8.x86_64
+>>>>>    - libpng-1.6.34-5.el8.x86_64
+>>>>>    - libpng-devel-1.6.34-5.el8.x86_64
+>>>>>    - zlib-1.2.11-15.el8.x86_64
+>>>>>    - zlib-devel-1.2.11-15.el8.x86_64
+>>>>>
+>>>>>
+>>>>> Is there anything obvious that I am missing? I don't know what to try
+>>>>> next.
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>    - On Thu, Aug 13, 2020 at 6:35 AM Martin Budaj <m.budaj at gmail.com>
+>>>>>    wrote:Hi,
+>>>>>
+>>>>> just build-time, introduced in 5.4.4. It's used to generate parts of
+>>>>>> thcsdata.cxx (esri_labels and epsg_labels). It's used for Proj 6 and newer,
+>>>>>> which uses sqlite3 format of its database (older versions used plain text
+>>>>>> files).
+>>>>>> Martin
+>>>>>>
+>>>>>> On Thu, Aug 13, 2020 at 1:18 AM Wookey <wookey at wookware.org> wrote:
+>>>>>>
+>>>>>>> On 2020-08-12 22:01 +0200, Martin Budaj wrote:
+>>>>>>> >    Hi,
+>>>>>>> >    check if you have libsqlite3-tcl (or equivalent) installed and
+>>>>>>> working.
+>>>>>>> >    It's required for correct parsing of projection names from the
+>>>>>>> EPSG
+>>>>>>> >    database.
+>>>>>>>
+>>>>>>> Is this a build-time only dependency or should it also be present at
+>>>>>>> runtime?
+>>>>>>>
+>>>>>>> It gets pulled in on debian builds but I'm not quite sure why. It
+>>>>>>> should perhaps be explicitly specified. Is this new or has it been
+>>>>>>> true for years?
+>>>>>>>
+>>>>>>> Wookey
+>>>>>>> --
+>>>>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>>>>> http://wookware.org/
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>>>
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200820/ae279370/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Aug 24 00:33:00 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 23 Aug 2020 23:33:00 +0100
+Subject: [Therion] Different map-level for different map items
+Message-ID: <519f1582-5355-3e5f-3176-4f5b331bc4d4@ntlworld.com>
+
+Hi,
+
+Just wondering if map-level can be dynamic or set differently for
+different map items.
+
+map mymap -projection plan
+  eastcaves
+  westcaves
+  surfaceMP at surface #this has a title
+endmap
+map eastcaves
+  cave1MP at cave1 #this has a title
+  cave2MP at cave2 #this has a title
+endmap
+map westcaves
+  cave3MP at cave3 #this has a title
+  cave4MP at cave4 #this has a title
+endmap
+
+If I were making an atlas of "mymap" (using "select mymap at mycaves
+-map-level 2" and "export atlas"), I would want to use "-map-level 2"
+for the caves, but "-map-level 1" for the surface.
+
+Is there a way to make it use a different map-level for each item in
+mymap, or would I need to create a nested map to put surfaceMP at surface
+into, so that it would also have a map-level of 2?
+
+Cheers,
+
+Tarquin
+
+

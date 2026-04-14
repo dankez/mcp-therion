@@ -1,0 +1,1479 @@
+From torstein.finnesand at gmail.com  Fri Jan  1 21:48:41 2010
+From: torstein.finnesand at gmail.com (Torstein Finnesand)
+Date: Fri, 01 Jan 2010 21:48:41 +0100
+Subject: [Therion] Centerline colours in a PDF file (map)
+Message-ID: <4B3E5FA9.2090005@gmail.com>
+
+Hi. I have a simple .th file with centerline data from a cave. The 
+output file is PDF (map), - with the centerline and station symbols. I 
+have no scraps.
+
+My problem is how to visualize the shots and the stations symbols in 3 
+colours in the PDF file:
+
+1. one group of the shots (and their stations) could be default (black)
+
+2. the second group (and their stations) could be red
+
+3. the third group could be blue (with hidden or blue stations). Or 
+better: The group is hidden.
+
+
+I can fix no. 1 and no. 3, the last one by using flag surface in .th 
+file and symbol-hide / symbol-colour in the config file. (The shots are 
+not surface shots, but that doesn't matter.)
+
+
+But how to fix no. 2?
+
+
+Torstein Finnesand
+Norway
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100101/3cfbb4b2/attachment.htm>
+
+From magnu213 at umn.edu  Fri Jan  1 22:25:58 2010
+From: magnu213 at umn.edu (Carl Magnuson)
+Date: Fri, 1 Jan 2010 15:25:58 -0600
+Subject: [Therion] Centerline colours in a PDF file (map)
+In-Reply-To: <4B3E5FA9.2090005@gmail.com>
+References: <4B3E5FA9.2090005@gmail.com>
+Message-ID: <CCAB138D-AAEF-4EC6-B2DE-53A58B0CB7A0@umn.edu>
+
+I have a solution that works, but you may have to redefine a number of metapost symbols.  I set a color attribute on my lines and use it in the following way in a line or point symbol:
+
+if known ATTR_color: 
+        scantokens ATTR_color;
+else: 
+        scantokens "color col; col:=black;";
+fi;
+
+Then add a withcolor col to all the draw commands.
+
+Carl
+
+
+
+
+
+On Jan 1, 2010, at 2:48 PM, Torstein Finnesand wrote:
+
+> Hi. I have a simple .th file with centerline data from a cave. The output file is PDF (map), - with the centerline and station symbols. I have no scraps. 
+> 
+> My problem is how to visualize the shots and the stations symbols  in 3 colours in the PDF file:
+> 1. one group of the shots (and their stations) could be default (black)
+> 2. the second group (and their stations) could be red
+> 3. the third group could be blue (with hidden or blue stations). Or better:  The group is hidden.
+> 
+> I can fix no. 1  and no. 3, the last one by using flag surface in .th file and symbol-hide / symbol-colour in the config file. (The shots are not surface shots, but that doesn't matter.)
+> 
+> But how to fix no. 2?
+> 
+> Torstein Finnesand
+> Norway
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100101/d98e4ecc/attachment.htm>
+
+From m.budaj at gmail.com  Sat Jan  2 20:25:56 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 2 Jan 2010 20:25:56 +0100
+Subject: [Therion] Transparent Labels and Hyperlinks in Labels
+In-Reply-To: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+Message-ID: <f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+
+On Tue, Dec 15, 2009 at 5:21 AM, Carl Magnuson <magnu213 at umn.edu> wrote:
+> These are two features that I would like to make use of and may already be possible, I just don't know how its done.  I have played around with custom metapost cide for making labels with a transparent background and can either make a therion label with a colored background or a label with a transparent background but none of the Therion text formatting.  Has anybody coded a transparent label for Therion?
+
+Hi Carl,
+
+if you mean something like on attached picture, I can give you some
+hints how to modify the existing code until it would be implemented as
+a regular feature:
+
+therion provides a metapost macro def_transparent_rgb to define
+transparent colors like
+
+def_transparent_rgb(tr_blue, 0, 0, 1);
+
+you apply it using 'withtransparentcolor <colorname>' operator.
+Following code redefines p_continuation to use transparency:
+
+def p_continuation(expr pos,theta,sc,al) =
+  p_continuation_UIS(pos,theta,sc,al);
+  if known(ATTR__text) and picture(ATTR__text):
+    p_label.urt(ATTR__text,(.5u,-.25u) transformed T,0.0,8);   % last
+argument (8) instructs therion to use filledlabel
+  fi;
+enddef;
+
+def process_filledlabel(expr cent, rot) =
+  begingroup;
+    interim bboxmargin:=2.0bp;
+    q:=((bbox lab) smoothed 2) rotatedaround (cent, rot);
+    fill q withtransparentcolor tr_blue;      % transparency used
+    draw lab rotatedaround (cent, rot);
+    write_circ_bbox(q);  % without corners smoothing it was enough to use
+                         % write_bbox(q);
+  endgroup;
+enddef;
+
+All text formatting should be available as usual. Which problems did you have?
+
+> My second thought is about hyperlinks from within a label.  For example one may want to label a significant feature and also include a link to a flickr photo or online video of the feature. This may already be possible by just inserting some Latex code, but I'm not sure what kind of processing Therion does on the label text.
+
+Unfortunately it requires changes in the core, but it is so useful
+that I will give it high priority.
+
+Martin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: transp.png
+Type: image/png
+Size: 25174 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100102/9963866c/attachment.png>
+
+From martinsluka at mac.com  Sat Jan  2 20:43:52 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 02 Jan 2010 20:43:52 +0100
+Subject: [Therion] Transparent Labels and Hyperlinks in Labels
+In-Reply-To: <f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+Message-ID: <643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+
+
+On 2.1.2010, at 20:25, Martin Budaj wrote:
+
+>> My second thought is about hyperlinks from within a label.  For  
+>> example one may want to label a significant feature and also  
+>> include a link to a flickr photo or online video of the feature.  
+>> This may already be possible by just inserting some Latex code,  
+>> but I'm not sure what kind of processing Therion does on the label  
+>> text.
+
+There is a possibility to use new design version of Zoomify -  
+www.zoomify.com - try 6 Zoomify Hotspot Viewer
+
+For Zoomify and cave map check: http://klisura.speleo.sk/pages/ 
+ZoomifyFullScreenViewer-XML_en_2009.htm
+
+m.
+
+
+From dangle at tomo.co.nz  Sun Jan  3 06:14:02 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 3 Jan 2010 18:14:02 +1300
+Subject: [Therion] Clarification, Request for 2D output header title option
+Message-ID: <80692D967A6A41EFBCDE2C94CC9CC417@JUICEBRAIN>
+
+Clarification, Request for 2D output header title option
+
+ 
+
+I have noticed that the 2D output titles that are produced behave more or
+less like this.
+
+ 
+
+# if one 'map' for a particular projection is 'selected', the output map
+title that is produced uses that 'map's 'title' in the output header. 
+
+# if more 'map's for a particular projection are 'selected' and there is
+only one source'  survey, the output map title that is produced uses the
+specified 'source'  survey 'title' in the output header. 
+
+# If there are multiple 'selected' maps and 'source' surveys for a
+particular projection, then a blank output map 'title' is produced.
+
+ 
+
+One way of avoiding the 'blank title' problem is to aggregate either all of
+the surveys or all of the maps into single entities (survey or map
+respectively) prior to exporting.  This ensures that you have control over
+what the title will be, but reduces the versatility of the resultant output
+map or atlas, and so I would like to move away from doing it this way.  For
+example you can no longer use the pdf layers to adjust the visibility of the
+component cave maps, and atlas outputs are not collated by the component
+maps.  
+
+ 
+
+Unless there is a feature I have not understood an override map title option
+is perhaps required at export time.
+
+I tried this with a dataset with multiple caves set up in a modular
+hierarchical fashion, where all of the surveys and .
+
+  
+
+export map -projection plan     \
+
+  -layout LayoutMapThisCave     \
+
+  -layout LayoutMapThisCavePlan \
+
+  -layout-title "test override title "           \  
+
+  -output ./Outputs/FloraCavesPlanMap.pdf
+
+ 
+
+.and although no errors were flagged it still produced an output with a
+blank title.  (Not that surprising - not a documented feature).
+
+ 
+
+Has anyone managed to specify a title for an output that has multiple maps
+'selected' and multiple 'source' surveys?
+
+ 
+
+Cheers 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100103/a4806952/attachment.htm>
+
+From dangle at tomo.co.nz  Sun Jan  3 06:14:02 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 3 Jan 2010 18:14:02 +1300
+Subject: [Therion] Request new header projection display option
+Message-ID: <0EA6BD3912664D4BA4EAC88C2B3289CF@JUICEBRAIN>
+
+May I suggest a new layout command to add text to the outputs along the
+lines of .
+
+ 
+
+-projection [<on>|off]
+
+ 
+
+. where 'off' is the current behaviour  and where 'on' adds the following
+text immediately under the title;
+
+ 
+
+In the case of -projection plan adds the text "plan view"
+
+In the case of -projection [elevation xxx units] adds the text  "elevation
+looking xxx units" where units are deg, grad or whatever
+
+In the case of -projection [elevation extended] adds the text "extended
+elevation"
+
+ 
+
+This would compliment the optional printing of the coordinate system that I
+suggested some time ago.
+
+ 
+
+Cheers
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100103/b1604c24/attachment.htm>
+
+From dangle at tomo.co.nz  Sun Jan  3 06:24:29 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 3 Jan 2010 18:24:29 +1300
+Subject: [Therion] Fixed point display in kml model exports
+Message-ID: <1D003234D5BF4943AB35533171C986A8@JUICEBRAIN>
+
+Fixed point display in kml model exports
+
+ 
+
+Would it be possible to export fixed points (and surface surveys) as well as
+cave surveys to kml files?
+
+ 
+
+Cheers
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100103/d618003f/attachment.htm>
+
+From eric.madelaine at sophia.inria.fr  Sun Jan  3 16:39:00 2010
+From: eric.madelaine at sophia.inria.fr (Eric Madelaine, INRIA)
+Date: Sun, 03 Jan 2010 16:39:00 +0100
+Subject: [Therion] Transparent Labels and Hyperlinks in Labels
+In-Reply-To: <643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+Message-ID: <4B40BA14.3090802@sophia.inria.fr>
+
+Martin Sluka a écrit :
+>
+> On 2.1.2010, at 20:25, Martin Budaj wrote:
+>
+>>> My second thought is about hyperlinks from within a label.  For 
+>>> example one may want to label a significant feature and also include 
+>>> a link to a flickr photo or online video of the feature. This may 
+>>> already be possible by just inserting some Latex code, but I'm not 
+>>> sure what kind of processing Therion does on the label text.
+>
+> There is a possibility to use new design version of Zoomify - 
+> www.zoomify.com - try 6 Zoomify Hotspot Viewer
+> For Zoomify and cave map check: 
+> http://klisura.speleo.sk/pages/ZoomifyFullScreenViewer-XML_en_2009.htm
+
+Hello Martin,
+    I did not know about Zoomify, looks interesting...
+    However the documentation is crude... two beginner's questions:
+    - the free version does not provide full screen viewer, right ?
+    - it does not seem to be able to process pdf files. You have to 
+convert them to jpg before ?
+
+Eric.
+
+>
+> m.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Sun Jan  3 16:57:36 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jan 2010 16:57:36 +0100
+Subject: [Therion] Transparent Labels and Hyperlinks in Labels
+In-Reply-To: <4B40BA14.3090802@sophia.inria.fr>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+	<4B40BA14.3090802@sophia.inria.fr>
+Message-ID: <E66426C2-3652-446F-9EDE-4E0C3DA9345D@mac.com>
+
+
+On 3.1.2010, at 16:39, Eric Madelaine, INRIA wrote:
+
+>    - the free version does not provide full screen viewer, right ?
+
+Not. Chcek: http://www.zoomify.com/compare.htm
+
+>    - it does not seem to be able to process pdf files. You have to  
+> convert them to jpg before ?
+
+I convert them to TIFF, because no lost of data.
+
+Documentation is poor, but there are XML versions of parameters and  
+they are much more readable. The best start point is:
+3 Zoomify Full Screen Viewer -> HTML & XML Examples
+
+The viewers are flash applications, you may not change them without  
+Zoomify Flash.
+
+You may change only html or XML parameters and buttons in navigation  
+bar. But they are intuitive.
+
+I use Zoomify several years, but I bought the Design version now.
+
+Martin
+
+
+From dangle at tomo.co.nz  Mon Jan  4 08:05:50 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Mon, 4 Jan 2010 20:05:50 +1300
+Subject: [Therion] Station Label behaviour changed for pdf outputs
+Message-ID: <0251CF231BFC44BABE4EE799B948BD22@JUICEBRAIN>
+
+Hi
+
+I've noticed that the behaviour wrt pdf files has changed recently (probably
+with 5.2.14)
+
+It used to be that station text descriptions (examples below) had no effect
+on pdf outputs, but were displayed in kml outputs.
+
+Now I find that in pdf outputs, in the example below, CE75 gets an entrance
+symbol and the text "Cheops Extension" on all pdf outputs while CE58 is, as
+previously, not annotated.  (kml outputs are unchanged)
+
+While I can see that this would be desirable in many circumstances, at the
+moment I would prefer to suppress the text annotation (and probably, but not
+necessarily, keep the symbol).
+
+I can not see where this new behaviour is described.  I like the idea, but I
+would like to control it.
+
+Have I missed something, or is there a secret to manipulating this
+behaviour?
+
+ 
+
+Example
+
+survey CE -title "Cheops Extension Cave" -entrance CE75
+
+   station CE75 "Cheops Extension"
+# a symbol and text appears in pdf and kml
+
+   station CE58 "bones"
+# text appears in kml only 
+
+ 
+
+Cheers 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/984ab07d/attachment.htm>
+
+From dangle at tomo.co.nz  Mon Jan  4 08:05:50 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Mon, 4 Jan 2010 20:05:50 +1300
+Subject: [Therion] Clarification, Request for 2D output header title option
+Message-ID: <AA4E057F8CE648EEAA999F61AEC116B3@JUICEBRAIN>
+
+>Unless there is a feature I have not understood an override map title
+option is perhaps required at export time.
+
+  
+
+>export map -projection plan     \
+
+>  -layout-title "test override title "           \  
+
+>  -output ./Outputs/FloraCavesPlanMap.pdf
+
+ 
+
+Such an 'override map title' should have parameters;
+
+ 
+
+UseAlways, and
+
+UseOnlyIfNoUniqueTitleAvailable
+
+ 
+
+for maximum versatility.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/0967cd24/attachment.htm>
+
+From martinsluka at mac.com  Mon Jan  4 08:25:01 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 04 Jan 2010 08:25:01 +0100
+Subject: [Therion] Zoomify - a note
+In-Reply-To: <4B40BA14.3090802@sophia.inria.fr>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+	<4B40BA14.3090802@sophia.inria.fr>
+Message-ID: <E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+
+Zoomify is based on Flash, I'm not sure it works under Linux.
+
+m.
+
+
+From drfootleg at googlemail.com  Mon Jan  4 17:20:24 2010
+From: drfootleg at googlemail.com (Footleg)
+Date: Mon, 4 Jan 2010 16:20:24 +0000
+Subject: [Therion] Zoomify - a note
+In-Reply-To: <E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+	<4B40BA14.3090802@sophia.inria.fr>
+	<E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+Message-ID: <3a2bbd711001040820t3de01acbubb28eb601ca3dbb6@mail.gmail.com>
+
+>From what I can see, Microsoft has a similar tool called Deep Zoom which is
+free to generate zoomable images to upload onto websites. While the design
+tool will only run on Windows, it is possible to generate output
+compositions which use either Silverlight (a Microsoft technology) or
+Seadragon AJAX (which should work from any browser+OS).
+
+See http://www.microsoft.com/uk/wave/software-deepzoom.aspx
+
+>From my experience the Silverlight pages run a bit faster and smoother than
+the AJAX output, but on a decent computer both work pretty well.
+
+Footleg
+
+2010/1/4 Martin Sluka <martinsluka at mac.com>
+
+> Zoomify is based on Flash, I'm not sure it works under Linux.
+>
+> m.
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/4f2b9d11/attachment.htm>
+
+From martinsluka at mac.com  Mon Jan  4 19:00:29 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 04 Jan 2010 19:00:29 +0100
+Subject: [Therion] Zoomify - a note
+In-Reply-To: <E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+	<4B40BA14.3090802@sophia.inria.fr>
+	<E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+Message-ID: <829FCC5C-16C2-4665-AB3F-B4760EF5FEC8@mac.com>
+
+http://labs.adobe.com/downloads/flashplayer10.html
+
+The following downloads will install Flash Player 10.1 beta 2 for  
+Windows, Macintosh and Linux desktop operating systems. See the  
+Release Notes for more information.
+
+Important: All users should uninstall any currently installed Flash  
+Player before installing the latest prerelease.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: download.gif
+Type: image/gif
+Size: 365 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/87e6e643/attachment.gif>
+-------------- next part --------------
+
+Download plug-in for Windows (EXE, 2.3 MB)
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: download.gif
+Type: image/gif
+Size: 365 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/87e6e643/attachment-0001.gif>
+-------------- next part --------------
+
+Download active-x for Windows (EXE, 2.3 MB)
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: download.gif
+Type: image/gif
+Size: 365 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/87e6e643/attachment-0002.gif>
+-------------- next part --------------
+
+Download plug-in for Macintosh (DMG, 12.6 MB)
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: download.gif
+Type: image/gif
+Size: 365 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100104/87e6e643/attachment-0003.gif>
+-------------- next part --------------
+
+Download plug-in for Linux (TAR.GZ, 4.3 MB)
+
+
+From martinsluka at mac.com  Mon Jan  4 19:03:22 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 04 Jan 2010 19:03:22 +0100
+Subject: [Therion] Zoomify - a note
+In-Reply-To: <E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+References: <F5F29BC2-449C-4CB3-80D2-C28DAB757D6F@umn.edu>
+	<f64c1c4a1001021125m4adacd95qfc46b38fa294cfc7@mail.gmail.com>
+	<643D0A7F-3D76-4C12-A4D4-C3FCC2E57CFB@mac.com>
+	<4B40BA14.3090802@sophia.inria.fr>
+	<E1DA142C-F1A0-4D74-9D5D-A12B95A62C2E@mac.com>
+Message-ID: <A1B77154-F981-46E1-A3D7-D480D2B3DB82@mac.com>
+
+How can I convert images on a UNIX or LINUX machine?
+
+The Zoomify Converter is currently available for Windows and  
+Macintosh platforms, however, scripted alternatives are available for  
+UNIX/LINUX environments. Access information is provided below. These  
+alternatives have been developed by Zoomify customers and partners  
+and, as script-based implementations, are editable and portable to  
+other scripting languages. They are, however, slower than the  
+compiled offerings for Windows and Macintosh. Zoomify is pursuing the  
+creation of a UNIX/LINUX converter through partners and we hope to  
+have more to announce soon. Please watch our home page for  
+information on this topic.
+
+For a Python/PIL/Zope-based conversion solution please see  
+SourceForge.net and search on 'ZoomifyImage'. For a PERL-based  
+conversion alternative you may download the PERL-Slice.zip file from  
+the Zoomify download server. (Note: the PERL-based solution does not  
+support incremental source image data loading so it is only  
+appropriate for images tens or hundreds of megabytes in size rather  
+than gigabytes in size).
+
+so it looks, it should be solved
+
+If anybody may test the zoomify on Linux - both conversion and Flash  
+extension, please do it and send a note.
+
+m.
+
+
+From piotr_szukala at o2.pl  Fri Jan  8 23:54:00 2010
+From: piotr_szukala at o2.pl (=?UTF-8?Q?piotr=5Fszukala?=)
+Date: Fri, 08 Jan 2010 23:54:00 +0100
+Subject: [Therion] =?utf-8?q?Problems_with_export_=2Epdf_file_=5Bmetapost_?=
+	=?utf-8?q?warnings=5D?=
+Message-ID: <7aaccfd.79029864.4b47b788.38762@o2.pl>
+
+Hi!
+After all steps to remove white trianle problem there is still the error: cp
+exit code 1. 
+There are also some warnings in metapost log file like: Warning: the
+turningnumber algorithms do not agree. The current computed value is 1, but the
+'connect-the-dots' algorithm returned 0 
+
+What does it exactly mean? Where is the problem that Xtherion still occures
+cp exit code 1 error and blocks exporting .pdf file?
+I've attached therion.log and data.pdf (generated by -d option)
+
+Best regards
+Piotr Szukała
+Poland
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.log
+Type: application/octet-stream
+Size: 4815 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100108/7f7d1d6e/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: data.pdf
+Type: application/pdf
+Size: 261443 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100108/7f7d1d6e/attachment.pdf>
+
+From m.budaj at gmail.com  Sat Jan  9 17:01:22 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 9 Jan 2010 17:01:22 +0100
+Subject: [Therion] Problems with export .pdf file [metapost warnings]
+In-Reply-To: <7aaccfd.79029864.4b47b788.38762@o2.pl>
+References: <7aaccfd.79029864.4b47b788.38762@o2.pl>
+Message-ID: <f64c1c4a1001090801i7eb40869lbeaab4b6c1887b4e@mail.gmail.com>
+
+On Fri, Jan 8, 2010 at 11:54 PM, piotr_szukala <piotr_szukala at o2.pl> wrote:
+> Hi!
+> After all steps to remove white trianle problem there is still the error: cp
+> exit code 1.
+
+According to your log file it seems that the directory where therion
+should copy the temporary files does not exist. You should use
+export map -o dir/file instead of export map -o -dir/file unless the
+directory name is really '-dir'.
+
+> There are also some warnings in metapost log file like: Warning: the
+> turningnumber algorithms do not agree. The current computed value is 1, but the
+> 'connect-the-dots' algorithm returned 0
+
+See http://mailman.speleo.sk/pipermail/therion/2009-June/002534.html
+
+Martin
+
+
+From wookey at wookware.org  Wed Jan 13 14:51:19 2010
+From: wookey at wookware.org (Wookey)
+Date: Wed, 13 Jan 2010 13:51:19 +0000
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+Message-ID: <20100113135118.GY15916@dream.aleph1.co.uk>
+
+Guys - someone is testing if debian packages build with gcc 4.5, and
+therion doesn't. Anyone got any ideas how to fix this, or do we
+contend that it is actually a compiler bug?
+
+----- Forwarded message from Matthias Klose <doko at debian.org> -----
+
+From: Matthias Klose <doko at debian.org>
+Date: Wed, 13 Jan 2010 01:06:03 +0000
+To: maintonly at bugs.debian.org
+Subject: Bug#565049: therion: ftbfs with gcc-4.5
+Reply-To: Matthias Klose <doko at debian.org>,
+	565049-maintonly at bugs.debian.org
+X-Spam-Status: No, score=-3.6 required=4.5 tests=BAYES_00,RCVD_IN_DNSWL_LOW
+	autolearn=ham version=3.2.5
+
+Package: therion
+Version: 5.2.8-1
+Severity: normal
+Tags: sid
+User: debian-gcc at lists.debian.org
+Usertags: ftbfs-gcc-4.5
+
+The package fails to build in a test rebuild on at least amd64 with
+gcc-4.5/g++-4.5, but succeeds to build with gcc-4.4/g++-4.4.
+For the compiler version used, see:
+http://lists.debian.org/debian-devel/2010/01/msg00230.html
+
+The full build log can be found at:
+http://people.debian.org/~lucas/logs/2010/01/08b/therion_5.2.8-1_lsid64b.buildlog
+The last lines of the build log are cwat the end of this report.
+
+The reason of the build failure is likely in the package (compiler or
+linker message found in the build log), if this turns out as a gcc bug,
+please reassign to the gcc-4.5 package. If the build ends with a
+message "confused by earlier errors, bailing out", please
+ignore it for now; these compiler errors are filed separately.
+
+
+[...]
+c++ -c -Wall -DTHLINUX -O2 -o thscraplp.o thscraplp.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thscrapen.o thscrapen.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thpoint.o thpoint.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thline.o thline.cxx
+c++ -c -Wall -DTHLINUX -O2 -o tharea.o tharea.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thlegenddata.o thlegenddata.cxx
+make -C ./mpost
+make[2]: Entering directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion/mpost'
+perl genmpost.pl
+reading therion.mp
+reading thPoint
+reading thLine
+reading thArea
+reading thText
+reading thSpecial
+reading thTrans
+done
+make[2]: Leaving directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion/mpost'
+c++ -c -Wall -DTHLINUX -O2 -o thmpost.o thmpost.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thsymbolsets.o thsymbolsets.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thjoin.o thjoin.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thmap.o thmap.cxx
+c++ -c -Wall -DTHLINUX -O2 -o thexpmap.o thexpmap.cxx
+In file included from thexpmap.cxx:75:0:
+thsvg.h:26:79: error: cannot call constructor 'legenddata::legenddata' directly
+thsvg.h:26:79: note: for a function-style cast, remove the redundant '::legenddata'
+make[1]: *** [thexpmap.o] Error 1
+make: *** [build-stamp] Error 2
+make[1]: Leaving directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion'
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+
+
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From aaron at boim.com  Fri Jan 15 15:44:45 2010
+From: aaron at boim.com (Aaron Birenboim)
+Date: Fri, 15 Jan 2010 07:44:45 -0700
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+In-Reply-To: <20100113135118.GY15916@dream.aleph1.co.uk>
+References: <20100113135118.GY15916@dream.aleph1.co.uk>
+Message-ID: <4B507F5D.70007@boim.com>
+
+Wookey wrote:
+> Guys - someone is testing if debian packages build with gcc 4.5, and
+> therion doesn't. Anyone got any ideas how to fix this, or do we
+> contend that it is actually a compiler bug?
+
+I have many debian and ubuntu machines.
+I could (most likely) get 4.5 on one of them.
+
+Could you give me a hint at how best to help?
+I have not actually used Therion yet, but wanted to start,
+since I really wanted LINUX based software.
+
+Is there a place I should go to get a snapshot from
+revision control (svn?  git?) instead of the debian package?
+
+              aaron
+
+> 
+> ----- Forwarded message from Matthias Klose <doko at debian.org> -----
+> 
+> From: Matthias Klose <doko at debian.org>
+> Date: Wed, 13 Jan 2010 01:06:03 +0000
+> To: maintonly at bugs.debian.org
+> Subject: Bug#565049: therion: ftbfs with gcc-4.5
+> Reply-To: Matthias Klose <doko at debian.org>,
+> 	565049-maintonly at bugs.debian.org
+> X-Spam-Status: No, score=-3.6 required=4.5 tests=BAYES_00,RCVD_IN_DNSWL_LOW
+> 	autolearn=ham version=3.2.5
+> 
+> Package: therion
+> Version: 5.2.8-1
+> Severity: normal
+> Tags: sid
+> User: debian-gcc at lists.debian.org
+> Usertags: ftbfs-gcc-4.5
+> 
+> The package fails to build in a test rebuild on at least amd64 with
+> gcc-4.5/g++-4.5, but succeeds to build with gcc-4.4/g++-4.4.
+> For the compiler version used, see:
+> http://lists.debian.org/debian-devel/2010/01/msg00230.html
+> 
+> The full build log can be found at:
+> http://people.debian.org/~lucas/logs/2010/01/08b/therion_5.2.8-1_lsid64b.buildlog
+> The last lines of the build log are cwat the end of this report.
+> 
+> The reason of the build failure is likely in the package (compiler or
+> linker message found in the build log), if this turns out as a gcc bug,
+> please reassign to the gcc-4.5 package. If the build ends with a
+> message "confused by earlier errors, bailing out", please
+> ignore it for now; these compiler errors are filed separately.
+> 
+> 
+> [...]
+> c++ -c -Wall -DTHLINUX -O2 -o thscraplp.o thscraplp.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thscrapen.o thscrapen.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thpoint.o thpoint.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thline.o thline.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o tharea.o tharea.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thlegenddata.o thlegenddata.cxx
+> make -C ./mpost
+> make[2]: Entering directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion/mpost'
+> perl genmpost.pl
+> reading therion.mp
+> reading thPoint
+> reading thLine
+> reading thArea
+> reading thText
+> reading thSpecial
+> reading thTrans
+> done
+> make[2]: Leaving directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion/mpost'
+> c++ -c -Wall -DTHLINUX -O2 -o thmpost.o thmpost.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thsymbolsets.o thsymbolsets.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thjoin.o thjoin.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thmap.o thmap.cxx
+> c++ -c -Wall -DTHLINUX -O2 -o thexpmap.o thexpmap.cxx
+> In file included from thexpmap.cxx:75:0:
+> thsvg.h:26:79: error: cannot call constructor 'legenddata::legenddata' directly
+> thsvg.h:26:79: note: for a function-style cast, remove the redundant '::legenddata'
+> make[1]: *** [thexpmap.o] Error 1
+> make: *** [build-stamp] Error 2
+> make[1]: Leaving directory `/build/user-therion_5.2.8-1-amd64-g4N5cQ/therion-5.2.8/build-tree/therion'
+> dpkg-buildpackage: error: debian/rules build gave error exit status 2
+> 
+> 
+> 
+> ----- End forwarded message -----
+> Wookey
+
+
+
+From ipogeorge at email.it  Fri Jan 15 16:36:45 2010
+From: ipogeorge at email.it (Giorgio Pannuzzo)
+Date: Fri, 15 Jan 2010 16:36:45 +0100
+Subject: [Therion] (no subject)
+Message-ID: <37654401cebf40a023076bff7882d8a4@89.97.177.8>
+
+Hi to all.
+I installed Loch vers 5.2.13, but noticed that there is no way to display
+walls escluding Vertical Threshold.
+I have a lot of old data collected considering U & D like actual Up and
+Down, then I wish to use them as they are.
+
+Hope the problem could be solved soon, in a next version.
+
+Giorgio 
+ --
+ Caselle da 1GB, trasmetti allegati fino a 3GB e in piu' IMAP, POP3 e SMTP
+autenticato? GRATIS solo con Email.it: http://www.email.it/f
+ 
+ Sponsor:
+ Apri Conto Arancio entro il 28 febbraio 2010 e ricevi 50 Euro da spendere
+presso Media World. Aprilo adesso
+ Clicca qui: http://adv.email.it/cgi-bin/foclick.cgi?mid=10035&d=20100115
+
+
+
+
+From wookey at wookware.org  Fri Jan 15 20:48:24 2010
+From: wookey at wookware.org (Wookey)
+Date: Fri, 15 Jan 2010 19:48:24 +0000
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+In-Reply-To: <4B507F5D.70007@boim.com>
+References: <20100113135118.GY15916@dream.aleph1.co.uk>
+	<4B507F5D.70007@boim.com>
+Message-ID: <20100115194822.GL15916@dream.aleph1.co.uk>
+
++++ Aaron Birenboim [2010-01-15 07:44 -0700]:
+> Wookey wrote:
+> > Guys - someone is testing if debian packages build with gcc 4.5, and
+> > therion doesn't. Anyone got any ideas how to fix this, or do we
+> > contend that it is actually a compiler bug?
+> 
+> I have many debian and ubuntu machines.
+> I could (most likely) get 4.5 on one of them.
+
+That's easy: add experimental to your sources.list and aptitude update;
+aptitude install gcc-4.5
+(http://packages.debian.org/experimental/gcc-4.5)
+
+> Could you give me a hint at how best to help?
+
+Examinging the buildlog failure linked in the message may be
+sufficient to make the problem obvious to a C++-competent person.
+http://people.debian.org/~lucas/logs/2010/01/08b/therion_5.2.8-1_lsid64b.buildlog
+
+> I have not actually used Therion yet, but wanted to start,
+> since I really wanted LINUX based software.
+> 
+> Is there a place I should go to get a snapshot from
+> revision control (svn?  git?) instead of the debian package?
+
+For this particualr problem checking against the Debian source first
+would be best. Once a patch that fixes it has been found we can apply
+that to 'latest'. Therion does not have a publically-accessible
+svn/git repo for the offical code (SFAIK). I have an svn repo for my
+own Debian development purposes, but it's currently out of date. 
+
+To get the debian sources just do apt-get source therion
+
+The tarballs on the therion site remain definitive for upstream.
+
+Thanks for taking an interest - I hope someone can fix this. 
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From aaron at boim.com  Fri Jan 15 22:04:55 2010
+From: aaron at boim.com (Aaron Birenboim)
+Date: Fri, 15 Jan 2010 14:04:55 -0700
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+In-Reply-To: <20100115194822.GL15916@dream.aleph1.co.uk>
+References: <20100113135118.GY15916@dream.aleph1.co.uk>	<4B507F5D.70007@boim.com>
+	<20100115194822.GL15916@dream.aleph1.co.uk>
+Message-ID: <4B50D877.5030507@boim.com>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Wookey wrote:
+> +++ Aaron Birenboim [2010-01-15 07:44 -0700]:
+>> Wookey wrote:
+>>> Guys - someone is testing if debian packages build with gcc 4.5, and
+>>> therion doesn't. Anyone got any ideas how to fix this, or do we
+>>> contend that it is actually a compiler bug?
+>> I have many debian and ubuntu machines.
+>> I could (most likely) get 4.5 on one of them.
+> 
+> That's easy: add experimental to your sources.list and aptitude update;
+> aptitude install gcc-4.5
+> (http://packages.debian.org/experimental/gcc-4.5)
+> 
+>> Could you give me a hint at how best to help?
+> 
+> Examinging the buildlog failure linked in the message may be
+> sufficient to make the problem obvious to a C++-competent person.
+> http://people.debian.org/~lucas/logs/2010/01/08b/therion_5.2.8-1_lsid64b.buildlog
+
+c++ -c -Wall -DTHLINUX -O2 -o thexpmap.o thexpmap.cxx
+In file included from thexpmap.cxx:75:0:
+thsvg.h:26:79: error: cannot call constructor 'legenddata::legenddata'
+directly
+thsvg.h:26:79: note: for a function-style cast, remove the redundant
+'::legenddata'
+make[1]: *** [thexpmap.o] Error 1
+make[1]: Leaving directory
+`/build/user-therion_5.2.8-1-amd64-9Je2GG/therion-5.2.8/build-tree/therion'
+make: *** [build-stamp] Error 2
+dpkg-buildpackage: error: debian/rules build gave error exit status 2
+
+
+This is an odd line of code, that I've never seen before.
+I'm not up-to-date on the latest versions of therion, or the compiler,
+but I have never seen such a declaration before:
+
+void thsvg(char * fname, int, legenddata ldata = legenddata::legenddata());
+
+AFAIK, you can only define defaults (in ANSI C++) to constant parameters.
+Also, it should invoke the default constructor when creating a temporary
+object, so the explicit call should not be necessary.
+(And it seems incorrect to me, but it seems that several compilers took
+it ok)
+
+Hence, I would think that the call declaration:
+
+void thsvg(char * fname, int, const legenddata ldata =
+legenddata::legenddata());
+
+might be more correct, although
+
+void thsvg(char * fname, int, const legenddata ldata = legenddata());
+
+might work.
+
+To be safe, I might just switch over to overloading this function.
+I'm pretty sure every compiler will like:
+- -------------------------------------------------------
+void thsvg(char * fname, int, legenddata ldata);
+inline void thsvg(char * fname, int i)
+{
+  legenddata ldata;
+  thsvg(fname,i,ldata);
+}
+- -----------------------------------------------------  in thsvg.h
+
+If you don't like the inline, you could just overload another function,
+without the optional parameter,
+and implement the 2 parameter version in thsvg.cxx.
+
+I am also shocked to see the default parameter definition in the .cxx
+implementation.
+Again, I can see where it could work, but I am surprised.
+The typical way to do this is to #include "thsvg.h"
+in thsg.cxx, and NOT declare the default parameter in the implementation.
+This way, you get the compiler to double-check that your declarations match.
+
+Let me know if you can/wish to give these suggestions a try.
+If that does not solve the problem, I can go back to
+trying to create a full, latest version build environment.
+But... that will take a while.
+There are many dependencies to BUILD therion that I do not
+have on my machines, by default.
+Was there some sort of apt-get command that would install
+all the build-dependencies for a source package?
+
+            aaron
+
+To summarize:
+
+I recommend overloading that function with a 2 and 3 parameter version.
+Just do an inline declaration for the 2 parameter version that supplies
+the default parameter.
+Remove references to the default parameter constructor in the 3
+parameter declaration (.h),
+and in the implementation (.cxx).
+This might not be as "slick" as what you have now, but it
+might be more universal.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iEYEARECAAYFAktQ2HcACgkQY9pzGJrjUYC+pwCgttfkTr7vRbEccWeEUNXceclW
+ES0An2buDaxRfKMknl1+bpabRFQVLvoF
+=94TG
+-----END PGP SIGNATURE-----
+
+
+From m.budaj at gmail.com  Fri Jan 15 22:38:45 2010
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Fri, 15 Jan 2010 22:38:45 +0100
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+In-Reply-To: <4B50D877.5030507@boim.com>
+References: <20100113135118.GY15916@dream.aleph1.co.uk>
+	<4B507F5D.70007@boim.com> <20100115194822.GL15916@dream.aleph1.co.uk>
+	<4B50D877.5030507@boim.com>
+Message-ID: <f64c1c4a1001151338j4d9f0b1ar6008263673c04601@mail.gmail.com>
+
+On Fri, Jan 15, 2010 at 10:04 PM, Aaron Birenboim <aaron at boim.com> wrote:
+> To be safe, I might just switch over to overloading this function.
+> I'm pretty sure every compiler will like:
+> - -------------------------------------------------------
+> void thsvg(char * fname, int, legenddata ldata);
+> inline void thsvg(char * fname, int i)
+> {
+>  legenddata ldata;
+>  thsvg(fname,i,ldata);
+> }
+> - -----------------------------------------------------  in thsvg.h
+
+Hi,
+
+the default parameter value is actually not necessary (it is a remnant
+of some weird testing, I guess -- this function is never called with 2
+parameters), so simple
+
+void thsvg(const char * fname, int, legenddata ldata);
+
+is enough for header (similarly for cxx implementation). Will be fixed
+in the sources.
+
+Martin
+
+
+From wookey at wookware.org  Sat Jan 16 01:17:20 2010
+From: wookey at wookware.org (Wookey)
+Date: Sat, 16 Jan 2010 00:17:20 +0000
+Subject: [Therion] Fw: Bug#565049: therion: ftbfs with gcc-4.5
+In-Reply-To: <4B50D877.5030507@boim.com>
+References: <20100113135118.GY15916@dream.aleph1.co.uk>
+	<4B507F5D.70007@boim.com>
+	<20100115194822.GL15916@dream.aleph1.co.uk>
+	<4B50D877.5030507@boim.com>
+Message-ID: <20100116001720.GN15916@dream.aleph1.co.uk>
+
++++ Aaron Birenboim [2010-01-15 14:04 -0700]:
+
+> This is an odd line of code, that I've never seen before.
+> I'm not up-to-date on the latest versions of therion, or the compiler,
+> but I have never seen such a declaration before:
+> 
+> void thsvg(char * fname, int, legenddata ldata = legenddata::legenddata());
+
+<helpful suggestions>
+
+> Let me know if you can/wish to give these suggestions a try.
+
+I will indeed see how those go. 
+
+> If that does not solve the problem, I can go back to
+> trying to create a full, latest version build environment.
+> But... that will take a while.
+> There are many dependencies to BUILD therion that I do not
+> have on my machines, by default.
+> Was there some sort of apt-get command that would install
+> all the build-dependencies for a source package?
+
+yes: apt-get build-dep therion
+
+(isn't Debian lovely :-)
+(you should also have the 'build-essential' package installed)
+
+If that doesn't work complain at me - it should.
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From dangle at tomo.co.nz  Sat Jan 16 09:36:54 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sat, 16 Jan 2010 21:36:54 +1300
+Subject: [Therion] Preview above below, map-level, revise
+Message-ID: <8B26C6D8AC1C4958A8F95FBC69EFAE17@JUICEBRAIN>
+
+Does anyone have an explanation for the what and how of 'map-level' as it
+relates to maps as described in this extract from Pg 31 of the Therion Book
+5.2.14.
+
+ 
+
+preview <above/below> <other map id> will put the outline of the other map
+in the
+
+specified preview position relative to the current map.
+
+ 
+
+Preview is displayed only if the map is in the map-level level as specified
+by the
+
+select command.
+
+ 
+
+Use the revise command if you want to add maps from higher levels to the
+preview.
+
+ 
+
+I have only ever managed to create previews of maps in the very simplest of
+cases (except I'm not sure exactly what constitutes a simple case - the ones
+that don't work seem to be quite straight forward, and not much different to
+those that don't work  ).  I think it may relate to 'map-level'.
+
+ 
+
+I have asked on this forum about a year ago, but alas I still have not
+resolved this.  I have not been able to comprehend the explanations in the
+wiki (which is similar to the Therion book extract above).
+
+ 
+
+I think the first step to working it out might be to understand what a
+map-level is.  I think it is not referring to the layering of scraps or maps
+within a map.  
+
+Maybe it is the level of the map in the hierarchy displayed in the XTherion
+Compiler window 'Map Structure' panel?  If so how are they numbered?  How to
+determine the map-level of any given map? Top level 0 or 1? Bottom level 0
+or 1?
+
+ 
+
+How would I use 'revise' to change the map-level of a map to enable a
+preview to be displayed?
+
+My attempts to change something simple like a map -title have all failed, so
+there must be something fundamental that I'm not understanding.
+
+ 
+
+Any assistance appreciated.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100116/4712c8af/attachment.htm>
+
+From gfe_list at aliceadsl.fr  Wed Jan 27 19:04:17 2010
+From: gfe_list at aliceadsl.fr (Gilbert Fernandes (mailinglist))
+Date: Wed, 27 Jan 2010 19:04:17 +0100
+Subject: [Therion] show only fixed survey point on maps
+Message-ID: <4B608021.5070108@aliceadsl.fr>
+
+hello,
+
+I'm looking to display the fixed survey points on maps,
+but I didn't succeed.
+I try to set the symbol-hide / symbol-show command in the layout bloc,
+but if I put
+
+  symbol-show point station
+
+I have all the station points displayed (not only the "subtype fixed" 
+points)
+and if I put
+
+  symbol-hide point station
+  symbol-show point station:fixed
+
+I have no station points.
+I saw in the manual that we can use flags to show specific stations
+( flag:<entrance/continuation/sink/spring/doline/dig> )
+But can we use the subtype of the station points to do the same selection ?
+Thanks
+
+Gilbert
+
+
+From dangle at tomo.co.nz  Sat Jan 30 19:15:24 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 31 Jan 2010 07:15:24 +1300
+Subject: [Therion] FW:  show only fixed survey point on maps
+Message-ID: <05175113C42846D6A42F2E89C6110150@JUICEBRAIN>
+
+I too would like this type of control over point station visibility.
+
+I'm sure it can be done with metapost code, by just redefining the temporary
+station symbol and survey line fragments as barely visible or invisible
+dots.  There may be a hint as to how to do this in recent posts on splay
+lines and points.  It's too low on my priority list at the moment to follow
+up, but I have been of a mind to do this for a year or two.
+
+A more satisfactory solution would be to include this functionality directly
+into Therion, along the lines of what Gilbert was trying to do.
+
+  symbol-hide point station
+  symbol-show point station:fixed
+
+Related to this, I suspect the behaviour of pdf outputs with respect to
+flag:<entrance/continuation/sink/spring/doline/dig> 
+has changed.  With recent releases text and symbols associated with stations
+that have these seem to 'print' by default.  This is reasonable, however I
+have not figured out how to stop them printing.  There should be an easy way
+to do it, but I have not found it yet.  Ideas anyone?
+
+
+
+From dangle at tomo.co.nz  Sat Jan 30 21:19:37 2010
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 31 Jan 2010 09:19:37 +1300
+Subject: [Therion] Paperless Cave Survey with DistoX, PocketTopo and Therion
+Message-ID: <2AF011EBAF8F4A3F8EA011A181B393F2@JUICEBRAIN>
+
+You may recall that 6 to 9 months ago I was having difficulty with our new
+DistoX http://paperless.bheeb.ch/. It would not calibrate properly.  
+
+ 
+
+This is just to let you know that it would seem that all the problems are
+resolved, and it is now our preferred surveying device.  It took us a while,
+but we did our first completely paperless cave survey a couple of weeks ago
+(after a few above ground practice runs).  The finished map was done by
+lunchtime the next day, with minimal effort compared to an equivalent 'paper
+survey'.  A bit more time is spent sketching in the cave, but much more
+detail tends to be collected, and it would appear to be more accurate.
+
+ 
+
+There are a few rough edges to the software, so it pays to practice the
+whole process before doing a real survey.  With luck these will be ironed
+out in due course.
+
+ 
+
+The problem with the distoX calibration was resolved by replacing the
+circuit board (Beat provided this service free of charge).
+
+There was a short term problem after this, because the compass behaviour was
+erratic - increasing counter-clockwise etc.  This was due to the calibration
+being carried out in Switzerland where the earth's magnetic field is weaker
+than where we were using the device in New Zealand.  So even though in
+theory a calibration is valid for use anywhere on earth, in practice this is
+only the case if the magnetic field is weaker than where the device was
+calibrated.
+
+ 
+
+Cheers
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20100131/aa314f2c/attachment.htm>
+
+From luethi at vaw.baug.ethz.ch  Sat Jan 30 22:24:49 2010
+From: luethi at vaw.baug.ethz.ch (Martin =?ISO-8859-1?Q?L=FCthi?=)
+Date: Sat, 30 Jan 2010 22:24:49 +0100
+Subject: [Therion] Paperless Cave Survey with DistoX,
+	PocketTopo and Therion
+In-Reply-To: <2AF011EBAF8F4A3F8EA011A181B393F2@JUICEBRAIN>
+References: <2AF011EBAF8F4A3F8EA011A181B393F2@JUICEBRAIN>
+Message-ID: <87r5p7b80u.wl%luethi@vaw.baug.ethz.ch>
+
+Hi Bruce
+
+At Sun, 31 Jan 2010 09:19:37 +1300,
+Bruce wrote:
+> This is just to let you know that it would seem that all the problems are
+> resolved, and it is now our preferred surveying device.  It took us a while,
+> but we did our first completely paperless cave survey a couple of weeks ago
+> (after a few above ground practice runs).  The finished map was done by
+> lunchtime the next day, with minimal effort compared to an equivalent 'paper
+> survey'.  A bit more time is spent sketching in the cave, but much more
+> detail tends to be collected, and it would appear to be more accurate.
+
+Just wondering: how do you get the data from DistoX into Therion? I was not
+very successful since the *.top files are not easy to parse, and apparently
+not ducumented. What is exported for Therion is just a sketch, but it would be
+nice to have *.th files produeced from *.top files directly.
+
+I had contacted Beat about that, but never got an answer.
+
+So my question are:
+o How do you export DistoX data to Therion?
+o Does anybody have a documentation on the *.top format, or source code to
+  read it?
+
+Thanks, Martin
+
+
+From luethi at vaw.baug.ethz.ch  Sun Jan 31 05:37:40 2010
+From: luethi at vaw.baug.ethz.ch (Martin =?ISO-8859-1?Q?L=FCthi?=)
+Date: Sun, 31 Jan 2010 05:37:40 +0100
+Subject: [Therion] Paperless Cave Survey with DistoX,
+	PocketTopo and Therion
+In-Reply-To: <D5BEE531FFD54D538E055822111B98E3@JUICEBRAIN>
+References: <2AF011EBAF8F4A3F8EA011A181B393F2@JUICEBRAIN>
+	<87r5p7b80u.wl%luethi@vaw.baug.ethz.ch>
+	<D5BEE531FFD54D538E055822111B98E3@JUICEBRAIN>
+Message-ID: <87ljfec2jv.wl%luethi@vaw.baug.ethz.ch>
+
+Bruce
+
+Thanks for your explanations.
+
+At Sun, 31 Jan 2010 14:24:11 +1300,
+Bruce Mutton wrote:
+> It is documented, but on searching just now I discovered it is quite hard to
+> find. Martin Sluka commented back in April 2009...
+> "Therion export file from PocketTopo is an intermediate format. The data and
+> sketches are generated right in Therion - Import for data and Insert
+> background images -> format PocketTopo for sketches."
+
+I am aware of that, but that is not what we (I) want. I don't think we can do
+much userul with these files, because they are already processed.
+
+> Attached are some notes I made to myself on how to use the gadgets and
+> process the data in a consistent way.  I think the bit on branching of
+> passages is erroneous.  I need to play some more to figure out how it really
+> works.  The answer to your question is near the top of the second page I
+> think.  I keep a .top file and both types of exported .txt files in the
+> folder with all of the therion data.  The bulk of the .th file is created
+> without much in the way of user intervention.
+
+If I understand that correctly, PocketTopo is still completely closed and the
+file format not documented. Also from reading your comments, the PDA software
+seems to be quite inflexible (first splay shots, then next target). Since I am
+also considering going that route, these seem to be severe limitations.
+
+Working together with people using PocketTopo, it is quite inconvenint not to
+have true Therion *.th files with the full set of measurements, but just
+processed data. It would be great to be able to write a *.top conversion
+utility, but for that the file format needs to known.
+
+Best, Martin
+
+
+From martinsluka at mac.com  Sun Jan 31 22:42:55 2010
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 31 Jan 2010 22:42:55 +0100
+Subject: [Therion] Paperless Cave Survey with DistoX,
+	PocketTopo and Therion
+In-Reply-To: <87ljfec2jv.wl%luethi@vaw.baug.ethz.ch>
+References: <2AF011EBAF8F4A3F8EA011A181B393F2@JUICEBRAIN>
+	<87r5p7b80u.wl%luethi@vaw.baug.ethz.ch>
+	<D5BEE531FFD54D538E055822111B98E3@JUICEBRAIN>
+	<87ljfec2jv.wl%luethi@vaw.baug.ethz.ch>
+Message-ID: <C33D2084-DD8A-4092-9508-46D90FFB4A2C@mac.com>
+
+
+On 31.1.2010, at 5:37, Martin Lüthi wrote:
+
+> If I understand that correctly, PocketTopo is still completely  
+> closed and the
+> file format not documented. Also from reading your comments, the  
+> PDA software
+> seems to be quite inflexible (first splay shots, then next target).  
+> Since I am
+> also considering going that route, these seem to be severe  
+> limitations.
+
+Dear friends, I thank for the miracle I hoped all me cave life. My  
+dream about xyz instrument is reality.
+
+I spoke with Beat just few minutes he presented his solution. His  
+answers were simple: he did it for himself but he is able to SELL  
+such boards to other surveyors. The software is for himself too, so  
+use it or let it be.
+
+The format of .top files is just simple, because PocketTopo uses only  
+straight lines, not splines or Beziers. It means you should to redraw  
+the sketch from PocketTopo anyway.
+
+Martin
+

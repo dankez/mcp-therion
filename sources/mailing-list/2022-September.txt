@@ -1,0 +1,657 @@
+From bruce at tomo.co.nz  Thu Sep  1 11:16:30 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 1 Sep 2022 21:16:30 +1200
+Subject: [Therion] More on showing only some cross-sections
+In-Reply-To: <708218c0-ca5e-2b6c-7991-f164bbdedead@campercaver.net>
+References: <708218c0-ca5e-2b6c-7991-f164bbdedead@campercaver.net>
+Message-ID: <003701d8bde3$86d91870$948b4950$@tomo.co.nz>
+
+> Is there a list of the predefined contexts and groups?
+
+>From the Therion Book (pg 53), group may be one of the following: 
+all, centerline, sections, water, speleothems, passage-fills, ice,
+sediments, equipment.
+text, cave-centreline, surface-centreline
+
+...depending on the context.
+
+Bruce
+
+
+
+From bgee at campercaver.net  Thu Sep  1 19:35:06 2022
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 1 Sep 2022 12:35:06 -0500
+Subject: [Therion] More on showing only some cross-sections
+In-Reply-To: <52312291-840e-f857-7459-fd45fde90c2d@wotcc.org.uk>
+References: <708218c0-ca5e-2b6c-7991-f164bbdedead@campercaver.net>
+ <52312291-840e-f857-7459-fd45fde90c2d@wotcc.org.uk>
+Message-ID: <bea87dd1-29ef-15e2-00e6-a7156481dc43@campercaver.net>
+
+Hmmm ....  That is an interesting idea!  It never occurred to me to put 
+cross-sections on a different map.  I am about to leave for a couple of 
+weeks of canoeing in Canada.  When I return I will take a closer look at 
+Heartbreak Hill
+
+Thanks for the suggestion.
+
+===============
+Bill Gee
+
+On 8/30/22 10:25, Andrew Atkinson wrote:
+> 
+> 
+> On 30/08/2022 15:48, Bill Gee wrote:
+>> It occurs to me that perhaps some of the cross-sections could be put in
+>> a custom group or context.? So my first questions:
+>>
+>> Is it possible to create a group or a context?? Can I add more than one
+>> group or context to a symbol such as a cross-section?
+> 
+> I had completely forgotten about this way of doing it, although I used
+> it for a different reason, therefore, it might not be useable in your case.
+> 
+> Look at (or download it)
+> 
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/Goughs/
+> 
+> In this case I have put cross sections into a scrap (and then a map).
+> For example HeartbreakHill has a file XSectionsHeartbreakHill.th2 in
+> which there is a scrap XSectionSP
+> 
+> In the file  HeartbreakHill.th I have then made it a map
+> 
+> map XSectionM
+>    XSectionSP
+> endmap
+> 
+> As maps can be displayed or not displayed this could be used to have a
+> couple of different sets of sections. Goodness knows how hard it is to
+> manage
+> 
+> Good luck
+> 
+> Andrew
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Sun Sep  4 22:33:34 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 4 Sep 2022 21:33:34 +0100
+Subject: [Therion] sd for a vertical pole
+Message-ID: <4b8b8ecd-5083-b485-4e8a-21dae1d6e726@ntlworld.com>
+
+Hi folks,
+
+I guess this could just as easily be a Survex question as a Therion
+question.
+
+I have GPS readings taken on a pole, with the position being given for
+the top of the pole. Subsequent Disto readings are taken from the bottom
+of the pole. The pole is brought to vertical using a spirit level. I
+have checked the accuracy of the spirit as being 0.125?.
+
+I have the (measured) standard deviations of the GPS positions, so I can
+specify the standard deviations for the location fix. What I need to
+work out is how to specify the standard deviation for the pole. It's not
+a plumb measurement, because it is not purely gravitational. So although
+I could use "DOWN" that is not actually accurate, since it is really a
+nearly-vertical measurement depending on the accuracy of the spirit
+level. It's really a length and clinometer reading.
+
+#length of the pole accuracy measurements
+sd length 0.001 metres
+#accuracy of the spirit level
+sd clino 0.125 degrees
+
+But when working with a supposedly vertical position, even the slightest
+error in the clinometer angle of the pole could cause the compass
+bearing to flip to any angle at all. But this seems extreme:
+sd compass 360 degrees
+
+So what would be the right way to specify it?
+
+Cheers,
+
+Tarquin
+
+From tarquin.wilton-jones at ntlworld.com  Tue Sep  6 16:51:54 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 6 Sep 2022 15:51:54 +0100
+Subject: [Therion] sd for a vertical pole
+In-Reply-To: <4b8b8ecd-5083-b485-4e8a-21dae1d6e726@ntlworld.com>
+References: <4b8b8ecd-5083-b485-4e8a-21dae1d6e726@ntlworld.com>
+Message-ID: <5f030ed2-d7ed-c926-0749-edff5b2ac150@ntlworld.com>
+
+> I guess this could just as easily be a Survex question as a Therion
+> question.
+
+Actually, it's not. In Survex terminology, it would be done like this:
+
+*sd length 0.001 metres
+*sd plumb 0.125 degrees
+gps surveystart 2.000 - DOWN
+
+That is how you are supposed to do a vertical leg with variable
+clinometer accuracy and length accuracy, but no compass reading (this is
+taken from Survex's "How do I?" article, when talking about a radio
+location fix).
+
+In Therion, this generates an error "invalid quantity -- plumb".
+
+sd length 0.001 metres
+sd plumb 0.125 degrees
+gps surveystart 2.000 - DOWN
+
+So how do you do the equivalent in Therion without being allowed to use
+"sd plumb"? Is this a bug in Therion? Does it use clino instead? Can it
+pass this to the underlying Survex correctly?
+
+Cheers,
+
+Tarquin
+
+> I have GPS readings taken on a pole, with the position being given for
+> the top of the pole. Subsequent Disto readings are taken from the bottom
+> of the pole. The pole is brought to vertical using a spirit level. I
+> have checked the accuracy of the spirit as being 0.125?.
+> 
+> I have the (measured) standard deviations of the GPS positions, so I can
+> specify the standard deviations for the location fix. What I need to
+> work out is how to specify the standard deviation for the pole. It's not
+> a plumb measurement, because it is not purely gravitational. So although
+> I could use "DOWN" that is not actually accurate, since it is really a
+> nearly-vertical measurement depending on the accuracy of the spirit
+> level. It's really a length and clinometer reading.
+> 
+> #length of the pole accuracy measurements
+> sd length 0.001 metres
+> #accuracy of the spirit level
+> sd clino 0.125 degrees
+> 
+> But when working with a supposedly vertical position, even the slightest
+> error in the clinometer angle of the pole could cause the compass
+> bearing to flip to any angle at all. But this seems extreme:
+> sd compass 360 degrees
+> 
+> So what would be the right way to specify it?
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Sep  7 11:56:00 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 7 Sep 2022 10:56:00 +0100
+Subject: [Therion] sd for a vertical pole
+In-Reply-To: <5f030ed2-d7ed-c926-0749-edff5b2ac150@ntlworld.com>
+References: <4b8b8ecd-5083-b485-4e8a-21dae1d6e726@ntlworld.com>
+ <5f030ed2-d7ed-c926-0749-edff5b2ac150@ntlworld.com>
+Message-ID: <c391b980-4808-8edf-b6af-cd18d3bd5f68@ntlworld.com>
+
+> In Therion, this generates an error "invalid quantity -- plumb".
+> 
+> sd length 0.001 metres
+> sd plumb 0.125 degrees
+> gps surveystart 2.000 - DOWN
+
+I wrote a bunch of tests. Therion is missing the required "sd plumb"
+functionality, and has no equivalent. I have filed this as:
+https://github.com/therion/therion/issues/445
+
+The only workaround is to use:
+
+sd length 0.001 metres
+sd clino 0.125 degrees
+gps surveystart 2.000 - -90
+
+but this will then generate a warning from Cavern saying that the
+compass bearing may not be omitted. (It will still work, however.)
+
+From olly at survex.com  Thu Sep  8 23:23:05 2022
+From: olly at survex.com (Olly Betts)
+Date: Thu, 8 Sep 2022 22:23:05 +0100
+Subject: [Therion] sd for a vertical pole
+In-Reply-To: <c391b980-4808-8edf-b6af-cd18d3bd5f68@ntlworld.com>
+References: <4b8b8ecd-5083-b485-4e8a-21dae1d6e726@ntlworld.com>
+ <5f030ed2-d7ed-c926-0749-edff5b2ac150@ntlworld.com>
+ <c391b980-4808-8edf-b6af-cd18d3bd5f68@ntlworld.com>
+Message-ID: <20220908212305.GD12467@survex.com>
+
+On Wed, Sep 07, 2022 at 10:56:00AM +0100, Tarquin Wilton-Jones via Therion wrote:
+> > In Therion, this generates an error "invalid quantity -- plumb".
+> > 
+> > sd length 0.001 metres
+> > sd plumb 0.125 degrees
+> > gps surveystart 2.000 - DOWN
+> 
+> I wrote a bunch of tests. Therion is missing the required "sd plumb"
+> functionality, and has no equivalent. I have filed this as:
+> https://github.com/therion/therion/issues/445
+> 
+> The only workaround is to use:
+
+Another workaround is to process your centreline data directly with
+cavern and point therion at the resultant .3d file.  However, if you
+have existing centreline data in therion format that would require
+converting it which is probably too annoying.
+
+> sd length 0.001 metres
+> sd clino 0.125 degrees
+> gps surveystart 2.000 - -90
+> 
+> but this will then generate a warning from Cavern saying that the
+> compass bearing may not be omitted. (It will still work, however.)
+
+Not sure what therion generates to feed to cavern in this case, but
+presumably this gets handled as having a compass reading of 0, so
+it doesn't give you the symmetric situation you want.
+
+Setting the compass SD high probably won't give you the symmetric
+situation either.
+
+As you concluded modelling this as a plumb is the best approach
+in Survex.  The plumb error is assumed to be a small angle from the
+vertical since the main error component is assumed to be linear in the
+length of the leg.
+
+I'm not sure if those assumptions are entirely justified, but having
+the error increase with length seems appropriate as on longer plumbs the
+end tends to wander over a larger area and the period of oscillation for
+a pendulum increases with length (proportional to sqrt(length) if you
+assume the string is weightless, or if you assume the whole pendulum is
+rigid, neither of which are going to be entirely true for a plumb in a
+cave).
+
+It might be interesting to experiment to see what the plumb reading
+error actually looks like with increasing length (perhaps down a
+stairwell in a tall building).
+
+Anyway, the main error from your spirit level on the stick will also be
+a small angle from the vertical.
+
+Cheers,
+    Olly
+
+From dropstone at gmx.de  Sat Sep 10 07:39:42 2022
+From: dropstone at gmx.de (Axel)
+Date: Sat, 10 Sep 2022 07:39:42 +0200
+Subject: [Therion] Custom map connections
+Message-ID: <trinity-7c0eb51d-42b2-441f-bac2-38a8d39f00bb-1662788382829@3c-app-gmx-bap20>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220910/8a9223e3/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sat Sep 10 08:01:58 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 10 Sep 2022 07:01:58 +0100
+Subject: [Therion] Custom map connections
+In-Reply-To: <trinity-7c0eb51d-42b2-441f-bac2-38a8d39f00bb-1662788382829@3c-app-gmx-bap20>
+Message-ID: <20220910080312.WtaCoOkQnuYlrWtaCo9xcn@csmtp4.tb.ukmail.iss.as9143.net.>
+
+Hi Axel,Yes. Therion's bug is annoying. I have a workaround. It's a hack, but it works.I have a custom u point that has to appear in the object list just below the map connection point. The code reads the attributes from the custom point and stores them in a global variable. The map-connection code uses that variable if it cannot find attributes on the map connection point itself.My arrows have multiple colours. I will share the CC0 code later once I am back in front of my computer.Hack hack hack...Tarquin
+-------- Original message --------From: Axel <dropstone at gmx.de> Date: 10/09/2022  06:45  (GMT+00:00) To: therion at speleo.sk Subject: [Therion] Custom map connections Bonjour all,
+
+?
+
+some months ago Tarquin opened a request on Github to pass point_mapconnection attributes to the actual l_mapconnection (#434).
+I wonder if something happened there?
+
+As caves don't know how to behave, I have one at the minute that has -just- 5 passages above/underneath each other. Different styled map-connections would make it so much easier to understand the plan and follow the route in the cave (eg make the main ones thicker, change color for overlying/underlying passages).
+
+?
+
+has anyone found a way around it?
+
+?
+
+cheers,
+Axel
+
+?
+
+?
+
+from the mailing-list:
+
+-------
+
+?Tarquin Wilton-Jones via Therion Thu, 07 Jul 2022 10:04:09 -0700
+
+Hi folks,
+
+I have a challenge, presented to me by some users of one of our surveys.
+
+
+We have a cave with layers horribly stacked above each other (10
+passages all crossing the same point!). Simple solution; use map offsets
+to put them all side by side. Use map connection arrows to show what
+connects to what.
+
+That's all good, but they find the default connection arrow hard to see.
+I can redefine l_mapconnection to create my own arrows. Great!
+
+But here's the challenge; they want us to show the difference between an
+unimportant connection, and a major "follow this route" connection. Eg.
+minor ones in grey, major route in red.
+
+I have tried everything I can think of with the mapconnection point: id,
+scale, rotation, -attr etc., but Therion is not creating a
+p_mapconnection. it creates a l_mapconnection, and passes it a path to
+create the line. The attributes are all completely ignored.
+
+Normally, I would use "-attr type major", but that cannot work here,
+because Therion just ignores it. In my opinion, this is a limitation
+that should be fixed.
+
+The only solution I can think of, is to put *two* mapconnection points.
+The l_mapconnection code can then see if the current path matches the
+previous path, and if so, draw it in red. But this is such a horrible
+hack, and prone to failure in future if someone does not realise why
+there are two points, and why they have to follow on from each other.
+
+Can anyone think of a better workaround?
+
+Cheers,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+?
+
+?
+
+?
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220910/85678531/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Sep 11 08:44:40 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 11 Sep 2022 07:44:40 +0100
+Subject: [Therion] Custom map connections
+In-Reply-To: <20220910080312.WtaCoOkQnuYlrWtaCo9xcn@csmtp4.tb.ukmail.iss.as9143.net.>
+References: <20220910080312.WtaCoOkQnuYlrWtaCo9xcn@csmtp4.tb.ukmail.iss.as9143.net.>
+Message-ID: <a183eeba-2930-bcad-8342-efa2546d8e4d@ntlworld.com>
+
+> My arrows have multiple colours. I will share the CC0 code later once I
+> am back in front of my computer.
+
+Attached. (Hope the list lets it through.) To use it, you need to set this:
+
+symbol-assign line map-connection MY
+
+Yes, that is the *line* not the point, because Therion turns each point
+into a line if it is using offsets on its map.
+
+Hopefully the comment at the start of the code is enough for you to use
+it. But basically, it goes something like this. If Therion's bug ever
+gets fixed, you can just create:
+
+point mapconnection -attr theme 1
+...
+endpoint
+
+But until Therion's bug is fixed, you can use my hack:
+
+point mapconnection
+...
+endpoint
+point u:mapconnectiondata -attr theme 1
+endpoint
+
+Therion gets it right with line mapconnection, so if you are using those
+(eg. in an extended elevation as shown in the Therion book), you can
+just set the -attr directly on the line mapconnection.
+
+Each u:mapconnectiondata will only have its theme attribute used once.
+So in this case, the first mapconnection point will use theme "default",
+and the second one will use theme "1" (because Therion draws things in
+reverse order).
+
+point mapconnection
+...
+endpoint
+point mapconnection
+...
+endpoint
+point u:mapconnectiondata -attr theme 1
+endpoint
+
+Note that Therion draws "-clip off" objects out of sequence from the
+rest of the objects, so if you set that property on a mapconnection
+point, you would also need to set it on the u:mapconnectiondata.
+
+Hopefully this is useful for your purposes.
+
+Tarquin
+-------------- next part --------------
+#This MetaPost symbol definition is licensed under CC0 1.0. See the package LICENCE.txt for details.
+
+# use with the following -attr type "value" options
+# -attr theme default = draws in the default brown
+# -attr theme inherit = draws in the symbol colour defined in the layout
+# -attr theme 1 = draws in red
+# Therion 6 does not support -attr on point mapconnection, so this code contains a hacky workaround;
+# by placing a point u:mapconnectiondata below the point mapconnection, the -attr from that point
+# will be used instead. (Note that it must appear below it in rendering order - that means any use of
+# -clip must also be taken into account!)
+
+#the next line is part of the hack
+text en "point u:mapconnectiondata" ""
+layout l_mapconnection_MY
+	code metapost
+		def l_mapconnection_MY (expr P) =
+			T:=identity;
+			begingroup;
+				save arrowsize, type, arrowhead;
+				%the length of the arrowhead, which must be bigger than the pen size by enough margin for the line's curved end not to poke past the walls of the arrowhead
+				arrowsize:=0.4u;
+				string theme;
+				if known ATTR_theme:
+					theme:=ATTR_theme;
+					%this is part of the hack
+					p_u_mapconnectiondata_ATTR_theme:="";
+				elseif known p_u_mapconnectiondata_ATTR_theme:
+					%the same attribute, passed using a point u:mapconnectiondata
+					%this is part of the hack
+					theme:=p_u_mapconnectiondata_ATTR_theme;
+					p_u_mapconnectiondata_ATTR_theme:="";
+				else:
+					theme:="default";
+				fi;
+				if (theme = "1"):
+					drawoptions( withcolor (1,0,0) dashed evenly ); %red
+				elseif (theme = "2"):
+					drawoptions( withcolor (1,0.6,0) dashed evenly ); %orange
+				elseif (theme = "3"):
+					drawoptions( withcolor (0.78,0.78,0) dashed evenly ); %dark yellow
+				elseif (theme = "4"):
+					drawoptions( withcolor (0.46,0.78,0) dashed evenly ); %spring green
+				elseif (theme = "5"):
+					drawoptions( withcolor (0,0.78,0) dashed evenly ); %green
+				elseif (theme = "6"):
+					drawoptions( withcolor (0,0.5,0.44) dashed evenly ); %greeny teal
+				elseif (theme = "7"):
+					drawoptions( withcolor (0,0.8,0.87) dashed evenly ); %sky blue
+				elseif (theme = "8"):
+					drawoptions( withcolor (0,0,1) dashed evenly ); %navy blue
+				elseif (theme = "9"):
+					drawoptions( withcolor (0.5,0,1) dashed evenly ); %violet
+				elseif (theme = "10"):
+					drawoptions( withcolor (1,0,1) dashed evenly ); %fuchia
+				elseif (theme = "inherit"):
+					drawoptions( dashed evenly ); %normally black, but can be coloured by the layout
+				else:
+					drawoptions( withcolor (0.4,0,0) dashed dashpattern(on .1u off .5u on .1u) ); %brown
+				fi;
+				%shorten the line by the size of the arrow head, so that it cannot bulge out of the sides of the arrowhead
+				thdraw ( subpath( arctime arrowsize of P, arctime ( ( arclength P ) - arrowsize ) of P ) of P ) withpen PenA;
+				drawoptions();
+				path arrowhead;
+				arrowhead:=(0,0)--( 2 * arrowsize / 5, arrowsize )--( -2 * arrowsize / 5, arrowsize )--cycle;
+				thfill arrowhead rotated ( angle( thdir( P, 0 ) ) - 90 ) shifted ( point 0 of P );
+				thfill arrowhead rotated ( angle( thdir( P, length P ) ) + 90 ) shifted ( point (length P) of P );
+			endgroup;
+		enddef;
+		initsymbol("l_mapconnection_MY");
+		%this is part of the hack
+		%store the attr
+		string p_u_mapconnectiondata_ATTR_theme;
+		def p_u_mapconnectiondata (expr P,R,S,A)=
+			if known ATTR_theme:
+				p_u_mapconnectiondata_ATTR_theme:=ATTR_theme;
+			fi;
+		enddef;
+		initsymbol("p_u_mapconnectiondata");
+	endcode
+endlayout
+
+From bruce at tomo.co.nz  Wed Sep 14 22:17:25 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 15 Sep 2022 08:17:25 +1200
+Subject: [Therion] Mapiah and WTherion
+Message-ID: <000001d8c877$023c4f80$06b4ee80$@tomo.co.nz>
+
+I've been dabbling with WTherion, and while it is progressing well and
+looking very good in many respects, it is flagged as a sort term interim
+project (on Matrix <https://app.element.io/#/room/> ) and I see some
+high-level challenges:
+
+*	it seems a document must be saved in three places for it to be an
+enduring part of a mapping project:
+
+*	a browser cache (required, and visible only to a particular browser
+on a particular device)
+*	a json file (if you want to store or share the document (presumably)
+without loss of fidelity)
+*	a th2 file (if you wish to compile the document using Therion)
+
+*	In a multi-user project, unless everyone uses the workflow [WTherion
+open json, edit, export th2, compile Therion] there will be loss of
+fidelity.
+ie if some users choose [XTherion open th2, edit, compile Therion] then the
+WTherion users must 'know' to import from th2.  This will result in loss of
+fidelity, especially where there are xvi files in the th2.
+
+ 
+
+For me multi-user and version-controlled storage are prerequisites for any
+mapping projects, and because it seems for most users, (readers of this
+forum excepted of course) both Therion and version control are significant
+challenges, any drawing editor should fit seamlessly into the existing
+Therion environment.  Most likely this means it should read and write th2
+files natively.
+
+ 
+
+Please tell me if I am wrong.  As a self-taught dabbler I am only too happy
+to be shown the error in my thinking.
+
+ 
+
+Anyway, I got to thinking about Mapiah.
+
+I think the development for Mapiah is here and was last updated in February?
+https://gitlab.com/rsevero1/mapiah/-/releases 
+
+I installed 0.0.3 and it looks like it is still in the very early stages.
+Is it still under consideration for further development?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220915/322048b1/attachment.htm>
+
+From rsev at pm.me  Wed Sep 14 23:11:00 2022
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 14 Sep 2022 21:11:00 +0000
+Subject: [Therion] Mapiah and WTherion
+In-Reply-To: <000001d8c877$023c4f80$06b4ee80$@tomo.co.nz>
+References: <000001d8c877$023c4f80$06b4ee80$@tomo.co.nz>
+Message-ID: <_po_pe3tCUKPe6nw78vO7N_CapUS6-qxiRH8xqCfxtujF-bOLAC0xCEoSbdDj9B57GDG26uyXAZcfxn9ap6e-Y7TbK_ELNIfWdHVHOCcDCE=@pm.me>
+
+------- Original Message -------
+
+On Wednesday, September 14th, 2022 at 5:17 PM, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> I?ve been dabbling with WTherion, and while it is progressing well and looking very good in many respects, it is flagged as a sort term interim project (on [Matrix](https://app.element.io/#/room/)) and I see some high-level challenges:
+>
+> - it seems a document must be saved in three places for it to be an enduring part of a mapping project:
+>
+> - a browser cache (required, and visible only to a particular browser on a particular device)
+> - a json file (if you want to store or share the document (presumably) without loss of fidelity)
+> - a th2 file (if you wish to compile the document using Therion)
+> - In a multi-user project, unless everyone uses the workflow [WTherion open json, edit, export th2, compile Therion] there will be loss of fidelity.
+> ie if some users choose [XTherion open th2, edit, compile Therion] then the WTherion users must ?know? to import from th2. This will result in loss of fidelity, especially where there are xvi files in the th2.
+>
+> For me multi-user and version-controlled storage are prerequisites for any mapping projects, and because it seems for most users, (readers of this forum excepted of course) both Therion and version control are significant challenges, any drawing editor should fit seamlessly into the existing Therion environment. Most likely this means it should read and write th2 files natively.
+>
+> Please tell me if I am wrong. As a self-taught dabbler I am only too happy to be shown the error in my thinking.
+>
+> Anyway, I got to thinking about Mapiah.
+>
+> I think the development for Mapiah is here and was last updated in February? https://gitlab.com/rsevero1/mapiah/-/releases
+>
+> I installed 0.0.3 and it looks like it is still in the very early stages. Is it still under consideration for further development?
+
+Development of Mapiah has halted.
+
+After some talks during the last ICS, the ideia seems to be to convert WTherion to a Electron app and further develop it. If someone knows better, please correct me.
+
+I want to help this movement but right now I am still stuck on finishing reports on the Brazilian Cave Rescue course that I organized and ended last week.
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220914/4baec130/attachment.htm>
+
+From wookey at wookware.org  Thu Sep 15 03:11:34 2022
+From: wookey at wookware.org (Wookey)
+Date: Thu, 15 Sep 2022 02:11:34 +0100
+Subject: [Therion] Mapiah and WTherion
+In-Reply-To: <_po_pe3tCUKPe6nw78vO7N_CapUS6-qxiRH8xqCfxtujF-bOLAC0xCEoSbdDj9B57GDG26uyXAZcfxn9ap6e-Y7TbK_ELNIfWdHVHOCcDCE=@pm.me>
+References: <000001d8c877$023c4f80$06b4ee80$@tomo.co.nz>
+ <_po_pe3tCUKPe6nw78vO7N_CapUS6-qxiRH8xqCfxtujF-bOLAC0xCEoSbdDj9B57GDG26uyXAZcfxn9ap6e-Y7TbK_ELNIfWdHVHOCcDCE=@pm.me>
+Message-ID: <20220915011134.GR12437@mail.wookware.org>
+
+On 2022-09-14 21:11 +0000, Rodrigo Severo via Therion wrote:
+>    Development of Mapiah has halted.
+
+That's a pity. 
+
+>    After some talks during the last ICS, the idea seems to be to convert
+>    WTherion to a Electron app and further develop it.
+
+Both the electron-baed apps I use have a fundamental problem: select
+and paste does not work (either in or out). (i.e. It does not
+correctly deal with unix/X two different cut buffers.)  This would be
+a serious problem for Therion use IMHO. I presume this can be fixed
+but I'd recomend checking that before going too far down this road.
+
+If this is something fundamental in the design of electron (or
+upstream refuse to fix it for some reason) then we still need some
+other solution for desktop use.
+
+Wookey
+-- 
+Principal hats:  Debian, Wookware, ARM
+http://wookware.org/
+

@@ -1,0 +1,1167 @@
+From wookey at aleph1.co.uk  Wed Nov  5 19:27:32 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 5 Nov 2003 18:27:32 +0000
+Subject: survex to therion data conversion
+Message-ID: <020@reconstruction>
+
+Having been using Therion to try and draw up some caves I have become
+somewhat frustrated by the survex/therion data incompatibilities.
+
+I think there is room for improvement here and will make some observations,
+which I hope will promote discussion.
+
+The therion centreline data format is pretty-much the same as Survex's -
+however it's not exactly the same so there is a need for converting data
+between the two packages. Ultimately I think we need a scheme where the one
+dataset can be used by both packages as otherwise you end up maintaining two
+almost identical datasets, which has to be a bad thing. This could be
+accomplished with conversion tools, but the two formats are so nearly
+identical that we ought to be able to simply 'include' survex files in
+therion, or have both packages understand both dialects.
+
+In the meantime I need to be able to automate conversion for the hundreds of
+survex data files I have.
+
+Here are the differences I have found so far:
+
+First the simple ones:
+
+* In therion commands do not have a "*" prefix (lines starting with reserved
+words that are not actually commands have a "!" prefix)
+
+* therion does not understand "export"
+  this is not a big deal, but it would probably be a good idea if it did
+
+* therion uses # for comments, survex uses ; (by default)
+  this is just tiresome - especially for hand-editing conversion
+
+* Survex uses "begin <surveyname>", therion uses  "survey <surveyname>"
+* Survex uses "end <surveyname>", therion uses "endsurvey"
+
+* (in *team) (survex currently allows anything but therion has a list)
+ "insts" is not recognised and has to be replaced with "compass clino". I
+think "insts" or "instruments" should be a permitted synonym as it's in a lot
+of data files.
+ therion has no eqivalent of "dog" on the surveying team (general
+checking-out of leads) . I think 'dog' is a colloquial UK term but there
+should probably be something
+
+in *data "ignore" is not supported by therion. - neither is
+left/right/up/down (survex doesn't support these either, but should - I even
+did a patch for it somewhere)
+
+This construct is needed for entry of LRUD info into files that will one day
+be processed usefully (at least for interleaved style data). If both bits of
+software allowed it to be labelled 'left', 'right', 'up', down' then that
+solves the problem.
+
+
+There are two more fundamental changes:
+
+*therion surrounds centreline (ie survex) data (inside the 'survey'
+construct) with
+ centerline
+ ....
+ endcenterline
+
+this makes sense - it is effectively implicit in survex, but therion has
+other forms of data so the centreline stuff needs to be indicated.
+
+(it would be nice if the synonym "centreline" was allowed as well as
+"centerline", then I wouldn't get an error every time I type it in  :-)  On
+the other hand there is a lot to be said for a strict data format).
+
+* equates need to live inside centerline/endcenterline
+
+this one is tricky as it seems to change the scoping rules survex uses and
+seems to make it difficult to directly (simply) translate data.
+
+typical survex data goes:
+*begin part1
+ <survey data>
+*end part1
+
+*equate part1.36 part2.0
+
+*begin part2
+ <survey data>
+*end part2
+
+How do I translate this to therion?
+
+will:
+
+survey part1
+ centerline
+  <survey data>
+ endcenterline
+endsurvey
+
+survey part2
+ centerline
+  equate part1.36 part2.0
+ endceterline
+endsurvey
+
+work? (It is good practice in survex not to include equates in the survey
+like this as they don't really belong to the scope of either survey).
+
+Recommendations welcome.
+
+So - I can probably write some perl to do this conversion reasonably well,
+but it'd be useful to have agreement on what to do about some of these cases and
+if we agreed it was better to modify the programs rather than write a
+converter then I could spend the time doing that instead.
+
+Discuss.
+
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From john.pybus at zoology.oxford.ac.uk  Thu Nov  6 03:27:56 2003
+From: john.pybus at zoology.oxford.ac.uk (John Pybus)
+Date: Thu, 06 Nov 2003 02:27:56 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <021@reconstruction>
+
+Wookey wrote:
+
+> Having been using Therion to try and draw up some caves I have become
+> somewhat frustrated by the survex/therion data incompatibilities.
+>
+> I think there is room for improvement here and will make some observations,
+> which I hope will promote discussion.
+>
+> The therion centreline data format is pretty-much the same as Survex's -
+> however it's not exactly the same so there is a need for converting data
+> between the two packages. Ultimately I think we need a scheme where the one
+> dataset can be used by both packages as otherwise you end up maintaining two
+> almost identical datasets, which has to be a bad thing. This could be
+> accomplished with conversion tools, but the two formats are so nearly
+> identical that we ought to be able to simply 'include' survex files in
+> therion, or have both packages understand both dialects.
+
+
+I've also started using Therion recenty, and have come to similar
+conclusions.
+
+<minor differences snipped>
+
+> * (in *team) (survex currently allows anything but therion has a list)
+>  "insts" is not recognised and has to be replaced with "compass clino". I
+> think "insts" or "instruments" should be a permitted synonym as it's in a lot
+> of data files.
+
+
+I've also found the *team difference a problem.
+
+> There are two more fundamental changes:
+>
+> *therion surrounds centreline (ie survex) data (inside the 'survey'
+> construct) with  centerline
+>  ....
+>  endcenterline
+>
+> this makes sense - it is effectively implicit in survex, but therion has
+> other forms of data so the centreline stuff needs to be indicated.
+>
+> (it would be nice if the synonym "centreline" was allowed as well as
+> "centerline", then I wouldn't get an error every time I type it in :-) On
+> the other hand there is a lot to be said for a strict data format).
+
+
+I have got this wrong *every* time I've used it so far!  I did think of
+complaining but considered that many people have to put up with every
+term in computer based languages being non-native so thought I'd just
+put up with one spelled 'wrongly'.
+
+> * equates need to live inside centerline/endcenterline
+>
+> this one is tricky as it seems to change the scoping rules survex uses and
+> seems to make it difficult to directly (simply) translate data.
+
+
+I'm not sure things are quite so different.  Survex has an (implicit)
+root context.  In therion you don't, so you'll have to create your own
+container survey, but you can then put your equates in the same relative
+position as before.
+
+> typical survex data goes:
+> *begin part1
+>  <survey data>
+> *end part1
+>
+> *equate part1.36 part2.0
+>
+> *begin part2
+>  <survey data>
+> *end part2
+>
+> How do I translate this to therion?
+>
+> will:
+>
+> survey part1
+>  centerline
+>   <survey data>
+>  endcenterline
+> endsurvey
+>
+> survey part2
+>  centerline
+>   equate part1.36 part2.0  endceterline
+> endsurvey
+>
+> work? (It is good practice in survex not to include equates in the survey
+> like this as they don't really belong to the scope of either survey).
+>
+> Recommendations welcome.
+
+
+Something like:
+
+survey outer
+
+  survey part1
+   centreline
+    <data>
+   endcentreline
+  endsurvey
+
+  centreline
+   equate 36 at part1 0 at part2
+  endcentreline
+
+  survey part2
+   centreline
+    <more data>
+   endcentreline
+  endsurvey
+
+endsurvey
+
+You'll also note the need to convert reference of the form
+survey.subsurvey.station to station at subsurvey.survey .  This is also
+rather irksome (I think it betrays therion's tcl roots?).
+
+I'd really like a survexinclude which would import survex data from the
+original files.  With very little reorganisation my existing data could
+then be used with therion without change.  That might require linking
+the survex parser into therion to implement.
+
+Yours,
+
+John
+
+
+
+
+
+From Mike.Lake at uts.edu.au  Thu Nov  6 05:08:03 2003
+From: Mike.Lake at uts.edu.au (Michael Lake)
+Date: Thu, 06 Nov 2003 15:08:03 +1100
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <022@reconstruction>
+
+John Pybus wrote:
+
+>> You'll also note the need to convert reference of the form
+>> survey.subsurvey.station to station at subsurvey.survey .  This is also
+>> rather irksome (I think it betrays therion's tcl roots?).
+
+OT but I think that at some point it will have to use another GUI.
+Either GTK-anything or wxWindows or ..... now back to the topic at hand.
+
+>> I'd really like a survexinclude which would import survex data from the
+>> original files.  With very little reorganisation my existing data could
+>> then be used with therion without change.  That might require linking
+>> the survex parser into therion to implement.
+
+
+The above would be by far the best option. Copying and pasting in your
+survex data creates then two copies of survex data that can get
+out-of-sync when you update the survex data.
+
+Mike
+PS. I have been distracted lately and havent been able to get back to
+playing with Therions metapost and ASF/UIS cave symbols. I intend to get
+back onto this in Dec/Jan as Im taking annual leave so will have time. I
+would like to modify the metapost so that cave symbols can be easily
+constructed with just a bit of metapost knowledge and pulled in at run
+time rather than needing to be there when compiled.
+
+--
+Michael Lake
+Chemistry, Materials & Forensic Science, UTS
+Ph: 9514 1724 Fx: 9514 1460
+
+
+
+UTS CRICOS Provider Code: 00099F
+
+DISCLAIMER
+========================================================================
+This email message and any accompanying attachments may contain
+confidential information. If you are not the intended recipient, do not
+read, use, disseminate, distribute or copy this message or attachments.
+If you have received this message in error, please notify the sender
+immediately and delete this message. Any views expressed in this message
+are those of the individual sender, except where the sender expressly,
+and with authority, states them to be the views the University of
+Technology Sydney. Before opening any attachments, please check them for
+viruses and defects.
+========================================================================
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Nov  6 10:40:14 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 6 Nov 2003 09:40:14 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <023@reconstruction>
+
++++ John Pybus [03-11-06 02:27 +0000]:
+
+>> Wookey wrote:
+>> I've also found the *team difference a problem.
+
+
+I wrote a (survex) patch last night to make survex parse the *TEAM line
+(with a slightly expanded list over therion's  :-) , but
+having done this I wonder if there is actually much point. What is this data
+going to be used for? Is there any point trying to classify "disto",
+"assistant", "clino", "notes", or might it just as well remain as a string
+to be reported somewhere (then it can say 'Bosch DLE35', or 'Pybus's magic
+surveyor')? The right thing to do here is to decide what survex and/or
+therion is going to use this info for first and then agree on a syntax.
+
+>>> >(it would be nice if the synonym "centreline" was allowed as well as
+>>> >"centerline", then I wouldn't get an error every time I type it in  :-)  On
+>>> >the other hand there is a lot to be said for a strict data format).
+>
+>>
+>> I have got this wrong *every* time I've used it so far!  I did think of
+>> complaining but considered that many people have to put up with every
+>> term in computer based languages being non-native so thought I'd just
+>> put up with one spelled 'wrongly'.
+
+
+But this is European software - we can't go spelling it the American way  :-)
+
+>>> >* equates need to live inside centerline/endcenterline
+>
+>>
+>> I'm not sure things are quite so different.  Survex has an (implicit)
+>> root context.  In therion you don't, so you'll have to create your own
+>> container survey, but you can then put your equates in the same relative
+>> position as before.
+
+
+OK - I did wonder if that was the right answer - I didn't have time to check
+before writing this mail. That all seems fair enough, although it makes
+writing a perl converter slightly trickier I suspect.
+
+I'd be happy to collaborate on writing a 'survexinclude' thing for Therion if that's
+deemed to be the right answer, although I don't do C++ if I can help it  :-)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Thu Nov  6 10:45:32 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 6 Nov 2003 09:45:32 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <024@reconstruction>
+
++++ Michael Lake [03-11-06 15:08 +1100]:
+
+>> John Pybus wrote:
+>>
+>
+>>> > You'll also note the need to convert reference of the form
+>>> > survey.subsurvey.station to station at subsurvey.survey .  This is also
+>>> > rather irksome (I think it betrays therion's tcl roots?).
+>
+>> OT but I think that at some point it will have to use another GUI.
+>> Either GTK-anything or wxWindows or
+
+
+Yes. Everyone agrees xtherion is fairly horrid and is merely a 'proof of
+concept' UI. I think stacho picked tcl because he already knew it.
+
+Most of the people I know who are currently using illustrator rather than
+therion are doing it because the interface was too slow/horrible in
+comparison.
+
+The problem is of course that writing good UIs is both hard and tedious -
+any volunteers  :-)
+
+..... now back to the topic at hand.
+
+>>
+>
+>>> > I'd really like a survexinclude which would import survex data from the
+>>> > original files.  With very little reorganisation my existing data could
+>>> > then be used with therion without change.  That might require linking
+>>> > the survex parser into therion to implement.
+>
+>>
+>> The above would be by far the best option. Copying and pasting in your
+>> survex data creates then two copies of survex data that can get
+>> out-of-sync when you update the survex data.
+
+
+OK - that's another vote. Unless any of the main authors object violently
+this seems like the way to go.
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From surveys at pennine.demon.co.uk  Thu Nov  6 11:04:26 2003
+From: surveys at pennine.demon.co.uk (Andy Waddington on Cave Surveying)
+Date: Thu, 6 Nov 2003 10:04:26 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <025@reconstruction>
+
+On Wednesday 2003-11-05 18:27, Wookey typed:
+
+>> * (in *team) (survex currently allows anything but therion has a list)
+>>  "insts" is not recognised and has to be replaced with "compass clino". I
+>> think "insts" or "instruments" should be a permitted synonym as it's in a
+>> lot of data files.
+
+
+The instruments being read are not necessarily compass and clino for
+some surveying styles. They might, for example, be a compass and
+depth guage. The more general term should be preferred if all
+instruments are being read by a single surveyor, but it ought to
+be accpetable to specify individual instruments if, as occasionally
+happens, different instruments are being read by different people and
+you need to specify which/who.
+
+>> (it would be nice if the synonym "centreline" was allowed as well as
+>> "centerline", then I wouldn't get an error every time I type it in  :-)  On
+>> the other hand there is a lot to be said for a strict data format).
+
+
+You could have a strict data format whilst still allowing regional
+variant spellings if you had something like
+
+*lingua en-gb
+; or
+*lingua en-us
+
+to specify which command set was in use. Your program would need
+to understand every set of directives. This form of internationalisation
+is the sort of common courtesy that most English-speaking standards
+groups neglect  :-(  I used to have a browser that understood <centre>
+as well as <center>, which was nice for viewing web pages which had
+been built in an ordinary text editor (like Wookey, I always type the
+familiar spelling), but not much use for testing pages that you were
+actually going to publish. If the DTD line at the top of the page
+would allow me to specify en-gb tags, that would make life much
+easier (but would make browsers more complex)-:
+
+Andy
+
+
+
+
+From s.m at group-s.sk  Thu Nov  6 11:23:39 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Nov 2003 11:23:39 +0100
+Subject: [therion] Re: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <026@reconstruction>
+
+>> Yes. Everyone agrees xtherion is fairly horrid and is merely a 'proof of
+>> concept' UI. I think stacho picked tcl because he already knew it.
+
+
+No  :)  The first editor wrote Martin in Delphi/???(I do not remember the name
+of Linux clone). But it has not implemented canvas with vector graphics in it
+- and this was definitely needed. The only APIs, that has it implemented are
+Tcl/Tk and Qt - the second one is not GPL for Win32  :(
+
+>> Most of the people I know who are currently using illustrator rather than
+>> therion are doing it because the interface was too slow/horrible in
+>> comparison.
+
+
+Here I disagree. On a computer, where Illustrator works smoothly, also
+xtherion must work.
+
+The horribility is other case - a lot of things should work more intuitivly, I
+agree, but I do not agree, that drawing maps of complicated caves in
+Illustrator is more simple. It's the same with Word/TeX.
+
+For a simple one page letter to some stupid officer, I always use Word. But
+when I started to write the first mathematical formula of my diploma thesis
+in Word, I was forced (by the lack of time) to switch to LaTeX.
+
+>> The problem is of course that writing good UIs is both hard and tedious -
+>> any volunteers  :-)
+
+
+:))) We have also something like ultimate GUI in mind, but...
+
+>> OK - that's another vote. Unless any of the main authors object violently
+>> this seems like the way to go.
+
+
+If somebody will write the transformation script - I'll do the stuff around...
+But I don't thing, that writing such a script will be very easy.
+
+S.
+
+
+
+
+From s.m at group-s.sk  Thu Nov  6 12:47:01 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Nov 2003 12:47:01 +0100
+Subject: [therion] Re: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <027@reconstruction>
+
+I'm sorry, but I'm busy now so just very briefly:
+
+1. TEAM will be used in therion very soon to generate map legend item
+"Surveyed by". The <role> fields we don't care at the moment - we've never
+noticed in fact the roles on the paper. The man, who drawn the notes is
+usually very clear, the rest are not important...
+
+2. "centreline" - I'll have to look at this - whether it's possible to change
+it. But I believe, it should be. But it will not be trivial - it can't be
+solved by adding a single item to parsing table...
+
+3.  survexinclude - it can't be done just by changing the parsing table, but
+as a first aproximation, therion can call a perl script (C++ is not a good
+idea for the first approximation) and read data from the pipe (OK, Win32 pipe
+may be a problem, but on other systems this should work).
+
+4. LRUD in centerline - this should be also implemented very soon, also other
+format incompatibilities
+
+5. The rest, I'll write something to this later today or tomorrow...
+
+>> I'd be happy to collaborate on writing a 'survexinclude' thing for Therion
+>> if that's deemed to be the right answer, although I don't do C++ if I can
+>> help it  :-)
+
+
+We would be very happy...
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Thu Nov  6 14:06:14 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 6 Nov 2003 13:06:14 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <028@reconstruction>
+
++++ Andy Waddington on Cave Surveying [03-11-06 10:04 +0000]:
+
+>> On Wednesday 2003-11-05 18:27, Wookey typed:
+>
+>>> > * (in *team) (survex currently allows anything but therion has a list)
+>>> >  "insts" is not recognised and has to be replaced with "compass clino". I
+>>> > think "insts" or "instruments" should be a permitted synonym as it's in a
+>>> > lot of data files.
+>
+>>
+>> The instruments being read are not necessarily compass and clino for
+>> some surveying styles. They might, for example, be a compass and
+>> depth guage. The more general term should be preferred if all
+>> instruments are being read by a single surveyor, but it ought to
+>> be accpetable to specify individual instruments if, as occasionally
+>> happens, different instruments are being read by different people and
+>> you need to specify which/who.
+
+
+There is a huge pile of considerations like this - the tape might be a
+disto, the instrument might be an altimeter. Does the *team command serve to
+categorise the person responsible for the 'length, depth, gradient, backclino
+pictures' measurements in order to know who was respnsible for what in which
+case all we care about is which numbers to match them up with, or is it
+simply a string that we can use.
+
+I think we want to use this command (as opposed to a comment) to regularise
+this data so that it can be understood by the programs for future use (e.g
+making charts of who took the most clino readings, or applying personal
+calibration offsets (still not clear if this is worth doing)). The problem
+is that there are a lot of potentially valid strings if we allow all
+instrument names (disto, DLE35, laser, compass, MC-15 etc). These boil down
+to a set of measurement names (length, gradient, depth etc) and a set of
+accuracy numbers (disto is better than tape). But the accuracy numbers go in
+the *SD command anyway so maybe we should limit the synonyms (but allow
+'other' and 'unkown').
+
+If we were just going to treat it as a free string then we might as well
+stick to using comments.
+
+>>> > (it would be nice if the synonym "centreline" was allowed as well as
+>>> > "centerline", then I wouldn't get an error every time I type it in  :-)  On
+>>> > the other hand there is a lot to be said for a strict data format).
+>
+>>
+>> You could have a strict data format whilst still allowing regional
+>> variant spellings if you had something like
+>>
+>> *lingua en-gb
+>> ; or
+>> *lingua en-us
+>>
+>> to specify which command set was in use.
+
+
+This way lies madness.
+
+>> I used to have a browser that understood <centre>
+>> as well as <center>, which was nice for viewing web pages which had
+>> been built in an ordinary text editor (like Wookey, I always type the
+>> familiar spelling), but not much use for testing pages that you were
+>> actually going to publish. If the DTD line at the top of the page
+>> would allow me to specify en-gb tags, that would make life much
+>> easier (but would make browsers more complex)-:
+
+
+We've had this argument over HTML and we all know what a mess accepting
+broken HTML was. We need to be strict about option names and
+spellings. In general I'd say that there should only be one spelling of
+centerline. The problem is that at the moment this line is aded by hand to a
+lot of survex files and all en-gb (or en-fr) spekaing people will get it
+wrong most of the time. The question is should therion allow both spellings
+until the need for hand-editing as a matter of course is removed?
+
+I suspect the answer is 'no' and we should just fix the conversion problem
+so this particular irritation goes away.
+
+(sorry about the repeats for people on both these lists BTW - but I think
+it's important for both user communities to agree on this stuff)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Thu Nov  6 14:13:06 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 6 Nov 2003 13:13:06 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <029@reconstruction>
+
++++ Stacho Mudrak [03-11-06 12:47 +0100]:
+
+>> I'm sorry, but I'm busy now so just very briefly:
+>>
+>> 1. TEAM will be used in therion very soon to generate map legend item
+>> "Surveyed by". The <role> fields we don't care at the moment - we've never
+>> noticed in fact the roles on the paper. The man, who drawn the notes is
+>> usually very clear, the rest are not important...
+
+
+OK. In that case it might be best to have neither program specify what
+should go in these fields until we decide how to use them - the current
+incompatibility (therion requires one of a set of tokens) serves no purpose.
+
+>> 2. "centreline" - I'll have to look at this - whether it's possible to change
+>> it. But I believe, it should be. But it will not be trivial - it can't be
+>> solved by adding a single item to parsing table...
+
+
+If it's not easy to do then we should probably put up with it (I just
+wanted to moan  :-) , and automate the survex->therion data-reading process
+instead.
+
+>> 3.  survexinclude - it can't be done just by changing the parsing table, but
+>> as a first aproximation, therion can call a perl script (C++ is not a good
+>> idea for the first approximation) and read data from the pipe (OK, Win32 pipe
+>> may be a problem, but on other systems this should work).
+
+
+OK - I'll look at it on that basis. The equates could be tricky...
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Thu Nov  6 15:25:46 2003
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 06 Nov 2003 15:25:46 +0100
+Subject: [therion] Re: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <030@reconstruction>
+
+Just two small remarks:
+
+If the role should be used for something in the future, the keywords must be specified. If not, it should be removed to comments.
+
+I've understood this as a responsibility for some reading - and readings are standardized in DATA command.
+
+Adding "unknown" keyword is useless - this is the same, as nothing specified in this field (the most of the cases). So I'll add there words "instruments" and "insts". :)
+
+> In general I'd say that there should only be one spelling of
+> centerline.
+
+
+I disagree - even in survex you used "meters" and "metres" for the same thing. Here I don't see the problem.
+
+Regards, S.
+
+
+
+
+From s.m at group-s.sk  Thu Nov  6 11:00:52 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Nov 2003 11:00:52 +0100
+Subject: [therion] Re: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <031@reconstruction>
+
+I'm sorry, but I'm busy now so just very briefly:
+
+1. TEAM will be used in therion very soon to generate map legend item
+"Surveyed by". The <role> fields we don't care at the moment - we've never
+noticed in fact the roles on the paper. The man, who drawn the notes is
+usually very clear, the rest are not important...
+
+2. "centreline" - I'll have to look at this - whether it's possible to change
+it. But I believe, it should be. But it will not be trivial - it can't be
+solved by adding a single item to parsing table...
+
+3.  survexinclude - it can't be done just by changing the parsing table, but
+as a first aproximation, therion can call a perl script (C++ is not a good
+idea for the first approximation) and read data from the pipe (OK, Win32 pipe
+may be a problem, but on other systems this should work).
+
+4. LRUD in centerline - this should be also implemented very soon, also other
+format incompatibilities
+
+5. The rest, I'll write something to this later today or tomorrow...
+
+>> I'd be happy to collaborate on writing a 'survexinclude' thing for Therion
+>> if that's deemed to be the right answer, although I don't do C++ if I can
+>> help it  :-)
+
+
+We would be very happy...
+
+S.
+
+
+
+
+From s.m at speleo.sk  Fri Nov  7 10:43:19 2003
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 07 Nov 2003 10:43:19 +0100
+Subject: [therion] survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <032@reconstruction>
+
+Hi everybody,
+
+I'm sorry for the previous mail - it was lost somewhere on the net - so I've sent it yesterday once more... :(
+
+Now I would like to write my opinions to other topics:
+
+> * In therion commands do not have a "*" prefix (lines starting with reserved
+> words that are not actually commands have a "!" prefix)
+
+
+This can't be changed no more :( . But this is probably the most simple thing to do in convertor.
+
+> * therion does not understand "export"
+> this is not a big deal, but it would probably be a good idea if it did
+
+
+I do not like this thing - it can happen, that you will not be able to join two datasets, because there will be two different stations exported with the same name. Or is it not true?
+
+> * therion uses # for comments, survex uses ; (by default)
+> this is just tiresome - especially for hand-editing conversion
+
+
+This has something to do with the very old concept of therion, at that time, it has been quite far away from survex syntax...
+
+> * Survex uses "begin <surveyname>", therion uses  "survey <surveyname>"
+> * Survex uses "end <surveyname>", therion uses "endsurvey"
+
+
+endsurvey can be optionally followed by <surveyname>, than it's checked whether survey and endsurvey parameter match. It's because we have also other data than centreline: (line, area, map)
+
+> therion has no eqivalent of "dog" on the surveying team (general
+> checking-out of leads) . I think 'dog' is a colloquial UK term but there
+> should probably be something
+
+
+I still do not understand, what does the term "dog" mean :( Could you please explain it?
+
+The last, I thing very important difference is the station naming. Survex uses prefixes - we use suffixes (svx: survey.1 th: 1 at survey). We've chosen this because we're naming also other objects than stations (scraps,maps etc...) and we wanted to be able at single look recognize what is an station/object name and what is a survey.
+
+That's all for now. Today we're leaving for some caving (hopefuly), but I believe, next week I'll be able to implement all "implementable" changes to therion.
+
+I have another question with SVX input. If somebody wants to maintain original survey data in survex format - wouldn't it be sufficient to write independent convertor and some makefiles and call therion via "make" command?
+
+This would be probably the most "clean" solution, and I'll add this feature to xtherion compiler (to run "make" instead of "therion"). Becuase sometimes also postprocessing will be used (for example to combine plan and elevation maps into one PDF file).
+
+Regards, S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Fri Nov  7 14:30:58 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 7 Nov 2003 13:30:58 +0000
+Subject: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <033@reconstruction>
+
++++ Stacho Mudrak [03-11-07 10:43 +0100]:
+
+>>> >* In therion commands do not have a "*" prefix (lines starting with
+>>> >reserved
+>>> >words that are not actually commands have a "!" prefix)
+>
+>>
+>> This can't be changed no more  :( . But this is probably the most simple
+>> thing to do in convertor.
+
+
+I am not proposing to change the two syntaxes to be identical (as you say
+it's probably too late for that, and it may well not be appropriate either)
+- but we do need a mechanism for using continuously-updated survex data as
+the therion baseline. If therion can just accept survex-systax data directly
+(by ignoring the "*"'s in this case when told to do so via a "survexinclude"
+command (for example), that should work fine.
+
+Obviously the fewer differences there are between the two syntaxes the
+better things are likely to work  :-)
+
+>>> >* therion does not understand "export"
+>>> >this is not a big deal, but it would probably be a good idea if it did
+>
+>>
+>> I do not like this thing - it can happen, that you will not be able to join
+>> two datasets, because there will be two different stations exported with
+>> the same name. Or is it not true?
+
+
+'export' only exports up one level - to the surrounding survey, so there are
+no 'global' names which might clash. So it is not true that you might not be
+able to join caves. However if therion does not want to support export than
+it can simply ignore it - it makes no practical difference. Then therion
+will work as it does now, and as survex does if there are no export
+commands: every station is implicitly exported.
+
+>>> >* therion uses # for comments, survex uses ; (by default)
+>>> >this is just tiresome - especially for hand-editing conversion
+>
+>>
+>> This has something to do with the very old concept of therion, at that
+>> time, it has been quite far away from survex syntax...
+
+
+If therion could accept both it would be handy. conversion of these chars is
+easy in theory but the problem is that ";" is/can be used in places where it
+does not mean 'comment' so a simple-minded replacement might make some
+comments a bit odd. It shouldn't break anything though. A converter
+replacing the first one on a line will probably always work.
+(counterexamples?)
+
+>>> >* Survex uses "begin <surveyname>", therion uses  "survey <surveyname>"
+>>> >* Survex uses "end <surveyname>", therion uses "endsurvey"
+>
+>>
+>> endsurvey can be optionally followed by <surveyname>, than it's checked
+>> whether survey and endsurvey parameter match.
+
+
+I'm fairly sure I got errors in therion 0.2.15 when I tried this....this
+would certainly be better for making the converter simpler (it has to be
+careful about begin/end pairs that are do not start/end surveys.
+
+>>> >therion has no eqivalent of "dog" on the surveying team (general
+>>> >checking-out of leads) . I think 'dog' is a colloquial UK term but there
+>>> >should probably be something
+>
+>>
+>> I still do not understand, what does the term "dog" mean  :(  Could you
+>> please explain it?
+
+
+"assitant" was the best sensible term I could think of. Someone on the
+surveying team who may not actually be surveying but is looking round
+corners, up slopes, and behind boulders to be sure nothing is missed.
+
+>> The last, I thing very important difference is the station naming. Survex
+>> uses prefixes - we use suffixes (svx: survey.1 th: 1 at survey). We've chosen
+>> this because we're naming also other objects than stations (scraps,maps
+>> etc...) and we wanted to be able at single look recognize what is an
+>> station/object name and what is a survey.
+
+
+Yes - this bit of the conversion could be 'interesting'.
+
+>> That's all for now. Today we're leaving for some caving (hopefuly), but I
+>> believe, next week I'll be able to implement all "implementable" changes to
+>> therion.
+
+
+OK - olly is away for another 8 days or so and it would be useful to hear
+what he thinks too before we fiddle with survex/therion and a converter
+script (as they need to be somewhat synchronsied.
+
+>> I have another question with SVX input. If somebody wants to maintain
+>> original survey data in survex format - wouldn't it be sufficient to write
+>> independent convertor and some makefiles and call therion via "make"
+>> command?
+>>
+>> This would be probably the most "clean" solution,
+
+
+Why is that cleaner than a 'survexinclude' directive which does necessary
+conversion?. I suppose it is more general, but going through make is going
+to be confusing to non-programmers I would have thought?
+
+The make target would need to create new files by converting the existing
+survex files, then insert them, or include them, in existing therion files -
+right?
+
+>> and I'll add this feature
+>> to xtherion compiler (to run "make" instead of "therion"). Becuase
+>> sometimes also postprocessing will be used (for example to combine plan and
+>> elevation maps into one PDF file).
+
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Mon Nov 10 10:18:03 2003
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 10 Nov 2003 10:18:03 +0100
+Subject: [therion] Re: survex to therion data conversion
+In-Reply-To: <020@reconstruction>
+Message-ID: <034@reconstruction>
+
+> 'export' only exports up one level - to the surrounding survey, so there are no 'global' names which might clash. So it is not true that you might not be able to join caves.
+
+
+Then I've not understood the survex manual correctly :)
+
+>> >* therion uses # for comments, survex uses ; (by default)
+>> >this is just tiresome - especially for hand-editing conversion
+>
+>
+> If therion could accept both it would be handy. conversion of
+> these chars is easy in theory but the problem is that ";" is/can
+> be used in places where it does not mean 'comment' so a simple-minded replacement might make some comments a bit odd.
+> It shouldn't break anything though. A converter replacing the
+> first one on a line will probably always work.
+> (counterexamples?)
+
+
+No idea. I just have to check - how is it in therion - when the
+line is not commented from the beginning.
+
+>> >* Survex uses "begin <surveyname>", therion uses  "survey <surveyname>"
+>> >* Survex uses "end <surveyname>", therion uses "endsurvey"
+>>
+>> endsurvey can be optionally followed by <surveyname>, than it's checked whether survey and endsurvey parameter match.
+>
+>
+> I'm fairly sure I got errors in therion 0.2.15 when I tried this....this
+> would certainly be better for making the converter simpler (it has to be
+> careful about begin/end pairs that are do not start/end surveys.
+
+
+I've checked this now - it works with my dataset. So if it doesn't work with your data, there must be a bug somewhere...
+
+> "assitant" was the best sensible term I could think of. Someone on the
+> surveying team who may not actually be surveying but is looking round
+> corners, up slopes, and behind boulders to be sure nothing is missed.
+
+
+Now I understand :)
+
+> Why is that cleaner than a 'survexinclude' directive which does necessary
+> conversion?. I suppose it is more general, but going through make is going
+> to be confusing to non-programmers I would have thought?
+
+
+I had in mind, that convertor would never be able to convert corretly all survex input data. Using make process - user (programmer) would be able to make corrections. But you're right, I've never thought about 'non- programmers' :(
+
+> The make target would need to create new files by converting the existing
+> survex files, then insert them, or include them, in existing therion files -
+> right?
+
+
+Yes. But I think, that the most important thing now is to create and test the conversion script - and then we can decide, how it will be implemented in therion.
+
+Regards, S.
+
+
+
+
+From s.m at group-s.sk  Fri Nov 14 10:18:31 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 14 Nov 2003 10:18:31 +0100
+Subject: new 0.2.15
+Message-ID: <035@reconstruction>
+
+Hello everybody,
+
+we've added several new features to therion - new 0.2.15 source code can be
+downloaded from
+
+http://therion.speleo.sk/download.html
+
+According to Wookey's suggestions, following things were added:
+ * new team roles: instruments (insts), assistant (dog)
+ * centerline/centreline syntax
+ * new centerline data items: up ceiling down floor left right ignore
+(currently all of them are ignored).
+
+We need also some abbreviation for LRUD, to be used in
+*units LRUD metres
+I don't think that "LRUD" is the best choise. Something like "dimensions" or
+"walls"...
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Fri Nov 14 18:49:12 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 14 Nov 2003 17:49:12 +0000
+Subject: new 0.2.15
+In-Reply-To: <035@reconstruction>
+Message-ID: <036@reconstruction>
+
++++ Stacho Mudrak [03-11-14 10:18 +0100]:
+
+>> Hello everybody,
+>>
+>> we've added several new features to therion - new 0.2.15 source code can be
+>> downloaded from
+
+
+erm - the last version was 0.2.15 - this one should probably be 0.2.16  :-)
+
+Will you change it or shall I do a 0.2.15b-1 debian release?
+
+>> According to Wookey's suggestions, following things were added:
+>>  * new team roles: instruments (insts), assistant (dog)
+>>  * centerline/centreline syntax
+>>  * new centerline data items: up ceiling down floor left right ignore
+>> (currently all of them are ignored).
+
+
+great.
+
+>> We need also some abbreviation for LRUD, to be used in
+>> *units LRUD metres
+>> I don't think that "LRUD" is the best choise. Something like "dimensions" or
+>> "walls"...
+
+
+you are right that LRUD is not ideal. Especially for US users whpo call it
+LRCF. And no doubt french-speaking users call it something else.
+"Dimensions" seems good.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Tue Nov 18 08:54:13 2003
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 18 Nov 2003 08:54:13 +0100
+Subject: [therion] Re: new 0.2.15
+In-Reply-To: <035@reconstruction>
+Message-ID: <037@reconstruction>
+
+> erm - the last version was 0.2.15 - this one should probably be 0.2.16 :-)
+
+
+Yes.
+
+But we (Martin and me) need to synchronize our sources together (we can't use CVS, because we have a very problematic i-net connection - firewalls etc :() So 0.2.16 will be available probably next week.
+
+> Will you change it or shall I do a 0.2.15b-1 debian release?
+
+
+The second one :( . At least until next week.
+
+Regards, S.
+
+
+
+
+From m.b at speleo.sk  Mon Nov 24 15:15:42 2003
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 24 Nov 2003 15:15:42 +0100
+Subject: Therion 0.2.16
+Message-ID: <038@reconstruction>
+
+Hi all,
+new version of Therion is available on the web. Improvements include
+ - centerline command has new team roles: instruments (insts),
+   assistant (dog)
+ - centerline command has new data readings:
+     up/ceiling, down/floor, left, right, ignore
+ - centerline may be spelled as centreline
+ - deg:min:sec syntax allowed for degree values
+ - point, line and area commands have new option: visibility on/off
+See the file CHANGES for details. The Therion Book was also updated.
+Martin
+
+
+

@@ -1,0 +1,4123 @@
+From md at foxel.org  Mon Sep  2 14:37:05 2019
+From: md at foxel.org (Max D)
+Date: Mon, 2 Sep 2019 14:37:05 +0200
+Subject: [Therion] Display Station comments on Map?
+Message-ID: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+
+Hello,
+
+I have Stations like this in a survey:
+
+        fix wiesenponor 391349.0 5650631.0 154
+        station wiesenponor "Wiesenponor" sink
+	fix quelleinderagger 391952.0 5650078.0 125
+ 	station quelleinderagger "Quelle in der Agger" spring
+	fix aggertalhoehle 391124 5650259 150
+	station aggertalhoehle "Aggertalhöhle" entrance 
+	fix gipfel 391528 5650356 254.3
+	station gipfel "Gipfel Mühlenberg" 
+
+Is there a way to display Icons for these (but not for all stations) and the Comments (e.g. "Gipfel Mühlenberg") in the map without creating a scrap and retyping them there? I checked the MetaPost files and found no obvious way to enable that.
+
+Regards
+
+--max
+
+
+
+From bruce at tomo.co.nz  Mon Sep  2 21:25:34 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 3 Sep 2019 07:25:34 +1200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+Message-ID: <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+
+Max
+Does this start to solve your problem?
+https://therion.speleo.sk/wiki/faq?s[]=fixed&s[]=stations#how_do_i_print_only_cave_or_surface_stations_with_a_particular_mark_ie_fixed_or_painted
+
+I use this always to show only fixed or painted station symbols, but I don't think I have ever had luck with combined control of both underground and surface stations.
+I think you are wanting selective labelling, which is a bit more of a refinement.  Your labels will show up in Loch as they are entered now, but the trick is to get them into a pdf map.
+
+There was a thread last year about boxed labels, that led to more ability to control the labelling in general (not just around boxes).
+https://www.mail-archive.com/therion at speleo.sk/msg07230.html
+https://www.mail-archive.com/therion at speleo.sk/msg07234.html
+
+I was going to write it up in the wiki, but never got around to it, and now I forget exactly how it works and what it could be used for.  Will have to wait until I again have time and inspiration.
+Anyway, combining the above two 'things' could lead to the possibility of labelling some fixed points and not labelling others (or maybe not).
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Max D
+Sent: Tuesday, 3 September 2019 00:37
+To: List for Therion users <therion at speleo.sk>
+Subject: [Therion] Display Station comments on Map?
+
+Hello,
+
+I have Stations like this in a survey:
+
+        fix wiesenponor 391349.0 5650631.0 154
+        station wiesenponor "Wiesenponor" sink
+	fix quelleinderagger 391952.0 5650078.0 125
+ 	station quelleinderagger "Quelle in der Agger" spring
+	fix aggertalhoehle 391124 5650259 150
+	station aggertalhoehle "Aggertalhöhle" entrance 
+	fix gipfel 391528 5650356 254.3
+	station gipfel "Gipfel Mühlenberg" 
+
+Is there a way to display Icons for these (but not for all stations) and the Comments (e.g. "Gipfel Mühlenberg") in the map without creating a scrap and retyping them there? I checked the MetaPost files and found no obvious way to enable that.
+
+Regards
+
+--max
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From md at foxel.org  Tue Sep  3 14:35:27 2019
+From: md at foxel.org (Max D)
+Date: Tue, 3 Sep 2019 14:35:27 +0200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+Message-ID: <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+
+
+
+> On 2. Sep 2019, at 21:25, Bruce Mutton <bruce at tomo.co.nz> wrote:
+> 
+> Max
+> Does this start to solve your problem?
+> ...
+> I use this always to show only fixed or painted station symbols, but I don't think I have ever had luck with combined control of both underground and surface stations.
+
+Thanks for the Pointers. I think Therion data structures  has no concept of "surface stations" - only shots have that attached. But I might be wrong.
+
+I'm still fiddeling, but this is enough to display station comments:
+
+layyout showcomments
+    code metapost
+        def p_station(expr pos,mark,txt)(text flags) =
+            p_station_SKBB(pos,mark,txt,flags)
+            T:=identity shifted pos;
+            if picture(txt):
+                p_smartlabel(txt,pos);
+            fi;
+        enddef;
+    endcode
+endlayout
+
+To me it seems that the "flags" parameter in therion 5.4.4+b998d1b (2019-06-12) is always empty.
+Not sure if this is a bug or if I'm missing something. The p_station_SKBB() macro has a lot of code for handling different flags which seems to be unused.
+
+--max
+
+
+
+From phil.vernant at gmail.com  Tue Sep  3 15:12:02 2019
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Tue, 3 Sep 2019 15:12:02 +0200
+Subject: [Therion] Karst3D database, a quick overview.
+In-Reply-To: <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+Message-ID: <22B285CA-C9AB-427F-AB99-392F63D90ABF@gmail.com>
+
+Hi guys,
+
+We’ve just launched a database to archive cave survey data. Our database relies a lot on Therion, and I’d like to thank the developers for their great job! I’d like to do the same for the developer of Cave View !
+
+This is a big beta release and we hope to make it better with more option in the future (DEM, statistical analysis of the karst network, etc.): https://data.oreme.org/observation/karst3d <https://data.oreme.org/observation/karst3d> 
+
+I’d be happy to have your feedback, specially if you decide to upload some data. We’ve chosen to have the opportunity of an embargo time before releasing the data, you can choose between 0 and 5 years, but since it is a public university we have to make the data archived public a some point. But the 3D view will be online soon after you upload the data.
+
+Here is a short tutorial on how to visualize several caves at the same time.
+ 
+Looking forward to have your feedback.
+
+Phil
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190903/b83c4266/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: karst3d_multi_cave_visu.pdf
+Type: application/pdf
+Size: 1153409 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190903/b83c4266/attachment.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190903/b83c4266/attachment-0001.htm>
+
+From markus.boldt at gmx.net  Tue Sep  3 19:10:05 2019
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Tue, 3 Sep 2019 19:10:05 +0200
+Subject: [Therion] Karst3D database, a quick overview.
+In-Reply-To: <22B285CA-C9AB-427F-AB99-392F63D90ABF@gmail.com>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <22B285CA-C9AB-427F-AB99-392F63D90ABF@gmail.com>
+Message-ID: <004101d5627a$6eca1fd0$4c5e5f70$@gmx.net>
+
+Dear Phil, in fact it is a good Idea and a great work. But...
+
+But there are some evident problems, if I would give you "my" data from "our" caves - for example. There are often at some projects a lot of surveyors over the years. So I have to ask them all. In germany the data are archieved until now in so called "Kataster". Every karst region has one. There is a person (mostly some) who has the confidence of all cavers in the particular region. There is an agreement that I am (or my collegues) not allowed to give that data to an public institution so that these data will be very public in the future. Only cavers (or caverclubs) who are working for the "Kataster" have an access to these data. And additionally to that there are some Clubs in germany who do there data to the Kataster but it is not really seeable for other users (Keyword: Competition) . You write that is also possible at your website but only maximum 5 years. 
+
+Our Kataster is working with "Spelix" since two years now. This program is made from a caver from austria. All the possibilities I have seen until now in your release and more are implemented in that program. But not reachable for the public. 
+
+The risk of your site is that everyone will have informations from the caves and so the numbers of visits to the caves will increase, I think. 
+
+And please there are often "so called" cavers (often from clubs also) who are taking so such informations, to go in caves during holidays without having contact to the cavers from that region. 
+
+That is not what we want for our caves because it is an extremely sensitive environment. 
+
+This comment is from me personnel. Others in Germany may have another opinion. 
+
+Please take it only as an information and be not angry about that (do a look to my first sentence). 
+
+best regards 
+
+Markus
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Philippe Vernant
+Gesendet: Dienstag, 3. September 2019 15:12
+An: List for Therion users
+Betreff: [Therion] Karst3D database, a quick overview.
+
+ 
+
+Hi guys,
+
+ 
+
+We’ve just launched a database to archive cave survey data. Our database relies a lot on Therion, and I’d like to thank the developers for their great job! I’d like to do the same for the developer of Cave View !
+
+ 
+
+This is a big beta release and we hope to make it better with more option in the future (DEM, statistical analysis of the karst network, etc.): https://data.oreme.org/observation/karst3d 
+
+ 
+
+I’d be happy to have your feedback, specially if you decide to upload some data. We’ve chosen to have the opportunity of an embargo time before releasing the data, you can choose between 0 and 5 years, but since it is a public university we have to make the data archived public a some point. But the 3D view will be online soon after you upload the data.
+
+ 
+
+Here is a short tutorial on how to visualize several caves at the same time.
+
+ 
+
+Looking forward to have your feedback.
+
+ 
+
+Phil
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190903/23c02fab/attachment.htm>
+
+From md at foxel.org  Tue Sep  3 22:04:31 2019
+From: md at foxel.org (Max D)
+Date: Tue, 3 Sep 2019 22:04:31 +0200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+Message-ID: <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+
+
+
+> On 3. Sep 2019, at 14:35, Max D <md at foxel.org> wrote:
+> 
+> To me it seems that the "flags" parameter in therion 5.4.4+b998d1b (2019-06-12) is always empty.
+> Not sure if this is a bug or if I'm missing something. The p_station_SKBB() macro has a lot of code for handling different flags which seems to be unused.
+> 
+
+I produced a patch for therion which makes it display all flags for "station" entries. I'm not very firm with MetaPost and Therion internal structures, but it seems to me, the original code simply could not work. OR I just did not understand.
+
+The patch is at.
+https://gist.github.com/mdornseif/3b3764844cae2f6274726674a9c68a0f
+
+https://tug.org/pipermail/metapost/2006-February/000527.html helped me to understand what is going on in MetaPost.
+
+--max
+
+
+
+From bruce at tomo.co.nz  Tue Sep  3 22:32:00 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 4 Sep 2019 08:32:00 +1200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+Message-ID: <001801d56296$a509d880$ef1d8980$@tomo.co.nz>
+
+Hmm, I have not time to look into this, don't really understand much about metapost at all, but my recollection is that I could get all the features implied in the code of the original p_station to manifest in outputs (at least of centrelines, if not scraps).  If you have removed code, then I suggest others look very carefully before this is committed.
+Although looking at your diff, it seem like you have taken little if anything out, so maybe my concern is unfounded?
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Max D
+Sent: Wednesday, 4 September 2019 08:05
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Display Station comments on Map?
+
+
+
+> On 3. Sep 2019, at 14:35, Max D <md at foxel.org> wrote:
+> 
+> To me it seems that the "flags" parameter in therion 5.4.4+b998d1b (2019-06-12) is always empty.
+> Not sure if this is a bug or if I'm missing something. The p_station_SKBB() macro has a lot of code for handling different flags which seems to be unused.
+> 
+
+I produced a patch for therion which makes it display all flags for "station" entries. I'm not very firm with MetaPost and Therion internal structures, but it seems to me, the original code simply could not work. OR I just did not understand.
+
+The patch is at.
+https://gist.github.com/mdornseif/3b3764844cae2f6274726674a9c68a0f
+
+https://tug.org/pipermail/metapost/2006-February/000527.html helped me to understand what is going on in MetaPost.
+
+--max
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From md at foxel.org  Tue Sep  3 22:35:58 2019
+From: md at foxel.org (Max D)
+Date: Tue, 3 Sep 2019 22:35:58 +0200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <001801d56296$a509d880$ef1d8980$@tomo.co.nz>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+ <001801d56296$a509d880$ef1d8980$@tomo.co.nz>
+Message-ID: <8A43462A-4EA6-4798-A652-ACB58F06DB01@foxel.org>
+
+
+
+> On 3. Sep 2019, at 22:32, Bruce Mutton <bruce at tomo.co.nz> wrote:
+> 
+> Hmm, I have not time to look into this, don't really understand much about metapost at all, but my recollection is that I could get all the features implied in the code of the original p_station to manifest in outputs (at least of centrelines, if not scraps).  If you have removed code, then I suggest others look very carefully before this is committed.
+> Although looking at your diff, it seem like you have taken little if anything out, so maybe my concern is unfounded?
+
+This certainly should not be committed.
+
+* I removed the "is this flag defined in this symbol set" check
+* I also changed the calling convention for p_station 🙀
+
+So this is definitively only Proof of Concept.
+
+--max
+
+
+
+From phil.vernant at gmail.com  Tue Sep  3 23:28:29 2019
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Tue, 3 Sep 2019 23:28:29 +0200
+Subject: [Therion] Karst3D database, a quick overview.
+In-Reply-To: <004101d5627a$6eca1fd0$4c5e5f70$@gmx.net>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <22B285CA-C9AB-427F-AB99-392F63D90ABF@gmail.com>
+ <004101d5627a$6eca1fd0$4c5e5f70$@gmx.net>
+Message-ID: <2591C1AF-5296-4633-AF33-3624E001A66D@gmail.com>
+
+Hi Markus,
+
+Not sure if it is the place to discuss about that but as a caver what I see is that I’m 42 years old and I’m among the youngest cavers of our area (in southern France), caving is not fun and fashionable anymore so I’m not to worried about an increase in the cave visits. As a scientist I’m more worried by the lost of invaluable data of cave surveys. These data will bring a better understanding karst systems and network and cavers are not aware of the work they have done/are doing. I had to resurvey 9km of a cave that where lost, and there are many more lost data.
+
+From your comment I see that “paranoia” seems to be a worldwide behavior of the cavers being afraid of someone stilling “their” caves, but unfortunately many data are lost due to that behavior. Don’t take it personally or be angry about that it is just an observation. I’ve seen the same behavior about the Grottocenter database (which I’m not part of it) but I doubt that there has been an increase in cavers/accident/visits due to that database, at least in my area...
+
+Best,
+Phil   
+
+> On 3 Sep 2019, at 19:10, Markus Boldt <markus.boldt at gmx.net> wrote:
+> 
+> Dear Phil, in fact it is a good Idea and a great work. But...
+> But there are some evident problems, if I would give you "my" data from "our" caves - for example. There are often at some projects a lot of surveyors over the years. So I have to ask them all. In germany the data are archieved until now in so called "Kataster". Every karst region has one. There is a person (mostly some) who has the confidence of all cavers in the particular region. There is an agreement that I am (or my collegues) not allowed to give that data to an public institution so that these data will be very public in the future. Only cavers (or caverclubs) who are working for the "Kataster" have an access to these data. And additionally to that there are some Clubs in germany who do there data to the Kataster but it is not really seeable for other users (Keyword: Competition) . You write that is also possible at your website but only maximum 5 years. 
+> Our Kataster is working with "Spelix" since two years now. This program is made from a caver from austria. All the possibilities I have seen until now in your release and more are implemented in that program. But not reachable for the public. 
+> The risk of your site is that everyone will have informations from the caves and so the numbers of visits to the caves will increase, I think. 
+> And please there are often "so called" cavers (often from clubs also) who are taking so such informations, to go in caves during holidays without having contact to the cavers from that region. 
+> That is not what we want for our caves because it is an extremely sensitive environment. 
+> This comment is from me personnel. Others in Germany may have another opinion. 
+> Please take it only as an information and be not angry about that (do a look to my first sentence). 
+> best regards 
+> Markus
+>  
+> Von: Therion [mailto:therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>] Im Auftrag von Philippe Vernant
+> Gesendet: Dienstag, 3. September 2019 15:12
+> An: List for Therion users
+> Betreff: [Therion] Karst3D database, a quick overview.
+>  
+> Hi guys,
+>  
+> We’ve just launched a database to archive cave survey data. Our database relies a lot on Therion, and I’d like to thank the developers for their great job! I’d like to do the same for the developer of Cave View !
+>  
+> This is a big beta release and we hope to make it better with more option in the future (DEM, statistical analysis of the karst network, etc.): https://data.oreme.org/observation/karst3d <https://data.oreme.org/observation/karst3d> 
+>  
+> I’d be happy to have your feedback, specially if you decide to upload some data. We’ve chosen to have the opportunity of an embargo time before releasing the data, you can choose between 0 and 5 years, but since it is a public university we have to make the data archived public a some point. But the 3D view will be online soon after you upload the data.
+>  
+> Here is a short tutorial on how to visualize several caves at the same time.
+>  
+> Looking forward to have your feedback.
+>  
+> Phil
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190903/1adb3979/attachment.htm>
+
+From olly at survex.com  Wed Sep  4 22:42:26 2019
+From: olly at survex.com (Olly Betts)
+Date: Wed, 4 Sep 2019 21:42:26 +0100
+Subject: [Therion] Detecting errors
+In-Reply-To: <20190815210605.iqw6fz6zvluildru@survex.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+Message-ID: <20190904204226.g5yopopfnksgujwo@survex.com>
+
+On Thu, Aug 15, 2019 at 10:06:05PM +0100, Olly Betts wrote:
+> The colour scale is fixed such that blue is "good" and anything else
+> is suspect.  You probably want to look at the worst first.
+> 
+> Once you have a suspect traverse identified, you can look it up in the
+> .err file which is produced alongside the .3d file when you process the
+> data.  Here's an example entry:
+> 
+> 76.brave.18 - 76.brave.17 - 76.brave.16 - 76.brave.15 - 76.brave.14 - 76.brave.13 - 76.brave.12 - 76.brave.11 - 76.brave.10
+> Original length  32.35m (  8 legs), moved   1.26m ( 0.16m/leg). Error   3.90%
+> 4.920289
+> H: 5.888476 V: 0.864600
+> 
+> Here 4.920289 is the number of sds (which is what aven colours by).  But
+> below that the H and V are the equivalent numbers looking only at the
+> horizontal and vertical errors.
+
+Survex 1.2.42 (released yesterday) adds the ability to colour by
+horizontal or vertical error (H and V above), so you can zoom in on
+a suspect traverse based on the overall error, and then check how
+its H and V values compare based on the colouring.
+
+> So here the vertical error is very good,
+> and the horizontal error lousy.  That suggests the error is probably either
+> in a compass reading or the tape reading in a low-inclination leg.  (If
+> H was fine and V bad, you'd be looking for a clino error or a tape error
+> in a steep leg or plumb.)
+> 
+> So you can now look at each of the legs in the list on the first line and
+> look at their compass readings and the tape readings for any low-inclination
+> legs.  For manually entered data, compare with the original notes.
+
+Another tip is that a common error type is a "mis-tie" - connecting a
+new survey to the wrong existing station(s).
+
+This is probably especially prevalent in long running survey projects
+with a turnover of the people involved.  For example, it's all to easy
+to tie to the "first bolt of the traverse" but fail to realise
+somebody's extended the traverse since the original survey.  This sort
+of problem affects both electronic and traditional instruments.
+
+My experience is that the largest errors tend to turn out to be
+mis-ties (but not all mis-ties result in large errors).  Mis-ties will
+tend to have bad H and V, though maybe H will tend to be a bit less bad
+(because it's easier to mis-tie to something in the same passage or
+chamber, and harder to mix up top vs bottom of a pitch).
+
+If you suspect a mis-tie, I would try simply disconnecting each end of
+the problematic survey in turn.  If that makes the remaining network
+look good then you can see what stations the disconnected end is near
+to give you some candidates to consider for where it perhaps should be
+tied to.
+
+Cheers,
+    Olly
+
+
+From olly at survex.com  Thu Sep  5 08:28:15 2019
+From: olly at survex.com (Olly Betts)
+Date: Thu, 5 Sep 2019 07:28:15 +0100
+Subject: [Therion] Detecting errors
+In-Reply-To: <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+Message-ID: <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+
+On Fri, Aug 16, 2019 at 05:11:22AM +0200, MD wrote:
+> We also then to measure the same small loop at the beginning  of each trip: 
+> A-B in four device orientations
+> B-A in four device orientations
+> A-C in four device orientations
+> C-A in four device orientations
+> C-B once
+> 
+> So I could calculate an SD based on that. 
+
+You probably don't want to work out a set of SDs per-trip - there
+would be quite a lot of random fluctuation in the observed SDs
+from such a short loop, and an equivalent instrument properly calibrated
+and used with suitable care really ought to be able to achieve similar
+SDs.
+
+Combining information from a lot of such small test loops would be
+interesting though.
+
+We've been doing some surface measurements at home with our disto-x2
+while planning some building work and I did some experimenting with
+setting different SDs and looking at how the loop error values are,
+and I found the following SDs seem to be achievable with care:
+
+*sd tape 0.002 metres ; 2 millimetres
+*sd compass clino 0.5 degrees
+*sd position 0.05 metres ; 5 centimetres
+
+The tape/compass/clino are just taken from Beet's disto-x2 article:
+http://paperless.bheeb.ch/download/DistoX2.pdf
+
+I've glossed over exactly what a "precision" of 2mm means and assumed
+it's just the standard deviation.  It might actually mean the SD is
+even smaller, but that's pretty much irrelevant as the compass, clino
+and position errors will swamp any contribution from the tape (1m at
+0.5 degrees is 8.7mm).
+
+The position error reflects how close I think I can reliably position
+the spot I've marked on the back of the disto relative to the "from"
+station plus the error in where the laser beam hits compared to the
+"to" station.
+
+I haven't tested if those are still reasonable underground.  There
+should be less electromagnetic noise underground, but it's often
+colder and wetter underground than in our front garden, and I've found
+misty or dusty air can cause problems for the disto.
+
+I'd be interested to hear what people can actually achieve in-cave.
+
+> For sone Devices errors seem to be bound very much to orientation. In
+> the data saved by TopoDroid you can see the device orientation and so
+> we could set a sd based on the direction in which the shot was taken.
+> I have nit investigated this further so far. Also because we have this
+> data only for about 20% of the cave.
+
+This is already taken into account - you tell Survex the SD for the
+"tape" (read laser range-finder), "compass" and "clino" (read magnetic
+field measuring devices) and position (how close to the station you
+actually measure from) and it uses the direction of the leg to produce
+a 3D set of expected errors, which are then summed along each traverse.
+
+> TopoDroid also is able to flag an “magnetic anomaly” - i’m not totally
+> sure how but this als could be used in setting a per shot SD. i have
+> not looked much into this.
+
+I think you want to treat that as an in-cave indication that you should
+check for sources of magnetic interference and redo affected readings.
+
+Cheers,
+    Olly
+
+
+From md at foxel.org  Thu Sep  5 13:10:30 2019
+From: md at foxel.org (Max D)
+Date: Thu, 5 Sep 2019 13:10:30 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+Message-ID: <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+
+
+
+> On 5. Sep 2019, at 08:28, Olly Betts <olly at survex.com> wrote:
+> 
+>> On Fri, Aug 16, 2019 at 05:11:22AM +0200, MD wrote:
+>> We also then to measure the same small loop at the beginning  of each trip: 
+>> A-B in four device orientations
+>> B-A in four device orientations
+>> A-C in four device orientations
+>> C-A in four device orientations
+>> C-B once
+>> 
+>> So I could calculate an SD based on that. 
+> 
+> You probably don't want to work out a set of SDs per-trip -
+
+Currently we set the SD per calibration - which works out to about every second trip. We Take the "Error stddev" from Topodroid Calibration Results - e.g.0.1058 in the attached Screenshot.
+
+Thinking of it, this might be the wrong approach because it only considers the instrument.
+
+> *sd tape 0.002 metres ; 2 millimetres
+> *sd compass clino 0.5 degrees
+> *sd position 0.05 metres ; 5 centimetres
+
+Interesting. I will read up on the difference between tape and position
+
+>> For sone Devices errors seem to be bound very much to orientation. In
+>> the data saved by TopoDroid you can see the device orientation and so
+>> we could set a sd based on the direction in which the shot was taken.
+>> I have nit investigated this further so far. Also because we have this
+>> data only for about 20% of the cave.
+> 
+> This is already taken into account - you tell Survex the SD for the
+> "tape" (read laser range-finder), "compass" and "clino" (read magnetic
+> field measuring devices) and position (how close to the station you
+> actually measure from) and it uses the direction of the leg to produce
+> a 3D set of expected errors, which are then summed along each traverse.
+
+But I would need a extra set SD data per device orientation. 
+So I know that if the display is to the right the Disto tends to reassure an Azimuth 2 degrees to high and if the display is to the left.
+And when the display is to the left it tends to give an Azimuth 1 degree to low.
+
+But perhaps I just should try to do more and better calibrations instead of fixing stuff afterwards.
+
+
+>> TopoDroid also is able to flag an “magnetic anomaly” - i’m not totally
+>> sure how but this als could be used in setting a per shot SD. i have
+>> not looked much into this.
+> 
+> I think you want to treat that as an in-cave indication that you should
+> check for sources of magnetic interference and redo affected readings.
+
+Good Advice!
+
+Thanks!
+
+--max
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190905/41fcf24f/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot_20190720-135115_TopoDroid.jpeg
+Type: image/jpeg
+Size: 13668 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190905/41fcf24f/attachment.jpeg>
+
+From beni at hallinger.org  Thu Sep  5 17:08:18 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 5 Sep 2019 17:08:18 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+Message-ID: <CF803881-9A27-4F14-864F-99E6B9265292@hallinger.org>
+
+You could also indicate the misalignment with instrument correction commands, but i dont know the exact command at the moment. I think that would not with  different orientations of the same device...
+
+> Am 05.09.2019 um 13:10 schrieb Max D <md at foxel.org>:
+> 
+> 
+> 
+>> On 5. Sep 2019, at 08:28, Olly Betts <olly at survex.com> wrote:
+>> 
+>>> On Fri, Aug 16, 2019 at 05:11:22AM +0200, MD wrote:
+>>> We also then to measure the same small loop at the beginning  of each trip: 
+>>> A-B in four device orientations
+>>> B-A in four device orientations
+>>> A-C in four device orientations
+>>> C-A in four device orientations
+>>> C-B once
+>>> 
+>>> So I could calculate an SD based on that. 
+>> 
+>> You probably don't want to work out a set of SDs per-trip -
+> 
+> Currently we set the SD per calibration - which works out to about every second trip. We Take the "Error stddev" from Topodroid Calibration Results - e.g.0.1058 in the attached Screenshot.
+> 
+> Thinking of it, this might be the wrong approach because it only considers the instrument.
+> 
+>> *sd tape 0.002 metres ; 2 millimetres
+>> *sd compass clino 0.5 degrees
+>> *sd position 0.05 metres ; 5 centimetres
+> 
+> Interesting. I will read up on the difference between tape and position
+> 
+>>> For sone Devices errors seem to be bound very much to orientation. In
+>>> the data saved by TopoDroid you can see the device orientation and so
+>>> we could set a sd based on the direction in which the shot was taken.
+>>> I have nit investigated this further so far. Also because we have this
+>>> data only for about 20% of the cave.
+>> 
+>> This is already taken into account - you tell Survex the SD for the
+>> "tape" (read laser range-finder), "compass" and "clino" (read magnetic
+>> field measuring devices) and position (how close to the station you
+>> actually measure from) and it uses the direction of the leg to produce
+>> a 3D set of expected errors, which are then summed along each traverse.
+> 
+> But I would need a extra set SD data per device orientation. 
+> So I know that if the display is to the right the Disto tends to reassure an Azimuth 2 degrees to high and if the display is to the left.
+> And when the display is to the left it tends to give an Azimuth 1 degree to low.
+> 
+> But perhaps I just should try to do more and better calibrations instead of fixing stuff afterwards.
+> 
+> 
+>>> TopoDroid also is able to flag an “magnetic anomaly” - i’m not totally
+>>> sure how but this als could be used in setting a per shot SD. i have
+>>> not looked much into this.
+>> 
+>> I think you want to treat that as an in-cave indication that you should
+>> check for sources of magnetic interference and redo affected readings.
+> 
+> Good Advice!
+> 
+> Thanks!
+> 
+> --max
+> 
+> <Screenshot_20190720-135115_TopoDroid.jpeg>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190905/5cc00ed3/attachment.htm>
+
+From ben at caver.plus.com  Thu Sep  5 17:52:14 2019
+From: ben at caver.plus.com (Ben Cooper)
+Date: Thu, 5 Sep 2019 16:52:14 +0100
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <8A43462A-4EA6-4798-A652-ACB58F06DB01@foxel.org>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+ <001801d56296$a509d880$ef1d8980$@tomo.co.nz>
+ <8A43462A-4EA6-4798-A652-ACB58F06DB01@foxel.org>
+Message-ID: <019e01d56401$e8a4d880$b9ee8980$@caver.plus.com>
+
+Hi Max,
+To your original question, I achieved something similar a while ago using station comments to create an overlay for fixed stations, and another for continuations.  The pdf outputs are attached.  While the programmatic selection of stations to display would be a nice to have, it is relatively painless to do what you want manually. These were achieved using a th2 file with a dedicated scrap, as you hinted at, however, I didn't need to plot all the stations - it is sufficient just to include the station names in the scrap -stations command, making this a very viable approach.
+
+I've included the entire th2 file below - as you can see there is a long list of station names in the scrap command, and only three points actually plotted (I can't remember why these three were plotted manually, sorry. In the fixed stations list, I had to manually plot fixed stations that were created in the cave but not yet actually tied into to the survey line - my intention was that these would be surveyed eventually, at which point I would not have to manually draw them in). It wasn't very onerous generating the th2 file - I basically searched all my the files for the stations, manipulated the search output to create the list of station names, and then copied the list into my th2 file; job done.  In fact one could easily write a script that did all of that and just output the entire th2 file.
+
+The full Therion survey with the metapost definitions of the station points that I used is available at http://cave-registry.org.uk/svn/CheddarCatchment/UpperFlood.  Start with the thconfig files called thconfig.UF_Fixed.tp and thconfig.UF_Continuations.tp respectively.  
+
+Here's the th2 scrap:
+scrap Continuations_s1 -projection plan -stations [M2d at MCGPaper.Entrance M11d at MCGPaper.Entrance 11d at MidnightChamber.Entrance BS10 at MCGPaper.Entrance r4d at CC.GoldenChamber r14 at CC.GoldenChamber 31d at BoulderChoke 34 at Leg1.MalcolmsWay 35 at Leg1.MalcolmsWay 2 at Leg2.MalcolmsWay MW55 at MW.WalkThePlankChamber ws11 at WallStreetCC.WallStreet 1.17 at WallStreetDig.WallStreet 1.0a at Disto.CharnelPassage 1.23 at Disto.CharnelPassage 27 at Pony.RoyalIcing 1.2a at HiddenPassage.RoyalIcing 1.9 at HiddenPassage.RoyalIcing 10 at EP_Pony.EastPassage 11 at EP_Pony.EastPassage 22d at EP_Pony.EastPassage 23 at EP_Pony.EastPassage 32 at EP_Pony.EastPassage 45 at EP_Pony.EastPassage 49 at EP_Pony.EastPassage 51 at EP_Pony.EastPassage 4b at DeepPoolTube.EastPassage 14 at DownUnder.EastPassage 21 at BZA_Pony.BeyondZebraAven.EastPassage 31 at BZA_Pony.BeyondZebraAven.EastPassage 35 at BZA_Pony.BeyondZebraAven.EastPassage 45 at BZA_Pony.BeyondZebraAven.EastPassage 49 at BZA_Pony.BeyondZebraAven.EastPassage 62 at BZA_Pony.BeyondZebraAven.EastPassage 63 at BZA_Pony.BeyondZebraAven.EastPassage 66 at BZA_Pony.BeyondZebraAven.EastPassage 67 at BZA_Pony.BeyondZebraAven.EastPassage 1.38 at Disto.SouthPassage 1.40 at Disto.SouthPassage 1.51 at Disto.SouthPassage   1.0 at WPDisto.WestPassage 2.2d at WPDisto.WestPassage 2.5 at WPDisto.WestPassage 2.18 at WPDisto.WestPassage F1 at NeverlandCC.Neverland G1 at NeverlandCC.Neverland H1 at NeverlandCC.Neverland 3.35 at NeverlandDisto.Neverland 18 at NeverlandRopeClimb.Neverland 33 at NeverlandRopeClimb.Neverland 47 at NeverlandRopeClimb.Neverland] -scale [-128.0 -128.0 14706.8877 -128.0 0.0 0.0 376.80614758 0.0 m]
+
+point 2344.46 6494.81 station -name 46 at NeverlandRopeClimb.Neverland
+
+point 10441.94 4602.38 station -name 35 at EP_Pony.EastPassage
+
+point 4582.73 16269.96 station -name E0 at MCGPaper.Entrance
+
+endscrap
+
+Best regards,
+Ben
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: UF_FIXED.pdf
+Type: application/pdf
+Size: 194679 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190905/86fb14f3/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: UF_Continuations.pdf
+Type: application/pdf
+Size: 245867 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190905/86fb14f3/attachment-0001.pdf>
+
+From ben at caver.plus.com  Fri Sep  6 08:01:13 2019
+From: ben at caver.plus.com (Ben Cooper)
+Date: Fri, 6 Sep 2019 07:01:13 +0100
+Subject: [Therion] Detecting errors
+In-Reply-To: <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+Message-ID: <A436192D-76A4-4BF9-AEED-C62BFA553553@caver.plus.com>
+
+An error of 3 degrees in clino does indicate a device out of calibration.  I would expect it to be within 0.5 degrees for a well calibrated device, and would not tolerate more than 1 degree.  In my experience poor calibration is usually down to either just inaccurate calibration shots, or local magnetic anomalies: take off watch, step counter, metal belt buckle, jewellery, glasses, helmet, lights, steel toe caps, etc!!
+
+Sent from my iPhone
+
+> On 5 Sep 2019, at 12:10, Max D <md at foxel.org> wrote:
+> 
+> So I know that if the display is to the right the Disto tends to reassure an Azimuth 2 degrees to high and if the display is to the left.
+> And when the display is to the left it tends to give an Azimuth 1 degree to low.
+> 
+> But perhaps I just should try to do more and better calibrations instead of fixing stuff afterwards.
+
+
+
+From martinsluka at mac.com  Fri Sep  6 10:00:20 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 10:00:20 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+Message-ID: <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+
+
+> 5. 9. 2019 v 13:10, Max D <md at foxel.org>:
+> 
+> So I know that if the display is to the right the Disto tends to reassure an Azimuth 2 degrees to high and if the display is to the left.
+> And when the display is to the left it tends to give an Azimuth 1 degree to low.
+> 
+
+The main source of error could be misaligned back side of Disto with station point especially together with short distance to measured station. There is a way to reduce this error to minimum when the back extension aligned with laser beam of the Disto is used.
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/cd066ede/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: distoX_extension.jpg
+Type: image/jpeg
+Size: 939371 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/cd066ede/attachment.jpg>
+
+From markus.boldt at gmx.net  Fri Sep  6 11:02:06 2019
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 6 Sep 2019 11:02:06 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+Message-ID: <001a01d56491$c26ee260$474ca720$@gmx.net>
+
+Hi Martin,
+
+in Ebensee I have asked you, if this part is buyable. Is it? And when where.
+
+
+Best regards
+
+Markus
+
+
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+via Therion
+Gesendet: Freitag, 6. September 2019 10:00
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Detecting errors
+
+
+
+
+
+5. 9. 2019 v 13:10, Max D <md at foxel.org>:
+
+
+
+So I know that if the display is to the right the Disto tends to reassure an
+Azimuth 2 degrees to high and if the display is to the left.
+
+And when the display is to the left it tends to give an Azimuth 1 degree to
+low.
+
+
+
+
+
+The main source of error could be misaligned back side of Disto with station
+point especially together with short distance to measured station. There is
+a way to reduce this error to minimum when the back extension aligned with
+laser beam of the Disto is used.
+
+
+
+Martin
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/120bdbd0/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 81483 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/120bdbd0/attachment.jpg>
+
+From herich at speleodd.sk  Fri Sep  6 10:39:09 2019
+From: herich at speleodd.sk (Pavel Herich)
+Date: Fri, 06 Sep 2019 10:39:09 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+Message-ID: <8ab7773a351b486eefb692f689c3824e@speleodd.sk>
+
+Martin,
+I´ve never used this back extention, but before every "topo day" I use 
+to calibrate DistoX, which brings me errors under 0,5 % permanetly, very 
+rarely between 0,5 - 1 %.
+Pavel
+
+
+Dňa 2019-09-06 10:00 Martin Sluka via Therion napísal(a):
+>> 5. 9. 2019 v 13:10, Max D <md at foxel.org>:
+>> 
+>> So I know that if the display is to the right the Disto tends to
+>> reassure an Azimuth 2 degrees to high and if the display is to the
+>> left.
+>> And when the display is to the left it tends to give an Azimuth 1
+>> degree to low.
+> 
+> The main source of error could be misaligned back side of Disto with
+> station point especially together with short distance to measured
+> station. There is a way to reduce this error to minimum when the back
+> extension aligned with laser beam of the Disto is used.
+> 
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Fri Sep  6 11:41:41 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 11:41:41 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <8ab7773a351b486eefb692f689c3824e@speleodd.sk>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+ <8ab7773a351b486eefb692f689c3824e@speleodd.sk>
+Message-ID: <941BF079-95D0-448A-9BEE-D9C8CA66B2EF@mac.com>
+
+You are the wizard, but for as normal people the physical laws are valid. ;)
+
+Martin
+
+Odesláno z iPhonu
+
+6. 9. 2019 v 10:39, Pavel Herich <herich at speleodd.sk>:
+
+> Martin,
+> I´ve never used this back extention, but before every "topo day" I use to calibrate DistoX, which brings me errors under 0,5 % permanetly, very rarely between 0,5 - 1 %.
+> Pavel
+> 
+> 
+> Dňa 2019-09-06 10:00 Martin Sluka via Therion napísal(a):
+>>> 5. 9. 2019 v 13:10, Max D <md at foxel.org>:
+>>> So I know that if the display is to the right the Disto tends to
+>>> reassure an Azimuth 2 degrees to high and if the display is to the
+>>> left.
+>>> And when the display is to the left it tends to give an Azimuth 1
+>>> degree to low.
+>> The main source of error could be misaligned back side of Disto with
+>> station point especially together with short distance to measured
+>> station. There is a way to reduce this error to minimum when the back
+>> extension aligned with laser beam of the Disto is used.
+>> Martin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bgee at campercaver.net  Fri Sep  6 15:47:34 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 06 Sep 2019 08:47:34 -0500
+Subject: [Therion] Extended profile problems
+Message-ID: <3058711.aFa8ePt7AY@main2.billgee.local>
+
+Hello everyone -
+
+I have not been putting elevation profiles on my maps for several years because it is such a pain to do in Therion.  The time has come where I need to start adding them to several maps in progress.  
+
+In the past I have defined the profile scraps as type "elevation" and given them a viewpoint angle.  The profile I am working on now will not work for that because it basically goes around in a circle.  There is no viewpoint angle where the entire profile lays out in a line.  The plan view is a loop.
+
+So for this one I defined the scrap as type "extended".  Holy cow, that makes a mess of things!  Take a look at the attached file.  This is so distorted it is hard to figure out how it relates to the drawing!  The stations in this profile go about 3/4 of the way around the circle.  The upper half of the resulting map is upside down and magnified about 5 times larger than it should be.
+
+What am I missing???  Do I correctly understand that an "extended" scrap should draw just the way it appears on the original sketch?  How should I be drawing
+
+Maybe I should completely skip using elevations.  I can probably make them work by drawing as cross-sections.  Indeed, that might be easier to fit onto the final map.  I think the only real problem there is whether cross-section scraps can be joined.
+
+-- 
+Bill Gee
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsElevations.pdf
+Type: application/pdf
+Size: 24134 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/4842ccaf/attachment.pdf>
+
+From martinsluka at mac.com  Fri Sep  6 15:50:38 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 15:50:38 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <3058711.aFa8ePt7AY@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+Message-ID: <FB155CF2-A21C-44C8-BCB9-4C371EEB344D@mac.com>
+
+Bill, 
+
+may you publish all your data? Or send it privately?
+
+Martin
+
+> 6. 9. 2019 v 15:47, Bill Gee <bgee at campercaver.net>:
+> 
+> Hello everyone -
+> 
+> I have not been putting elevation profiles on my maps for several years because it is such a pain to do in Therion.  The time has come where I need to start adding them to several maps in progress.  
+> 
+> In the past I have defined the profile scraps as type "elevation" and given them a viewpoint angle.  The profile I am working on now will not work for that because it basically goes around in a circle.  There is no viewpoint angle where the entire profile lays out in a line.  The plan view is a loop.
+> 
+> So for this one I defined the scrap as type "extended".  Holy cow, that makes a mess of things!  Take a look at the attached file.  This is so distorted it is hard to figure out how it relates to the drawing!  The stations in this profile go about 3/4 of the way around the circle.  The upper half of the resulting map is upside down and magnified about 5 times larger than it should be.
+> 
+> What am I missing???  Do I correctly understand that an "extended" scrap should draw just the way it appears on the original sketch?  How should I be drawing
+> 
+> Maybe I should completely skip using elevations.  I can probably make them work by drawing as cross-sections.  Indeed, that might be easier to fit onto the final map.  I think the only real problem there is whether cross-section scraps can be joined.
+> 
+> -- 
+> Bill Gee
+> 
+> <StarkCavernsElevations.pdf>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bgee at campercaver.net  Fri Sep  6 16:09:33 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 06 Sep 2019 09:09:33 -0500
+Subject: [Therion] Extended profile problems
+In-Reply-To: <FB155CF2-A21C-44C8-BCB9-4C371EEB344D@mac.com>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <FB155CF2-A21C-44C8-BCB9-4C371EEB344D@mac.com>
+Message-ID: <2104521.ELt1UcxOji@main2.billgee.local>
+
+Hi Martin -
+
+This is a commercial cave - there are no secrets!  The attached ZIP file has the thconfig, .th, .th2 and centerline data files for the whole project.
+
+-- 
+Bill Gee
+
+
+
+On Friday, September 6, 2019 8:50:38 AM CDT Martin Sluka via Therion wrote:
+> Bill, 
+> 
+> may you publish all your data? Or send it privately?
+> 
+> Martin
+> 
+> > 6. 9. 2019 v 15:47, Bill Gee <bgee at campercaver.net>:
+> > 
+> > Hello everyone -
+> > 
+> > I have not been putting elevation profiles on my maps for several years because it is such a pain to do in Therion.  The time has come where I need to start adding them to several maps in progress.  
+> > 
+> > In the past I have defined the profile scraps as type "elevation" and given them a viewpoint angle.  The profile I am working on now will not work for that because it basically goes around in a circle.  There is no viewpoint angle where the entire profile lays out in a line.  The plan view is a loop.
+> > 
+> > So for this one I defined the scrap as type "extended".  Holy cow, that makes a mess of things!  Take a look at the attached file.  This is so distorted it is hard to figure out how it relates to the drawing!  The stations in this profile go about 3/4 of the way around the circle.  The upper half of the resulting map is upside down and magnified about 5 times larger than it should be.
+> > 
+> > What am I missing???  Do I correctly understand that an "extended" scrap should draw just the way it appears on the original sketch?  How should I be drawing
+> > 
+> > Maybe I should completely skip using elevations.  I can probably make them work by drawing as cross-sections.  Indeed, that might be easier to fit onto the final map.  I think the only real problem there is whether cross-section scraps can be joined.
+> > 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsData.zip
+Type: application/zip
+Size: 88737 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/ab221d5e/attachment.zip>
+
+From martinsluka at mac.com  Fri Sep  6 16:31:51 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 16:31:51 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <001a01d56491$c26ee260$474ca720$@gmx.net>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <60ABA01B-99EE-498B-B1FC-0640C407CCB4@mac.com>
+ <001a01d56491$c26ee260$474ca720$@gmx.net>
+Message-ID: <EA13562B-5D73-4BA3-8C40-90A97FCB3EC3@mac.com>
+
+
+> 6. 9. 2019 v 11:02, Markus Boldt <markus.boldt at gmx.net>:
+> 
+> in Ebensee I have asked you, if this part is buyable. Is it? And when where.
+
+Hi Marcus,
+
+as I know it is not. But there are several sources of CAD or 3D printers data for it you may find on internet. 
+
+I made my based on this design:
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/e7513536/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: TRN Disto X2 3D vykres.jpg
+Type: image/jpeg
+Size: 92436 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/e7513536/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: DSCF1529.jpg
+Type: image/jpeg
+Size: 1147164 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/e7513536/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: DSCF1531.jpg
+Type: image/jpeg
+Size: 1378163 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/e7513536/attachment-0002.jpg>
+
+From phil.vernant at gmail.com  Fri Sep  6 16:58:49 2019
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 6 Sep 2019 16:58:49 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <2104521.ELt1UcxOji@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <FB155CF2-A21C-44C8-BCB9-4C371EEB344D@mac.com>
+ <2104521.ELt1UcxOji@main2.billgee.local>
+Message-ID: <A3951701-4A84-43C9-8782-CC257C34D1F6@gmail.com>
+
+Hi Bill,
+
+Not sure to understand what you are trying to do. Are you trying to make the full extended profile of the cave ? In which .th2 is your profile drawing ? 
+
+Phil
+
+> On 6 Sep 2019, at 16:09, Bill Gee <bgee at campercaver.net> wrote:
+> 
+> Hi Martin -
+> 
+> This is a commercial cave - there are no secrets!  The attached ZIP file has the thconfig, .th, .th2 and centerline data files for the whole project.
+> 
+> -- 
+> Bill Gee
+> 
+> 
+> 
+> On Friday, September 6, 2019 8:50:38 AM CDT Martin Sluka via Therion wrote:
+>> Bill, 
+>> 
+>> may you publish all your data? Or send it privately?
+>> 
+>> Martin
+>> 
+>>> 6. 9. 2019 v 15:47, Bill Gee <bgee at campercaver.net>:
+>>> 
+>>> Hello everyone -
+>>> 
+>>> I have not been putting elevation profiles on my maps for several years because it is such a pain to do in Therion.  The time has come where I need to start adding them to several maps in progress.  
+>>> 
+>>> In the past I have defined the profile scraps as type "elevation" and given them a viewpoint angle.  The profile I am working on now will not work for that because it basically goes around in a circle.  There is no viewpoint angle where the entire profile lays out in a line.  The plan view is a loop.
+>>> 
+>>> So for this one I defined the scrap as type "extended".  Holy cow, that makes a mess of things!  Take a look at the attached file.  This is so distorted it is hard to figure out how it relates to the drawing!  The stations in this profile go about 3/4 of the way around the circle.  The upper half of the resulting map is upside down and magnified about 5 times larger than it should be.
+>>> 
+>>> What am I missing???  Do I correctly understand that an "extended" scrap should draw just the way it appears on the original sketch?  How should I be drawing
+>>> 
+>>> Maybe I should completely skip using elevations.  I can probably make them work by drawing as cross-sections.  Indeed, that might be easier to fit onto the final map.  I think the only real problem there is whether cross-section scraps can be joined.
+>>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> 
+> <StarkCavernsData.zip>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/4aab452b/attachment.htm>
+
+From martinsluka at mac.com  Fri Sep  6 17:26:52 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 17:26:52 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <2104521.ELt1UcxOji@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <FB155CF2-A21C-44C8-BCB9-4C371EEB344D@mac.com>
+ <2104521.ELt1UcxOji@main2.billgee.local>
+Message-ID: <E28A6D0F-87DE-4444-9470-A37A52FFB225@mac.com>
+
+Hi Bill,
+
+it looks you have not defined „extend“ of centerline in your centerline data. 
+
+Because extend right is default Therion will extend your stations form OC5a to the right, but it has to close the loop and there should be the problem.
+
+Your scrap extended Profile-OC5a-G10 includes stations OC5a to G10, stations OC5a-G are extended to East but stations C9 and C10 are extended to West.
+
+Try to divide that loop to two scraps from OC5a to G8 and G8 to G14 and add extend commands. Not use join commands for first elevation export.
+
+ extend right
+OC5a  G1     19.6   134     3.0    314    -3.0   1.0 9.8 18.7 3.5
+  G1    G2     20.4   133    29.0    313   -28.0   3.0 6.6 17.3 4.2
+  G2    G3     21.2   125    13.0    306   -13.0   2.3 3.0 9.3 6.4
+  G3    G4     22.6    60     4.0    239    -5.0   6.2 2.0 4.8 2.4
+  G4    G5      4.5    48   -10.0    228    10.0   2.6 1.7 1.2 0.3
+  G5    G6     12.3   101    18.0    281   -18.0   1.5 1.5 7.2 0.3
+  G6    G7      9.0   127     7.0    308    -7.0   7.3 16.2 5.1 2.0
+  G7    G8     10.9    44    -8.0    225     8.0   12.8 10.4 4.1 2.3
+  extend left
+G8    G9      8.5   335   -15.0    157    16.0   8.5 27.4 2.7 3.1
+  G9    G10    15.5   307    -1.0    128.5   1.0   3.4 3.9 0.7 0.8
+  G10   G11    32.0   267    -1.5     88.5   2.0   7.4 5.6 0.5 1.0
+  G11   G12    21.8   262     0.0     81     0.0   1.7 4.8 1.5 1.4
+  G12   G13     5.7   246     6.0      -    -6.0   1.8 3.0 1.0 2.0
+  G13   G14    13.9   236   -61.0     57    62.0   - - - -
+  extend hide 
+G14   G1      5.9     -   -32.0    220    32.0   - - - -
+  
+flags splay
+  G1    G1a    12.9   200    -6.0      -     6.0   20.0 20.0 17.3 4.2
+  G7    G7a    18.4   249    12.0      -   -12.0   10.4 12.8 4.1 2.3
+flags not splay
+
+Add command select to your thconfig file
+
+source StarkCaverns.th
+
+select StarkCavernsProfiles at StarkCavernsProfiles
+
+
+# Load the Metapost code for custom symbols
+
+and add to scrap  G10-G14 (G8-G14) parameter -flip horizontal, because in output it should be flipped.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2019-09-06 v?17.16.02.png
+Type: image/png
+Size: 14905 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/0a2eecc7/attachment.png>
+-------------- next part --------------
+
+
+Martin
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsElevations-G10-G14.pdf
+Type: application/pdf
+Size: 17174 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/0a2eecc7/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsElevations-OC5a-G10.pdf
+Type: application/pdf
+Size: 23897 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/0a2eecc7/attachment-0001.pdf>
+-------------- next part --------------
+
+And after some editing:
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsElevations-OC5a-G14.pdf
+Type: application/pdf
+Size: 30419 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/0a2eecc7/attachment-0002.pdf>
+-------------- next part --------------
+
+
+
+
+> 6. 9. 2019 v 16:09, Bill Gee <bgee at campercaver.net>:
+> 
+> Hi Martin -
+> 
+> This is a commercial cave - there are no secrets!  The attached ZIP file has the thconfig, .th, .th2 and centerline data files for the whole project.
+> 
+> -- 
+> Bill Gee
+> 
+> 
+> 
+> On Friday, September 6, 2019 8:50:38 AM CDT Martin Sluka via Therion wrote:
+>> Bill, 
+>> 
+>> may you publish all your data? Or send it privately?
+>> 
+>> Martin
+>> 
+>>> 6. 9. 2019 v 15:47, Bill Gee <bgee at campercaver.net>:
+>>> 
+>>> Hello everyone -
+>>> 
+>>> I have not been putting elevation profiles on my maps for several years because it is such a pain to do in Therion.  The time has come where I need to start adding them to several maps in progress.  
+>>> 
+>>> In the past I have defined the profile scraps as type "elevation" and given them a viewpoint angle.  The profile I am working on now will not work for that because it basically goes around in a circle.  There is no viewpoint angle where the entire profile lays out in a line.  The plan view is a loop.
+>>> 
+>>> So for this one I defined the scrap as type "extended".  Holy cow, that makes a mess of things!  Take a look at the attached file.  This is so distorted it is hard to figure out how it relates to the drawing!  The stations in this profile go about 3/4 of the way around the circle.  The upper half of the resulting map is upside down and magnified about 5 times larger than it should be.
+>>> 
+>>> What am I missing???  Do I correctly understand that an "extended" scrap should draw just the way it appears on the original sketch?  How should I be drawing
+>>> 
+>>> Maybe I should completely skip using elevations.  I can probably make them work by drawing as cross-sections.  Indeed, that might be easier to fit onto the final map.  I think the only real problem there is whether cross-section scraps can be joined.
+>>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> 
+> <StarkCavernsData.zip>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Fri Sep  6 17:41:14 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 06 Sep 2019 10:41:14 -0500
+Subject: [Therion] Extended profile problems
+In-Reply-To: <E28A6D0F-87DE-4444-9470-A37A52FFB225@mac.com>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <2104521.ELt1UcxOji@main2.billgee.local>
+ <E28A6D0F-87DE-4444-9470-A37A52FFB225@mac.com>
+Message-ID: <1926724.1UkbG9dX4O@main2.billgee.local>
+
+Hi Martin -
+
+Thanks!  This is much better, but still not what I want.  I don't want the profile to fold back on itself at all.  I want one continuous profile extending from OC5a on the left to G14 on the right.  Is that possible?
+
+If I draw them as "projection none", then two questions come up.  First, if I put survey stations in the scrap will they be used to scale the drawing?  Second, can two (or more) such scraps be joined?
+
+-- 
+Bill Gee
+
+
+
+On Friday, September 6, 2019 10:26:52 AM CDT Martin Sluka via Therion wrote:
+> Hi Bill,
+> 
+> it looks you have not defined „extend“ of centerline in your centerline data. 
+> 
+> Because extend right is default Therion will extend your stations form OC5a to the right, but it has to close the loop and there should be the problem.
+> 
+> Your scrap extended Profile-OC5a-G10 includes stations OC5a to G10, stations OC5a-G are extended to East but stations C9 and C10 are extended to West.
+> 
+> Try to divide that loop to two scraps from OC5a to G8 and G8 to G14 and add extend commands. Not use join commands for first elevation export.
+> 
+>  extend right
+> OC5a  G1     19.6   134     3.0    314    -3.0   1.0 9.8 18.7 3.5
+>   G1    G2     20.4   133    29.0    313   -28.0   3.0 6.6 17.3 4.2
+>   G2    G3     21.2   125    13.0    306   -13.0   2.3 3.0 9.3 6.4
+>   G3    G4     22.6    60     4.0    239    -5.0   6.2 2.0 4.8 2.4
+>   G4    G5      4.5    48   -10.0    228    10.0   2.6 1.7 1.2 0.3
+>   G5    G6     12.3   101    18.0    281   -18.0   1.5 1.5 7.2 0.3
+>   G6    G7      9.0   127     7.0    308    -7.0   7.3 16.2 5.1 2.0
+>   G7    G8     10.9    44    -8.0    225     8.0   12.8 10.4 4.1 2.3
+>   extend left
+> G8    G9      8.5   335   -15.0    157    16.0   8.5 27.4 2.7 3.1
+>   G9    G10    15.5   307    -1.0    128.5   1.0   3.4 3.9 0.7 0.8
+>   G10   G11    32.0   267    -1.5     88.5   2.0   7.4 5.6 0.5 1.0
+>   G11   G12    21.8   262     0.0     81     0.0   1.7 4.8 1.5 1.4
+>   G12   G13     5.7   246     6.0      -    -6.0   1.8 3.0 1.0 2.0
+>   G13   G14    13.9   236   -61.0     57    62.0   - - - -
+>   extend hide 
+> G14   G1      5.9     -   -32.0    220    32.0   - - - -
+>   
+> flags splay
+>   G1    G1a    12.9   200    -6.0      -     6.0   20.0 20.0 17.3 4.2
+>   G7    G7a    18.4   249    12.0      -   -12.0   10.4 12.8 4.1 2.3
+> flags not splay
+> 
+> Add command select to your thconfig file
+> 
+> source StarkCaverns.th
+> 
+> select StarkCavernsProfiles at StarkCavernsProfiles
+> 
+> 
+> # Load the Metapost code for custom symbols
+> 
+> and add to scrap  G10-G14 (G8-G14) parameter -flip horizontal, because in output it should be flipped.
+> 
+> 
+
+
+
+
+
+
+From wookey at wookware.org  Fri Sep  6 18:31:36 2019
+From: wookey at wookware.org (Wookey)
+Date: Fri, 6 Sep 2019 17:31:36 +0100
+Subject: [Therion] Detecting errors
+In-Reply-To: <7D3B1CEA-D18D-4E7D-A267-55854E516100@hallinger.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <AA29ECE4-4293-4D6D-BB89-CF914DAE209B@mac.com>
+ <7D3B1CEA-D18D-4E7D-A267-55854E516100@hallinger.org>
+Message-ID: <20190906163136.x3vkgpcyhzs3w5yt@mail.wookware.org>
+
+On 2019-08-15 11:50 +0200, Benedikt Hallinger wrote:
+> To expand a little in this, you could also use the standard „grade“ to tell theriob which centerline data has which quality. We use this to mark the centerlines we have surveyed with distox and traditional way and therion uses this to put more of the errors towards the more bad survey.
+
+What SD numbers do you use for this?
+
+I agree they should be different, but I've not seen much research
+evidence on what the correct numbers are.
+
+Also SDs are about expected errors and do not cover blunder
+probability very usefully, which is also quite different for fully
+digital and paper-based surveying as well as for compass/clino/tape vs
+SAP or DistoX. You could adjust the SDs to allow for this, given that
+we don't have a better mechanism, but again - how do we choose the
+numbers?
+
+I have asked this before and not had useful answers.
+
+I have a re-survey project which has found a lot of errors in old
+(both compass/clino and distoX surveys). I'm struggling to work out
+what to do with the differences, but it's possible that some plausible
+blunder probabilities could be generated if enough resurvey is
+done. The main problem is that the resurvey is wrong too, just by a
+different unknown amount, and could itself contain blunders.
+
+In practice I found it really difficult to refind all the previous
+stations so the resurveys are not mostly leg-for-leg, just connected
+every so often.
+
+None of that helps much with the fact that survex does its sums as if
+there are only measurments errors, not blunders.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/e23ff330/attachment.sig>
+
+From md at foxel.org  Fri Sep  6 21:35:54 2019
+From: md at foxel.org (MD)
+Date: Fri, 6 Sep 2019 21:35:54 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <20190906163136.x3vkgpcyhzs3w5yt@mail.wookware.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <AA29ECE4-4293-4D6D-BB89-CF914DAE209B@mac.com>
+ <7D3B1CEA-D18D-4E7D-A267-55854E516100@hallinger.org>
+ <20190906163136.x3vkgpcyhzs3w5yt@mail.wookware.org>
+Message-ID: <DA815588-A63F-4651-B2D9-494CDD34952A@foxel.org>
+
+On 6. Sep 2019, at 18:31, Wookey <wookey at wookware.org> wrote:
+> 
+> What SD numbers do you use for this?
+> 
+> I agree they should be different, but I've not seen much research
+> evidence on what the correct numbers are.
+
+Pre-Disto we used https://de.wikipedia.org/wiki/H%C3%A4ngezeug which should result in about the same SD as an Disto.
+
+I toyed with taking the Callibration SD but I‘m not sure this makes sense. 
+
+> Also SDs are about expected errors and do not cover blunder
+> probability
+
+I think this is an important point. They tend to mess up things much worse than anything else.
+
+—max
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/1ac39037/attachment.htm>
+
+From md at foxel.org  Fri Sep  6 21:37:50 2019
+From: md at foxel.org (MD)
+Date: Fri, 6 Sep 2019 21:37:50 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <A436192D-76A4-4BF9-AEED-C62BFA553553@caver.plus.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <A436192D-76A4-4BF9-AEED-C62BFA553553@caver.plus.com>
+Message-ID: <3519BFB9-1DE1-419C-B076-5D44A35D851F@foxel.org>
+
+On 6. Sep 2019, at 08:01, Ben Cooper <ben at caver.plus.com> wrote:
+> 
+> In my experience poor calibration is usually down to either just inaccurate calibration shots, or local magnetic anomalies: take off watch, step counter, metal belt buckle, jewellery, glasses, helmet, lights, steel toe caps, etc!!
+
+Took your advice to heart and calibrated without helmet. Much better!
+
+Thanks!
+
+—max
+
+
+From martinsluka at mac.com  Fri Sep  6 22:16:06 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 6 Sep 2019 22:16:06 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <1926724.1UkbG9dX4O@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <2104521.ELt1UcxOji@main2.billgee.local>
+ <E28A6D0F-87DE-4444-9470-A37A52FFB225@mac.com>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+Message-ID: <B76845A7-1D08-4B7C-9A24-316C3DA7B81F@mac.com>
+
+Hi Bill,
+
+> 6. 9. 2019 v 17:41, Bill Gee <bgee at campercaver.net>:
+> 
+> Thanks!  This is much better, but still not what I want.  I don't want the profile to fold back on itself at all.  I want one continuous profile extending from OC5a on the left to G14 on the right.  Is that possible?
+
+I’m not sure if this is possible without using another centreline file where the loop will be not closed. So for map you should have data with loops and for extended profile without loops. 
+
+> If I draw them as "projection none", then two questions come up.  First, if I put survey stations in the scrap will they be used to scale the drawing?  Second, can two (or more) such scraps be joined?
+
+I don’t know this is possible. Projection none is for sections only.  
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190906/71d9a994/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Sep  6 23:41:13 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 7 Sep 2019 09:41:13 +1200
+Subject: [Therion] Display Station comments on Map?
+In-Reply-To: <019e01d56401$e8a4d880$b9ee8980$@caver.plus.com>
+References: <B4EEB0BA-73C9-4F56-95E9-1ECAE73D2D66@foxel.org>
+ <001401d561c4$32d45c40$987d14c0$@tomo.co.nz>
+ <BC55BF40-48CE-4937-AC7E-B5DB7E65D89D@foxel.org>
+ <5E9EBD8A-39CE-4A7C-A7A2-7A6980F8A200@foxel.org>
+ <001801d56296$a509d880$ef1d8980$@tomo.co.nz>
+ <8A43462A-4EA6-4798-A652-ACB58F06DB01@foxel.org>
+ <019e01d56401$e8a4d880$b9ee8980$@caver.plus.com>
+Message-ID: <000201d564fb$d01df210$7059d630$@tomo.co.nz>
+
+Thanks Ben
+Two new insights for me in your examples.  I create surface station maps with flags like in your examples, but have never thought to include a previewed cave map as well - obvious really!
+And I had not appreciated how to use the -station option for scraps, much easier than drawing them all in the scrap!
+
+Very timely for me, as I am just in the middle of an interesting surface feature - cave feature mapping exercise, and Google Earth does not provide the same level of refinement.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Ben Cooper
+Sent: Friday, 6 September 2019 03:52
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] Display Station comments on Map?
+
+Hi Max,
+To your original question, I achieved something similar a while ago using station comments to create an overlay for fixed stations, and another for continuations.  The pdf outputs are attached.  While the programmatic selection of stations to display would be a nice to have, it is relatively painless to do what you want manually. These were achieved using a th2 file with a dedicated scrap, as you hinted at, however, I didn't need to plot all the stations - it is sufficient just to include the station names in the scrap -stations command, making this a very viable approach.
+
+I've included the entire th2 file below - as you can see there is a long list of station names in the scrap command, and only three points actually plotted (I can't remember why these three were plotted manually, sorry. In the fixed stations list, I had to manually plot fixed stations that were created in the cave but not yet actually tied into to the survey line - my intention was that these would be surveyed eventually, at which point I would not have to manually draw them in). It wasn't very onerous generating the th2 file - I basically searched all my the files for the stations, manipulated the search output to create the list of station names, and then copied the list into my th2 file; job done.  In fact one could easily write a script that did all of that and just output the entire th2 file.
+
+The full Therion survey with the metapost definitions of the station points that I used is available at http://cave-registry.org.uk/svn/CheddarCatchment/UpperFlood.  Start with the thconfig files called thconfig.UF_Fixed.tp and thconfig.UF_Continuations.tp respectively.  
+
+Here's the th2 scrap:
+scrap Continuations_s1 -projection plan -stations [M2d at MCGPaper.Entrance M11d at MCGPaper.Entrance 11d at MidnightChamber.Entrance BS10 at MCGPaper.Entrance r4d at CC.GoldenChamber r14 at CC.GoldenChamber 31d at BoulderChoke 34 at Leg1.MalcolmsWay 35 at Leg1.MalcolmsWay 2 at Leg2.MalcolmsWay MW55 at MW.WalkThePlankChamber ws11 at WallStreetCC.WallStreet 1.17 at WallStreetDig.WallStreet 1.0a at Disto.CharnelPassage 1.23 at Disto.CharnelPassage 27 at Pony.RoyalIcing 1.2a at HiddenPassage.RoyalIcing 1.9 at HiddenPassage.RoyalIcing 10 at EP_Pony.EastPassage 11 at EP_Pony.EastPassage 22d at EP_Pony.EastPassage 23 at EP_Pony.EastPassage 32 at EP_Pony.EastPassage 45 at EP_Pony.EastPassage 49 at EP_Pony.EastPassage 51 at EP_Pony.EastPassage 4b at DeepPoolTube.EastPassage 14 at DownUnder.EastPassage 21 at BZA_Pony.BeyondZebraAven.EastPassage 31 at BZA_Pony.BeyondZebraAven.EastPassage 35 at BZA_Pony.BeyondZebraAven.EastPassage 45 at BZA_Pony.BeyondZebraAven.EastPassage 49 at BZA_Pony.BeyondZebraAven.EastPassage 62 at BZA_Pony.BeyondZebraAven.EastPassage 63 at BZA_Pony.BeyondZebraAven.EastPassage 66 at BZA_Pony.BeyondZebraAven.EastPassage 67 at BZA_Pony.BeyondZebraAven.EastPassage 1.38 at Disto.SouthPassage 1.40 at Disto.SouthPassage 1.51 at Disto.SouthPassage   1.0 at WPDisto.WestPassage 2.2d at WPDisto.WestPassage 2.5 at WPDisto.WestPassage 2.18 at WPDisto.WestPassage F1 at NeverlandCC.Neverland G1 at NeverlandCC.Neverland H1 at NeverlandCC.Neverland 3.35 at NeverlandDisto.Neverland 18 at NeverlandRopeClimb.Neverland 33 at NeverlandRopeClimb.Neverland 47 at NeverlandRopeClimb.Neverland] -scale [-128.0 -128.0 14706.8877 -128.0 0.0 0.0 376.80614758 0.0 m]
+
+point 2344.46 6494.81 station -name 46 at NeverlandRopeClimb.Neverland
+
+point 10441.94 4602.38 station -name 35 at EP_Pony.EastPassage
+
+point 4582.73 16269.96 station -name E0 at MCGPaper.Entrance
+
+endscrap
+
+Best regards,
+Ben
+
+
+
+
+From martinsluka at mac.com  Sat Sep  7 10:21:30 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 7 Sep 2019 10:21:30 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <1926724.1UkbG9dX4O@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <2104521.ELt1UcxOji@main2.billgee.local>
+ <E28A6D0F-87DE-4444-9470-A37A52FFB225@mac.com>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+Message-ID: <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+
+
+> 6. 9. 2019 v 17:41, Bill Gee <bgee at campercaver.net>:
+> 
+> I want one continuous profile extending from OC5a on the left to G14 on the right. 
+
+Just commented G14-G1, a bit shorted ends of scraps  on station G10 and added join command.
+
+Martin
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsExtended_no_loop_G14_G1.pdf
+Type: application/pdf
+Size: 28839 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/2c211c87/attachment.pdf>
+
+From ben at caver.plus.com  Sat Sep  7 13:33:54 2019
+From: ben at caver.plus.com (Ben Cooper)
+Date: Sat, 7 Sep 2019 12:33:54 +0100
+Subject: [Therion] Detecting errors
+In-Reply-To: <3519BFB9-1DE1-419C-B076-5D44A35D851F@foxel.org>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <A436192D-76A4-4BF9-AEED-C62BFA553553@caver.plus.com>
+ <3519BFB9-1DE1-419C-B076-5D44A35D851F@foxel.org>
+Message-ID: <028101d56570$2222b4a0$66681de0$@caver.plus.com>
+
+>Took your advice to heart and calibrated without helmet. Much better!
+
+My non-surveyor assistants are usually dismayed when I ask them to remove everything!
+
+ 
+
+Apologies, I misunderstood what you meant by display to the left and right.  I think I see what you mean now, the following drawing portrays the issue with a Disto sitting on top of one station, and pointing to another.  The two stations are horizontally aligned, but the Disto is pointing down.  The angular error will be the angle subtended by the height of the laser beam above the station (3.3 cm or 1.2 cm for my DistoX, depending on orientation).  If the error is 2-degrees, then this suggests the distance is 94cm  (=3.3cm / tan(2.0)) – that’s a very short leg.  At 5m, this error reduces to 0.4-degrees, within the calibration error of the device.
+
+
+
+In practice, I find legs of 5m to 8m produce the best surveys – much more than that and it is hard to accurately hit the target station with the laser beam, much less and errors like this “position” error start to get too big.  Alternatively, when taking short legs, make sure that the “back” projection of the laser beam is as closely aligned to the station as possible – often easy to do for example when taking a shot from one wall across the passage to the opposite wall.  
+
+ 
+
+Being aware of this issue should help surveyors choose better station positions, especially for short legs.  
+
+ 
+
+The gadget shown in other emails would help, but only in certain circumstance – eg shots along the wall still suffer from this issue.  
+
+- Ben
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/7704e7ae/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: oledata.mso
+Type: application/octet-stream
+Size: 27232 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/7704e7ae/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.wmz
+Type: application/x-ms-wmz
+Size: 675 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/7704e7ae/attachment.wmz>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 4530 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/7704e7ae/attachment.png>
+
+From martinsluka at mac.com  Sat Sep  7 15:50:09 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 7 Sep 2019 15:50:09 +0200
+Subject: [Therion] Detecting errors
+In-Reply-To: <028101d56570$2222b4a0$66681de0$@caver.plus.com>
+References: <6CA32087-3B6D-46E5-A756-D1F58E14C35C@foxel.org>
+ <20190815210605.iqw6fz6zvluildru@survex.com>
+ <A1D624E5-01B2-4887-95E8-39C8C4AF2917@foxel.org>
+ <20190905062815.hzhdxqplfwj4jzhc@survex.com>
+ <8E6A1ECC-9D2E-4F13-935D-252A9BED4269@foxel.org>
+ <A436192D-76A4-4BF9-AEED-C62BFA553553@caver.plus.com>
+ <3519BFB9-1DE1-419C-B076-5D44A35D851F@foxel.org>
+ <028101d56570$2222b4a0$66681de0$@caver.plus.com>
+Message-ID: <2C79F62E-4C48-40E7-A972-3900CE3DD90D@mac.com>
+
+
+> 7. 9. 2019 v 13:33, Ben Cooper <ben at caver.plus.com>:
+> 
+> I think I see what you mean now, the following drawing portrays the issue with a Disto sitting on top of one station, and pointing to another.
+
+That is the reason to use extension.
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/ef71368d/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Sep  8 01:15:30 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 07 Sep 2019 16:15:30 -0700
+Subject: [Therion] Detecting errors
+Message-ID: <20190907232228.519FC61353@mail.speleo.sk>
+
+This is one of the reasons that for legs like that (where the Disto will be parallel to a wall not perpendicular to it during the next shot), we aim the laser not for the station itself, but for the middle of a small block that is a similar size to the Disto, held on the station. The easiest thing to use is the nail varnish bottle which will be used to physically paint semi-permanent stations. It is easier to see from a distance, and it removes angular and distance errors you mention. And the person holding the nail varnish can clearly identify whether the Disto missed the target.For calibration, I get a typical error of around 0.3 or below. All metal objects are removed first: tripods, tackle bags, krabs, belt, Android device, stylus, helmet, light, SRT gear, wedding ring, watch, safety knife, etc.. And avoid fixed aids like bolts or cables, or areas with scaffolding or fences and gates, or reinforced concrete in the cave.I use obvious natural marks on the walls for all points of the calibration, aiming from one to the opposite one, about 3 metres (10 feet ish) apart. Then the opposing measurement in the opposite direction. This is done for all measurements, horizontal, vertical and diagonal.When the cave has natural minerals, avoid those areas during calibration. For our lead mine surveys, we calibrate in a local forest where there are no minerals.
+null
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190907/c6b10513/attachment.htm>
+
+From bgee at campercaver.net  Sun Sep  8 02:54:52 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 07 Sep 2019 19:54:52 -0500
+Subject: [Therion] Extended profile problems
+In-Reply-To: <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+ <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+Message-ID: <1619458.hQHo6R9fY5@main2.billgee.local>
+
+Hi Martin -
+
+Hmmm....   That is exactly what I am looking for.  I dislike taking out a survey shot.  Maybe the thing to do is have a different centerline data file for generating this profile.
+
+Now that I know why the profile was so messed up, I can consider how to proceed.  Thanks for all the advice and the samples.
+
+This part of the cave has an additional complication that I will eventually have to deal with.  From station G8 there is another passage that goes down to the west.  We have not yet surveyed that passage.  Depicting its profile is going to be interesting!  I will probably start a new profile sketch for it.
+
+-- 
+Bill Gee
+
+
+
+On Saturday, September 7, 2019 3:21:30 AM CDT Martin Sluka via Therion wrote:
+> 
+> > 6. 9. 2019 v 17:41, Bill Gee <bgee at campercaver.net>:
+> > 
+> > I want one continuous profile extending from OC5a on the left to G14 on the right. 
+> 
+> Just commented G14-G1, a bit shorted ends of scraps  on station G10 and added join command.
+> 
+> Martin
+> 
+> 
+
+
+
+
+
+
+From bruce at tomo.co.nz  Sun Sep  8 09:20:45 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 8 Sep 2019 19:20:45 +1200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <1619458.hQHo6R9fY5@main2.billgee.local>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+ <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+ <1619458.hQHo6R9fY5@main2.billgee.local>
+Message-ID: <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+
+> I dislike taking out a survey shot.  Maybe the thing to do is have a different centerline data file for generating this profile.
+
+You could see if extend hide or extend ignore will do the trick.  Better than removing data or duplicating it.
+This https://therion.speleo.sk/wiki/extend?s[]=extend#summary_of_all_extend_options_for_survey_centrelines may not be directly applicable, but may give some insights.
+Bruce
+
+
+
+From martinsluka at mac.com  Sun Sep  8 09:30:14 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 8 Sep 2019 09:30:14 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+ <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+ <1619458.hQHo6R9fY5@main2.billgee.local>
+ <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+Message-ID: <34FC1152-CBF2-4FDA-97B8-3575FC721598@mac.com>
+
+
+> 8. 9. 2019 v 9:20, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+>> I dislike taking out a survey shot.  Maybe the thing to do is have a different centerline data file for generating this profile.
+> 
+> You could see if extend hide or extend ignore will do the trick.  Better than removing data or duplicating it.
+> This https://therion.speleo.sk/wiki/extend?s[]=extend#summary_of_all_extend_options_for_survey_centrelines may not be directly applicable, but may give some insights.
+> Bruce
+
+I’m not sure it may have any effect. If there is shot the G14-G1 Therion will calculate with a loop. 
+
+Martin
+
+From martinsluka at mac.com  Sun Sep  8 10:01:15 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 8 Sep 2019 10:01:15 +0200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+ <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+ <1619458.hQHo6R9fY5@main2.billgee.local>
+ <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+Message-ID: <0E839688-56F1-4F56-9597-5D63C03837A4@mac.com>
+
+
+> 8. 9. 2019 v 9:20, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+>> I dislike taking out a survey shot.  Maybe the thing to do is have a different centerline data file for generating this profile.
+> 
+> You could see if extend hide or extend ignore will do the trick.  Better than removing data or duplicating it.
+> This https://therion.speleo.sk/wiki/extend?s[]=extend#summary_of_all_extend_options_for_survey_centrelines may not be directly applicable, but may give some insights.
+> Bruce
+> 
+
+It does crazy things. Maybe if there will be added another parameter to command extend - something as „no-loop“. But I’m not sure how much modification of code it would require.
+
+Martin
+
+extend hide G14-G1
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsExtended_extend_hide_G14_G1.pdf
+Type: application/pdf
+Size: 29184 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190908/73c64cfc/attachment.pdf>
+-------------- next part --------------
+
+
+extend ignore G14-G1
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: StarkCavernsExtended_extend_ignore_G14_G1.pdf
+Type: application/pdf
+Size: 28985 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190908/73c64cfc/attachment-0001.pdf>
+-------------- next part --------------
+
+
+
+From bruce at tomo.co.nz  Sun Sep  8 11:02:17 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 8 Sep 2019 21:02:17 +1200
+Subject: [Therion] Extended profile problems
+In-Reply-To: <0E839688-56F1-4F56-9597-5D63C03837A4@mac.com>
+References: <3058711.aFa8ePt7AY@main2.billgee.local>
+ <1926724.1UkbG9dX4O@main2.billgee.local>
+ <CCA5F3B6-AA96-4349-B1E6-C96454A5467B@mac.com>
+ <1619458.hQHo6R9fY5@main2.billgee.local>
+ <000401d56615$f009fb30$d01df190$@tomo.co.nz>
+ <0E839688-56F1-4F56-9597-5D63C03837A4@mac.com>
+Message-ID: <000001d56624$1f9c7220$5ed55660$@tomo.co.nz>
+
+It is never easy in my experience.  Extend ignore will be the answer, if there is one.  I tend to get the network shape correct first before trying to draw.  There are some scrap statements that can then mess it up.  Subtle variations in approach may make a big difference.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via Therion
+Sent: Sunday, 8 September 2019 20:01
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] Extended profile problems
+
+
+> 8. 9. 2019 v 9:20, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+>> I dislike taking out a survey shot.  Maybe the thing to do is have a different centerline data file for generating this profile.
+> 
+> You could see if extend hide or extend ignore will do the trick.  Better than removing data or duplicating it.
+> This https://therion.speleo.sk/wiki/extend?s[]=extend#summary_of_all_extend_options_for_survey_centrelines may not be directly applicable, but may give some insights.
+> Bruce
+> 
+
+It does crazy things. Maybe if there will be added another parameter to command extend - something as „no-loop“. But I’m not sure how much modification of code it would require.
+
+Martin
+
+extend hide G14-G1
+
+
+
+From bruce at tomo.co.nz  Mon Sep  9 05:36:45 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 9 Sep 2019 15:36:45 +1200
+Subject: [Therion] map without scrap,
+ survey or map reported as incompatible map projection
+Message-ID: <002f01d566bf$d0031fb0$70095f10$@tomo.co.nz>
+
+I was creating a new map just now, and while I should have realised that it
+would probably not work in its current form, the error message caused al lot
+of confusion and initially led me down the wrong track.
+
+ 
+
+C:\Program Files .\therion.exe: error -- INDEXGLMESM_System.th [134] --
+incompatible map projection -- SwissM_PlanMap at GLMESM_system
+
+ 
+
+I started looking through map definitions to find which one was not defined
+properly as a plan, despite knowing they all must be, as they have worked
+for years.
+
+ 
+
+  map GreenlinkAreaPlanMap -title "Greenlink Area<br>Plan view" -projection
+plan
+
+  # overview map focusing on surface features
+
+                preview below SwissM_PlanMap at GLMESM_system
+
+                  preview below DwarfsDoorPlanMap at GLMESM_system
+
+                  preview below MiddleEarthPlanMap at GLMESM_system
+
+                  preview below GreenlinkPlanMap at GLMESM_system
+
+                  preview below BlackSabbathPlanMap at GLMESM_system 
+
+  endmap GreenlinkAreaPlanMap
+
+ 
+
+The problem turns out to be that a map definition must contain more than
+just previews.  If I remove 'preview below' from one of the definition
+lines, all is well.
+
+ 
+
+I suggest that the error would be more helpfully be reported by Therion as;
+
+"map must contain at least one scrap, survey or map without preview"
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190909/41d3afbe/attachment.htm>
+
+From beni at hallinger.org  Thu Sep 12 21:09:29 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 12 Sep 2019 21:09:29 +0200
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <1A6458A0-75AD-4107-ACC7-8EE81E2636B6@mac.com>
+References: <003401d52d9a$8b39c450$a1ad4cf0$@tomo.co.nz>
+ <1A6458A0-75AD-4107-ACC7-8EE81E2636B6@mac.com>
+Message-ID: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+
+Hi there,
+i upgraded my debian testing installation some time ago and since then, 
+therion wont compile anymore.
+
+When i run
+i get the following output:
+
+------------------------------------
+therion 5.4.4 (2019-05-01)
+cavern - Survex 1.2.42
+initialization file: /etc/therion.ini
+reading ... done
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) 
+(preloaded format=pdfetex)
+  restricted \write18 enabled.
+entering extended mode
+(./fonttest.tex
+checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT 
+INSTALLED
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) 
+(preloaded format=pdfetex)
+  restricted \write18 enabled.
+entering extended mode
+(./fonttest.tex
+checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT 
+INSTALLED
+configuration file: 
+therion/model.hirlatz-dop-1m_geoland-dom-10mALS.thconfig
+reading ... done
+reading source files ... proj_create: Error -1: no arguments in 
+initialization list
+
+therion: error -- PROJ4 library: -1 (no arguments in initialization 
+list)
+------------------------------------
+
+I cant figure out whats wrong....
+
+
+
+Also loch crashes, is this related?
+--------------------------
+$ loch
+Error: glXCreateContext failed
+--------------------------
+
+
+
+
+From olly at survex.com  Thu Sep 12 22:17:35 2019
+From: olly at survex.com (Olly Betts)
+Date: Thu, 12 Sep 2019 21:17:35 +0100
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+Message-ID: <20190912201735.prz2ttxlx43zbs7f@survex.com>
+
+On Thu, Sep 12, 2019 at 09:09:29PM +0200, Benedikt Hallinger wrote:
+> i upgraded my debian testing installation some time ago and since then,
+> therion wont compile anymore.
+
+Do you have any idea when "some time ago" was?  If we know when this
+broke that would help narrow down the culprit.
+
+> configuration file: therion/model.hirlatz-dop-1m_geoland-dom-10mALS.thconfig
+> reading ... done
+> reading source files ... proj_create: Error -1: no arguments in
+> initialization list
+> 
+> therion: error -- PROJ4 library: -1 (no arguments in initialization list)
+> ------------------------------------
+> 
+> I cant figure out whats wrong....
+
+I'd guess a something changed with PROJ.  Therion uses the library from
+proj 5.2.0-1 which was uploaded nearly a year ago, but there's a
+proj-data package which got updated on 2019-09-04 to come from proj
+6.2.0-1 instead of 5.2.0-1.  So if "some time ago" was after that
+then this could be the cause.
+
+Debian has continuous integration to attempt to catch this sort of
+problem, but that's currently green:
+
+https://ci.debian.net/packages/t/therion/testing/amd64/
+
+The current CI test tries to process:
+
+therion samples/morphing/sample1/thconfig.1
+
+and checks that a non-empty cave1.pdf is produced.
+
+But unfortunately that sample doesn't use coordinate systems so wouldn't
+catch issues with PROJ (it seems none of the supplied samples do).
+
+I tried adding "cs" and "fix" lines to that sample, but it processes OK
+so it seems it's something specific to your example, or perhaps to your
+installation.  Can you show a cut-down example which fails?  If you
+replace the survey data with a single dummy leg and change the entrance
+coordinates to be something random but valid there shouldn't be anything
+potentially sensitive revealed.
+
+> Also loch crashes, is this related?
+> --------------------------
+> $ loch
+> Error: glXCreateContext failed
+> --------------------------
+
+It seems unlikely to be related.
+
+I see this too - it happens if "execution fails on the client side"
+apparently:
+
+https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glXCreateContext.xml
+
+That seems uselessly vague though.
+
+Cheers,
+    Olly
+
+
+From beni at hallinger.org  Fri Sep 13 17:54:20 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 13 Sep 2019 17:54:20 +0200
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <20190912201735.prz2ttxlx43zbs7f@survex.com>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+Message-ID: <526e44588b564281c80103a03e57c066@hallinger.org>
+
+Hi, this is enough:
+
+---------test.th-------------
+survey test
+   centerline
+     units length meters
+     data normal from to length bearing clino
+     1   2       10      10      10
+     2   3       20      20      20
+
+    cs EPSG:31258
+    fix 1 470000 200000 123
+
+   endcenterline
+endsurvey
+------------------------------
+
+---------test.thconf-------------
+source test.th
+
+export model -o test.3d
+---------------------------------
+
+
+
+Gives:
+beni at segin:/tmp/thdebug$ therion test.thconf
+therion 5.4.4 (2019-05-01)
+cavern - Survex 1.2.42
+initialization file: /etc/therion.ini
+reading ... done
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) 
+(preloaded format=pdfetex)
+  restricted \write18 enabled.
+entering extended mode
+(./fonttest.tex
+checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT 
+INSTALLED
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) 
+(preloaded format=pdfetex)
+  restricted \write18 enabled.
+entering extended mode
+(./fonttest.tex
+checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT 
+INSTALLED
+configuration file: test.thconf
+reading ... done
+reading source files ... proj_create: Error -1: no arguments in 
+initialization list
+
+therion: error -- PROJ4 library: -1 (no arguments in initialization 
+list)
+beni at segin:/tmp/thdebug$
+
+
+
+
+Am 2019-09-12 22:17, schrieb Olly Betts:
+> On Thu, Sep 12, 2019 at 09:09:29PM +0200, Benedikt Hallinger wrote:
+>> i upgraded my debian testing installation some time ago and since 
+>> then,
+>> therion wont compile anymore.
+> 
+> Do you have any idea when "some time ago" was?  If we know when this
+> broke that would help narrow down the culprit.
+> 
+>> configuration file: 
+>> therion/model.hirlatz-dop-1m_geoland-dom-10mALS.thconfig
+>> reading ... done
+>> reading source files ... proj_create: Error -1: no arguments in
+>> initialization list
+>> 
+>> therion: error -- PROJ4 library: -1 (no arguments in initialization 
+>> list)
+>> ------------------------------------
+>> 
+>> I cant figure out whats wrong....
+> 
+> I'd guess a something changed with PROJ.  Therion uses the library from
+> proj 5.2.0-1 which was uploaded nearly a year ago, but there's a
+> proj-data package which got updated on 2019-09-04 to come from proj
+> 6.2.0-1 instead of 5.2.0-1.  So if "some time ago" was after that
+> then this could be the cause.
+> 
+> Debian has continuous integration to attempt to catch this sort of
+> problem, but that's currently green:
+> 
+> https://ci.debian.net/packages/t/therion/testing/amd64/
+> 
+> The current CI test tries to process:
+> 
+> therion samples/morphing/sample1/thconfig.1
+> 
+> and checks that a non-empty cave1.pdf is produced.
+> 
+> But unfortunately that sample doesn't use coordinate systems so 
+> wouldn't
+> catch issues with PROJ (it seems none of the supplied samples do).
+> 
+> I tried adding "cs" and "fix" lines to that sample, but it processes OK
+> so it seems it's something specific to your example, or perhaps to your
+> installation.  Can you show a cut-down example which fails?  If you
+> replace the survey data with a single dummy leg and change the entrance
+> coordinates to be something random but valid there shouldn't be 
+> anything
+> potentially sensitive revealed.
+> 
+>> Also loch crashes, is this related?
+>> --------------------------
+>> $ loch
+>> Error: glXCreateContext failed
+>> --------------------------
+> 
+> It seems unlikely to be related.
+> 
+> I see this too - it happens if "execution fails on the client side"
+> apparently:
+> 
+> https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glXCreateContext.xml
+> 
+> That seems uselessly vague though.
+> 
+> Cheers,
+>     Olly
+
+
+From beni at hallinger.org  Fri Sep 13 18:16:42 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 13 Sep 2019 18:16:42 +0200
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <526e44588b564281c80103a03e57c066@hallinger.org>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+ <526e44588b564281c80103a03e57c066@hallinger.org>
+Message-ID: <3d6f9f956c58533b47ee27c5b3cbe12f@hallinger.org>
+
+...Also just tried to build the package myself on my system, sadly with 
+the same results.
+
+Am 2019-09-13 17:54, schrieb Benedikt Hallinger:
+> Hi, this is enough:
+> 
+> ---------test.th-------------
+> survey test
+>   centerline
+>     units length meters
+>     data normal from to length bearing clino
+>     1   2       10      10      10
+>     2   3       20      20      20
+> 
+>    cs EPSG:31258
+>    fix 1 470000 200000 123
+> 
+>   endcenterline
+> endsurvey
+> ------------------------------
+> 
+> ---------test.thconf-------------
+> source test.th
+> 
+> export model -o test.3d
+> ---------------------------------
+> 
+> 
+> 
+> Gives:
+> beni at segin:/tmp/thdebug$ therion test.thconf
+> therion 5.4.4 (2019-05-01)
+> cavern - Survex 1.2.42
+> initialization file: /etc/therion.ini
+> reading ... done
+> This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian)
+> (preloaded format=pdfetex)
+>  restricted \write18 enabled.
+> entering extended mode
+> (./fonttest.tex
+> checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT 
+> INSTALLED
+> This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian)
+> (preloaded format=pdfetex)
+>  restricted \write18 enabled.
+> entering extended mode
+> (./fonttest.tex
+> checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ...
+> NOT INSTALLED
+> configuration file: test.thconf
+> reading ... done
+> reading source files ... proj_create: Error -1: no arguments in
+> initialization list
+> 
+> therion: error -- PROJ4 library: -1 (no arguments in initialization 
+> list)
+> beni at segin:/tmp/thdebug$
+> 
+> 
+> 
+> 
+> Am 2019-09-12 22:17, schrieb Olly Betts:
+>> On Thu, Sep 12, 2019 at 09:09:29PM +0200, Benedikt Hallinger wrote:
+>>> i upgraded my debian testing installation some time ago and since 
+>>> then,
+>>> therion wont compile anymore.
+>> 
+>> Do you have any idea when "some time ago" was?  If we know when this
+>> broke that would help narrow down the culprit.
+>> 
+>>> configuration file: 
+>>> therion/model.hirlatz-dop-1m_geoland-dom-10mALS.thconfig
+>>> reading ... done
+>>> reading source files ... proj_create: Error -1: no arguments in
+>>> initialization list
+>>> 
+>>> therion: error -- PROJ4 library: -1 (no arguments in initialization 
+>>> list)
+>>> ------------------------------------
+>>> 
+>>> I cant figure out whats wrong....
+>> 
+>> I'd guess a something changed with PROJ.  Therion uses the library 
+>> from
+>> proj 5.2.0-1 which was uploaded nearly a year ago, but there's a
+>> proj-data package which got updated on 2019-09-04 to come from proj
+>> 6.2.0-1 instead of 5.2.0-1.  So if "some time ago" was after that
+>> then this could be the cause.
+>> 
+>> Debian has continuous integration to attempt to catch this sort of
+>> problem, but that's currently green:
+>> 
+>> https://ci.debian.net/packages/t/therion/testing/amd64/
+>> 
+>> The current CI test tries to process:
+>> 
+>> therion samples/morphing/sample1/thconfig.1
+>> 
+>> and checks that a non-empty cave1.pdf is produced.
+>> 
+>> But unfortunately that sample doesn't use coordinate systems so 
+>> wouldn't
+>> catch issues with PROJ (it seems none of the supplied samples do).
+>> 
+>> I tried adding "cs" and "fix" lines to that sample, but it processes 
+>> OK
+>> so it seems it's something specific to your example, or perhaps to 
+>> your
+>> installation.  Can you show a cut-down example which fails?  If you
+>> replace the survey data with a single dummy leg and change the 
+>> entrance
+>> coordinates to be something random but valid there shouldn't be 
+>> anything
+>> potentially sensitive revealed.
+>> 
+>>> Also loch crashes, is this related?
+>>> --------------------------
+>>> $ loch
+>>> Error: glXCreateContext failed
+>>> --------------------------
+>> 
+>> It seems unlikely to be related.
+>> 
+>> I see this too - it happens if "execution fails on the client side"
+>> apparently:
+>> 
+>> https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glXCreateContext.xml
+>> 
+>> That seems uselessly vague though.
+>> 
+>> Cheers,
+>>     Olly
+
+
+From olly at survex.com  Fri Sep 13 21:20:57 2019
+From: olly at survex.com (Olly Betts)
+Date: Fri, 13 Sep 2019 20:20:57 +0100
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <526e44588b564281c80103a03e57c066@hallinger.org>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+ <526e44588b564281c80103a03e57c066@hallinger.org>
+Message-ID: <20190913192057.hwe6tmna73lytfmd@survex.com>
+
+On Fri, Sep 13, 2019 at 05:54:20PM +0200, Benedikt Hallinger wrote:
+> therion: error -- PROJ4 library: -1 (no arguments in initialization list)
+
+OK, this fails for me too.  Thanks for reducing that testcase.
+
+I also spotted that therion had been binNMUed (read "rebuilt against the
+latest dependencies") so it is actually fully using PROJ 6.1.0.
+
+I'd guess this is probably a general incompatibility with newer PROJ.
+
+Cheers,
+    Olly
+
+
+From m.budaj at gmail.com  Sun Sep 15 21:45:23 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 15 Sep 2019 21:45:23 +0200
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <20190913192057.hwe6tmna73lytfmd@survex.com>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+ <526e44588b564281c80103a03e57c066@hallinger.org>
+ <20190913192057.hwe6tmna73lytfmd@survex.com>
+Message-ID: <CALPsdStBq3Fx2R9b9rE3+bOuB6=kBnhr2x=x1_GgYvW1Qm4EMw@mail.gmail.com>
+
+Hi,
+
+after a quick investigation (no time for going more in depth) it seems that
+there is some issue in Proj v.6 itself.
+
+Therion internally generates the following transformation for Benedikt's
+example:
++proj=pipeline +step +inv +init=epsg:31258 +step +init=epsg:31258 (source
+and destination CS are the same)
+
+When processed outside of therion using proj's command line utility, you
+get the same error as given by therion:
+
+$ proj +proj=pipeline +step +inv +init=epsg:31258 +step +init=epsg:31258
+Rel. 6.2.0, September 1st, 2019
+<proj>:
+projection initialization failure
+cause: no arguments in initialization list
+program abnormally terminated
+
+Currently I have no Proj v.5 environment to test this example, but I guess
+it would work -- could anybody check it?
+
+Proj's other utility cs2cs acccepts this init string in version 6.2.0
+without any issue, though:
+
+$ cs2cs +init=epsg:31258 +to +init=epsg:31258
+
+@Olly, Wookey: While investigating this issue I noticed that a dependency
+on libsqlite3-tcl should be added in Debian if Proj library version 6 is
+used.
+
+M.
+
+
+
+On Fri, Sep 13, 2019 at 9:21 PM Olly Betts <olly at survex.com> wrote:
+
+> On Fri, Sep 13, 2019 at 05:54:20PM +0200, Benedikt Hallinger wrote:
+> > therion: error -- PROJ4 library: -1 (no arguments in initialization list)
+>
+> OK, this fails for me too.  Thanks for reducing that testcase.
+>
+> I also spotted that therion had been binNMUed (read "rebuilt against the
+> latest dependencies") so it is actually fully using PROJ 6.1.0.
+>
+> I'd guess this is probably a general incompatibility with newer PROJ.
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190915/0df7f463/attachment.htm>
+
+From olly at survex.com  Mon Sep 16 01:16:14 2019
+From: olly at survex.com (Olly Betts)
+Date: Mon, 16 Sep 2019 00:16:14 +0100
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <CALPsdStBq3Fx2R9b9rE3+bOuB6=kBnhr2x=x1_GgYvW1Qm4EMw@mail.gmail.com>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+ <526e44588b564281c80103a03e57c066@hallinger.org>
+ <20190913192057.hwe6tmna73lytfmd@survex.com>
+ <CALPsdStBq3Fx2R9b9rE3+bOuB6=kBnhr2x=x1_GgYvW1Qm4EMw@mail.gmail.com>
+Message-ID: <20190915231614.wamgvfw3aje6k6cp@survex.com>
+
+On Sun, Sep 15, 2019 at 09:45:23PM +0200, Martin Budaj wrote:
+> @Olly, Wookey: While investigating this issue I noticed that a dependency
+> on libsqlite3-tcl should be added in Debian if Proj library version 6 is
+> used.
+
+What sort of dependency?  Build-time, run-time, both?
+
+And if run-time, what exactly needs it?  There's a separate binary
+package for loch (therion-viewer).
+
+Cheers,
+    Olly
+
+
+From m.budaj at gmail.com  Mon Sep 16 07:49:05 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 16 Sep 2019 07:49:05 +0200
+Subject: [Therion] therion crashes on debian testing (bullseye)
+In-Reply-To: <20190915231614.wamgvfw3aje6k6cp@survex.com>
+References: <f0cac633ce1876c23c23264ac0f2bc82@hallinger.org>
+ <20190912201735.prz2ttxlx43zbs7f@survex.com>
+ <526e44588b564281c80103a03e57c066@hallinger.org>
+ <20190913192057.hwe6tmna73lytfmd@survex.com>
+ <CALPsdStBq3Fx2R9b9rE3+bOuB6=kBnhr2x=x1_GgYvW1Qm4EMw@mail.gmail.com>
+ <20190915231614.wamgvfw3aje6k6cp@survex.com>
+Message-ID: <CALPsdSsduTiH_HR5oVgK3nZzkEMTmci_aU3ZKHY2OHgAdRf0NQ@mail.gmail.com>
+
+Build-time, just for therion. It's used to parse the definitions of CSs
+from the Proj database.
+M.
+
+On Mon, Sep 16, 2019, 01:16 Olly Betts <olly at survex.com> wrote:
+
+> On Sun, Sep 15, 2019 at 09:45:23PM +0200, Martin Budaj wrote:
+> > @Olly, Wookey: While investigating this issue I noticed that a dependency
+> > on libsqlite3-tcl should be added in Debian if Proj library version 6 is
+> > used.
+>
+> What sort of dependency?  Build-time, run-time, both?
+>
+> And if run-time, what exactly needs it?  There's a separate binary
+> package for loch (therion-viewer).
+>
+> Cheers,
+>     Olly
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190916/f813246e/attachment.htm>
+
+From omrigas at gmail.com  Fri Sep 20 07:02:52 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Fri, 20 Sep 2019 08:02:52 +0300
+Subject: [Therion] ceiling step in the wrong direction when exported from
+ topodroid
+Message-ID: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+
+Hi,
+I've noticed that when I export sketches from Topodroid to Therion all of
+the ceiling step lines are in the wrong direction. it doesn't happen in the
+other lines...
+
+has anyone else had this problem?
+
+
+
+Omri Gaster
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190920/48c42a0b/attachment.htm>
+
+From martinsluka at mac.com  Fri Sep 20 09:48:47 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 20 Sep 2019 09:48:47 +0200
+Subject: [Therion] ceiling step in the wrong direction when exported
+ from topodroid
+In-Reply-To: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+References: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+Message-ID: <987F8202-8EC6-40F6-97E1-5A4D69CA4D10@mac.com>
+
+Anyway you may reverse the direction of line in Therion.
+
+Martin
+
+> 20. 9. 2019 v 7:02, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com⁩>:
+> 
+> Hi,
+> I've noticed that when I export sketches from Topodroid to Therion all of the ceiling step lines are in the wrong direction. it doesn't happen in the other lines...
+> 
+> has anyone else had this problem?
+> 
+> 
+> 
+> Omri Gaster
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Sep 20 14:14:06 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 20 Sep 2019 13:14:06 +0100
+Subject: [Therion] ceiling step in the wrong direction when exported
+ from topodroid
+In-Reply-To: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+References: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+Message-ID: <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+
+> I've noticed that when I export sketches from Topodroid to Therion all
+> of the ceiling step lines are in the wrong direction. it doesn't happen
+> in the other lines...
+
+
+Are you sure it's not just that TopoDroid or Therion uses a symbol set
+that shows the "lower" and "higher" side using the opposite notation
+from what you expect (and opposite to what Therion uses by default)?
+
+Looking through the Therion symbols file:
+https://therion.speleo.sk/wiki/_media/therion_symbols_20130407_.pdf
+NZSS and UIS default to having the tail of the symbol in one direction,
+while SKBB has it the other way. Therion seems to default to using SKBB
+notation, while TopoDroid probably uses UIS.
+
+Now that is confusing, and I have probably been using the wrong
+direction all this time, since I just left it on the defaults, In the UK
+at least, people seem to use the UIS version, so I have just been
+setting "reverse" on the lines as needed...
+
+
+From martinsluka at mac.com  Fri Sep 20 14:30:07 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 20 Sep 2019 14:30:07 +0200
+Subject: [Therion] Fwd: ceiling step in the wrong direction when exported
+ from topodroid
+References: <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+Message-ID: <E7B8CE68-68B9-4B6D-B8BF-9030B43BA83B@mac.com>
+
+
+> Začátek přeposílané zprávy:
+> 
+> Od: Tarquin Wilton-Jones via Therion <therion at speleo.sk>
+> Předmět: Re: [Therion] ceiling step in the wrong direction when exported from topodroid
+> Datum: 20. září 2019 14:14:06 SELČ
+> Komu: therion at speleo.sk
+> Kopie: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+> Odpověď na: List for Therion users <therion at speleo.sk>
+> 
+> NZSS and UIS default to having the tail of the symbol in one direction,
+> while SKBB has it the other way. Therion seems to default to using SKBB
+> notation, while TopoDroid probably uses UIS.
+
+As I may say, the idea of SKBB is that ticks are "in air” as in case of pit or floor-step line. So the ceiling is higher on side where are ticks.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190920/b853d409/attachment.htm>
+
+From martinsluka at mac.com  Fri Sep 20 14:36:17 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 20 Sep 2019 14:36:17 +0200
+Subject: [Therion] ceiling step in the wrong direction when exported
+ from topodroid
+In-Reply-To: <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+References: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+ <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+Message-ID: <8C816B1A-883B-49C6-983A-45B12F808C01@mac.com>
+
+
+
+> 20. 9. 2019 v 14:14, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> Therion seems to default to using SKBB
+> notation, while TopoDroid probably uses UIS.
+
+You may change default symbol Therion will use for your project in thTrans.mp file - /Therion/mpost/thTrans.mp
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190920/1b33697f/attachment.htm>
+
+From md at foxel.org  Fri Sep 20 17:35:51 2019
+From: md at foxel.org (Max D)
+Date: Fri, 20 Sep 2019 17:35:51 +0200
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+Message-ID: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+
+I have a somewhat big cave (2400 Stations) and since a few weeks Loch shows a huge bounding box of obout 250x7500 km (!) see http://filez.foxel.org/2c4512e8a235
+
+Export is done like this:
+
+     select m_all
+     export model -output output/windloch.lox
+     export model -format survex -output output/windloch-konstruktion.3d
+     export model -format compass -output output/windloch.plt
+     export model -format dxf -output output/windloch.dxf
+     export model -format kml -output output/windloch-konstruktion.kml
+
+survex Data is fine, PLT also (when viewed in Aven)
+
+lox and dxf have the huge bounding box
+
+kml seems to have only the surface survey and is missing the cave.
+
+
+So far I have not been able to poin down the change that caused it. Any suggestions on how to hunt this error down?
+
+Regards
+
+--max
+
+
+
+From geospatial3d at gmail.com  Fri Sep 20 22:16:35 2019
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Fri, 20 Sep 2019 21:16:35 +0100
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+Message-ID: <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+
+Is there a 0,0,0 origin coordinate in one of your files ?
+Are you using the same PROJ for all files ?
+
+Kevin Dixon
+
+On Fri, Sep 20, 2019 at 4:36 PM Max D <md at foxel.org> wrote:
+>
+> I have a somewhat big cave (2400 Stations) and since a few weeks Loch shows a huge bounding box of obout 250x7500 km (!) see http://filez.foxel.org/2c4512e8a235
+>
+> Export is done like this:
+>
+>      select m_all
+>      export model -output output/windloch.lox
+>      export model -format survex -output output/windloch-konstruktion.3d
+>      export model -format compass -output output/windloch.plt
+>      export model -format dxf -output output/windloch.dxf
+>      export model -format kml -output output/windloch-konstruktion.kml
+>
+> survex Data is fine, PLT also (when viewed in Aven)
+>
+> lox and dxf have the huge bounding box
+>
+> kml seems to have only the surface survey and is missing the cave.
+>
+>
+> So far I have not been able to poin down the change that caused it. Any suggestions on how to hunt this error down?
+>
+> Regards
+>
+> --max
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From md at foxel.org  Sun Sep 22 23:28:45 2019
+From: md at foxel.org (Max D)
+Date: Sun, 22 Sep 2019 23:28:45 +0200
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+ <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+Message-ID: <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+
+
+
+> On 20. Sep 2019, at 22:16, kevin dixon <geospatial3d at gmail.com> wrote:
+> 
+> Is there a 0,0,0 origin coordinate in one of your files ?
+> Are you using the same PROJ for all files ?
+
+I'm not sure where to check. Searching vor "cs" I see "cs UTM32" all around - so same PROJ everywhere.
+I also checked all my "fix" statements. 
+
+In scraps I see 0,0 ana n origin like in this:
+
+scrap s_aussen -scale [0 0 1600 0 0.0 0.0 40.64 0.0 m]
+
+but to my understanding this should not matter.
+
+So I'm still searching.
+
+--max
+
+
+
+From bruce at tomo.co.nz  Mon Sep 23 01:08:22 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 23 Sep 2019 11:08:22 +1200
+Subject: [Therion] ceiling step in the wrong direction when exported
+ from topodroid
+In-Reply-To: <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+References: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+ <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+Message-ID: <000001d5719a$a37a9640$ea6fc2c0$@tomo.co.nz>
+
+My comment here does not address the original topodroid to Therion line orientation question – as I have not checked this.
+
+So possibly a digression, but once a line is in Therion…
+
+As Martin said, SKBB and UIS convention is that drawing ticks are 'in air' (matching the XTherion yellow tick line orientation convention).  To expand, this follows through for pits, slopes, gradients, meanders, wall:flowstone, ceiling steps etc
+
+ 
+
+For NZSS, the convention is similar, but the drawing tick points could be thought of as pointing to the 'lower side' of the rock surface.  This results in the same orientation of the drawn line ornamentation (to SKBB and UIS) for all except ceiling steps, meanders and chimneys.  I have explained it slightly differently, in terms of the XTherion yellow tick line orientation (which is a different ‘thing’), here https://therion.speleo.sk/wiki/drawingchecklist#wall together with some other exceptions to XTherion line orientation convention.
+
+ 
+
+Generally, to rely on Therion's defaults will result in disappointment at some stage, at least to those that do not speak sk (Slovak) [I hope I have got that right].  For example I generally add language en (English) to my layout, so that I may understand what is produced.
+
+Similarly I select the symbol set and specific symbol reassignments that are used (or that I like to use) in my region.  For example…
+
+  symbol-set NZSS
+
+  symbol-assign line gradient BCRA
+
+  symbol-assign point gradient BCRA
+
+  symbol-assign area debris AUT   
+
+  symbol-assign line wall:debris AUT  
+
+  symbol-assign point debris AUT
+
+  etc
+
+ 
+
+To not do this and rely on defaults will generally result in confusion or unhappiness at some point.
+
+ 
+
+To ‘compensate’ by reversing lines may result in a project that plots incorrectly when you toggle to another symbol set (I occasionally produce both NZSS and UIS versions of maps, and these have the opposite convention).   It also tends to destroy loch models, as line:pit orientation governs model generation, and chimney and meander etc could potentially in the future.  Passage shading in pdf outputs can be affected to.
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Subject: Re: [Therion] ceiling step in the wrong direction when exported from topodroid
+
+ 
+
+> I've noticed that when I export sketches from Topodroid to Therion all 
+
+> of the ceiling step lines are in the wrong direction. it doesn't 
+
+> happen in the other lines...
+
+ 
+
+ 
+
+Are you sure it's not just that TopoDroid or Therion uses a symbol set that shows the "lower" and "higher" side using the opposite notation from what you expect (and opposite to what Therion uses by default)?
+
+ 
+
+Looking through the Therion symbols file:
+
+ <https://therion.speleo.sk/wiki/_media/therion_symbols_20130407_.pdf> https://therion.speleo.sk/wiki/_media/therion_symbols_20130407_.pdf
+
+SKBB and UIS default to having the tail of the symbol in one direction, while NZSS has it the other way. Therion seems to default to using SKBB notation, while TopoDroid probably uses UIS.
+
+ 
+
+Now that is confusing, and I have probably been using the wrong direction all this time, since I just left it on the defaults, In the UK at least, people seem to use the UIS version, so I have just been setting "reverse" on the lines as needed...
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190923/c76b91b8/attachment.htm>
+
+From md at foxel.org  Mon Sep 23 15:06:49 2019
+From: md at foxel.org (Max D)
+Date: Mon, 23 Sep 2019 15:06:49 +0200
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+ <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+ <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+Message-ID: <C157DA96-A6F5-4907-ACD0-9000FD57C602@foxel.org>
+
+
+
+> On 22. Sep 2019, at 23:28, Max D <md at foxel.org> wrote:
+> 
+> So I'm still searching.
+
+Found it. Inside a th2 file there was a big scrap and a small one .
+The small one contained no stations. Adding Stations fixed the lox bounding box.
+
+Regards
+
+--max
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Mon Sep 23 15:13:26 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 23 Sep 2019 14:13:26 +0100
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <C157DA96-A6F5-4907-ACD0-9000FD57C602@foxel.org>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+ <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+ <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+ <C157DA96-A6F5-4907-ACD0-9000FD57C602@foxel.org>
+Message-ID: <0482b7c6-494f-f3cf-0b5f-1b3c7c941c7a@ntlworld.com>
+
+On 23/09/2019 09:06, Max D wrote:
+> 
+> 
+>> On 22. Sep 2019, at 23:28, Max D <md at foxel.org> wrote:
+>>
+>> So I'm still searching.
+> 
+> Found it. Inside a th2 file there was a big scrap and a small one .
+> The small one contained no stations. Adding Stations fixed the lox bounding box.
+
+
+When you try to render this as PDF, Metapost says it cannot render
+something that large (in spite of you trying to fix it with a different
+scale). Can be useful for detecting that kind of error - shame it's not
+very verbose.
+
+
+
+From md at foxel.org  Mon Sep 23 17:13:09 2019
+From: md at foxel.org (MD)
+Date: Mon, 23 Sep 2019 17:13:09 +0200
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <0482b7c6-494f-f3cf-0b5f-1b3c7c941c7a@ntlworld.com>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+ <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+ <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+ <C157DA96-A6F5-4907-ACD0-9000FD57C602@foxel.org>
+ <0482b7c6-494f-f3cf-0b5f-1b3c7c941c7a@ntlworld.com>
+Message-ID: <34FCFFFB-45BA-4541-BF8E-BE112F050F34@foxel.org>
+
+
+
+> On 23. Sep 2019, at 15:13, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+> 
+>> On 23/09/2019 09:06, Max D wrote:
+>> 
+>> 
+>>> On 22. Sep 2019, at 23:28, Max D <md at foxel.org> wrote:
+>>> 
+>>> So I'm still searching.
+>> 
+>> Found it. Inside a th2 file there was a big scrap and a small one .
+>> The small one contained no stations. Adding Stations fixed the lox bounding box.
+> 
+> 
+> When you try to render this as PDF, Metapost says it cannot render
+> something that large 
+
+It did not show tat error in my case - probably because the scrap was nowhere referenced.
+
+—max
+
+
+From tarquin.wilton-jones at ntlworld.com  Mon Sep 23 17:36:54 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 23 Sep 2019 16:36:54 +0100
+Subject: [Therion] Bounding Box to big in Loch but fine in Aven
+In-Reply-To: <34FCFFFB-45BA-4541-BF8E-BE112F050F34@foxel.org>
+References: <F0773726-F17A-4F6F-BB34-6D8DEC51923D@foxel.org>
+ <CAAUsM+O7RsXDsX29tNzFarU+m7XCZYUtU+YZLoftwc_D9Dp4nA@mail.gmail.com>
+ <46334CF9-A5D0-4FA5-8C07-B22A51CF94FB@foxel.org>
+ <C157DA96-A6F5-4907-ACD0-9000FD57C602@foxel.org>
+ <0482b7c6-494f-f3cf-0b5f-1b3c7c941c7a@ntlworld.com>
+ <34FCFFFB-45BA-4541-BF8E-BE112F050F34@foxel.org>
+Message-ID: <81959f3e-24a6-13b8-bbf5-8803ea8c699a@ntlworld.com>
+
+>>> Found it. Inside a th2 file there was a big scrap and a small one .
+>>> The small one contained no stations. Adding Stations fixed the lox bounding box.
+>>
+>>
+>> When you try to render this as PDF, Metapost says it cannot render
+>> something that large 
+> 
+> It did not show tat error in my case - probably because the scrap was nowhere referenced.
+
+
+Indeed. Scraps are only rendered in PDFs if they are referenced by the
+select statement (or implicitly used where there is no select
+statement), and Metapost cannot see the error unless the scrap gets used.
+
+LOX generation doesn't care what you select (unfortunately), it renders
+all scraps anyway.
+
+
+From andrew at wotcc.org.uk  Mon Sep 23 20:40:32 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 23 Sep 2019 19:40:32 +0100
+Subject: [Therion] Limit on scale
+Message-ID: <d1c2655a-62f8-a716-e877-ef8d9ab51883@wotcc.org.uk>
+
+I'm working on a survey
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Bagpit/
+
+As I'm working on it the Head will be changing as often
+
+Using the config file in this directory it works at a scale of 1 100
+
+However if I import common_layout.th (which imports another file) from
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/
+
+Then use the common layout in my local layout, I get an error if I try
+to go to a scale bigger than 1 139 (eg 1 138) The message does not give
+me any clues, as far as I can fathom, of what is causing the error, and
+there is lots going on in these files, some very old now, so how do I
+find the problem?
+
+The error message is
+writing BagpitP.pdf ...
+####################### metapost log file ########################
+This is MetaPost, version 2.00 (TeX Live 2019/dev/Debian) (kpathsea
+version 6.3.1/dev)  23 SEP 2019 19:29
+**data.mp
+(/usr/share/texlive/texmf-dist/metapost/base/mpost.mp
+(/usr/share/texlive/texmf-dist/metapost/base/plain.mp
+Preloading the plain mem file, version 1.005) ) (./data.mp
+{randomseed:=42}
+ [4001] [4002] [4003] [4004] [4005] [4006] [4007] [4008] [4009] [4010]
+[4011] [
+4012] [4013]
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+[18] [19] [20] [21] (./mptextmp.mp) (./mptextmp.mp) (./mptextmp.mp)
+(./mptextmp.mp) (./mptextmp.mp) (./mptextmp.mp) [22]
+! Number is too large (5669.29134).
+l.6842 s_hgrid(-1, -1, 5669.29134
+                                 , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6842 s_hgrid(-1, -1, 5669.29134, 5669.29134
+                                             );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[23]
+! Number is too large (5669.29134).
+l.6845 s_hgrid(0, -1, 5669.29134
+                                , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6845 s_hgrid(0, -1, 5669.29134, 5669.29134
+                                            );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[24]
+! Number is too large (5669.29134).
+l.6848 s_hgrid(1, -1, 5669.29134
+                                , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6848 s_hgrid(1, -1, 5669.29134, 5669.29134
+                                            );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+
+>>>>>>>>>..........and it continues on a similar vein until
+
+                                           );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[31] )
+
+Here is how much of MetaPost's memory you used:
+ 7706 strings using 154690 characters
+ 4000528 bytes of node memory
+ 1469 symbolic tokens
+ 11i,81n,26p,214b,5f stack positions out of 16i,96n,32p,250b,6f
+44 output files written: data.1 .. data.4013
+
+
+#################### end of metapost log file ####################
+therion: error -- metapost exit code -- 512
+writing xtherion file ... done
+
+Any help most appriciated
+
+
+
+From alastairgott at hotmail.com  Mon Sep 23 23:30:40 2019
+From: alastairgott at hotmail.com (alastair gott)
+Date: Mon, 23 Sep 2019 21:30:40 +0000
+Subject: [Therion] Limit on scale
+In-Reply-To: <d1c2655a-62f8-a716-e877-ef8d9ab51883@wotcc.org.uk>
+References: <d1c2655a-62f8-a716-e877-ef8d9ab51883@wotcc.org.uk>
+Message-ID: <AM0PR03MB4867537E56066E4D85A4A98FD6850@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Hi Andrew,
+
+Do you need to refer to Slab chamber as:
+ input "..\SlabChamber/SlabChamber.th"
+because slab chamber is in a higher file than bagpit?
+
+also I cannot find input Temp/bagpit_dig.th #containing survey Temp
+
+I managed to get slabchamber to appear in the survey structure by adding in ..\
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+________________________________
+From: Therion <therion-bounces at speleo.sk> on behalf of Andrew Atkinson <andrew at wotcc.org.uk>
+Sent: 23 September 2019 19:40
+To: therion at speleo.sk <therion at speleo.sk>
+Subject: [Therion] Limit on scale
+
+I'm working on a survey
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Bagpit/
+
+As I'm working on it the Head will be changing as often
+
+Using the config file in this directory it works at a scale of 1 100
+
+However if I import common_layout.th (which imports another file) from
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/
+
+Then use the common layout in my local layout, I get an error if I try
+to go to a scale bigger than 1 139 (eg 1 138) The message does not give
+me any clues, as far as I can fathom, of what is causing the error, and
+there is lots going on in these files, some very old now, so how do I
+find the problem?
+
+The error message is
+writing BagpitP.pdf ...
+####################### metapost log file ########################
+This is MetaPost, version 2.00 (TeX Live 2019/dev/Debian) (kpathsea
+version 6.3.1/dev)  23 SEP 2019 19:29
+**data.mp
+(/usr/share/texlive/texmf-dist/metapost/base/mpost.mp
+(/usr/share/texlive/texmf-dist/metapost/base/plain.mp
+Preloading the plain mem file, version 1.005) ) (./data.mp
+{randomseed:=42}
+ [4001] [4002] [4003] [4004] [4005] [4006] [4007] [4008] [4009] [4010]
+[4011] [
+4012] [4013]
+[1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+[18] [19] [20] [21] (./mptextmp.mp) (./mptextmp.mp) (./mptextmp.mp)
+(./mptextmp.mp) (./mptextmp.mp) (./mptextmp.mp) [22]
+! Number is too large (5669.29134).
+l.6842 s_hgrid(-1, -1, 5669.29134
+                                 , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6842 s_hgrid(-1, -1, 5669.29134, 5669.29134
+                                             );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[23]
+! Number is too large (5669.29134).
+l.6845 s_hgrid(0, -1, 5669.29134
+                                , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6845 s_hgrid(0, -1, 5669.29134, 5669.29134
+                                            );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[24]
+! Number is too large (5669.29134).
+l.6848 s_hgrid(1, -1, 5669.29134
+                                , 5669.29134);
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+! Number is too large (5669.29134).
+l.6848 s_hgrid(1, -1, 5669.29134, 5669.29134
+                                            );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+
+>>>>>>>>>..........and it continues on a similar vein until
+
+                                           );
+It is at least 4096. Continue and I'll try to cope
+with that big value; but it might be dangerous.
+(Set warningcheck:=0 to suppress this message.)
+
+[31] )
+
+Here is how much of MetaPost's memory you used:
+ 7706 strings using 154690 characters
+ 4000528 bytes of node memory
+ 1469 symbolic tokens
+ 11i,81n,26p,214b,5f stack positions out of 16i,96n,32p,250b,6f
+44 output files written: data.1 .. data.4013
+
+
+#################### end of metapost log file ####################
+therion: error -- metapost exit code -- 512
+writing xtherion file ... done
+
+Any help most appriciated
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190923/60303693/attachment.htm>
+
+From andrew at wotcc.org.uk  Mon Sep 23 23:44:05 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 23 Sep 2019 22:44:05 +0100
+Subject: [Therion] Limit on scale
+In-Reply-To: <AM0PR03MB4867537E56066E4D85A4A98FD6850@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <d1c2655a-62f8-a716-e877-ef8d9ab51883@wotcc.org.uk>
+ <AM0PR03MB4867537E56066E4D85A4A98FD6850@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <89387964-b1bd-fa63-9baf-ca6a0688dc20@wotcc.org.uk>
+
+Woops you caught the commit in mid rearrange to take some new data, all
+done now, the current set should work, sorry
+
+I'm reasonably sure that is not the problem
+
+
+
+Andrew
+
+On 23/09/2019 22:30, alastair gott wrote:
+> Hi Andrew,
+> 
+> Do you need to refer to Slab chamber as:
+>  input "..\SlabChamber/SlabChamber.th"
+> because slab chamber is in a higher file than bagpit?
+> 
+> also I cannot find input Temp/bagpit_dig.th #containing survey Temp
+> 
+> I managed to get slabchamber to appear in the survey structure by adding
+> in ..\
+> 
+> 
+> Regards,
+> Alastair Gott.
+
+
+From martinsluka at mac.com  Tue Sep 24 09:09:25 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 24 Sep 2019 09:09:25 +0200
+Subject: [Therion] ceiling step in the wrong direction when exported
+ from topodroid
+In-Reply-To: <000001d5719a$a37a9640$ea6fc2c0$@tomo.co.nz>
+References: <CAOjFj0n8AyZSwu0EPAhKzd+4NjSTZ97M2sDbGsKyNPzSnPAbGA@mail.gmail.com>
+ <ae667f7e-7ce6-20cd-abcc-3cbaa4db433f@ntlworld.com>
+ <000001d5719a$a37a9640$ea6fc2c0$@tomo.co.nz>
+Message-ID: <0F7C6A3C-4F56-4A19-B1F9-D2B478D25EEB@mac.com>
+
+
+> 23. 9. 2019 v 1:08, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> To ‘compensate’ by reversing lines may result in a project that plots incorrectly when you toggle to another symbol set (I occasionally produce both NZSS and UIS versions of maps, and these have the opposite convention).   It also tends to destroy loch models, as line:pit orientation governs model generation, and chimney and meander etc could potentially in the future.  Passage shading in pdf outputs can be affected to.
+
+There is one basic principle of using Therion for map production: One doesn’t draw map In Therion, but „construct“ it instead.
+
+The yellow tick on line shows the „empty space side“ (and beginning of line) of line symbol in case mentioned in https://therion.speleo.sk/wiki/drawingchecklist#wall . This information is used for generation of loch models and others as Bruce mentioned. The orientation of small ticks on line symbol „ceiling step“ depends on definition of line symbol itself in particular symbol set. 
+
+So correct way is to draw line symbol „ceiling step“ with orientation of yellow tick to „empty space“ and use symbol line „ceiling step“ representation you want. With small ticks in the same direction as yellow tick or in opposite direction.
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190924/61d45294/attachment.htm>
+
+From andrew at wotcc.org.uk  Tue Sep 24 11:52:40 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 24 Sep 2019 10:52:40 +0100
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+Message-ID: <8243612e-cc65-2935-df68-063ec0b97284@wotcc.org.uk>
+
+I need to split up the scale bar, north arrow, legend and header
+information on a survey I'm doing
+
+To do this I think that I have to use tex-map, which works fine for the
+scale bar, north arrow but I cannot get any of the legend tokens work
+
+layout combined
+legend on
+code tex-map
+\def\maplayout{
+ \formattedlegend
+ \northarrow
+ \scalebar
+\legendbox{10}{20}{NW}{\\scalebar}
+ \legendbox{10}{20}{NW}{\northarrow}
+ \legendbox{10}{20}{NW}{\formattedlegend}
+}
+endcode
+endlayout
+
+So in the above I get a scale bar and north arrow in the bottom left
+from  \northarrow \scalebar, but \formattedlegend does not do anything
+nor does \insertlegend or \legendtitle the \legendbox lets me control
+where they are
+
+I also tried
+
+\iflegend(\formattedlegend)\fi
+
+But this gives a
+
+therion: error -- pdftex exit code -- 256
+
+Anyone got any ideas?
+
+thanks
+
+Andrew
+
+
+From andrew at wotcc.org.uk  Tue Sep 24 11:54:07 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 24 Sep 2019 10:54:07 +0100
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+Message-ID: <b63f05e6-a4d4-4a58-db37-a941b16c6a3e@wotcc.org.uk>
+
+I need to split up the scale bar, north arrow, legend and header
+information on a survey I'm doing
+
+To do this I think that I have to use tex-map, which works fine for the
+scale bar, north arrow but I cannot get any of the legend tokens work
+
+layout combined
+legend on
+code tex-map
+\def\maplayout{
+ \formattedlegend
+ \northarrow
+ \scalebar
+\legendbox{10}{20}{NW}{\\scalebar}
+ \legendbox{10}{20}{NW}{\northarrow}
+ \legendbox{10}{20}{NW}{\formattedlegend}
+}
+endcode
+endlayout
+
+So in the above I get a scale bar and north arrow in the bottom left
+from  \northarrow \scalebar, but \formattedlegend does not do anything
+nor does \insertlegend or \legendtitle the \legendbox lets me control
+where they are
+
+I also tried
+
+\iflegend(\formattedlegend)\fi
+
+But this gives a
+
+therion: error -- pdftex exit code -- 256
+
+Anyone got any ideas?
+
+Woops missed: therion 5.4.3 (2019-02-01 on debian
+
+thanks
+
+Andrew
+
+
+From Henry.Bennett at dell.com  Tue Sep 24 13:27:18 2019
+From: Henry.Bennett at dell.com (Henry.Bennett at dell.com)
+Date: Tue, 24 Sep 2019 11:27:18 +0000
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+In-Reply-To: <8243612e-cc65-2935-df68-063ec0b97284@wotcc.org.uk>
+References: <8243612e-cc65-2935-df68-063ec0b97284@wotcc.org.uk>
+Message-ID: <c42583e7a9944d9a8eb0873152e177c6@SNNX13MDC115.EMEA.DELL.COM>
+
+Hi Andrew,
+
+I've done this in the past however I can't remember exactly how.  The detail is in here
+
+https://github.com/speleo/SpeleoPhilippines/blob/master/CodeLibrary/_layouts.tex
+
+layout custom_legendsymbolbox
+  #http://therion.speleo.sk/wiki/doku.php/tips#map-image_and_custom_legendbox
+  code tex-map
+	\def\legendsymbolbox#1#2{%
+	  \setbox\tmpboxa=\hbox{\pdfrefxform#1}%
+	  \setbox\tmpboxb=\hbox{\the\legendtextsize(}%
+	  \legendsymbolwd=\wd\tmpboxa
+	  \legendsymbolht=\ht\tmpboxa
+	  \advance\legendsymbolht by -\ht\tmpboxb
+	  \advance\legendsymbolht by -\ht\tmpboxb
+	  \advance\legendsymbolht by -20pt
+	  \advance\legendsymbolht by -1dd
+	  \tmpdimen=\hsize
+	    \advance\tmpdimen by 10pt 
+	    \divide\tmpdimen by\legendcolumns 
+	    \advance\tmpdimen by-10pt
+	  \hbox to \tmpdimen{%
+	     \box\tmpboxa\kern10pt\raise\legendsymbolht\vtop{%
+	       \advance\tmpdimen by -\legendsymbolwd
+	       \advance\tmpdimen by -10pt
+	       \hsize=\tmpdimen\rightskip=0pt plus \tmpdimen minus 0pt\relax\the\legendtextsize #2\vskip1dd}\hss}%
+	}
+  endcode
+endlayout
+
+From memory I grabbed the code which defined the legend box and packaged it as above as an override.
+
+Hope this helps,
+
+Henry 
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Andrew Atkinson
+Sent: 24 September 2019 10:53
+To: List for Therion users
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+
+
+[EXTERNAL EMAIL] 
+
+I need to split up the scale bar, north arrow, legend and header information on a survey I'm doing
+
+To do this I think that I have to use tex-map, which works fine for the scale bar, north arrow but I cannot get any of the legend tokens work
+
+layout combined
+legend on
+code tex-map
+\def\maplayout{
+ \formattedlegend
+ \northarrow
+ \scalebar
+\legendbox{10}{20}{NW}{\\scalebar}
+ \legendbox{10}{20}{NW}{\northarrow}
+ \legendbox{10}{20}{NW}{\formattedlegend}
+}
+endcode
+endlayout
+
+So in the above I get a scale bar and north arrow in the bottom left from  \northarrow \scalebar, but \formattedlegend does not do anything nor does \insertlegend or \legendtitle the \legendbox lets me control where they are
+
+I also tried
+
+\iflegend(\formattedlegend)\fi
+
+But this gives a
+
+therion: error -- pdftex exit code -- 256
+
+Anyone got any ideas?
+
+thanks
+
+Andrew
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+From andrew at wotcc.org.uk  Wed Sep 25 17:56:06 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 25 Sep 2019 16:56:06 +0100
+Subject: [Therion] map-tex - controlling the size of the bounding box
+Message-ID: <8fc7adf2-e8b5-ac51-651f-f0be71939d58@wotcc.org.uk>
+
+When using things like
+
+ \legendbox{-6}{100}{SW}{\northarrow}
+
+The box that is put the legend box is reasonably large, so the north
+arrow cannot be put that close to a survey. Is there a way of
+controlling this?
+
+thanks
+
+Andrew
+
+
+From drunews at mail.ru  Wed Sep 25 20:03:03 2019
+From: drunews at mail.ru (=?UTF-8?B?QW5kcmV5?=)
+Date: Wed, 25 Sep 2019 21:03:03 +0300
+Subject: [Therion] 
+ =?utf-8?q?code_tex-map_-_some_tokens_I_cannot_get_to_w?=
+ =?utf-8?q?ork?=
+In-Reply-To: <b63f05e6-a4d4-4a58-db37-a941b16c6a3e@wotcc.org.uk>
+References: <b63f05e6-a4d4-4a58-db37-a941b16c6a3e@wotcc.org.uk>
+Message-ID: <1569434583.871342581@f474.i.mail.ru>
+
+
+Hi Andrew,
+
+I've used this code from wiki with little edits.
+
+Worked pretty well for me apart from the fact that "map image" command will no longer work properly and will require full path to image file.
+
+code tex-map #begining of TeX code
+
+\edef\temp{\the\cavename} 
+\edef\nostring{} 
+\ifx\temp\nostring 
+\cavename={Fantasy Cave} 
+\else 
+\fi
+%\newtoks\club \club={MCU caving club} 
+\def\maplayout{
+\legendbox{5}{70}{NW}{ 
+\legendwidth 26 cm 
+\legendtextheadersize={\size[38]}
+\legendtextsize={\size[22]} 
+\the\legendcontent
+}
+\legendbox{85}{95}{NW}{ 
+\legendwidth 25 cm 
+\legendtextsize={\size[18]} 
+\hsize=\legendwidth
+\input th_legend
+}
+\legendbox{15}{95}{NW}{\northarrow} 
+\legendbox{50}{5}{NW}{\scalebar} 
+\legendbox{5}{95}{NW} {\loadpicture{G:/Caving/Caves/Fantaziya/Therion/KS_MCU_colour.png}}
+}
+endcode #end of TeX code
+
+Kind regards,
+Andrey
+
+
+>Вторник, 24 сентября 2019, 10:54 +01:00 от Andrew Atkinson <andrew at wotcc.org.uk>:
+>
+>I need to split up the scale bar, north arrow, legend and header
+>information on a survey I'm doing
+>
+>To do this I think that I have to use tex-map, which works fine for the
+>scale bar, north arrow but I cannot get any of the legend tokens work
+>
+>layout combined
+>legend on
+>code tex-map
+>\def\maplayout{
+> \formattedlegend
+> \northarrow
+> \scalebar
+>\legendbox{10}{20}{NW}{\\scalebar}
+> \legendbox{10}{20}{NW}{\northarrow}
+> \legendbox{10}{20}{NW}{\formattedlegend}
+>}
+>endcode
+>endlayout
+>
+>So in the above I get a scale bar and north arrow in the bottom left
+>from  \northarrow \scalebar, but \formattedlegend does not do anything
+>nor does \insertlegend or \legendtitle the \legendbox lets me control
+>where they are
+>
+>I also tried
+>
+>\iflegend(\formattedlegend)\fi
+>
+>But this gives a
+>
+>therion: error -- pdftex exit code -- 256
+>
+>Anyone got any ideas?
+>
+>Woops missed: therion 5.4.3 (2019-02-01 on debian
+>
+>thanks
+>
+>Andrew
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+
+-- 
+Kind regards,
+Andrey
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190925/860fa0a8/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Sep 26 10:49:22 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 26 Sep 2019 09:49:22 +0100
+Subject: [Therion] BUG? Thin line in colour fill
+Message-ID: <88d6fa1a-f690-542c-68dd-fb8c716e0f80@wotcc.org.uk>
+
+Just been doing the final checks on my survey, and found a thin line
+that should not be there in the colour file
+
+see http://wotcc.org.uk/__Therion/ThinLineInFile.png generated by
+http://wotcc.org.uk/__Therion/ThinLineinFileth2.png
+
+A bit of investigation shows that the lower right station (1) of the
+line is surface and the upper left is not surface (station 1.1)  not
+sure if this is actually related as I needed a quick fix so.
+
+Deleting them solves the problem, but that is not really a good solution
+
+see http://wotcc.org.uk/__Therion/NoLine.png
+and http://wotcc.org.uk/__Therion/NoLineth2.png
+
+Therion 5.4.3 on Debian
+
+Raw data is at
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Bagpit/Bagpit/
+
+version 409 has the line it is fixed in version 410 (sorry the head is
+only available on line, but the full data set is downloadable using an
+svn client)
+
+thanks
+
+Andrew
+
+
+From andrew at wotcc.org.uk  Thu Sep 26 10:56:01 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 26 Sep 2019 09:56:01 +0100
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+In-Reply-To: <1569434583.871342581@f474.i.mail.ru>
+References: <b63f05e6-a4d4-4a58-db37-a941b16c6a3e@wotcc.org.uk>
+ <1569434583.871342581@f474.i.mail.ru>
+Message-ID: <85860ffd-69ce-e93d-4a19-eab580453a3f@wotcc.org.uk>
+
+Unless I'm missing something this code does not print a list of the
+symbols and what they are, which I think should be produced
+\insertlegend or \legendtitle which I should then be able to control the
+position on the page like I do with the north arrow and scale bar
+
+Andrew
+
+
+
+On 25/09/2019 19:03, Andrey via Therion wrote:
+> Hi Andrew,
+> 
+> I've used this code from wiki with little edits.
+> 
+> Worked pretty well for me apart from the fact that "map image" command
+> will no longer work properly and will require full path to image file.
+> 
+> code tex-map #begining of TeX code
+> 
+> \edef\temp{\the\cavename} 
+> \edef\nostring{} 
+> \ifx\temp\nostring 
+> \cavename={Fantasy Cave} 
+> \else 
+> \fi
+> %\newtoks\club \club={MCU caving club} 
+> 
+> \def\maplayout{
+> \legendbox{5}{70}{NW}{ 
+> \legendwidth 26 cm 
+> \legendtextheadersize={\size[38]}
+> \legendtextsize={\size[22]}
+> \the\legendcontent
+> }
+> \legendbox{85}{95}{NW}{ 
+> \legendwidth 25 cm 
+> \legendtextsize={\size[18]} 
+> \hsize=\legendwidth
+> \input th_legend
+> }
+> \legendbox{15}{95}{NW}{\northarrow} 
+> \legendbox{50}{5}{NW}{\scalebar} 
+> \legendbox{5}{95}{NW}
+> {\loadpicture{G:/Caving/Caves/Fantaziya/Therion/KS_MCU_colour.png}}
+> }
+> endcode #end of TeX code
+> 
+
+
+From torsten.schnitter at netcologne.de  Thu Sep 26 11:44:51 2019
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Thu, 26 Sep 2019 11:44:51 +0200 (CEST)
+Subject: [Therion] code tex-map - some tokens I cannot get to work
+In-Reply-To: <85860ffd-69ce-e93d-4a19-eab580453a3f@wotcc.org.uk>
+References: <b63f05e6-a4d4-4a58-db37-a941b16c6a3e@wotcc.org.uk>
+ <1569434583.871342581@f474.i.mail.ru>
+ <85860ffd-69ce-e93d-4a19-eab580453a3f@wotcc.org.uk>
+Message-ID: <703191962.168947.1569491091135@comcenter.netcologne.de>
+
+Hi Andrew
+
+I had a similar problem some time ago and build my own solution for that.
+Maybe this works for you as well.
+Maybe a bit complex but for me it works...
+
+I put northarrow, scalebar, legendcontent and legendsymbols into a seperate .th file (you'll find attached as examples).
+Inside your config file load these files (e.g. input scalebar.th)
+Inside your config file and within your layout definition use e.g. "copy scalebar" or "copy northarrow_mexico" to load this code into your layout.
+Finally use within your layout definition and between "code tex-map .... endcode":
+"\legendbox{x}{y}{NW}{\hsize=10 cm\centerline\scalebar}" or
+"\legendbox{x}{y}{NW}{\northarrow}" for positioning these parts.
+
+Additionally there are some parameters you have to define.
+Also within "code tex-map ... endcode":
+% parameter legendcontent
+\def\thsizexl{36}            % size of cave name in map
+\def\thsizel{30}             % size of comment in map
+\def\thsizem{24}             % size of text in map
+% parameter legend symbols
+\def\legendsymbolswidth1{14 cm}    % width of each column legend symbols
+\legendtextsectionsize={\size[24]} % text size of legend symbols header
+\legendtextsize={\size[15]}        % text size of legend symbols
+      
+Within the "code metapost ... endcode" part:
+tmpscalebar:=1.0;
+tmpscalenarrow:=1.0;
+% scale of legend symbols
+tmpscale:=1.0;
+
+There are some minor problems especially with the legend symbols while changing scale.
+I couldn't solve this so far.
+(Hopefully I didn't miss anything so far)
+
+hth,
+Torsten
+
+
+
+> Andrew Atkinson <andrew at wotcc.org.uk> hat am 26. September 2019 um 10:56 geschrieben:
+> 
+> 
+> Unless I'm missing something this code does not print a list of the
+> symbols and what they are, which I think should be produced
+> \insertlegend or \legendtitle which I should then be able to control the
+> position on the page like I do with the north arrow and scale bar
+> 
+> Andrew
+> 
+> 
+> 
+> On 25/09/2019 19:03, Andrey via Therion wrote:
+> > Hi Andrew,
+> > 
+> > I've used this code from wiki with little edits.
+> > 
+> > Worked pretty well for me apart from the fact that "map image" command
+> > will no longer work properly and will require full path to image file.
+> > 
+> > code tex-map #begining of TeX code
+> > 
+> > \edef\temp{\the\cavename} 
+> > \edef\nostring{} 
+> > \ifx\temp\nostring 
+> > \cavename={Fantasy Cave} 
+> > \else 
+> > \fi
+> > %\newtoks\club \club={MCU caving club} 
+> > 
+> > \def\maplayout{
+> > \legendbox{5}{70}{NW}{ 
+> > \legendwidth 26 cm 
+> > \legendtextheadersize={\size[38]}
+> > \legendtextsize={\size[22]}
+> > \the\legendcontent
+> > }
+> > \legendbox{85}{95}{NW}{ 
+> > \legendwidth 25 cm 
+> > \legendtextsize={\size[18]} 
+> > \hsize=\legendwidth
+> > \input th_legend
+> > }
+> > \legendbox{15}{95}{NW}{\northarrow} 
+> > \legendbox{50}{5}{NW}{\scalebar} 
+> > \legendbox{5}{95}{NW}
+> > {\loadpicture{G:/Caving/Caves/Fantaziya/Therion/KS_MCU_colour.png}}
+> > }
+> > endcode #end of TeX code
+> > 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: northarrow_mexico.th
+Type: application/octet-stream
+Size: 884 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190926/49a53257/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: scalebar.th
+Type: application/octet-stream
+Size: 1333 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190926/49a53257/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: legendcontent.th
+Type: application/octet-stream
+Size: 1458 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190926/49a53257/attachment-0002.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: legendsymbols.th
+Type: application/octet-stream
+Size: 1826 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190926/49a53257/attachment-0003.obj>
+
+From andrew at wotcc.org.uk  Thu Sep 26 15:26:18 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 26 Sep 2019 14:26:18 +0100
+Subject: [Therion] text<ss>
+Message-ID: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+
+I've been adding text and in the thbook p26 under text
+
+"<rm>, <it>, <bf>, <ss>, <si> ▷ font switches"
+
+They all work apart from <ss> which as far as I can tell, does nothing?
+
+What is it mean to do?
+
+Therion 5.4.3 on Debian
+
+thanks
+
+Andrew
+
+
+From bruce at tomo.co.nz  Thu Sep 26 20:19:46 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 27 Sep 2019 06:19:46 +1200
+Subject: [Therion] text<ss>
+In-Reply-To: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+References: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+Message-ID: <000e01d57496$fc47ad90$f4d708b0$@tomo.co.nz>
+
+Andrew
+It is sans serif, the default font setting.
+It took me a while many years ago to work it out, and I described it here https://therion.speleo.sk/wiki/drawingchecklist#points (in the 'code' box)
+You will only notice a difference if you set something else first. ie
+Point label "This <bf>cave passage<ss> is <si>very<ss> big"
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Andrew Atkinson
+Sent: Friday, 27 September 2019 01:26
+To: Torsten Schnitter via Therion <therion at speleo.sk>
+Subject: [Therion] text<ss>
+
+I've been adding text and in the thbook p26 under text
+
+"<rm>, <it>, <bf>, <ss>, <si> ▷ font switches"
+
+They all work apart from <ss> which as far as I can tell, does nothing?
+
+What is it mean to do?
+
+Therion 5.4.3 on Debian
+
+thanks
+
+Andrew
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From andrew at wotcc.org.uk  Thu Sep 26 21:07:32 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 26 Sep 2019 20:07:32 +0100
+Subject: [Therion] text<ss>
+In-Reply-To: <000e01d57496$fc47ad90$f4d708b0$@tomo.co.nz>
+References: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+ <000e01d57496$fc47ad90$f4d708b0$@tomo.co.nz>
+Message-ID: <e24246e5-1808-4f35-03f9-550eff800e9e@wotcc.org.uk>
+
+Oh yes, thanks for that, shame I missed it on the wiki
+
+Andrew
+
+On 26/09/2019 19:19, Bruce Mutton wrote:
+> Andrew
+> It is sans serif, the default font setting.
+> It took me a while many years ago to work it out, and I described it here https://therion.speleo.sk/wiki/drawingchecklist#points (in the 'code' box)
+> You will only notice a difference if you set something else first. ie
+> Point label "This <bf>cave passage<ss> is <si>very<ss> big"
+> 
+> Bruce
+
+
+From olly at survex.com  Thu Sep 26 22:33:09 2019
+From: olly at survex.com (Olly Betts)
+Date: Thu, 26 Sep 2019 21:33:09 +0100
+Subject: [Therion] text<ss>
+In-Reply-To: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+References: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+Message-ID: <20190926203309.bsaze56aslgozbej@survex.com>
+
+On Thu, Sep 26, 2019 at 02:26:18PM +0100, Andrew Atkinson wrote:
+> I've been adding text and in the thbook p26 under text
+> 
+> "<rm>, <it>, <bf>, <ss>, <si> ▷ font switches"
+> 
+> They all work apart from <ss> which as far as I can tell, does nothing?
+> 
+> What is it mean to do?
+
+Probably select a sans-serif font:
+
+https://en.wikipedia.org/wiki/Sans-serif
+
+Cheers,
+    Olly
+
+
+From martinsluka at mac.com  Fri Sep 27 11:32:21 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 27 Sep 2019 11:32:21 +0200
+Subject: [Therion] text<ss>
+In-Reply-To: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+References: <cf7ef3da-dc07-c172-cf2e-7347e421fc1c@wotcc.org.uk>
+Message-ID: <117DCE8A-D329-436D-9370-345EC5A60040@mac.com>
+
+It comes from Computer Modern font family used as default for TeX:
+
+Computer Modern Font Family
+
+The standard Computer Modern family includes the following fonts:
+cmr
+Roman (5--10pt)
+cmmi
+Math Italic (5--10pt)
+cmsy
+Math Symbols (5--10pt)
+cmex
+Math Extension (10pt)
+cmss
+Sans serif (10pt)
+cmssqi
+Sans serif quote italic (8pt)
+cmssi
+Sans serif Italic (10pt)
+cmbx
+Bold Extended (10pt)
+cmtt
+Typewriter (8--10pt)
+cmsltt
+Slanted typewriter (10pt)
+cmsl
+Slanted roman (8--10pt)
+cmti
+Text italic (7--10pt)
+cmu
+Unslanted text italic (10pt)
+cmmib
+Bold math italic (10pt)
+cmbsy
+Bold math symbols (10pt)
+cmcsc
+Caps and Small caps (10pt)
+cmssbx
+Sans serif bold extended (10pt)
+cmdunh
+Dunhill style (10pt)
+ <>
+Martin
+
+> 26. 9. 2019 v 15:26, Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> I've been adding text and in the thbook p26 under text
+> 
+> "<rm>, <it>, <bf>, <ss>, <si> ▷ font switches"
+> 
+> They all work apart from <ss> which as far as I can tell, does nothing?
+> 
+> What is it mean to do?
+> 
+> Therion 5.4.3 on Debian
+> 
+> thanks
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190927/d55ca55d/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Sep 29 08:03:54 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 29 Sep 2019 19:03:54 +1300
+Subject: [Therion] code tex-map maplayout
+Message-ID: <000001d5768b$aefe97f0$0cfbc7d0$@tomo.co.nz>
+
+Following Andrew’s questions about code tex-map and not being able to get
+\formattedlegend to work, I have again experimented to try to resolve some
+issues I have been having.
+
+I hope you managed to get \formattedlegend to work Andrew.  I did some
+experimentation and did not have too much difficulty in getting it to plot
+in a customised \maplayout.  One insight I got from Audrey’s post is that
+\input th_legend will do almost the same thing as \formattedlegend – the
+plot just does not have a title.  That will be useful sometimes.
+
+I don’t think I understand tex, tex-map or \maplayout well enough to be able
+to provide any insight beyond what has already been given however.
+
+ 
+
+On a similar vein, invoking a custom \maplayout
+
+code tex-map 
+
+ \def\maplayout{ … }
+
+causes  any layout map-image specifications to silently fail.
+
+I am aware that there is a work around, as described in the wiki
+<https://therion.speleo.sk/wiki/tex?s%5b%5d=tex&s%5b%5d=map#changing_the_loo
+k_or_layout_of_a_map_output> , however I’m not keen on complicating my
+projects in that way.  I want a typical Therion user to be able to pick them
+up without having to know about environment variables and tex.
+
+ 
+
+And then I noticed this entry in the wiki
+
+https://therion.speleo.sk/wiki/tips?s[]=tex
+<https://therion.speleo.sk/wiki/tips?s%5b%5d=tex&s%5b%5d=map#map-image_and_c
+ustom_legendbox> &s[]=map#map-image_and_custom_legendbox
+
+
+
+This suggests to me that it may be possible to retain the use of map-image
+simply by defining multiple \maplayouts and presumably they are both invoked
+in the same pdf output
+
+However I have just tried several variations of renamed \maplayout in
+conjunction with a map-image, and I can only ever get either the ‘layout
+map-header’ to plot with map-images, or a custom \maplayout without
+map-images.  A renamed \new_maplayout never plots.
+
+ 
+
+So is there something missing from the wiki entry, is it misleading, or am I
+missing something?
+
+ 
+
+Ngā mihi
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190929/be55d700/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 11659 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190929/be55d700/attachment.jpg>
+

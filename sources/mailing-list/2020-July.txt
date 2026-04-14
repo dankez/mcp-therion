@@ -1,0 +1,4647 @@
+From bruce at tomo.co.nz  Wed Jul  1 10:44:37 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 1 Jul 2020 20:44:37 +1200
+Subject: [Therion] Order of calls - symbol-hide doesn't work
+Message-ID: <000001d64f83$dc3550c0$949ff240$@tomo.co.nz>
+
+Thanks for that insight Tarquin
+I have intuitively followed the principles you set out, for the most part, but not entirely, and I would not have thought that setting a symbol-set would override symbol-show -hide statements.
+I had written a few words about this some years ago here
+https://therion.speleo.sk/wiki/bds?s[]=order#order_of_layout_functions_called 
+but I see that it is not quite best practice.  I will rewrite it soon.
+
+I think I have always got away with less than perfect layout statement ordering, because I tend to have layouts that are tightly constrained to particular topics.  ie scales, statistics, northarrows or whatever.
+
+Anyway, symbol-set, symbol-assign, symbol redefinitions, then specific symbol-hide or -show with layout file copys somewhere in the middle seems like a sensible rule of thumb.
+
+Bruce
+
+
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Wednesday, 1 July 2020 08:40
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] symbol-hide doesn't work
+
+Your problem is the order of your statements:
+
+layout local
+symbol-hide group centerline
+symbol-set UIS
+
+These directives are processed in order, so if the second one overrides the symbol hiding, it will win. "symbol-set UIS" includes centreline symbols defined as a line. It is defined second, so it overrides the line before it. You need to swap the lines around:
+
+layout local
+symbol-set UIS #overall symbol set
+symbol-hide group centerline #override specifics
+
+In the same way, your .thconfig file's "layout local" says "copy LayoutScalebar1".
+I guess that is defined in:
+F:\Omri\Therion\Layout\StdFiles\LayoutStandards.thc
+
+You did not share that file, so I cannot be certain if it also could cause problems. You copy that layout *after* you set the symbol-hide. If
+LayoutScalebar1 overrides the symbol hiding, it will win. This is risky:
+
+layout local
+symbol-hide group centerline
+...
+copy LayoutScalebar1
+
+This is better:
+
+layout local
+copy LayoutScalebar1
+symbol-hide group centerline
+
+This is probably not causing problems in your particular case, but this is why I always do my "copy" statements first, then the local layout settings afterwards, so I never bump into this kind of hidden problem.
+
+Hope this helps.
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Jul  1 10:58:52 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 1 Jul 2020 09:58:52 +0100
+Subject: [Therion] Order of calls - symbol-hide doesn't work
+In-Reply-To: <000001d64f83$dc3550c0$949ff240$@tomo.co.nz>
+References: <000001d64f83$dc3550c0$949ff240$@tomo.co.nz>
+Message-ID: <1c44ef82-8db4-4742-f9dd-a049b6c6cddf@ntlworld.com>
+
+> Anyway, symbol-set, symbol-assign, symbol redefinitions, then specific symbol-hide or -show with layout file copys somewhere in the middle seems like a sensible rule of thumb.
+
+Yes. You may note that "copy" can be used either before or after,
+depending on whether you want to copy a set of defaults, or copy a
+specific configuration for symbols. This does mean that my "copies
+first" method is not always appropriate, and it depends on the specific
+intention of the copy.
+
+Since you will generally know exactly what you are copying, you can
+presumably work out the approach that works for your case. Just treat
+"copy" as being replaced with the contents of the layout that you are
+copying.
+
+If your layout and the layout you are copying both try to set a whole
+load of symbol-set, symbol-assign, symbol-show/-hide etc. then you could
+be in a world of hurt.
+
+
+From omrigas at gmail.com  Wed Jul  1 19:24:50 2020
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Wed, 1 Jul 2020 20:24:50 +0300
+Subject: [Therion] symbol-hide doesn't work
+In-Reply-To: <7b124a67-affb-383b-5daf-0bf38003705a@ntlworld.com>
+References: <CAOjFj0=pfMeBYzci9Pyjj99Qpm1MNsGnvvEhK9QsU2Z3XsKWkQ@mail.gmail.com>
+ <7b124a67-affb-383b-5daf-0bf38003705a@ntlworld.com>
+Message-ID: <CAOjFj0nUKrYko66_9x44hZ=NSSbpF=QE6BEqt=K2xAWX4yUrYA@mail.gmail.com>
+
+Thanks Tarquin!
+It worked!
+
+On Tue, Jun 30, 2020 at 11:45 PM Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> Your problem is the order of your statements:
+>
+> layout local
+> symbol-hide group centerline
+> symbol-set UIS
+>
+> These directives are processed in order, so if the second one overrides
+> the symbol hiding, it will win. "symbol-set UIS" includes centreline
+> symbols defined as a line. It is defined second, so it overrides the
+> line before it. You need to swap the lines around:
+>
+> layout local
+> symbol-set UIS #overall symbol set
+> symbol-hide group centerline #override specifics
+>
+> In the same way, your .thconfig file's "layout local" says "copy
+> LayoutScalebar1".
+> I guess that is defined in:
+> F:\Omri\Therion\Layout\StdFiles\LayoutStandards.thc
+>
+> You did not share that file, so I cannot be certain if it also could
+> cause problems. You copy that layout *after* you set the symbol-hide. If
+> LayoutScalebar1 overrides the symbol hiding, it will win. This is risky:
+>
+> layout local
+> symbol-hide group centerline
+> ...
+> copy LayoutScalebar1
+>
+> This is better:
+>
+> layout local
+> copy LayoutScalebar1
+> symbol-hide group centerline
+>
+> This is probably not causing problems in your particular case, but this
+> is why I always do my "copy" statements first, then the local layout
+> settings afterwards, so I never bump into this kind of hidden problem.
+>
+> Hope this helps.
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200701/1256fd90/attachment.htm>
+
+From therion at speleo.sk  Fri Jul  3 22:02:33 2020
+From: therion at speleo.sk (Therion)
+Date: Fri,  3 Jul 2020 22:02:33 +0200 (CEST)
+Subject: [Therion] new Therion 5.5.1
+Message-ID: <20200703200233.AF8CD6138C@mail.speleo.sk>
+
+Hi, there is a new release 5.5.1 of Therion.
+Release notes:
+
+v5.5.1          Therion 5.5.1 (2020-07-03):
+    
+    therion:
+     * duplicate shot length removed from expored individual team member statistics
+     * improved Proj support in auto mode (automatic specification of the area of use;
+       caching and logging of the used transformations) and in the Windows build
+     * added support for handling of missing coordinate transformation grids
+       (see the proj-missing-grid init file option)
+     * support for linking with multiple Proj versions to improve testing
+       (see test_proj.sh)
+     * improved mingw-w64 compatibility
+     * bux fixed
+       - various memory-related fixes by Matěj Plch
+       - workaround for Proj 7.1.0 axes swap in Krovak's projection
+
+Best regards,
+Therion team
+
+
+From bruce at tomo.co.nz  Sun Jul  5 00:13:39 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 5 Jul 2020 10:13:39 +1200
+Subject: [Therion] Therion 5.5.1 broken surface image
+Message-ID: <000001d65250$61e75460$25b5fd20$@tomo.co.nz>
+
+Morning
+
+Therion 5.5.1 has broken something that has worked up until and including
+5.5.0.
+
+I'm tentatively thinking it only affects exports with surface images.  Same
+thing occurs with two of them, and all the exports I have tried without
+surface images are fine so far.
+
+ 
+
+Here is the error that 5.5.1 produces.
+
+ 
+
+!pdfTeX error: pdftex.exe: cannot find image file
+
+==> Fatal error occurred, no output PDF file produced!
+
+ 
+
+##################### end of pdftex log file #####################
+
+C:\Program Files (x86)\Therion\therion.exe: error -- pdftex exit code -- 1
+
+writing xtherion file ... done
+
+ 
+
+ 
+
+Interesting, because the image file IS there, and if I install 5.5.0 an
+output is produced.
+
+ 
+
+Here is synopsis of what seems to be material differences in the log files.
+
+Looks like maybe the new version of MetaPost Is not parsing the surface
+image properly.
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200705/8b6b0447/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 243787 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200705/8b6b0447/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 243359 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200705/8b6b0447/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.png
+Type: image/png
+Size: 189255 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200705/8b6b0447/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image012.png
+Type: image/png
+Size: 157593 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200705/8b6b0447/attachment-0003.png>
+
+From bruce at tomo.co.nz  Mon Jul  6 04:01:52 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 6 Jul 2020 14:01:52 +1200
+Subject: [Therion] RESOLVED:  Therion 5.5.1 broken surface image
+Message-ID: <000201d65339$6cac70d0$46055270$@tomo.co.nz>
+
+Thanks Martin and Stacho
+
+The latest development version e66c699 has resolved the issue.
+
+pdfTeX can now find surface images with ./ and ../ in the file path.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Sunday, 5 July 2020 10:14
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Therion 5.5.1 broken surface image
+
+ 
+
+Morning
+
+Therion 5.5.1 has broken something that has worked up until and including
+5.5.0.
+
+I'm tentatively thinking it only affects exports with surface images.  Same
+thing occurs with two of them, and all the exports I have tried without
+surface images are fine so far.
+
+ 
+
+Here is the error that 5.5.1 produces.
+
+ 
+
+!pdfTeX error: pdftex.exe: cannot find image file
+
+==> Fatal error occurred, no output PDF file produced!
+
+ 
+
+##################### end of pdftex log file #####################
+
+C:\Program Files (x86)\Therion\therion.exe: error -- pdftex exit code -- 1
+
+writing xtherion file ... done
+
+ 
+
+ 
+
+Interesting, because the image file IS there, and if I install 5.5.0 an
+output is produced.
+
+ 
+
+Here is synopsis of what seems to be material differences in the log files.
+
+Looks like maybe the new version of MetaPost Is not parsing the surface
+image properly.
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/9a1924cf/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 294105 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/9a1924cf/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 243359 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/9a1924cf/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 223736 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/9a1924cf/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 157593 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/9a1924cf/attachment-0003.png>
+
+From wookey at wookware.org  Mon Jul  6 14:37:01 2020
+From: wookey at wookware.org (Wookey)
+Date: Mon, 6 Jul 2020 13:37:01 +0100
+Subject: [Therion] new Therion 5.5.1
+In-Reply-To: <20200703200233.AF8CD6138C@mail.speleo.sk>
+References: <20200703200233.AF8CD6138C@mail.speleo.sk>
+Message-ID: <20200706123701.GQ17293@mail.wookware.org>
+
+On 2020-07-03 22:02 +0200, Therion wrote:
+> Hi, there is a new release 5.5.1 of Therion.
+
+This has now been uploaded to Debian so is available in unstable. It
+should migrate into Ubuntu too in a few days.
+
+https://tracker.debian.org/pkg/therion
+
+Thanks to Martin for promptly fixing the libproj issue in 5.5.0.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200706/5141291b/attachment.sig>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jul  6 23:12:23 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 6 Jul 2020 22:12:23 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+Message-ID: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+
+Hi all,
+
+I have a puzzle that comes from my old puzzle:
+https://therion.speleo.sk/wiki/breakingextend
+
+1   2 1    0   -10
+2   3 1    0   -10
+3   4 1    45  -10
+4   5 1    45  -10
+5   6 1    45  -10
+6   7 1    90  -10
+7   8 1.71 225  60
+8   9 1    225  10
+9  10 1    225  10
+10  2 1.8  225 -32.2
+7  11 1    90  -10
+
+Imagine you want to break the loop at station 7, so that Therion shows
+1-2-3-4-5-6-7-11 as a single line, then 2-10-9-8-7 as a branch off it.
+The break should be at the end of the branch:
+    10-9-8-7
+   /
+1-2-3-4-5-6-7-11
+
+If you say "extend ignore 7" or "extend ignore 7 6" it will do this:
+1-2-10-9-8-7-11
+   \
+    3-4-5-6-7
+Breaks at the right station, but on the wrong branch.
+
+You can do "extend ignore 8 7" to break at the wrong station on the
+right branch. If you use "extend ignore 7 11" it ignores you, and breaks
+at the natural point, leg 2-3.
+
+Is it actually possible to break at station 7 along the 2-10-9-8-7 branch?
+
+Cheers!
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Tue Jul  7 10:59:17 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 7 Jul 2020 20:59:17 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+Message-ID: <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+
+OK, I give up I think.  It might not be possible to break a loop at it’s closing end.
+
+ 
+
+Tarquin’s example…
+
+ 
+
+1   2 1    0   -10
+
+2   3 1    0   -10
+
+3   4 1    45  -10
+
+4   5 1    45  -10
+
+5   6 1    45  -10
+
+6   7 1    90  -10
+
+7   8 1.71 225  60
+
+8   9 1    225  10
+
+9  10 1    225  10
+
+10  2 1.8  225 -32.2
+
+7  11 1    90  -10
+
+ 
+
+# set gap at station 2
+
+    extend start 1
+
+    extend ignore 2 10
+
+    extend left 8
+
+
+
+processing extended elevation ... 
+
+START 1 at extendedloop
+
+RIGHT 2 at extendedloop
+
+RIGHT 3 at extendedloop
+
+RIGHT 4 at extendedloop
+
+RIGHT 5 at extendedloop
+
+RIGHT 6 at extendedloop
+
+RIGHT 7 at extendedloop
+
+RIGHT 11 at extendedloop
+
+BACK 7 at extendedloop
+
+LEFT 8 at extendedloop
+
+LEFT 9 at extendedloop
+
+LEFT 10 at extendedloop
+
+LEFT 2 at extendedloop #gap here
+
+done
+
+ 
+
+Looking at therion.log transcript we can see that Therion traverses 1 2 3 4 5 6 7 11, then steps back to 7 before stepping to 8 9 10 2 and consequently leaving a gap between two 2s.
+
+ 
+
+If we had a statement to tell Therion to step back beyond 7 to 2, and THEN start generating we might get 2 10 9 8 7 and leaving a gap between two 7s.
+
+This would play havoc with my ‘extend ignore’ rules of thumb for predicting gap locations though. https://therion.speleo.sk/wiki/extend#summary_of_all_extend_options_for_survey_centrelines
+
+ 
+
+Another solution might be for ‘extend right 2 10’ etc to be an implied  ‘extend ignore’ for any other legs emanating from station 2.  But that would break many existing extended elevations, so although more intuitive, lets cancel that idea!
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Tuesday, 7 July 2020 09:12
+To: Therion <therion at speleo.sk>
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+Hi all,
+
+ 
+
+I have a puzzle that comes from my old puzzle:
+
+ <https://therion.speleo.sk/wiki/breakingextend> https://therion.speleo.sk/wiki/breakingextend
+
+ 
+
+1   2 1    0   -10
+
+2   3 1    0   -10
+
+3   4 1    45  -10
+
+4   5 1    45  -10
+
+5   6 1    45  -10
+
+6   7 1    90  -10
+
+7   8 1.71 225  60
+
+8   9 1    225  10
+
+9  10 1    225  10
+
+10  2 1.8  225 -32.2
+
+7  11 1    90  -10
+
+ 
+
+Imagine you want to break the loop at station 7, so that Therion shows
+
+1-2-3-4-5-6-7-11 as a single line, then 2-10-9-8-7 as a branch off it.
+
+The break should be at the end of the branch:
+
+    10-9-8-7
+
+   /
+
+1-2-3-4-5-6-7-11
+
+ 
+
+If you say "extend ignore 7" or "extend ignore 7 6" it will do this:
+
+1-2-10-9-8-7-11
+
+   \
+
+    3-4-5-6-7
+
+Breaks at the right station, but on the wrong branch.
+
+ 
+
+You can do "extend ignore 8 7" to break at the wrong station on the right branch. If you use "extend ignore 7 11" it ignores you, and breaks at the natural point, leg 2-3.
+
+ 
+
+Is it actually possible to break at station 7 along the 2-10-9-8-7 branch?
+
+ 
+
+Cheers!
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/36bea3f0/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 21920 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/36bea3f0/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 27579 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/36bea3f0/attachment-0001.png>
+
+From bruce at tomo.co.nz  Tue Jul  7 11:19:56 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 7 Jul 2020 21:19:56 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+Message-ID: <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+
+Actually, I have found a way, but it is cheating, and not suitable for a real-life project.
+
+Just start the sequence from the other end of the survey.  Now I expect it is not possible to make a gap at station 2.
+
+ 
+
+#set gap at station 7 by starting from station 11
+
+    extend start 11
+
+    extend left 11
+
+    extend ignore 7 8
+
+    extend right 2 10
+
+    extend right 10
+
+ 
+
+
+
+processing extended elevation ... 
+
+START 11 at extendedloop
+
+LEFT 7 at extendedloop
+
+LEFT 6 at extendedloop
+
+LEFT 5 at extendedloop
+
+LEFT 4 at extendedloop
+
+LEFT 3 at extendedloop
+
+LEFT 2 at extendedloop
+
+RIGHT 10 at extendedloop
+
+RIGHT 9 at extendedloop
+
+RIGHT 8 at extendedloop
+
+RIGHT 7 at extendedloop #gap here
+
+BACK 9 at extendedloop
+
+BACK 10 at extendedloop
+
+BACK 2 at extendedloop
+
+LEFT 1 at extendedloop
+
+done
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Tuesday, 7 July 2020 20:59
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+OK, I give up I think.  It might not be possible to break a loop at it’s closing end.
+
+ 
+
+Tarquin’s example…
+
+ 
+
+1   2 1    0   -10
+
+2   3 1    0   -10
+
+3   4 1    45  -10
+
+4   5 1    45  -10
+
+5   6 1    45  -10
+
+6   7 1    90  -10
+
+7   8 1.71 225  60
+
+8   9 1    225  10
+
+9  10 1    225  10
+
+10  2 1.8  225 -32.2
+
+7  11 1    90  -10
+
+ 
+
+# set gap at station 2
+
+    extend start 1
+
+    extend ignore 2 10
+
+    extend left 8
+
+
+
+processing extended elevation ... 
+
+START 1 at extendedloop
+
+RIGHT 2 at extendedloop
+
+RIGHT 3 at extendedloop
+
+RIGHT 4 at extendedloop
+
+RIGHT 5 at extendedloop
+
+RIGHT 6 at extendedloop
+
+RIGHT 7 at extendedloop
+
+RIGHT 11 at extendedloop
+
+BACK 7 at extendedloop
+
+LEFT 8 at extendedloop
+
+LEFT 9 at extendedloop
+
+LEFT 10 at extendedloop
+
+LEFT 2 at extendedloop #gap here
+
+done
+
+ 
+
+Looking at therion.log transcript we can see that Therion traverses 1 2 3 4 5 6 7 11, then steps back to 7 before stepping to 8 9 10 2 and consequently leaving a gap between two 2s.
+
+ 
+
+If we had a statement to tell Therion to step back beyond 7 to 2, and THEN start generating we might get 2 10 9 8 7 and leaving a gap between two 7s.
+
+This would play havoc with my ‘extend ignore’ rules of thumb for predicting gap locations though. https://therion.speleo.sk/wiki/extend#summary_of_all_extend_options_for_survey_centrelines
+
+ 
+
+Another solution might be for ‘extend right 2 10’ etc to be an implied  ‘extend ignore’ for any other legs emanating from station 2.  But that would break many existing extended elevations, so although more intuitive, lets cancel that idea!
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Tuesday, 7 July 2020 09:12
+To: Therion <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com <mailto:tarquin.wilton-jones at ntlworld.com> >
+Subject: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+Hi all,
+
+ 
+
+I have a puzzle that comes from my old puzzle:
+
+ <https://therion.speleo.sk/wiki/breakingextend> https://therion.speleo.sk/wiki/breakingextend
+
+ 
+
+1   2 1    0   -10
+
+2   3 1    0   -10
+
+3   4 1    45  -10
+
+4   5 1    45  -10
+
+5   6 1    45  -10
+
+6   7 1    90  -10
+
+7   8 1.71 225  60
+
+8   9 1    225  10
+
+9  10 1    225  10
+
+10  2 1.8  225 -32.2
+
+7  11 1    90  -10
+
+ 
+
+Imagine you want to break the loop at station 7, so that Therion shows
+
+1-2-3-4-5-6-7-11 as a single line, then 2-10-9-8-7 as a branch off it.
+
+The break should be at the end of the branch:
+
+    10-9-8-7
+
+   /
+
+1-2-3-4-5-6-7-11
+
+ 
+
+If you say "extend ignore 7" or "extend ignore 7 6" it will do this:
+
+1-2-10-9-8-7-11
+
+   \
+
+    3-4-5-6-7
+
+Breaks at the right station, but on the wrong branch.
+
+ 
+
+You can do "extend ignore 8 7" to break at the wrong station on the right branch. If you use "extend ignore 7 11" it ignores you, and breaks at the natural point, leg 2-3.
+
+ 
+
+Is it actually possible to break at station 7 along the 2-10-9-8-7 branch?
+
+ 
+
+Cheers!
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/f1b82684/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 27856 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/f1b82684/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 27135 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/f1b82684/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 30632 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/f1b82684/attachment-0002.png>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul  7 11:22:43 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 Jul 2020 10:22:43 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+Message-ID: <ae856792-1c14-e651-b68f-c1c0ec979675@ntlworld.com>
+
+> OK, I give up I think.  It might not be possible to break a loop at it’s
+> closing end.
+
+OK, so if even the extended elevation master can't do it, I don't have
+to feel like I missed something obvious...
+
+My proposed solution would be for "extend ignore 7 8" to tell Therion "I
+want you to break at station 7, for the leg that connects to station 8".
+As it stands now, Therion will ignore that statement, since it is
+extending that leg in the 8->7 direction. So it will not break any
+existing setups if it starts to respect it, because that backwards
+statement should not be in any working setups.
+
+Alternatively, some new syntax, like:
+extend ignore 8 7 end
+which says "break this leg, but at its end rather than its start".
+
+> Another solution might be for ‘extend right 2 10’ etc to be an implied 
+> ‘extend ignore’ for any other legs emanating from station 2.  But that
+> would break many existing extended elevations, so although more
+> intuitive, lets cancel that idea!
+
+Indeed. I wouldn't want a solution that changes existing behaviour.
+Breaking all of your surveys is not a goal.
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul  7 11:38:15 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 Jul 2020 10:38:15 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+Message-ID: <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+
+> Actually, I have found a way, but it is cheating, and not suitable for a
+> real-life project.
+
+Indeed. starting from the wrong end would just swap one problem for
+another ;)
+
+I added an "Important note" to the end of this:
+https://therion.speleo.sk/wiki/breakingextend
+
+Summary:
+As it currently stands, it does not seem to be possible to break an
+extended elevation at the "end" of a loop, along the shorter side of the
+loop (or whichever path Therion chooses as its primary path around the
+loop).
+
+
+From lists at group-s.sk  Tue Jul  7 16:11:56 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 7 Jul 2020 16:11:56 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+Message-ID: <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+
+Well, there is one workaround. But to be honest, I have no idea why :/
+
+    extend ignore 7 8
+    extend ignore 8 7
+
+Something like:
+
+  extend end 8 7
+
+... would be definitely better. Is it OK to implement it like that?
+
+S.
+
+On Tue, 7 Jul 2020 at 11:38, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> > Actually, I have found a way, but it is cheating, and not suitable for a
+> > real-life project.
+>
+> Indeed. starting from the wrong end would just swap one problem for
+> another ;)
+>
+> I added an "Important note" to the end of this:
+> https://therion.speleo.sk/wiki/breakingextend
+>
+> Summary:
+> As it currently stands, it does not seem to be possible to break an
+> extended elevation at the "end" of a loop, along the shorter side of the
+> loop (or whichever path Therion chooses as its primary path around the
+> loop).
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200707/d100d5c8/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul  7 16:41:43 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 Jul 2020 15:41:43 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+Message-ID: <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+
+> Well, there is one workaround. But to be honest, I have no idea why :/
+> 
+>     extend ignore 7 8
+>     extend ignore 8 7
+
+Wow!
+
+First thought is; that ... really shouldn't work, and it looks almost
+like a bug.
+
+Maybe there is logic though, if you look at those two statements in the
+opposite order (which also works, by the way).
+
+Therion proceeds along 1-2-10-9-8-7-11
+"Therion, please ignore 8-7"
+Therion breaks the survey at 8. Therion now goes:
+    10-9-8    8
+   /         /
+1-2-3-4-5-6-7-11
+"Therion, please ignore 7-8"
+Therion breaks the survey at 7. It now has a floating 7-8 leg not
+connected to anything. So it connects it to the 10-9-8 branch, and ends
+up with the desired output.
+
+So maybe this is trustworthy rather than a bug? But it hurts my head to
+read it, and it smells like there will be some unpredictable hidden
+behaviours in there.
+
+> Something like:
+> 
+>   extend end 8 7
+> 
+> ... would be definitely better. Is it OK to implement it like that?
+
+I like that it will never clash with existing stuff. I don't like that
+it introduces a new keyword instead of "ignore", that does the same
+thing as "ignore". I would personally prefer it as a modifier rather
+than a keyword, for consistency:
+
+extend ignore end 8 7
+extend ignore 8 7 end
+
+But others may have stronger opinions.
+
+
+From bruce at tomo.co.nz  Tue Jul  7 22:33:00 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 8 Jul 2020 08:33:00 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+Message-ID: <001801d6549d$d02df600$7089e200$@tomo.co.nz>
+
+I wondered if adding extend statements in-line with data would offer a solution, or at least some insight.
+
+If so I have not found it yet.  Interested to see if anyone else can:
+
+ 
+
+1.	Make the loop generate anticlockwise and produce a gap at station 2, with the second instance of 2 on the right of the first instance.
+2.	Produce a gap at station 7.
+
+ 
+
+Here is my first attempt.
+
+ 
+
+extend start
+
+extend right
+
+1   2 1    0   -10
+
+2   3 1    0   -10
+
+3   4 1    45  -10
+
+4   5 1    45  -10
+
+5   6 1    45  -10
+
+6   7 1    90  -10
+
+extend left
+
+7   8 1.71 225  60
+
+8   9 1    225  10
+
+9  10 1    225  10
+
+# extend ignore
+
+10  2 1.8  225 -32.2
+
+extend right
+
+7  11 1    90  -10
+
+ 
+
+
+
+ie this traverses 1 2 10 9 8 7 then backwards through 6 5 4 3 2, then 7 to 11
+
+Not at all the sequence the data is presented in the data table above
+
+The ignore statement before leg 2 10 is ‘ignored’ if it is uncommented.
+
+ 
+
+START 1 at extendedloop
+
+RIGHT 2 at extendedloop
+
+RIGHT 10 at extendedloop
+
+RIGHT 9 at extendedloop
+
+RIGHT 8 at extendedloop
+
+RIGHT 7 at extendedloop
+
+LEFT 6 at extendedloop
+
+LEFT 5 at extendedloop
+
+LEFT 4 at extendedloop
+
+LEFT 3 at extendedloop
+
+LEFT 2 at extendedloop #now back to 7
+
+BACK 4 at extendedloop
+
+BACK 5 at extendedloop
+
+BACK 6 at extendedloop
+
+BACK 7 at extendedloop
+
+RIGHT 11 at extendedloop # and 7 to 11
+
+Done
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200708/36cacfa7/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 30880 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200708/36cacfa7/attachment.png>
+
+From bruce at tomo.co.nz  Tue Jul  7 22:33:00 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 8 Jul 2020 08:33:00 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+Message-ID: <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+
+Hmm, may need to think about this.
+
+We risk adding adhoc patches on adhoc patches and painting ourselves into a corner.
+
+ 
+
+Agree we should not add a new keyword just to emulate an obscure special case that is not well understood or well handled by 'ignore'.  So a modifier of 'ignore' would be better, as Tarquin suggests.
+
+ 
+
+>extend ignore end 8 7 #or
+
+>extend ignore 8 7 end
+
+ 
+
+Not sure about the word 'end', as it will not always be evident which end of a loop is the 'end’.  Especially where there are loops within loops or beside loops.  Maybe 'force'.  Not sure about that either, but the user rule of thumb could be, if 'ignore' does not work, try 'ignore force'.
+
+ 
+
+extend ignore force 8 7 #or
+
+extend ignore 8 7 force
+
+ 
+
+Maybe we should take time to think about it for a while.  We have a tentative solution right now, as Stacho has found, using the combination.
+
+    extend start 1
+
+    extend ignore 7 8
+
+    extend ignore 8 7
+
+ 
+
+ie, if extend ignore <leg> does not work, try following it with extend ignore <reversed leg>
+
+
+
+Using Tarquin's example this gives a log like...
+
+ 
+
+START 1 at extendedloop
+
+RIGHT 2 at extendedloop
+
+RIGHT 10 at extendedloop
+
+RIGHT 9 at extendedloop
+
+RIGHT 8 at extendedloop #ie random branch taken as far as 8
+
+BACK 9 at extendedloop
+
+BACK 10 at extendedloop
+
+BACK 2 at extendedloop #step back to 2
+
+RIGHT 3 at extendedloop
+
+RIGHT 4 at extendedloop
+
+RIGHT 5 at extendedloop
+
+RIGHT 6 at extendedloop
+
+RIGHT 7 at extendedloop
+
+RIGHT 11 at extendedloop #at end branch 11…
+
+BACK 7 at extendedloop
+
+BACK 6 at extendedloop
+
+BACK 5 at extendedloop
+
+BACK 4 at extendedloop
+
+BACK 3 at extendedloop
+
+BACK 2 at extendedloop
+
+BACK 1 at extendedloop #step all the way back to 1
+
+START 8 at extendedloop #auto restart at 8
+
+RIGHT 7 at extendedloop #finish the last leg
+
+done
+
+ 
+
+And vise versa
+
+               extend start 1
+
+              extend ignore 8 7            
+
+              extend ignore 7 8
+
+ 
+
+START 1 at extendedloop
+
+RIGHT 2 at extendedloop
+
+RIGHT 10 at extendedloop
+
+RIGHT 9 at extendedloop
+
+RIGHT 8 at extendedloop #ie random branch taken as far as 8
+
+BACK 9 at extendedloop
+
+BACK 10 at extendedloop
+
+BACK 2 at extendedloop #ie random branch taken as far as 8
+
+RIGHT 3 at extendedloop
+
+RIGHT 4 at extendedloop
+
+RIGHT 5 at extendedloop
+
+RIGHT 6 at extendedloop
+
+RIGHT 7 at extendedloop
+
+RIGHT 11 at extendedloop #at end branch 11…
+
+BACK 7 at extendedloop
+
+BACK 6 at extendedloop
+
+BACK 5 at extendedloop
+
+BACK 4 at extendedloop
+
+BACK 3 at extendedloop
+
+BACK 2 at extendedloop
+
+BACK 1 at extendedloop #step all the way back to 1
+
+START 8 at extendedloop#auto restart at 8
+
+RIGHT 7 at extendedloop #finish the last leg
+
+done
+
+ 
+
+It disturbs me that the sequence is exactly the same.
+
+I agree with Tarquin, “it smells like there will be some unpredictable hidden behaviours in there”.
+
+ 
+
+A question Stacho.
+
+Are extend statements processed in sequence they are written, or are they all read by Therion before Therion chooses best order to process them (as it does with survey data)?
+
+I’m suspecting the latter.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Wednesday, 8 July 2020 02:42
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+> Well, there is one workaround. But to be honest, I have no idea why :/
+
+> 
+
+>     extend ignore 7 8
+
+>     extend ignore 8 7
+
+ 
+
+Wow!
+
+ 
+
+First thought is; that ... really shouldn't work, and it looks almost like a bug.
+
+ 
+
+Maybe there is logic though, if you look at those two statements in the opposite order (which also works, by the way).
+
+ 
+
+Therion proceeds along 1-2-10-9-8-7-11
+
+"Therion, please ignore 8-7"
+
+Therion breaks the survey at 8. Therion now goes:
+
+    10-9-8    8
+
+   /         /
+
+1-2-3-4-5-6-7-11
+
+"Therion, please ignore 7-8"
+
+Therion breaks the survey at 7. It now has a floating 7-8 leg not connected to anything. So it connects it to the 10-9-8 branch, and ends up with the desired output.
+
+ 
+
+So maybe this is trustworthy rather than a bug? But it hurts my head to read it, and it smells like there will be some unpredictable hidden behaviours in there.
+
+ 
+
+> Something like:
+
+> 
+
+>   extend end 8 7
+
+> 
+
+> ... would be definitely better. Is it OK to implement it like that?
+
+ 
+
+I like that it will never clash with existing stuff. I don't like that it introduces a new keyword instead of "ignore", that does the same thing as "ignore". I would personally prefer it as a modifier rather than a keyword, for consistency:
+
+ 
+
+extend ignore end 8 7
+
+extend ignore 8 7 end
+
+ 
+
+But others may have stronger opinions.
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200708/2172f8a1/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 24805 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200708/2172f8a1/attachment.png>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul  7 23:04:36 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 Jul 2020 22:04:36 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+Message-ID: <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+
+> Not sure about the word 'end', as it will not always be evident which
+> end of a loop is the 'end’.
+
+The modifier name I suggested was "break at the *end* of the leg, not
+the start of it like you normally would". Sortof like "to" rather than
+"from", except that Therion picks its own start station and end station
+of a leg when traversing an extended elevation.
+
+Not precious about it, just hoping some word can put the idea into the
+head of a user, so that it takes less effort to learn.
+
+"first" (default) and "second" also make sense from that perspective.
+"former" and "latter" too.
+
+> It disturbs me that the sequence is exactly the same.
+
+o_O
+That was unexpected. I echo your question. I have always thought of them
+as being sequential, but perhaps that's just because that is how you
+normally create them, and how the idea has therefore stuck in my head.
+
+> We have a tentative solution right now
+
+If we could guarantee that this is intended behaviour and will always
+work, then it might be acceptable to just leave it without a better
+notation. But even if it is by design, it is quite hard to make sense
+out of it. Even harder to teach someone else how to understand and apply
+this concept when they need it.
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Wed Jul  8 10:49:05 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 8 Jul 2020 20:49:05 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+Message-ID: <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+
+>The modifier name I suggested was "break at the *end* of the leg, not the start of it like you normally would". Sortof like "to" rather than "from", except that Therion picks its own start station and end station of a >leg when traversing an extended elevation.
+
+OK, I misunderstood...
+
+
+>extend ignore end 8 7 #or
+>extend ignore 8 7 end
+>"first" (default) and "second" also make sense from that perspective.
+>"former" and "latter" too.
+>extend ignore force 8 7 #or
+>extend ignore 8 7 force
+
+How about...
+extend ignore 8 7 [ (from) | to ]
+... since we already use the from and to keywords with respect to stations at each end of a survey leg?
+
+Bruce
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Jul  8 11:00:44 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 8 Jul 2020 10:00:44 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+ <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+Message-ID: <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+
+> How about...
+> extend ignore 8 7 [ (from) | to ]
+> ... since we already use the from and to keywords with respect to stations at each end of a survey leg?
+
+It's all good by me.
+
+The only reason I didn't suggest that keyword is that Therion is
+stepping through my loop backwards. So a user might assume that the "to"
+station is the "to" station from their data, when actually it is the
+"to" station from the "extend ignore" pair.
+
+But as long as people think it is intuitive enough, carry on :)
+
+
+From bruce at tomo.co.nz  Thu Jul  9 12:51:59 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 9 Jul 2020 22:51:59 +1200
+Subject: [Therion] Android cave software on Windows
+Message-ID: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+
+Has anyone had any luck running Topodroid or SexyTopo on Windows (in a VM
+presumably)?
+
+Seems like it should be possible, but I just haven't managed to crack it
+yet.
+
+ 
+
+I'm wanting to manage the transition from field notes to Therion all on the
+same device.  As I usually do with PocketTopo, having the cave open in both
+applications (Therion and PocketTopo).  It helps keep me oriented while
+drawing/editing in Therion.  And I don't always have a suitable Android
+device on hand when using Therion.
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200709/4cf046c9/attachment.htm>
+
+From dave at david-cooke.me.uk  Thu Jul  9 14:43:19 2020
+From: dave at david-cooke.me.uk (David Cooke)
+Date: Thu, 9 Jul 2020 13:43:19 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+Message-ID: <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+
+I've had SexyTopo successfully running in Android Studio, the 
+development environment, on a PC.
+
+It's not super fast but works.
+
+No extra VM necessary.
+
+Cookie
+
+
+On 09/07/2020 11:51, Bruce Mutton wrote:
+>
+> Has anyone had any luck running Topodroid or SexyTopo on Windows (in a 
+> VM presumably)?
+>
+> Seems like it should be possible, but I just haven’t managed to crack 
+> it yet.
+>
+> I’m wanting to manage the transition from field notes to Therion all 
+> on the same device.  As I usually do with PocketTopo, having the cave 
+> open in both applications (Therion and PocketTopo).  It helps keep me 
+> oriented while drawing/editing in Therion.  And I don’t always have a 
+> suitable Android device on hand when using Therion.
+>
+> Bruce
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+David Cooke
+Axbridge, Somerset, England. dave at david-cooke.me.uk
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200709/f0592ee3/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul  9 15:13:03 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 9 Jul 2020 14:13:03 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+Message-ID: <cc33f596-935f-018f-4c0b-06b19b91425e@ntlworld.com>
+
+On 09/07/2020 13:43, David Cooke via Therion wrote:
+> I've had SexyTopo successfully running in Android Studio, the
+> development environment, on a PC.
+
+And I have had it running on BlueStacks (another Android emulator). Also
+seems to work OK there. Not tried to connect to anything via BlueTooth,
+but presumably you won't need to.
+
+Don't know how to transfer the SexyTopo data files to it from your
+device though, apart from laboriously sharing them via something like
+pcloud or dropbox. It doesn't let you connect to the PC via a virtual
+USB for sharing files...
+
+I suspect that is a lot easier with Android Studio.
+
+
+From bruce at tomo.co.nz  Thu Jul  9 22:11:56 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 10 Jul 2020 08:11:56 +1200
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+Message-ID: <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+
+So this?
+
+https://developer.android.com/studio/run/emulator
+
+Looks complicated for a non-developer.  Will give it a go.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of David Cooke via
+Therion
+Sent: Friday, 10 July 2020 00:43
+To: therion at speleo.sk
+Cc: David Cooke <dave at david-cooke.me.uk>
+Subject: Re: [Therion] Android cave software on Windows
+
+ 
+
+I've had SexyTopo successfully running in Android Studio, the development
+environment, on a PC. 
+
+It's not super fast but works.
+
+No extra VM necessary.
+
+Cookie
+
+ 
+
+On 09/07/2020 11:51, Bruce Mutton wrote:
+
+Has anyone had any luck running Topodroid or SexyTopo on Windows (in a VM
+presumably)?
+
+Seems like it should be possible, but I just haven't managed to crack it
+yet.
+
+ 
+
+I'm wanting to manage the transition from field notes to Therion all on the
+same device.  As I usually do with PocketTopo, having the cave open in both
+applications (Therion and PocketTopo).  It helps keep me oriented while
+drawing/editing in Therion.  And I don't always have a suitable Android
+device on hand when using Therion.
+
+Bruce
+
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-- 
+David Cooke
+Axbridge, Somerset, England. dave at david-cooke.me.uk
+<mailto:dave at david-cooke.me.uk> 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200710/c9a2a398/attachment.htm>
+
+From dave at david-cooke.me.uk  Thu Jul  9 22:33:51 2020
+From: dave at david-cooke.me.uk (David Cooke)
+Date: Thu, 9 Jul 2020 21:33:51 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+ <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+Message-ID: <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+
+Hi Bruce,
+
+Yes, that's the one.
+
+I think you have to install the whole Studio to get the emulator which 
+means there are a daunting number of options, 99% of which you don't 
+need. The instructions on the page you linked should get you there.
+
+Cookie
+
+
+On 09/07/2020 21:11, Bruce Mutton wrote:
+>
+> So this?
+>
+> https://developer.android.com/studio/run/emulator
+>
+> Looks complicated for a non-developer. Will give it a go.
+>
+> Bruce
+>
+> *From:*Therion <therion-bounces at speleo.sk> *On Behalf Of *David Cooke 
+> via Therion
+> *Sent:* Friday, 10 July 2020 00:43
+> *To:* therion at speleo.sk
+> *Cc:* David Cooke <dave at david-cooke.me.uk>
+> *Subject:* Re: [Therion] Android cave software on Windows
+>
+> I've had SexyTopo successfully running in Android Studio, the 
+> development environment, on a PC.
+>
+> It's not super fast but works.
+>
+> No extra VM necessary.
+>
+> Cookie
+>
+> On 09/07/2020 11:51, Bruce Mutton wrote:
+>
+>     Has anyone had any luck running Topodroid or SexyTopo on Windows
+>     (in a VM presumably)?
+>
+>     Seems like it should be possible, but I just haven’t managed to
+>     crack it yet.
+>
+>     I’m wanting to manage the transition from field notes to Therion
+>     all on the same device.  As I usually do with PocketTopo, having
+>     the cave open in both applications (Therion and PocketTopo).  It
+>     helps keep me oriented while drawing/editing in Therion.  And I
+>     don’t always have a suitable Android device on hand when using
+>     Therion.
+>
+>     Bruce
+>
+>
+>
+>     _______________________________________________
+>
+>     Therion mailing list
+>
+>     Therion at speleo.sk  <mailto:Therion at speleo.sk>
+>
+>     https://mailman.speleo.sk/listinfo/therion
+>
+> -- 
+> David Cooke
+> Axbridge, Somerset, England.dave at david-cooke.me.uk  <mailto:dave at david-cooke.me.uk>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+David Cooke
+Axbridge, Somerset, England. dave at david-cooke.me.uk
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200709/bb33e4db/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul  9 22:42:14 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 9 Jul 2020 21:42:14 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+ <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+ <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+Message-ID: <97797f64-c5e3-e6f7-139c-cdb93076e2a7@ntlworld.com>
+
+> I think you have to install the whole Studio to get the emulator which
+> means there are a daunting number of options, 99% of which you don't
+> need.
+
+This is why I use BlueStacks, since it is just intended to run apps, not
+help developers. Sadly without USB connectivity (unless I missed
+something), it is a little limited, and it does need you to jump through
+a hoop to get your files on it.
+
+But hey, pCloud is easy enough. Just a shame there is no "copy this
+folder from one phone to another".
+
+
+From dave at david-cooke.me.uk  Thu Jul  9 22:54:47 2020
+From: dave at david-cooke.me.uk (David Cooke)
+Date: Thu, 9 Jul 2020 21:54:47 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <97797f64-c5e3-e6f7-139c-cdb93076e2a7@ntlworld.com>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+ <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+ <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+ <97797f64-c5e3-e6f7-139c-cdb93076e2a7@ntlworld.com>
+Message-ID: <b0eb2079-c9b8-2a67-4d4d-f7b807931453@david-cooke.me.uk>
+
+I've not used it but the BlueStacks Media Manager might solve that problem.
+
+See 
+https://support.bluestacks.com/hc/en-us/articles/360021374972-Introducing-the-Media-Manager-on-BlueStacks-4
+
+Cookie
+
+
+On 09/07/2020 21:42, Tarquin Wilton-Jones via Therion wrote:
+>> I think you have to install the whole Studio to get the emulator which
+>> means there are a daunting number of options, 99% of which you don't
+>> need.
+> This is why I use BlueStacks, since it is just intended to run apps, not
+> help developers. Sadly without USB connectivity (unless I missed
+> something), it is a little limited, and it does need you to jump through
+> a hoop to get your files on it.
+>
+> But hey, pCloud is easy enough. Just a shame there is no "copy this
+> folder from one phone to another".
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+David Cooke
+Axbridge, Somerset, England. dave at david-cooke.me.uk
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200709/0f38fbab/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul  9 23:46:12 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 9 Jul 2020 22:46:12 +0100
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <b0eb2079-c9b8-2a67-4d4d-f7b807931453@david-cooke.me.uk>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+ <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+ <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+ <97797f64-c5e3-e6f7-139c-cdb93076e2a7@ntlworld.com>
+ <b0eb2079-c9b8-2a67-4d4d-f7b807931453@david-cooke.me.uk>
+Message-ID: <1ef3bf3b-caea-a2a6-98e6-beadf2c444ac@ntlworld.com>
+
+> I've not used it but the BlueStacks Media Manager might solve that problem.
+> 
+> See
+> https://support.bluestacks.com/hc/en-us/articles/360021374972-Introducing-the-Media-Manager-on-BlueStacks-4
+
+Yay!
+
+So...
+
+BlueStacks 4 (not available on version 3).
+Start it, log in to Play Store.
+"Home" tab - Library - Google Play Store, install SexyTopo.
+"Home" tab - Library - System apps - Media Manager.
+Import From Windows, select all the files in a SexyTopo data folder
+(whatever you imported into Windows from your Android device
+Documents\SexyTopo\Surveys\somesurvey).
+Imported files. Tap and hold on the first file to select it. Tap on the
+next one etc. until all are selected.
+Click the Save icon.
+Save it to Internal shared storage\Documents\SexyTopo\Surveys\somesurvey
+(make sure you name the folder correctly or it won't work).
+You can now access your survey from the SexyTopo app.
+
+Hope this is useful to you Bruce.
+
+I am guessing the same approach probably works for TopoDroid, but I do
+not use it, so have not tested it.
+
+
+From bruce at tomo.co.nz  Fri Jul 10 12:43:22 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 10 Jul 2020 22:43:22 +1200
+Subject: [Therion] Android cave software on Windows
+In-Reply-To: <1ef3bf3b-caea-a2a6-98e6-beadf2c444ac@ntlworld.com>
+References: <000001d655de$fbdc5570$f3950050$@tomo.co.nz>
+ <c2e69299-e6ea-af3a-c84a-c8e2612311e6@david-cooke.me.uk>
+ <000001d6562d$34262340$9c7269c0$@tomo.co.nz>
+ <1fac9fab-63ad-852e-2afd-79fa431319b0@david-cooke.me.uk>
+ <97797f64-c5e3-e6f7-139c-cdb93076e2a7@ntlworld.com>
+ <b0eb2079-c9b8-2a67-4d4d-f7b807931453@david-cooke.me.uk>
+ <1ef3bf3b-caea-a2a6-98e6-beadf2c444ac@ntlworld.com>
+Message-ID: <000401d656a6$f0a42f20$d1ec8d60$@tomo.co.nz>
+
+Thanks Tarquin and Cookie, just the help I needed.
+Android Studio came to a stop when I ran into a failed HAXM installation.
+Before I could be bothered trying to unpick that I tried BlueStacks 4, and surprise surprise it was quite straight forward, once I got over 'in your face' gaming front it puts up.
+
+SexyTopo looks like it works and Media Manager looks like it will too.
+I like the way I get a SexyTopo shortcut that starts directly from my Windows 10 taskbar.
+
+Tomorrow to try some real data from a hodge podge of SexyTopo files I've just inherited.
+
+Bruce
+
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Friday, 10 July 2020 09:46
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Android cave software on Windows
+
+> I've not used it but the BlueStacks Media Manager might solve that problem.
+> 
+> See
+> https://support.bluestacks.com/hc/en-us/articles/360021374972-Introduc
+> ing-the-Media-Manager-on-BlueStacks-4
+
+Yay!
+
+So...
+
+BlueStacks 4 (not available on version 3).
+Start it, log in to Play Store.
+"Home" tab - Library - Google Play Store, install SexyTopo.
+"Home" tab - Library - System apps - Media Manager.
+Import From Windows, select all the files in a SexyTopo data folder (whatever you imported into Windows from your Android device Documents\SexyTopo\Surveys\somesurvey).
+Imported files. Tap and hold on the first file to select it. Tap on the next one etc. until all are selected.
+Click the Save icon.
+Save it to Internal shared storage\Documents\SexyTopo\Surveys\somesurvey
+(make sure you name the folder correctly or it won't work).
+You can now access your survey from the SexyTopo app.
+
+Hope this is useful to you Bruce.
+
+I am guessing the same approach probably works for TopoDroid, but I do not use it, so have not tested it.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Sat Jul 11 00:47:36 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 11 Jul 2020 10:47:36 +1200
+Subject: [Therion] BlueStacks 4 to run Android Cave Survey Apps
+Message-ID: <000001d6570c$1dd3c450$597b4cf0$@tomo.co.nz>
+
+At the risk of digressing from direct relevance to Therion...
+
+And of exposing my ignorance and incompetence…
+
+ 
+
+Looks like SexyTopo works fine in Windows 10 in BlueStacks, subject to the proviso that Bluetooth is not accessible.
+
+ 
+
+And files in Windows ThisPC Documents and Pictures and \ProgramData\BlueStacks\Engine\UserData map automatically and directly to
+
+BlueStacks sdcard/windows/Documents, Pictures and BstSharedFolder
+
+ 
+
+Not quite as documented, but very nice and seamless.  I suspect it depends on the particular setup you choose - I accepted the default of Samsung S8+.
+
+ 
+
+But I have not made complete friends with the BlueStacks Media Manager yet.
+
+I cannot delete unwanted folders (can only delete files), although SexyTopo provides a survey deletion function, so that is an acceptable workaround wher
+
+Using the Import from Windows script I find I can only import files.  It will not import folders or file structures.  Found some info in a general search that suggests that BlueStacks Media Manager cannot generally select folders.
+
+ 
+
+Following Tarquin’s guidance below, I get tripped up at the lines marked **.
+
+The screenshot below shows what I see after importing from windows a set of files and then selecting them.
+
+I would like to now copy them or preferably move them to sdcard/Documents/SexyTopo/Surveys/…
+
+But all the Media Manager presents me with is an option to Export to Windows (from whence they were just imported!), to delete them or select all.
+
+
+
+(These ‘Imported Files’ happen to be stored in Explore sdcard/DCIM/SharedFolder by the way, but accessing from there also does not allow the files to be moved)
+
+So I’m stuck, I cannot move files to a location that SexyTopo can access.
+
+ 
+
+How to copy/paste/move folders and files within BlueStacks?
+
+How to delete folders within BlueStacks?
+
+ 
+
+Seems like basic functionality, but only found two questions on this with a general search, both of which unanswered.
+
+The BlueStacks help and the many search other results all seem to skirt around these particular questions.
+
+It really feels like I must be missing something very obvious.
+
+ 
+
+Do I need to install a third-party file manager?
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+
+...
+
+ 
+
+BlueStacks 4 (not available on version 3).
+
+Start it, log in to Play Store.
+
+"Home" tab - Library - Google Play Store, install SexyTopo.
+
+"Home" tab - Library - System apps - Media Manager.
+
+Import From Windows, select all the files in a SexyTopo data folder (whatever you imported into Windows from your Android device Documents\SexyTopo\Surveys\somesurvey).
+
+Imported files. Tap and hold on the first file to select it. Tap on the next one etc. until all are selected.
+
+** Click the Save icon.
+
+** Save it to Internal shared storage\Documents\SexyTopo\Surveys\somesurvey
+
+(make sure you name the folder correctly or it won't work).
+
+You can now access your survey from the SexyTopo app.
+
+ 
+
+Hope this is useful to you Bruce.
+
+ 
+
+I am guessing the same approach probably works for TopoDroid, but I do not use it, so have not tested it.
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200711/6687d545/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 41115 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200711/6687d545/attachment.jpg>
+
+From tarquin.wilton-jones at ntlworld.com  Sat Jul 11 20:46:07 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 11 Jul 2020 19:46:07 +0100
+Subject: [Therion] BlueStacks 4 to run Android Cave Survey Apps
+In-Reply-To: <000001d6570c$1dd3c450$597b4cf0$@tomo.co.nz>
+References: <000001d6570c$1dd3c450$597b4cf0$@tomo.co.nz>
+Message-ID: <4601d46d-1c13-19f4-27d9-211c67555b78@ntlworld.com>
+
+> But I have not made complete friends with the BlueStacks Media Manager yet.
+
+It seems like a functionally poor file manager. The only bonus is that
+it knows how to "import" into a virtual storage area, or see limited
+parts of your Windows disk (the "Windows" folder is empty when using
+other file manager apps). Since you said that imported files seem to be
+stored in "sdcard/DCIM/SharedFolder", you can also use any other file
+manager to get at them.
+
+> But all the Media Manager presents me with is an option to Export to
+> Windows (from whence they were just imported!), to delete them or select
+> all.
+
+See what I attached. I also think that when I first tried it ,that save
+icon wasn't there. Then I tried importing an image file (.png) and
+clicked on it to view it. Then I noticed a save icon in the photo
+viewer. Then I went back to look at "imported" and it had a save icon,
+and I felt like maybe I had been blind the first time. But maybe it
+wasn't there the first time...
+
+It's there permanently now, even after I deleted files from it.
+
+> How to copy/paste/move folders and files within BlueStacks?
+
+Files only, I think.
+But once you have imported or "saved" them onto the Android disk, you
+can move and delete folders with any other file manager app (Total
+Commander, for example, one of the most functionally complete, but also
+a little complex).
+
+> How to delete folders within BlueStacks?
+
+Total commander or another file manager app.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: mediasave.png
+Type: image/png
+Size: 94233 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200711/e343f6b3/attachment.png>
+
+From bruce at tomo.co.nz  Mon Jul 13 05:14:15 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 13 Jul 2020 15:14:15 +1200
+Subject: [Therion] BlueStacks 4 to run Android Cave Survey Apps
+In-Reply-To: <4601d46d-1c13-19f4-27d9-211c67555b78@ntlworld.com>
+References: <000001d6570c$1dd3c450$597b4cf0$@tomo.co.nz>
+ <4601d46d-1c13-19f4-27d9-211c67555b78@ntlworld.com>
+Message-ID: <001a01d658c3$b2b239e0$1816ada0$@tomo.co.nz>
+
+Thanks Tarquin
+The Android Windows space seems to involve soo much pain when it comes to managing files, and even more so when using a virtual Android device (on BlueStacks).
+I have reverted to using a physical Android device connected to Windows via USB.  Bit of a pain, but at least Windows Explorer can reliably see and move and delete folders and files.
+The only downside is that I cannot text edit json files on the device directly from Windows, but I can copy them back and forth, so it works out in the end.
+Bruce
+
+-----Original Message-----
+
+>> But I have not made complete friends with the BlueStacks Media Manager yet.
+>It seems like a functionally poor file manager. The only bonus is that it knows how to "import" into a virtual storage area, or see limited parts of your Windows disk (the "Windows" folder is empty when using other file manager apps). Since you said that imported files seem to be stored in "sdcard/DCIM/SharedFolder", you can also use any other file manager to get at them.
+
+Total Command, Media Manager and Windows sometimes report the same folder contents in the various shared folders and in folders inaccessible to windows, but more often they do not.  It is completely fickle (which pretty much sums up my entire experience with Android file management).  Total Command does not entirely replace the BlueStacks Media Manager it seems, as it cannot see the same folder mappings (could be my ignorance - too me a while to decipher Total Command) so I end up having to use both for different steps the folder transfer process.
+Have been careful to 'reload'/'refresh' folders and to leave a minute or so to allow for any lag in the system.  To little effect.
+
+>> But all the Media Manager presents me with is an option to Export to 
+>> Windows (from whence they were just imported!), to delete them or 
+>> select all.
+>See what I attached. I also think that when I first tried it ,that save icon wasn't there. Then I tried importing an image file (.png) and clicked on it to view it. Then I noticed a save icon in the photo viewer. Then I went back to look at "imported" and it had a save icon, and I felt like maybe I had been blind the first time. But maybe it wasn't there the first time...  It's there permanently now, even after I deleted files from it.
+
+Well I tried what you suggested, restarting BlueStacks and Windows a number of times over a number of sessions and still no 'Save Icon'.  Then this morning I thought I'd have a look, and viola a 'Save Icon', and it does work, but the general unreliability of the visibility and reporting between the two Android file managers and Windows means that I am not really any further ahead.
+
+>> How to copy/paste/move folders and files within BlueStacks?
+>Files only, I think.
+>But once you have imported or "saved" them onto the Android disk, you can move and delete folders with any other file manager app (Total Commander, for example, one of the most functionally complete, but also a little complex).
+
+Works sometimes, but soo inconsistent and unreliable.
+
+END
+
+
+
+
+
+From bruce at tomo.co.nz  Tue Jul 14 11:33:54 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 14 Jul 2020 21:33:54 +1200
+Subject: [Therion] BlueStacks 4 to run Android Cave Survey Apps
+Message-ID: <000501d659c1$e60efb30$b22cf190$@tomo.co.nz>
+
+>> But all the Media Manager presents me with is an option to Export to 
+
+>> Windows (from whence they were just imported!), to delete them or 
+
+>> select all.
+
+>See what I attached. I also think that when I first tried it ,that save icon wasn't there. Then I tried importing an image file (.png) and clicked on it to view it. Then I noticed a save icon in the photo viewer. Then I went back to look at "imported" and it had a save icon, and I felt like maybe I had been blind the first time. But maybe it wasn't there the first time...  It's there permanently now, even after I deleted files from it.
+
+ 
+
+
+
+ 
+
+OK, the save icon Is not really a save icon.  It is the Total Commander icon.
+
+I installed Solid Explorer, and straight afterwards the Solid Explorer icon turns up!
+
+Seems that a third party-file manager is required to create folders and move files around within the BlueStacks virtual Android device.
+
+BlueStacks Media Manager only transfers files in or out, or deletes them.
+
+ 
+
+So in the BlueStacks Media Manager snip above, the options from the left of the image above are:
+
+- Export to any Windows folder using a simple dialog box [ie Transfer SexyTopo files to your Windows based project folder]
+
+- Use Total Commander third-party file manager to save to a different Android folder [ie Move SexyTopo files from a shared folder to Documents/SexyTopo]
+
+- Use Solid Explorer third-party file manager to save to a different Android folder [same as for Total Commander]
+
+- Delete the files
+
+ 
+
+So possible workflows are:
+
+Files from Windows based project folders to BlueStacks virtual Android device SexyTopo folders
+
+1.	EITHER Copy (Windows) folders/files from project folders to one of the shared BlueStacks folders (C:/Users/<User>/Documents, Documents or /ProgramData/BlueStacks/Engine/UserData/SharedFolder )
+2.	OR Use BlueStacks Media Manager’s ‘Import from Windows’ to select files (but not folders) and import them into ‘Imported files’ (equivalent to sdcard/DCIM)
+3.	THEN Use a third-party file manager to manually create a destination folder structure (if necessary) to match any folders you just copied (ie SexyTopo/Surveys/SurveyName) because BlueStacks Media Manager cannot copy or create folders
+4.	In BlueStacks Media Manager select the files copied in step 1 or 2, then click your third-party file manager button, and …
+5.	In your third-party file manager select the destination folder (ie SexyTopo/Surveys/SurveyName)
+
+ 
+
+Open the surveys in SexyTopo, to interrogate them while drawing with Therion, or even edit them.
+
+ 
+
+Files from BlueStacks virtual Android device SexyTopo folders to Windows based project folders
+
+1.	In BlueStacks Media Manager select the files you want to return to your Windows project, and …
+2.	With Windows Explorer manually create a destination folder structure (if necessary) to match any folders you just copied
+3.	Use BlueStacks Media Manager’s ‘Export to windows’ to select any folder (ie your Windows based project folder) 
+
+ 
+
+I found Solid Explorer much easier to understand and use than total Commander, by the way.
+
+It is still not fool proof.  Files copied back to Windows can be visible with some applications (Explorer, text editors, parts of Bazaar) and not others (other parts of Bazaar).  I presume this is just some sort of delay that would eventually sort itself out.
+
+ 
+
+If you still use PocketTopo, all you need to do is open the relevant file directly from the Windows based project folder.  Oh well, that’s progress.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200714/d88afe61/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 137153 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200714/d88afe61/attachment.png>
+
+From A.M.vanRosmalen at gmx.net  Tue Jul 14 18:28:24 2020
+From: A.M.vanRosmalen at gmx.net (Anton van Rosmalen)
+Date: Tue, 14 Jul 2020 18:28:24 +0200
+Subject: [Therion] Survey without clino
+Message-ID: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+
+Hey guys,
+
+How do I enter survey data made without a clinometer. I just thought entering data like dive data would work but apparently diving only takes place under water in Therion....
+
+It doesn't matter whether I enter fromdepth todepth data negative or positive, it doesn't matter if I add calibrate depth 0 -1 before the data.... the following line just goes down where it should be going up:
+
+
+So this:
+
+    data diving from to tape compass fromdepth todepth left right up down
+
+    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+
+Produces the same results as this:
+
+    data diving from to tape compass fromdepth todepth left right up down
+
+    calibrate depth 0 -1
+
+    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+
+And the same results as this:
+
+    data diving from to tape compass fromdepth todepth left right up down
+
+    r112    h1   7.00    10.00   0.00    -5.00   2.00   0.00   8.00   0.00
+
+Where it should be something somewhat comparable to this:
+
+    data normal from to length compass clino
+    0 1 5.53 5.5 24.5
+
+I looked at various manuals and examples, but they all assume you have a disto or some other clinometer.
+
+What extremely simple point am I too moronic to understand here?
+
+Thanks!
+
+Anton
+
+
+From wookey at wookware.org  Tue Jul 14 18:50:48 2020
+From: wookey at wookware.org (Wookey)
+Date: Tue, 14 Jul 2020 17:50:48 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+Message-ID: <20200714165048.GN1006@mail.wookware.org>
+
+On 2020-07-14 18:28 +0200, Anton van Rosmalen wrote:
+> Hey guys,
+> 
+> How do I enter survey data made without a clinometer.
+
+I'm not sure about therion, but as it uses survex the same rules usually apply.
+
+In survex you just specify that there are no clino readings, 
+
+*data normal from to tape compass
+1  2  3  160
+2  3  3  143
+3  4  3  180
+4  5  3  165
+
+or omit them with a '-' (the default 'OMIT' character)
+
+*data normal from to tape compass clino
+1  2  3  160 -
+2  3  3  143 -
+3  4  3  180 -
+4  5  3  165 -
+
+(The latter is more useful where some readings have a clino, but not all)
+
+The default vertical standard deviation used for such legs, if not
+otherwise specified "is taken to be proportional to the tape
+measurement" https://survex.com/docs/manual/datafile.htm (*data command, 'normal' description)
+
+I would assume that you can do this in therion too, but I've not checked. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200714/4bcc5cb9/attachment.sig>
+
+From ben at caver.plus.com  Tue Jul 14 18:47:53 2020
+From: ben at caver.plus.com (Ben Cooper)
+Date: Tue, 14 Jul 2020 17:47:53 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+Message-ID: <B00F5A9B-7415-4F05-9CEB-6B97A8166ABC@caver.plus.com>
+
+Hi Anton
+When I’ve had to do that in the past, I just entered “0” for the clino. It’s the same effect I think as what you are asking of Therion, ie to default clino to zero. 
+Best regards
+Ben
+
+Sent from my iPhone
+
+> On 14 Jul 2020, at 17:34, Anton van Rosmalen <A.M.vanRosmalen at gmx.net> wrote:
+> 
+> ﻿Hey guys,
+> 
+> How do I enter survey data made without a clinometer. I just thought entering data like dive data would work but apparently diving only takes place under water in Therion....
+> 
+> It doesn't matter whether I enter fromdepth todepth data negative or positive, it doesn't matter if I add calibrate depth 0 -1 before the data.... the following line just goes down where it should be going up:
+> 
+> 
+> So this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+> 
+> Produces the same results as this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    calibrate depth 0 -1
+> 
+>    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+> 
+> And the same results as this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    r112    h1   7.00    10.00   0.00    -5.00   2.00   0.00   8.00   0.00
+> 
+> Where it should be something somewhat comparable to this:
+> 
+>    data normal from to length compass clino
+>    0 1 5.53 5.5 24.5
+> 
+> I looked at various manuals and examples, but they all assume you have a disto or some other clinometer.
+> 
+> What extremely simple point am I too moronic to understand here?
+> 
+> Thanks!
+> 
+> Anton
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul 14 19:08:27 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 14 Jul 2020 18:08:27 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+Message-ID: <f0b8bc67-da92-d387-23ac-39e95a4e9043@ntlworld.com>
+
+Hi Anton,
+
+>     data normal from to length compass clino
+>     0 1 5.53 5.5 24.5
+
+If you are trying to do a survey where you just didn't bother to take
+clino readings, Survex uses "-" for the clino like this, which makes it
+use 0 as the clino:
+
+data normal from to length compass clino
+0 1 5.53 5.5 -
+
+But Therion does not understand that. You have to explicitly set the
+clino to 0:
+
+data normal from to length compass clino
+0 1 5.53 5.5 0
+
+Note that Wookey's suggestion does not work in Therion, even though
+Survex understands it (Survex treats them as clino=0):
+
+data normal from to length compass #error in Therion, it needs a clino
+0 1 5.53 5.5
+
+If, however, you are trying to do a survey where you know that the
+altitude (above a certain fixed point) is v1 metres, and the next
+station is v2 metres above the fixed point (eg. if you are tracing over
+a survey with altitude dots, or if you measured vertical descent between
+stations with a plumb line), you can use "data diving" with v1 and v2 as
+the fromdepth and todepth:
+
+data diving from to tape compass fromdepth todepth
+0 1 5.53 5.5 20 22 #that is a 2 metre rise in altitude
+1 2 50 37 22 -10 #that is a 32 metre fall in altitude
+2 3 37 100 10 -15 #that is a 25 metre fall in altitude
+
+Note that with this approach, it will get the altitude of the cave wrong
+for exported files, unless you also set a fixed point with the correct
+altitude. It uses relative altitudes, not actual altitudes. That is how
+2-3 leg still manages to be connected to station 2, even though the
+absolute altitudes make no sense.
+
+Cheers,
+
+Tarquin
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul 14 19:40:44 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 14 Jul 2020 18:40:44 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <f0b8bc67-da92-d387-23ac-39e95a4e9043@ntlworld.com>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+ <f0b8bc67-da92-d387-23ac-39e95a4e9043@ntlworld.com>
+Message-ID: <cb45eb68-5f05-e76d-ed91-5a157a6fdd6a@ntlworld.com>
+
+> data diving from to tape compass fromdepth todepth
+> 0 1 5.53 5.5 20 22 #that is a 2 metre rise in altitude
+> 1 2 50 37 22 -10 #that is a 32 metre fall in altitude
+> 2 3 37 100 10 -15 #that is a 25 metre fall in altitude
+
+Of course there is also the other very cool "cylpolar" survey (just put
+that word instead of "diving"), where you measure with a horizontal tape
+and spirit level (to keep the tape level) and plumb line. Syntax is
+identical, but the tape is held horizontally instead of diagonally.
+
+You can see the different types of survey here, in the "DATA" section:
+https://survex.com/docs/manual/datafile.htm
+
+Just be aware that this is aimed at Survex, so it uses the "*data"
+syntax, and it says you can use "-" instead of "0" for the clino if you
+took no readings. You're using Therion, so you need to use "data", and "0".
+
+You might be interested in "depthchange" for example, which allows you
+to specify a single relative depth change instead of two absolute depths.
+
+This should have the effect of flipping positive to negative in dive data:
+calibrate depth 0 -1
+
+Aside: changing the "zero error" (the first number) to a number will
+cause that any metres to be subtracted from each relative depth change.
+So positive depth changes are reduced, and *negative ones are
+increased*. I cannot see any use for that feature even in actual dive
+data, or cylpolar data, so in general it probably should be left at 0.
+Scale is the only thing that really makes sense.
+
+
+From martinsluka at me.com  Tue Jul 14 20:18:37 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Tue, 14 Jul 2020 20:18:37 +0200
+Subject: [Therion] Survey without clino
+In-Reply-To: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+Message-ID: <7EAC80E6-EFE7-45F3-9E40-59E33806161A@me.com>
+
+From Survex documentation:
+
+CYLPOLAR
+A CYLPOLAR style survey is very similar to a diving survey, except that the tape is always
+measured horizontally rather than along the slope of the leg.
+*data cypolar from to tape compass fromdepth todepth
+1 2 9.45 311 -13.3 -19.0
+*data cylpolar station depth newline tape compass
+1 -13.3
+9.45 311
+2 -19.0
+*data cylpolar from to tape compass depthchange
+1 2 9.45 311 -5.7
+
+From Therion documentation:
+
+• data <style> <readings order> ▷ set data style (normal, topofil, diving, cartesian,
+cylpolar, dimensions, nosurvey) and readings order. Reading is one of the following
+keywords: station, from, to, tape/length, [back]compass/[back]bearing, [back]clino/
+[back]gradient, depth, fromdepth, todepth, depthchange, counter, fromcount, tocount,
+northing, easting, altitude, up/ceiling4, down/floor, left, right, ignore, ignoreall.
+See Survex manual for details.
+
+Martin
+
+
+
+
+> 14. 7. 2020 v 18:28, Anton van Rosmalen <A.M.vanRosmalen at gmx.net>:
+> 
+> Hey guys,
+> 
+> How do I enter survey data made without a clinometer. I just thought entering data like dive data would work but apparently diving only takes place under water in Therion....
+> 
+> It doesn't matter whether I enter fromdepth todepth data negative or positive, it doesn't matter if I add calibrate depth 0 -1 before the data.... the following line just goes down where it should be going up:
+> 
+> 
+> So this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+> 
+> Produces the same results as this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    calibrate depth 0 -1
+> 
+>    r112    h1   7.00    10.00   0.00    5.00   2.00   0.00   8.00   0.00
+> 
+> And the same results as this:
+> 
+>    data diving from to tape compass fromdepth todepth left right up down
+> 
+>    r112    h1   7.00    10.00   0.00    -5.00   2.00   0.00   8.00   0.00
+> 
+> Where it should be something somewhat comparable to this:
+> 
+>    data normal from to length compass clino
+>    0 1 5.53 5.5 24.5
+> 
+> I looked at various manuals and examples, but they all assume you have a disto or some other clinometer.
+> 
+> What extremely simple point am I too moronic to understand here?
+> 
+> Thanks!
+> 
+> Anton
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jul 14 20:51:14 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 14 Jul 2020 19:51:14 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+Message-ID: <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+
+Hi Anton,
+
+> the following line just goes down where it should be going up:
+> 
+>     data diving from to tape compass fromdepth todepth left right up down
+
+Just realised what your confusion is. "left" "right" "up" and "down"
+have nothing to do with the station-to-station data. They are for
+passage dimensions; the distance from the station to the walls, ceiling
+and floor. You almost certainly didn't need to use those at all.
+
+You probably wanted this:
+
+data cylpolar from to tape compass depthchange
+r112    h1   7.00    10.00   8.00
+
+Note the spelling. There is a typo in the Survex docs.
+
+Tarquin
+
+
+From martinsluka at me.com  Tue Jul 14 20:59:44 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Tue, 14 Jul 2020 20:59:44 +0200
+Subject: [Therion] Survey without clino
+In-Reply-To: <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+ <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+Message-ID: <F7DFA302-7551-426E-9AE7-6CDADC41FBD2@me.com>
+
+And
+
+data dimensions station left right up down
+
+ h1   2.00   0.00   8.00   0.00
+...
+
+Martin
+
+
+> 14. 7. 2020 v 20:51, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> Hi Anton,
+> 
+>> the following line just goes down where it should be going up:
+>> 
+>>    data diving from to tape compass fromdepth todepth left right up down
+> 
+> Just realised what your confusion is. "left" "right" "up" and "down"
+> have nothing to do with the station-to-station data. They are for
+> passage dimensions; the distance from the station to the walls, ceiling
+> and floor. You almost certainly didn't need to use those at all.
+> 
+> You probably wanted this:
+> 
+> data cylpolar from to tape compass depthchange
+> r112    h1   7.00    10.00   8.00
+> 
+> Note the spelling. There is a typo in the Survex docs.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From wookey at wookware.org  Tue Jul 14 21:07:41 2020
+From: wookey at wookware.org (Wookey)
+Date: Tue, 14 Jul 2020 20:07:41 +0100
+Subject: [Therion] Survey without clino
+In-Reply-To: <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+ <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+Message-ID: <20200714190741.GO1006@mail.wookware.org>
+
+On 2020-07-14 19:51 +0100, Tarquin Wilton-Jones via Therion wrote:
+> Note the spelling. There is a typo in the Survex docs.
+
+So there is. That must have been there for years. Patch filed.
+https://trac.survex.com/attachment/ticket/117/#ticket
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200714/15dd2666/attachment.sig>
+
+From A.M.vanRosmalen at gmx.net  Tue Jul 14 21:57:47 2020
+From: A.M.vanRosmalen at gmx.net (Anton van Rosmalen)
+Date: Tue, 14 Jul 2020 21:57:47 +0200
+Subject: [Therion] Survey without clino
+In-Reply-To: <F7DFA302-7551-426E-9AE7-6CDADC41FBD2@me.com>
+References: <trinity-6c53ada4-9003-45a3-adde-1f870e9826cf-1594744104084@3c-app-gmx-bs71>
+ <8c60c161-2535-d7a9-e13a-d9d7ce248c06@ntlworld.com>
+ <F7DFA302-7551-426E-9AE7-6CDADC41FBD2@me.com>
+Message-ID: <trinity-23b0c09b-aa4e-4ed6-8912-874a606570bc-1594756667332@3c-app-gmx-bap47>
+
+depthchange did the trick, you're all amazing :-)
+
+I did want to use LRUD data by the way Martin, but thanks for considering it in your answer!
+
+I also wanted to take altitude change into consideration, but after running into substantial dry passage after pushing a deep(ish) siphon, there isn't always a clinometer at hand...
+
+Thanks again!
+
+Anton
+
+> Gesendet: Dienstag, 14. Juli 2020 um 20:59 Uhr
+> Von: "Martin Sluka via Therion" <therion at speleo.sk>
+> An: "List for Therion users" <therion at speleo.sk>
+> Cc: "Martin Sluka" <martinsluka at me.com>
+> Betreff: Re: [Therion] Survey without clino
+>
+> And
+>
+> data dimensions station left right up down
+>
+>  h1   2.00   0.00   8.00   0.00
+> ...
+>
+> Martin
+>
+>
+> > 14. 7. 2020 v 20:51, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> >
+> > Hi Anton,
+> >
+> >> the following line just goes down where it should be going up:
+> >>
+> >>    data diving from to tape compass fromdepth todepth left right up down
+> >
+> > Just realised what your confusion is. "left" "right" "up" and "down"
+> > have nothing to do with the station-to-station data. They are for
+> > passage dimensions; the distance from the station to the walls, ceiling
+> > and floor. You almost certainly didn't need to use those at all.
+> >
+> > You probably wanted this:
+> >
+> > data cylpolar from to tape compass depthchange
+> > r112    h1   7.00    10.00   8.00
+> >
+> > Note the spelling. There is a typo in the Survex docs.
+> >
+> > Tarquin
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From lists at group-s.sk  Wed Jul 15 07:42:42 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 15 Jul 2020 07:42:42 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+ <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+ <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+Message-ID: <CAP35+gHoMpLHLQATcCZV1V0acoTOmnXTozmB9Eduh=gas_hfmg@mail.gmail.com>
+
+Hi, after returning from the caving trip, I would like to finish this topic.
+
+For me, adding another parameter to extend is a little bit problematic, I
+would prefer some new keyword.
+
+What do you think about:
+
+extend stop 8 7
+
+S.
+
+On Wed, 8 Jul 2020 at 11:01, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> > How about...
+> > extend ignore 8 7 [ (from) | to ]
+> > ... since we already use the from and to keywords with respect to
+> stations at each end of a survey leg?
+>
+> It's all good by me.
+>
+> The only reason I didn't suggest that keyword is that Therion is
+> stepping through my loop backwards. So a user might assume that the "to"
+> station is the "to" station from their data, when actually it is the
+> "to" station from the "extend ignore" pair.
+>
+> But as long as people think it is intuitive enough, carry on :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200715/432ad1d2/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Jul 15 09:10:13 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 15 Jul 2020 19:10:13 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAP35+gHoMpLHLQATcCZV1V0acoTOmnXTozmB9Eduh=gas_hfmg@mail.gmail.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+ <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+ <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+ <CAP35+gHoMpLHLQATcCZV1V0acoTOmnXTozmB9Eduh=gas_hfmg@mail.gmail.com>
+Message-ID: <000401d65a76$fe11d2b0$fa357810$@tomo.co.nz>
+
+Stacho
+
+Stop seems like a keyword that probably evokes the right expectations from a user.
+
+Although, what are you thinking that a description of what it does would look like?
+
+ 
+
+extend stop 8 7
+
+ 
+
+Maybe, “when extending along leg 8 7, stop at 7, backup and start extending at the next part of the centreline that needs to be extended”.
+
+Or would it exactly mimic the extend ignore 8 7 extend ignore 7 8 behaviour shown in the log in my 8 July email, which stops generating at station 8, then backs up, and eventually assigns itself a second start station to patch up an orphaned leg?
+
+ 
+
+
+
+What would be the expected behaviour of extend 8 7 if the centreline were to be extending from the right, starting at 11?
+
+ 
+
+And as a general question…
+
+Are extend statements processed in the sequence they are written, or are they all read by Therion before Therion chooses the best order to process them (as it does with survey data)?
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Wednesday, 15 July 2020 17:43
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+Hi, after returning from the caving trip, I would like to finish this topic.
+
+ 
+
+For me, adding another parameter to extend is a little bit problematic, I would prefer some new keyword.
+
+ 
+
+What do you think about:
+
+ 
+
+extend stop 8 7
+
+ 
+
+S.
+
+ 
+
+On Wed, 8 Jul 2020 at 11:01, Tarquin Wilton-Jones via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+
+> How about...
+> extend ignore 8 7 [ (from) | to ]
+> ... since we already use the from and to keywords with respect to stations at each end of a survey leg?
+
+It's all good by me.
+
+The only reason I didn't suggest that keyword is that Therion is
+stepping through my loop backwards. So a user might assume that the "to"
+station is the "to" station from their data, when actually it is the
+"to" station from the "extend ignore" pair.
+
+But as long as people think it is intuitive enough, carry on :)
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200715/37b14b63/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 12305 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200715/37b14b63/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 27703 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200715/37b14b63/attachment-0001.png>
+
+From lists at group-s.sk  Thu Jul 16 10:25:46 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 16 Jul 2020 10:25:46 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <000401d65a76$fe11d2b0$fa357810$@tomo.co.nz>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+ <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+ <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+ <CAP35+gHoMpLHLQATcCZV1V0acoTOmnXTozmB9Eduh=gas_hfmg@mail.gmail.com>
+ <000401d65a76$fe11d2b0$fa357810$@tomo.co.nz>
+Message-ID: <CAP35+gGm90P43jgEAfUiWx+YL0C2OmB7VVdQU+ikOeD=rCsOvA@mail.gmail.com>
+
+Hi Bruce,
+
+extend stop 8 7
+
+would mean, that if the algorithm reaches station 7 from station 8, it
+stops extending, turns back, and continues from some previous stations. If
+the algorithm will go the opposite way (11->7->8), extend stop 8 7 will be
+ignored.
+
+And to the general question: the b) is correct. Therion reads all extend
+statements, assign these options to oriented legs and stations, and then
+processes them.
+
+S.
+
+
+
+
+
+
+On Wed, 15 Jul 2020 at 09:10, Bruce Mutton via Therion <therion at speleo.sk>
+wrote:
+
+> Stacho
+>
+> Stop seems like a keyword that probably evokes the right expectations from
+> a user.
+>
+> Although, what are you thinking that a description of what it does would
+> look like?
+>
+>
+>
+> extend stop 8 7
+>
+>
+>
+> Maybe, “when extending along leg 8 7, stop at 7, backup and start
+> extending at the next part of the centreline that needs to be extended”.
+>
+> Or would it exactly mimic the extend ignore 8 7 extend ignore 7 8
+> behaviour shown in the log in my 8 July email, which stops generating at
+> station 8, then backs up, and eventually assigns itself a second start
+> station to patch up an orphaned leg?
+>
+>
+>
+> What would be the expected behaviour of extend 8 7 if the centreline were
+> to be extending from the right, starting at 11?
+>
+>
+>
+> And as a general question…
+>
+> Are extend statements processed in the sequence they are written, or are
+> they all read by Therion before Therion chooses the best order to process
+> them (as it does with survey data)?
+>
+>
+>
+> Bruce
+>
+>
+>
+> *From:* Therion <therion-bounces at speleo.sk> *On Behalf Of *Stacho Mudrak
+> *Sent:* Wednesday, 15 July 2020 17:43
+> *To:* List for Therion users <therion at speleo.sk>
+> *Subject:* Re: [Therion] Revisiting Breaking extended elevations on
+> specific stations
+>
+>
+>
+> Hi, after returning from the caving trip, I would like to finish this
+> topic.
+>
+>
+>
+> For me, adding another parameter to extend is a little bit problematic, I
+> would prefer some new keyword.
+>
+>
+>
+> What do you think about:
+>
+>
+>
+> extend stop 8 7
+>
+>
+>
+> S.
+>
+>
+>
+> On Wed, 8 Jul 2020 at 11:01, Tarquin Wilton-Jones via Therion <
+> therion at speleo.sk> wrote:
+>
+> > How about...
+> > extend ignore 8 7 [ (from) | to ]
+> > ... since we already use the from and to keywords with respect to
+> stations at each end of a survey leg?
+>
+> It's all good by me.
+>
+> The only reason I didn't suggest that keyword is that Therion is
+> stepping through my loop backwards. So a user might assume that the "to"
+> station is the "to" station from their data, when actually it is the
+> "to" station from the "extend ignore" pair.
+>
+> But as long as people think it is intuitive enough, carry on :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200716/3ed3d59d/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 12305 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200716/3ed3d59d/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 27703 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200716/3ed3d59d/attachment-0001.png>
+
+From marco.corvi at gmail.com  Thu Jul 16 11:11:01 2020
+From: marco.corvi at gmail.com (Marco Corvi)
+Date: Thu, 16 Jul 2020 11:11:01 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+Message-ID: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+
+last weekend i completed the survey of a cave with some parallel close pits
+connected through several "windows".
+the last survey joined the previous surveys at seven stations.
+
+needless to say, i was not able to tell therion how to break the centerline
+for the extended elevation. Eventually i removed a few "equates"
+(the loops closed quite well anyways)
+
+extended elevation requires a spanning tree of the centerline graph.
+"extend" is meant to tell therion how to break loops "removing" edges/legs.
+
+I suspect that this semantics of "extend stop" is not sufficient because if the
+user moves the data around (which is acceptable because in therion data can
+be reordered) the result could be different.
+
+I believe that we need a way the user tell therion how to construct the spanning
+tree without ambiguities. The only solution i can see is telling which
+edge to remove.
+The drawback is that each station appears only once (at one node) in
+the tree, and
+there cannot be two stations "7" as in Tarquin's problem.
+
+back to the problem i experienced:
+what about an option to "equate" to tell therion that it must not be
+used for the
+extended elevation ?
+
+marco
+
+
+From A.M.vanRosmalen at gmx.net  Thu Jul 16 21:23:58 2020
+From: A.M.vanRosmalen at gmx.net (Anton van Rosmalen)
+Date: Thu, 16 Jul 2020 21:23:58 +0200
+Subject: [Therion] Block comment
+Message-ID: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+
+Hey guys,
+
+I hope you don't mind me asking another really basic question...
+
+I know I can comment out parts of a line using #
+Now I want to be able to comment out whole blocks of text (specifically in the main portion a .thconfig or .th2 file). I can't find anything in the manual about this.
+I mean things like:
+
+/* everything
+in
+here
+is commented
+out...
+*/
+
+like is common in C++ or any other programming language.
+
+What am I missing?
+
+Thanks!
+
+Anton
+
+
+From bruce at tomo.co.nz  Thu Jul 16 21:28:04 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 17 Jul 2020 07:28:04 +1200
+Subject: [Therion] Block comment
+In-Reply-To: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+References: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+Message-ID: <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+
+Anton
+comment
+endcomment block is allowed in data and configuration files.
+Page 13 Therion Book
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Anton van Rosmalen
+Sent: Friday, 17 July 2020 07:24
+To: therion at speleo.sk
+Subject: [Therion] Block comment
+
+Hey guys,
+
+I hope you don't mind me asking another really basic question...
+
+I know I can comment out parts of a line using # Now I want to be able to comment out whole blocks of text (specifically in the main portion a .thconfig or .th2 file). I can't find anything in the manual about this.
+I mean things like:
+
+/* everything
+in
+here
+is commented
+out...
+*/
+
+like is common in C++ or any other programming language.
+
+What am I missing?
+
+Thanks!
+
+Anton
+
+
+
+
+From A.M.vanRosmalen at gmx.net  Thu Jul 16 21:36:05 2020
+From: A.M.vanRosmalen at gmx.net (Anton van Rosmalen)
+Date: Thu, 16 Jul 2020 21:36:05 +0200
+Subject: [Therion] Block comment
+In-Reply-To: <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+References: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+ <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+Message-ID: <trinity-b95eb014-dc49-46ed-9978-7fc624168b28-1594928165336@3c-app-gmx-bap54>
+
+Thank you sir!
+
+That works :-)
+
+Anton
+
+
+> Gesendet: Donnerstag, 16. Juli 2020 um 21:28 Uhr
+> Von: "Bruce Mutton" <bruce at tomo.co.nz>
+> An: "'List for Therion users'" <therion at speleo.sk>
+> Betreff: Re: [Therion] Block comment
+>
+> Anton
+> comment
+> endcomment block is allowed in data and configuration files.
+> Page 13 Therion Book
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Anton van Rosmalen
+> Sent: Friday, 17 July 2020 07:24
+> To: therion at speleo.sk
+> Subject: [Therion] Block comment
+>
+> Hey guys,
+>
+> I hope you don't mind me asking another really basic question...
+>
+> I know I can comment out parts of a line using # Now I want to be able to comment out whole blocks of text (specifically in the main portion a .thconfig or .th2 file). I can't find anything in the manual about this.
+> I mean things like:
+>
+> /* everything
+> in
+> here
+> is commented
+> out...
+> */
+>
+> like is common in C++ or any other programming language.
+>
+> What am I missing?
+>
+> Thanks!
+>
+> Anton
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From martinsluka at mac.com  Thu Jul 16 21:31:45 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 16 Jul 2020 21:31:45 +0200
+Subject: [Therion] Block comment
+In-Reply-To: <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+References: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+ <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+Message-ID: <CB1D8F56-11DE-47CA-86CB-BB027733F5A0@mac.com>
+
+You may do it only in survey - endsurvey as comment - endcomment. 
+
+There is no similar command in  .th2 or .thconfig file. 
+
+Martin
+
+Odesláno z iPhonu
+
+16. 7. 2020 v 21:28, Bruce Mutton <bruce at tomo.co.nz>:
+
+> Anton
+> comment
+> endcomment block is allowed in data and configuration files.
+> Page 13 Therion Book
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Anton van Rosmalen
+> Sent: Friday, 17 July 2020 07:24
+> To: therion at speleo.sk
+> Subject: [Therion] Block comment
+> 
+> Hey guys,
+> 
+> I hope you don't mind me asking another really basic question...
+> 
+> I know I can comment out parts of a line using # Now I want to be able to comment out whole blocks of text (specifically in the main portion a .thconfig or .th2 file). I can't find anything in the manual about this.
+> I mean things like:
+> 
+> /* everything
+> in
+> here
+> is commented
+> out...
+> */
+> 
+> like is common in C++ or any other programming language.
+> 
+> What am I missing?
+> 
+> Thanks!
+> 
+> Anton
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From A.M.vanRosmalen at gmx.net  Thu Jul 16 21:54:48 2020
+From: A.M.vanRosmalen at gmx.net (Anton van Rosmalen)
+Date: Thu, 16 Jul 2020 21:54:48 +0200
+Subject: [Therion] Block comment
+In-Reply-To: <CB1D8F56-11DE-47CA-86CB-BB027733F5A0@mac.com>
+References: <trinity-152547df-60b5-42be-89d7-c30909d5c212-1594927438795@3c-app-gmx-bap54>
+ <000f01d65ba7$3d003c60$b700b520$@tomo.co.nz>
+ <CB1D8F56-11DE-47CA-86CB-BB027733F5A0@mac.com>
+Message-ID: <trinity-6ee6b1b4-741a-4f52-9ba9-a751ed41280b-1594929288267@3c-app-gmx-bap54>
+
+It actually works in a .th2 file :-)
+
+> Gesendet: Donnerstag, 16. Juli 2020 um 21:31 Uhr
+> Von: "Martin Sluka via Therion" <therion at speleo.sk>
+> An: "List for Therion users" <therion at speleo.sk>
+> Cc: "Martin Sluka" <martinsluka at mac.com>
+> Betreff: Re: [Therion] Block comment
+>
+> You may do it only in survey - endsurvey as comment - endcomment. 
+> 
+> There is no similar command in  .th2 or .thconfig file. 
+> 
+> Martin
+> 
+> Odesláno z iPhonu
+> 
+> 16. 7. 2020 v 21:28, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> > Anton
+> > comment
+> > endcomment block is allowed in data and configuration files.
+> > Page 13 Therion Book
+> > 
+> > -----Original Message-----
+> > From: Therion <therion-bounces at speleo.sk> On Behalf Of Anton van Rosmalen
+> > Sent: Friday, 17 July 2020 07:24
+> > To: therion at speleo.sk
+> > Subject: [Therion] Block comment
+> > 
+> > Hey guys,
+> > 
+> > I hope you don't mind me asking another really basic question...
+> > 
+> > I know I can comment out parts of a line using # Now I want to be able to comment out whole blocks of text (specifically in the main portion a .thconfig or .th2 file). I can't find anything in the manual about this.
+> > I mean things like:
+> > 
+> > /* everything
+> > in
+> > here
+> > is commented
+> > out...
+> > */
+> > 
+> > like is common in C++ or any other programming language.
+> > 
+> > What am I missing?
+> > 
+> > Thanks!
+> > 
+> > Anton
+> > 
+> > 
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+From bruce at tomo.co.nz  Thu Jul 16 22:09:09 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 17 Jul 2020 08:09:09 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+References: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+Message-ID: <001601d65bac$fa773ff0$ef65bfd0$@tomo.co.nz>
+
+`> needless to say, i was not able to tell therion how to break the centerline for the extended elevation. Eventually i removed a few "equates"
+>(the loops closed quite well anyways)
+
+> what about an option to "equate" to tell therion that it must not be used for the extended elevation ?
+>marco
+
+Thanks Marco
+Something important I had not considered.  I wonder what it does to tarquin's example.
+Of course, there are two types of equate, although Therion rightly does not distinguish.  It was only important for very old software about 30 years ago.
+
+The first type of equate, is that which is necessary to join one survey to the next.  Without this, you only have individual surveys that are not connected in any way.
+It would make no sense for Therion's extend to ignore these.
+
+The second type of equate, is the second, third etc to a particular survey, which cause the two centrelines to form loops.
+
+Ah, and there is possibly a third distinction.  Those defined explicitly with 'equate 1 at survey2 43 at survey1' and those that just happen to traverse the same station more than once within a particular survey trip.
+
+I imagine you mean that a proposed 'extend ignore-equates' would be telling Therion to honour only those equates necessary to join the extended survey network, and ignore all other equates?
+
+I guess 'extend ignore-equates' could honour namespaces, and be started at particular stations/legs and stopped at particular stations legs?
+Maybe...
+extend [equates (default) | ignore-equates ] [ [station1] [[station2]] ]
+
+This could be used where the extended network is defined 'in-line' with the survey data, and 'in blocks' separated from the survey data.
+
+Bruce
+
+
+
+From bruce at tomo.co.nz  Thu Jul 16 22:09:09 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 17 Jul 2020 08:09:09 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAP35+gGm90P43jgEAfUiWx+YL0C2OmB7VVdQU+ikOeD=rCsOvA@mail.gmail.com>
+References: <8292ba82-ecc3-1ca8-a9e5-36459d20809a@ntlworld.com>
+ <000701d6543c$e73eecc0$b5bcc640$@tomo.co.nz>
+ <001201d6543f$ca8895b0$5f99c110$@tomo.co.nz>
+ <9528d39d-519f-252d-4c05-878d11bede29@ntlworld.com>
+ <CAP35+gFNvKHU9LfLW-3G7Vi6HN6Sp9wOtbkFhuwNKva3M=mDsQ@mail.gmail.com>
+ <f878f81f-8934-e6dd-f2d3-ef21bd891797@ntlworld.com>
+ <001201d6549d$d004c320$700e4960$@tomo.co.nz>
+ <c639f230-12aa-9f28-22fb-79425f065948@ntlworld.com>
+ <002201d65504$a4fbbdc0$eef33940$@tomo.co.nz>
+ <2e0fc439-63f5-b32a-57d1-d53f11448b2c@ntlworld.com>
+ <CAP35+gHoMpLHLQATcCZV1V0acoTOmnXTozmB9Eduh=gas_hfmg@mail.gmail.com>
+ <000401d65a76$fe11d2b0$fa357810$@tomo.co.nz>
+ <CAP35+gGm90P43jgEAfUiWx+YL0C2OmB7VVdQU+ikOeD=rCsOvA@mail.gmail.com>
+Message-ID: <001001d65bac$fa466bf0$eed343d0$@tomo.co.nz>
+
+Stacho
+
+Could there be an ‘extend stop 7’, whereby the algorithm stops extending regardless of the direction and branch from which station 7 is traversed?
+
+In the diagram below it seems like station 7 could conceptually be encountered from station 6, 8 or 11.
+
+Would the ‘stop’ be invoked every time 7 is encountered, or just the first time?
+
+Seems like ‘extend stop station’ could be problematic or unpredictable, especially in live projects where new surveys are regularly added.
+
+ 
+
+I like the idea of ‘extend stop leg’, but probably not ‘extend stop station’.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Thursday, 16 July 2020 20:26
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Revisiting Breaking extended elevations on specific stations
+
+ 
+
+Hi Bruce,
+
+ 
+
+extend stop 8 7
+
+ 
+
+would mean, that if the algorithm reaches station 7 from station 8, it stops extending, turns back, and continues from some previous stations. If the algorithm will go the opposite way (11->7->8), extend stop 8 7 will be ignored.
+
+ 
+
+And to the general question: the b) is correct. Therion reads all extend statements, assign these options to oriented legs and stations, and then processes them.
+
+ 
+
+S.
+
+ 
+
+
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200717/76b1685d/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 13584 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200717/76b1685d/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 27703 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200717/76b1685d/attachment-0001.png>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul 16 22:40:13 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 16 Jul 2020 21:40:13 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <001601d65bac$fa773ff0$ef65bfd0$@tomo.co.nz>
+References: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+ <001601d65bac$fa773ff0$ef65bfd0$@tomo.co.nz>
+Message-ID: <a526fed2-0026-ccf5-0a10-df8edf39c91c@ntlworld.com>
+
+> Something important I had not considered.  I wonder what it does to tarquin's example.
+
+I don't even begin to know how to cope with the situation where there is
+a separate branch from 7 to 12 in my example, where you want
+2-10-9-8-7-12 to be shown as one branch in the extended elevation, and
+1-2-3-4-5-6-7-11 in the other branch, with two station 7s.
+
+At that point, I think the only way to cope with it is to say:
+
+7 7a 0 0 0
+7a 8 1 2 3
+...
+7a 12 1 2 3
+extend ignore 7-7a
+
+Manipulate the data to add an extra station, allowing a break.
+
+I also don't think this discussion of "extend stop 8 7" can cope with it
+either.
+
+I sense a large spanner in the works...
+
+
+Tarquin
+
+
+From lists at group-s.sk  Thu Jul 16 23:22:37 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 16 Jul 2020 23:22:37 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAP35+gHDB0z_L7Th3E6FNYouSOVYePfncd0SpsyPYwtL4YAP7A@mail.gmail.com>
+References: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+ <001601d65bac$fa773ff0$ef65bfd0$@tomo.co.nz>
+ <a526fed2-0026-ccf5-0a10-df8edf39c91c@ntlworld.com>
+ <CAP35+gHDB0z_L7Th3E6FNYouSOVYePfncd0SpsyPYwtL4YAP7A@mail.gmail.com>
+Message-ID: <CAP35+gH=BGypmfj_gU9=e8F9sLKh6d=dHNWwhUJQJfVfZcbOkQ@mail.gmail.com>
+
+Thanks Marco and others for pointing these problems out.
+
+So I have another suggestion. Not to implement extend stop, equate, but add
+the possibility of 3 stations in extend ignore. I.e.
+
+extend ignore <s1> <s2> <s3>
+
+would mean, do not go to s3 if you came to s2 from s1. In your case
+Tarquin, specifying
+
+extend ignore 8 7 11
+extend ignore 6 7 12
+
+should save the situation. Am I still missing something?
+
+S.
+
+On Thu, 16 Jul 2020 at 23:15, Stacho Mudrak <stacho.mudrak at gmail.com> wrote:
+
+> Thanks Marco, Tarquin for pointing this out.
+>
+> So I have another suggestion. Not to implement extend stop, but add the
+> possibility of 3 stations in extend ignore.
+>
+> extend ignore <s1> <s2> <s3>
+>
+> would mean, do not go to s3 if you came to s2 from s1. In your case
+> Tarquin, specifying
+>
+> extend ignore 8 7 11
+> extend ignore 6 7 12
+>
+> should save the situation. Am I missing something?
+>
+> S.
+>
+> On Thu, 16 Jul 2020 at 22:40, Tarquin Wilton-Jones via Therion <
+> therion at speleo.sk> wrote:
+>
+>> > Something important I had not considered.  I wonder what it does to
+>> tarquin's example.
+>>
+>> I don't even begin to know how to cope with the situation where there is
+>> a separate branch from 7 to 12 in my example, where you want
+>> 2-10-9-8-7-12 to be shown as one branch in the extended elevation, and
+>> 1-2-3-4-5-6-7-11 in the other branch, with two station 7s.
+>>
+>> At that point, I think the only way to cope with it is to say:
+>>
+>> 7 7a 0 0 0
+>> 7a 8 1 2 3
+>> ...
+>> 7a 12 1 2 3
+>> extend ignore 7-7a
+>>
+>> Manipulate the data to add an extra station, allowing a break.
+>>
+>> I also don't think this discussion of "extend stop 8 7" can cope with it
+>> either.
+>>
+>> I sense a large spanner in the works...
+>>
+>>
+>> Tarquin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200716/a0e34eb5/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul 16 23:23:43 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 16 Jul 2020 22:23:43 +0100
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAP35+gHDB0z_L7Th3E6FNYouSOVYePfncd0SpsyPYwtL4YAP7A@mail.gmail.com>
+References: <CAJiQYo27KWAnmnT1Zks1zZ=H76KMPG3KMtGZSQ0CfYGw3qsMOw@mail.gmail.com>
+ <001601d65bac$fa773ff0$ef65bfd0$@tomo.co.nz>
+ <a526fed2-0026-ccf5-0a10-df8edf39c91c@ntlworld.com>
+ <CAP35+gHDB0z_L7Th3E6FNYouSOVYePfncd0SpsyPYwtL4YAP7A@mail.gmail.com>
+Message-ID: <69916f26-bf95-1801-7559-62e4293c7b81@ntlworld.com>
+
+> extend ignore 8 7 11
+> extend ignore 6 7 12
+> 
+> should save the situation. Am I missing something?
+
+This is basically what I also thought; you need to supply three stations
+to control it.
+
+I was going to suggest the opposite notation:
+extend prefer 8 7 12
+meaning "to get to 12, prefer to start from the 8-7 leg".
+
+But either preferring one triplet, or preventing the other, should work.
+So I would be just as happy with your suggestion.
+
+Either of these would also solve the "extend stop" problem at the same time.
+
+
+From marco.corvi at gmail.com  Mon Jul 20 13:25:57 2020
+From: marco.corvi at gmail.com (Marco Corvi)
+Date: Mon, 20 Jul 2020 13:25:57 +0200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+Message-ID: <CAJiQYo1Y6oUoODSb79PQyLK-0s-ROC82FB5p5Udv061yQDQKbg@mail.gmail.com>
+
+i realized i was too naive:
+the "principle" of the spanning tree is ok, but it is not enough.
+
+suppose to have five legs at a station
+  6-7
+  7-8
+ 20-7
+  7-21
+  7-45
+and some of them belongs to loop(s).
+Suppose that the user wants to have 6-7 7-8 together, and 20-7 7-21 together
+but the two pairs separated, because of the way loops get extended.
+and 7-45 attached to 6-7 7-8 at station 7.
+
+the abstract picture i came up with was to replace a crossway station, like "7"
+in the above example, with a complete graph (for 3-leg crossway this is trivial)
+
+to make the story short i think therion syntax needs a way to specify that
+6-7 7-8 and 7-45 share station "7" in the extended elevation and 20-7 7-21
+share a separate station "7".
+
+marco
+
+
+From bruce at tomo.co.nz  Wed Jul 22 11:36:54 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 22 Jul 2020 21:36:54 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <CAJiQYo1Y6oUoODSb79PQyLK-0s-ROC82FB5p5Udv061yQDQKbg@mail.gmail.com>
+References: <CAJiQYo1Y6oUoODSb79PQyLK-0s-ROC82FB5p5Udv061yQDQKbg@mail.gmail.com>
+Message-ID: <000201d6600b$a5499ce0$efdcd6a0$@tomo.co.nz>
+
+I agree that we should have the control that Marco describes below, but do not have any idea of a conceptual framework that would be compatible with the current Therion extended control.
+
+Stacho's suggestion
+>Not to implement extend stop, equate, but add the possibility of 3 stations in extend ignore. I.e.
+>extend ignore <s1> <s2> <s3>
+>would mean, do not go to s3 if you came to s2 from s1. In your case Tarquin, specifying
+>extend ignore 8 7 11
+>extend ignore 6 7 12
+>should save the situation. Am I still missing something?
+
+I think that might be a good solution to add to Therion's current extend controls.
+
+As a digression, the idea of 'ignoring' particular routes through a station (as Therion currently requires) is not only counterintuitive, but inefficient.
+Imagine the typical case of one station with two legs attached.  There are two ways available to traverse this, 1-2-3 and 3-2-1.
+For one station with three legs attached.  There are six possible ways to traverse (three in each direction).
+For one station with four legs attached. There are twelve possible ways to traverse (six in each direction).
+The pattern is, for a station with n legs attached, there are n.(n-1) ways that an extend network could theoretically travel through the station.
+Therefore, for a station with a number of survey branches attached, it becomes very inefficient to specify with certainty the way the extended network should generate.
+For the simplest branch (one station with three legs) we could in theory specify one route that must be taken, or five routes that must not be taken, if we want to be certain of the result.
+Because we must specify (with ignore) those that must not be taken, I tend to be lazy and stop specifying ignores as soon as the network behaves as I wish it to.
+The risk with this, (I imagine) is that a new survey will one day be added to the network, or there might be some other data change, which changes things sufficiently that Therion takes an unwanted route that has not been specifically 'ignored'.  Hence that which worked will suddenly no longer work, and the poor user must study what will by then be an unfamiliar network to track down the problem.
+If an intuitive and dependable conceptual means of controlling extends could be found that is not compatible with our current approach, then would it be acceptable to introduce a toggle like:
+extend-method [old-way (default) | new-way]
+This way old datasets will continue to work as before, and for current and future datasets, users could adopt what is hopefully a better means of extended control.
+
+It might be a bit of work, but worth it if it could provide easily understood and predictable control.
+Maybe TopoDroid has some lessons for what might work well? 
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Marco Corvi
+Sent: Monday, 20 July 2020 23:26
+To: therion at speleo.sk
+Subject: Re: [Therion] Revisiting Breaking extended elevations on specific stations
+
+i realized i was too naive:
+the "principle" of the spanning tree is ok, but it is not enough.
+
+suppose to have five legs at a station
+  6-7
+  7-8
+ 20-7
+  7-21
+  7-45
+and some of them belongs to loop(s).
+Suppose that the user wants to have 6-7 7-8 together, and 20-7 7-21 together but the two pairs separated, because of the way loops get extended.
+and 7-45 attached to 6-7 7-8 at station 7.
+
+the abstract picture i came up with was to replace a crossway station, like "7"
+in the above example, with a complete graph (for 3-leg crossway this is trivial)
+
+to make the story short i think therion syntax needs a way to specify that
+6-7 7-8 and 7-45 share station "7" in the extended elevation and 20-7 7-21 share a separate station "7".
+
+marco
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Thu Jul 23 11:24:05 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 23 Jul 2020 21:24:05 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <000201d6600b$a5499ce0$efdcd6a0$@tomo.co.nz>
+References: <CAJiQYo1Y6oUoODSb79PQyLK-0s-ROC82FB5p5Udv061yQDQKbg@mail.gmail.com>
+ <000201d6600b$a5499ce0$efdcd6a0$@tomo.co.nz>
+Message-ID: <000701d660d3$0506dc70$0f149550$@tomo.co.nz>
+
+Coincidentally, I'm working on an extended elevation at the moment, comprising six surveys.
+Happens to be the easiest I've ever worked on - no loops!
+But I would like to tweak the length of some of the legs/branches to make the adjacent passage relativity align better.  Sometimes extend left/vertical/right/hide is not quite enough.
+
+Nothing (or at least not much) related to breaking extended elevations, but...
+What do people think of adding a graduated response between left or right, and vertical (similar to Topodroid)?
+
+ie
+extend [left | right] [0 - 100]  # 0 to 100% of the horizontal extension of the leg, left or right
+ where 
+extend left 0 		would be the same as extend vertical, and
+extend left 100 		would be the same as extend left (ie 100% is the default behaviour we have now)
+
+Bruce
+
+
+
+From bruce at tomo.co.nz  Thu Jul 23 21:11:39 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 24 Jul 2020 07:11:39 +1200
+Subject: [Therion] Revisiting Breaking extended elevations on specific
+ stations
+In-Reply-To: <000701d660d3$0506dc70$0f149550$@tomo.co.nz>
+References: <CAJiQYo1Y6oUoODSb79PQyLK-0s-ROC82FB5p5Udv061yQDQKbg@mail.gmail.com>
+ <000201d6600b$a5499ce0$efdcd6a0$@tomo.co.nz>
+ <000701d660d3$0506dc70$0f149550$@tomo.co.nz>
+Message-ID: <000e01d66125$1968c870$4c3a5950$@tomo.co.nz>
+
+> extend [left | right] [0 - 100]  # 0 to 100% of the horizontal extension of the leg, left or right  where 
+> extend left 0 		would be the same as extend vertical, and
+> extend left 100 		would be the same as extend left (ie 100% is the default behaviour we have now)
+
+Oops, an obvious oversight.
+A new keyword would be required.
+
+How about...
+extend [left | right] [station1 station2] [-stretch 0 - 200]  # 0 to 200% of the horizontal extension of the leg, left or right  where 
+extend left <station1> <station2> -stretch 0		would be the same as extend vertical, and
+extend left <station1> <station2> -stretch 100		would be the same as extend left (ie 100% is the default behaviour we have now)
+
+Bruce
+
+
+
+From dropstone at gmx.de  Sun Jul 26 10:50:25 2020
+From: dropstone at gmx.de (Axel)
+Date: Sun, 26 Jul 2020 10:50:25 +0200
+Subject: [Therion] Extended Gridl ines longer and other font for altitude
+Message-ID: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200726/d9d7d19a/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Jul 27 03:51:11 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 27 Jul 2020 13:51:11 +1200
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+Message-ID: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+
+Another random observation on extend control.
+
+ 
+
+Extending left and right using a block of control statements (as opposed to in-line with the survey data) results in Therion extending the splays incorrectly.
+
+ 
+
+This behaviour is present regardless of whether data is imported via PocketTopo, TopParser or SexyTopo.  Examples below. 
+
+ 
+
+Below, a SexyTopo elevation surveying to the right (splays are correctly drawn)
+
+
+
+ 
+
+Below, the above SexyTopo elevation exported to Therion  (it is the same – good)
+
+
+
+ 
+
+Below, the above elevation from Therion exported left (splays are wrong)
+
+
+
+Notice how all the splays are extended in the direction that the legs are extended in.
+
+ 
+
+Another example of Therion export to pdf showing splays incorrectly extending in the direction that the legs have been extended.
+
+
+
+ 
+
+It should be more aligned to the approach that TopoDroid uses (page 19 of the user manual)
+
+ 
+
+ <https://sites.google.com/site/speleoapps/home/topodroid/user-manual> 
+
+“mid-line = centreline”
+
+“azimuth = bearing”
+
+ 
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 24128 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 47989 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 38156 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image011.png
+Type: image/png
+Size: 36379 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image015.png
+Type: image/png
+Size: 204938 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/82a605ae/attachment-0004.png>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jul 27 11:26:52 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 27 Jul 2020 10:26:52 +0100
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+Message-ID: <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+
+> Extending left and right using a block of control statements (as opposed
+> to in-line with the survey data) results in Therion extending the splays
+> incorrectly.
+
+Wait ... that's a bug?!
+I thought Therion just didn't handle splays well compared with Survex.
+
+> Notice how all the splays are extended in the direction that the legs
+> are extended in.
+
+Drives me crazy. Pretty bad behaviour, and makes all the splays useless
+for drawing extended elevations.
+
+Does this mean that there is actually a solution to this, by using
+inline extend commands?
+
+
+From m.budaj at gmail.com  Mon Jul 27 21:43:23 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 27 Jul 2020 21:43:23 +0200
+Subject: [Therion] Extended Gridl ines longer and other font for altitude
+In-Reply-To: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+References: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+Message-ID: <CALPsdSuCGNUp1QNzXyXz-7RwUqQv66_9DBBv1xVR6xzQ=q9kOQ@mail.gmail.com>
+
+Hi,
+
+you can modify the appearance of lines (using s_vgrid MetaPost macro as you
+tried) and also the alignment of the altitude labels (using \gridcoord TeX
+macro).
+
+This modification (it's simplified and wouldn't work for the plan
+projection) displays coordinates on the outer side of the imaginary map
+box, vertically centered on the elevation lines:
+
+\def\gridcoord#1#2{\hbox to0pt{%
+  \ifnum#1=3\hss\fi
+  \ifnum#1=9\hss\fi
+    \vbox to0pt{%
+      \vss
+      \kern2pt%
+      \hbox{\kern2pt#2\kern2pt}%
+      \kern2pt%
+      \vss
+    }%
+  \ifnum#1=1\hss\fi
+  \ifnum#1=7\hss\fi
+  }%
+
+Cheers
+Martin
+
+
+On Sun, Jul 26, 2020 at 10:55 AM Axel <dropstone at gmx.de> wrote:
+
+> Hi all,
+>
+> I am looking for a way to extend the gridlines in an extended elev to the
+> left and right that the alitude notations don't cover the survey.
+> If u think of the survey as a box it would be good to have the
+> altitude-notations outside this box (in fact I think this is a bug).
+>
+> I tried to change the s_vgrid definition a bit but only achieved that my
+> lines get longer and are dashed again (if xpos < -1: 0). Text won't move
+> though...
+> It also would be nice to get a non italic font for the notations. I guess
+> the key is to know where Therion actually generates the grid?
+>
+> would be greate if someone could give me a kick in the right direction
+>
+> cheers,
+> Axel Hack
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200727/84854d96/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Jul 27 22:08:23 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 28 Jul 2020 08:08:23 +1200
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+ <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+Message-ID: <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+
+Yeah, I'd call it a bug now.
+
+I think I first noticed this behaviour early in 2015, and if that was the case it would have been around version 5.3.16 (the date and version on my first decent extended elevation map).
+
+It would have been my first forays into extended elevations and I quickly switched from in-line to data blocks for extends for the reasons outlined here <https://therion.speleo.sk/wiki/extend> .
+
+Because I was already drawing completely electronic, not using pdfs or pencil sketches, I was using the xvi s exported from PocketTopo and so the Therion exports were a curiosity only.
+
+Placing the extend statements in a block was essentially an undocumented feature, and so I assumed it was my fault for stretching boundaries.
+
+And I assumed that if I placed the extends in-line, the splays would behave.  I am not sure though, as I have not carried out any explicit tests.
+
+ 
+
+I’ve really only been prompted to bring it up now because a) we’re making good progress on extend behaviour and blocks of extend statements are becoming mainstream, and b) I have inherited some survey notes for which the sketches will be best drawn in pencil over a pdf printout.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Monday, 27 July 2020 21:27
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Splays - Revisiting Breaking extended elevations
+
+ 
+
+> Extending left and right using a block of control statements (as 
+
+> opposed to in-line with the survey data) results in Therion extending 
+
+> the splays incorrectly.
+
+ 
+
+Wait ... that's a bug?!
+
+I thought Therion just didn't handle splays well compared with Survex.
+
+ 
+
+> Notice how all the splays are extended in the direction that the legs 
+
+> are extended in.
+
+ 
+
+Drives me crazy. Pretty bad behaviour, and makes all the splays useless for drawing extended elevations.
+
+ 
+
+Does this mean that there is actually a solution to this, by using inline extend commands?
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200728/5281b439/attachment.htm>
+
+From dropstone at gmx.de  Tue Jul 28 17:38:17 2020
+From: dropstone at gmx.de (Axel)
+Date: Tue, 28 Jul 2020 17:38:17 +0200
+Subject: [Therion] Extended Gridl ines longer and other font for altitude
+In-Reply-To: <CALPsdSuCGNUp1QNzXyXz-7RwUqQv66_9DBBv1xVR6xzQ=q9kOQ@mail.gmail.com>
+References: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+ <CALPsdSuCGNUp1QNzXyXz-7RwUqQv66_9DBBv1xVR6xzQ=q9kOQ@mail.gmail.com>
+Message-ID: <trinity-fb969bd0-5518-494a-b5bd-01e0c1a0dd98-1595950697012@3c-app-gmx-bs37>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200728/7a9464dd/attachment.htm>
+
+From m.budaj at gmail.com  Tue Jul 28 19:34:24 2020
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 28 Jul 2020 19:34:24 +0200
+Subject: [Therion] Extended Gridl ines longer and other font for altitude
+In-Reply-To: <trinity-fb969bd0-5518-494a-b5bd-01e0c1a0dd98-1595950697012@3c-app-gmx-bs37>
+References: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+ <CALPsdSuCGNUp1QNzXyXz-7RwUqQv66_9DBBv1xVR6xzQ=q9kOQ@mail.gmail.com>
+ <trinity-fb969bd0-5518-494a-b5bd-01e0c1a0dd98-1595950697012@3c-app-gmx-bs37>
+Message-ID: <CALPsdSs3RSXnLcQr=_XQEHuxnJ66raXe2fKKWmCOsN-eH+W-Sg@mail.gmail.com>
+
+On Tue, Jul 28, 2020 at 5:38 PM Axel <dropstone at gmx.de> wrote:
+
+> Now the only question is how to get the labels in normal font and not
+> italic...
+>
+
+Hi, the elevations are typeset in math mode to get e.g. the minus sign
+correct (it's different from both hyphen and dash). The side effect of the
+math mode in TeX is that the text is in italics, numbers are in the upright
+font. But there should be no text, just the numbers in coordinate labels.
+Could you send an example of what's in italic font?
+M.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200728/01e9e9c3/attachment.htm>
+
+From dropstone at gmx.de  Wed Jul 29 08:31:36 2020
+From: dropstone at gmx.de (Axel)
+Date: Wed, 29 Jul 2020 08:31:36 +0200
+Subject: [Therion] Extended Gridl ines longer and other font for altitude
+In-Reply-To: <CALPsdSs3RSXnLcQr=_XQEHuxnJ66raXe2fKKWmCOsN-eH+W-Sg@mail.gmail.com>
+References: <trinity-be5069bc-fe4c-4a18-9978-dc838649974c-1595753425120@3c-app-gmx-bap43>
+ <CALPsdSuCGNUp1QNzXyXz-7RwUqQv66_9DBBv1xVR6xzQ=q9kOQ@mail.gmail.com>
+ <trinity-fb969bd0-5518-494a-b5bd-01e0c1a0dd98-1595950697012@3c-app-gmx-bs37>
+ <CALPsdSs3RSXnLcQr=_XQEHuxnJ66raXe2fKKWmCOsN-eH+W-Sg@mail.gmail.com>
+Message-ID: <trinity-3d851870-395c-4e1f-8618-1467b594e795-1596004296385@3c-app-gmx-bap07>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200729/70a10561/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Jul 29 19:25:50 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 29 Jul 2020 18:25:50 +0100
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+ <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+ <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+Message-ID: <118791a8-b550-16df-67f8-fc979d17ecc9@ntlworld.com>
+
+> And I assumed that if I placed the extends in-line, the splays would
+> behave.  I am not sure though, as I have not carried out any explicit tests.
+
+Sadly not. Therion - in all cases - extends the splays in the same
+direction as the default direction from that station (or wherever you
+placed the inline extend command). Basically, the splays act like legs.
+
+This is really quite useless when you are trying to draw the passage
+shape correctly.
+
+TopoDroid, Pocket Topo and Survex all extend only the legs. They all
+keep the splays in the "same" direction (relative to the leg) as they
+were before, which makes them normally perfect for drawing extended
+elevations. They can project forwards and backwards out of the page (so
+to speak), so they end up the right distance, visually, from the station.
+
+There is always the issue when you are at a station where the extend
+direction changes from left to right or vertical, since at that point
+you don't know whether a splay should take its direction from the leg
+before or the leg after (or the "nearest" leg to it - perhaps the most
+useful answer). Survex gets this wrong sometimes, but is normally useful.
+
+Even so, that issue is just peanuts compared with how difficult it
+currently is to use Therion's exported XVI to draw your extended
+elevations. I would take an odd splay being wrong over *all* splays
+being wrong any day.
+
+Virtual awards await anyone who chooses to attack this problem.
+
+Tarquin
+
+
+From olly at survex.com  Thu Jul 30 00:56:00 2020
+From: olly at survex.com (Olly Betts)
+Date: Wed, 29 Jul 2020 23:56:00 +0100
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <118791a8-b550-16df-67f8-fc979d17ecc9@ntlworld.com>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+ <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+ <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+ <118791a8-b550-16df-67f8-fc979d17ecc9@ntlworld.com>
+Message-ID: <20200729225600.GA12026@survex.com>
+
+On Wed, Jul 29, 2020 at 06:25:50PM +0100, Tarquin Wilton-Jones via Therion wrote:
+> TopoDroid, Pocket Topo and Survex all extend only the legs. They all
+> keep the splays in the "same" direction (relative to the leg) as they
+> were before, which makes them normally perfect for drawing extended
+> elevations. They can project forwards and backwards out of the page (so
+> to speak), so they end up the right distance, visually, from the station.
+> 
+> There is always the issue when you are at a station where the extend
+> direction changes from left to right or vertical, since at that point
+> you don't know whether a splay should take its direction from the leg
+> before or the leg after (or the "nearest" leg to it - perhaps the most
+> useful answer). Survex gets this wrong sometimes, but is normally useful.
+
+Examples of where Survex it gets it wrong are definitely of interest.
+
+I added extending of splays just over 3 years ago, and the NEWS entry
+(which also explains the algorithm used) explicitly invites feedback:
+
+| + Splays are now carried over the extended survey.  The current
+|   handling is simplistic, but should do a good enough job to be more
+|   useful than discarding splays.  The splays at each station are all
+|   rotated together based on the bearing between the stations either
+|   side of the current one along the first path extended through that
+|   station.  This nicely handles dead ends and the situation at the top
+|   or bottom of a pitch, and should tend to pick an angle close to the
+|   passage orientation along a traverse.  It's weakest at junctions.
+|   Feedback (especially examples which could be handled better) most
+|   welcome.
+
+But so far the only thing I could possibly count as feedback on this
+subject is what you wrote above (which is good to hear overall, but it'd
+be helpful to have some details of where you've seen it go wrong).
+
+Cheers,
+    Olly
+
+
+From lists at group-s.sk  Thu Jul 30 12:44:44 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 30 Jul 2020 12:44:44 +0200
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <20200729225600.GA12026@survex.com>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+ <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+ <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+ <118791a8-b550-16df-67f8-fc979d17ecc9@ntlworld.com>
+ <20200729225600.GA12026@survex.com>
+Message-ID: <CAP35+gHUKxDVMkon=fFxQ6m9RshD7b_uZ1RxoCOjst3rmU5GHQ@mail.gmail.com>
+
+I have tried to fix all the extended elevation issues in the latest
+development snapshot (commit 6860f82
+<https://github.com/therion/therion/commit/6860f82e616edb5e0fc7b35120cfc68eb682897a>
+).
+
+1. splay shots should be extended relatively to survey shot with closest
+(horizontal) bearing
+
+2. there is a possibility to specify reduction ratio for extended elevation
+(0 = vertical, 100 = normal left/right) - just use "extend <number>"
+
+3. extend ignore via path of 3 points should now work -- use "extend ignore
+<s1> <s2> <s3>". I think this should allow all crazy loop configurations to
+be solved, but I am not still 100% sure.
+
+Unfortunately (but not surprisingly :/), there was a bug with the extended
+elevation algorithm. In the case there were loops present in the
+centerline, it caused some random behaviour.
+
+I have tried to fix this bug, but it required quite a deep change to the
+code. My data seems to work, but I suppose, there may be some cases when it
+still can fail. Could you please try your datasets?
+
+Thanks, S.
+
+
+On Thu, 30 Jul 2020 at 01:18, Olly Betts <olly at survex.com> wrote:
+
+> On Wed, Jul 29, 2020 at 06:25:50PM +0100, Tarquin Wilton-Jones via Therion
+> wrote:
+> > TopoDroid, Pocket Topo and Survex all extend only the legs. They all
+> > keep the splays in the "same" direction (relative to the leg) as they
+> > were before, which makes them normally perfect for drawing extended
+> > elevations. They can project forwards and backwards out of the page (so
+> > to speak), so they end up the right distance, visually, from the station.
+> >
+> > There is always the issue when you are at a station where the extend
+> > direction changes from left to right or vertical, since at that point
+> > you don't know whether a splay should take its direction from the leg
+> > before or the leg after (or the "nearest" leg to it - perhaps the most
+> > useful answer). Survex gets this wrong sometimes, but is normally useful.
+>
+> Examples of where Survex it gets it wrong are definitely of interest.
+>
+> I added extending of splays just over 3 years ago, and the NEWS entry
+> (which also explains the algorithm used) explicitly invites feedback:
+>
+> | + Splays are now carried over the extended survey.  The current
+> |   handling is simplistic, but should do a good enough job to be more
+> |   useful than discarding splays.  The splays at each station are all
+> |   rotated together based on the bearing between the stations either
+> |   side of the current one along the first path extended through that
+> |   station.  This nicely handles dead ends and the situation at the top
+> |   or bottom of a pitch, and should tend to pick an angle close to the
+> |   passage orientation along a traverse.  It's weakest at junctions.
+> |   Feedback (especially examples which could be handled better) most
+> |   welcome.
+>
+> But so far the only thing I could possibly count as feedback on this
+> subject is what you wrote above (which is good to hear overall, but it'd
+> be helpful to have some details of where you've seen it go wrong).
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200730/3b920748/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jul 30 15:49:17 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 30 Jul 2020 14:49:17 +0100
+Subject: [Therion] Splays - Revisiting Breaking extended elevations
+In-Reply-To: <CAP35+gHUKxDVMkon=fFxQ6m9RshD7b_uZ1RxoCOjst3rmU5GHQ@mail.gmail.com>
+References: <000901d663b8$6aa81160$3ff83420$@tomo.co.nz>
+ <51c0d9be-bb5f-e508-4ebd-987bf45ee098@ntlworld.com>
+ <000501d66451$b02c9a50$1085cef0$@tomo.co.nz>
+ <118791a8-b550-16df-67f8-fc979d17ecc9@ntlworld.com>
+ <20200729225600.GA12026@survex.com>
+ <CAP35+gHUKxDVMkon=fFxQ6m9RshD7b_uZ1RxoCOjst3rmU5GHQ@mail.gmail.com>
+Message-ID: <98646969-8234-4746-fe45-ebf068832abf@ntlworld.com>
+
+> 1. splay shots should be extended relatively to survey shot with closest
+> (horizontal) bearing
+
+Holy _____, somebody buy this man a beer!
+
+Seriously, if I ever meet you in person, I owe you one. This is going to
+make our surveys so much easier to draw.
+
+You will also have Gareth's gratitude once he gets off his bike and
+realises what you have done :)
+
+> extend ignore <s1> <s2> <s3>
+
+Glad you went with your own suggestion in the end. Fewer keywords to
+learn, and the controls are simple enough, and very intuitive. AFAICT,
+it does allow you to offer all of the controls needed even for complex
+looping (bugs aside).
+
+> Could you please try your datasets?
+
+I do not yet have enough loops in my system to test it in anger, but I
+will let you know once I get a more complex extended elevation to draw up.
+
+(In surveys where I do have enough loops, I use projected elevation
+instead.)
+
+Hopefully Marco can use something more convoluted for testing. An oxbow
+maze should be perfect.
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Jul 31 08:08:28 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 31 Jul 2020 07:08:28 +0100
+Subject: [Therion] Selecting parts of a survey with the "select" statement
+Message-ID: <1c8ae231-ccf3-5817-dc35-273def7cbc28@ntlworld.com>
+
+Hi folks (and particularly Stacho),
+
+Just trying to revive an idea we had last year, which solves a
+significant problem; drawing cross sections through multiple
+passages/stations. The idea is to be able to select a subset of legs and
+splays from a survey, for export (eg. as an XVI).
+
+https://github.com/therion/therion/issues/156
+
+group foo
+2 3 2.706 351.41 -77.19
+3 - 0.440 232.38 13.38
+3 - 0.824 193.77 56.68
+3 - 0.648 149.94 47.91
+endgroup
+
+And in .thconfig:
+
+source "cave.th"
+select foo at survey1.cave
+select bar at survey1.cave
+select baz at survey2.cave
+export map -projection [elevation 180] -fmt xvi -output "sections_a.xvi"
+
+Can anyone see any better ways to do this with existing stuff, or should
+I keep trying to persuade someone to implement it?
+
+Stacho, would you be able to say if such a thing would actually be
+possible to implement?
+
+Cheers,
+
+Tarquin
+
+
+From dropstone at gmx.de  Fri Jul 31 10:29:12 2020
+From: dropstone at gmx.de (Axel)
+Date: Fri, 31 Jul 2020 10:29:12 +0200
+Subject: [Therion] context related hide with custom point
+Message-ID: <trinity-b26a736d-b4e2-45ed-8323-34f843dafc43-1596184152376@3c-app-gmx-bap09>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200731/9e40e853/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Jul 31 23:12:22 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 1 Aug 2020 09:12:22 +1200
+Subject: [Therion] context related hide with custom point
+In-Reply-To: <trinity-b26a736d-b4e2-45ed-8323-34f843dafc43-1596184152376@3c-app-gmx-bap09>
+References: <trinity-b26a736d-b4e2-45ed-8323-34f843dafc43-1596184152376@3c-app-gmx-bap09>
+Message-ID: <002f01d6677f$49f615a0$dde240e0$@tomo.co.nz>
+
+I recall years ago that I could not get context to work for some ‘-context’s.  
+
+It may or may not have been resolved. There are some forum entries here from 8 – 10 years ago…
+
+https://www.mail-archive.com/therion at speleo.sk/msg02851.html
+
+https://www.mail-archive.com/therion at speleo.sk/msg03942.html
+
+https://www.mail-archive.com/therion at speleo.sk/msg03939.html
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Axel
+Sent: Friday, 31 July 2020 20:29
+To: therion at speleo.sk
+Subject: [Therion] context related hide with custom point
+
+ 
+
+hi all,
+
+We need to show some elements (or different sizes of them) depending on language. As that could as well be geology or other stuff the lang:XX is not really appropriate (nor working).
+
+The option would be to use -context and a 'dummy' point (as context does exactly what we want).
+In a small test I defined p_u_test and initiated it in the layout. '-context point u:test' was then added to a symbol. Therion would not compile it and show 'invalid object context -- point u:test'
+Tried it with u_test and test as well as a custom line with no luck. The custom point/line is working as it should and if I use an existing point for the context and hide it, it works like expected.
+
+Am I missing something on the context-command or is it simply not working for user defined symbols (and if so could that be changed)?
+
+thanks,
+Axel
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200801/21c9f159/attachment.htm>
+

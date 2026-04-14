@@ -1,0 +1,2198 @@
+From martinsluka at mac.com  Sun Sep  1 08:09:01 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 01 Sep 2013 08:09:01 +0200
+Subject: [Therion] Surface profile in elevation maps
+In-Reply-To: <942EE1BA791C4F2BB70E094FA9C9A21D@JUICEBRAIN>
+References: <52221394.5010606@cantab.net>
+	<942EE1BA791C4F2BB70E094FA9C9A21D@JUICEBRAIN>
+Message-ID: <A6CFC799-2AE7-4052-B732-E2D9A85FF796@mac.com>
+
+You may read altitudes of points from GoogleEarth. A macro may help. Grey and white PDF you may create from dummy scrap and then crop the final PDF file. 
+
+M. S. 
+
+Odesláno z iPhonu
+
+31. 8. 2013 v 21:50, Bruce <bruce at tomo.co.nz>:
+
+> Steve
+> I'll be interested to see if anyone has managed to create a ground line as
+> you describe.  I assume it is not possible to make it a boundary for the
+> background colour.
+> 
+> I have just tried taking a 3d gps trail with 2m resolution and then
+> including it as a survey line and this can be included to give context in
+> Loch, Aven and pdf outputs.  Not sure how well it would work with extended
+> elevations though - I have only tried it with projected elevations.
+> It adds interesting context to plans and elevations, but best with a white
+> background in elevations.
+> 
+> It is quick to produce, but seems a little clunky. If anyone has a better
+> way to include gps trails in therion data I would like to learn of it.
+> 
+> Some snippets below to show what I mean.
+> Bruce
+> 
+>   centreline 
+>   cs lat-long
+>   grade BCRA3
+> 
+>   walls off # 3D model auto = only use LRUD if no scrap available # on off
+>   mark temporary   
+>   flags surface #do fixed stations inherit shot flags?
+>   # station-names 4wd01 [] # to avoid name clashes if required
+> 
+> fix    1    -42.0001724        171.9024155    572.6
+> fix    2    -42.00020492    171.9022789    574.04
+> fix    3    -42.00021414    171.9021513    574.04
+> fix    4    -42.00026879    171.9020413    575.01
+> fix    5    -42.00030752    171.901925    575.01
+> #thousands of these, they are decimal degrees and metres
+> 
+> data nosurvey from to
+> 1    2
+> 2    3
+> 3    4
+> 4    5
+> 5    6
+> 6    7
+> #thousands of these as well, a spreadsheet makes them easy to generate
+> 
+> #Then just select this survey along with your cave when processing
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From olly at survex.com  Mon Sep  2 04:07:54 2013
+From: olly at survex.com (Olly Betts)
+Date: Mon, 2 Sep 2013 03:07:54 +0100
+Subject: [Therion] samples processing failing
+In-Reply-To: <20130830164730.GW1342@stoneboat.aleph1.co.uk>
+References: <20130829040155.GN1342@stoneboat.aleph1.co.uk>
+	<20130830034306.GT1342@stoneboat.aleph1.co.uk>
+	<20130830050441.GP18306@survex.com>
+	<20130830164730.GW1342@stoneboat.aleph1.co.uk>
+Message-ID: <20130902020702.GQ18306@survex.com>
+
+On Fri, Aug 30, 2013 at 05:47:30PM +0100, Wookey wrote:
+> +++ Olly Betts [2013-08-30 06:04 +0100]:
+> > The error given by therion here would be less confusing if it at least
+> > reported the filename that img failed to open, and ideally if it also
+> > reported the reason as given by img_error().
+> 
+> Indeed. I've already patched therion to report the filename. I'll have
+> a go at getting it to report the error code too. It would indeed have
+> been much less confusing.
+> 
+> OK. so I tried this and added this code:
+>  +   img_errcode imgerr;
+> ...
+>  -    ththrow(("unable to open file"))    
+>  +    imgerr = img_error();
+>  +    ththrow(("unable to open file %s, error code: %u", this->fname, imgerr))
+> 
+> And I get 
+> ../../therion: error -- file import -- cave1.th [11] -- unable to open file
+> /home/wookey/packages/therion/therion-5.3.11/samples/survex/cave.3d, error code: 9152480
+> 
+> so clearly this error code enum isn't the simple number 0-7 I was expecting. 
+> 
+> img.c has 
+> #ifdef IMG_HOSTED
+> static enum {
+>    IMG_NONE = 0,
+>    IMG_FILENOTFOUND = /*Couldn't open data file `%s'*/24,
+>    IMG_OUTOFMEMORY  = /*Out of memory %.0s*/38,
+>    IMG_DIRECTORY    = /*Filename `%s' refers to directory*/44,
+>    IMG_CANTOPENOUT  = /*Failed to open output file `%s'*/47,
+>    IMG_BADFORMAT    = /*Bad 3d image file `%s'*/106,
+>    IMG_READERROR    = /*Error reading from file `%s'*/109,
+>    IMG_WRITEERROR   = /*Error writing to file `%s'*/110,
+>    IMG_TOONEW       = /*File `%s' has a newer format than this program can understand*/114
+> } img_errno = IMG_NONE;
+> #else
+> static img_errcode img_errno = IMG_NONE;
+> #endif
+> 
+> So I'm not sure what's going on here. Are those numbers getting
+> translated to strings, and I should call some function to do
+> that before trying to print the result? If so what function? Does this
+> machinerey only happen inside survex, not when using img.c/h
+> externally? i.e am I HOSTED or not? Is this stuff written down anywhere?
+
+You're not HOSTED.
+
+I don't understand why you're getting 9152480 though.  If I try patching
+this myself I get 8 (which is IMG_TOONEW), though that's with the latest
+img.c from survex git, so maybe it's something that's already fixed?
+
+> So, net result so far is that I don't know what error code I'm
+> actually getting.
+> 
+> > Oops, I'll restore that in the next Survex release (coming soon).
+> 
+> [offtopic: You got my debian patches from during expo I assume?]
+
+Yes, but I haven't done anything with them yet as I was busy caving at
+the time.
+
+> > > That lets it build, but now processing samples/survex/thconfig.1
+> > > causes a segfault:
+> > > ../../therion thconfig.1
+> > > therion 5.3.11
+> > > cavern - Survex 1.2.7
+> > > initialization file: /etc/therion.ini
+> > > reading ... done
+> > > configuration file: thconfig.1
+> > > reading ... done
+> > > reading source files ... done
+> > > preprocessing database ... Segmentation fault
+> > > 
+> > > Which I guess isn't very surprising.
+> > > 
+> > > So I could go back to survex 1.2.6 and build therion. That would
+> > > presumably build OK, but I supsect I'd hit problems with and v8 .3d
+> > > files in data?
+> > 
+> > You can tell cavern to output older 3d versions with --3d-version=7
+> > though older versions may not support newer features fully.
+> 
+> That info needs to go in the cavern manpage. It's not there currently.
+
+OK.  It's documented in cavern --help at least.
+
+> > > Can someone who groks C++ take a look at this and see what's needed to
+> > > make it work with survex 1.2.7, as that's out now. We'll need to fix
+> > > it at some point.
+> > 
+> > If you run the command under gdb, it should show where the segfault is
+> > happening:
+> > 
+> > gdb --args ../../therion thconfig.1
+> > 
+> > And then in gdb "run" and once it fails "bt full" should give a
+> > backtrace with local variables shown.
+> 
+> Cheers for the tutorial runes there.
+> 
+> I get the following:
+> wookey at kh:~/packages/therion/therion-5.3.11/samples/survex$ gdb --args ../../therion thconfig.1
+[...]
+> Program received signal SIGSEGV, Segmentation fault.
+> 0x00007ffff732fa59 in free () from /lib/x86_64-linux-gnu/libc.so.6
+> (gdb) bt full
+> #0  0x00007ffff732fa59 in free () from /lib/x86_64-linux-gnu/libc.so.6
+> No symbol table info available.
+> #1  0x000000000044d173 in img_close ()
+
+That narrowed it down somewhat, but lack of debug symbols isn't helping
+here.  Building it myself, I see the problem, and it's fixed in the
+latest version of img.c in survex git.
+
+> The build is now 'acceptably noisy but would benefit for a bit more tidyup.
+
+The attached patch fixes all the rest which I see with GCC 4.7.2.
+
+I'm slightly dubious about this part - the patch shouldn't change the
+current behaviour, but that's a lot of code which doesn't actually do
+anything so I wonder if it's really doing what was intended:
+
+--- therion-5.3.11/extern/poly2tri/common/shapes.cc	Thu Jan 19 21:42:59 2012
++++ therion-5.3.11/extern/poly2tri/common/shapes.cc	Mon Sep  2 13:05:42 2013
+@@ -86,11 +86,6 @@
+ Point* Triangle::OppositePoint(Triangle& t, Point& p)
+ {
+   Point *cw = t.PointCW(p);
+-  double x = cw->x;
+-  double y = cw->y;
+-  x = p.x;
+-  y = p.y;
+-  Point* ham = PointCW(*cw);
+   return PointCW(*cw);
+ }
+ 
+Cheers,
+    Olly
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-5.3.11-warning-fixes.patch
+Type: text/x-diff
+Size: 15648 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130902/c37310f1/attachment.patch>
+
+From dave at daveclucas.com  Tue Sep  3 18:39:33 2013
+From: dave at daveclucas.com (Dave Clucas)
+Date: Tue, 3 Sep 2013 17:39:33 +0100
+Subject: [Therion] Extend
+Message-ID: <F9CB382C-8EA2-4DCB-AEDB-26D7AEFD216B@daveclucas.com>
+
+I'm totally confused about the use of extend. I understand right and left reverse but the hide and ignore are puzzling me.
+
+I have a cave which has three entrances with their passages all converging at a common point. I want to show an extended elevation from only one of the entrances and ignore or hide the other two passages.
+
+I've created a simple example of what I want to do.
+
+This is what I get without any modifier. Exactly what I expected.I want to hide the passage at the top (stations 1 to 2 and 2 to 5).
+
+centreline
+  extend left
+  0 1 10 90 0
+  1 2 10 45 45
+  2 5 5 90 0
+  1 3 10 90 0
+  3 4 10 100 0
+endcentreline
+
+test 1
+
+
+
+The manual says 
+
+extend <spec> [<station> [<station>]] ◃ control how the centerline is extended. 
+
+
+ignore ◃ ignore specified station (shot), continue extended elevation with other station (shot) if possible
+
+hide ◃ do not show specified station (shot) in extended elevation 
+
+
+Presuming that (shot) would refer to the two stations 1 to 2 I tried
+
+centreline
+  extend left
+  0 1 10 90 0
+  extend [hide 1 2]
+  1 2 10 45 45
+  2 5 5 90 0
+  1 3 10 90 0
+  3 4 10 100 0
+endcentreline
+
+but got the error therion: error -- test.th [5] -- unknown extend flag -- hide 1 2
+
+I then read the manual again and tried
+
+…
+  extend hide 1 [2]
+...
+
+This time I got  
+
+test 2
+
+
+Not what I expected. The two lines at the top are shots  5 -2 and 1 - 2. I understand why 5-2 might still be there but not 1-2 and why is there no vertical element to 1-2?
+
+I tried again using ignore instead of hide and got the same as test 1.
+
+I then tried
+
+…
+  extend hide 1
+...
+
+with this result
+
+test 3
+
+
+Changing hide to ignore gives the following result.
+…
+extend ignore 1
+…
+
+test 4
+
+
+So, I have two questions.
+
+1. How do I hide or ignore the side passage
+
+2. What is the logic behind the results I get.
+
+Dave Clucas
+daveclucas.com
+mycaves.org.
+daveclucas at icloud.com
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130903/15b4bb90/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test1.jpg
+Type: image/jpg
+Size: 79807 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130903/15b4bb90/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test2.jpg
+Type: image/jpg
+Size: 79124 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130903/15b4bb90/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test3.jpg
+Type: image/jpg
+Size: 29709 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130903/15b4bb90/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test4.jpg
+Type: image/jpg
+Size: 53287 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130903/15b4bb90/attachment-0003.jpg>
+
+From bruce at tomo.co.nz  Tue Sep  3 21:16:30 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 4 Sep 2013 07:16:30 +1200
+Subject: [Therion] Extend
+In-Reply-To: <F9CB382C-8EA2-4DCB-AEDB-26D7AEFD216B@daveclucas.com>
+References: <F9CB382C-8EA2-4DCB-AEDB-26D7AEFD216B@daveclucas.com>
+Message-ID: <35221100083446CEA6934D820E5BB553@JUICEBRAIN>
+
+Hi Dave
+
+Can you repost with labeled diagrams please?
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/4545c774/attachment.htm>
+
+From dave at daveclucas.com  Wed Sep  4 21:03:16 2013
+From: dave at daveclucas.com (Dave Clucas)
+Date: Wed, 4 Sep 2013 20:03:16 +0100
+Subject: [Therion] Extend - Therion Digest, Vol 93, Issue 4
+In-Reply-To: <mailman.3.1378288802.24145.therion@speleo.sk>
+References: <mailman.3.1378288802.24145.therion@speleo.sk>
+Message-ID: <A2CE9875-5BE0-4BE1-82FD-4A638658ACC2@daveclucas.com>
+
+Here are the pics marked up
+
+
+
+
+
+
+
+
+
+On 4 Sep 2013, at 11:00, therion-request at speleo.sk wrote:
+
+> Send Therion mailing list submissions to
+> 	therion at speleo.sk
+> 
+> To subscribe or unsubscribe via the World Wide Web, visit
+> 	http://mailman.speleo.sk/mailman/listinfo/therion
+> or, via email, send a message with subject or body 'help' to
+> 	therion-request at speleo.sk
+> 
+> You can reach the person managing the list at
+> 	therion-owner at speleo.sk
+> 
+> When replying, please edit your Subject line so it is more specific
+> than "Re: Contents of Therion digest..."
+> 
+> 
+> Today's Topics:
+> 
+>   1. Re: Extend (Bruce)
+> 
+> 
+> ----------------------------------------------------------------------
+> 
+> Message: 1
+> Date: Wed, 4 Sep 2013 07:16:30 +1200
+> From: Bruce <bruce at tomo.co.nz>
+> Subject: Re: [Therion] Extend
+> To: 'List for Therion users' <therion at speleo.sk>
+> Message-ID: <35221100083446CEA6934D820E5BB553 at JUICEBRAIN>
+> Content-Type: text/plain; charset="us-ascii"
+> 
+> Hi Dave
+> 
+> Can you repost with labeled diagrams please?
+> 
+> Bruce
+> 
+> 
+> 
+> -------------- next part --------------
+> An HTML attachment was scrubbed...
+> URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/4545c774/attachment-0001.htm>
+> 
+> ------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> 
+> End of Therion Digest, Vol 93, Issue 4
+> **************************************
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/9aacfcd5/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test1.jpg
+Type: image/jpg
+Size: 68355 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/9aacfcd5/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test2.jpg
+Type: image/jpg
+Size: 68912 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/9aacfcd5/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test3.jpg
+Type: image/jpg
+Size: 37136 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/9aacfcd5/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test4.jpg
+Type: image/jpg
+Size: 57443 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130904/9aacfcd5/attachment-0003.jpg>
+
+From sbc23 at cantab.net  Wed Sep  4 23:39:40 2013
+From: sbc23 at cantab.net (Steve Clark)
+Date: Wed, 04 Sep 2013 22:39:40 +0100
+Subject: [Therion] Surface profile in elevation maps
+Message-ID: <5227A89C.8000603@cantab.net>
+
+Martin,
+
+Picking points from GoogleEarth works very well. Thank you for the 
+suggestion. I found a very useful tool here :
+
+http://www.gpsvisualizer.com/elevation
+
+By simply importing the .kml file of the cave centreline data 
+(lat-long), this online tool will create a list of coordinates including 
+the ground altitude at each point from one of it's datasets. Very easy 
+to use and copy-paste the data back into therion as fixed stations. I 
+imagine it would be easy to extract a full DTM surface grid using this tool.
+
+Bruce,
+
+Your suggestion worked great. It is a little odd when used in extended 
+projection, but seems correct in elevation projection.
+
+I do have a bit of a problem in exporting to pdf, and this may be me 
+missing something more fundamental in how survey/maps are structured and 
+therion builds up the plot :
+
+When I just plot centreline data, I can see cave centreline and the new 
+ground surface centreline for the complete cave length. When I include a 
+single cave scrap, I no longer see any centreline data outside this 
+single scrap. Is there a way to over-ride this behaviour or 
+alternatively how should I structure my survey/map objects to avoid this?
+
+Thanks to all for your help,
+
+Steve
+
+
+From wookey at wookware.org  Thu Sep  5 04:20:26 2013
+From: wookey at wookware.org (Wookey)
+Date: Thu, 5 Sep 2013 03:20:26 +0100
+Subject: [Therion] samples processing failing
+In-Reply-To: <20130902020702.GQ18306@survex.com>
+References: <20130829040155.GN1342@stoneboat.aleph1.co.uk>
+	<20130830034306.GT1342@stoneboat.aleph1.co.uk>
+	<20130830050441.GP18306@survex.com>
+	<20130830164730.GW1342@stoneboat.aleph1.co.uk>
+	<20130902020702.GQ18306@survex.com>
+Message-ID: <20130905022026.GX1342@stoneboat.aleph1.co.uk>
+
++++ Olly Betts [2013-09-02 03:07 +0100]:
+> On Fri, Aug 30, 2013 at 05:47:30PM +0100, Wookey wrote:
+> > +++ Olly Betts [2013-08-30 06:04 +0100]:
+> > > The error given by therion here would be less confusing if it at least
+> > > reported the filename that img failed to open, and ideally if it also
+> > > reported the reason as given by img_error().
+> > 
+> > Indeed. I've already patched therion to report the filename. I'll have
+> > a go at getting it to report the error code too. It would indeed have
+> > been much less confusing.
+> > 
+> > OK. so I tried this and added this code:
+> >  +   img_errcode imgerr;
+> > ...
+> >  -    ththrow(("unable to open file"))    
+> >  +    imgerr = img_error();
+> >  +    ththrow(("unable to open file %s, error code: %u", this->fname, imgerr))
+
+
+> > So I'm not sure what's going on here. Are those numbers getting
+> > translated to strings, and I should call some function to do
+> > that before trying to print the result? If so what function? Does this
+> > machinerey only happen inside survex, not when using img.c/h
+> > externally? i.e am I HOSTED or not? Is this stuff written down anywhere?
+> 
+> You're not HOSTED.
+> 
+> I don't understand why you're getting 9152480 though.  If I try patching
+> this myself I get 8 (which is IMG_TOONEW), though that's with the latest
+> img.c from survex git, so maybe it's something that's already fixed?
+
+With a bit of help from Ol pointing out where I was hacking way after
+I should have gone to bed, this is all sorted now.
+
+> 
+> > > > That lets it build, but now processing samples/survex/thconfig.1
+> > > > causes a segfault:
+
+> > > > Can someone who groks C++ take a look at this and see what's needed to
+> > > > make it work with survex 1.2.7
+
+> That narrowed it down somewhat, but lack of debug symbols isn't helping
+> here.  Building it myself, I see the problem, and it's fixed in the
+> latest version of img.c in survex git.
+
+I've updated the patches to use this and everything builds and
+processes nicely now.
+
+> > The build is now acceptably noisy but would benefit for a bit more tidyup.
+> 
+> The attached patch fixes all the rest which I see with GCC 4.7.2.
+
+That's all lovely except this bit:
+
+> --- therion-5.3.11/thepsparse.cxx	Sun May 30 10:11:10 2010
+> +++ therion-5.3.11/thepsparse.cxx	Mon Sep  2 13:57:29 2013
+> @@ -146,6 +146,12 @@
+>    closed=false;
+>    fillstroke = -1;
+>    transformation.clear();
+> +  transf[0] = 0;
+> +  transf[1] = 0;
+> +  transf[2] = 0;
+> +  transf[3] = 0;
+> +  transf[4] = 0;
+> +  transf[5] = 0;
+>  }
+
+which causes: 
+thepsparse.cxx:149:3: error: ‘transf’ was not declared
+in this scope
+
+I tried changing it to 
++  transformation.transf[0] = 0;
++  transformation.transf[1] = 0;
++  transformation.transf[2] = 0;
++  transformation.transf[3] = 0;
++  transformation.transf[4] = 0;
++  transformation.transf[5] = 0;
+
+Which stops the whinge but doesn't stop this error:
+thepsparse.cxx:812:35: warning: ‘fntmatr.MP_transform::transf[5]’ may
+be used uninitialized in this function [-Wmaybe-uninitialized]
+
+I took a stab in the C++ dark and ched the patch to this:
+Index: therion-5.3.11/thepsparse.cxx
+===================================================================
+--- therion-5.3.11.orig/thepsparse.cxx	2013-09-05 01:12:43.630272317 +0100
++++ therion-5.3.11/thepsparse.cxx	2013-09-05 01:40:29.410532475 +0100
+@@ -117,6 +117,12 @@
+ 
+ void MP_transform::clear () {
+   command = MP_notransf;
++  transf[0] = 0;
++  transf[1] = 0;
++  transf[2] = 0;
++  transf[3] = 0;
++  transf[4] = 0;
++  transf[5] = 0;
+ }
+ 
+ MP_transform::MP_transform () {
+
+(i.e set them to zero in the MP_transform clear member)
+and that seemed to do the trick, and is presumably what Ol meant to
+type in the first place.
+
+So we have a warning-free build!
+
+Now the only issue remaining is that every therion run has this at the
+end:
+compilation time: 2 sec
+/home/wookey/packages/therion/therion-5.3.11/therion: warning --
+trying to run: p(U+001A)(U+0001)/tmp/th1544
+sh: 1: p(U+001A)(U+0001) not found
+/home/wookey/packages/therion/therion-5.3.11/therion: warning -- error
+deleting temporary directory -- /tmp/th1544
+
+(The odd chars are shown as little square boxes, not the above unicode
+representation I've used - i.e. it's the actual odd chars)
+
+This looks like garbage getting into the string which should remove
+the therion tmpdir. I think this has been broken in the Debian
+packages from some time (because I've been collecting thNNNN tmpdirs
+for ages), but then I've been using 5.3.11 for some time on this
+machine...
+
+I presume the relevant code is: void thtmpdir::remove() in thtmpdir.cxx
+some debug suggests that 
+    if (strlen(thini.tmp_remove_script.get_buffer()) > 0) {
+      thbuffer tmpfname;
+      tmpfname = thini.tmp_remove_script.get_buffer();
+      tmpfname += " ";
+      tmpfname += this->name;
+      std::cout<<"trying to run special rmcommand:"<<tmpfname.get_buffer()<<std::endl;
+      system(tmpfname.get_buffer());
+
+is being run and thini.tmp_remove_script.get_buffer() has garbage in
+it. Where does this come from?
+(my thconfig.ini file has:
+# tmp-remove  ""
+in it. 
+
+Uncommenting that and giving it a value makes no difference to the
+above behaviour.
+
+tmp_remove_script only seems to get set in thinit.cxx, either to "" or
+reading in the file. So I don't know why it's coming out to be p and a
+couple of control chars. Could a different therion.ini files be being
+used (from the one in /etc/therion.ini)?
+
+commenting out the enum entry:
+static const thstok thtt_initcmd[] = {
+...
+  {"tmp-path",TTIC_TMP_PATH},
+//  {"tmp-remove",TTIC_TMP_REMOVE_SCRIPT},
+  {"units",TTIC_UNITS},
+    
+means it now tries to run 
+trying to run special rmcommand:p/tmp/th5702
+sh: 1: p not found
+(i.e the control chars are gone)
+
+Simply removing all the code for 
+if (strlen(thini.tmp_remove_script.get_buffer()) > 0) {
+in thtmpdir.cxx, thtmpdir::remove()
+makes it behave properly, which seems the best plan for now.
+
+Anyone got any idea what's going on here?
+
+Oh yes another little clue might be that zero-length files are created in 
+samples/xelevation/
+samples/map-offset/
+samples/u-symbols/
+with control chars for names, i.e.
+samples/xelevation/(U+0002)
+samples/map-offset/(U+0002)
+samples/u-symbols/(U+0001)
+
+Maybe that's a different issue, but we clearly have a problem with
+spurious control chars.
+
+Current code is at:
+http://wookware.org/software/therion/therion-5.3.11-wook3.tar.gz
+
+I plan to upload this to debian after a couple of checks so we at
+least have something newer than 5.3.10 and basically working in the
+archive.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From dave at daveclucas.com  Thu Sep  5 08:13:52 2013
+From: dave at daveclucas.com (Dave Clucas)
+Date: Thu, 5 Sep 2013 07:13:52 +0100
+Subject: [Therion] Extend
+Message-ID: <FE8F4BF0-1005-4EA2-B8BB-F21D5B71020C@daveclucas.com>
+
+More  tests
+
+test 5
+
+centreline
+  extend left
+  0 1 10 90 0
+  extend ignore 1 [2]
+  1 2 10 45 45
+  extend ignore 2 [5]
+  2 5 5 90 0
+  1 3 10 90 0
+  3 4 10 100 0
+endcentreline
+
+
+
+This is more likeI want but would prefer 1,2,5 to be omitted.
+
+test 6
+
+centreline
+  extend left
+  0 1 10 90 0
+  extend hide 1 [2]
+  1 2 10 45 45
+  extend hide 2 [5]
+  2 5 5 90 0
+  1 3 10 90 0
+  3 4 10 100 0
+endcentreline
+
+
+
+
+Dave Clucas
+daveclucas.com
+mycaves.org.
+dave at daveclucas.com
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/9394e778/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test5.jpg
+Type: image/jpg
+Size: 99746 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/9394e778/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test6.jpg
+Type: image/jpg
+Size: 60152 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/9394e778/attachment-0001.jpg>
+
+From bruce at tomo.co.nz  Thu Sep  5 10:25:55 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 5 Sep 2013 20:25:55 +1200
+Subject: [Therion] Surface profile in elevation maps
+In-Reply-To: <5227A89C.8000603@cantab.net>
+References: <5227A89C.8000603@cantab.net>
+Message-ID: <24D512601228418F9788BB04FEE5CCCD@JUICEBRAIN>
+
+Steve
+
+I'll add the gpsvisualizer to the Therion wiki, as it looks like a good way
+to get a smoothed ground profile over a cave centreline.  Just so I'm clear,
+did you just upload your therion generated kml file here?
+
+ 
+
+
+
+ 
+
+If you want to make a terrain model, then TerrainTool is the way to go
+http://therion.speleo.sk/wiki/doku.php/contrib:terrainmodelling 
+
+ 
+
+ 
+
+Therions default pdf outputs
+
+ 
+
+>I do have a bit of a problem in exporting to pdf, and this may be me 
+
+missing something more fundamental in how survey/maps are structured and 
+
+therion builds up the plot :
+
+ 
+
+>When I just plot centreline data, I can see cave centreline and the new 
+
+ground surface centreline for the complete cave length. 
+
+ 
+
+ If you do not explicitly select a survey or map (ie you only have source
+data) and the source does not reference any scraps, then default the entire
+centreline is plotted.  As you observed above.
+
+ 
+
+ 
+
+>When I include a single cave scrap, I no longer see any centreline data
+outside this 
+
+single scrap. Is there a way to over-ride this behaviour or alternatively
+how should I structure my survey/map objects to avoid this?
+
+ 
+
+ And as soon as the source references scraps, then only the scraps (and all
+of them) are exported.
+
+To gain control over what is output, you have to select surveys or maps to
+be exported.  The easiest way is to select is to use the Xtherion compiler
+window.  You can only do this after you have successfully compiled.  Open
+the Surveys or Maps window on the righthand side, and double-click the
+survey or map you want to select.  Xtherion adds the select statement to
+your thconfig file.
+
+
+
+A little more explanation in the thconfig templates on
+http://therion.speleo.sk/wiki/doku.php/templates and in the Therion Book pg
+56.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/a2e489db/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 18895 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/a2e489db/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 67195 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130905/a2e489db/attachment-0001.jpg>
+
+From wookey at wookware.org  Thu Sep  5 12:38:28 2013
+From: wookey at wookware.org (Wookey)
+Date: Thu, 5 Sep 2013 11:38:28 +0100
+Subject: [Therion] 5.3.11
+In-Reply-To: <CAP35+gG16G4H24AdAZYQwqsvQeJ3D1zy-paWaBcBj7w2eXQjNw@mail.gmail.com>
+References: <CAP35+gG16G4H24AdAZYQwqsvQeJ3D1zy-paWaBcBj7w2eXQjNw@mail.gmail.com>
+Message-ID: <20130905103828.GY1342@stoneboat.aleph1.co.uk>
+
++++ Stacho Mudrak [2012-12-22 18:05 +0100]:
+>    Hello everybody,
+
+After an impressive delay, therion 5.3.11 was just uploaded to Debian
+unstable and is already built for nearly all architectures:
+
+https://buildd.debian.org/status/package.php?p=therion
+
+There is now a hefty pile of debian patches applied, most of which
+should be upstreamed. I'll send a separate mail about that.
+
+Please can linux users test this. Things that _should_ be fixed: 
+* The 'error 768' when processing stuff
+* Failing to load files with no extension in the editor
+* Failing to remove thtmpdirs (not sure if that was OK on 5.3.10 or not?).
+
+It is also compatible with survex 1.2.7 and the v8 .3d files it
+produces. 
+
+I believe there is also a known problem with loading background
+images? http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+Is there a known fix for this. If so can someone point me at it and
+I'll include it.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From martinsluka at mac.com  Thu Sep  5 15:56:33 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 05 Sep 2013 15:56:33 +0200
+Subject: [Therion] 5.3.11
+In-Reply-To: <20130905103828.GY1342@stoneboat.aleph1.co.uk>
+References: <CAP35+gG16G4H24AdAZYQwqsvQeJ3D1zy-paWaBcBj7w2eXQjNw@mail.gmail.com>
+	<20130905103828.GY1342@stoneboat.aleph1.co.uk>
+Message-ID: <9D8A8EBF-DEC0-4E52-B882-083CC8B81FC0@mac.com>
+
+The same problem on MacOSX  
+
+M. S. 
+
+Odesláno z iPhonu
+
+5. 9. 2013 v 12:38, Wookey <wookey at wookware.org>:
+
+> Failing to remove thtmpdirs (not sure if that was OK on 5.3.10 or not?).
+
+
+From sbc23 at cantab.net  Thu Sep  5 20:35:43 2013
+From: sbc23 at cantab.net (Steve Clark)
+Date: Thu, 05 Sep 2013 19:35:43 +0100
+Subject: [Therion] Surface profile in elevation maps
+In-Reply-To: <mailman.105.1378368369.2919.therion@speleo.sk>
+References: <mailman.105.1378368369.2919.therion@speleo.sk>
+Message-ID: <5228CEFF.7090808@cantab.net>
+
+ > I'll add the gpsvisualizer to the Therion wiki, as it looks like a 
+good way to get a smoothed ground profile over a cave centreline. >Just 
+so I'm clear, did you just upload your therion generated kml file here?
+
+Yes, I used the 'model' version of the .kml file, with the x, y 
+centreline coordinates. For the output, I just copy and pasted from the 
+website text box, added station names in excel and pasted back into 
+therion as fixed stations. The only issue I have noticed is that you 
+seem to get an extra point at the end of the dataset that is back at the 
+start of the path.
+
+
+I think I understand the map & survey structuring a bit better now. 
+Thanks for the links. I can see I need to create a scrap for the surface 
+to make it visible. My structure, albeit non-existent, wasn't the problem!
+
+I have used the following process to add the ground profile to both the 
+extended and elevation pdf projections:
+
+Export a .kml model of the cave centreline
+Import to gpsvisualiser to add the ground altitudes to each co-ordinate
+Create a new centreline survey with fixed stations for this set of lat, 
+long, alt coordinates
+Export an .xvi of this survey
+Import the .xvi into therion graphical editor
+Create a scrap, referencing some of the stations
+Trace the stations with a line (I have currently used 'walls', but I am 
+open to suggestions for a better line to use?).
+Include this scrap and the centreline survey in the exported map.
+
+Sample work-in-progress here :
+https://dl.dropboxusercontent.com/u/4064739/draft_extended_04sep2013.pdf
+
+ From a cave diving perspective, it would be useful to add local zero 
+depth lines using a similar process. Is there an appropriate line type 
+to use for this?
+
+Steve
+
+
+From bruce at tomo.co.nz  Thu Sep  5 21:34:58 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 6 Sep 2013 07:34:58 +1200
+Subject: [Therion] Surface profile in elevation maps
+In-Reply-To: <5228CEFF.7090808@cantab.net>
+References: <mailman.105.1378368369.2919.therion@speleo.sk>
+	<5228CEFF.7090808@cantab.net>
+Message-ID: <B8CA9837D2274A31BCA2F3B8A135533F@JUICEBRAIN>
+
+ 
+
+> From a cave diving perspective, it would be useful to add local zero 
+
+depth lines using a similar process. Is there an appropriate line type 
+
+to use for this?
+
+ 
+
+ 
+
+I have not yet drawn a wet cave, but I've been experimenting with 
+
+ 
+
+line border:presumed -clip off
+
+ 
+
+for flood levels.  You need to use 'adjust horizontal' for the second line
+point to make sure the line stays horizontal after morphing.
+
+ 
+
+The adding a bit of an area water inside a border:invisible line.
+
+For a wet cave you might use area sump.
+
+ 
+
+An example here
+
+
+
+I have the flood levels in a separate map so I can easily toggle them on or
+off.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130906/86118b53/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 48688 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130906/86118b53/attachment.jpg>
+
+From wookey at wookware.org  Fri Sep  6 03:58:05 2013
+From: wookey at wookware.org (Wookey)
+Date: Fri, 6 Sep 2013 02:58:05 +0100
+Subject: [Therion] Error 768
+In-Reply-To: <20130829030549.GM1342@stoneboat.aleph1.co.uk>
+References: <50B63D57.6070001@wotcc.org.uk>
+	<20121128233507.GE9131@stoneboat.aleph1.co.uk>
+	<CA+y_9U2GcO+eD-iPwopYo94Mc-Gi4M58hxDNzyc=EBugT0RiFg@mail.gmail.com>
+	<CA+y_9U3AGam6FWW8xH513nRB70m9ODC3DACsJLPTwqs3YNeLSg@mail.gmail.com>
+	<20130829030549.GM1342@stoneboat.aleph1.co.uk>
+Message-ID: <20130906015805.GD1342@stoneboat.aleph1.co.uk>
+
++++ Wookey [2013-08-29 04:05 +0100]:
+> +++ cawa sorix [2012-12-16 11:58 +0100]:
+> > 2012/12/16 cawa sorix <cawa.sorix at gmail.com>:
+> > > 2012/11/29 Wookey <wookey at wookware.org>:
+> > >> +++ Andrew Atkinson [2012-11-28 16:35 +0000]:
+> > >>
+> > >>> So when producing a pdf I get the Error 768, log attached, everything
+> > >>> else I do seems to work as normal
+> > >
+> > I fact I fixed the issue :o)
+> > 
+> > I ran therion on command line to catch the error message and I found
+> > an older message from 2007 : [Therion] texlive support in therion
+> > 
+> > The fix is to add the line bellow on the /etc/therion.ini :
+> > tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+> 
+> And presumably also install texlive-lang-czechslovak ?
+
+> I've been working through this stuff after finding that making your
+> config file change and removing the long-standing
+> 80remove-czech-fonts-default.patch patch breaks the therion build (in
+> the sample generation). And noticing that I documented these problems
+> years ago in the Debian.README file. A longer mail about the sordid
+> details here will follow.
+
+OK, so this issue here is that you get 'error 768' if you configure
+therion to use fonts that are not installed.
+
+Default upstream therion set up to use latin, czechslovak and cyrillic
+fonts, and needs them installed, even if only latin fonts/chars are
+actually used. As those two fonts are another 16MB I changed it a long
+time back to not install these by default, and added lines to
+/etc/therion.ini to easily enable them, along with an explanation
+about this in Debian.readme. And the two packages
+texlive-lang-czechslovak texlive-lang-cyrillic are in 'Suggests:'
+
+It would appear that Andrew had uncommented these lines but not
+actually installed the corresponding font packages. I'll modify the
+file to make clear in the comment that the lang packs need installing.
+
+The alternative would be to enable all the fonts by default and
+have the lang packs as hard dependencies. That would match upstream
+better, but I'm inclined to leave the Debian packaging as-is, unless
+someone can persuade me that it should be changed.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From stelios.zacharias at selas.org  Fri Sep  6 10:12:36 2013
+From: stelios.zacharias at selas.org (Stelios Zacharias)
+Date: Fri, 06 Sep 2013 11:12:36 +0300
+Subject: [Therion] Surveys without centrelines
+Message-ID: <52298E74.3080008@selas.org>
+
+Dear all,
+
+Can Therion put together scraps on the basis of the polygonal system of 
+survey? (I think this is what it is called - it uses as set of triangles 
+and only distance measurement rather than the distance, azimuth, slope 
+measurements we are used to).
+
+A friend has a survey constructed with only distances taken from two 
+points (and successive points) so as to create a flat area of triangles 
+(it is flat because the "floor" is the sea and the water level is 
+constant). There is therefore no centreline, but a series of points, 
+each joined by two measurements to other points and all coming back to a 
+known baseline. In the days of paper survey, the plan would be drawn 
+with just a compass from one point to the next, beginning off the baseline.
+
+There exist a series of drawings of the cave, but on separate sheets of 
+A3 paper, which could be digitised but they will need some way to be 
+joined together (with errors shared from sheet to sheet), hence my 
+question. Currently they do not join in a satisfactory way when the same 
+stations are aligned from one sheet to the other.
+
+In a worst case scenario, I would imagine using trigonometry to create a 
+centreline around the outside edge of the polygons, but if there is a 
+simpler way, I would be glad to know it.
+
+Cheers,
+Stelios
+
+PS is this method called the polygonal method, or am I misremembering?
+
+
+From bruce at tomo.co.nz  Fri Sep  6 11:10:08 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 6 Sep 2013 21:10:08 +1200
+Subject: [Therion] Surveys without centrelines
+In-Reply-To: <52298E74.3080008@selas.org>
+References: <52298E74.3080008@selas.org>
+Message-ID: <6A65B53C1DB549988027909614345BBE@JUICEBRAIN>
+
+Stelios
+Thinking laterally...
+
+What about using conventional tape compass and clino data input, but set the
+standard deviation for the compass so large that therion practically ignores
+the compass reading (ie almost all the loop closure adjustment happens in
+the compass readings).
+
+So my idea is;
+Give each intersection a station name
+You know the tape distances for each leg of each triangle.
+You know the clino is always zero.
+Adopt a bearing for the base leg.
+Guess a compass bearing, +-20 deg say, for each leg of each triangle (you
+already have a map so it must be approximately to scale).
+
+Each triangle is a loop, and with any luck therion will close the loops with
+minimal change in the length of each leg.
+
+Be interested to see what happens.
+
+Bruce
+
+
+
+From cawa.sorix at gmail.com  Sun Sep  8 11:39:45 2013
+From: cawa.sorix at gmail.com (cawa sorix)
+Date: Sun, 8 Sep 2013 11:39:45 +0200
+Subject: [Therion] 5.3.11
+In-Reply-To: <20130905103828.GY1342@stoneboat.aleph1.co.uk>
+References: <CAP35+gG16G4H24AdAZYQwqsvQeJ3D1zy-paWaBcBj7w2eXQjNw@mail.gmail.com>
+	<20130905103828.GY1342@stoneboat.aleph1.co.uk>
+Message-ID: <CA+y_9U3fNNSzk6dUWYa3WTe2mHkJx9w-ysB4yJLmmn+fyBbeHw@mail.gmail.com>
+
+Hi,
+
+Seems to be good :o)
+I upgrade my Jessie/Sid amd64, and test with survex 1.2.6
+* The 'error 768' when processing stuff => Ok
+* Failing to load files with no extension in the editor => OK
+* Failing to remove thtmpdirs (not sure if that was OK on 5.3.10 or not?)
+=> OK
+Coud you share the patch ? I have the same issue with my build version...
+
+And I have of course the background image bug...
+
+
+C.S.
+
+
+2013/9/5 Wookey <wookey at wookware.org>
+
+> +++ Stacho Mudrak [2012-12-22 18:05 +0100]:
+> >    Hello everybody,
+>
+> After an impressive delay, therion 5.3.11 was just uploaded to Debian
+> unstable and is already built for nearly all architectures:
+>
+> https://buildd.debian.org/status/package.php?p=therion
+>
+> There is now a hefty pile of debian patches applied, most of which
+> should be upstreamed. I'll send a separate mail about that.
+>
+> Please can linux users test this. Things that _should_ be fixed:
+> * The 'error 768' when processing stuff
+> * Failing to load files with no extension in the editor
+> * Failing to remove thtmpdirs (not sure if that was OK on 5.3.10 or not?).
+>
+> It is also compatible with survex 1.2.7 and the v8 .3d files it
+> produces.
+>
+> I believe there is also a known problem with loading background
+> images? http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+> Is there a known fix for this. If so can someone point me at it and
+> I'll include it.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130908/aa71b0bf/attachment.htm>
+
+From andrew at wotcc.org.uk  Sun Sep  8 23:25:05 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 08 Sep 2013 22:25:05 +0100
+Subject: [Therion] Export Full Backbearings from PocketTopo to Therion
+In-Reply-To: <000d01cea557$359f4050$a0ddc0f0$@speleo.ch>
+References: <93F360AC111E4601B235C845F83DFEC2@Study>
+	<000d01cea557$359f4050$a0ddc0f0$@speleo.ch>
+Message-ID: <522CEB31.2010804@wotcc.org.uk>
+
+Not something that I knew about either,  could be a little tricky for
+none consistent data (some with back bears some without), as I think it
+will need a data command to stop the double loops, might be easier to
+put in the flag command, but that is not the way I would like to do it.
+I will have to think, hopefully this will give an answer to the plotting
+of the extended elevation.
+
+Andrew
+
+PS topParser handles the splays differently (flattens them to the
+perpendicular to the bisector) on extended elevation to PocketTopo (not
+sure what it does, but I know it has changed since I looked at it!!) My
+method is probably wrong and should be to flattened to the 'closest' leg.
+Most of the time it makes little difference, but worth been aware of.
+
+On 30/08/13 09:01, Beat Heeb wrote:
+> 2.10        2.11        49.30     -14.96    3.575     >
+> 
+> 2.11        2.10        0.00        0.00        0.000     >
+> 
+>  
+> 
+> This looks like an error in the PocketTopo Therion export.
+> 
+> I will look at that.
+> 
+>  
+> 
+> Beat
+> 
+>  
+> 
+>  
+> 
+> *From:*therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *John Stevens
+> *Sent:* Thursday, 29 August, 2013 13:13
+> *To:* List for Therion users
+> *Subject:* [Therion] Export Full Backbearings from PocketTopo to Therion
+> 
+>  
+> 
+> Export oddities from PocketTopo to Therion
+> 
+> A while back, I noted that if you do a full back bearing of three
+> readings straight after you have done to forward leg, PocketTopo
+> recognises this as the same leg and numbers it accordingly. I have not
+> found any documentation about this useful feature though.
+> 
+>     2.10                  1.139   64.25  -33.70  [1]   
+> 
+>      2.10                  1.288   53.85  -61.89  [1]   
+> 
+>      2.10                  2.243  304.70  -50.40  [1]    "fissure in
+> floor with sound of water flowing "
+> 
+>      2.10        2.11      3.574   49.25  -15.19  [1]   
+> 
+>      2.10        2.11      3.574   49.06  -15.19  [1]    
+> 
+>      2.10        2.11      3.577   49.27  -15.23  [1]   
+> 
+>      2.11        2.10      3.576  229.26   14.68  [1]   
+> 
+>      2.11        2.10      3.575  229.37   14.68  [1]   
+> 
+>      2.11        2.10      3.577  229.60   14.80  [1]   
+> 
+>      2.11                  0.599   96.53   74.98  [1]   
+> 
+>      2.11                  0.201  156.69  -50.20  [1]   
+> 
+>  
+> 
+> If the back bearing was outside the automatic parameters, then it can
+> always be forced and sorted later. i.e. make a note, station may be too
+> close to iron work or buried iron in spoil/deads.
+> 
+>  
+> 
+> PocketTopo and TopParser deal with these in different ways when it is
+> imported into Therion
+> 
+>  
+> 
+> PocketTopo averages all 6 readings for the output file but it also adds
+> a blank line
+> 
+>  
+> 
+> 2.10                     64.25     -33.68    1.140     >
+> 
+> 2.10                     53.85     -61.89    1.288     >
+> 
+> 2.10                     304.69   -50.39    2.243     >
+> 
+> 2.10     2.11        49.30     -14.96    3.575     >
+> 
+> 2.11     2.10        0.00        0.00        0.000     >
+> 
+> 2.11                     96.67     75.01     0.599     >
+> 
+> 2.11                     156.63   -50.15    0.201     >
+> 
+>  
+> 
+> This second line then has to be commented out or deleted once in
+> Therion. Other than that all other outputsact as expected.
+> 
+>  
+> 
+> TopParser on the other hand outputs both sets of readings as separate
+> legs. This has an advantage but a couple of disadvantages.
+> 
+>  
+> 
+> 2.10  -  1.139  64.25  -33.7 
+> 
+> 2.10  -  1.288  53.85  -61.89 
+> 
+> 2.10  -  2.243  304.7  -50.4  fissure in floor with sound of water flowing
+> 
+> #2.10  2.11  3.574  49.25  -15.19 
+> 
+> #2.10  2.11  3.574  49.06  -15.19 
+> 
+> #2.10  2.11  3.577  49.27  -15.23 
+> 
+> 2.10  2.11  3.575  49.15  -15.2  Calculated leg from 3 above
+> 
+> #2.11  2.10  3.576  229.26  14.68 
+> 
+> #2.11  2.10  3.575  229.37  14.68 
+> 
+> #2.11  2.10  3.577  229.6  14.8 
+> 
+> 2.11  2.10  3.576  229.31  14.72  Calculated leg from 3 above
+> 
+> 2.11  -  0.599  96.53  74.98 
+> 
+> 2.11  -  0.201  156.69  -50.2  
+> 
+>  
+> 
+> If I use this output, the length of the cave is doubled for the leg but
+> I do get some nice 2 leg loop closure errors. 
+> 
+> The distance can be adjusted but adding flags duplicate and flags not
+> duplicate lines around the duplicate leg.
+> 
+> These loop closures then give me good feed back into where magnetic
+> influences are within the cave/mine.
+> 
+>  
+> 
+>   5.70%    0.4m    7.7m   2   -0.2m    0.4m   -0.0m [2.7 - 2.8 - 2.7]
+> 
+>   3.86%    0.2m    5.1m   2   -0.1m   -0.2m   -0.0m [2.8 - 2.9 - 2.8]
+> 
+>   2.70%    0.2m    8.7m   2   -0.2m    0.2m   -0.0m [2.11 - 2.12 - 2.11]
+> 
+>   1.18%    0.1m   11.0m   2   -0.1m   -0.1m    0.0m [2.9 - 2.10 - 2.9]
+> 
+>   0.50%    0.0m    3.9m   2   -0.0m   -0.0m    0.0m [2.12 - 2.2 - 2.12]
+> 
+>   0.44%    0.0m    7.2m   2   -0.0m    0.0m   -0.0m [2.10 - 2.11 - 2.10]
+> 
+>   0.33%    0.0m   10.8m   2    0.0m    0.0m   -0.0m [2.2 - 2.7 - 2.2]
+> 
+>  
+> 
+> From these it is easy to see which passage had a large iron pipe running
+> down it, even those we kept a good distance from it. This now allows me
+> to set that passage survey grade as lower for the loop closures.
+> 
+> But with all these subloops, Therion does not like calculating the main
+> loop error.
+> 
+> The other main problem with the TopParser output is for the extended
+> section. Here it plots both legs so the centreline and splays are in the
+> wrong place for the drawings. So that output is totally useless and I
+> have to go back and use the PocketTopo output for extended sections.
+> 
+>  
+> 
+> So bit more work on TopParser and PocketTopo to make them both fully
+> implement this useful function.
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From wookey at wookware.org  Mon Sep  9 03:59:51 2013
+From: wookey at wookware.org (Wookey)
+Date: Mon, 9 Sep 2013 02:59:51 +0100
+Subject: [Therion] 5.3.11
+In-Reply-To: <CA+y_9U3fNNSzk6dUWYa3WTe2mHkJx9w-ysB4yJLmmn+fyBbeHw@mail.gmail.com>
+References: <CAP35+gG16G4H24AdAZYQwqsvQeJ3D1zy-paWaBcBj7w2eXQjNw@mail.gmail.com>
+	<20130905103828.GY1342@stoneboat.aleph1.co.uk>
+	<CA+y_9U3fNNSzk6dUWYa3WTe2mHkJx9w-ysB4yJLmmn+fyBbeHw@mail.gmail.com>
+Message-ID: <20130909015951.GQ1342@stoneboat.aleph1.co.uk>
+
++++ cawa sorix [2013-09-08 11:39 +0200]:
+>    Hi,
+> 
+>    Seems to be good :o)
+>    I upgrade my Jessie/Sid amd64, and test with survex 1.2.6
+>    * The 'error 768' when processing stuff => Ok
+>    * Failing to load files with no extension in the editor => OK
+>    * Failing to remove thtmpdirs (not sure if that was OK on 5.3.10 or not?)
+>    => OK
+>    Coud you share the patch ? I have the same issue with my build version...
+
+The patches are in the debian sources I uploaded:
+Browse:
+http://sources.debian.net/src/therion/5.3.11-1/debian/patches
+tarball:
+http://packages.debian.org/source/sid/therion
+(links down the bottom of the page)
+http://ftp.de.debian.org/debian/pool/main/t/therion/therion_5.3.11-1.dsc
+http://ftp.de.debian.org/debian/pool/main/t/therion/therion_5.3.11.orig.tar.gz
+http://ftp.de.debian.org/debian/pool/main/t/therion/therion_5.3.11-1.debian.tar.xz
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From martinsluka at mac.com  Thu Sep 12 09:31:25 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 12 Sep 2013 09:31:25 +0200
+Subject: [Therion] strata and fault symbols
+Message-ID: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+
+There are definitions of two new symbols in MetaPost section of wiki: strata and fault.
+
+Because of all user defined symbols could not use automatic -clip off you should to add this option.
+
+With new version of Therion they should behave as section symbol - without -clip off. 
+
+m.s.
+
+From bruce at tomo.co.nz  Thu Sep 12 12:03:53 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 12 Sep 2013 22:03:53 +1200
+Subject: [Therion] Next version therion
+In-Reply-To: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+Message-ID: <7C5E8DDD33204D5592706FBC295442E5@JUICEBRAIN>
+
+Thinking of 5.3.12, I've been meaning to put together a bunch of metapost
+for some more NZSS symbols for the last 9 months.  I'd like to submit it for
+inclusion in 5.3.12, but I won't be able to work on it for at least 6 weeks.
+Is there an eta for the next release?
+
+Bruce
+
+
+
+
+From Xavier.Pennec at inria.fr  Thu Sep 12 13:11:49 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Thu, 12 Sep 2013 13:11:49 +0200
+Subject: [Therion] UHidding user-defined symbols [was strata and fault
+ symbols]
+In-Reply-To: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+Message-ID: <5231A175.5060905@inria.fr>
+
+Talking about user symbols: is there a way to hide them in a thconfig file?
+
+So far, my experience is that symbol-hide is not working for these 
+symbols, the only way I found to hide them is to redefine them to nothing:
+
+layout Preview_layout
+   copy LayoutTopoXav
+   # ... Hiding lots of symbols
+
+   # symbol-hide line u:fracture
+  # Does not work: unknown symbol specification -- line u:fracture
+
+   code metapost
+       def l_u_fracture (expr P) = enddef;
+   endcode
+endlayout
+
+
+Xavier
+
+Le 12/09/2013 09:31, Martin Sluka a écrit :
+> There are definitions of two new symbols in MetaPost section of wiki: strata and fault.
+>
+> Because of all user defined symbols could not use automatic -clip off you should to add this option.
+>
+> With new version of Therion they should behave as section symbol - without -clip off.
+>
+> m.s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+
+
+From martinsluka at mac.com  Thu Sep 12 14:05:50 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 12 Sep 2013 14:05:50 +0200
+Subject: [Therion] UHidding user-defined symbols [was strata and fault
+ symbols]
+In-Reply-To: <5231A175.5060905@inria.fr>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+	<5231A175.5060905@inria.fr>
+Message-ID: <3F444ADD-F993-453F-B02B-661E3506E099@mac.com>
+
+You may try copy definitions from a layout file to your layout in thconfig.
+
+comment should do the work.
+
+m.
+
+
+Sep 12, 2013 v 1:11 PM, Xavier Pennec <Xavier.Pennec at inria.fr>:
+
+> Talking about user symbols: is there a way to hide them in a thconfig file?
+> 
+> So far, my experience is that symbol-hide is not working for these symbols, the only way I found to hide them is to redefine them to nothing:
+> 
+> layout Preview_layout
+>  copy LayoutTopoXav
+>  # ... Hiding lots of symbols
+> 
+>  # symbol-hide line u:fracture
+> # Does not work: unknown symbol specification -- line u:fracture
+> 
+>  code metapost
+>      def l_u_fracture (expr P) = enddef;
+>  endcode
+> endlayout
+> 
+> 
+> Xavier
+> 
+> Le 12/09/2013 09:31, Martin Sluka a écrit :
+>> There are definitions of two new symbols in MetaPost section of wiki: strata and fault.
+>> 
+>> Because of all user defined symbols could not use automatic -clip off you should to add this option.
+>> 
+>> With new version of Therion they should behave as section symbol - without -clip off.
+>> 
+>> m.s.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> -- 
+>> -------------------------
+>> Xavier Pennec
+>> Senior Research Scientist / Directeur de recherche
+>> Asclepios project-team, INRIA Sophia-Antipolis
+>> 2004 Route des Lucioles, BP93
+>> F-06902 Sophia-Antipolis Cedex, France
+>> +33 4 92 38 76 64
+>> +33 6 78 35 16 90
+>> http://www-sop.inria.fr/asclepios/
+>> -------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií a reprodukcí
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130912/82ca3752/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Sep 12 20:06:59 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 12 Sep 2013 19:06:59 +0100
+Subject: [Therion] image missing and import error
+In-Reply-To: <CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+References: <51F6BF7B.7010903@wotcc.org.uk>
+	<CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+Message-ID: <523202C3.7000601@wotcc.org.uk>
+
+Hi all
+
+I have just been adding some labels to my diagrams in the th2 files, in
+xtherion.
+
+As I was editing a label, I tried to copy and paste as I did this when
+you come back into the options box, it highlight everything so when I
+pasted, it deleted the previous text, so I hit ctrl-z for undo, then did
+the past again, on one of the last two actions, the background diagrams
+re-appeared.
+
+Not sure if this is repeatable or what, and have not got time to play
+now, but thought that I would write it down and post while it was still
+fresh in my mind.
+
+Andrew
+
+On 30/07/13 11:04, Stacho Mudrak wrote:
+> On 29 July 2013 21:16, Andrew Atkinson <andrew at wotcc.org.uk
+> <mailto:andrew at wotcc.org.uk>> wrote:
+> 
+>     Hello
+> 
+>     I have just upgraded to debian jessie which comes with Therion 5.3.10
+> 
+>     When opening a th2 file I find that all my background images are not
+>     visable, also not listed in the background images on the right hand side
+> 
+>     So in a new file I try importing a jpg, one I have done before, it gives
+>     an error, the log of which is attached, as is the th2 file it produces,
+>     which looks okay at a quick glance.
+> 
+>     I also tried a .top text file import, again that I have successfully
+>     done before, with the same result, the xvi is produced.
+> 
+>     Trying importing an xvi it looks like the same error
+> 
+>     Suspect this is a debian bug, as no one else has complained so will file
+>     a report after this
+> 
+>     thanks
+> 
+>     Andrew
+
+
+From Xavier.Pennec at inria.fr  Fri Sep 13 08:27:03 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 13 Sep 2013 08:27:03 +0200
+Subject: [Therion] Hidding user-defined symbols [was strata and fault
+ symbols]
+In-Reply-To: <3F444ADD-F993-453F-B02B-661E3506E099@mac.com>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+	<5231A175.5060905@inria.fr>
+	<3F444ADD-F993-453F-B02B-661E3506E099@mac.com>
+Message-ID: <5232B037.1020300@inria.fr>
+
+Well, I gathered my layout definitions in a single file to avoid 
+repeating and duplicating everything in my 50 thconfig files. This 
+allows me to modify only one layout file to modify consistently all the 
+layouts of all caves. I think heritage + redefinition is a more 
+structured way than commenting out when needed. In fact, I was wondering 
+why user symbols need to be treated differently than predefined symbols 
+in layouts: is that a logical or a technical reason?
+
+Best
+
+Xavier
+
+
+Le 12/09/2013 14:05, Martin Sluka a écrit :
+> You may try copy definitions from a layout file to your layout in 
+> thconfig.
+>
+> comment should do the work.
+>
+> m.
+>
+>
+> Sep 12, 2013 v 1:11 PM, Xavier Pennec <Xavier.Pennec at inria.fr 
+> <mailto:Xavier.Pennec at inria.fr>>:
+>
+>> Talking about user symbols: is there a way to hide them in a thconfig 
+>> file?
+>>
+>> So far, my experience is that symbol-hide is not working for these 
+>> symbols, the only way I found to hide them is to redefine them to 
+>> nothing:
+>>
+>> layout Preview_layout
+>>  copy LayoutTopoXav
+>>  # ... Hiding lots of symbols
+>>
+>>  # symbol-hide line u:fracture
+>> # Does not work: unknown symbol specification -- line u:fracture
+>>
+>>  code metapost
+>>      def l_u_fracture (expr P) = enddef;
+>>  endcode
+>> endlayout
+>>
+>>
+>> Xavier
+>>
+>> Le 12/09/2013 09:31, Martin Sluka a écrit :
+>>> There are definitions of two new symbols in MetaPost section of 
+>>> wiki: strata and fault.
+>>>
+>>> Because of all user defined symbols could not use automatic -clip 
+>>> off you should to add this option.
+>>>
+>>> With new version of Therion they should behave as section symbol - 
+>>> without -clip off.
+>>>
+>>> m.s.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>> -- 
+>>> -------------------------
+>>> Xavier Pennec
+>>> Senior Research Scientist / Directeur de recherche
+>>> Asclepios project-team, INRIA Sophia-Antipolis
+>>> 2004 Route des Lucioles, BP93
+>>> F-06902 Sophia-Antipolis Cedex, France
+>>> +33 4 92 38 76 64
+>>> +33 6 78 35 16 90
+>>> http://www-sop.inria.fr/asclepios/
+>>> -------------------------------
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> Martin Sluka - Studio Sluka
+>
+> prodej Hahnemühle DFA
+> tisk fotografií a reprodukcí
+>
+> Na Rovnosti 2692/21
+> 130 00 Praha 3
+> tel.: +420 603513640
+> mail: martinsluka at mac.com <mailto:martinsluka at mac.com>
+> web: http://www.piezografie.cz
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130913/8be7d92f/attachment.htm>
+
+From andrew at wotcc.org.uk  Fri Sep 13 08:39:42 2013
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 13 Sep 2013 07:39:42 +0100
+Subject: [Therion] image missing and import error
+In-Reply-To: <CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+References: <51F6BF7B.7010903@wotcc.org.uk>
+	<CAP35+gEys=QoBuAg3Ch2MDePUMmvZcSpE6RGiLQfvV7iHQk9xg@mail.gmail.com>
+Message-ID: <5232B32E.4050406@wotcc.org.uk>
+
+Hi all
+
+Okay had a chance to play, could repeat the below on the original file,
+seemed to only work for point station, could not get it to work on any
+other file, tried about 4, so comparing the files, I notices the one I
+was working on was at a different zoom (200 and the rest at 100)
+
+On clicking on the increase zoom the image comes back, seems to work on
+all files, don't think that the percentage it is at is important, but at
+lease I seem to have a working xtherion again :)
+
+Andrew
+
+> 
+> I have just been adding some labels to my diagrams in the th2 files, in
+> xtherion.
+> 
+> As I was editing a label, I tried to copy and paste as I did this when
+> you come back into the options box, it highlight everything so when I
+> pasted, it deleted the previous text, so I hit ctrl-z for undo, then did
+> the past again, on one of the last two actions, the background diagrams
+> re-appeared.
+> 
+> Not sure if this is repeatable or what, and have not got time to play
+> now, but thought that I would write it down and post while it was still
+> fresh in my mind.
+> 
+> Andrew
+
+
+
+
+From martinsluka at mac.com  Fri Sep 13 10:22:23 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 13 Sep 2013 10:22:23 +0200
+Subject: [Therion] Hidding user-defined symbols [was strata and fault
+ symbols]
+In-Reply-To: <5232B037.1020300@inria.fr>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+	<5231A175.5060905@inria.fr>
+	<3F444ADD-F993-453F-B02B-661E3506E099@mac.com>
+	<5232B037.1020300@inria.fr>
+Message-ID: <2A8B3635-DD92-4DD0-B5D8-5D7AFC6DB642@mac.com>
+
+My idea was to divide your layout into small parts, each one with one metapost definition of user symbol and use the command in thconfig file:
+
+input - works like input command in data files - includes other files.
+
+copy <source layout id> . set properties here that are not modied based on the given source layout. - in your layout.
+
+file: layout_foo:
+
+layout u_foo
+  code metapost
+    definition of u:foo
+  endcode
+endlayout
+
+thconfig file:
+
+input layout_foo
+
+layout my_layout
+   #copy u_foo #this is the line which could be commented 
+endlayout
+
+export foo_off
+
+it was not tested prior post!
+
+m.
+
+Sep 13, 2013 v 8:27 AM, Xavier Pennec <Xavier.Pennec at inria.fr>:
+
+> Well, I gathered my layout definitions in a single file to avoid repeating and duplicating everything in my 50 thconfig files. This allows me to modify only one layout file to modify consistently all the layouts of all caves. I think heritage + redefinition is a more structured 
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130913/fd432efd/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Fri Sep 13 10:35:10 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 13 Sep 2013 10:35:10 +0200
+Subject: [Therion] Hidding user-defined symbols [was strata and fault
+ symbols]
+In-Reply-To: <2A8B3635-DD92-4DD0-B5D8-5D7AFC6DB642@mac.com>
+References: <2D8A0139-06A8-49EE-A586-3663CB75055E@mac.com>
+	<5231A175.5060905@inria.fr>
+	<3F444ADD-F993-453F-B02B-661E3506E099@mac.com>
+	<5232B037.1020300@inria.fr>
+	<2A8B3635-DD92-4DD0-B5D8-5D7AFC6DB642@mac.com>
+Message-ID: <5232CE3E.4060501@inria.fr>
+
+Hi Martin,
+
+This should work. This is partly what I do already but within one one 
+single layout file.
+
+However, my concern with this solution is that I should reorganize 
+user-symbols definitions into one single (or just a few) layout 
+definitions which need to be copied at the last level of layouts. I have 
+to think more about such an organization. It does not seem very natural 
+a-priori but it might be more efficient than redefining to null the 
+user-symbols.
+
+Xavier
+
+
+Le 13/09/2013 10:22, Martin Sluka a écrit :
+> My idea was to divide your layout into small parts, each one with one 
+> metapost definition of user symbol and use the command in thconfig file:
+>
+> input - works like input command in data files - includes other files.
+>
+> copy <source layout id> . set properties here that are not modied 
+> based on the given source layout. - in your layout.
+>
+> file: layout_foo:
+>
+> layout u_foo
+>   code metapost
+>     definition of u:foo
+>   endcode
+> endlayout
+>
+> thconfig file:
+>
+> input layout_foo
+>
+> layout my_layout
+> *#*copy u_foo *#this is the line which could be commented *
+> endlayout
+>
+> export foo_off
+>
+> it was not tested prior post!
+>
+> m.
+>
+> Sep 13, 2013 v 8:27 AM, Xavier Pennec <Xavier.Pennec at inria.fr 
+> <mailto:Xavier.Pennec at inria.fr>>:
+>
+>> Well, I gathered my layout definitions in a single file to avoid 
+>> repeating and duplicating everything in my 50 thconfig files. This 
+>> allows me to modify only one layout file to modify consistently all 
+>> the layouts of all caves. I think heritage + redefinition is a more 
+>> structured
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130913/231a6ee3/attachment.htm>
+
+From bruce at tomo.co.nz  Sat Sep 21 02:48:11 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 21 Sep 2013 12:48:11 +1200
+Subject: [Therion] statistics carto sort order request for 5.3.12
+Message-ID: <DEF838E046B240F69462F6058E98915A@JUICEBRAIN>
+
+With the addition of a third draughtsperson to our project, whose name comes
+early in the alphabet, and who has clearly drawn much less than us two
+oldies, it's become apparent that 5.3.11 sorts cartographers names
+alphabetically rather than by length of centreline associated with their
+drawings.
+
+ 
+
+Not sure if this was the case with 5.3.10, but certainly the default sort
+order for explo-length and topo-length changed with 5.3.11 as described here
+
+http://therion.speleo.sk/wiki/doku.php/faq#why_do_peoples_names_sort_alphabe
+tically_when_they_used_to_sort_by_length_of_cave_explored_and_surveyed
+
+ 
+
+To make matters worse, I thought I would display only the 'top 2'
+draughtspeople, 
+
+  statistics carto 2    
+
+and it dumped my name because it is alphabetically towards the end of the
+alphabet, despite having drawn most of the cave (well maybe second most, but
+at least 100x more length than the newcomer).  I may have a bias due to
+conflict of interest, but it seems like an unsatisfactory situation to me
+that the 'top two' cartographers is based on alphabetical rank rather than
+drawing rank.
+
+ 
+
+Is it possible to make the carto statistics syntax and behaviour consistent
+with explo and topo statistics in 5.3.12?
+
+A sample layout of mine below shows how they all work together, and how what
+I am requesting might fit in.
+
+ 
+
+layout LayoutStatisticsNormal 
+
+#-----------------------  
+
+  statistics explo all                 # all/off/number    # names of
+explorers, or 'number' most significant explorers
+
+  statistics explo-length hide  # on/off/hide        # adds each persons
+exploration length and toggles sort type
+
+  statistics topo all                  # all/off/number    # names of survey
+team members 
+
+  statistics topo-length hide   # on/off/hide       # adds each persons
+survey length and toggles sort type
+
+  statistics carto all                 # all/off/number    # names of
+authors  
+
+  statistics carto -length hide  # on/off/hide       # request to add each
+persons carto length and toggle sort type
+
+  statistics copyright all         # all/off/number   # names of copyrights
+
+
+endlayout LayoutStatisticsNormal
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130921/24fd613f/attachment.htm>
+
+From bruce at tomo.co.nz  Sat Sep 28 06:10:36 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 28 Sep 2013 16:10:36 +1200
+Subject: [Therion] point stalactites point stalagmites
+Message-ID: <2C61013CD7E04E059A3F3FDEBB714AC6@JUICEBRAIN>
+
+I recently discovered 'point stalagmites' (plural) which is presumably new
+in 5.3.11 (but it may have been around much longer).
+
+Now that I've started using it I have discovered that the legend text has
+not been refined for these, which is easy to correct using the following
+statements in thconfig file.
+
+ 
+
+text en "point stalactites"      "many stalactites"
+
+text en "point stalagmites"     "many stalagmites"
+
+ 
+
+Would be nice to have corrected in future 5.3.12, together with mention of
+the plural symbols in the Therion Book.
+
+ 
+
+Happy caving
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130928/52f8c833/attachment.htm>
+
+From alexandra.shturma at gmail.com  Mon Sep 30 20:41:55 2013
+From: alexandra.shturma at gmail.com (Alexandra Shturma)
+Date: Mon, 30 Sep 2013 14:41:55 -0400
+Subject: [Therion] Issues with average azimuth calculation and backlino
+Message-ID: <CAA92WSM2TfB=VLuKTp5pzFyfhA9nnFRNa6vk2d3aUsD649R4uQ@mail.gmail.com>
+
+Hi Staho and Martin,
+
+My name is Sasha and I am one of Abris developers (abris.shturmsoft.com).
+Currently, we are working on Therion export and have ran into few issues:
+
+1.       1. Average azimuth calculation is wrong for certain cases. For
+example, if we have azimuth=1 and back azimuth = 179, the resulting azimuth
+would be 180. However, the resulting azimuth should be 0.
+
+2.       2. Cannot omit backclino with “-”:
+
+data normal from to tape compass backcompass clino backclino
+
+A0 A1 1 100.0 – 0.0 –
+
+Gives an error: -- invalid backwards gradient reading -- -
+
+
+Best regards,
+
+Sasha Shturma
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20130930/c0f8b5c5/attachment.htm>
+

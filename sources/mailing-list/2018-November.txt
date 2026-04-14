@@ -1,0 +1,3137 @@
+From martinsluka at mac.com  Thu Nov  1 08:24:53 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 01 Nov 2018 08:24:53 +0100
+Subject: [Therion] ***UNCHECKED*** Quick fix exporting from therion to
+	SVG
+In-Reply-To: <AM0PR03MB48677E5E02993773F9018FF4D6CD0@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48677E5E02993773F9018FF4D6CD0@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <111BC3B7-EC66-492C-ACEA-D35611D1EDE5@mac.com>
+
+Check all possible exports of maps in Thbook or Wiki. 
+
+Martin Sluka
+
+Odesláno z iPhonu
+
+31. 10. 2018 v 23:31, alastair gott via Therion <therion at speleo.sk>:
+
+> Hi everyone,
+> 
+> Not an ideal situation, but is there a quick way of exporting from therion to SVG or a similar file format.
+> 
+> There is a legacy survey that we have found a new extension/entrance to, I have drawn the new cave in therion, but the rest is in a drawing package.
+> 
+> We're looking at quickly adding the therion file to the existing drawing. If there's no solution, then it's not too bad, I'll be with a load of therion boffins in a week and a half. And will probably be able to do it properly.
+> 
+> 
+> Regards,
+> Alastair Gott.
+> 
+> AlastairGott at hotmail.com,
+> M: 07931779380,
+> A: 8 Earlston Avenue, Denton, Manchester M34 2LF.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From torsten.schnitter at netcologne.de  Thu Nov  1 16:09:00 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Thu, 1 Nov 2018 16:09:00 +0100 (CET)
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+Message-ID: <572165859.251159.1541084940104@comcenter.netcologne.de>
+
+Hi
+
+I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+
+The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+
+So far so good.
+But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+
+After some tests I realized the start of the cave was the problem.
+You can see this part on the attached picture.
+As you can see there is a vertical start of the cave.
+
+Here the data from that first part:
+data diving station depth newline tape compass
+0   0.0
+            4.9   0
+1   4.9
+            9.1   0
+2   14.0
+          28.1   78
+3   28.2
+            8.9   88
+4   30.3
+
+As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+So there is some more distance needed for the vertical parts. But I can't explain why.
+
+Is this a problem with the loop closure algorithm?
+May be some of the experts around can post a explanation for this behaviour!?
+
+regards,
+Torsten
+
+> Bruce Mutton via Therion <therion at speleo.sk> hat am 30. Oktober 2018 um 08:34 geschrieben:
+> 
+> 
+>     Torsten
+> 
+>     The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+> 
+>     Also, if the water is flowing, then the water levels at each end will actually differ.
+> 
+>      
+> 
+>     But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+> 
+>      
+> 
+>     I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+> 
+>      
+> 
+>     Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+> 
+>      
+> 
+>     Bruce
+> 
+>      
+> 
+>     From: Therion <therion-bounces at speleo.sk> On Behalf Of Torsten Schnitter via Therion
+>     Sent: Tuesday, 30 October 2018 04:36
+>     To: therion at speleo.sk
+>     Cc: Torsten Schnitter <torsten.schnitter at netcologne.de>
+>     Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+> 
+>      
+> 
+>     Hi all
+> 
+>     I have a under water cave survey and all the data is done with depth measurements.
+>     So the Z coordinates are absolute and the survey is not with clino data.
+>     The cave starts at one point and after roughly 800m you have another surface point.
+> 
+>     When I compile the data I get a strange behaviour.
+>     Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+>     The 2 points within the red marks do have the same depth measurements.
+>     But if you have a closer look to it you can see they are not at the same level.
+>     (They differ somehow in x/y way and therefore the points are not on top of each other.)
+>     There are no loop closures inbetween which could be a reason for different levels.
+> 
+>     Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+>     When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+>     See pictures "elevation problem-start" and "elevation problem-end".
+> 
+>     What's wrong?
+>     Can anybody help?
+>     If more info is needed please let me know.
+> 
+>     Thanks,
+>     Torsten
+> 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181101/faab251d/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Entrance-1.JPG
+Type: image/jpeg
+Size: 209028 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181101/faab251d/attachment.jpe>
+
+From martinsluka at me.com  Thu Nov  1 16:27:35 2018
+From: martinsluka at me.com (Martin Sluka)
+Date: Thu, 01 Nov 2018 16:27:35 +0100
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <572165859.251159.1541084940104@comcenter.netcologne.de>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+Message-ID: <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+
+Thorsten
+
+have you try both loop closure methods - Therion’s and Survex’s?
+
+Martin S.
+
+
+> 1. 11. 2018 v 16:09, Torsten Schnitter via Therion <therion at speleo.sk>:
+> 
+> Hi
+> 
+> I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+> 
+> The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+> After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+> I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+> 
+> So far so good.
+> But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+> As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+> 
+> After some tests I realized the start of the cave was the problem.
+> You can see this part on the attached picture.
+> As you can see there is a vertical start of the cave.
+> 
+> Here the data from that first part:
+> data diving station depth newline tape compass
+> 0   0.0
+>             4.9   0
+> 1   4.9
+>             9.1   0
+> 2   14.0
+>           28.1   78
+> 3   28.2
+>             8.9   88
+> 4   30.3
+> 
+> As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+> So there is some more distance needed for the vertical parts. But I can't explain why.
+> 
+> Is this a problem with the loop closure algorithm?
+> May be some of the experts around can post a explanation for this behaviour!?
+> 
+> regards,
+> Torsten
+> 
+>> Bruce Mutton via Therion <therion at speleo.sk> hat am 30. Oktober 2018 um 08:34 geschrieben: 
+>> 
+>> Torsten
+>> 
+>> The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+>> 
+>> Also, if the water is flowing, then the water levels at each end will actually differ.
+>> 
+>>  
+>> But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+>> 
+>>  
+>> I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+>> 
+>>  
+>> Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+>> 
+>>  
+>> Bruce
+>> 
+>>  
+>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Torsten Schnitter via Therion
+>> Sent: Tuesday, 30 October 2018 04:36
+>> To: therion at speleo.sk
+>> Cc: Torsten Schnitter <torsten.schnitter at netcologne.de>
+>> Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+>> 
+>>  
+>> Hi all
+>> 
+>> I have a under water cave survey and all the data is done with depth measurements.
+>> So the Z coordinates are absolute and the survey is not with clino data.
+>> The cave starts at one point and after roughly 800m you have another surface point.
+>> 
+>> When I compile the data I get a strange behaviour.
+>> Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+>> The 2 points within the red marks do have the same depth measurements.
+>> But if you have a closer look to it you can see they are not at the same level.
+>> (They differ somehow in x/y way and therefore the points are not on top of each other.)
+>> There are no loop closures inbetween which could be a reason for different levels.
+>> 
+>> Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+>> When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+>> See pictures "elevation problem-start" and "elevation problem-end".
+>> 
+>> What's wrong?
+>> Can anybody help?
+>> If more info is needed please let me know.
+>> 
+>> Thanks,
+>> Torsten
+>> 
+> 
+>  
+> 
+>> _______________________________________________ 
+>> Therion mailing list 
+>> Therion at speleo.sk 
+>> https://mailman.speleo.sk/listinfo/therion 
+> 
+>  
+> 
+> <Entrance-1.JPG>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181101/2e0c6f48/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Thu Nov  1 16:39:50 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Thu, 1 Nov 2018 16:39:50 +0100
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+Message-ID: <AE754F6D-DDA6-4545-B569-5522A630C59B@netcologne.de>
+
+Hi Martin
+I did try both (survex and therion) before the „correction“. 
+Both did result into the problem. 
+I will check both with correction later. 
+Will post the result then. 
+Cheers,
+Torsten
+
+> Am 01.11.2018 um 16:27 schrieb Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> Thorsten
+> 
+> have you try both loop closure methods - Therion’s and Survex’s?
+> 
+> Martin S.
+> 
+> 
+>> 1. 11. 2018 v 16:09, Torsten Schnitter via Therion <therion at speleo.sk>:
+>> 
+>> Hi
+>> 
+>> I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+>> 
+>> The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+>> After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+>> I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+>> 
+>> So far so good.
+>> But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+>> As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+>> 
+>> After some tests I realized the start of the cave was the problem.
+>> You can see this part on the attached picture.
+>> As you can see there is a vertical start of the cave.
+>> 
+>> Here the data from that first part:
+>> data diving station depth newline tape compass
+>> 0   0.0
+>>             4.9   0
+>> 1   4.9
+>>             9.1   0
+>> 2   14.0
+>>           28.1   78
+>> 3   28.2
+>>             8.9   88
+>> 4   30.3
+>> 
+>> As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+>> So there is some more distance needed for the vertical parts. But I can't explain why.
+>> 
+>> Is this a problem with the loop closure algorithm?
+>> May be some of the experts around can post a explanation for this behaviour!?
+>> 
+>> regards,
+>> Torsten
+>> 
+>>> Bruce Mutton via Therion <therion at speleo.sk> hat am 30. Oktober 2018 um 08:34 geschrieben: 
+>>> 
+>>> Torsten
+>>> 
+>>> The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+>>> 
+>>> Also, if the water is flowing, then the water levels at each end will actually differ.
+>>> 
+>>>  
+>>> But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+>>> 
+>>>  
+>>> I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+>>> 
+>>>  
+>>> Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+>>> 
+>>>  
+>>> Bruce
+>>> 
+>>>  
+>>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Torsten Schnitter via Therion
+>>> Sent: Tuesday, 30 October 2018 04:36
+>>> To: therion at speleo.sk
+>>> Cc: Torsten Schnitter <torsten.schnitter at netcologne.de>
+>>> Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+>>> 
+>>>  
+>>> Hi all
+>>> 
+>>> I have a under water cave survey and all the data is done with depth measurements.
+>>> So the Z coordinates are absolute and the survey is not with clino data.
+>>> The cave starts at one point and after roughly 800m you have another surface point.
+>>> 
+>>> When I compile the data I get a strange behaviour.
+>>> Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+>>> The 2 points within the red marks do have the same depth measurements.
+>>> But if you have a closer look to it you can see they are not at the same level.
+>>> (They differ somehow in x/y way and therefore the points are not on top of each other.)
+>>> There are no loop closures inbetween which could be a reason for different levels.
+>>> 
+>>> Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+>>> When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+>>> See pictures "elevation problem-start" and "elevation problem-end".
+>>> 
+>>> What's wrong?
+>>> Can anybody help?
+>>> If more info is needed please let me know.
+>>> 
+>>> Thanks,
+>>> Torsten
+>>> 
+>> 
+>>  
+>> 
+>>> _______________________________________________ 
+>>> Therion mailing list 
+>>> Therion at speleo.sk 
+>>> https://mailman.speleo.sk/listinfo/therion 
+>> 
+>>  
+>> 
+>> <Entrance-1.JPG>_______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181101/7c3148ef/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Thu Nov  1 21:23:00 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Thu, 1 Nov 2018 21:23:00 +0100 (CET)
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+Message-ID: <207838069.252772.1541103780735@comcenter.netcologne.de>
+
+Hi Martin
+
+I tried both loop closure methods. Survex and Therion.
+It doesn't make any difference.
+
+With both it's not at one level without the extra 0,01m for vertical shots.
+Both are correct with the extra for the shots.
+
+hth,
+Torsten
+
+> Martin Sluka via Therion <therion at speleo.sk> hat am 1. November 2018 um 16:27 geschrieben:
+> 
+>     Thorsten
+> 
+>     have you try both loop closure methods - Therion’s and Survex’s?
+> 
+>     Martin S.
+> 
+> 
+> 
+>         > >         1. 11. 2018 v 16:09, Torsten Schnitter via Therion < therion at speleo.sk mailto:therion at speleo.sk >:
+> > 
+> > 
+> >         Hi
+> > 
+> >         I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+> > 
+> >         The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+> >         After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+> >         I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+> > 
+> >         So far so good.
+> >         But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+> >         As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+> > 
+> >         After some tests I realized the start of the cave was the problem.
+> >         You can see this part on the attached picture.
+> >         As you can see there is a vertical start of the cave.
+> > 
+> >         Here the data from that first part:
+> >         data diving station depth newline tape compass
+> >         0   0.0
+> >                     4.9   0
+> >         1   4.9
+> >                     9.1   0
+> >         2   14.0
+> >                   28.1   78
+> >         3   28.2
+> >                     8.9   88
+> >         4   30.3
+> > 
+> >         As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+> >         So there is some more distance needed for the vertical parts. But I can't explain why.
+> > 
+> >         Is this a problem with the loop closure algorithm?
+> >         May be some of the experts around can post a explanation for this behaviour!?
+> > 
+> >         regards,
+> >         Torsten
+> > 
+> >             > > > Bruce Mutton via Therion < therion at speleo.sk mailto:therion at speleo.sk > hat am 30. Oktober 2018 um 08:34 geschrieben:
+> > > 
+> > > 
+> > >             Torsten
+> > > 
+> > >             The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+> > > 
+> > >             Also, if the water is flowing, then the water levels at each end will actually differ.
+> > > 
+> > >              
+> > > 
+> > >             But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+> > > 
+> > >              
+> > > 
+> > >             I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+> > > 
+> > >              
+> > > 
+> > >             Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+> > > 
+> > >              
+> > > 
+> > >             Bruce
+> > > 
+> > >              
+> > > 
+> > >             From: Therion <therion-bounces at speleo.sk mailto:therion-bounces at speleo.sk > On Behalf Of Torsten Schnitter via Therion
+> > >             Sent: Tuesday, 30 October 2018 04:36
+> > >             To: therion at speleo.sk mailto:therion at speleo.sk
+> > >             Cc: Torsten Schnitter <torsten.schnitter at netcologne.de mailto:torsten.schnitter at netcologne.de >
+> > >             Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+> > > 
+> > >              
+> > > 
+> > >             Hi all
+> > > 
+> > >             I have a under water cave survey and all the data is done with depth measurements.
+> > >             So the Z coordinates are absolute and the survey is not with clino data.
+> > >             The cave starts at one point and after roughly 800m you have another surface point.
+> > > 
+> > >             When I compile the data I get a strange behaviour.
+> > >             Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+> > >             The 2 points within the red marks do have the same depth measurements.
+> > >             But if you have a closer look to it you can see they are not at the same level.
+> > >             (They differ somehow in x/y way and therefore the points are not on top of each other.)
+> > >             There are no loop closures inbetween which could be a reason for different levels.
+> > > 
+> > >             Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+> > >             When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+> > >             See pictures "elevation problem-start" and "elevation problem-end".
+> > > 
+> > >             What's wrong?
+> > >             Can anybody help?
+> > >             If more info is needed please let me know.
+> > > 
+> > >             Thanks,
+> > >             Torsten
+> > > 
+> > >         > > 
+> > 
+> >          
+> > 
+> >             > > > _______________________________________________
+> > >             Therion mailing list
+> > >             Therion at speleo.sk mailto:Therion at speleo.sk
+> > >             https://mailman.speleo.sk/listinfo/therion
+> > > 
+> > >         > > 
+> > 
+> >          
+> > 
+> >         <Entrance-1.JPG>_______________________________________________
+> >         Therion mailing list
+> >         Therion at speleo.sk mailto:Therion at speleo.sk
+> >         https://mailman.speleo.sk/listinfo/therion
+> > 
+> >     > 
+> 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181101/d8c4f97d/attachment.htm>
+
+From herich at speleodd.sk  Fri Nov  2 15:17:51 2018
+From: herich at speleodd.sk (Pavel Herich)
+Date: Fri, 02 Nov 2018 15:17:51 +0100
+Subject: [Therion] Nautiz X8
+In-Reply-To: <000001d47144$6c772750$456575f0$@tomo.co.nz>
+References: <000001d47144$6c772750$456575f0$@tomo.co.nz>
+Message-ID: <7e9ff867ac36a0cb698c6c0ce42acd7f@speleodd.sk>
+
+Hello,
+i´m using it for more than two years now, 3 to 15 times per month. My 
+device is built on windows, so there is PocketTopo installed. For me it 
+works great, strong battery, quite big screen, I use to clean it just 
+directly under the flowing water. But on the other hand, surprisingly 
+PocketTopo turned out to run significantly slower than on the previous, 
+old and cheap PDA (means menu reactions, context menu calling and so; it 
+doesn´t affect bleutooth connection or any other core functionalities - 
+anyway it could be just some settings error). Then, I had to replace 
+stylus, which was very wide and not draw friendly, instead I use thin 
+stylus from old PDA (metal core), which doesn´t works perfectly, but 
+it´s much better to work with. As well, the screen is not so precise for 
+drawing than on my old PDA, partly perhaps because of bigger screen, but 
+I think the technology has been changed (you can use only plastic, thin 
+protection of the screen to be able to use old and precise stylus). 
+Also, the two buttons (arrows) on the left side of the device I found 
+very annoying - there are right there, where one would hold the device, 
+they manage volume, which is very necessary to work with inside the 
+cave...; I will try to seal them once. And last thing, it´s necessary to 
+protect screen from drops of water, even small ones are registered and 
+making some effect on screen.
+So that´s all troubles I noticed, otherwise you can count with this 
+device anywhere.
+But to use it just to draw a raw sketch in PocketTopo or Topodroid, it´s 
+bit expensive (f.e. DigiTerra explorer - basic GIS software can be 
+instaled).
+Pavel
+
+
+
+
+Dňa 2018-10-31 19:06 Bruce Mutton via Therion napísal(a):
+> Good Morning.
+> 
+> Does anyone have experience with these?
+> 
+> Nautiz X8
+> 
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#tab=tecspec
+> [1]
+> 
+> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html [2]
+> 
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/nautiz-x8-extreme-environment-surveying-with-rugged-handhelds/
+> [3]
+> 
+> Bruce
+> 
+> Links:
+> ------
+> [1]
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#tab=tecspec
+> [2] http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html
+> [3]
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/nautiz-x8-extreme-environment-surveying-with-rugged-handhelds/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Sat Nov  3 06:02:04 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 3 Nov 2018 18:02:04 +1300
+Subject: [Therion]  Nautiz X8
+In-Reply-To: <7e9ff867ac36a0cb698c6c0ce42acd7f@speleodd.sk>
+References: <000001d47144$6c772750$456575f0$@tomo.co.nz>
+ <7e9ff867ac36a0cb698c6c0ce42acd7f@speleodd.sk>
+Message-ID: <000701d47332$5fc14e10$1f43ea30$@tomo.co.nz>
+
+Thanks for the insights Pavel.
+I can see those side buttons are in exactly the wrong place.
+I too would be after the Windows version, I understand the Windows ones can run Android, but not vice versa.
+So before proceeding I will check PocketTopo speed, stylus and water response.  All our caves are such that devices are constantly wet and muddy while surveying. That the Nautiz display responds badly to water surprizes me, as our Trimble Recons have never responded to water (except once when swimming), and that assumption is the reason I am looking at them.
+Regards
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich via Therion
+Sent: Saturday, 3 November 2018 03:18
+To: List for Therion users <therion at speleo.sk>
+Cc: Pavel Herich <herich at speleodd.sk>
+Subject: Re: [Therion] Nautiz X8
+
+Hello,
+i´m using it for more than two years now, 3 to 15 times per month. My device is built on windows, so there is PocketTopo installed. For me it works great, strong battery, quite big screen, I use to clean it just directly under the flowing water. But on the other hand, surprisingly PocketTopo turned out to run significantly slower than on the previous, old and cheap PDA (means menu reactions, context menu calling and so; it doesn´t affect bleutooth connection or any other core functionalities - anyway it could be just some settings error). Then, I had to replace stylus, which was very wide and not draw friendly, instead I use thin stylus from old PDA (metal core), which doesn´t works perfectly, but it´s much better to work with. As well, the screen is not so precise for drawing than on my old PDA, partly perhaps because of bigger screen, but I think the technology has been changed (you can use only plastic, thin protection of the screen to be able to use old and precise stylus). 
+Also, the two buttons (arrows) on the left side of the device I found very annoying - there are right there, where one would hold the device, they manage volume, which is very necessary to work with inside the cave...; I will try to seal them once. And last thing, it´s necessary to protect screen from drops of water, even small ones are registered and making some effect on screen.
+So that´s all troubles I noticed, otherwise you can count with this device anywhere.
+But to use it just to draw a raw sketch in PocketTopo or Topodroid, it´s bit expensive (f.e. DigiTerra explorer - basic GIS software can be instaled).
+Pavel
+
+
+
+
+Dňa 2018-10-31 19:06 Bruce Mutton via Therion napísal(a):
+> Good Morning.
+> 
+> Does anyone have experience with these?
+> 
+> Nautiz X8
+> 
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#
+> tab=tecspec
+> [1]
+> 
+> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html [2]
+> 
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/naut
+> iz-x8-extreme-environment-surveying-with-rugged-handhelds/
+> [3]
+> 
+> Bruce
+> 
+> Links:
+> ------
+> [1]
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#
+> tab=tecspec [2] 
+> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html
+> [3]
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/naut
+> iz-x8-extreme-environment-surveying-with-rugged-handhelds/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Sat Nov  3 07:38:28 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 03 Nov 2018 07:38:28 +0100
+Subject: [Therion] Nautiz X8
+In-Reply-To: <000701d47332$5fc14e10$1f43ea30$@tomo.co.nz>
+References: <000001d47144$6c772750$456575f0$@tomo.co.nz>
+ <7e9ff867ac36a0cb698c6c0ce42acd7f@speleodd.sk>
+ <000701d47332$5fc14e10$1f43ea30$@tomo.co.nz>
+Message-ID: <BCC1B17D-0175-4C8C-B393-49AEAF064A65@mac.com>
+
+Bruce, have you check Panasonics products? They produce military grade rugged tablets too. 
+
+Martin
+
+Odesláno z iPhonu
+
+3. 11. 2018 v 6:02, Bruce Mutton via Therion <therion at speleo.sk>:
+
+> Thanks for the insights Pavel.
+> I can see those side buttons are in exactly the wrong place.
+> I too would be after the Windows version, I understand the Windows ones can run Android, but not vice versa.
+> So before proceeding I will check PocketTopo speed, stylus and water response.  All our caves are such that devices are constantly wet and muddy while surveying. That the Nautiz display responds badly to water surprizes me, as our Trimble Recons have never responded to water (except once when swimming), and that assumption is the reason I am looking at them.
+> Regards
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich via Therion
+> Sent: Saturday, 3 November 2018 03:18
+> To: List for Therion users <therion at speleo.sk>
+> Cc: Pavel Herich <herich at speleodd.sk>
+> Subject: Re: [Therion] Nautiz X8
+> 
+> Hello,
+> i´m using it for more than two years now, 3 to 15 times per month. My device is built on windows, so there is PocketTopo installed. For me it works great, strong battery, quite big screen, I use to clean it just directly under the flowing water. But on the other hand, surprisingly PocketTopo turned out to run significantly slower than on the previous, old and cheap PDA (means menu reactions, context menu calling and so; it doesn´t affect bleutooth connection or any other core functionalities - anyway it could be just some settings error). Then, I had to replace stylus, which was very wide and not draw friendly, instead I use thin stylus from old PDA (metal core), which doesn´t works perfectly, but it´s much better to work with. As well, the screen is not so precise for drawing than on my old PDA, partly perhaps because of bigger screen, but I think the technology has been changed (you can use only plastic, thin protection of the screen to be able to use old and precise stylus). 
+> Also, the two buttons (arrows) on the left side of the device I found very annoying - there are right there, where one would hold the device, they manage volume, which is very necessary to work with inside the cave...; I will try to seal them once. And last thing, it´s necessary to protect screen from drops of water, even small ones are registered and making some effect on screen.
+> So that´s all troubles I noticed, otherwise you can count with this device anywhere.
+> But to use it just to draw a raw sketch in PocketTopo or Topodroid, it´s bit expensive (f.e. DigiTerra explorer - basic GIS software can be instaled).
+> Pavel
+> 
+> 
+> 
+> 
+> Dňa 2018-10-31 19:06 Bruce Mutton via Therion napísal(a):
+>> Good Morning.
+>> 
+>> Does anyone have experience with these?
+>> 
+>> Nautiz X8
+>> 
+>> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#
+>> tab=tecspec
+>> [1]
+>> 
+>> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html [2]
+>> 
+>> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/naut
+>> iz-x8-extreme-environment-surveying-with-rugged-handhelds/
+>> [3]
+>> 
+>> Bruce
+>> 
+>> Links:
+>> ------
+>> [1]
+>> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#
+>> tab=tecspec [2] 
+>> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html
+>> [3]
+>> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/naut
+>> iz-x8-extreme-environment-surveying-with-rugged-handhelds/
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From torsten.schnitter at netcologne.de  Sat Nov  3 11:30:14 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Sat, 3 Nov 2018 11:30:14 +0100 (CET)
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <207838069.252772.1541103780735@comcenter.netcologne.de>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+ <207838069.252772.1541103780735@comcenter.netcologne.de>
+Message-ID: <1627680097.265217.1541241015102@comcenter.netcologne.de>
+
+Hi
+
+Concerning the loop closure problem I observed some more points.
+
+Following is the set:
+A underwater cave with a GPS position at the start and at the water surface (0m).
+Inbetween there is a second surface point with also a GPS position at the water surface (0m).
+Then there is a second start of survey from inside the cave. We have a GPS position of one point inside the cave (done with radio location).
+Both surveys should come together at one point of course.
+Due to underwater survey the x and y coordinates (compass) is not that accurate and the two final points do not match exactly (of course not).
+
+In picture "Cave-Lake-without-loop-closed-plan-view" you can see the plan view from this two points which are not at the same place (as expected).
+In picture "Cave-Lake-without-loop-closed-elevation-view" you can see the elevation view from this two points.
+May be it's hard to see but both points are at the exact same level (which they should be).
+
+(I draw a small scrap - red line - to show the water level (at correct level 0m) before the loop closure.)
+
+After the loop closure I get some problems.
+On the picture "Cave-Lake-with-loop-closed-plan-view" you can see the loop closed and corrected in x and y orientation.
+This seems to be ok (no problem with that).
+On the picture "Cave-Lake-with-loop-closed-elevation-view" you can see the elevation view after loop closure (it doesn't make any difference using therion or survex as loop closure algorithm).
+You can see the water level is not at the 0m level (scrap line) anymore, it's far below that. The loop closure corrected the survey also in z orientation although the two "end" points have been at the same level before and no correction should have been necessary.
+
+Due to this corrections the "lake" inside the cave is not flat anymore but it is bend somehow (high at beginning, lower in the middle and high up again at the end). I assume everybody does agree it's not possible to have a lake with bended surface. ;-)
+
+Due to this corrections I observed another point as well.
+Having a vertical shot before the loop closures (and for sure this is vertical!) this shot is not vertical anymore after the loop closures.
+
+In my opinion there are two points:
+- Having corrections in x and y with loop closures doesn't mean implicitly there is also a correlating correction to the z axis. Especially if the points are at the same level already.
+- With loop closure there should be a special treatment with vertical shots (in x/y orientation) and with horizontal shots (in z orientation). May be there should be no correction due to loop closures!?
+
+What do you think?
+
+Btw:
+does anybody have a solution for my problem: No correction in z orientation for this loop closure?
+
+regards,
+Torsten
+
+> Torsten Schnitter via Therion <therion at speleo.sk> hat am 1. November 2018 um 21:23 geschrieben:
+> 
+> 
+>     Hi Martin
+> 
+>     I tried both loop closure methods. Survex and Therion.
+>     It doesn't make any difference.
+> 
+>     With both it's not at one level without the extra 0,01m for vertical shots.
+>     Both are correct with the extra for the shots.
+> 
+>     hth,
+>     Torsten
+> 
+>         > > Martin Sluka via Therion <therion at speleo.sk> hat am 1. November 2018 um 16:27 geschrieben:
+> > 
+> >         Thorsten
+> > 
+> >         have you try both loop closure methods - Therion’s and Survex’s?
+> > 
+> >         Martin S.
+> > 
+> > 
+> > 
+> >             > > >             1. 11. 2018 v 16:09, Torsten Schnitter via Therion < therion at speleo.sk mailto:therion at speleo.sk >:
+> > > 
+> > > 
+> > >             Hi
+> > > 
+> > >             I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+> > > 
+> > >             The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+> > >             After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+> > >             I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+> > > 
+> > >             So far so good.
+> > >             But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+> > >             As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+> > > 
+> > >             After some tests I realized the start of the cave was the problem.
+> > >             You can see this part on the attached picture.
+> > >             As you can see there is a vertical start of the cave.
+> > > 
+> > >             Here the data from that first part:
+> > >             data diving station depth newline tape compass
+> > >             0   0.0
+> > >                         4.9   0
+> > >             1   4.9
+> > >                         9.1   0
+> > >             2   14.0
+> > >                       28.1   78
+> > >             3   28.2
+> > >                         8.9   88
+> > >             4   30.3
+> > > 
+> > >             As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+> > >             So there is some more distance needed for the vertical parts. But I can't explain why.
+> > > 
+> > >             Is this a problem with the loop closure algorithm?
+> > >             May be some of the experts around can post a explanation for this behaviour!?
+> > > 
+> > >             regards,
+> > >             Torsten
+> > > 
+> > >                 > > > > Bruce Mutton via Therion < therion at speleo.sk mailto:therion at speleo.sk > hat am 30. Oktober 2018 um 08:34 geschrieben:
+> > > > 
+> > > > 
+> > > >                 Torsten
+> > > > 
+> > > >                 The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+> > > > 
+> > > >                 Also, if the water is flowing, then the water levels at each end will actually differ.
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 Bruce
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 From: Therion <therion-bounces at speleo.sk mailto:therion-bounces at speleo.sk > On Behalf Of Torsten Schnitter via Therion
+> > > >                 Sent: Tuesday, 30 October 2018 04:36
+> > > >                 To: therion at speleo.sk mailto:therion at speleo.sk
+> > > >                 Cc: Torsten Schnitter <torsten.schnitter at netcologne.de mailto:torsten.schnitter at netcologne.de >
+> > > >                 Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+> > > > 
+> > > >                  
+> > > > 
+> > > >                 Hi all
+> > > > 
+> > > >                 I have a under water cave survey and all the data is done with depth measurements.
+> > > >                 So the Z coordinates are absolute and the survey is not with clino data.
+> > > >                 The cave starts at one point and after roughly 800m you have another surface point.
+> > > > 
+> > > >                 When I compile the data I get a strange behaviour.
+> > > >                 Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+> > > >                 The 2 points within the red marks do have the same depth measurements.
+> > > >                 But if you have a closer look to it you can see they are not at the same level.
+> > > >                 (They differ somehow in x/y way and therefore the points are not on top of each other.)
+> > > >                 There are no loop closures inbetween which could be a reason for different levels.
+> > > > 
+> > > >                 Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+> > > >                 When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+> > > >                 See pictures "elevation problem-start" and "elevation problem-end".
+> > > > 
+> > > >                 What's wrong?
+> > > >                 Can anybody help?
+> > > >                 If more info is needed please let me know.
+> > > > 
+> > > >                 Thanks,
+> > > >                 Torsten
+> > > > 
+> > > >             > > > 
+> > > 
+> > >              
+> > > 
+> > >                 > > > > _______________________________________________
+> > > >                 Therion mailing list
+> > > >                 Therion at speleo.sk mailto:Therion at speleo.sk
+> > > >                 https://mailman.speleo.sk/listinfo/therion
+> > > > 
+> > > >             > > > 
+> > > 
+> > >              
+> > > 
+> > >             <Entrance-1.JPG>_______________________________________________
+> > >             Therion mailing list
+> > >             Therion at speleo.sk mailto:Therion at speleo.sk
+> > >             https://mailman.speleo.sk/listinfo/therion
+> > > 
+> > >         > > 
+> > 
+> >     > 
+> 
+>      
+> 
+>         > > _______________________________________________
+> >         Therion mailing list
+> >         Therion at speleo.sk
+> >         https://mailman.speleo.sk/listinfo/therion
+> > 
+> >     > 
+> 
+>      
+> 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/0d37adf1/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Cave-Lake-without-loop-closed-plan-view.JPG
+Type: image/jpeg
+Size: 271336 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/0d37adf1/attachment.jpe>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Cave-Lake-without-loop-closed-elevation-view.JPG
+Type: image/jpeg
+Size: 356894 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/0d37adf1/attachment-0001.jpe>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Cave-Lake-with-loop-closed-plan-view.JPG
+Type: image/jpeg
+Size: 107012 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/0d37adf1/attachment-0002.jpe>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Cave-Lake-with-loop-closed-elevation-view.JPG
+Type: image/jpeg
+Size: 222293 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/0d37adf1/attachment-0003.jpe>
+
+From martinsluka at mac.com  Sat Nov  3 12:17:16 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 03 Nov 2018 12:17:16 +0100
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <1627680097.265217.1541241015102@comcenter.netcologne.de>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+ <207838069.252772.1541103780735@comcenter.netcologne.de>
+ <1627680097.265217.1541241015102@comcenter.netcologne.de>
+Message-ID: <688657CD-8869-4E34-8C95-DDB3E87099C6@mac.com>
+
+Torsten, 
+
+What about the inclination, is’t it this the problem of horizontal misplacement?
+
+Check the „extend vertical“  command of centerline section in Thbook - it solves the problem with vertical shots they should be vertical after loop-closure.
+
+If you draw scrap with water area, there is the parameter of line "adjust horizontal/vertical“ for line point. It will align the line point with the previous one, so the water level should be horizontal.
+
+Martin S. 
+
+
+> 3. 11. 2018 v 11:30, Torsten Schnitter via Therion <therion at speleo.sk>:
+> 
+> Hi
+> 
+> Concerning the loop closure problem I observed some more points.
+> 
+> Following is the set:
+> A underwater cave with a GPS position at the start and at the water surface (0m).
+> Inbetween there is a second surface point with also a GPS position at the water surface (0m).
+> Then there is a second start of survey from inside the cave. We have a GPS position of one point inside the cave (done with radio location).
+> Both surveys should come together at one point of course.
+> Due to underwater survey the x and y coordinates (compass) is not that accurate and the two final points do not match exactly (of course not).
+> 
+> In picture "Cave-Lake-without-loop-closed-plan-view" you can see the plan view from this two points which are not at the same place (as expected).
+> In picture "Cave-Lake-without-loop-closed-elevation-view" you can see the elevation view from this two points.
+> May be it's hard to see but both points are at the exact same level (which they should be).
+> 
+> (I draw a small scrap - red line - to show the water level (at correct level 0m) before the loop closure.)
+> 
+> After the loop closure I get some problems.
+> On the picture "Cave-Lake-with-loop-closed-plan-view" you can see the loop closed and corrected in x and y orientation.
+> This seems to be ok (no problem with that).
+> On the picture "Cave-Lake-with-loop-closed-elevation-view" you can see the elevation view after loop closure (it doesn't make any difference using therion or survex as loop closure algorithm).
+> You can see the water level is not at the 0m level (scrap line) anymore, it's far below that. The loop closure corrected the survey also in z orientation although the two "end" points have been at the same level before and no correction should have been necessary.
+> 
+> Due to this corrections the "lake" inside the cave is not flat anymore but it is bend somehow (high at beginning, lower in the middle and high up again at the end). I assume everybody does agree it's not possible to have a lake with bended surface. ;-)
+> 
+> Due to this corrections I observed another point as well.
+> Having a vertical shot before the loop closures (and for sure this is vertical!) this shot is not vertical anymore after the loop closures.
+> 
+> In my opinion there are two points:
+> - Having corrections in x and y with loop closures doesn't mean implicitly there is also a correlating correction to the z axis. Especially if the points are at the same level already.
+> - With loop closure there should be a special treatment with vertical shots (in x/y orientation) and with horizontal shots (in z orientation). May be there should be no correction due to loop closures!?
+> 
+> What do you think?
+> 
+> Btw:
+> does anybody have a solution for my problem: No correction in z orientation for this loop closure?
+> 
+> regards,
+> Torsten
+> 
+>> Torsten Schnitter via Therion <therion at speleo.sk> hat am 1. November 2018 um 21:23 geschrieben: 
+>> 
+>> Hi Martin
+>> 
+>> I tried both loop closure methods. Survex and Therion.
+>> It doesn't make any difference.
+>> 
+>> With both it's not at one level without the extra 0,01m for vertical shots.
+>> Both are correct with the extra for the shots.
+>> 
+>> hth,
+>> Torsten
+>> 
+>>> Martin Sluka via Therion <therion at speleo.sk> hat am 1. November 2018 um 16:27 geschrieben: 
+>>> 
+>>> Thorsten
+>>> 
+>>> have you try both loop closure methods - Therion’s and Survex’s?
+>>> 
+>>> Martin S.
+>>> 
+>>> 
+>>>> 1. 11. 2018 v 16:09, Torsten Schnitter via Therion < therion at speleo.sk <mailto:therion at speleo.sk>>:
+>>>> 
+>>>> Hi
+>>>> 
+>>>> I figuered out the problem and may be there is a bug in loop closure... or somewhere else.
+>>>> 
+>>>> The cave does start at 0m of depth and with a fixed point (fix 0 x y z) with z=118.4m.
+>>>> After roughly 800m of underwater cave survey (which does result in absolute z values for every station) the cave does surface again at a depth of 0m.
+>>>> I fixed this point as well (fix 0 x y z) with z=118.4m (to correct the x and y error).
+>>>> 
+>>>> So far so good.
+>>>> But further (around 1km more) into the cave it does surface again and I realized in elevation view that 0m is not at the same level than the first two points are.
+>>>> As soon as I deleted one of the two fixed points the z elevation was as expected and the 0m point into the cave was at the same level than the first two surface points.
+>>>> 
+>>>> After some tests I realized the start of the cave was the problem.
+>>>> You can see this part on the attached picture.
+>>>> As you can see there is a vertical start of the cave.
+>>>> 
+>>>> Here the data from that first part:
+>>>> data diving station depth newline tape compass
+>>>> 0   0.0
+>>>>             4.9   0
+>>>> 1   4.9
+>>>>             9.1   0
+>>>> 2   14.0
+>>>>           28.1   78
+>>>> 3   28.2
+>>>>             8.9   88
+>>>> 4   30.3
+>>>> 
+>>>> As soon as I add 0.01m to the first and second (vertical) tape measurement (4.9 = 4.91 and 9.1 = 9.11) all is good and the problem with loopclosure is gone. Both fixed points are added again and the eleveation is as expected (0m level is at the same level at all points).
+>>>> So there is some more distance needed for the vertical parts. But I can't explain why.
+>>>> 
+>>>> Is this a problem with the loop closure algorithm?
+>>>> May be some of the experts around can post a explanation for this behaviour!?
+>>>> 
+>>>> regards,
+>>>> Torsten
+>>>> 
+>>>>> Bruce Mutton via Therion < therion at speleo.sk <mailto:therion at speleo.sk>> hat am 30. Oktober 2018 um 08:34 geschrieben: 
+>>>>> 
+>>>>> Torsten
+>>>>> 
+>>>>> The image of the xvi file makes it look as though there is a loop (not sure if it is a plan or elevation view – presume it is elevation).  Also if you have a fixed point at each end, then this could also cause ‘a loop’ which might give differing elevations at each end.
+>>>>> 
+>>>>> Also, if the water is flowing, then the water levels at each end will actually differ.
+>>>>> 
+>>>>>   
+>>>>> But I assume you have correctly assessed these effects as negligible, or at least not detected by your survey method.
+>>>>> 
+>>>>>   
+>>>>> I think you are implying that the 0m line is a raster background.  If that is the case, it may be distorted by Therion.  One way to check would be to turn on gridlines for the layout.  That will show you what Therion really thinks is a horizontal line.
+>>>>> 
+>>>>>   
+>>>>> Also check that Therion has the water surface survey stations at the same altitude.  You can check this easily by interrogating a .3d output with Aven.
+>>>>> 
+>>>>>   
+>>>>> Bruce
+>>>>> 
+>>>>>   
+>>>>> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Torsten Schnitter via Therion
+>>>>> Sent: Tuesday, 30 October 2018 04:36
+>>>>> To: therion at speleo.sk <mailto:therion at speleo.sk>
+>>>>> Cc: Torsten Schnitter <torsten.schnitter at netcologne.de <mailto:torsten.schnitter at netcologne.de>>
+>>>>> Subject: [Therion] ***UNCHECKED*** Problem with elevation view
+>>>>> 
+>>>>>   
+>>>>> Hi all
+>>>>> 
+>>>>> I have a under water cave survey and all the data is done with depth measurements.
+>>>>> So the Z coordinates are absolute and the survey is not with clino data.
+>>>>> The cave starts at one point and after roughly 800m you have another surface point.
+>>>>> 
+>>>>> When I compile the data I get a strange behaviour.
+>>>>> Although it's not a WYSIWIG map editor I would expect points which have the same depth are at the same "depth"/level on the xvi file. But they are not (see attached screenshot "elevation problem").
+>>>>> The 2 points within the red marks do have the same depth measurements.
+>>>>> But if you have a closer look to it you can see they are not at the same level.
+>>>>> (They differ somehow in x/y way and therefore the points are not on top of each other.)
+>>>>> There are no loop closures inbetween which could be a reason for different levels.
+>>>>> 
+>>>>> Not having the same level with these points (I assume it is this point) leads to a bigger problem later on.
+>>>>> When drawing the elevation scraps and putting a water surface (depth = 0m) to the scraps and having a raster in the background, the surface at the beginning of the cave is not at the same level than at the next surface point of the cave. But it should be.
+>>>>> See pictures "elevation problem-start" and "elevation problem-end".
+>>>>> 
+>>>>> What's wrong?
+>>>>> Can anybody help?
+>>>>> If more info is needed please let me know.
+>>>>> 
+>>>>> Thanks,
+>>>>> Torsten
+>>>>> 
+>>>> 
+>>>>  
+>>>> 
+>>>>> _______________________________________________ 
+>>>>> Therion mailing list 
+>>>>> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+>>>>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion> 
+>>>> 
+>>>>  
+>>>> 
+>>>> <Entrance-1.JPG>_______________________________________________ 
+>>>> Therion mailing list 
+>>>> Therion at speleo.sk <mailto:Therion at speleo.sk> 
+>>>> https://mailman.speleo.sk/listinfo/therion 
+>>> 
+>> 
+>>  
+>> 
+>>> _______________________________________________ 
+>>> Therion mailing list 
+>>> Therion at speleo.sk 
+>>> https://mailman.speleo.sk/listinfo/therion 
+>> 
+>>  
+>> 
+> 
+>  
+> 
+>> _______________________________________________ 
+>> Therion mailing list 
+>> Therion at speleo.sk 
+>> https://mailman.speleo.sk/listinfo/therion 
+> 
+>  
+> 
+> <Cave-Lake-without-loop-closed-plan-view.JPG><Cave-Lake-without-loop-closed-elevation-view.JPG><Cave-Lake-with-loop-closed-plan-view.JPG><Cave-Lake-with-loop-closed-elevation-view.JPG>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/63888909/attachment.htm>
+
+From martinsluka at mac.com  Sat Nov  3 12:44:40 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 03 Nov 2018 12:44:40 +0100
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <1627680097.265217.1541241015102@comcenter.netcologne.de>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+ <207838069.252772.1541103780735@comcenter.netcologne.de>
+ <1627680097.265217.1541241015102@comcenter.netcologne.de>
+Message-ID: <C5EE30EB-6006-4750-9E61-9AE7434D574F@mac.com>
+
+
+> 3. 11. 2018 v 11:30, Torsten Schnitter via Therion <therion at speleo.sk>:
+> 
+> Due to this corrections I observed another point as well.
+> Having a vertical shot before the loop closures (and for sure this is vertical!) this shot is not vertical anymore after the loop closures.
+> 
+> 
+
+One thing more:
+
+• infer <what> <on/off> ▷ ‘infer plumbs on’ tells the program to interpret gradients
+°æ90 ◦ as UP/DOWN (this means no clino corrections are applied). ‘infer equates
+on’ will case program to interpret shots with 0 length as equate commands (which
+means that no tape corrections are applied)
+
+Martin S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181103/2bf6a1e3/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Sun Nov  4 15:53:21 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Sun, 4 Nov 2018 15:53:21 +0100 (CET)
+Subject: [Therion] Problem with elevation view
+In-Reply-To: <C5EE30EB-6006-4750-9E61-9AE7434D574F@mac.com>
+References: <913178404.231778.1540827345403@comcenter.netcologne.de>
+ <002901d47022$ee8bdf10$cba39d30$@tomo.co.nz>
+ <572165859.251159.1541084940104@comcenter.netcologne.de>
+ <008F0A00-BEEF-48B2-BAAD-1AF6B8165801@me.com>
+ <207838069.252772.1541103780735@comcenter.netcologne.de>
+ <1627680097.265217.1541241015102@comcenter.netcologne.de>
+ <C5EE30EB-6006-4750-9E61-9AE7434D574F@mac.com>
+Message-ID: <450722686.274412.1541343201382@comcenter.netcologne.de>
+
+Hi Martin
+
+Thanks a lot for your hints. Espacially the infer command (I didn't know this).
+
+While playing around with this command I recognized no change in behaviour to vertical shots.
+Of course this could not be and something else was wrong.
+In the end I realized that all lines in the Therion .ini file where with comments.
+Of course therefore it didn't  make any difference in changing loop closure method from survex to therion and vice versa.
+
+I'm using a windows with Therion and if you have a look to the ini file there are missing all line feeds.
+Therefore this ini-file is not that readable... anyhow. I build this file new with command "therion.exe --print-init-file" and all line feeds where in place.
+Than I realized my mistake and uncomment the line with loop closure method.
+
+And now I have to say: there IS a difference in the effects using loop closure method survex or therion.
+With 'survex' you get the problems I observed (0m beeing not at the same level and other misplacements).
+But with 'therion' as the loop closure method it worked very good and I got all 0m lines at the same level. But some minor misplacements nevertheless.
+And with the command 'infer plumbs on' it looks pretty perfect.
+Vertical shots stay vertical and after loop closures as well.
+
+Hopefully my problems with the elevation view are solved now...
+I have to check some more details but it's looking pretty good.
+
+Thanks again for all the help and sorry for my confusion with the loop closure method.
+
+regards,
+Torsten
+
+> Martin Sluka via Therion <therion at speleo.sk> hat am 3. November 2018 um 12:44 geschrieben:
+> 
+> 
+> 
+>         > >         3. 11. 2018 v 11:30, Torsten Schnitter via Therion < therion at speleo.sk mailto:therion at speleo.sk >:
+> > 
+> > 
+> >         Due to this corrections I observed another point as well.
+> >         Having a vertical shot before the loop closures (and for sure this is vertical!) this shot is not vertical anymore after the loop closures.
+> > 
+> > 
+> >     > 
+>     One thing more:
+> 
+>     • infer <what> <on/off> ▷ ‘ infer plumbs on ’ tells the program to interpret gradients
+>     °æ 90 ◦ as UP/DOWN (this means no clino corrections are applied). ‘ infer equates
+>     on ’ will case program to interpret shots with 0 length as equate commands (which
+>     means that no tape corrections are applied)
+> 
+>     Martin S.
+> 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181104/d4c9914d/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Nov  4 20:24:04 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 5 Nov 2018 08:24:04 +1300
+Subject: [Therion] Therion ini linefeeds
+Message-ID: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+
+Torsten wrote
+
+> I'm using a windows with Therion and if you have a look to the ini file there are missing all line feeds.
+
+
+
+I’m currently using Windows 10 with Therion development version dfe3c00 and have never noticed any problem.
+
+But I recall some changes mentioned regarding linefeed behaviour in recent commits, so I thought I’d check with other editors.
+
+ 
+
+So my preferred editor NotePad++ displays the linefeeds ini files correctly, as does WordPad.
+
+But the NotePad application that ships with Windows 10 does not display the therion.ini linefeeds, except one.  The whole therion.ini file displays on two lines.  Xtherion.ini displays on about 7 lines with the linefeeds in random places, apparently midline.
+
+ 
+
+As I never use the NotePad that ships with Windows it does not concern me, but maybe this is something that needs resolving or explaining so that other users are not inconvenienced.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181105/b1bda9d9/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Nov  4 23:35:48 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 5 Nov 2018 11:35:48 +1300
+Subject: [Therion]  Nautiz X8
+Message-ID: <000201d4748e$bd454ac0$37cfe040$@tomo.co.nz>
+
+Hi Pavel
+
+It might be difficult for me to get device to test before buying, so I just want to clarify the significance of this issue that you mentioned...
+
+"it´s necessary to protect screen from drops of water, even small ones are registered and making some effect on screen".
+
+ 
+
+You are using it a lot, as you mention, and I assume that you are using the device underground.  Therefore I assume that from time to time water droplets, wet mud and sand on the display are inevitable.  It happens for me all the time, and I wipe with my hand, lick the display clean (yuk), or wash it in a stream or from my water bottle.
+
+*	Does this scenario make the X8 unusable for drawing and typing, or just mildly annoying?
+*	What about wiping it with a cloth after washing it.  Does that fix it? 
+
+(I have a non-caving device, that once wet, needs to be removed from the humid environment completely before the display will respond correctly - drying with a non-absorbent cloth is not sufficient - I want to make sure the X8 is not like this).
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton via Therion
+Sent: Saturday, 3 November 2018 18:02
+To: 'List for Therion users' <therion at speleo.sk>
+Cc: Bruce Mutton <bruce at tomo.co.nz>
+Subject: [Therion] Nautiz X8
+
+ 
+
+Thanks for the insights Pavel.
+
+I can see those side buttons are in exactly the wrong place.
+
+I too would be after the Windows version, I understand the Windows ones can run Android, but not vice versa.
+
+So before proceeding I will check PocketTopo speed, stylus and water response.  All our caves are such that devices are constantly wet and muddy while surveying. That the Nautiz display responds badly to water surprizes me, as our Trimble Recons have never responded to water (except once when swimming), and that assumption is the reason I am looking at them.
+
+Regards
+
+Bruce
+
+ 
+
+-----Original Message-----
+
+From: Therion < <mailto:therion-bounces at speleo.sk> therion-bounces at speleo.sk> On Behalf Of Pavel Herich via Therion
+
+Sent: Saturday, 3 November 2018 03:18
+
+To: List for Therion users < <mailto:therion at speleo.sk> therion at speleo.sk>
+
+Cc: Pavel Herich < <mailto:herich at speleodd.sk> herich at speleodd.sk>
+
+Subject: Re: [Therion] Nautiz X8
+
+ 
+
+Hello,
+
+i´m using it for more than two years now, 3 to 15 times per month. My device is built on windows, so there is PocketTopo installed. For me it works great, strong battery, quite big screen, I use to clean it just directly under the flowing water. But on the other hand, surprisingly PocketTopo turned out to run significantly slower than on the previous, old and cheap PDA (means menu reactions, context menu calling and so; it doesn´t affect bleutooth connection or any other core functionalities - anyway it could be just some settings error). Then, I had to replace stylus, which was very wide and not draw friendly, instead I use thin stylus from old PDA (metal core), which doesn´t works perfectly, but it´s much better to work with. As well, the screen is not so precise for drawing than on my old PDA, partly perhaps because of bigger screen, but I think the technology has been changed (you can use only plastic, thin protection of the screen to be able to use old and precise stylus). 
+
+Also, the two buttons (arrows) on the left side of the device I found very annoying - there are right there, where one would hold the device, they manage volume, which is very necessary to work with inside the cave...; I will try to seal them once. And last thing, it´s necessary to protect screen from drops of water, even small ones are registered and making some effect on screen.
+
+So that´s all troubles I noticed, otherwise you can count with this device anywhere.
+
+But to use it just to draw a raw sketch in PocketTopo or Topodroid, it´s bit expensive (f.e. DigiTerra explorer - basic GIS software can be instaled).
+
+Pavel
+
+ 
+
+Dňa 2018-10-31 19:06 Bruce Mutton via Therion napísal(a):
+
+> Good Morning.
+
+> Does anyone have experience with these?
+
+> Nautiz X8
+
+> 
+
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#tab=tecspec[1] 
+
+> 
+
+http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html [2]
+
+ 
+
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/nautiz-x8-extreme-environment-surveying-with-rugged-handhelds 
+
+> 
+
+> Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181105/ceb73dfd/attachment.htm>
+
+From herich at speleodd.sk  Mon Nov  5 08:10:23 2018
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 05 Nov 2018 08:10:23 +0100
+Subject: [Therion] Nautiz X8
+In-Reply-To: <000201d4748e$bd454ac0$37cfe040$@tomo.co.nz>
+References: <000201d4748e$bd454ac0$37cfe040$@tomo.co.nz>
+Message-ID: <470a2dc6fe4b46e10700745396cc2baf@speleodd.sk>
+
+Hi Bruce,
+as you write, it´s enough to wipe it barehanded, very fast once or two 
+times and screen works again, not necessary to dry or clean it 
+perfectly. I have been using the device in many slovak caves, and I 
+haven´t found any place, where would be impossible to draw a sketch, 
+just sometimes I had to protect the screen with whole body like a 
+serpent twists around the branch. I just wonder how it would be in some 
+really rainy cave.
+Hope I have answered your questions, good luck
+Pavel
+
+Dňa 2018-11-04 23:35 Bruce Mutton via Therion napísal(a):
+> Hi Pavel
+> 
+> It might be difficult for me to get device to test before buying, so I
+> just want to clarify the significance of this issue that you
+> mentioned...
+> 
+> "it´s necessary to protect screen from drops of water, even small
+> ones are registered and making some effect on screen".
+> 
+> You are using it a lot, as you mention, and I assume that you are
+> using the device underground.  Therefore I assume that from time to
+> time water droplets, wet mud and sand on the display are inevitable.
+> It happens for me all the time, and I wipe with my hand, lick the
+> display clean (yuk), or wash it in a stream or from my water bottle.
+> 
+> 	* Does this scenario make the X8 unusable for drawing and typing, or
+> just mildly annoying?
+> 	* What about wiping it with a cloth after washing it.  Does that fix
+> it?
+> 
+> (I have a non-caving device, that once wet, needs to be removed from
+> the humid environment completely before the display will respond
+> correctly - drying with a non-absorbent cloth is not sufficient - I
+> want to make sure the X8 is not like this).
+> 
+> Regards
+> 
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+> via Therion
+> Sent: Saturday, 3 November 2018 18:02
+> To: 'List for Therion users' <therion at speleo.sk>
+> Cc: Bruce Mutton <bruce at tomo.co.nz>
+> Subject: [Therion] Nautiz X8
+> 
+> Thanks for the insights Pavel.
+> 
+> I can see those side buttons are in exactly the wrong place.
+> 
+> I too would be after the Windows version, I understand the Windows
+> ones can run Android, but not vice versa.
+> 
+> So before proceeding I will check PocketTopo speed, stylus and water
+> response.  All our caves are such that devices are constantly wet and
+> muddy while surveying. That the Nautiz display responds badly to water
+> surprizes me, as our Trimble Recons have never responded to water
+> (except once when swimming), and that assumption is the reason I am
+> looking at them.
+> 
+> Regards
+> 
+> Bruce
+> 
+> -----Original Message-----
+> 
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich
+> via Therion
+> 
+> Sent: Saturday, 3 November 2018 03:18
+> 
+> To: List for Therion users <therion at speleo.sk>
+> 
+> Cc: Pavel Herich <herich at speleodd.sk>
+> 
+> Subject: Re: [Therion] Nautiz X8
+> 
+> Hello,
+> 
+> i´m using it for more than two years now, 3 to 15 times per month. My
+> device is built on windows, so there is PocketTopo installed. For me
+> it works great, strong battery, quite big screen, I use to clean it
+> just directly under the flowing water. But on the other hand,
+> surprisingly PocketTopo turned out to run significantly slower than on
+> the previous, old and cheap PDA (means menu reactions, context menu
+> calling and so; it doesn´t affect bleutooth connection or any other
+> core functionalities - anyway it could be just some settings error).
+> Then, I had to replace stylus, which was very wide and not draw
+> friendly, instead I use thin stylus from old PDA (metal core), which
+> doesn´t works perfectly, but it´s much better to work with. As well,
+> the screen is not so precise for drawing than on my old PDA, partly
+> perhaps because of bigger screen, but I think the technology has been
+> changed (you can use only plastic, thin protection of the screen to be
+> able to use old and precise stylus).
+> 
+> Also, the two buttons (arrows) on the left side of the device I found
+> very annoying - there are right there, where one would hold the
+> device, they manage volume, which is very necessary to work with
+> inside the cave...; I will try to seal them once. And last thing,
+> it´s necessary to protect screen from drops of water, even small ones
+> are registered and making some effect on screen.
+> 
+> So that´s all troubles I noticed, otherwise you can count with this
+> device anywhere.
+> 
+> But to use it just to draw a raw sketch in PocketTopo or Topodroid,
+> it´s bit expensive (f.e. DigiTerra explorer - basic GIS software can
+> be instaled).
+> 
+> Pavel
+> 
+> Dňa 2018-10-31 19:06 Bruce Mutton via Therion napísal(a):
+> 
+>> Good Morning.
+> 
+>> Does anyone have experience with these?
+> 
+>> Nautiz X8
+> 
+>> 
+> 
+>> 
+> https://www.handheldgroup.com/rugged-computer/handheld-pda/nautiz-x8/#tab=tecspec[1]
+> 
+> 
+>> 
+> 
+> http://ruggedpcreview.com/3_handhelds_handheldus_nautiz_x8.html [2]
+> 
+>> 
+> https://www.handheldgroup.com/rugged-solutions/Customer-Solutions/nautiz-x8-extreme-environment-surveying-with-rugged-handhelds
+> 
+> 
+>> 
+> 
+>> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Mon Nov  5 08:54:55 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 05 Nov 2018 08:54:55 +0100
+Subject: [Therion] Nautiz X8
+In-Reply-To: <000201d4748e$bd454ac0$37cfe040$@tomo.co.nz>
+References: <000201d4748e$bd454ac0$37cfe040$@tomo.co.nz>
+Message-ID: <FA36839A-4A38-4D3E-9BC6-9F1237270558@mac.com>
+
+
+> 4. 11. 2018 v 23:35, Bruce Mutton via Therion <therion at speleo.sk>:
+> 
+> It happens for me all the time, and I wipe with my hand, lick the display clean (yuk), or wash it in a stream or from my water bottle.
+
+As wrote Marbach (in Alpine Caving Techniques http://speleo.lt/speleo/Knygos/Speleo/EN/Alpine%20Cave%20Techniques%20%5BEN%5D.pdf): 
+
+His tongue is sometimes only the clean part of body of a caver.
+
+m.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181105/36cf7368/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Mon Nov  5 10:27:28 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Mon, 5 Nov 2018 10:27:28 +0100 (CET)
+Subject: [Therion] Therion ini linefeeds
+In-Reply-To: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+References: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+Message-ID: <1095107004.268597.1541410048719@comcenter.netcologne.de>
+
+Hi Bruce
+
+I'm using Windows 7 (64bit).
+Normally and right now I just used a double click to open the ini files.
+The default is notepad.exe to open these files.
+This editor does not show the line feeds in a correct way.
+
+I now tested it with following programms:
+- Visual Studio Code
+- Notepad++
+- UltraEdit-32
+- Wordpad
+All these programms show the line feeds in a correct way.
+
+In my opinion the file is OK. It's using 0x0D and 0x0A for a line feed (CR+LF) which is the correct way as far as I know.
+So the problem is obviously "Notepad.exe".
+May be it's a good advice not to use notepad.exe. ;-)
+
+hth,
+Torsten
+
+> Bruce Mutton via Therion <therion at speleo.sk> hat am 4. November 2018 um 20:24 geschrieben:
+> 
+> 
+>     Torsten wrote
+> 
+>     > I'm using a windows with Therion and if you have a look to the ini file there are missing all line feeds.
+> 
+> 
+>     I’m currently using Windows 10 with Therion development version dfe3c00 and have never noticed any problem.
+>     But I recall some changes mentioned regarding linefeed behaviour in recent commits, so I thought I’d check with other editors.
+>      
+>     So my preferred editor NotePad++ displays the linefeeds ini files correctly, as does WordPad.
+>     But the NotePad application that ships with Windows 10 does not display the therion.ini linefeeds, except one.  The whole therion.ini file displays on two lines.  Xtherion.ini displays on about 7 lines with the linefeeds in random places, apparently midline.
+>      
+>     As I never use the NotePad that ships with Windows it does not concern me, but maybe this is something that needs resolving or explaining so that other users are not inconvenienced.
+>      
+>     Bruce
+>      
+> 
+>      
+> 
+
+
+ 
+
+> _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk
+>     https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181105/d8624670/attachment.htm>
+
+From wookey at wookware.org  Fri Nov  9 03:44:09 2018
+From: wookey at wookware.org (Wookey)
+Date: Fri, 9 Nov 2018 02:44:09 +0000
+Subject: [Therion] Therion ini linefeeds
+In-Reply-To: <1095107004.268597.1541410048719@comcenter.netcologne.de>
+References: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+ <1095107004.268597.1541410048719@comcenter.netcologne.de>
+Message-ID: <20181109024409.gn6gz6jjmk455aac@mail.wookware.org>
+
+On 2018-11-05 10:27 +0100, Torsten Schnitter via Therion wrote:
+> Hi Bruce
+> 
+> I'm using Windows 7 (64bit).
+> Normally and right now I just used a double click to open the ini files.
+> The default is notepad.exe to open these files.
+> This editor does not show the line feeds in a correct way.
+> 
+> I now tested it with following programms:
+> - Visual Studio Code
+> - Notepad++
+> - UltraEdit-32
+> - Wordpad
+> All these programms show the line feeds in a correct way.
+> 
+> In my opinion the file is OK. It's using 0x0D and 0x0A for a line feed (CR+LF)
+> which is the correct way as far as I know.
+
+Correct on DOS/Windows, not elsewhere, and it's actually probably just
+being shown like that, but not _actually_ like that on disc.
+
+> So the problem is obviously "Notepad.exe".
+
+Indeed it is (mostly).
+
+The issue is the difference between Unix lineends, windows/DOS lineends and macos lineends.
+unix uses 0x0A (10), Macos Uses 0x0D (14) and DOS/Windows uses both (0x0D,0x0A).
+
+Most editors can cope with this and will try to show you something
+that looks sensible on your screen whichever one it finds. i.e. any of
+those 3 combination will cause a new line (and the DOS version doesn't
+do _two_ new lines). If you think about it this is actually quite
+difficult to get right in all circumstances, and can only be done by
+'translating' a file at load and save time from whatever convention it
+uses to 'native'. If a file ends up being 'half and half' Unix and DOS
+lineends then editors have almost no hope of showing things as
+originally intended, because they can't tell what is 'right'.
+
+Notepad is famous for being very old and rather stupid about this
+- it only shows DOS linefeeds correctly. It ignores the unix linefeed
+and thus puts unix-linefeed files all on one line. Not sure what it
+does if you give it a mac file.
+
+Version control systems also sometimes do this translation so that
+files 'come out right' wherever you checked them out, but they are
+still identical when checked back in/compared.
+
+The original therion.ini file is presumably unix linefeeds so notepad
+is showing it all on one line. That's expected behaviour, even if it's
+not very helpful. Upstream could try to make different lineends for
+all the files in the windows and unix and mac versions of therion, but
+that's work and could cause other difficulties. Mostly if you just
+avoid notepad because it's really very shit that's probably best.
+
+> May be it's a good advice not to use notepad.exe. ;-)
+
+That is indeed good advice.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181109/305a8703/attachment.sig>
+
+From olly at survex.com  Fri Nov  9 05:09:26 2018
+From: olly at survex.com (Olly Betts)
+Date: Fri, 9 Nov 2018 04:09:26 +0000
+Subject: [Therion] Therion ini linefeeds
+In-Reply-To: <20181109024409.gn6gz6jjmk455aac@mail.wookware.org>
+References: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+ <1095107004.268597.1541410048719@comcenter.netcologne.de>
+ <20181109024409.gn6gz6jjmk455aac@mail.wookware.org>
+Message-ID: <20181109040926.nm3ghjavaxmlem2y@survex.com>
+
+On Fri, Nov 09, 2018 at 02:44:09AM +0000, Wookey via Therion wrote:
+> The issue is the difference between Unix lineends, windows/DOS lineends and macos lineends.
+> unix uses 0x0A (10), Macos Uses 0x0D (14) and DOS/Windows uses both (0x0D,0x0A).
+
+0x0D is actually 13 not 14.
+
+Pre-OS-X Macs used that, but modern macs use Unix-style line endings.
+
+Cheers,
+    Olly
+
+
+From wookey at wookware.org  Sat Nov 10 14:09:02 2018
+From: wookey at wookware.org (Wookey)
+Date: Sat, 10 Nov 2018 13:09:02 +0000
+Subject: [Therion] Therion ini linefeeds
+In-Reply-To: <20181109040926.nm3ghjavaxmlem2y@survex.com>
+References: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+ <1095107004.268597.1541410048719@comcenter.netcologne.de>
+ <20181109024409.gn6gz6jjmk455aac@mail.wookware.org>
+ <20181109040926.nm3ghjavaxmlem2y@survex.com>
+Message-ID: <20181110130902.xdnssqegokvbazqo@mail.wookware.org>
+
+On 2018-11-09 04:09 +0000, Olly Betts via Therion wrote:
+> On Fri, Nov 09, 2018 at 02:44:09AM +0000, Wookey via Therion wrote:
+> > The issue is the difference between Unix lineends, windows/DOS lineends and macos lineends.
+> > unix uses 0x0A (10), Macos Uses 0x0D (14) and DOS/Windows uses both (0x0D,0x0A).
+> 
+> 0x0D is actually 13 not 14.
+
+Gah - I counted that out on my fingers and still got it wrong :-)
+ 
+> Pre-OS-X Macs used that, but modern macs use Unix-style line endings.
+
+That's progress :-)
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181110/64a4d8e0/attachment.sig>
+
+From martinsluka at mac.com  Sat Nov 10 14:26:32 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 10 Nov 2018 14:26:32 +0100
+Subject: [Therion] Therion ini linefeeds
+In-Reply-To: <20181110130902.xdnssqegokvbazqo@mail.wookware.org>
+References: <000001d47473$f4a2d480$dde87d80$@tomo.co.nz>
+ <1095107004.268597.1541410048719@comcenter.netcologne.de>
+ <20181109024409.gn6gz6jjmk455aac@mail.wookware.org>
+ <20181109040926.nm3ghjavaxmlem2y@survex.com>
+ <20181110130902.xdnssqegokvbazqo@mail.wookware.org>
+Message-ID: <F2289EB4-EBE9-4CD0-9018-321CC0384CBC@mac.com>
+
+
+> 10. 11. 2018 v 14:09, Wookey via Therion <therion at speleo.sk>:
+> 
+> That's progress :-)
+
+
+:)
+
+Wookey, 
+
+system X of Apple is UNIX based.
+
+Martin S.
+
+
+From wookey at wookware.org  Mon Nov 12 04:01:50 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 03:01:50 +0000
+Subject: [Therion] Topodroid import
+Message-ID: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+
+We just held a weekend of 'intermediate/advanced' digital surveying,
+largely about therion usage in the UK.
+
+Expect some questions :-)
+
+One thing that came up was export from topodroid.
+
+It exports directly into therion .th2 format, which is good, but the
+exported drawings have a very high point-density on lines. There are
+hundreds of small straight line-segments in even quite a short
+survey. A large survey is pretty-much unmanageable in xtherion as it
+goes so slowly with lots of lines.
+
+It is possible to select each line and use 'edit line' -> 'convert to
+curve' to greatly simplify each line, and after doing this things work
+much better, but this process is very tedious indeed.
+
+What would it take to be able to select 'all lines' and apply this
+transformation in one go, or, even better, could topodroid do this
+before export so a much smaller and more useful file is exported?
+
+Any other sugestions for making this less painful?
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181112/7da44760/attachment.sig>
+
+From wookey at wookware.org  Mon Nov 12 04:32:12 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 03:32:12 +0000
+Subject: [Therion] Background zoom-level bug
+Message-ID: <20181112033212.befewgqxyouitgit@mail.wookware.org>
+
+There seems to be a bug in xtherion graphics editor revealed if you
+manage to enter a non-power-of-two zoom level.
+
+If you get into this state then the background image and the lines
+drawn on top of it go out of registration.
+
+Here is an easy way to reproduce the problem. You will need a mouse
+with a scroll-wheel, and the latest 5.4.1 version of therion..
+
+* Insert a jpeg into a new .th2 file in xtherion.
+* Draw a line over part of it.
+* Move it around and observe that the line moves with the background. This is true at 
+  all 5 fixed zoom levels.
+* zoom with the mouse scroll button as far out as possible. It seems to allow 12% for example. Now when you come back out you get 24%, 48%, 96% etc.
+* Now if you move the image around, the image and lines stay together until you have moved a bit, but then start to move seprately. This seems to be something to do with bounding boxes. 
+* Click on 25/50/100/200/400 scaling the line+ images go back into registration. 
+
+I can't reproduce this problem right now because my therion is too
+old, so the mouse wheel doesn't produce scrolling in the xtherion
+window, but we had the same problem on both Windows and Linux machines
+at the weekend with 5.4.1.
+
+If others can confirm that the above is a sufficient set of
+instructions, then hopefully someone with clue can work out why it
+goes wrong for 'intermediate' zoom levels.
+
+It took us quite a while to work out what on earth was going on at the weekend!
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Mon Nov 12 04:39:50 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 03:39:50 +0000
+Subject: [Therion] Old version of Windows filer dialog
+Message-ID: <20181112033950.rwis5y33zjs5fbh3@mail.wookware.org>
+
+One issue reported was that the 'open' dialog in xtherion on Windows
+is now older than the 'normal' explorer one, so it doesn't support
+some handy things like being able to cut and paste a path.
+
+I'm not sure where the filer dialog comes from, but I guess it's wx?
+Perhaps this can't easily be fixed without an update in that library?
+
+If it can be updated it would be appreciated. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Mon Nov 12 09:22:59 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 12 Nov 2018 21:22:59 +1300
+Subject: [Therion] Background zoom-level bug
+In-Reply-To: <20181112033212.befewgqxyouitgit@mail.wookware.org>
+References: <20181112033212.befewgqxyouitgit@mail.wookware.org>
+Message-ID: <000001d47a60$edd38b20$c97aa160$@tomo.co.nz>
+
+This bug has been around ever since mouse wheel zooming was introduced.  An attempt was made to fix it I recall, but it did not have the desired effect.
+It manifests for bitmap background images, but not for xvi 'images'.
+A work around is to never roll the mouse wheel when working with th2 with bitmaps inserted.  Very hard to do!.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Wookey via Therion
+Sent: Monday, 12 November 2018 16:32
+To: Therion List <therion at speleo.sk>
+Cc: Wookey <wookey at wookware.org>
+Subject: [Therion] Background zoom-level bug
+
+There seems to be a bug in xtherion graphics editor revealed if you manage to enter a non-power-of-two zoom level.
+
+If you get into this state then the background image and the lines drawn on top of it go out of registration.
+
+Here is an easy way to reproduce the problem. You will need a mouse with a scroll-wheel, and the latest 5.4.1 version of therion..
+
+* Insert a jpeg into a new .th2 file in xtherion.
+* Draw a line over part of it.
+* Move it around and observe that the line moves with the background. This is true at
+  all 5 fixed zoom levels.
+* zoom with the mouse scroll button as far out as possible. It seems to allow 12% for example. Now when you come back out you get 24%, 48%, 96% etc.
+* Now if you move the image around, the image and lines stay together until you have moved a bit, but then start to move seprately. This seems to be something to do with bounding boxes. 
+* Click on 25/50/100/200/400 scaling the line+ images go back into registration. 
+
+I can't reproduce this problem right now because my therion is too old, so the mouse wheel doesn't produce scrolling in the xtherion window, but we had the same problem on both Windows and Linux machines at the weekend with 5.4.1.
+
+If others can confirm that the above is a sufficient set of instructions, then hopefully someone with clue can work out why it goes wrong for 'intermediate' zoom levels.
+
+It took us quite a while to work out what on earth was going on at the weekend!
+
+Wookey
+--
+Principal hats:  Linaro, Debian, Wookware, ARM http://wookware.org/ _______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From eqr at ecgracia.com  Mon Nov 12 10:02:15 2018
+From: eqr at ecgracia.com (Evaristo Quiroga)
+Date: Mon, 12 Nov 2018 10:02:15 +0100
+Subject: [Therion] Topodroid import
+In-Reply-To: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+References: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+Message-ID: <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+
+Hi Wookey,
+
+Yours problems with the high density line segments are from the Setting 
+selection.
+
+In "Settings/Sketching/Lines/Lines style" you can select the segment 
+density  type (Fine, Normal or Coarse). But it's better to use the 
+Bezier option.
+
+The Bezier lines are like the lines in Therion.
+
+Best regards,
+
+Evaristo.
+
+
+
+
+El 12/11/2018 a las 4:01, Wookey via Therion escribió:
+> We just held a weekend of 'intermediate/advanced' digital surveying,
+> largely about therion usage in the UK.
+>
+> Expect some questions :-)
+>
+> One thing that came up was export from topodroid.
+>
+> It exports directly into therion .th2 format, which is good, but the
+> exported drawings have a very high point-density on lines. There are
+> hundreds of small straight line-segments in even quite a short
+> survey. A large survey is pretty-much unmanageable in xtherion as it
+> goes so slowly with lots of lines.
+>
+> It is possible to select each line and use 'edit line' -> 'convert to
+> curve' to greatly simplify each line, and after doing this things work
+> much better, but this process is very tedious indeed.
+>
+> What would it take to be able to select 'all lines' and apply this
+> transformation in one go, or, even better, could topodroid do this
+> before export so a much smaller and more useful file is exported?
+>
+> Any other sugestions for making this less painful?
+>
+> Wookey
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181112/1db3eb67/attachment.htm>
+
+From wookey at wookware.org  Mon Nov 12 14:35:50 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 13:35:50 +0000
+Subject: [Therion] Topodroid import
+In-Reply-To: <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+References: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+ <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+Message-ID: <20181112133550.ccmann3hastdmrcz@mail.wookware.org>
+
+On 2018-11-12 10:02 +0100, Evaristo Quiroga via Therion wrote:
+> Hi Wookey,
+> 
+> Yours problems with the high density line segments are from the Setting
+> selection.
+> 
+> In "Settings/Sketching/Lines/Lines style" you can select the  segment density 
+> type (Fine, Normal or Coarse). But it's better to use the Bezier option.
+
+OK, thanks, that's good to know. I'll pass it on to the user in
+question (who may or may not have got round to joining this list
+already).
+
+But if someone has done a survey like that (or maybe a whole
+expeditions-worth) then they would still like a reasonably easy way to
+convert it/them back to manageable lines. So I think the original
+question still stands: can we have a way to select more than one line
+at a time for such processing in xtherion. Or perhaps decide that the
+'fine' setting in topodroid is no practical use, or should at least be
+advised against. What is the default setting for line segment density?
+
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181112/f34393cd/attachment.sig>
+
+From wookey at wookware.org  Mon Nov 12 14:43:01 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 13:43:01 +0000
+Subject: [Therion] Background zoom-level bug
+In-Reply-To: <000001d47a60$edd38b20$c97aa160$@tomo.co.nz>
+References: <20181112033212.befewgqxyouitgit@mail.wookware.org>
+ <000001d47a60$edd38b20$c97aa160$@tomo.co.nz>
+Message-ID: <20181112134301.l2xrznp3uibcdpdb@mail.wookware.org>
+
+On 2018-11-12 21:22 +1300, Bruce Mutton via Therion wrote:
+> On Monday, 12 November 2018 16:32 Wookey wrote:
+> 
+> > There seems to be a bug in xtherion graphics editor revealed if you manage to enter a non-power-of-two zoom level.
+> >
+> > If you get into this state then the background image and the lines drawn on top of it go out of registration.
+
+> This bug has been around ever since mouse wheel zooming was introduced.  An attempt was made to fix it I recall, but it did not have the desired effect.
+> It manifests for bitmap background images, but not for xvi 'images'.
+
+Aha - this would explain why most of us had not noticed it before. People using a pockettopo->topparser->xtherion workflow would never notice this (no jpegs/gifs/pngs).
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181112/5230d990/attachment.sig>
+
+From markus.boldt at gmx.net  Mon Nov 12 15:04:23 2018
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Mon, 12 Nov 2018 15:04:23 +0100
+Subject: [Therion] Topodroid import
+In-Reply-To: <20181112133550.ccmann3hastdmrcz@mail.wookware.org>
+References: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+ <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+ <20181112133550.ccmann3hastdmrcz@mail.wookware.org>
+Message-ID: <009f01d47a90$9ec029a0$dc407ce0$@gmx.net>
+
+Hi Wookey, 
+I guess, this "problem" is better lifted to the topodroid-list or rather
+directly to Marco. Because to change the resolution of lines is better made
+before exporting to therion. Of course it`s my opinion. 
+Greetings 
+Markus
+
+-----Ursprüngliche Nachricht-----
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Wookey via
+Therion
+Gesendet: Montag, 12. November 2018 14:36
+An: Therion List
+Cc: Wookey
+Betreff: Re: [Therion] Topodroid import
+
+On 2018-11-12 10:02 +0100, Evaristo Quiroga via Therion wrote:
+> Hi Wookey,
+> 
+> Yours problems with the high density line segments are from the 
+> Setting selection.
+> 
+> In "Settings/Sketching/Lines/Lines style" you can select the  segment 
+> density type (Fine, Normal or Coarse). But it's better to use the Bezier
+option.
+
+OK, thanks, that's good to know. I'll pass it on to the user in question
+(who may or may not have got round to joining this list already).
+
+But if someone has done a survey like that (or maybe a whole
+expeditions-worth) then they would still like a reasonably easy way to
+convert it/them back to manageable lines. So I think the original question
+still stands: can we have a way to select more than one line at a time for
+such processing in xtherion. Or perhaps decide that the 'fine' setting in
+topodroid is no practical use, or should at least be advised against. What
+is the default setting for line segment density?
+
+
+Wookey
+--
+Principal hats:  Linaro, Debian, Wookware, ARM http://wookware.org/
+
+
+
+From wookey at wookware.org  Mon Nov 12 15:22:03 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 12 Nov 2018 14:22:03 +0000
+Subject: [Therion] Topodroid import
+In-Reply-To: <009f01d47a90$9ec029a0$dc407ce0$@gmx.net>
+References: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+ <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+ <20181112133550.ccmann3hastdmrcz@mail.wookware.org>
+ <009f01d47a90$9ec029a0$dc407ce0$@gmx.net>
+Message-ID: <20181112142202.knu6f4bllqbr6o5i@mail.wookware.org>
+
+On 2018-11-12 15:04 +0100, Markus Boldt via Therion wrote:
+> Hi Wookey, 
+> I guess, this "problem" is better lifted to the topodroid-list 
+
+I didn't know there was a topodroid list.
+I don't see mention of one on:
+https://github.com/marcocorvi/topodroid
+or
+https://sites.google.com/site/speleoapps/home/topodroid
+
+where is it?
+
+(I've been meaning to fix things so that Marco's apps were available
+in f-droid, because at the moment they are a pain to get hold of
+(those of us avoiding google's tracking have to go to aptoide or
+apkpure), and obviously this is a sensible thing to discuss on such a
+list)
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181112/097fce54/attachment.sig>
+
+From ladislav at lblazek.cz  Mon Nov 12 20:20:15 2018
+From: ladislav at lblazek.cz (=?utf-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Mon, 12 Nov 2018 20:20:15 +0100
+Subject: [Therion] Topodroid import
+In-Reply-To: <20181112142202.knu6f4bllqbr6o5i@mail.wookware.org>
+References: <20181112030150.4ywixjdvtjfuyp54@mail.wookware.org>
+ <9d1bcf4a-868b-0aa4-4899-5548e7f7c425@ecgracia.com>
+ <20181112133550.ccmann3hastdmrcz@mail.wookware.org>
+ <009f01d47a90$9ec029a0$dc407ce0$@gmx.net>
+ <20181112142202.knu6f4bllqbr6o5i@mail.wookware.org>
+Message-ID: <BBC9A03A-B4B8-47C0-AB14-6D4B9E6F6A36@lblazek.cz>
+
+Hi Wookey,
+there is a Google group topodroid at googlegroups.com
+
+\Ladislav
+
+12. 11. 2018 v 15:22, Wookey via Therion <therion at speleo.sk>:
+
+>> On 2018-11-12 15:04 +0100, Markus Boldt via Therion wrote:
+>> Hi Wookey, 
+>> I guess, this "problem" is better lifted to the topodroid-list 
+> 
+> I didn't know there was a topodroid list.
+> I don't see mention of one on:
+> https://github.com/marcocorvi/topodroid
+> or
+> https://sites.google.com/site/speleoapps/home/topodroid
+> 
+> where is it?
+> 
+> (I've been meaning to fix things so that Marco's apps were available
+> in f-droid, because at the moment they are a pain to get hold of
+> (those of us avoiding google's tracking have to go to aptoide or
+> apkpure), and obviously this is a sensible thing to discuss on such a
+> list)
+> 
+> Wookey
+> -- 
+> Principal hats:  Linaro, Debian, Wookware, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From marco.corvi at gmail.com  Tue Nov 13 12:13:09 2018
+From: marco.corvi at gmail.com (Marco Corvi)
+Date: Tue, 13 Nov 2018 12:13:09 +0100
+Subject: [Therion] topodroid lines
+Message-ID: <CAJiQYo24CO-knQKz+OD2fZVGprKMLD8fRV01URkFP3i0QWD9oA@mail.gmail.com>
+
+sorry for the late reply (i read digest)
+
+there is a setting in topodroid to set the spacing of line points.
+units of screen pixels, i think (not sure, i should check)
+
+there are also a couple of setting to control how cubics are generated
+
+apks: besides google play store,
+some are on the site (which is on google, but i suppose does not require
+sign-in)
+
+marco
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181113/8243992d/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Wed Nov 14 10:53:33 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Wed, 14 Nov 2018 10:53:33 +0100 (CET)
+Subject: [Therion] mark [(Station list)] <type>
+Message-ID: <1251141965.330636.1542189213324@comcenter.netcologne.de>
+
+Hi
+
+Can sombody explain what the switch:
+mark [(station list)] <type>
+
+from the command centreline does!?
+
+As <type> one of the following ist allowed:
+temporary (default)
+painted
+natural
+fixed
+
+I can't find an example and therefore do not understand the meaning of this switch.
+Thanks!
+
+regards,
+Torsten
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/4db9d5f2/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Nov 14 11:18:57 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 14 Nov 2018 23:18:57 +1300
+Subject: [Therion] mark [(Station list)] <type>
+In-Reply-To: <1251141965.330636.1542189213324@comcenter.netcologne.de>
+References: <1251141965.330636.1542189213324@comcenter.netcologne.de>
+Message-ID: <001e01d47c03$75db00e0$619102a0$@tomo.co.nz>
+
+The mark [station list] <type> statement allows you to differentiate stations.
+
+ 
+
+For example, I use natural to refer to a speleothem or pointy rock that is a station, and fixed to represent a rock cairn, or artificial insert.  The default ‘temporary’ is for ephemeral stations that cease to exist once the survey has moved on.
+
+ 
+
+In a finished map, I symbol-hide the temporary stations, and show the others.  
+
+
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Torsten Schnitter via Therion
+Sent: Wednesday, 14 November 2018 22:54
+To: therion at speleo.sk
+Cc: Torsten Schnitter <torsten.schnitter at netcologne.de>
+Subject: [Therion] mark [(Station list)] <type>
+
+ 
+
+Hi
+
+Can sombody explain what the switch:
+mark [(station list)] <type>
+
+from the command centreline does!?
+
+As <type> one of the following ist allowed:
+temporary (default)
+painted
+natural
+fixed
+
+I can't find an example and therefore do not understand the meaning of this switch.
+Thanks!
+
+regards,
+Torsten
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/0120b969/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 12055 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/0120b969/attachment.png>
+
+From torsten.schnitter at netcologne.de  Wed Nov 14 16:29:42 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Wed, 14 Nov 2018 16:29:42 +0100
+Subject: [Therion] mark [(Station list)] <type>
+In-Reply-To: <001e01d47c03$75db00e0$619102a0$@tomo.co.nz>
+References: <1251141965.330636.1542189213324@comcenter.netcologne.de>
+ <001e01d47c03$75db00e0$619102a0$@tomo.co.nz>
+Message-ID: <0409BEBF-A059-4AE3-88E2-8DE2FC24BC40@netcologne.de>
+
+Thanks, Bruce. 
+
+So it doesn‘t have any effect on a xvi file although it is a centreline switch!?
+
+Regards,
+Torsten
+
+> Am 14.11.2018 um 11:18 schrieb Bruce Mutton via Therion <therion at speleo.sk>:
+> 
+> The mark [station list] <type> statement allows you to differentiate stations.
+>  
+> For example, I use natural to refer to a speleothem or pointy rock that is a station, and fixed to represent a rock cairn, or artificial insert.  The default ‘temporary’ is for ephemeral stations that cease to exist once the survey has moved on.
+>  
+> In a finished map, I symbol-hide the temporary stations, and show the others. 
+> <image001.png>
+>  
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Torsten Schnitter via Therion
+> Sent: Wednesday, 14 November 2018 22:54
+> To: therion at speleo.sk
+> Cc: Torsten Schnitter <torsten.schnitter at netcologne.de>
+> Subject: [Therion] mark [(Station list)] <type>
+>  
+> Hi
+> 
+> Can sombody explain what the switch:
+> mark [(station list)] <type>
+> 
+> from the command centreline does!?
+> 
+> As <type> one of the following ist allowed:
+> temporary (default)
+> painted
+> natural
+> fixed
+> 
+> I can't find an example and therefore do not understand the meaning of this switch.
+> Thanks!
+> 
+> regards,
+> Torsten
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/53e0d4ef/attachment.htm>
+
+From alastairgott at hotmail.com  Tue Nov 13 12:10:09 2018
+From: alastairgott at hotmail.com (alastair gott)
+Date: Tue, 13 Nov 2018 11:10:09 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+	Hierarchy?
+Message-ID: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+HI,
+
+I was trying to join a file [with Centreline driven by .3d data (.3d)] to another file [with centreline driven by my electronic surveying data (Elec)].
+
+The .3d file seems to come with it's own coordinate system, so we needed to remove(#) the entrance coordinates, from the Elec data.
+
+I have joined these two surveys in a .th file and successfully got an output. There are two entrances to the system.
+
+So my question is, can I add back coordinate data for one (or more) Entrance(s) at the last level of the survey hierarchy? or will the mismatch between .3d and Elec prevent me from doing this?
+
+
+ Regards,
+ Alastair Gott.
+ 
+ AlastairGott at hotmail.com,
+ M: 07931779380,
+   
+
+From martinsluka at mac.com  Wed Nov 14 19:07:50 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 14 Nov 2018 19:07:50 +0100
+Subject: [Therion] Add Coordinate data back at last level of
+	Survey	Hierarchy?
+In-Reply-To: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <5ECDF6EF-375A-4B99-901A-8736C71881E8@mac.com>
+
+No, as far as the data are in different centerlines. 
+
+Odesláno z iPhonu
+
+13. 11. 2018 v 12:10, alastair gott via Therion <therion at speleo.sk>:
+
+> HI,
+> 
+> I was trying to join a file [with Centreline driven by .3d data (.3d)] to another file [with centreline driven by my electronic surveying data (Elec)].
+> 
+> The .3d file seems to come with it's own coordinate system, so we needed to remove(#) the entrance coordinates, from the Elec data.
+> 
+> I have joined these two surveys in a .th file and successfully got an output. There are two entrances to the system.
+> 
+> So my question is, can I add back coordinate data for one (or more) Entrance(s) at the last level of the survey hierarchy? or will the mismatch between .3d and Elec prevent me from doing this?
+> 
+> 
+> Regards,
+> Alastair Gott.
+> 
+> AlastairGott at hotmail.com,
+> M: 07931779380,
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Wed Nov 14 19:45:21 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 15 Nov 2018 07:45:21 +1300
+Subject: [Therion] Add Coordinate data back at last level of
+	Survey	Hierarchy?
+In-Reply-To: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+
+Not sure I understand you situation properly.  And I have no experience using .3d files as input.
+
+However, in general...
+
+If you have multiple surveys, each with a different (but not arbitrary) coordinate system set, then there should be no problem if you identify the coordinate system in each low level (survey trip) survey.  Each one can be different.  ie cs lat-long in one, cs EPSG:27200 in another, and cs EPSG:2193 in another.  On occasion I specify multiple cs in each input file.
+
+Then you can specify the output coordinate system in the thconfig file.  If more than one is specified in the thconfig, then only the last one is used.   Ie all outputs must share the same cs.
+
+Looking at the wiki and Therion Book, I am not sure that the input side of this problem is well documented.
+
+Bruce
+
+-----Original Message-----
+HI,
+
+I was trying to join a file [with Centreline driven by .3d data (.3d)] to another file [with centreline driven by my electronic surveying data (Elec)].
+
+The .3d file seems to come with it's own coordinate system, so we needed to remove(#) the entrance coordinates, from the Elec data.
+
+I have joined these two surveys in a .th file and successfully got an output. There are two entrances to the system.
+
+So my question is, can I add back coordinate data for one (or more) Entrance(s) at the last level of the survey hierarchy? or will the mismatch between .3d and Elec prevent me from doing this?
+
+
+ Regards,
+ Alastair Gott.
+ 
+ AlastairGott at hotmail.com,
+ M: 07931779380,
+   
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From andrew at wotcc.org.uk  Wed Nov 14 20:07:50 2018
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 14 Nov 2018 19:07:50 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+	Hierarchy?
+In-Reply-To: <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+Message-ID: <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+
+I've not had time to play with this, since Alistair showed me the problem
+on the weekend. The bit that I cannot get my head round is when 3d are
+imported with a coordinate system, if a th centreline then connects 2 parts
+of the survey from the 3d or an entrance coordinate is specified for the
+3d, how does this change, or can it change the coordinates of the data from
+the 3d as the stations from this already has coordinates with little
+information about the connections  [I hope that makes sense]
+
+Andrew
+
+On Wed, 14 Nov 2018, 18:45 Bruce Mutton via Therion <therion at speleo.sk
+wrote:
+
+> Not sure I understand you situation properly.  And I have no experience
+> using .3d files as input.
+>
+> However, in general...
+>
+> If you have multiple surveys, each with a different (but not arbitrary)
+> coordinate system set, then there should be no problem if you identify the
+> coordinate system in each low level (survey trip) survey.  Each one can be
+> different.  ie cs lat-long in one, cs EPSG:27200 in another, and cs
+> EPSG:2193 in another.  On occasion I specify multiple cs in each input file.
+>
+> Then you can specify the output coordinate system in the thconfig file.
+> If more than one is specified in the thconfig, then only the last one is
+> used.   Ie all outputs must share the same cs.
+>
+> Looking at the wiki and Therion Book, I am not sure that the input side of
+> this problem is well documented.
+>
+> Bruce
+>
+> -----Original Message-----
+> HI,
+>
+> I was trying to join a file [with Centreline driven by .3d data (.3d)] to
+> another file [with centreline driven by my electronic surveying data
+> (Elec)].
+>
+> The .3d file seems to come with it's own coordinate system, so we needed
+> to remove(#) the entrance coordinates, from the Elec data.
+>
+> I have joined these two surveys in a .th file and successfully got an
+> output. There are two entrances to the system.
+>
+> So my question is, can I add back coordinate data for one (or more)
+> Entrance(s) at the last level of the survey hierarchy? or will the mismatch
+> between .3d and Elec prevent me from doing this?
+>
+>
+>  Regards,
+>  Alastair Gott.
+>
+>  AlastairGott at hotmail.com,
+>  M: 07931779380,
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/f3b92583/attachment.htm>
+
+From olly at survex.com  Wed Nov 14 21:36:45 2018
+From: olly at survex.com (Olly Betts)
+Date: Wed, 14 Nov 2018 20:36:45 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+ Hierarchy?
+In-Reply-To: <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+ <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+Message-ID: <20181114203645.b4hntlekvmt6gndb@survex.com>
+
+On Wed, Nov 14, 2018 at 07:07:50PM +0000, Andrew Atkinson via Therion wrote:
+> I've not had time to play with this, since Alistair showed me the problem
+> on the weekend. The bit that I cannot get my head round is when 3d are
+> imported with a coordinate system, if a th centreline then connects 2 parts
+> of the survey from the 3d or an entrance coordinate is specified for the
+> 3d, how does this change, or can it change the coordinates of the data from
+> the 3d as the stations from this already has coordinates with little
+> information about the connections  [I hope that makes sense]
+
+Survex .3d files record the coordinate system the data is in, if one was
+specified.  This was added in Survex 1.2.14 (released 2014-07-05).
+
+But looking at the therion source code, it appears therion never makes
+use of this information.  I suspect therion just hasn't been updated for
+Survex gaining coordinate system support.
+
+You can specify the coordinate system as an option to therion's import
+command, so for now I guess that's what you have to do.
+
+Cheers,
+    Olly
+
+
+From wookey at wookware.org  Wed Nov 14 23:59:44 2018
+From: wookey at wookware.org (Wookey)
+Date: Wed, 14 Nov 2018 22:59:44 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+ Hierarchy?
+In-Reply-To: <20181114203645.b4hntlekvmt6gndb@survex.com>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+ <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+ <20181114203645.b4hntlekvmt6gndb@survex.com>
+Message-ID: <20181114225943.s67b5kll7u44rjdz@mail.wookware.org>
+
+On 2018-11-14 20:36 +0000, Olly Betts via Therion wrote:
+> On Wed, Nov 14, 2018 at 07:07:50PM +0000, Andrew Atkinson via Therion wrote:
+> > I've not had time to play with this, since Alistair showed me the problem
+> > on the weekend. The bit that I cannot get my head round is when 3d are
+> > imported with a coordinate system, if a th centreline then connects 2 parts
+> > of the survey from the 3d or an entrance coordinate is specified for the
+> > 3d, how does this change, or can it change the coordinates of the data from
+> > the 3d as the stations from this already has coordinates with little
+> > information about the connections  [I hope that makes sense]
+> 
+> Survex .3d files record the coordinate system the data is in, if one was
+> specified.  This was added in Survex 1.2.14 (released 2014-07-05).
+
+Right, and that is metadata saying, effectively, 'the numbers in this
+file should be considered to be in a co-ordinate system starting at
+X,Y on the planet, oriented this way'.
+
+
+> But looking at the therion source code, it appears therion never makes
+> use of this information.  I suspect therion just hasn't been updated for
+> Survex gaining coordinate system support.
+> 
+> You can specify the coordinate system as an option to therion's import
+> command, so for now I guess that's what you have to do.
+
+Right, but (if I understand this correctly), that option does not
+change the numbers in the file. They must be valid for the cordinate
+system given in the import command. This info effectively says where
+the origin for the co-ordinates in the file are to be interpreted-as
+(and stuff about axis angles).
+
+So let's say that your survex data was processed in 'local' co-ordinates
+so it just starts from 0,0 in arbitrary 'nowhere' co-ordinates.
+
+What Alistair wants to do is read that in, but use it with therion
+data that is in real-world co-ordinates (UTM30N).
+
+The question is, can that be offset by some arbitrary number on
+reading-in so that it appears in the right place in the UTM30
+co-ordinate system? Is a rotation needed too?
+
+Adding a rune to the line saying 'this is already in UTM30' will not
+have the desired effect, because data in UTM30 doesn't necessarily
+start from 0,0, and even if it did, his survey presumably needs to be
+at some other co-ord withint that space.
+
+The import -calibrate x y z X Y Z command looks like it should do the
+right thing, so long as the axes are aligned, by shifting from x y z
+to X Y Z. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181114/c9adb0ac/attachment.sig>
+
+From olly at survex.com  Thu Nov 15 00:24:17 2018
+From: olly at survex.com (Olly Betts)
+Date: Wed, 14 Nov 2018 23:24:17 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+ Hierarchy?
+In-Reply-To: <20181114225943.s67b5kll7u44rjdz@mail.wookware.org>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+ <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+ <20181114203645.b4hntlekvmt6gndb@survex.com>
+ <20181114225943.s67b5kll7u44rjdz@mail.wookware.org>
+Message-ID: <20181114232417.r23yo4wuhzzqqkk7@survex.com>
+
+On Wed, Nov 14, 2018 at 10:59:44PM +0000, Wookey via Therion wrote:
+> On 2018-11-14 20:36 +0000, Olly Betts via Therion wrote:
+> > On Wed, Nov 14, 2018 at 07:07:50PM +0000, Andrew Atkinson via Therion wrote:
+> > > I've not had time to play with this, since Alistair showed me the problem
+> > > on the weekend. The bit that I cannot get my head round is when 3d are
+> > > imported with a coordinate system, if a th centreline then connects 2 parts
+> > > of the survey from the 3d or an entrance coordinate is specified for the
+> > > 3d, how does this change, or can it change the coordinates of the data from
+> > > the 3d as the stations from this already has coordinates with little
+> > > information about the connections  [I hope that makes sense]
+> > 
+> > Survex .3d files record the coordinate system the data is in, if one was
+> > specified.  This was added in Survex 1.2.14 (released 2014-07-05).
+> 
+> Right, and that is metadata saying, effectively, 'the numbers in this
+> file should be considered to be in a co-ordinate system starting at
+> X,Y on the planet, oriented this way'.
+
+That's a bit oversimplified, but gives the right idea.
+
+> > But looking at the therion source code, it appears therion never makes
+> > use of this information.  I suspect therion just hasn't been updated for
+> > Survex gaining coordinate system support.
+> > 
+> > You can specify the coordinate system as an option to therion's import
+> > command, so for now I guess that's what you have to do.
+> 
+> Right, but (if I understand this correctly), that option does not
+> change the numbers in the file. They must be valid for the cordinate
+> system given in the import command. This info effectively says where
+> the origin for the co-ordinates in the file are to be interpreted-as
+> (and stuff about axis angles).
+> So let's say that your survex data was processed in 'local' co-ordinates
+> so it just starts from 0,0 in arbitrary 'nowhere' co-ordinates.
+> 
+> What Alistair wants to do is read that in, but use it with therion
+> data that is in real-world co-ordinates (UTM30N).
+> 
+> The question is, can that be offset by some arbitrary number on
+> reading-in so that it appears in the right place in the UTM30
+> co-ordinate system? Is a rotation needed too?
+
+I'd interpreted what Alistair had said as meaning he was specifying
+the coordinate systems in his Survex data, but re-reading I think
+you may be right that his data is currently just in arbitrary "local"
+coordinates.
+
+I don't think there's a way to retrofit a coordinate system to
+processed data in arbitrary local coordinates.  Theoretically it
+could probably be done, though if there are multiple fixed points then
+you'd probably have to redo the loop closure to make it fit properly
+(because space isn't exactly the same shape in different coordinate
+systems - it's not just a translation and a rotation).
+
+> The import -calibrate x y z X Y Z command looks like it should do the
+> right thing, so long as the axes are aligned, by shifting from x y z
+> to X Y Z. 
+
+Adding on a fixed offset isn't going to correctly map you between most
+pairs of coordinate systems though, so in general that's a bodge.  It
+may sometimes be good enough given the errors in cave survey
+measurements, but it seems simpler to just specify the coordinate
+systems and fixed stations in the Survex data with "*cs" and "*fix", and
+reprocess (and with current therion, also tell it what coordinate system
+you used in "*cs out" in the Survex data).
+
+Cheers,
+    Olly
+
+
+From alastairgott at hotmail.com  Thu Nov 15 00:20:32 2018
+From: alastairgott at hotmail.com (alastair gott)
+Date: Wed, 14 Nov 2018 23:20:32 +0000
+Subject: [Therion] Add Coordinate data back at last level of Survey
+ Hierarchy?
+In-Reply-To: <20181114225943.s67b5kll7u44rjdz@mail.wookware.org>
+References: <AM0PR03MB48679C4500345466F2FCE442D6C20@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <000201d47c4a$341bd390$9c537ab0$@tomo.co.nz>
+ <CAN+2M_HUXdozZTAAwi3dniNHSJyf+MHW0RoBVy9S_=y6Kp9nmg@mail.gmail.com>
+ <20181114203645.b4hntlekvmt6gndb@survex.com>,
+ <20181114225943.s67b5kll7u44rjdz@mail.wookware.org>
+Message-ID: <AM0PR03MB4867087EAB7F47F5122CED23D6C30@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Hi Everyone,
+
+It's solved, I found a way of commenting out enough of the information at a higher level in Survex to allow Therion to take a .3d file with the right amount of information that it can cope with. This means that the UTM30N data was running through Survex (for MarniosaOld) and this was the same cs that I was using for the Silvestre Data.
+
+I'm sure I could use the Calibrate function, just as a case in point if you would like me to run it again with the limited .3d dataset to prove its use?
+
+thanks for all the help, as a reward I've got a lovely KML file. 
+https://drive.google.com/open?id=1xIOHqp5ypJOUda_AZzf-ypYqArseJsAZ&usp=sharing
+
+I'll need to tidy up the survey, as the KML is not coming out correctly. we've got a few things to solve when we return next year. but it adds to the fun.
+
+
+  Regards,
+ Alastair Gott.
+ 
+ AlastairGott at hotmail.com,
+ M: 07931779380,
+   
+
+
+
+From: Therion <therion-bounces at speleo.sk> on behalf of Wookey via Therion <therion at speleo.sk>
+Sent: 14 November 2018 22:59
+To: Andrew Atkinson via Therion
+Cc: Wookey
+Subject: Re: [Therion] Add Coordinate data back at last level of Survey Hierarchy?
+  
+
+On 2018-11-14 20:36 +0000, Olly Betts via Therion wrote:
+> On Wed, Nov 14, 2018 at 07:07:50PM +0000, Andrew Atkinson via Therion wrote:
+> > I've not had time to play with this, since Alistair showed me the problem
+> > on the weekend. The bit that I cannot get my head round is when 3d are
+> > imported with a coordinate system, if a th centreline then connects 2 parts
+> > of the survey from the 3d or an entrance coordinate is specified for the
+> > 3d, how does this change, or can it change the coordinates of the data from
+> > the 3d as the stations from this already has coordinates with little
+> > information about the connections  [I hope that makes sense]
+> 
+> Survex .3d files record the coordinate system the data is in, if one was
+> specified.  This was added in Survex 1.2.14 (released 2014-07-05).
+
+Right, and that is metadata saying, effectively, 'the numbers in this
+file should be considered to be in a co-ordinate system starting at
+X,Y on the planet, oriented this way'.
+
+
+> But looking at the therion source code, it appears therion never makes
+> use of this information.  I suspect therion just hasn't been updated for
+> Survex gaining coordinate system support.
+> 
+> You can specify the coordinate system as an option to therion's import
+> command, so for now I guess that's what you have to do.
+
+Right, but (if I understand this correctly), that option does not
+change the numbers in the file. They must be valid for the cordinate
+system given in the import command. This info effectively says where
+the origin for the co-ordinates in the file are to be interpreted-as
+(and stuff about axis angles).
+
+So let's say that your survex data was processed in 'local' co-ordinates
+so it just starts from 0,0 in arbitrary 'nowhere' co-ordinates.
+
+What Alistair wants to do is read that in, but use it with therion
+data that is in real-world co-ordinates (UTM30N).
+
+The question is, can that be offset by some arbitrary number on
+reading-in so that it appears in the right place in the UTM30
+co-ordinate system? Is a rotation needed too?
+
+Adding a rune to the line saying 'this is already in UTM30' will not
+have the desired effect, because data in UTM30 doesn't necessarily
+start from 0,0, and even if it did, his survey presumably needs to be
+at some other co-ord withint that space.
+
+The import -calibrate x y z X Y Z command looks like it should do the
+right thing, so long as the axes are aligned, by shifting from x y z
+to X Y Z. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+https://nam01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwookware.org%2F&amp;data=02%7C01%7C%7C670640a1c1ed4a4e7bcd08d64a84fa34%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636778332323125751&amp;sdata=nhNLhLsOQtUspK5BJMEYGjHCEXwPTIHWFA60VHl4L3Q%3D&amp;reserved=0
+    
+
+From olly at survex.com  Thu Nov 15 21:59:23 2018
+From: olly at survex.com (Olly Betts)
+Date: Thu, 15 Nov 2018 20:59:23 +0000
+Subject: [Therion] Background zoom-level bug
+In-Reply-To: <000001d47a60$edd38b20$c97aa160$@tomo.co.nz>
+References: <20181112033212.befewgqxyouitgit@mail.wookware.org>
+ <000001d47a60$edd38b20$c97aa160$@tomo.co.nz>
+Message-ID: <20181115205923.ea6ughrx2z3h3q4p@survex.com>
+
+On Mon, Nov 12, 2018 at 09:22:59PM +1300, Bruce Mutton via Therion wrote:
+> This bug has been around ever since mouse wheel zooming was
+> introduced.  An attempt was made to fix it I recall, but it did not
+> have the desired effect.
+> It manifests for bitmap background images, but not for xvi 'images'.
+> A work around is to never roll the mouse wheel when working with th2
+> with bitmaps inserted.  Very hard to do!.
+
+There have been (at least) two changes that apparently fix bugs with
+zooming in xtherion using the mouse wheel since the last release:
+
+https://github.com/therion/therion/commit/82fc78e8931d36b215ab676754ede0cc54d3935d
+https://github.com/therion/therion/commit/99d3347abaa96dde6ef3ba702a6040da65612e8c
+
+It's been more than 18 months since the last release, and there are
+a significant number of changes (~150 commits ignoring merge commits)
+- perhaps it's time to make a new release?
+
+It would be useful to have one before the end of the year from a Debian 
+perspective so we can get it into the next stable release.
+
+Cheers,
+    Olly
+
+
+From torsten.schnitter at netcologne.de  Fri Nov 16 11:30:48 2018
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Fri, 16 Nov 2018 11:30:48 +0100 (CET)
+Subject: [Therion] Therion Window gets smaler every time you compile
+Message-ID: <609845123.355467.1542364248581@comcenter.netcologne.de>
+
+Hi
+
+I'm using Therion 5.4.1+3bee73c on Windows 7.
+But also tested with 5.4.1+975063a and same.behaviour
+
+Every time when I click on "Compile" (or use F9 instead) the window from Therion get's a bit smaller in size (up down direction).
+Is there a fix for that?
+
+regards,
+Torsten
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20181116/63bc233d/attachment.htm>
+
+From phil.vernant at gmail.com  Sun Nov 25 22:43:39 2018
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sun, 25 Nov 2018 22:43:39 +0100
+Subject: [Therion] 2 surfaces
+In-Reply-To: <609845123.355467.1542364248581@comcenter.netcologne.de>
+References: <609845123.355467.1542364248581@comcenter.netcologne.de>
+Message-ID: <FC0C8EF5-9C15-4430-8543-712E01A55D81@gmail.com>
+
+Hi guys,
+
+Can we have two surfaces in Therion like a DEM and a surface showing the water base level?
+I have tried, but failed. So I assume it is not possible, but it would not be the first time I’m wrong, and I would really be happy to be so in this case!  
+
+Cheers,
+Phil
+
+
+
+From herich at speleodd.sk  Mon Nov 26 14:09:44 2018
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 26 Nov 2018 14:09:44 +0100
+Subject: [Therion] Metapost
+Message-ID: <f2453e7df8664df9c4f99e1af828edc1@speleodd.sk>
+
+Hi all,
+I look for code of "snail shell" written in metapost, to use it as point 
+u (for organodetritic limestone layers), but I am not able to find 
+anything, as well I haven´t any skills to write it by myself. Does 
+anybody posses this kind of code?
+Thank you
+Pavel
+
+

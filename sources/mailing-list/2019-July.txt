@@ -1,0 +1,2678 @@
+From bruce at tomo.co.nz  Thu Jul  4 11:17:15 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 4 Jul 2019 21:17:15 +1200
+Subject: [Therion] Point Symbol rotation in legend
+Message-ID: <000201d53249$486a8700$d93f9500$@tomo.co.nz>
+
+A quick quiz.
+
+ 
+
+Who knows where the code is that makes some point symbols rotate 90 degrees
+in the legend, and others not rotate?
+
+For example I have an entrance and dig symbol that are both defined to have
+rotation parsed to them, and yet one can be rotated, and the other cannot.
+
+And one is rotated 90 degrees in the legend, and the other not.
+
+ 
+
+OK, so the dig T: transformation does not include a rotation parameter,
+which explains why it does not follow -orientation settings, but that does
+not explain why symbols that do include a rotation parameter have their
+legend entries rotated (like entrance and gradient).
+
+ 
+
+ 
+
+For example, my gradient and slope points are rotated 90 deg in the legend,
+and can be rotated using the -orientation option.
+
+Whereas my dig point is not rotated in the legend and cannot be rotated
+using the -orientation option.
+
+I want to be able to rotate by omega entrance symbol (as in the drawing
+below) but I don't want it to rotate 90 degrees in the legend.
+
+Although legend symbols like gradient and water flow should continue to be
+rotated 90 deg.
+
+ 
+
+
+
+ 
+
+The code samples below produce the above symbols, and it is easy to see why
+the dig does not rotate in the drawing, but this does not explain why the
+dig symbol is not rotated 90 deg in the legend like the others.  Any
+insights appreciated.
+
+ 
+
+Bruce
+
+ 
+
+def p_dig_UIS (expr pos,r,s,al) = 
+
+    U:=(.4u, .5u);
+
+   T:=identity aligned al shifted pos;
+
+    thfill ((-.075u,-.5u){down} .. {up}(0.075u, -.5u) -- (0.075u, .15u) --
+(0.3u, 0.15u) -- (0.3u, 0.5u) --
+
+    (-.3u, .5u) -- (-.3u, .15u) -- (-.075u, .15u) -- cycle) rotated 45;
+
+enddef;
+
+ 
+
+def p_entrance (expr pos,theta,sc,al)=
+
+    U:=(.35u,.3u);
+
+    T:=identity rotated theta aligned al scaled sc shifted pos; %#rotated
+theta  ##adding theta rotation to T: allows entrance symbol to be rotated on
+drawing, but causes entrance symbol to be rotated 90 deg in legend
+
+                # If the T: parameters are changed, then the SYMBOL
+PARAMETER INDICATOR CODE below needs modifying as well
+
+ 
+
+    pickup PenX;
+
+                if known colour_entrance: thdraw (-.3u,-.25u) --
+(-.2u,-.25u){dir 135} .. (0, .25u) .. {dir 225}(.2u,-.25u) -- (.3u,-.25u)
+withcolor colour_entrance;
+
+                else: thdraw (-.3u,-.25u) -- (-.2u,-.25u){dir 135} .. (0,
+.25u) .. {dir 225}(.2u,-.25u) -- (.3u,-.25u);
+
+                fi;
+
+enddef;
+
+endcode
+
+ 
+
+def p_gradient_BCRA (expr pos,theta,sc,al)=
+
+    U:=(.25u,0.7u);
+
+    T:=identity aligned al rotated theta scaled sc shifted pos;
+
+    thfill (-.25u,-0.7u)--(0,.7u)--(.25u,-.7u)--cycle;
+
+enddef;
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/33b137ea/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 20274 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/33b137ea/attachment.jpg>
+
+From bruce at tomo.co.nz  Thu Jul  4 11:33:16 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 4 Jul 2019 21:33:16 +1200
+Subject: [Therion] Point Symbol rotation in legend
+In-Reply-To: <000201d53249$486a8700$d93f9500$@tomo.co.nz>
+References: <000201d53249$486a8700$d93f9500$@tomo.co.nz>
+Message-ID: <000d01d5324b$84fe9330$8efbb990$@tomo.co.nz>
+
+One more thing, if I create a user defined symbol, like Bill Gee's electric
+light, it behaves just like I would like my redefined entrance symbol to
+behave.
+
+ie not rotated in the legend, and it honours the -orientation setting in the
+drawing file.
+
+ 
+
+So why is, for example, a u:xxx symbol behaving differently to an entrance
+symbol or a dig symbol, which both behave badly, but in different ways?
+
+ 
+
+ 
+
+ 
+
+   def p_u_electriclight (expr pos,theta,sc,al) =
+
+      U:=(0.7u, 0.7u);
+
+      % Reduce size of the symbol.  The default size is too big.
+
+      interim defaultscale:=0.4sc;
+
+      T:=identity rotated theta aligned al scaled defaultscale shifted pos;
+%corrected to rotate THEN align
+
+      
+
+      pickup PenC;
+
+      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+
+      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+
+      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+
+      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+
+      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+
+      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+
+  enddef;
+
+endcode  
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Thursday, 4 July 2019 21:17
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Point Symbol rotation in legend
+
+ 
+
+A quick quiz.
+
+ 
+
+Who knows where the code is that makes some point symbols rotate 90 degrees
+in the legend, and others not rotate?
+
+For example I have an entrance and dig symbol that are both defined to have
+rotation parsed to them, and yet one can be rotated, and the other cannot.
+
+And one is rotated 90 degrees in the legend, and the other not.
+
+ 
+
+OK, so the dig T: transformation does not include a rotation parameter,
+which explains why it does not follow -orientation settings, but that does
+not explain why symbols that do include a rotation parameter have their
+legend entries rotated (like entrance and gradient).
+
+ 
+
+ 
+
+For example, my gradient and slope points are rotated 90 deg in the legend,
+and can be rotated using the -orientation option.
+
+Whereas my dig point is not rotated in the legend and cannot be rotated
+using the -orientation option.
+
+I want to be able to rotate by omega entrance symbol (as in the drawing
+below) but I don't want it to rotate 90 degrees in the legend.
+
+Although legend symbols like gradient and water flow should continue to be
+rotated 90 deg.
+
+ 
+
+
+
+ 
+
+The code samples below produce the above symbols, and it is easy to see why
+the dig does not rotate in the drawing, but this does not explain why the
+dig symbol is not rotated 90 deg in the legend like the others.  Any
+insights appreciated.
+
+ 
+
+Bruce
+
+ 
+
+def p_dig_UIS (expr pos,r,s,al) = 
+
+    U:=(.4u, .5u);
+
+   T:=identity aligned al shifted pos;
+
+    thfill ((-.075u,-.5u){down} .. {up}(0.075u, -.5u) -- (0.075u, .15u) --
+(0.3u, 0.15u) -- (0.3u, 0.5u) --
+
+    (-.3u, .5u) -- (-.3u, .15u) -- (-.075u, .15u) -- cycle) rotated 45;
+
+enddef;
+
+ 
+
+def p_entrance (expr pos,theta,sc,al)=
+
+    U:=(.35u,.3u);
+
+    T:=identity rotated theta aligned al scaled sc shifted pos; %#rotated
+theta  ##adding theta rotation to T: allows entrance symbol to be rotated on
+drawing, but causes entrance symbol to be rotated 90 deg in legend
+
+                # If the T: parameters are changed, then the SYMBOL
+PARAMETER INDICATOR CODE below needs modifying as well
+
+ 
+
+    pickup PenX;
+
+                if known colour_entrance: thdraw (-.3u,-.25u) --
+(-.2u,-.25u){dir 135} .. (0, .25u) .. {dir 225}(.2u,-.25u) -- (.3u,-.25u)
+withcolor colour_entrance;
+
+                else: thdraw (-.3u,-.25u) -- (-.2u,-.25u){dir 135} .. (0,
+.25u) .. {dir 225}(.2u,-.25u) -- (.3u,-.25u);
+
+                fi;
+
+enddef;
+
+endcode
+
+ 
+
+def p_gradient_BCRA (expr pos,theta,sc,al)=
+
+    U:=(.25u,0.7u);
+
+    T:=identity aligned al rotated theta scaled sc shifted pos;
+
+    thfill (-.25u,-0.7u)--(0,.7u)--(.25u,-.7u)--cycle;
+
+enddef;
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/956bd57e/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 20274 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/956bd57e/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 2999 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/956bd57e/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.jpg
+Type: image/jpeg
+Size: 3732 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190704/956bd57e/attachment-0002.jpg>
+
+From omrigas at gmail.com  Tue Jul 16 21:58:04 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Tue, 16 Jul 2019 22:58:04 +0300
+Subject: [Therion] map offset doesn't work
+Message-ID: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+
+Hi,
+I need some help doing map offset
+
+I've tried to do work with the explanation on Therion wiki:
+https://therion.speleo.sk/wiki/mapconnectors  but whatever I'm doing it
+doesn't work.
+
+I added map connection point in test-1p.th2 scrap, and I'm using the syntax
+below for the .th file:
+
+survey test -title "test"
+
+  centerline
+    date 2019.07.16
+    # team Omri Gaster
+    units length meters
+    units compass clino degrees
+    data normal from to length compass clino
+    extend right
+    0 1 5.00 5.0 5.0
+    1 2 3.00 17.0 14.0
+    2 3 5.00 20.0 10.0
+  endcenterline
+
+  input "test-1p.th2"
+  input "test-2p.th2"
+
+   map offset
+   m1p [0 20 m] above
+   break
+   m2p
+   endmap
+
+   map m1p -projection plan
+    test-1p
+   endmap
+
+   map m2p -projection plan
+     test-2p
+   endmap
+
+
+endsurvey
+
+I get this map all the time:
+
+[image: image.png]
+
+what am I doing wrong?
+
+Omri
+--
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190716/2bf3bb7e/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 24999 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190716/2bf3bb7e/attachment.png>
+
+From Nick at pff.uk.com  Tue Jul 16 21:53:59 2019
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Tue, 16 Jul 2019 19:53:59 +0000
+Subject: [Therion] XtTherion canvas zoom with the mouse wheel bug
+Message-ID: <b944f87fa0e74ce6a23099a0d349ce3a@PFF-EXCH1.pff.local>
+
+5.4.4 seems to have cured this very annoying issue (so hard not to scroll) but now with this latest release any scrolling is so ridiculously slow on my Windows machine, I'm going back to 5.4.1 which scrolled fine. I will dig out a none scroll wheel mouse for the few times I have to use a scanned image.
+
+Nick
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190716/00edf303/attachment.htm>
+
+From martinsluka at mac.com  Tue Jul 16 22:48:04 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 16 Jul 2019 22:48:04 +0200
+Subject: [Therion] map offset doesn't work
+In-Reply-To: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+References: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+Message-ID: <28569A52-A46C-43F5-A06F-99ADCD7F5890@mac.com>
+
+What is your thconfig?
+
+Martin
+
+Odesláno z iPhonu
+
+16. 7. 2019 v 21:58, עמרי גסטר <omrigas at gmail.com>:
+
+> Hi,
+> I need some help doing map offset
+> 
+> I've tried to do work with the explanation on Therion wiki: https://therion.speleo.sk/wiki/mapconnectors  but whatever I'm doing it doesn't work.
+> 
+> I added map connection point in test-1p.th2 scrap, and I'm using the syntax below for the .th file:
+> 
+> survey test -title "test"
+> 
+>   centerline
+>     date 2019.07.16 
+>     # team Omri Gaster 
+>     units length meters
+>     units compass clino degrees
+>     data normal from to length compass clino
+>     extend right
+>     0 1 5.00 5.0 5.0
+>     1 2 3.00 17.0 14.0
+>     2 3 5.00 20.0 10.0
+>   endcenterline
+> 
+>   input "test-1p.th2"
+>   input "test-2p.th2"
+>   
+>    map offset
+>    m1p [0 20 m] above
+>    break
+>    m2p
+>    endmap
+>    
+>    map m1p -projection plan
+>     test-1p
+>    endmap
+>   
+>    map m2p -projection plan
+>      test-2p
+>    endmap
+>   
+> 
+> endsurvey 
+> 
+> I get this map all the time:
+> 
+> <image.png>
+> 
+> what am I doing wrong?
+> 
+> Omri
+> -- 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190716/51a30241/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Jul 17 10:27:24 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 17 Jul 2019 20:27:24 +1200
+Subject: [Therion] XtTherion canvas zoom with the mouse wheel bug
+In-Reply-To: <b944f87fa0e74ce6a23099a0d349ce3a@PFF-EXCH1.pff.local>
+References: <b944f87fa0e74ce6a23099a0d349ce3a@PFF-EXCH1.pff.local>
+Message-ID: <000001d53c79$780cecc0$6826c640$@tomo.co.nz>
+
+I think this feature was implemented mid-2017, and it was about then that I
+raised the issue
+<https://www.mail-archive.com/therion at speleo.sk/msg06518.html>  of a bug
+with canvas zooming and bitmap background images.
+
+There were a couple of commits
+<https://github.com/therion/therion/search?q=zoom&type=Commits>  to resolve
+this 25 June 2018, and the effect for me since then has been is that mouse
+wheel zooming has been non-existent (although the code edits suggest
+something should happen on wheel rotation).
+
+So I am intrigued that you say it is working, even if very slowly.  I seem
+to recall that the functionality was;
+
+ 
+
+Ctrl+mouse-wheel to zoom in and out the XTherion canvas.
+
+ 
+
+Currently version 5.4.4+bd62e22 does not respond at all to this control (and
+it does it quickly ie no hint that a redraw is being attempted or that there
+is an error condition).  Same behaviour for all versions (on Windows 10)
+since 25 June 2018.  So what am I missing? How does one activate the mouse
+wheel scrolling?  It is a nice feature (so long as its not too slow as Nick
+has experienced).
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Nick Bairstow
+Sent: Wednesday, 17 July 2019 07:54
+To: therion at speleo.sk
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+ 
+
+5.4.4 seems to have cured this very annoying issue (so hard not to scroll)
+but now with this latest release any scrolling is so ridiculously slow on my
+Windows machine, I'm going back to 5.4.1 which scrolled fine. I will dig out
+a none scroll wheel mouse for the few times I have to use a scanned image.
+
+ 
+
+Nick   
+
+                                                                    
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/399b305f/attachment.htm>
+
+From martinsluka at mac.com  Wed Jul 17 10:30:10 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 17 Jul 2019 10:30:10 +0200
+Subject: [Therion] map offset doesn't work
+In-Reply-To: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+References: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+Message-ID: <A82397EE-DA09-4168-8B7F-58CC3DD83340@mac.com>
+
+
+you should select the map you want to use for export of map in thconfig file first:
+
+test.thconfig:
+
+source test.th
+
+select offset at test
+
+export map
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: cave.pdf
+Type: application/pdf
+Size: 53475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/92515fe8/attachment.pdf>
+-------------- next part --------------
+
+
+> 16. 7. 2019 v 21:58, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com⁩>:
+> 
+> <image.png>
+
+
+From omrigas at gmail.com  Wed Jul 17 10:34:51 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Wed, 17 Jul 2019 11:34:51 +0300
+Subject: [Therion] map offset doesn't work
+In-Reply-To: <A82397EE-DA09-4168-8B7F-58CC3DD83340@mac.com>
+References: <CAOjFj0n1Ps_Gr-f-GGJvZbe5Pp0Jpko5sTgX36WVx92Lae2E0g@mail.gmail.com>
+ <A82397EE-DA09-4168-8B7F-58CC3DD83340@mac.com>
+Message-ID: <CAOjFj0nNWnUF4vTdXh2fbczAVWSgifDc9Cb7dhPaJPPvWY5QyA@mail.gmail.com>
+
+Thanks!
+I'll try it later today
+
+On Wed, 17 Jul 2019, 11:30 Martin Sluka via Therion, <therion at speleo.sk>
+wrote:
+
+>
+> you should select the map you want to use for export of map in thconfig
+> file first:
+>
+> test.thconfig:
+>
+> source test.th
+>
+> select offset at test
+>
+> export map
+>
+>
+>
+> > 16. 7. 2019 v 21:58, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com⁩>:
+> >
+> > <image.png>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/1cd6b6f1/attachment.htm>
+
+From Nick at pff.uk.com  Wed Jul 17 11:17:21 2019
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Wed, 17 Jul 2019 09:17:21 +0000
+Subject: [Therion] XtTherion canvas zoom with the mouse wheel bug
+In-Reply-To: <000001d53c79$780cecc0$6826c640$@tomo.co.nz>
+References: <b944f87fa0e74ce6a23099a0d349ce3a@PFF-EXCH1.pff.local>
+ <000001d53c79$780cecc0$6826c640$@tomo.co.nz>
+Message-ID: <03bd96ee1f614005a92bfb3d661b7727@PFF-EXCH1.pff.local>
+
+Right a bit more information.
+Having installed 5.4.4 last night on a Windows machine I noticed that canvas scrolling did not work as it had done using 5.4.1. I thought it was really slow but on further investigation it seems that the zooming only happens after scrolling the mouse wheel quite vigorously 3 times in quick succession.  This works for zooming in and out and is consistently repeatable although it does seem to confuse itself occasionally. The scrolling has to be done in quick succession or zooming does not occur they also have to be big scrolls.
+Ctrl + zoom is the same.
+I find scroll zoom very useful and it would be good to have it sorted in 5.4.4 but I am afraid that is a bit beyond my meagre talents, sorry.
+
+Nick
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce Mutton
+Sent: 17 July 2019 09:27
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+I think this feature was implemented mid-2017, and it was about then that I raised the issue<https://www.mail-archive.com/therion at speleo.sk/msg06518.html> of a bug with canvas zooming and bitmap background images.
+There were a couple of commits<https://github.com/therion/therion/search?q=zoom&type=Commits> to resolve this 25 June 2018, and the effect for me since then has been is that mouse wheel zooming has been non-existent (although the code edits suggest something should happen on wheel rotation).
+So I am intrigued that you say it is working, even if very slowly.  I seem to recall that the functionality was;
+
+Ctrl+mouse-wheel to zoom in and out the XTherion canvas.
+
+Currently version 5.4.4+bd62e22 does not respond at all to this control (and it does it quickly ie no hint that a redraw is being attempted or that there is an error condition).  Same behaviour for all versions (on Windows 10) since 25 June 2018.  So what am I missing? How does one activate the mouse wheel scrolling?  It is a nice feature (so long as its not too slow as Nick has experienced).
+
+Bruce
+
+From: Therion <therion-bounces at speleo.sk<mailto:therion-bounces at speleo.sk>> On Behalf Of Nick Bairstow
+Sent: Wednesday, 17 July 2019 07:54
+To: therion at speleo.sk<mailto:therion at speleo.sk>
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+5.4.4 seems to have cured this very annoying issue (so hard not to scroll) but now with this latest release any scrolling is so ridiculously slow on my Windows machine, I'm going back to 5.4.1 which scrolled fine. I will dig out a none scroll wheel mouse for the few times I have to use a scanned image.
+
+Nick
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/d0a6780a/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Jul 17 21:55:58 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 18 Jul 2019 07:55:58 +1200
+Subject: [Therion] XtTherion canvas zoom with the mouse wheel bug
+In-Reply-To: <03bd96ee1f614005a92bfb3d661b7727@PFF-EXCH1.pff.local>
+References: <b944f87fa0e74ce6a23099a0d349ce3a@PFF-EXCH1.pff.local>
+ <000001d53c79$780cecc0$6826c640$@tomo.co.nz>
+ <03bd96ee1f614005a92bfb3d661b7727@PFF-EXCH1.pff.local>
+Message-ID: <001601d53cd9$a8d8adc0$fa8a0940$@tomo.co.nz>
+
+Ah ha!
+
+You are right. Three very large and rapid rolls of the wheel are required to
+trigger the zoom.  Ctrl key is not required.
+
+And unlike the early implementations, it is limited to the 25 50 100 200 400
+zoom levels available from the toolbars.
+
+ 
+
+So although it works, and is appropriately fast at redrawing, the gross
+repeated movements required make it both tedious and risky if you already
+have mouse hand tendon problems.
+
+ 
+
+If a fix is to be investigated, then I suggest that more zoom levels be
+allowed as well, particularly to accommodate xvi drawings that do not fit
+nicely in XTherion's zoom range.  ie 6.25 and 12.5, 800 and 1600
+
+This would make XTherion a bit more TopoDroid friendly.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Nick Bairstow
+Sent: Wednesday, 17 July 2019 21:17
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+ 
+
+Right a bit more information.
+
+Having installed 5.4.4 last night on a Windows machine I noticed that canvas
+scrolling did not work as it had done using 5.4.1. I thought it was really
+slow but on further investigation it seems that the zooming only happens
+after scrolling the mouse wheel quite vigorously 3 times in quick
+succession.  This works for zooming in and out and is consistently
+repeatable although it does seem to confuse itself occasionally. The
+scrolling has to be done in quick succession or zooming does not occur they
+also have to be big scrolls. 
+
+Ctrl + zoom is the same.
+
+I find scroll zoom very useful and it would be good to have it sorted in
+5.4.4 but I am afraid that is a bit beyond my meagre talents, sorry.
+
+ 
+
+Nick
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce Mutton
+Sent: 17 July 2019 09:27
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+ 
+
+I think this feature was implemented mid-2017, and it was about then that I
+raised the issue
+<https://www.mail-archive.com/therion at speleo.sk/msg06518.html>  of a bug
+with canvas zooming and bitmap background images.
+
+There were a couple of commits
+<https://github.com/therion/therion/search?q=zoom&type=Commits>  to resolve
+this 25 June 2018, and the effect for me since then has been is that mouse
+wheel zooming has been non-existent (although the code edits suggest
+something should happen on wheel rotation).
+
+So I am intrigued that you say it is working, even if very slowly.  I seem
+to recall that the functionality was;
+
+ 
+
+Ctrl+mouse-wheel to zoom in and out the XTherion canvas.
+
+ 
+
+Currently version 5.4.4+bd62e22 does not respond at all to this control (and
+it does it quickly ie no hint that a redraw is being attempted or that there
+is an error condition).  Same behaviour for all versions (on Windows 10)
+since 25 June 2018.  So what am I missing? How does one activate the mouse
+wheel scrolling?  It is a nice feature (so long as its not too slow as Nick
+has experienced).
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>
+> On Behalf Of Nick Bairstow
+Sent: Wednesday, 17 July 2019 07:54
+To: therion at speleo.sk <mailto:therion at speleo.sk> 
+Subject: Re: [Therion] XtTherion canvas zoom with the mouse wheel bug
+
+ 
+
+5.4.4 seems to have cured this very annoying issue (so hard not to scroll)
+but now with this latest release any scrolling is so ridiculously slow on my
+Windows machine, I'm going back to 5.4.1 which scrolled fine. I will dig out
+a none scroll wheel mouse for the few times I have to use a scanned image.
+
+ 
+
+Nick   
+
+                                                                    
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190718/0bf67c6a/attachment.htm>
+
+From james.begley at gmail.com  Wed Jul 17 22:22:55 2019
+From: james.begley at gmail.com (James Begley)
+Date: Wed, 17 Jul 2019 21:22:55 +0100
+Subject: [Therion] Loch fails on Fedora 30
+In-Reply-To: <3478665.rXhE9JVovK@main2.billgee.local>
+References: <3478665.rXhE9JVovK@main2.billgee.local>
+Message-ID: <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+
+Hi Bill,
+
+Sorry its taken so long to reply to this.
+
+The build of Loch from the copr repository works for me on my fedora 30
+workstation, so I'm guessing that there is an incompatibility with some
+libraries on your laptop and desktop. You say that Loch "no longer works",
+so presumably it used to work? Do you know vaguely when it stopped working?
+Note that the build of Loch in the copr repository hasn't changed since the
+therion 5.4.4 build on the 1st of May, so if Loch was working after that
+date, and isnt working now then it would point to an external library
+problem.
+
+Your error message points to a problem within the lxR2P.c file (
+https://github.com/therion/therion/blob/master/loch/lxR2P.c) which would
+suggest that the mesa-libGL package might be causing this issue. I've got
+version 19.0.8-1 installed here, which was built on the 26th June (see
+https://koji.fedoraproject.org/koji/packageinfo?packageID=184), but the
+Loch copr package would have been originally built against 19.0.3-1 . Does
+that help? (The mesa changelogs from https://www.mesa3d.org/ don't help me
+very much!).
+
+Cheers,
+James
+
+On Wed, 26 Jun 2019 at 17:09, Bill Gee <bgee at campercaver.net> wrote:
+
+> Hello everyone -
+>
+>
+>
+> I just noticed that Loch no longer works on Fedora 30. I use the version
+> that is packaged by JM Begley.
+>
+>
+>
+> Launching from a KDE menu spins an hourglass for about 2 seconds and then
+> goes away. When launched from a command shell, the only output is "Error:
+> glXCreateContext failed".
+>
+> This happens on both my laptop and desktop, which have two different
+> display drivers. It also happens on a VirtualBox guest.
+>
+>
+>
+> Is there a way to get a more detailed log file?
+>
+>
+>
+> Thanks!
+>
+>
+> --
+>
+> Bill Gee
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/66b88d41/attachment.htm>
+
+From bgee at campercaver.net  Wed Jul 17 23:15:56 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 17 Jul 2019 16:15:56 -0500
+Subject: [Therion] Loch fails on Fedora 30
+In-Reply-To: <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+References: <3478665.rXhE9JVovK@main2.billgee.local>
+ <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+Message-ID: <37226830.W66sCFly4s@main2.billgee.local>
+
+Hi James -
+
+I have exactly the same version of mesa-libGL as you mention below.  Below is what rpm -qi has to say about it.
+
+I see that I have both 32-bit and 64-bit packages installed.  Is it possible that Loch is getting confused about which to use?  Answering my own question:  I tried Loch on a VirtualBox machine that runs 32-bit Fedora 30.  Same error.
+
+I rarely use Loch, so figuring out when it stopped working is an exercise in futility.  About the best I can say is it was probably working late last year (2018).  I know it worked at one time ...  Having a working Loch is one of the reasons I switched to using your copr packages instead of compiling from source.  In all the years I compiled Therion from source, I always had to turn off the Loch component because it would always fail.  I was excited to have it finally work!  :-)
+
+Regards - Bill Gee
+
+============
+Name        : mesa-libGL 
+Version     : 19.0.8 
+Release     : 1.fc30 
+Architecture: x86_64 
+Install Date: Sun 14 Jul 2019 07:53:01 PM CDT 
+Group       : Unspecified 
+Size        : 585432 
+License     : MIT 
+Signature   : RSA/SHA256, Wed 26 Jun 2019 06:31:51 PM CDT, Key ID ef3c111fcfc659b9 
+Source RPM  : mesa-19.0.8-1.fc30.src.rpm 
+Build Date  : Wed 26 Jun 2019 05:47:29 PM CDT 
+Build Host  : buildvm-22.phx2.fedoraproject.org 
+Relocations : (not relocatable) 
+Packager    : Fedora Project 
+Vendor      : Fedora Project 
+URL         : http://www.mesa3d.org 
+Bug URL     : https://bugz.fedoraproject.org/mesa 
+Summary     : Mesa libGL runtime libraries 
+Description : 
+Mesa libGL runtime libraries. 
+
+
+Name        : mesa-libGL 
+Version     : 19.0.8 
+Release     : 1.fc30 
+Architecture: i686 
+Install Date: Sun 14 Jul 2019 08:03:50 PM CDT 
+Group       : Unspecified 
+Size        : 582552 
+License     : MIT 
+Signature   : RSA/SHA256, Wed 26 Jun 2019 06:31:07 PM CDT, Key ID ef3c111fcfc659b9 
+Source RPM  : mesa-19.0.8-1.fc30.src.rpm 
+Build Date  : Wed 26 Jun 2019 05:47:35 PM CDT 
+Build Host  : buildvm-13.phx2.fedoraproject.org
+====================
+
+
+
+-- 
+Bill Gee
+
+
+
+On Wednesday, July 17, 2019 3:22:55 PM CDT James Begley wrote:
+> Hi Bill,
+> 
+> Sorry its taken so long to reply to this.
+> 
+> The build of Loch from the copr repository works for me on my fedora 30
+> workstation, so I'm guessing that there is an incompatibility with some
+> libraries on your laptop and desktop. You say that Loch "no longer works",
+> so presumably it used to work? Do you know vaguely when it stopped working?
+> Note that the build of Loch in the copr repository hasn't changed since the
+> therion 5.4.4 build on the 1st of May, so if Loch was working after that
+> date, and isnt working now then it would point to an external library
+> problem.
+> 
+> Your error message points to a problem within the lxR2P.c file (
+> https://github.com/therion/therion/blob/master/loch/lxR2P.c) which would
+> suggest that the mesa-libGL package might be causing this issue. I've got
+> version 19.0.8-1 installed here, which was built on the 26th June (see
+> https://koji.fedoraproject.org/koji/packageinfo?packageID=184), but the
+> Loch copr package would have been originally built against 19.0.3-1 . Does
+> that help? (The mesa changelogs from https://www.mesa3d.org/ don't help me
+> very much!).
+> 
+> Cheers,
+> James
+> 
+> On Wed, 26 Jun 2019 at 17:09, Bill Gee <bgee at campercaver.net> wrote:
+> 
+> > Hello everyone -
+> >
+> >
+> >
+> > I just noticed that Loch no longer works on Fedora 30. I use the version
+> > that is packaged by JM Begley.
+> >
+> >
+> >
+> > Launching from a KDE menu spins an hourglass for about 2 seconds and then
+> > goes away. When launched from a command shell, the only output is "Error:
+> > glXCreateContext failed".
+> >
+> > This happens on both my laptop and desktop, which have two different
+> > display drivers. It also happens on a VirtualBox guest.
+> >
+> >
+> >
+> > Is there a way to get a more detailed log file?
+> >
+> >
+> >
+> > Thanks!
+> >
+> >
+> > --
+> >
+> > Bill Gee
+> >
+> >
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> >
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/3a7b3d0c/attachment.htm>
+
+From olly at survex.com  Wed Jul 17 22:57:32 2019
+From: olly at survex.com (Olly Betts)
+Date: Wed, 17 Jul 2019 21:57:32 +0100
+Subject: [Therion] Loch fails on Fedora 30
+In-Reply-To: <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+References: <3478665.rXhE9JVovK@main2.billgee.local>
+ <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+Message-ID: <20190717205732.fsi4bkdamhsvfa3y@survex.com>
+
+On Wed, Jul 17, 2019 at 09:22:55PM +0100, James Begley wrote:
+> The build of Loch from the copr repository works for me on my fedora 30
+> workstation, so I'm guessing that there is an incompatibility with some
+> libraries on your laptop and desktop. You say that Loch "no longer works",
+> so presumably it used to work? Do you know vaguely when it stopped working?
+> Note that the build of Loch in the copr repository hasn't changed since the
+> therion 5.4.4 build on the 1st of May, so if Loch was working after that
+> date, and isnt working now then it would point to an external library
+> problem.
+> 
+> Your error message points to a problem within the lxR2P.c file (
+> https://github.com/therion/therion/blob/master/loch/lxR2P.c) which would
+> suggest that the mesa-libGL package might be causing this issue. I've got
+> version 19.0.8-1 installed here, which was built on the 26th June (see
+> https://koji.fedoraproject.org/koji/packageinfo?packageID=184), but the
+> Loch copr package would have been originally built against 19.0.3-1 . Does
+> that help? (The mesa changelogs from https://www.mesa3d.org/ don't help me
+> very much!).
+
+Currently wxWidgets' OpenGL support requires X and doesn't work with
+Wayland.
+
+Fedora now defaults to Wayland, so perhaps Bill is using that default
+but James is still using X?
+
+You can override for a single application by running it from a terminal
+like so:
+
+GDK_BACKEND=x11 loch
+
+In Survex this workaround is implemented in the aven code, but I don't
+see anything equivalent in the therion code.
+
+Cheers,
+    Olly
+
+
+From bgee at campercaver.net  Wed Jul 17 23:55:40 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 17 Jul 2019 16:55:40 -0500
+Subject: [Therion] Loch fails on Fedora 30
+In-Reply-To: <20190717205732.fsi4bkdamhsvfa3y@survex.com>
+References: <3478665.rXhE9JVovK@main2.billgee.local>
+ <CAGS-eH5aNdeeKJkOFtbwE7sRksJcX3_T1r8cKf_LoJSTpvhinw@mail.gmail.com>
+ <20190717205732.fsi4bkdamhsvfa3y@survex.com>
+Message-ID: <1689581.4pjRebRv9f@main2.billgee.local>
+
+Good idea!  But no joy ...  No Wayland here - I am still on X.  
+
+$ echo $XDG_SESSION_TYPE 
+x11 
+
+Just in case - I tried your command to force x11 and got exactly the same error.
+
+-- 
+Bill Gee
+
+
+
+On Wednesday, July 17, 2019 3:57:32 PM CDT Olly Betts wrote:
+> On Wed, Jul 17, 2019 at 09:22:55PM +0100, James Begley wrote:
+> > The build of Loch from the copr repository works for me on my fedora 30
+> > workstation, so I'm guessing that there is an incompatibility with some
+> > libraries on your laptop and desktop. You say that Loch "no longer works",
+> > so presumably it used to work? Do you know vaguely when it stopped working?
+> > Note that the build of Loch in the copr repository hasn't changed since the
+> > therion 5.4.4 build on the 1st of May, so if Loch was working after that
+> > date, and isnt working now then it would point to an external library
+> > problem.
+> > 
+> > Your error message points to a problem within the lxR2P.c file (
+> > https://github.com/therion/therion/blob/master/loch/lxR2P.c) which would
+> > suggest that the mesa-libGL package might be causing this issue. I've got
+> > version 19.0.8-1 installed here, which was built on the 26th June (see
+> > https://koji.fedoraproject.org/koji/packageinfo?packageID=184), but the
+> > Loch copr package would have been originally built against 19.0.3-1 . Does
+> > that help? (The mesa changelogs from https://www.mesa3d.org/ don't help me
+> > very much!).
+> 
+> Currently wxWidgets' OpenGL support requires X and doesn't work with
+> Wayland.
+> 
+> Fedora now defaults to Wayland, so perhaps Bill is using that default
+> but James is still using X?
+> 
+> You can override for a single application by running it from a terminal
+> like so:
+> 
+> GDK_BACKEND=x11 loch
+> 
+> In Survex this workaround is implemented in the aven code, but I don't
+> see anything equivalent in the therion code.
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190717/77e0fff1/attachment.htm>
+
+From omrigas at gmail.com  Thu Jul 25 22:51:03 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Thu, 25 Jul 2019 23:51:03 +0300
+Subject: [Therion] merge lines in xtherion
+Message-ID: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+
+Hi everyone,
+I want to merge two wall lines into one line
+is there a way to do that in xtherion?
+
+I know I can do that in notepad but it would be much easier if there is a
+way to do it in xtherion
+
+Omri
+
+
+
+--
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190725/fd70acb4/attachment.htm>
+
+From martinsluka at mac.com  Fri Jul 26 07:26:50 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 26 Jul 2019 07:26:50 +0200
+Subject: [Therion] merge lines in xtherion
+In-Reply-To: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+References: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+Message-ID: <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+
+No
+
+Martin
+
+Odesláno z iPhonu
+
+25. 7. 2019 v 22:51, עמרי גסטר <omrigas at gmail.com>:
+
+> Hi everyone,
+> I want to merge two wall lines into one line 
+> is there a way to do that in xtherion?
+> 
+> I know I can do that in notepad but it would be much easier if there is a way to do it in xtherion
+> 
+> Omri
+> 
+>  
+> 
+> -- 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From beni at hallinger.org  Fri Jul 26 10:37:47 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 26 Jul 2019 10:37:47 +0200
+Subject: [Therion] merge lines in xtherion
+In-Reply-To: <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+References: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+ <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+Message-ID: <8E96939E-810C-4032-8150-E8F024B90392@hallinger.org>
+
+What exactly is the problem with two separate lines in this case?
+Just curious
+
+> Am 26.07.2019 um 07:26 schrieb Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> No
+> 
+> Martin
+> 
+> Odesláno z iPhonu
+> 
+> 25. 7. 2019 v 22:51, עמרי גסטר <omrigas at gmail.com>:
+> 
+>> Hi everyone,
+>> I want to merge two wall lines into one line 
+>> is there a way to do that in xtherion?
+>> 
+>> I know I can do that in notepad but it would be much easier if there is a way to do it in xtherion
+>> 
+>> Omri
+>> 
+>> 
+>> 
+>> -- 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From md at foxel.org  Fri Jul 26 12:40:44 2019
+From: md at foxel.org (MD)
+Date: Fri, 26 Jul 2019 12:40:44 +0200
+Subject: [Therion] merge lines in xtherion
+In-Reply-To: <8E96939E-810C-4032-8150-E8F024B90392@hallinger.org>
+References: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+ <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+ <8E96939E-810C-4032-8150-E8F024B90392@hallinger.org>
+Message-ID: <877940D3-6292-45DF-8E0B-9FE5441DB3B5@foxel.org>
+
+
+
+> On 26. Jul 2019, at 10:37, Benedikt Hallinger <beni at hallinger.org> wrote:
+> 
+> What exactly is the problem with two separate lines in this case?
+> Just curious
+
+For example my TopoDroid exports tend to have half a dozen separate lines, where One would be enough. Changing styles etc is a pain this way.
+
+Also „convert to curve“ gets better results with a single line.
+
+—max
+
+
+From omrigas at gmail.com  Fri Jul 26 13:03:58 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Fri, 26 Jul 2019 14:03:58 +0300
+Subject: [Therion] merge lines in xtherion
+In-Reply-To: <877940D3-6292-45DF-8E0B-9FE5441DB3B5@foxel.org>
+References: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+ <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+ <8E96939E-810C-4032-8150-E8F024B90392@hallinger.org>
+ <877940D3-6292-45DF-8E0B-9FE5441DB3B5@foxel.org>
+Message-ID: <CAOjFj0kE_4xyjhA1e=WatCWOcneOHYi1hVx_pY6_T4jKp2gjOg@mail.gmail.com>
+
+we use Therion to make an intermediate map and then we finish it on
+illustrator.
+To make the wall buffer for the wall we need the wall to be one line.
+
+In order to do that we must use "continue" option when we draw in Topodroid
+(which is not always the most convenient one), or after we finish the
+sketch we need to go over it and use "attach to line" option in Topodroid
+to make it a single line.
+The "attach to line" option is still in tester mode and it is not fully
+reliable (sometimes it delete the line).
+
+if there was an option to do it in Therion it would make things much easier.
+
+Omri
+
+
+On Fri, Jul 26, 2019 at 1:41 PM MD <md at foxel.org> wrote:
+
+>
+>
+> > On 26. Jul 2019, at 10:37, Benedikt Hallinger <beni at hallinger.org>
+> wrote:
+> >
+> > What exactly is the problem with two separate lines in this case?
+> > Just curious
+>
+> For example my TopoDroid exports tend to have half a dozen separate lines,
+> where One would be enough. Changing styles etc is a pain this way.
+>
+> Also „convert to curve“ gets better results with a single line.
+>
+> —max
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190726/cd945c14/attachment.htm>
+
+From beni at hallinger.org  Fri Jul 26 13:25:37 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 26 Jul 2019 13:25:37 +0200
+Subject: [Therion] merge lines in xtherion
+In-Reply-To: <CAOjFj0kE_4xyjhA1e=WatCWOcneOHYi1hVx_pY6_T4jKp2gjOg@mail.gmail.com>
+References: <CAOjFj0megtptRAQAKynM0cwrcX+UNP-nEWVv7sZojsX_s38EuQ@mail.gmail.com>
+ <650E6205-6D06-4034-832C-EC7EC3C1D2B7@mac.com>
+ <8E96939E-810C-4032-8150-E8F024B90392@hallinger.org>
+ <877940D3-6292-45DF-8E0B-9FE5441DB3B5@foxel.org>
+ <CAOjFj0kE_4xyjhA1e=WatCWOcneOHYi1hVx_pY6_T4jKp2gjOg@mail.gmail.com>
+Message-ID: <6C8A76B3-4FB6-41D8-8863-650089E67D53@hallinger.org>
+
+I once got the hint to render topodroid to image and then redraw in therion by hand.
+
+Obviously a function in xtherion to combine lines would be nice.
+
+> Am 26.07.2019 um 13:03 schrieb עמרי גסטר <omrigas at gmail.com>:
+> 
+> we use Therion to make an intermediate map and then we finish it on illustrator.
+> To make the wall buffer for the wall we need the wall to be one line.
+> 
+> In order to do that we must use "continue" option when we draw in Topodroid (which is not always the most convenient one), or after we finish the sketch we need to go over it and use "attach to line" option in Topodroid to make it a single line.
+> The "attach to line" option is still in tester mode and it is not fully reliable (sometimes it delete the line).
+> 
+> if there was an option to do it in Therion it would make things much easier.
+> 
+> Omri
+>  
+> 
+>> On Fri, Jul 26, 2019 at 1:41 PM MD <md at foxel.org> wrote:
+>> 
+>> 
+>> > On 26. Jul 2019, at 10:37, Benedikt Hallinger <beni at hallinger.org> wrote:
+>> > 
+>> > What exactly is the problem with two separate lines in this case?
+>> > Just curious
+>> 
+>> For example my TopoDroid exports tend to have half a dozen separate lines, where One would be enough. Changing styles etc is a pain this way.
+>> 
+>> Also „convert to curve“ gets better results with a single line.
+>> 
+>> —max
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> -- 
+> בברכה,
+> עמרי גסטר
+> 052-6124995
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190726/96bd0def/attachment.htm>
+
+From razvid at yahoo.com  Fri Jul 26 13:36:50 2019
+From: razvid at yahoo.com (=?UTF-8?Q?R=C4=83zvan_Dumbrav=C4=83?=)
+Date: Fri, 26 Jul 2019 11:36:50 +0000 (UTC)
+Subject: [Therion] Examples / merging lines in xtherion / text
+References: <397909315.4304591.1564141010193.ref@mail.yahoo.com>
+Message-ID: <397909315.4304591.1564141010193@mail.yahoo.com>
+
+I saw a topic with merging lines in xtherion, and someone told that it is possible in text mode? Do you have any indications how to be that done?
+Thank you!
+Răzvan Dumbravă
+razvid at yahoo.com 
+Tel. +40 722 348825
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190726/50c89463/attachment.htm>
+
+From omrigas at gmail.com  Fri Jul 26 13:53:15 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Fri, 26 Jul 2019 14:53:15 +0300
+Subject: [Therion] Examples / merging lines in xtherion / text
+In-Reply-To: <397909315.4304591.1564141010193@mail.yahoo.com>
+References: <397909315.4304591.1564141010193.ref@mail.yahoo.com>
+ <397909315.4304591.1564141010193@mail.yahoo.com>
+Message-ID: <CAOjFj0m_36sL59t773g9e9PaAeQn3B9tv+0p0d-coXB7j8citw@mail.gmail.com>
+
+You need to open the .th2 file in notepad++
+and you will see that two lines that connected in the same point has the
+same coordinates in both.
+
+for example:
+
+line wall
+  162.05 -498.09
+  168.82 -472.44
+  181.19 -446.82
+  191.32 -423.1
+  *197.27 -400.48*
+endline
+
+line wall
+  *197.27 -400.48*
+  218.29 -367.04
+  234.37 -340.98
+  236.84 -312.57
+  243.02 -263.91
+endline
+
+all you need to do is add the second line coordinates to the first line and
+delete one of the duplicate points:
+
+line wall
+  162.05 -498.09
+  168.82 -472.44
+  181.19 -446.82
+  191.32 -423.1
+  *197.27 -400.48*
+  218.29 -367.04
+  234.37 -340.98
+  236.84 -312.57
+  243.02 -263.91
+endline
+
+and you will get one line
+
+On Fri, Jul 26, 2019 at 2:37 PM Răzvan Dumbravă via Therion <
+therion at speleo.sk> wrote:
+
+> I saw a topic with merging lines in xtherion, and someone told that it is
+> possible in text mode? Do you have any indications how to be that done?
+>
+> Thank you!
+>
+> Răzvan Dumbravă
+> razvid at yahoo.com
+> Tel. +40 722 348825
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190726/a87da013/attachment.htm>
+
+From bgee at campercaver.net  Fri Jul 26 17:07:30 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 26 Jul 2019 10:07:30 -0500
+Subject: [Therion] Placing part of a map below another
+Message-ID: <3972998.78X9lsS8vL@main2.billgee.local>
+
+Hello everyone -
+
+I seem to be missing something.  I have made this work in the past, but now it seems that Therion is totally ignoring my instructions.  Argh!
+
+I have a part of the cave where a stream flow under a tourist trail overlook.  The original sketches were done on two different occasions, and I have drawn them as separate scraps.
+
+When I set up the map in the .th file, I created a map for "MainPassages" and another for "LowerStream".  These are then collected into a single map.  The LowerStream map has options "[0 0] below".  However, the compiled map always shows it ABOVE.
+
+I tried adding a "break" between the two maps.  I tried adding units to the [0 0], and I tried changing the offset from [0 0] to [20 20].  None of these made any visible difference in the compiled map.  I tried removing the "join" that connects the lower stream to the main passage, but all that did was make for a sloppy join.  The lower stream was still above the overlook area.
+
+I have other caves where I have done this, and it worked.  What am I missing?
+
+Attached is the .th file I am using.
+
+Thanks!
+
+-- 
+Bill Gee
+
+-------------- next part --------------
+encoding  utf-8
+# The.th file defines the survey.  It brings in all of the subfiles
+# and scraps.  There can be several of these depending on how the
+# elevations work out.  Normally there is one .th file for the 
+# main plan and another for each elevation.
+
+map MainPlan -title "Stark Caverns (MIL001) - Plan View" -projection plan
+  MainPassages at StarkCaverns
+  OverlookLowerStream at StarkCaverns [0 0 feet] below
+endmap
+
+survey StarkCaverns -title "Stark Caverns"
+
+# List the th2 files here.  Try to note which scraps are in what file.
+
+# Very first survey section, up to the Overlook
+input 20181229/StarkCaverns-1-5.th2
+input 20190720/StarkCaverns-5-8.th2
+input 20190223/StarkCaverns-B1-B5.th2
+
+# From the three-way to the Onyx Circle
+input 20190223/StarkCaverns-B1-C4.th2
+
+#  Working backward from the three-way toward the entrance
+input 20190330/StarkCaverns-B1-AA1.th2
+input 20190330/StarkCaverns-AA1-AA2.th2
+input 20190330/StarkCaverns-AA2-AA5.th2
+input 20190330/StarkCaverns-AA5-AA7.th2
+input 20190330/StarkCaverns-AA7-AA9.th2
+input 20190330/StarkCaverns-AA9-AA10.th2
+input 20190330/StarkCavernsCrossSections1.th2
+input 20190509/StarkCaverns-AA8-MID5.th2
+input 20190509/StarkCaverns-AA3-QL5.th2
+
+# The Onyx Circle area
+input 20190509/StarkCaverns-OC1-OC5.th2
+input 20190720/StarkCaverns-OC2a-OC2l.th2
+input 20190720/StarkCaverns-B1a-B1e.th2
+
+# The lower stream level that goes under the Overlook
+input 20190720/StarkCaverns-E1-E3.th2
+
+# The long north leg of the cave.
+input 20190720/StarkCaverns-C5-D8.th2
+
+map MainPassages -projection plan
+StarkCaverns-1-5
+StarkCaverns-5-8
+StarkCaverns-B1-B5
+StarkCaverns-B1-C4
+StarkCaverns-B1a-B1e
+
+StarkCaverns-B1-AA1
+
+StarkCaverns-AA1-AA2
+StarkCaverns-AA2-AA5
+StarkCaverns-AA5-AA7
+StarkCaverns-AA7-AA9
+StarkCaverns-AA9-AA10
+
+# The Bone Passage, also called the Midden Passage
+StarkCaverns-AA8-MID5
+
+# The Queen's Loft
+StarkCaverns-AA3-QL5
+
+# The Onyx Circle
+StarkCaverns-OC1-OC5
+StarkCaverns-OC2a-OC2l
+
+# The D passage
+StarkCaverns-C5-D8
+
+endmap
+
+map OverlookLowerStream -projection plan
+# The lower stream passage under the Overlook
+  StarkCaverns-E1-E3
+
+endmap
+
+  centreline
+
+  # Define the units that will be used.
+  units compass degrees
+  units clino degrees
+  units length feet
+  units depth feet
+  units tape feet
+  units altitude feet
+  units dimensions feet
+  
+# A separate file contains all of the survey data.
+# One file per survey trip.
+
+  equate B5 1
+  input 20181229/20181229Data.txt
+  input 20190223/20190223Data.txt
+  input 20190330/20190330Data.txt
+  input 20190509/20190509Data.txt
+  input 20190720/20190720Data.txt
+
+  endcentreline
+
+#Joins go here
+join StarkCaverns-B1-B5 StarkCaverns-1-5 -smooth on
+join StarkCaverns-1-5 StarkCaverns-5-8 -smooth on
+join StarkCaverns-AA1-AA2 StarkCaverns-AA2-AA5 -smooth on
+join StarkCaverns-AA2-AA5 StarkCaverns-AA5-AA7 -smooth on
+join StarkCaverns-AA5-AA7 StarkCaverns-AA7-AA9 -smooth on
+join StarkCaverns-AA7-AA9 StarkCaverns-AA9-AA10 -smooth on
+join StarkCaverns-B1-AA1 StarkCaverns-AA1-AA2 -smooth on
+join StarkCaverns-B1-C4 StarkCaverns-OC1-OC5 -smooth on
+join StarkCaverns-AA7-AA9 StarkCaverns-AA8-MID5 -smooth on
+
+# join StarkCaverns
+
+# Upper level of Onyx Circle
+join StarkCaverns-OC1-OC5 StarkCaverns-OC2a-OC2l -smooth on
+
+# Lower stream passage under the Overlook
+join StarkCaverns-1-5 StarkCaverns-E1-E3
+
+# Line joins for a three-way intersection
+join A1-3:0 B1-2:end
+join A1-2:end C1-1:0
+
+# Line joins for water passage leading to Moonshiner's Dam
+join AA1-1:end A1-2:0
+join AA1-2:0 A1-1:end
+
+# Line joins to add low side passage onto C survey
+join B1a-1:end C1-4:0
+join B1a-2:0 C1-3:end
+join B1a-3:0 C1-2:end
+join B1a-3:end C1-2:0
+
+endsurvey StarkCaverns
+
+
+From torsten.schnitter at netcologne.de  Fri Jul 26 18:25:29 2019
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Fri, 26 Jul 2019 18:25:29 +0200
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <3972998.78X9lsS8vL@main2.billgee.local>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+Message-ID: <BD154499-3F25-4E00-AA5B-6967894C0BB9@netcologne.de>
+
+Hm... maybe changing the sequence of the two maps !?
+
+Torsten
+
+> Am 26.07.2019 um 17:07 schrieb Bill Gee <bgee at campercaver.net>:
+> 
+> Hello everyone -
+> 
+> I seem to be missing something.  I have made this work in the past, but now it seems that Therion is totally ignoring my instructions.  Argh!
+> 
+> I have a part of the cave where a stream flow under a tourist trail overlook.  The original sketches were done on two different occasions, and I have drawn them as separate scraps.
+> 
+> When I set up the map in the .th file, I created a map for "MainPassages" and another for "LowerStream".  These are then collected into a single map.  The LowerStream map has options "[0 0] below".  However, the compiled map always shows it ABOVE.
+> 
+> I tried adding a "break" between the two maps.  I tried adding units to the [0 0], and I tried changing the offset from [0 0] to [20 20].  None of these made any visible difference in the compiled map.  I tried removing the "join" that connects the lower stream to the main passage, but all that did was make for a sloppy join.  The lower stream was still above the overlook area.
+> 
+> I have other caves where I have done this, and it worked.  What am I missing?
+> 
+> Attached is the .th file I am using.
+> 
+> Thanks!
+> 
+> -- 
+> Bill Gee
+> 
+> <StarkCaverns.th>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Jul 26 18:46:44 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 26 Jul 2019 17:46:44 +0100
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <3972998.78X9lsS8vL@main2.billgee.local>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+Message-ID: <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+
+Hi Bill,
+
+> When I set up the map in the .th file, I created a map for "MainPassages" and another for "LowerStream".
+
+
+You don't normally need to do this. You can just put the two scraps into
+the same map like this:
+
+map outermap
+  mainpassagesscrap
+  break
+  lowerstreamscrap
+endmap
+
+This will display the lower stream's scrap below the main passages
+scrap. Or if you want to keep your two maps, then this should work:
+
+map outermap
+  MainPassages
+  break
+  LowerStream
+endmap
+
+Make sure your .thconfig file has:
+
+select outermap at surveyname
+
+I think this is the most likely cause of your problem - if you don't
+select the right map, Therion will select all of the scraps, without any
+control over stacking order.
+
+> "[0 0] below"
+
+
+This is something very different, and not related to stacking order. It
+is used to offset a map from its natural position, and leave a shadow
+"below" the other maps where it would normally have been. "0 0" would
+not offset it at all, so you are asking Therion to draw the map in its
+natural position, and leave a shadow ... also in its natural position
+... below the map.
+
+Probably not what you were looking for :)
+
+Hope this is useful.
+
+Tarquin
+
+
+From bgee at campercaver.net  Fri Jul 26 19:37:54 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 26 Jul 2019 12:37:54 -0500
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+Message-ID: <8992505.Yjbh7kiAf3@main2.billgee.local>
+
+Hi Tarquin -
+
+The "select" statement in the thconfig file turned out to be the answer.  I have never used that before, so I don't understand why my other maps with overlying passage have worked.  However, it took care of this situation.
+
+In this case I need to map a map of the lower level because it will contain far more than one scrap.  Right now there is only 50 feet or so of the stream mapped, but eventually it will be hundreds of feet, and it will weave back and forth under the main passage.
+
+Just to make life even more complicated, there is an upper level passage that will get stacked in here too!  When we get done there will be at least three levels.
+
+Thanks!
+
+-- 
+Bill Gee
+
+
+
+On Friday, July 26, 2019 11:46:44 AM CDT Tarquin Wilton-Jones via Therion wrote:
+> Hi Bill,
+> 
+> > When I set up the map in the .th file, I created a map for "MainPassages" and another for "LowerStream".
+> 
+> 
+> You don't normally need to do this. You can just put the two scraps into
+> the same map like this:
+> 
+> map outermap
+>   mainpassagesscrap
+>   break
+>   lowerstreamscrap
+> endmap
+> 
+> This will display the lower stream's scrap below the main passages
+> scrap. Or if you want to keep your two maps, then this should work:
+> 
+> map outermap
+>   MainPassages
+>   break
+>   LowerStream
+> endmap
+> 
+> Make sure your .thconfig file has:
+> 
+> select outermap at surveyname
+> 
+> I think this is the most likely cause of your problem - if you don't
+> select the right map, Therion will select all of the scraps, without any
+> control over stacking order.
+> 
+> > "[0 0] below"
+> 
+> 
+> This is something very different, and not related to stacking order. It
+> is used to offset a map from its natural position, and leave a shadow
+> "below" the other maps where it would normally have been. "0 0" would
+> not offset it at all, so you are asking Therion to draw the map in its
+> natural position, and leave a shadow ... also in its natural position
+> ... below the map.
+> 
+> Probably not what you were looking for :)
+> 
+> Hope this is useful.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+
+
+
+
+From martinsluka at mac.com  Fri Jul 26 19:52:39 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 26 Jul 2019 19:52:39 +0200
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+Message-ID: <66FBFA63-6A55-4F4E-9882-77A7BC4A48D4@mac.com>
+
+Break will not work in map definition from maps. Only sequence of particular maps works. 
+
+Martin
+
+Odesláno z iPhonu
+
+26. 7. 2019 v 18:46, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+> Hi Bill,
+> 
+>> When I set up the map in the .th file, I created a map for "MainPassages" and another for "LowerStream".
+> 
+> 
+> You don't normally need to do this. You can just put the two scraps into
+> the same map like this:
+> 
+> map outermap
+>  mainpassagesscrap
+>  break
+>  lowerstreamscrap
+> endmap
+> 
+> This will display the lower stream's scrap below the main passages
+> scrap. Or if you want to keep your two maps, then this should work:
+> 
+> map outermap
+>  MainPassages
+>  break
+>  LowerStream
+> endmap
+> 
+> Make sure your .thconfig file has:
+> 
+> select outermap at surveyname
+> 
+> I think this is the most likely cause of your problem - if you don't
+> select the right map, Therion will select all of the scraps, without any
+> control over stacking order.
+> 
+>> "[0 0] below"
+> 
+> 
+> This is something very different, and not related to stacking order. It
+> is used to offset a map from its natural position, and leave a shadow
+> "below" the other maps where it would normally have been. "0 0" would
+> not offset it at all, so you are asking Therion to draw the map in its
+> natural position, and leave a shadow ... also in its natural position
+> ... below the map.
+> 
+> Probably not what you were looking for :)
+> 
+> Hope this is useful.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Jul 26 20:59:36 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 26 Jul 2019 19:59:36 +0100
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <8992505.Yjbh7kiAf3@main2.billgee.local>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+ <8992505.Yjbh7kiAf3@main2.billgee.local>
+Message-ID: <896ebf66-7d66-0d25-e5de-857f54e8fe8d@ntlworld.com>
+
+> The "select" statement in the thconfig file turned out to be the answer.  I have never used that before, so I don't understand why my other maps with overlying passage have worked.
+
+Because when you don't select a map, Therion selects *all* scraps that
+match the current projection, and draws all of them, using the "average
+height" of the scraps to determine stacking order. That often works
+well, but there are some cases where it doesn't. See the previous thread
+on this mailing list titled "Sorting scraps/maps by height in default mode".
+
+https://www.mail-archive.com/therion at speleo.sk/msg07536.html
+
+> In this case I need to map a map of the lower level because it will contain far more than one scrap.
+
+
+Yep, there's multiple ways that will work, and you choose what works for
+you. You could have a single map, put all the scrap references for the
+top layer, then "break" then all the scraps in the next layer, and so
+on. Or you can use nested maps to organise it.
+
+Personally, I have at least two maps per survey trip+area (plan, and
+elevation), each of which contains multiple scraps. Then for each parent
+survey (eg. one region of the cave at a time, or one cave), I have the
+same, collecting together the child maps. When doing offsets, I have a
+separate map for each "part" (offset or not), and a map to apply the
+offsets - again mirrored into the parent surveys. So yeah, maps are used
+quite heavily. But they are not essential for layering.
+
+> Break will not work in map definition from maps. Only sequence of particular maps works. 
+
+
+OK, now how come I didn't know that?!
+
+Whenever I make maps, I have been putting "break" in there, and it has
+happened to work because I will always put them in the right order
+anyway. It doesn't show any error message, and just silently ignores
+them. (It doesn't hurt to have it there, if only just to help mental
+understanding of the layers.)
+
+But even the Therion book does it - see the "displaying overlaying maps
+in offset" section. When defining "break" it doesn't say that it applies
+only to scraps and not maps. And when defining "map" syntax, it actually
+shows you putting a map reference, then "break" then another map reference.
+
+This should really be stated very explicitly, since it is not at all
+consistent with what the book shows. Are you sure it's not a bug?
+
+I was told previously that maps represent their scraps, so a map that
+references two maps could just be thought of as the combined list of
+scraps (and breaks) within them. But as you said, it seems to implicitly
+add a "break" at the end of each child map.
+
+Could someone authoritatively state the intended behaviour here, because
+either a bug needs to be fixed, or the documentation needs to be updated
+to match the implementation. I will happily file the required bug report
+accordingly.
+
+Cheers :)
+
+Tarquin
+
+
+From A.M.vanRosmalen at gmx.net  Sat Jul 27 22:37:02 2019
+From: A.M.vanRosmalen at gmx.net (Anton  van Rosmalen)
+Date: Sat, 27 Jul 2019 22:37:02 +0200
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+ <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+Message-ID: <trinity-4eb1b42a-62ec-4651-bcb5-49922373f3ba-1564259822870@3c-app-gmx-bs29>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190727/45b293f1/attachment.htm>
+
+From phil.vernant at gmail.com  Sun Jul 28 09:10:56 2019
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sun, 28 Jul 2019 09:10:56 +0200
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <trinity-4eb1b42a-62ec-4651-bcb5-49922373f3ba-1564259822870@3c-app-gmx-bs29>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+ <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+ <trinity-4eb1b42a-62ec-4651-bcb5-49922373f3ba-1564259822870@3c-app-gmx-bs29>
+Message-ID: <17E0C7EA-66E3-4411-810E-9F600CF90275@gmail.com>
+
+Hi Anton,
+
+Here is what I have for the event de la coudoulière :
+
+    cs epsg:2154 #Lambert 93
+    fix E6 747080.000 6301550.000 194.000 10 10 10
+
+if you convert it to with GDAL you should have :
+    cs EPSG:4326   # code WGS84
+    fix E6 3.58505 43.81139 194 10 10 10 
+
+longitude should be first.
+
+Best,
+Phil
+
+
+> On 27 Jul 2019, at 22:37, Anton van Rosmalen <A.M.vanRosmalen at gmx.net> wrote:
+> 
+> List,
+> 
+> Continuing this thread because there is still a coordinate conversion bug in Therion 5.4.4
+> in coordinate conversion when exporting to KML
+> 
+> I have entered the coordinates in UTM based on a point both from an
+> actual GPS and from Google Earth (they are the same) in cs epsg:2154
+> (Lambert 93) or epsg:32631 (WGS84 / UTM 31N)
+> 
+> When I look at the output in UTM again, the entrance has shifted
+> directly south for 9 meters.
+> 
+> I'm assuming Therion changes the coordinate to something else (more
+> assumptions... WGS84?) and then changes it back again to the desired
+> output format. This conversion produces the wrong results I think.
+> 
+> As a workaround, maybe I could enter and export in WGS84 lat/long,
+> however, when I enter 
+>  
+>     cs epsg:4326                                       # WGS84
+>     fix E6 43.811399 3.585060 194 10 10 10
+>  
+> I get
+>  
+> "can't determine meridian convergence for lat-long systems"
+>  
+> I can't find the format required for WGS84 lat/long in the manual, can someone
+> provide this?
+> 
+> Thanks,
+> 
+> Anton
+>  
+>  
+> can't determine meridian convergence for lat-long systems
+>  
+> Gesendet: Freitag, 18. Januar 2019 um 15:33 Uhr
+> Von: "Martin Budaj via Therion" <therion at speleo.sk>
+> An: "List for Therion users" <therion at speleo.sk>
+> Cc: "Martin Budaj" <m.budaj at gmail.com>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+> No, we don't modify existing releases. The fix will be included in 5.4.3 eventually, but until then you can use the latest snapshot (https://therion.speleo.sk/downloads/therion-setup-dev.exe <https://therion.speleo.sk/downloads/therion-setup-dev.exe>). 
+>  
+> Martin
+>  
+> On Fri, Jan 18, 2019 at 9:32 AM Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de>> wrote:
+> Thank you, Martin, for the quick fix.
+> 
+> Is it also fixed in
+> 
+> https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe <https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe>
+> ?
+> 
+> Regards,
+> 
+> Michael.
+> 
+>  
+> Von: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> Im Auftrag von Martin Budaj via Therion
+> Gesendet: Donnerstag, 17. Januar 2019 19:26
+> An: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Budaj <m.budaj at gmail.com <mailto:m.budaj at gmail.com>>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+> 
+>  
+> Hi, it's fixed in d98a0a6.
+> 
+> Martin
+> 
+>  
+> On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com <mailto:m.budaj at gmail.com>> wrote:
+> 
+> On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de>> wrote:
+> 
+> I have now attached a minimal cave sample produced  with 5.4.1. and one produced with 5.4.2. to demonstrate the displacement.
+> 
+>  
+> Hi,
+> 
+>  
+> the problem is that EPSG:31467 projection uses the "potsdam" datum and the PROJ library used by Therion changed the way how to transform potsdam datum to the standard WGS84 datum – it switched from a simple string parameter (towgs84) to using external grid file (see https://proj4.org/resource_files.html#transformation-grids <https://proj4.org/resource_files.html#transformation-grids> for examples). 
+> 
+>  
+> No grid files are currently included in the windows Therion distribution, so the transformation is not correct in 5.4.2. Therion needs to be modified to include and use those files – hopefully soon.
+> 
+>  
+> Best regards
+> 
+> Martin
+> 
+> _______________________________________________ Therion mailing list Therion at speleo.sk https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190728/75ce9c30/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Jul 29 09:56:37 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 29 Jul 2019 19:56:37 +1200
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <896ebf66-7d66-0d25-e5de-857f54e8fe8d@ntlworld.com>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+ <8992505.Yjbh7kiAf3@main2.billgee.local>
+ <896ebf66-7d66-0d25-e5de-857f54e8fe8d@ntlworld.com>
+Message-ID: <000501d545e3$28002ad0$78008070$@tomo.co.nz>
+
+>> Break will not work in map definition from maps. Only sequence of particular maps works. 
+
+ 
+
+>OK, now how come I didn't know that?!
+
+ 
+
+>Whenever I make maps, I have been putting "break" in there, and it has happened to work because I will always put them in the right order anyway. It doesn't show any error message, and just silently ignores them. (It doesn't hurt to have it there, if only just to help mental understanding of the layers.)
+
+ 
+
+>But even the Therion book does it - see the "displaying overlaying maps in offset" section. When defining "break" it doesn't say that it applies only to scraps and not maps. And when defining "map" syntax, it actually shows you putting a map reference, then "break" then another map reference.
+
+ 
+
+>This should really be stated very explicitly, since it is not at all consistent with what the book shows. Are you sure it's not a bug?
+
+ 
+
+>I was told previously that maps represent their scraps, so a map that references two maps could just be thought of as the combined list of scraps (and breaks) within them. But as you said, it seems to implicitly add a "break" at the end of each child map.
+
+ 
+
+>Could someone authoritatively state the intended behaviour here, because either a bug needs to be fixed, or the documentation needs to be updated to match the implementation. I will happily file the required bug report accordingly.
+
+ 
+
+>Cheers :)
+
+>Tarquin
+
+_______________________________________________
+
+ 
+
+Hi Tarquin
+
+Don't worry, it took me 12 years to discover that break was completely ineffective for maps that contain maps!
+
+ 
+
+Last month Stacho announced a new 'maps [on]off' feature https://www.mail-archive.com/therion at speleo.sk/msg07571.html
+
+It adds some more reporting to the therion.log, that includes map definitions and elevations.  Is quite informative, but as yet quite buggy, or else it is showing up some hither to unnoticed problem with  my datasets.  Current issues include altitudes reported as an overflow value if a scrap is empty, and if a map is defined from maps or includes a map defined from a survey centreline.  Also ‘maps off’ takes 4x longer to compile and produces pdfs 15x larger.  Is a problem as ‘maps off’ is a nice way to disable offsets and cross-sections for overview maps. I mention ‘maps’ as it is indirectly related to ‘break’. It provides useful insights, and warrants a wiki article once its behaviour settles down.
+
+ 
+
+I'm certainly not authoritative, but I think the ‘break’ behaviour is, and is intended to be, as follows;
+
+•             Breaks are required for maps defined from scraps if you want one set of scraps to render over another.
+
+•             Breaks are not required for maps defined from maps (as there is an automatic break inferred by Therion between every map in the definition).
+
+•             However a break placed in a map defined from maps will not cause any error. It is perhaps useful for the map author to use a break to clarify how main levels of cave are subdivided.
+
+•             Items at the top of a map definition list are taken to be the highest level passages, and render over top of items below, regardless of their average elevation based on centreline stations.
+
+ 
+
+The 10 June commit on Github appears to correct some of the issues in the Therion Book that you mention, but for some reason they don’t seem to have turned up in the latest version that I downloaded.  The issue is with the documentation I think.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190729/235a0fcf/attachment.htm>
+
+From martinsluka at mac.com  Mon Jul 29 10:20:00 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 29 Jul 2019 10:20:00 +0200
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <000501d545e3$28002ad0$78008070$@tomo.co.nz>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+ <8992505.Yjbh7kiAf3@main2.billgee.local>
+ <896ebf66-7d66-0d25-e5de-857f54e8fe8d@ntlworld.com>
+ <000501d545e3$28002ad0$78008070$@tomo.co.nz>
+Message-ID: <D3FC0D5B-85A3-496E-886D-5EBD3B70057E@mac.com>
+
+
+> 29. 7. 2019 v 9:56, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Is a problem as ‘maps off’ is a nice way to disable offsets and cross-sections for overview maps.
+
+  #hide sections
+
+  symbol-hide point section  #cross section locations
+
+  symbol-hide line section   #cross section cutting planes
+doesn’t work?
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190729/8226cd12/attachment.htm>
+
+From A.M.vanRosmalen at gmx.net  Mon Jul 29 11:54:32 2019
+From: A.M.vanRosmalen at gmx.net (Anton  van Rosmalen)
+Date: Mon, 29 Jul 2019 11:54:32 +0200
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <17E0C7EA-66E3-4411-810E-9F600CF90275@gmail.com>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+ <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+ <trinity-4eb1b42a-62ec-4651-bcb5-49922373f3ba-1564259822870@3c-app-gmx-bs29>
+ <17E0C7EA-66E3-4411-810E-9F600CF90275@gmail.com>
+Message-ID: <trinity-1fd0aefe-5e10-4953-81dd-54dba308b03e-1564394072745@3c-app-gmx-bs71>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190729/6d688a05/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Jul 29 21:07:56 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 Jul 2019 07:07:56 +1200
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <D3FC0D5B-85A3-496E-886D-5EBD3B70057E@mac.com>
+Message-ID: <6C.62.02537.F044F3D5@sparkbusinessmail.co.nz>
+
+Apologies. That is the best way to deal with sections. Bruce
+-------- Original message --------From: Martin Sluka via Therion <therion at speleo.sk> Date: 29/07/19  20:20  (GMT+12:00) To: List for Therion users <therion at speleo.sk> Cc: Martin Sluka <martinsluka at mac.com> Subject: Re: [Therion] Placing part of a map below another 29. 7. 2019 v 9:56, Bruce Mutton <bruce at tomo.co.nz>:Is a problem as ‘maps off’ is a nice way to disable offsets and cross-sections for overview maps.  #hide sections
+
+  symbol-hide point section  #cross section locations
+
+  symbol-hide line section   #cross section cutting planes
+doesn’t work?Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190730/170ba409/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jul 29 21:49:51 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 29 Jul 2019 20:49:51 +0100
+Subject: [Therion] Placing part of a map below another
+In-Reply-To: <000501d545e3$28002ad0$78008070$@tomo.co.nz>
+References: <3972998.78X9lsS8vL@main2.billgee.local>
+ <1c68b909-2a4d-745c-dd42-3cdf7993b926@ntlworld.com>
+ <8992505.Yjbh7kiAf3@main2.billgee.local>
+ <896ebf66-7d66-0d25-e5de-857f54e8fe8d@ntlworld.com>
+ <000501d545e3$28002ad0$78008070$@tomo.co.nz>
+Message-ID: <224a645e-d0cc-09a1-526f-e3937c52359f@ntlworld.com>
+
+> The 10 June commit on Github appears to correct some of the issues in
+> the Therion Book that you mention, but for some reason they don’t seem
+> to have turned up in the latest version that I downloaded.  The issue is
+> with the documentation I think.
+
+
+OK, I'll go with that. Posted here:
+https://github.com/therion/therion/issues/146
+
+It can be resolved it if there is something already in the pipeline for
+correcting it.
+
+Thanks for the confirmation :)
+
+Tarquin
+
+
+From john at k-stevens.co.uk  Wed Jul 31 00:42:43 2019
+From: john at k-stevens.co.uk (John Stevens)
+Date: Tue, 30 Jul 2019 23:42:43 +0100
+Subject: [Therion] Page Size
+In-Reply-To: <C2E736BD-F0F0-4D98-B93D-42BCEBABC1A5@mac.com>
+References: <002101d4112a$e113d920$a33b8b60$@gmx.net>
+ <000b01d4117c$20ed8180$62c88480$@tomo.co.nz>
+ <001301d411d1$469a6e70$d3cf4b50$@gmx.net>
+ <C2E736BD-F0F0-4D98-B93D-42BCEBABC1A5@mac.com>
+Message-ID: <38E87BF58DDD44259ABADFEC1228B37E@Study>
+
+The get around I have used is to make a custom atlas layout
+
+Here I put my paper size, scale and critically the origin of the area I wish to extract.
+e.g.
+  scale 1 1250
+
+  #NAV PANE      
+  #--------      
+  nav-factor  30    
+  nav-size  1  1  
+      
+  #PAGE LAYOUT   Custom paper size   
+  #-----------        
+  page-setup  35  45  \    
+              34  43  \    
+              1.0  1.0  cm   
+              # paper width, height, page width height, margins left, top, overlap
+      
+  overlap     0  cm        # default 1 cm
+      
+  size        32  36  cm       # 8cm = 100m
+
+own-pages 1
+title-pages off
+#exclude-pages on 1,5,6,11,15
+
+   cs OSGB:SO
+   origin 17540 16300 200 m  # change to top left of area
+   origin-label 1 1
+
+All I then need to do is save the required single page of the multipage pdf.
+
+It would be useful to know how to turn off the scale bar , nav grid and title.
+
+John S 
+
+
+
+From: Martin Sluka via Therion 
+Sent: Monday, July 2, 2018 1:43 PM
+To: List for Therion users 
+Cc: Martin Sluka 
+Subject: Re: [Therion] Page Size
+
+
+  2. 7. 2018 v 8:52, Markus Boldt via Therion <therion at speleo.sk>:
+
+  I have thought there could/must be a possibility directly in Therion. 
+
+The size of map is calculated from scale. So if you change the scale of map, the you’ll change the size of final output. A bit calculation.
+
+Martin S.
+
+
+
+--------------------------------------------------------------------------------
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190730/50719860/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Jul 31 09:57:24 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 31 Jul 2019 19:57:24 +1200
+Subject: [Therion] Page Size
+In-Reply-To: <38E87BF58DDD44259ABADFEC1228B37E@Study>
+References: <002101d4112a$e113d920$a33b8b60$@gmx.net>
+ <000b01d4117c$20ed8180$62c88480$@tomo.co.nz>
+ <001301d411d1$469a6e70$d3cf4b50$@gmx.net>
+ <C2E736BD-F0F0-4D98-B93D-42BCEBABC1A5@mac.com>
+ <38E87BF58DDD44259ABADFEC1228B37E@Study>
+Message-ID: <000001d54775$989d2980$c9d77c80$@tomo.co.nz>
+
+>It would be useful to know how to turn off the scale bar , nav grid and title.
+
+ 
+
+Try example at the top of pg 68 of the Therion Book.
+
+layout my_layout
+…
+code tex-atlas
+  \def\dopage{\box\mapbox}
+  \insertmaps
+endlayout
+
+ 
+
+and 
+
+symbol-hide special scale-bar
+
+ 
+
+Might work, I have never tried it.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of John Stevens
+Sent: Wednesday, 31 July 2019 10:43
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Page Size
+
+ 
+
+The get around I have used is to make a custom atlas layout
+
+ 
+
+Here I put my paper size, scale and critically the origin of the area I wish to extract.
+
+e.g.
+
+  scale 1 1250
+
+ 
+
+  #NAV PANE      
+
+  #--------      
+
+  nav-factor  30    
+
+  nav-size  1  1  
+
+      
+
+  #PAGE LAYOUT   Custom paper size   
+
+  #-----------        
+
+  page-setup  35  45  \    
+
+              34  43  \    
+
+              1.0  1.0  cm   
+
+              # paper width, height, page width height, margins left, top, overlap
+
+      
+
+  overlap     0  cm        # default 1 cm
+
+      
+
+  size        32  36  cm       # 8cm = 100m
+
+ 
+
+own-pages 1
+
+title-pages off
+
+#exclude-pages on 1,5,6,11,15
+
+ 
+
+   cs OSGB:SO
+
+   origin 17540 16300 200 m  # change to top left of area
+
+   origin-label 1 1
+
+ 
+
+All I then need to do is save the required single page of the multipage pdf.
+
+ 
+
+It would be useful to know how to turn off the scale bar , nav grid and title.
+
+ 
+
+John S 
+
+ 
+
+ 
+
+ 
+
+From: Martin Sluka via Therion 
+
+Sent: Monday, July 2, 2018 1:43 PM
+
+To: List for Therion users 
+
+Cc: Martin Sluka 
+
+Subject: Re: [Therion] Page Size
+
+ 
+
+ 
+
+2. 7. 2018 v 8:52, Markus Boldt via Therion <therion at speleo.sk <mailto:therion at speleo.sk> >:
+
+ 
+
+I have thought there could/must be a possibility directly in Therion. 
+
+ 
+
+The size of map is calculated from scale. So if you change the scale of map, the you’ll change the size of final output. A bit calculation.
+
+ 
+
+Martin S.
+
+ 
+
+  _____  
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190731/bb153b29/attachment.htm>
+
+From phil.vernant at gmail.com  Wed Jul 31 14:52:43 2019
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Wed, 31 Jul 2019 14:52:43 +0200
+Subject: [Therion] Therion 5.4.2. potential bug
+In-Reply-To: <trinity-1fd0aefe-5e10-4953-81dd-54dba308b03e-1564394072745@3c-app-gmx-bs71>
+References: <000001d4a82b$694f93f0$3beebbd0$@t-online.de>
+ <CALPsdSta-O8L0TaFwj5FUy49cVmxG5TVEiy9v43-3SKGzW+vYg@mail.gmail.com>
+ <000001d4aa5c$61816490$24842db0$@t-online.de>
+ <CALPsdStjBQZRMvWJJ06MvKXYeZNRMffL_f104g58zp+u7uGPig@mail.gmail.com>
+ <CALPsdSvhcCu995DMUMY-oQONaWEHVJAx=Jhtg4PNZJ6GZot+Cw@mail.gmail.com>
+ <001f01d4af08$636d8cb0$2a48a610$@t-online.de>
+ <CALPsdSuhJE6Oow1SKRxoDkFUWiBEFKjo6ZREcnR3Nczx1ELr7Q@mail.gmail.com>
+ <trinity-4eb1b42a-62ec-4651-bcb5-49922373f3ba-1564259822870@3c-app-gmx-bs29>
+ <17E0C7EA-66E3-4411-810E-9F600CF90275@gmail.com>
+ <trinity-1fd0aefe-5e10-4953-81dd-54dba308b03e-1564394072745@3c-app-gmx-bs71>
+Message-ID: <26C43DE6-4230-493F-9747-78CC53B335C2@gmail.com>
+
+Hi Anton,
+
+My mistake, sorry for that, if you remove the 10 10 10 it should work :
+
+    cs EPSG:4326   # code WGS84
+    fix E6 3.58505 43.81139 194 
+
+Cheers,
+Phil
+
+
+> On 29 Jul 2019, at 11:54, Anton van Rosmalen <A.M.vanRosmalen at gmx.net> wrote:
+> 
+> Hi Philippe!
+>  
+> Thanks... but I'm still getting the utterly useless message:
+>  
+> "can't determine meridian convergence for lat-long systems"
+>  
+> ...when I use the coordinates in WGS84 I already got when I used lat/long instead of long/lat as you suggested. 
+>  
+> Cheers,
+>  
+> Anton
+>  
+> Gesendet: Sonntag, 28. Juli 2019 um 09:10 Uhr
+> Von: "Philippe Vernant" <phil.vernant at gmail.com>
+> An: "List for Therion users" <therion at speleo.sk>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+> Hi Anton,
+>  
+> Here is what I have for the event de la coudoulière :
+>  
+>     cs epsg:2154 #Lambert 93
+>     fix E6 747080.000 6301550.000 194.000 10 10 10
+>  
+> if you convert it to with GDAL you should have :
+>     cs EPSG:4326   # code WGS84
+>     fix E6 3.58505 43.81139 194 10 10 10 
+>  
+> longitude should be first.
+>  
+> Best,
+> Phil
+>  
+>  
+> On 27 Jul 2019, at 22:37, Anton van Rosmalen <A.M.vanRosmalen at gmx.net <mailto:A.M.vanRosmalen at gmx.net>> wrote:
+>  
+> List,
+> 
+> Continuing this thread because there is still a coordinate conversion bug in Therion 5.4.4
+> in coordinate conversion when exporting to KML
+> 
+> I have entered the coordinates in UTM based on a point both from an
+> actual GPS and from Google Earth (they are the same) in cs epsg:2154
+> (Lambert 93) or epsg:32631 (WGS84 / UTM 31N)
+> 
+> When I look at the output in UTM again, the entrance has shifted
+> directly south for 9 meters.
+> 
+> I'm assuming Therion changes the coordinate to something else (more
+> assumptions... WGS84?) and then changes it back again to the desired
+> output format. This conversion produces the wrong results I think.
+> 
+> As a workaround, maybe I could enter and export in WGS84 lat/long,
+> however, when I enter 
+>  
+>     cs epsg:4326                                       # WGS84
+>     fix E6 43.811399 3.585060 194 10 10 10
+>  
+> I get
+>  
+> "can't determine meridian convergence for lat-long systems"
+>  
+> I can't find the format required for WGS84 lat/long in the manual, can someone
+> provide this?
+> 
+> Thanks,
+> 
+> Anton
+>  
+>  
+> can't determine meridian convergence for lat-long systems
+>  
+> Gesendet: Freitag, 18. Januar 2019 um 15:33 Uhr
+> Von: "Martin Budaj via Therion" <therion at speleo.sk <mailto:therion at speleo.sk>>
+> An: "List for Therion users" <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: "Martin Budaj" <m.budaj at gmail.com <mailto:m.budaj at gmail.com>>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+> No, we don't modify existing releases. The fix will be included in 5.4.3 eventually, but until then you can use the latest snapshot (https://therion.speleo.sk/downloads/therion-setup-dev.exe <https://therion.speleo.sk/downloads/therion-setup-dev.exe>). 
+>  
+> Martin
+>  
+> On Fri, Jan 18, 2019 at 9:32 AM Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de>> wrote:
+> Thank you, Martin, for the quick fix.
+> 
+> Is it also fixed in
+> 
+> https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe <https://therion.speleo.sk/downloads/therion-setup-5.4.2.exe>
+> ?
+> 
+> Regards,
+> 
+> Michael.
+> 
+>  
+> Von: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> Im Auftrag von Martin Budaj via Therion
+> Gesendet: Donnerstag, 17. Januar 2019 19:26
+> An: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Budaj <m.budaj at gmail.com <mailto:m.budaj at gmail.com>>
+> Betreff: Re: [Therion] Therion 5.4.2. potential bug
+> 
+>  
+> Hi, it's fixed in d98a0a6.
+> 
+> Martin
+> 
+>  
+> On Tue, Jan 15, 2019 at 7:28 PM Martin Budaj <m.budaj at gmail.com <mailto:m.budaj at gmail.com>> wrote:
+> 
+> On Sat, Jan 12, 2019 at 10:51 AM Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de>> wrote:
+> 
+> I have now attached a minimal cave sample produced  with 5.4.1. and one produced with 5.4.2. to demonstrate the displacement.
+> 
+>  
+> Hi,
+> 
+>  
+> the problem is that EPSG:31467 projection uses the "potsdam" datum and the PROJ library used by Therion changed the way how to transform potsdam datum to the standard WGS84 datum – it switched from a simple string parameter (towgs84) to using external grid file (see https://proj4.org/resource_files.html#transformation-grids <https://proj4.org/resource_files.html#transformation-grids> for examples). 
+> 
+>  
+> No grid files are currently included in the windows Therion distribution, so the transformation is not correct in 5.4.2. Therion needs to be modified to include and use those files – hopefully soon.
+> 
+>  
+> Best regards
+> 
+> Martin
+> 
+> _______________________________________________ Therion mailing list Therion at speleo.sk <mailto:Therion at speleo.sk> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>_______________________________________________ Therion mailing list Therion at speleo.sk https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190731/e30b914a/attachment.htm>
+

@@ -1,0 +1,1263 @@
+From wookey at aleph1.co.uk  Tue Dec  3 15:36:53 2002
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 3 Dec 2002 14:36:53 +0000 (GMT)
+Subject: [therion-users] simple HOWTO
+Message-ID: <Marcel-1.50-1203143653-fc4h+Ty@chewy.aleph1.co.uk>
+
+Sorry - I deleted the original message, but you wrote:
+
+> Until some manual to xtherion will come, you can do following simple steps:
+> 
+> 1. Go to map editor
+> 2. File->New
+> 3. Press Insert button in Background images control panel
+> 4. Open some *.gif (limitation of tcl/tk) file
+> 5. Press "Auto adjust" button in Drawing area control panel
+> 6. Open File commands control panel
+> 7. Select "Action" -> Insert scrap
+> 8. Press created "Insert scrap" button
+> 9. click on "scrap1" in file commands list box
+> 10. set "projection" to none in scrap control panel
+> 11. press Control+L (or Edit -> Insert line)
+> 12. draw close line (couter-clockwise oriented ;-) by clicking the last
+> point on the first point
+> 13. save the file as test.th2
+> 
+> Now an export of this simple map should work, if you will type folloving
+> thconfig file
+> 
+> source test.th2
+> export map none
+> 
+> If this will work, then the lesson 2 will come. But probably you'll
+> understand a lot of things from this simple example...
+
+
+That was very helpful. I do now basically understand how it works, except
+for how to set the scale for a scrap (and exactly what that means), and how
+to relate the picture to the real stations.
+
+I'm in a hurry so here are some hasty notes. I hope it is enough to help me
+along a bit further.
+
+However it didn't quite work:
+compile failed with test.th2[26] -
+invalid command context, because the line was outside the scrap context.
+(all the lines are above the 'scrap' entry).
+Even if you move this line to top so line is enclosed by scrap you still get
+same error.
+Adding a survey enclosure gets us 'no selected projection data'
+
+I also put in a proper survey to relate to some real data:
+But that wouldn't produce output either:
+ If you use same name in station label as station in .th file e.g. '5'
+ point x y station -station 5
+ then survey data specifying station 5 gvies an erro 'object exists -- 5'
+ Change one (e.g. to '05') and data compiles but then says 'projection
+ extended - no reference station' - how is this made to work?
+
+So I am stuck again and still haven't quite managed to produce any ouput. I
+need another clue. 'lesson 2' :-)
+
+Do I need to post sample files?
+
+I also found a lot of other things that were problems for the new user. You
+probably know about these but I'll record them here anyway as a useful
+feedback:
+
+* Errors in compiler go off screen RH side - wrap them?
+* Lots of stuff cannot be read in RH side panels (eg point types) - widen box,
+ shrink font, make pop-up show current text not truncate it to fit (I
+shrank the font from 12 to 9 pt in the xtherion tcl script and that was a
+lot better on a 1024x768 screen). Once you know all the options it doesn't
+matter so much but to start with it is hopeless - you can only see the
+first 7-8 characters or so.
+ 
+* More keyboard shortcuts - may exist already?
+
+* If you add a scrap manually then set the projection in xtherion and save 
+it doesn't add it. You need to delete scrap and redo in xtherion.
+
+* projection command/object doesn't seem to be recognised - you need the
+-projection option for the scrap command instead.
+
+* How do I set the scale for a scrap? what does 'update scale' do?
+
+* F1 etc don't work if menu currently selected. (tcl limitation? - quite
+annoying)
+
+* Problem with files being updated in two places at once. eg edit thconfig
+in text editor but version in compiler is not changed. If you close one in
+compiler to force an update it overwrites the version on disk. Needs to
+check modification times or something slightly smarter. Similar prob with
+edits made in text editor and in map editor at same time.
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From s.m at group-s.sk  Tue Dec  3 16:54:17 2002
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 3 Dec 2002 16:54:17 +0100
+Subject: [therion-users] simple HOWTO
+References: <Marcel-1.50-1203143653-fc4h+Ty@chewy.aleph1.co.uk>
+Message-ID: <000701c29ae4$415cb190$2301a8c0@sm>
+
+> I'm in a hurry so here are some hasty notes. I hope it is enough to help
+me
+> along a bit further.
+
+I'm also a bit hurry, so only the most necessary things. Martin call me
+today, that he has written down some short xtherion control manual, I'll put
+it on the web, when I'll get it.
+
+> However it didn't quite work:
+> compile failed with test.th2[26] -
+> invalid command context, because the line was outside the scrap context.
+> (all the lines are above the 'scrap' entry).
+> Even if you move this line to top so line is enclosed by scrap you still
+get
+> same error.
+
+Yes, I forgot, that scrap must be enclosed in survey -- endsurvey, and any
+scrap command in scrap -- endscrap.
+
+> Adding a survey enclosure gets us 'no selected projection data'
+
+As you probably noticed, the problem is, that -projection switch is probably
+not correctly set to none. But it can be also a bug on our side...
+
+> I also put in a proper survey to relate to some real data:
+> But that wouldn't produce output either:
+>  If you use same name in station label as station in .th file e.g. '5'
+>  point x y station -station 5
+>  then survey data specifying station 5 gvies an erro 'object exists -- 5'
+
+??? Please, send me the source file -- this does not make sense to me!
+
+>  Change one (e.g. to '05') and data compiles but then says 'projection
+>  extended - no reference station' - how is this made to work?
+>
+> So I am stuck again and still haven't quite managed to produce any ouput.
+I
+> need another clue. 'lesson 2' :-)
+
+I'll try to write more tomorrow.
+
+> Do I need to post sample files?
+
+It would be probably better, they're not big.
+
+> I also found a lot of other things that were problems for the new user.
+You
+> probably know about these but I'll record them here anyway as a useful
+> feedback:
+>
+> * Errors in compiler go off screen RH side - wrap them?
+> * Lots of stuff cannot be read in RH side panels (eg point types) - widen
+box,
+>  shrink font, make pop-up show current text not truncate it to fit (I
+> shrank the font from 12 to 9 pt in the xtherion tcl script and that was a
+> lot better on a 1024x768 screen). Once you know all the options it doesn't
+> matter so much but to start with it is hopeless - you can only see the
+> first 7-8 characters or so.
+
+I can play with it a little bit... I've problems reading small letters,
+therefore 12pt. I'll have to support some user-configuration file...
+
+> * More keyboard shortcuts - may exist already?
+
+All shortcuts are listed in menus, so probably they do not exist. Please be
+more concrete (e.g. Control+Alt+S -> create new scrap).
+
+> * If you add a scrap manually then set the projection in xtherion and save
+> it doesn't add it. You need to delete scrap and redo in xtherion.
+
+I'll check that, may be a bug, but try changing the projection and pressing
+after the Return button. This may help... but I'll check anyway...
+
+> * projection command/object doesn't seem to be recognised - you need the
+> -projection option for the scrap command instead.
+
+It's not a command. Projection can be set only via -projection option. This
+is inconsistency in our data format -- too late to change.
+
+> * How do I set the scale for a scrap? what does 'update scale' do?
+
+Tomorrow...
+
+> * F1 etc don't work if menu currently selected. (tcl limitation? - quite
+> annoying)
+
+We have same problems... Probably it has to be overcome via some key
+bindings and automatic focus changes...
+
+> * Problem with files being updated in two places at once. eg edit thconfig
+> in text editor but version in compiler is not changed. If you close one in
+> compiler to force an update it overwrites the version on disk. Needs to
+> check modification times or something slightly smarter. Similar prob with
+> edits made in text editor and in map editor at same time.
+
+This should be also fixed (I had also this problem several times.)
+
+I've no more time today, but tomorrow, I'll write these things on TODO list
+and I'll try to write some lesson 2...
+
+S.
+
+
+
+
+
+From s.m at group-s.sk  Wed Dec  4 10:30:00 2002
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 4 Dec 2002 10:30:00 +0100
+Subject: [therion-users] simple HOWTO
+References: <Marcel-1.50-1203143653-fc4h+Ty@chewy.aleph1.co.uk>
+Message-ID: <002201c29b77$bcb07690$2301a8c0@sm>
+
+Today I've more time, so I'll add some comments:
+
+> That was very helpful. I do now basically understand how it works, except
+> for how to set the scale for a scrap (and exactly what that means), and
+how
+> to relate the picture to the real stations.
+
+The scrap scale and projection are two fundamental things, that are not
+explained in README file. I'll try to shortly do it. Currently, therion
+supports four types of projections. PLAN and ELEVATION are standard
+ortogonal projections, EXTENDED is a standard extended elevation. If you
+want to use these, each scrap need to have specified at least one control
+station - "point x y station -station name" where name is the station name
+from data. The last projection is NONE, here no control stations may be
+specified. This is used to enter passage cross-sections or to draw maps,
+where no centerline data are avaiable (digitization of old maps).
+
+Scrap scale is used to pre-scale (convert coordinate from pixels to meters)
+the scrap data. If scrap projection is none, this is the only transformation
+that is done with coordinates. In xtherion, the scale can be defined only
+one way - using coordinates of two points. When you will select a scrap -
+two small red squares will appear (by defalut, they'll be in the corners of
+drawing area). You have to drag them to points, coordinates of which you
+know - usually the cross sections of mm grid lines on the scanned drawing.
+If you can not see scrap these points, you can move pointer to desired
+position, red pointer coordinates from status bar and enter these
+coordinates into boxes picture scale points. You have to fill X1,Y1 and
+X2,Y2 coordinate pairs. Then you have to enter real coordinates of these
+points. Using these two points is defined a linear transformation, that will
+be applied to scrap before any fitting to survey points.
+
+Uff, it's written very complicated, but it's really very simple. You just
+have to enter two coordinates of two points in the picture (pixel)
+coordinates and real (meters) coordinates. Do not forget pressing Return
+afterwards.
+
+> I also put in a proper survey to relate to some real data:
+> But that wouldn't produce output either:
+>  If you use same name in station label as station in .th file e.g. '5'
+>  point x y station -station 5
+>  then survey data specifying station 5 gvies an erro 'object exists -- 5'
+>  Change one (e.g. to '05') and data compiles but then says 'projection
+>  extended - no reference station' - how is this made to work?
+
+This should not happen. I've tested following code s.th:
+
+survey s
+    data
+        data cartesian from to dx dy dz
+        0 1 10 10 10
+    enddata
+
+    scrap ss
+        point 0 0 station -station 0
+        point 1 1 station -station 1
+    endscrap
+
+    map mm
+      ss
+    endmap
+
+endsurvey
+
+with simple thconfig:
+
+source s.th
+export map
+
+and it worked on my therion (OK, thpdf had some protests, because wall was
+missing - I've to fix this, but it worked). You can see, that at my Lesson 1
+I've made one more mistake - I forget to place a scrap into map - this is
+necessarry. Because therion export only maps, not scraps. So if you will run
+therion with this simple example. So your "Adding a survey enclosure gets us
+'no selected projection data'" was due to missing map command with scrap
+name in the body. Maps are used to organize scraps - order and so on.
+
+> * Errors in compiler go off screen RH side - wrap them?
+
+This is questionable - firstly they were wrapped  - but then I realized,
+that it's better to scroll them.
+
+> * Lots of stuff cannot be read in RH side panels (eg point types) - widen
+box,
+>  shrink font, make pop-up show current text not truncate it to fit (I
+> shrank the font from 12 to 9 pt in the xtherion tcl script and that was a
+> lot better on a 1024x768 screen). Once you know all the options it doesn't
+> matter so much but to start with it is hopeless - you can only see the
+> first 7-8 characters or so.
+
+On the border between working area and panel on the bottom (10% of height)
+is a small panel resize button ;-) You can enlarge panel to fit your needs
+;-)))
+
+> * If you add a scrap manually then set the projection in xtherion and save
+> it doesn't add it. You need to delete scrap and redo in xtherion.
+> * How do I set the scale for a scrap? what does 'update scale' do?
+
+The scale settings are commented above. Here I would comment the update
+buttons. The update botton will evaluate "update" script, that will apply
+changes, that were typed manually. Normally, this update script is evaluated
+very often (every time you click, you compile or you save file). But
+sometimes, if you want to apply changes, you need to press this button.
+Normally, every text field, where you enter data, have a Return key binding,
+that will force update. So when you will manually write down the projection,
+you need to press "Update scrap" button, or press Return. In fact I had no
+time to think about sophisticated undo redo process, so undo - redo action
+is created when an update script is run.
+
+> * F1 etc don't work if menu currently selected. (tcl limitation? - quite
+> annoying)
+
+What menu have you in mind? Sometimes it also does not work on my computer,
+but I've never find the reason.
+
+> * Problem with files being updated in two places at once. eg edit thconfig
+> in text editor but version in compiler is not changed. If you close one in
+> compiler to force an update it overwrites the version on disk. Needs to
+> check modification times or something slightly smarter. Similar prob with
+> edits made in text editor and in map editor at same time.
+
+This have to be fixed. Thanx for comments, some of them would be really
+usefull to apply.
+
+S.
+
+
+
+
+
+
+From s.m at group-s.sk  Mon Dec  9 12:33:32 2002
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 9 Dec 2002 12:33:32 +0100
+Subject: [therion-users] Documentation
+Message-ID: <001a01c29f76$d740a310$2301a8c0@sm>
+
+The first draft of therion book can be downloaded from http://www.therion.sk
+(link documentation).
+
+S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Dec  9 14:13:04 2002
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 9 Dec 2002 13:13:04 +0000 (GMT)
+Subject: [therion-users] Documentation
+In-Reply-To: <001a01c29f76$d740a310$2301a8c0@sm>
+Message-ID: <Marcel-1.50-1209131304-345h+Ty@chewy.aleph1.co.uk>
+
+On Mon 09 Dec, Stacho Mudrak wrote:
+> The first draft of therion book can be downloaded from http://www.therion.sk
+> (link documentation).
+
+That's looks like a good start. Can you also post the original TeX or SGML
+(or whatever) document the PDF was generated with so I can make
+english-improvements and include it in the Debian package (and it should go
+in the normal tarball as well of course).
+
+I've written part of a man page for therion too (which is required by
+Debian policy). I'll send that back to you when it's finished).
+
+Got a presentation to geeks to finish now - more therion later in the week
+I hope.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at group-s.sk  Thu Dec 12 15:01:45 2002
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 12 Dec 2002 15:01:45 +0100
+Subject: [therion-users] Extended profile
+Message-ID: <002301c2a1e7$0b211530$2301a8c0@sm>
+
+A new version of therion is on the WEB - I've fixed some bugs concerning
+extended elevation maps.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Tue Dec 17 20:17:40 2002
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 17 Dec 2002 19:17:40 +0000 (GMT)
+Subject: [therion-users] Documentation
+In-Reply-To: <001a01c29f76$d740a310$2301a8c0@sm>
+Message-ID: <Marcel-1.50-1217191740-d07h+Ty@chewy.aleph1.co.uk>
+
+On Mon 09 Dec, Stacho Mudrak wrote:
+> The first draft of therion book can be downloaded from http://www.therion.sk
+> (link documentation).
+
+I've gone through this for english grammar. I'll mail the changes direct to
+you stacho as it's a big big for the list?
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Tue Dec 17 20:27:37 2002
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 17 Dec 2002 19:27:37 +0000 (GMT)
+Subject: [therion-users] simple HOWTO
+In-Reply-To: <002201c29b77$bcb07690$2301a8c0@sm>
+Message-ID: <Marcel-1.50-1217192737-345h+Ty@chewy.aleph1.co.uk>
+
+On Wed 04 Dec, Stacho Mudrak wrote:
+
+> > I also put in a proper survey to relate to some real data:
+> > But that wouldn't produce output either:
+> >  If you use same name in station label as station in .th file e.g. '5'
+> >  point x y station -station 5
+
+OK - I found the problem with this. I added points with Xtherion and the
+entry in the file was:
+point x y station -name 5
+
+and that doesn't work. Maybe I pushed the wrong buttons - but certainly
+this could catch out other new users - it looks convincing, only a
+conmparison with an example file (below) showed me the problem.
+
+> >  then survey data specifying station 5 gvies an erro 'object exists -- 5'
+> >  Change one (e.g. to '05') and data compiles but then says 'projection
+> >  extended - no reference station' - how is this made to work?
+
+> This should not happen. I've tested following code s.th:
+
+> survey s
+>     data
+>         data cartesian from to dx dy dz
+>         0 1 10 10 10
+>     enddata
+
+>     scrap ss
+>         point 0 0 station -station 0
+>         point 1 1 station -station 1
+>     endscrap
+
+>     map mm
+>       ss
+>     endmap
+
+> endsurvey
+
+> with simple thconfig:
+
+> source s.th
+> export map
+
+> and it worked on my therion (OK, thpdf had some protests, because wall was
+> missing - I've to fix this, but it worked).
+
+OK. This worked - hooray, I finally produced a map!
+
+So then I went to fix my 'real' cave example. Fixing the above station
+problem was the first thing, then I realised that I couldn't have a scrap
+name the same as a survey name. (I called the scrap 'doline' as well as the
+survey 'doline' - that didn't work)
+
+And finally I had to give scrap at survey syntax to get it recognised.
+
+I've added a few notes on this to ch04.tex (not sure if tha'ts really the
+right place but I thought it a good idea to have a remonder of these
+things).
+
+So now it processes as far as trying to produce a PDF but it just gets
+stuck on 98% CPU (I left it for 5 hours and this is a one-survey, one-scrap
+map, but it never completed).
+
+Attached are the relevant files (but not the images)- does it work for you?
+
+Maybe this is fixed by the new download - I have downloaded it but these
+tests were at the weekend.
+
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+-------------- next part --------------
+encoding  utf-8
+source dxd.th
+#source test.th2
+export model -fmt survex
+export map extended -o dxd_extelv.pdf
+#export map plan -o dxd_plan.pdf
+#export atlas plan -o dxd_atlas.pdf
+
+
+
+
+
+
+
+
+
+
+
+-------------- next part --------------
+encoding  iso8859-1
+
+survey doline -title "Doline"
+
+#survey from entrance out of doline to GPSable point
+  
+  input doline.th2
+  
+  data
+    
+    date 2001.06.19
+    team "Wookey" notes pictures
+    team "Conor McGrath" compass clino
+    team "Brian Judd" tape
+    team "Oz Williams" tape
+    units clino compass degrees
+    units tape metres
+    #grade BCRA4
+    data normal from to length compass clino 
+
+#*export 1,40
+
+
+1  2  27.84  098  +12
+2  3  15.95  072  -03
+3  4  27.91  092  -02
+4  5  27.96  153  +08
+3  3b  55  348  -05 #comp 148 in original survey - checked on groud, and found to be 348
+5  6  9.68  204  +27
+6  7  12.80  200  +03
+7  8  27.15  104  +14
+8  9  15.23  106  +10
+9  10  21.14  158  +12
+flags surface
+10  11  10.39  090  +15
+11  12  6.74  326  +04
+12  13  5.57  330  +41
+13  14  11.62  058  +41
+14  15  8.39  088  +40
+15  16  2.70  004  +42
+16  17  8.50  357  +22
+17  18  9.28  066  +37
+18  19  7.13  129  +21
+19  20  5.84  102  +11
+20  21  5.90  017  +40
+21  22  4.98  336  +43
+22  23  6.55  005  +39
+23  24  29.95  015  +38
+24  25  12.40  062  +25
+25  26  12.80  103  +24
+26  27  6.93  070  +19
+27  28  8.22  145  -11
+28  29  10.90  065  +03
+29  30  8.70  140  +08
+30  31  5.90  119  +06
+31  32  7.70  083  +05
+32  33  14.87  128  +13
+33  34  5.04  066  +22
+34  35  6.90  114  +23
+35  36  9.65  004  +34
+36  37  7.75  110  +37
+37  38  7.90  086  +27
+38  39  11.10  040  +15
+39  40  1.70  -  down  
+
+  enddata
+endsurvey
+
+-------------- next part --------------
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -128 -554 1768 1328
+##XTHERION## xth_me_area_zoom_to 100
+##XTHERION## xth_me_image_insert {0 1} 1200 img/1.gif 0 {}
+
+
+
+scrap dolines -projection extended -scale [-128 -554 1768 -554 0.0 0.0 48.1584 0.0 m]
+
+point 596.0 541.0 station -station 38
+
+point 788.0 -227.0 station -station 12
+
+point 821.0 -234.0 station -station 11
+
+point 938.0 -254.0 station -station 10
+
+point 1088.0 -285.0 station -station 9
+
+point 1211.0 -309.0 station -station 8
+
+point 1378.0 -357.0 station -station 7
+
+point 1387.0 -357.0 station -station 6
+
+point 1433.0 -385.0 station -station 5
+
+line contour
+  1565.0 929.0
+  1565.0 848.0
+  1565.0 833.0
+  1568.0 762.0
+  1568.0 696.0
+  1564.0 640.0
+  1560.0 559.0
+  1560.0 535.0
+  1557.0 464.0
+  1567.0 400.0
+  1571.0 387.0
+  1580.0 387.0
+  1613.0 369.0
+  1624.0 367.0
+  1637.0 360.0
+endline
+
+line arrow
+endline
+
+line rock-edge
+  1618.0 -399.0
+  1622.0 -418.0
+endline
+
+line rock-edge
+  1571.0 -376.0
+  1578.0 -409.0
+endline
+
+line rock-edge -close on
+  1611.0 -417.0
+  1612.0 -401.0
+  1618.0 -399.0
+  1626.0 -399.0
+  1628.0 -413.0
+  1622.0 -418.0
+  1611.0 -417.0
+endline
+
+line rock-border -close on
+  1565.0 -406.0
+  1571.0 -376.0
+  1579.0 -382.0
+  1584.0 -411.0
+  1565.0 -406.0
+endline
+
+line rock-border
+  1520.0 -402.0
+  1513.0 -398.0
+  1517.0 -390.0
+  1504.0 -385.0
+  1517.0 -390.0
+endline
+
+line rock-edge -close on
+  1498.0 -400.0
+  1504.0 -385.0
+  1511.0 -380.0
+  1529.0 -387.0
+  1520.0 -402.0
+  1513.0 -398.0
+  1498.0 -400.0
+endline
+
+line rock-border
+  513.0 -90.0
+  528.0 -96.0
+  535.0 -103.0
+  537.0 -132.0
+  538.0 -139.0
+  545.0 -143.0
+  629.0 -165.0
+  660.0 -174.0
+  685.0 -180.0
+  694.0 -184.0
+  704.0 -191.0
+  710.0 -210.0
+  734.0 -218.0
+  748.0 -223.0
+  760.0 -224.0
+  782.0 -228.0
+  809.0 -235.0
+  827.0 -237.0
+  842.0 -237.0
+  873.0 -247.0
+  909.0 -255.0
+  939.0 -261.0
+  964.0 -268.0
+  990.0 -267.0
+  1032.0 -279.0
+  1069.0 -289.0
+  1087.0 -292.0
+  1106.0 -292.0
+  1127.0 -301.0
+  1168.0 -308.0
+  1202.0 -315.0
+  1211.0 -309.0
+  1271.0 -326.0
+  1287.0 -332.0
+  1306.0 -342.0
+  1334.0 -353.0
+  1353.0 -360.0
+  1364.0 -360.0
+  1378.0 -357.0
+endline
+
+line rock-edge
+  1448.0 -385.0
+  1465.0 -381.0
+  1476.0 -375.0
+  1491.0 -365.0
+  1504.0 -357.0
+  1518.0 -347.0
+  1544.0 -330.0
+  1555.0 -328.0
+  1604.0 -307.0
+  1616.0 -303.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1640.0 -295.0
+  1544.0 -330.0
+  1481.0 -368.0
+endline
+
+line rock-edge
+  1584.0 -411.0
+  1601.0 -408.0
+  1611.0 -417.0
+endline
+
+line rock-edge
+  1525.0 -397.0
+  1536.0 -402.0
+  1552.0 -399.0
+  1558.0 -407.0
+endline
+
+line rock-edge
+  1378.0 -357.0
+  1387.0 -357.0
+  1387.0 -363.0
+  1398.0 -359.0
+  1399.0 -366.0
+  1405.0 -363.0
+  1406.0 -370.0
+  1416.0 -367.0
+  1417.0 -379.0
+  1427.0 -376.0
+  1433.0 -385.0
+  1448.0 -385.0
+  1459.0 -392.0
+  1469.0 -390.0
+  1478.0 -391.0
+  1485.0 -394.0
+  1492.0 -395.0
+endline
+
+line contour
+  587.0 544.0
+  601.0 534.0
+  612.0 518.0
+  626.0 516.0
+  637.0 494.0
+  662.0 484.0
+  682.0 481.0
+  718.0 473.0
+  747.0 465.0
+  777.0 457.0
+  808.0 450.0
+  834.0 446.0
+  857.0 434.0
+  895.0 406.0
+  914.0 396.0
+  928.0 388.0
+  944.0 384.0
+  960.0 385.0
+  1040.0 386.0
+  1052.0 382.0
+  1068.0 380.0
+  1100.0 371.0
+  1133.0 359.0
+  1163.0 344.0
+  1194.0 312.0
+  1208.0 294.0
+  1209.0 286.0
+  1205.0 276.0
+  1180.0 250.0
+  1130.0 196.0
+  1130.0 196.0 1103.54 170.02 1075.0 142.0
+  1046.46 113.98 1036.0 107.0 1036.0 107.0
+  smooth off
+  1036.0 99.0
+  1036.0 99.0 1042.0 86.0 1042.0 81.0
+  1042.0 63.0 1017.0 43.0 1017.0 43.0
+  smooth off
+  976.0 4.0
+  968.0 -6.0
+  970.0 -16.0
+  980.0 -30.0
+  980.0 -38.0
+  969.0 -54.0 943.0 -86.0 943.0 -86.0
+  smooth off
+  916.0 -125.0
+  882.0 -166.0
+  835.0 -208.0
+  821.0 -227.0
+  821.0 -234.0
+endline
+
+line contour
+  215.0 589.0
+  251.0 579.0
+  294.0 573.0
+  327.0 568.0
+  370.0 561.0
+  408.0 556.0
+  448.0 551.0
+  486.0 545.0
+  541.0 542.0
+  587.0 544.0
+  618.0 548.0
+  664.0 549.0
+  711.0 557.0
+  758.0 570.0
+  801.0 584.0
+  876.0 611.0
+  978.0 657.0
+  1079.0 702.0
+  1180.0 747.0
+  1273.0 784.0
+  1338.0 804.0
+  1418.0 831.0
+  1456.0 842.0
+  1532.0 864.0
+  1606.0 887.0
+  1640.0 901.0
+endline
+
+endscrap
+
+-------------- next part --------------
+encoding iso8859-1
+
+survey ants
+#Cave: Da Xiao Dong
+#Yangtze Gorges, Jiang Kou area
+
+#    input ants.th2
+
+    data
+	
+    #Ants on the path streamway, follows on from sanctuary.
+	date 2001.06.27
+	team "Wookey" notes pictures
+	team "Chris Densham" compass clino
+	title "Ants on the Path"
+	grade BCRA5
+        data normal from to tape compass clino
+
+	#*export 1,12
+
+2	1	19.53	190	+32
+3	2	9.57	154.5	+13
+4	3	1.98	142	+09
+5	4	9.13	121	+24.5
+5	6	2.53	235	-24
+6	7	7.57	295	-17
+8	7	17.30	110	+60.5
+8	9	7.09	316	-12
+9	10	7.91	260	-75
+10	11	8.61	170	-76
+11	12	8.82	280	-76
+#aprox legs to show depth and canyon
+#superceded by next survey
+#12	13	40	-	down
+#13	14	030	20	0
+#14	15	20	-	down
+#15	16	200	030	-03
+
+#descriptions
+
+#1	0.8	6	7.5	1.8
+#2	0 (2)	0.8	5	1.8	RP
+#3	1.2	1	>5	1.8	
+#4	3	1.8(0.8)	>6	1.5	RP
+#5	2	0(1)	3.5	1.6	
+#6	1.5	0(3)	>7	1.7	
+#7	1.3(~4)	0	>8	1.4	RP
+#8	1	7	-	4	RP '8' on LHW
+#9	10	2	-	-	Knot of pitch
+#10	120:4	~2	210:13	030:3/5	1st rebelay bolt
+#11	120:2	4	210:11	030:1	2nd rebelay bolt
+
+  enddata
+endsurvey
+
+-------------- next part --------------
+encoding  iso8859-1
+
+survey ants2 -title "Ants rift"
+
+#Cave: Da Xioa Dong
+#Yangtze Gorges, Jiang Kou area
+#Down rest of pitch and along the bottom
+  
+#  input ants2.th2
+  
+  data
+    
+    date 2001.06.28
+    team "Brian Judd" notes pictures
+    team "Lev Bishop" compass clino tape
+    units clino compass degrees
+    units tape metres
+    grade BCRA5
+    data normal from to tape compass clino
+
+
+#*export 1	; starts at 2nd rebelay bolt; 15 on previous survey
+
+1	2	46.17	-	down
+2	3	3.34	004	+08
+3	4	4.90	-	down
+4	5	16.27	-	down
+5	6	2.66	046	+15
+6	7	8.67	019	-04
+7	8	7.35	039	+06
+8	9	14.30	-	down  #+90 in notes - but that's not right
+9	10	27.35	040	0
+10	11	9.26	039	-12
+11	12	16.10	025	+04
+12	13	31.00	030	0
+13	14	11.25	045	-02
+14	15	13.80	032	+12
+15	16	11.93	055	-06
+16	17	7.10	080	-27
+17	18	14.95	023	-11
+18	19	12.70	023	-05 
+
+#1	2	3	040:15	220:5
+#2	1.5	0	P	P
+#3	0.5	3.5	P	P
+#4	0.5	3.5	P	P
+#5	0.5	3.5	P5	P10
+#6	0.5	3.5	15	10
+#7	0.75	0	15	8
+#8	0.75	0.75	23	0	top of 14m pitch
+#9	0	2.5	10	4
+#10	1.3	0	10	1.7
+#11	0	1.3	15	2
+#12	3.5	3	10	1.7
+#13	1	0	5	3
+#14	0	1	5	8	start of traverse
+#15	5	8	2	2
+#16	0	5	3	1
+#17	2.5	0	8	2.5	Bolt RHW, top of p2
+#19					Maelstrom of water - big inlet - THE END
+	
+
+  enddata
+endsurvey	
+-------------- next part --------------
+encoding  iso8859-1
+
+survey daxiaodong
+  
+  input doline.th
+  input entrance.th
+  input overflow.th
+  input sanctuary.th
+  input ants.th
+  input ants2.th
+  
+  data
+        
+    # UTM WGS84 48R 0788984 3236595
+    fix GPS 88984 36595 1175
+    40 at doline GPS 6.00 090 +05 #approximate leg
+    equate 1 at doline 1 at entrance
+    equate 25 at entrance 1 at overflow
+    equate 20 at overflow 1 at sanctuary
+    equate 25 at sanctuary 1 at ants
+    equate 12 at ants 1 at ants2
+        
+  enddata
+    
+#  join cesta_ddd.s at dur.dur_dom hipds at hip.hip_dom -smooth off
+  
+#  revise hipds at hip.hip_dom -stations 19 at dur.dur_dom  
+#  revise dd.s at dur.dur_dom -stations [4 at monum.dur_dom 5 at monum.dur_dom 6 at monum.dur_dom]
+    
+map dxd -title "Da Xiao Dong - Extended Elevation"
+  dolines at doline
+endmap  
+  
+#  map komnata_13.m -title "Trin�sta komnata"
+#    13k.s at 13kom.dur_dom
+#    break
+#    plaz.s at za13.dur_dom
+#    preview above duranov_dom.m
+#    preview above ch_monum.m
+#    preview below hip_dom.m
+#  endmap 
+  
+endsurvey
+
+-------------- next part --------------
+encoding  iso8859-1
+
+survey entrance -title "Entrance"
+  
+#  input entrance.th2
+  
+  data
+    
+    team "Wookey" notes pictures
+    team "Conor McGrath" notes pictures tape
+    team "Oz Williams" compass clino
+    team "Brian Judd" tape
+    date 2001.06.18
+    units clino compass degrees
+    data normal from to tape compass clino
+
+
+1  1a  29.72  169  +03
+1a  1b  29.44  165  +02
+1  1c  24.49  321  -18
+1  2  29.69  263  -10
+2  3  29.92  265  -06
+3  4  29.63  275  -05
+4  5  31.03  248  -04
+5  6  9.50  226  -27
+6  7  14.02  258  -09
+7  8  3.2  225  -11
+8  9  4.45  328  -23
+9  10  5.04  246  -26
+10  11  6.90  308  -15
+11  12  7.42  010  -49
+12  13  9.80  322  +01
+14  13  7.48  148  +40
+14  15  7.66  299  -01
+15  16  7.71  281  +04
+16  17  6.90  042  -06
+17  18  7.58  346  +02
+17  19  8.00  348  -18
+20  19  6.00  213  +46
+20  21  3.95  030  -20
+22  21  7.78  157  +33
+23  22  9.50  110  +03
+24  23  6.23  053  +03
+25  24  8.60  186  +09
+ 
+  enddata
+endsurvey
+
+-------------- next part --------------
+encoding  iso8859-1
+
+survey overflow -title "The Overflow"
+  
+#  input overflow.th2
+  
+  data
+    
+    date 2001.06.24
+    team "Wookey" notes pictures
+    team "Chris Densham" compass clino
+    units clino compass degrees
+    units tape metres
+    grade BCRA5
+    data normal from to tape compass clino
+
+
+#*export 1,20
+
+1	2	2.45	286	-30.5
+2	3	3.90	-	DOWN
+4	3	6.20	094	-21
+5	4	7.46	180	+13
+5	6	5.40	273	+07
+6	7	5.52	352.5	-10
+8	7	11.97	101	+18.5
+8	9	4.96	339.5	-10
+10	9	8.67	100	+18.5
+11	10	10.18	094	+48
+12	11	21.25	117	+46  #notes had leg reversed
+13	12	9.10	097.5	00
+13	14	11.40	288	-12
+14	15	19.58	298.5	00
+16	15	4.99	162	+24
+17	16	7.65	107	+08
+17	18	9.43	315	-38.5
+18	19	8.75	259.5	+01
+19	20	5.93	230	-18.5
+
+
+#RP=Red point (nail varnish)
+station 1	"'.25' on RHW"
+station 2	"RP 0.5 below bolt LHW"
+station 3	"RP bottom of plumb"
+station 4	"RP"
+station 5	"chris' eyeball"
+station 6	"RP LHW"
+station 7	"RP '1' RHW at pitch"
+station 8	"RP LHW"
+station 9	"RP RHW"
+
+station 11	"RP"
+station 12	"RP LHW"
+station 13	"chris's eyeball"
+station 14	"RP RHW"
+station 15	"RP high on LHW"
+station 16	"RP"
+station 17	"RP"
+station 18	"RP"
+station 19	"RP"
+station 20	"RO '20'"
+
+	  
+  enddata
+endsurvey
+-------------- next part --------------
+encoding  iso8859-1
+
+survey sanctuary -title "Sanctuary"
+  
+  #Cave: Da Xioa Dong, follows on from 'overflow' survey 
+  #Yangtze Gorges, Jiang Kou area
+  #This survey had a number of errors, which we beleive have been corrected by
+  #analysis after the fact.
+  #There was a station missing at the bottom of all the plumbs
+  # so 10b, 16a and 24 are made up. Also in 18-16, 16 is referred to as 19.
+  # Took us bloody ages to work that out!
+
+#  input sanctuary.th2
+  
+  data
+    
+    date 2001.06.25
+    team "Brian Judd" notes pictures
+    team "Lev Bishop" compass clino
+    units clino compass degrees
+    units tape metres
+    grade BCRA5
+    data normal from to tape compass clino
+
+
+#*export 1,25
+
+2	1	7.69	168	-01
+2	3	13.00	308	-47
+3	4	12.15	328	-02
+4	5	11.56	289	-02
+6	5	6.35	194	-09
+7	6	2.20	145	+12 #read backsight?-325 in notes
+8	7	18.50	160	+12
+9	8	8.30	200	-09 #maybe 3.30?
+10	9	10.70	137	+13
+10b	10	6.3	190	+80
+11	12	28.55	001	+11
+12	10b	8.70	310	+01
+10b	13	19.35	289	+08
+13	14	9.25	330	-40
+14	15	7.30	046	-11
+15	16a	3.60	090	-50 #16a mising in notes
+16a	16	8.95	340	-60
+16	17	12.10	160	+21
+18	16	9.97	179	-13 #19 in notes - must be 16 really
+18	20	3.28	108	-20
+20	21	19.70	-	down
+21	22	23.65	034.5	+14
+22	23	3.20	295	-10
+23	24	13.04	-	down
+24	25	5.43	013	+16
+
+ 
+  enddata
+endsurvey
+
+From s.m at group-s.sk  Wed Dec 18 09:42:36 2002
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 18 Dec 2002 09:42:36 +0100
+Subject: [therion-users] simple HOWTO
+References: <Marcel-1.50-1217192737-345h+Ty@chewy.aleph1.co.uk>
+Message-ID: <010401c2a673$74216270$2301a8c0@sm>
+
+> Attached are the relevant files (but not the images)- does it work for
+you?
+>
+> Maybe this is fixed by the new download - I have downloaded it but these
+> tests were at the weekend.
+
+Yes, new download should help you (in the old version, there was one
+infinite loop...). At least, on my computer, I had no problems with
+compilation.
+
+S.
+
+
+
+
+From budaj at host.sk  Wed Dec 18 10:54:03 2002
+From: budaj at host.sk (Martin Budaj)
+Date: Wed, 18 Dec 2002 10:54:03 +0100
+Subject: [therion-users] Documentation
+In-Reply-To: <Marcel-1.50-1217191740-d07h+Ty@chewy.aleph1.co.uk>
+References: <001a01c29f76$d740a310$2301a8c0@sm>
+	<Marcel-1.50-1217191740-d07h+Ty@chewy.aleph1.co.uk>
+Message-ID: <20021218095403.M99742@host.sk>
+
+> I've gone through this for english grammar. I'll mail the changes 
+> direct to you stacho as it's a big big for the list?
+
+Thanks a lot for your improvements. I'll try to write some new chapters during 
+vacation.
+
+Martin
+
+
+

@@ -1,0 +1,3867 @@
+From ben.cooper at siemens.com  Sat Dec  1 22:04:47 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Sat, 1 Dec 2007 21:04:47 -0000
+Subject: [Therion] Legend Size
+In-Reply-To: <1196417354.474fe14a212b7@mail.atlantis.sk>
+References: <011301c82062$32e966e0$6e01a8c0@PETRORAD.PT><000001c8255f$721fd9f0$2e34f6d2@JUICEBRAIN><FF95F218CFC59E44979B6F3FC0FE0A8C01D81BB3@GBMDDMH232AMSX.gb001.siemens.net><000f01c82624$4a822360$b925f6d2@JUICEBRAIN><FF95F218CFC59E44979B6F3FC0FE0A8C01DB0E9D@GBMDDMH232AMSX.gb001.siemens.net><000101c827bd$0b579310$ac25f6d2@JUICEBRAIN><473CB463.6050101@group-s.sk><000301c827ce$ee45fed0$ac25f6d2@JUICEBRAIN><FF95F218CFC59E44979B6F3FC0FE0A8C01E41907@GBMDDMH232AMSX.gb001.siemens.net><FF95F218CFC59E44979B6F3FC0FE0A8C01F63BD3@GBMDDMH232AMSX.gb001.siemens.net><f64c1c4a0711271159m49bd2538qcef0036899d1c8e4@mail.gmail.com><FF95F218CFC59E44979B6F3FC0FE0A8C0204F9FD@GBMDDMH232AMSX.gb001.siemens.net>
+	<1196417354.474fe14a212b7@mail.atlantis.sk>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C0207D67C@GBMDDMH232AMSX.gb001.siemens.net>
+
+Thanks Stacho.  That worked!
+- Ben 
+
+> -----Original Message-----
+> From: therion-bounces at speleo.sk 
+> [mailto:therion-bounces at speleo.sk] On Behalf Of Stacho Mudrak
+> Sent: 30 November 2007 10:09
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Legend Size
+> 
+> Quoting "Cooper, Ben" <ben.cooper at siemens.com>:
+> > Thanks Martin.
+> > I've added this to the layout section of my thconfig file, 
+> but it makes
+> > no difference to the size of the North arrow.  I've tried 
+> different cm
+> > sizes too.  Is there something else I also need to do?
+> 
+> Strange, may be you can try just redefine s_northarrow, not 
+> s_northarrow_SKBB.
+> I.e.:
+> 
+> code metapost
+>  def s_northarrow (expr rot) =
+>    T:=identity scaled 1.5 rotated -rot;
+>    thdraw (-.5cm,-1cm)--(0,1.5cm)--(.5cm,-1cm)--(0,-.5cm)--cycle;
+>    thfill (-.5cm,-1cm)--(0,1.5cm)--(0,-.5cm)--cycle;
+>  enddef;
+> endcode
+> 
+> I have changed the value after scaled to get bigger arrow. 
+> When I have tried
+> this, it worked OK.
+> 
+> Regards, S.
+> 
+> > - Ben 
+> > 
+> > > -----Original Message-----
+> > > From: therion-bounces at speleo.sk 
+> > > [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Budaj
+> > > Sent: 27 November 2007 20:00
+> > > To: therion at speleo.sk
+> > > Subject: Re: [Therion] Legend Size
+> > > 
+> > > > > What I
+> > > > > needed was a huge "Upper Flood" title and reasonable text 
+> > > size for the
+> > > > > North arrow, and the rest of the legend, so these things
+> > > > > stood out even
+> > > > > when viewed from some distance.
+> > > 
+> > > The north-arrow macro is currently not easily 
+> customizable at all. You
+> > > have to add the following to the layout
+> > > 
+> > > code metapost
+> > > def s_northarrow_SKBB (expr rot) =
+> > >   T:=identity scaled 0.7 rotated -rot;
+> > >   thdraw (-.5cm,-1cm)--(0,1.5cm)--(.5cm,-1cm)--(0,-.5cm)--cycle;
+> > >   thfill (-.5cm,-1cm)--(0,1.5cm)--(0,-.5cm)--cycle;
+> > > enddef;
+> > > 
+> > > with values .5cm, 1cm, 1.5cm replaced by larger values.
+> > > 
+> > > Martin
+> > > _______________________________________________
+> > > Therion mailing list
+> > > Therion at speleo.sk
+> > > http://www.speleo.sk/mailman/listinfo/therion
+> > > 
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> > 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From bruce.mutton at paradise.net.nz  Sun Dec  2 09:56:14 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sun, 02 Dec 2007 21:56:14 +1300
+Subject: [Therion] Modular Reuse of thconfig Layouts
+In-Reply-To: <1196416682.474fdeaa0f738@mail.atlantis.sk>
+References: <000001c832c6$00e06b00$0d25f6d2@JUICEBRAIN>
+	<1196416682.474fdeaa0f738@mail.atlantis.sk>
+Message-ID: <000001c834c1$337e5930$0d25f6d2@JUICEBRAIN>
+
+Thanks Stacho, works like a dream!
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Friday, 30 November 2007 10:58 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Modular Reuse of thconfig Layouts
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+> I have played around a bit, trying to save layouts in different files and
+> using lines like;
+> 
+> copy StandardLayout
+> 
+> but 'StandardLayout' only seems to be visible from within the same file.
+> 
+> Have had no luck with 'input', 'source' or 'select'.
+> 
+> Probably I'm just missing out a bit of syntax or namespace visibility.
+> 
+> Any suggestions
+
+Your StandardLayout is not visible, probably because therion did not read
+configuration file with this layout. To load layouts in some standard file,
+you
+need to input this file first, then use copy. Example:
+
+Let file colors.thcfg contains:
+
+layout standard-colors
+  color map-fg altitude
+endlayout
+
+To include this layout in your main thconfig file you write:
+
+source my-data.th # to include data
+
+input colors.thcfg # to include file
+
+layout output-layout
+  copy standard-colors
+  ... other specific settings ...
+endlayout
+
+export map -layout outpu-layout
+
+HTH, S.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From marco.corvi at elsagdatamat.com  Wed Dec  5 19:36:31 2007
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Wed, 05 Dec 2007 19:36:31 +0100
+Subject: [Therion] scrap help needed
+Message-ID: <1196879791.4805.13.camel@localhost.localdomain>
+
+in the process of drawing a not-so-big xelev scrap
+got some wierd inside.
+what's wrong ?
+
+th (abridged) and th2 (draft) are attached.
+thconfig is a plain export of extended projection map.
+
+by the way, is there a point for water_drop
+(ie, vertical water flow) ?
+
+thanks, marco
+
+
+-------------- next part --------------
+encoding  utf-8
+survey orione05 -title "fondo del vecchio rilievo"
+
+centerline 
+date 2007.12.01
+team "D. Bassani" compass clino tape
+team "M. Corvi" notes
+
+units length cm
+
+data normal from to length compass clino left right up down
+walls off
+
+extend normal
+# 1 = spit del pozzo = ultimo cap. orione04
+#
+1 2 1483   0  -90    1.5 2.0 16.0 0.5
+3 2  170  62  -17.5  3.0 3.5 15.0 3.0
+4 3  813  86  -15    1   4    7   5
+# P 5
+5 4  567 176.5 11.5  0.4 0.4 1.5 2.0
+5 6  381  34.5 -58.5 0.5 0.2 1   0.5
+extend reverse
+6 7  240 166   -42   0.6 0.2 0.8 0.4
+extend normal
+7 8  396 350   -26.5 1.5 0   2   2
+9 8  407 142   -49   0.2 3   10  1
+10 9 102 154   -34   0   3   10  1.8
+10 11  941  14 -27   0   0.8 1   2
+11 12  139  76 -28   0.3 0.8 2   6
+12 13  811  48 -24   1.5 3   10  1
+14 13  198 252  64   2   2   12  20
+14 15 1148   0 -90   0   6   23  10
+16 15 1240 239  42   0.4 0   1   1.5
+17 16  274 230  44   0   0.7 2   1.5
+17 18  100  25 -57   0   4   2.5 18
+data normal from to length compass clino
+19 18 1668   0  90
+data normal from to length compass clino left right up down
+20 19  684 289  -6   4   3   20  1.5
+20 21 1628 160  40   5   3   15  0.2
+21 22  294   0  90   0   7   0   3.5
+20 23  820  28 -27   0   5   15  1.7
+23 24  153 107  -59  0   0.8 1.5 2.5
+
+
+
+endcenterline
+
+
+# SEZIONE LONGITUDINALE 
+# 
+input orione05s1.th2
+
+map orione05ms
+  orione05s1
+endmap
+
+# PIANTA
+# 
+# input orione05p1.th2
+# 
+# map orione05mp
+#   orione05p1
+# endmap
+
+endsurvey
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: orione05-s.pdf
+Type: application/pdf
+Size: 32262 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071205/1a9f5ea3/attachment.pdf>
+-------------- next part --------------
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -128 -1443 1630 128
+##XTHERION## xth_me_area_zoom_to 100
+##XTHERION## xth_me_image_insert {0 1 1.0} {0 {}} gif/s1-5.gif 0 {}
+##XTHERION## xth_me_image_insert {290 1 1.0} {-194 {}} gif/s5-12.gif 0 {}
+##XTHERION## xth_me_image_insert {577 1 1.0} {-340 {}} gif/s11-14.gif 0 {}
+##XTHERION## xth_me_image_insert {734 1 1.0} {-419 {}} gif/s15-20.gif 0 {}
+
+
+
+scrap orione05s1 -projection extended -scale [-128 -606 528 -606 0.0 0.0 16.6624 0.0 m]
+
+line rock-border
+  522.5 -433.5
+  532.0 -423.5
+  544.0 -425.5
+  547.5 -429.5
+  558.0 -427.0
+  569.0 -425.5
+  573.0 -431.5
+  570.5 -440.0
+  562.5 -434.0
+  552.0 -435.5
+  544.0 -442.0
+endline
+
+line rock-border
+  498.0 -414.0
+  492.5 -417.0
+  483.5 -413.5
+endline
+
+line rock-border
+  492.0 -438.0
+  484.5 -423.5
+  483.5 -413.5
+  489.5 -408.0
+  495.5 -406.5
+  498.0 -414.0
+endline
+
+line rock-border
+  474.5 -458.5
+  467.0 -447.0
+  461.0 -435.0
+endline
+
+line rock-border
+  783.0 -510.0
+  772.0 -530.0
+  785.0 -545.0
+endline
+
+line rock-border
+  774.0 -552.0
+  759.0 -535.0
+  767.0 -516.0
+  783.0 -510.0
+  796.0 -520.0
+  795.0 -538.0
+endline
+
+point 903.0 -331.0 continuation -code "TBA6"
+
+point 816.0 -462.0 water-flow -orientation 179.1
+
+point 844.0 -424.0 water-flow -orientation 179.1
+
+point 804.0 -526.0 station -name 14
+
+point 788.0 -502.0 station -name 13
+
+line wall
+  851.0 -357.0
+  851.0 -357.0 843.0 -374.0 834.0 -386.0
+  825.0 -398.0 812.0 -412.0 812.0 -412.0
+  smooth off
+  812.0 -412.0 806.0 -422.0 796.0 -422.0
+  786.0 -422.0 775.0 -426.0 775.0 -426.0
+  smooth off
+  760.0 -417.0
+  738.0 -432.0
+  711.0 -432.0
+  697.0 -437.0
+  669.0 -441.0
+  669.0 -441.0 648.0 -440.0 644.0 -435.0
+endline
+
+point 1403.0 -958.0 station -name 22
+
+line wall -outline in
+  1310.0 -791.0
+  1310.0 -791.0 1306.0 -818.0 1302.0 -833.0
+  1298.0 -848.0 1289.0 -881.0 1289.0 -881.0
+  smooth off
+  1289.0 -881.0 1286.0 -927.0 1281.0 -950.0
+  1276.0 -973.0 1264.0 -997.0 1260.0 -1008.0
+  1256.0 -1019.0 1258.0 -1035.0 1241.0 -1040.0
+  1224.0 -1045.0 1198.0 -1046.0 1198.0 -1046.0
+  smooth off
+  1202.0 -1011.0
+  1194.0 -971.0
+  1194.0 -971.0 1205.0 -928.0 1205.0 -916.0
+  1205.0 -904.0 1211.0 -868.0 1208.0 -862.0
+  1205.0 -856.0 1203.0 -823.0 1203.0 -823.0
+  smooth off
+  1199.0 -775.0
+  1190.0 -737.0
+endline
+
+line wall -outline in
+  1292.0 -1242.0
+  1292.0 -1242.0 1287.0 -1233.0 1282.0 -1222.0
+  1277.0 -1211.0 1283.0 -1192.0 1283.0 -1192.0
+  smooth off
+  1283.0 -1163.0
+  1283.0 -1163.0 1292.0 -1153.0 1302.0 -1141.0
+  1312.0 -1129.0 1319.0 -1115.0 1319.0 -1115.0
+  smooth off
+  1339.0 -1091.0
+  1339.0 -1091.0 1358.0 -1067.0 1370.0 -1058.0
+  1382.0 -1049.0 1392.0 -1041.0 1392.0 -1041.0
+  smooth off
+  1412.0 -1036.0
+  1412.0 -1036.0 1419.0 -1028.0 1417.0 -1019.0
+  1415.0 -1010.0 1413.0 -1003.0 1414.0 -996.0
+  1415.0 -989.0 1416.0 -981.0 1416.0 -981.0
+  smooth off
+  1413.0 -970.0
+  1431.0 -969.0
+  1431.0 -969.0 1441.0 -974.0 1449.0 -979.0
+  1457.0 -984.0 1467.0 -989.0 1467.0 -989.0
+  smooth off
+  1467.0 -989.0 1473.0 -978.0 1472.0 -971.0
+  1471.0 -964.0 1471.0 -957.0 1469.0 -946.0
+  1467.0 -935.0 1462.0 -925.0 1462.0 -925.0
+  smooth off
+  1451.0 -931.0
+  1443.0 -943.0
+  1429.0 -945.0
+  1422.0 -920.0
+  1421.0 -901.0
+  1412.0 -891.0
+  1403.0 -901.0
+  1403.0 -901.0 1398.0 -915.0 1388.0 -909.0
+  1378.0 -903.0 1382.0 -891.0 1377.0 -878.0
+  1372.0 -865.0 1369.0 -828.0 1369.0 -828.0
+  smooth off
+  1368.0 -791.0
+endline
+
+point 1402.0 -1017.0 station -name 21
+
+point 1130.0 -1187.0 station -name 20
+
+point 1019.0 -1223.0 station -name 19
+
+point 1021.0 -932.0 station -name 18
+
+point 1010.0 -915.0 station -name 17
+
+point 971.0 -879.0 station -name 16
+
+point 834.0 -740.0 station -name 15
+
+line wall
+  1113.0 -737.0
+  1113.0 -737.0 1111.0 -740.0 1109.0 -763.0
+  1107.0 -786.0 1106.0 -815.0 1106.0 -815.0
+  smooth off
+  1106.0 -815.0 1103.0 -837.0 1099.0 -841.0
+  1095.0 -845.0 1076.0 -861.0 1076.0 -861.0
+  smooth off
+  1076.0 -861.0 1063.0 -858.0 1059.0 -866.0
+  1055.0 -874.0 1050.0 -879.0 1045.0 -878.0
+  1040.0 -877.0 1026.0 -871.0 1026.0 -871.0
+  smooth off
+  1004.0 -877.0
+  1004.0 -877.0 988.0 -872.0 980.0 -865.0
+  972.0 -858.0 966.0 -849.0 964.0 -835.0
+  962.0 -821.0 956.0 -802.0 956.0 -802.0
+  smooth off
+  940.0 -775.0
+  935.0 -736.0
+  935.0 -736.0 952.0 -716.0 953.0 -707.0
+  954.0 -698.0 960.0 -672.0 960.0 -672.0
+  smooth off
+  962.0 -639.0
+  subtype presumed
+  962.0 -639.0 965.0 -606.0 963.0 -596.0
+  961.0 -586.0 960.0 -559.0 960.0 -559.0
+  smooth off
+  966.0 -520.0
+endline
+
+line wall
+  788.0 -701.0
+  788.0 -701.0 790.0 -713.0 790.0 -721.0
+  790.0 -729.0 789.0 -734.0 801.0 -736.0
+  813.0 -738.0 819.0 -740.0 819.0 -751.0
+  819.0 -762.0 819.0 -860.0 819.0 -874.0
+  adjust vertical
+  819.0 -888.0 818.0 -899.0 818.0 -904.0
+  818.0 -909.0 826.0 -913.0 834.0 -914.0
+  842.0 -915.0 858.0 -912.0 858.0 -912.0
+  smooth off
+  882.0 -917.0
+  902.0 -912.0
+  919.0 -902.0
+  942.0 -899.0
+  956.0 -897.0
+  975.0 -901.0
+  975.0 -901.0 987.0 -903.0 990.0 -916.0
+  993.0 -929.0 1003.0 -967.0 997.0 -970.0
+  991.0 -973.0 976.0 -967.0 974.0 -975.0
+  972.0 -983.0 973.0 -1029.0 973.0 -1029.0
+  smooth off
+  adjust vertical
+  973.0 -1029.0 979.0 -1052.0 983.0 -1060.0
+  987.0 -1068.0 993.0 -1082.0 992.0 -1092.0
+  991.0 -1102.0 1000.0 -1215.0 997.0 -1224.0
+  adjust vertical
+  994.0 -1233.0 995.0 -1248.0 993.0 -1253.0
+  991.0 -1258.0 992.0 -1269.0 992.0 -1269.0
+  smooth off
+  992.0 -1269.0 1006.0 -1268.0 1015.0 -1268.0
+  1024.0 -1268.0 1040.0 -1261.0 1040.0 -1261.0
+  smooth off
+  1052.0 -1248.0
+  1059.0 -1238.0
+  1059.0 -1238.0 1078.0 -1232.0 1086.0 -1231.0
+  1094.0 -1230.0 1119.0 -1220.0 1119.0 -1220.0
+  smooth off
+  1152.0 -1215.0
+  1152.0 -1215.0 1167.0 -1220.0 1176.0 -1225.0
+  1185.0 -1230.0 1206.0 -1234.0 1206.0 -1234.0
+  smooth off
+  1233.0 -1243.0
+  1254.0 -1254.0
+endline
+
+line wall
+  966.0 -520.0
+  966.0 -520.0 965.0 -495.36 965.0 -473.0
+  adjust vertical
+  965.0 -454.0 955.0 -423.0 955.0 -423.0
+  smooth off
+  955.0 -357.0
+  adjust vertical
+endline
+
+line wall -outline in
+  917.0 -582.0
+  917.0 -582.0 911.0 -588.0 908.0 -596.0
+  905.0 -604.0 898.0 -611.0 898.0 -611.0
+  smooth off
+  886.0 -598.0
+endline
+
+line wall -outline in -subtype presumed
+  930.0 -530.0
+  930.0 -530.0 929.0 -541.0 927.0 -551.0
+  925.0 -561.0 922.0 -576.0 917.0 -582.0
+endline
+
+line wall -outline in
+  886.0 -598.0
+  886.0 -598.0 873.0 -553.0 869.0 -545.0
+  865.0 -537.0 864.0 -514.0 864.0 -514.0
+  smooth off
+  873.0 -495.0
+  882.0 -482.0
+  882.0 -482.0 908.0 -482.0 909.0 -486.0
+  910.0 -490.0 922.0 -508.0 922.0 -513.0
+  922.0 -518.0 930.0 -530.0 930.0 -530.0
+  smooth off
+endline
+
+line wall
+  664.0 -597.0
+  664.0 -597.0 672.0 -592.0 687.0 -590.0
+  702.0 -588.0 724.0 -583.0 724.0 -583.0
+  smooth off
+  739.0 -572.0
+  752.0 -559.0
+  768.0 -552.0
+  776.0 -541.0
+  795.0 -538.0
+  795.0 -538.0 803.0 -549.0 804.0 -553.0
+  805.0 -557.0 789.0 -577.0 789.0 -577.0
+  smooth off
+  788.0 -701.0
+  adjust vertical
+endline
+
+line wall
+  623.0 -485.0
+  623.0 -485.0 634.0 -492.0 639.0 -497.0
+  644.0 -502.0 653.0 -514.0 653.0 -514.0
+  smooth off
+  662.0 -529.0
+  662.0 -529.0 665.0 -549.0 665.0 -556.0
+endline
+
+line rock-border
+  526.5 -405.0
+  546.0 -417.5
+  547.5 -429.5
+endline
+
+line rock-border
+  513.5 -433.5
+  526.5 -405.0
+  536.0 -402.5
+  553.5 -416.5
+  558.0 -427.0
+endline
+
+line rock-border
+  573.0 -431.5
+  573.0 -431.5 578.0 -426.0 582.0 -426.0
+  586.0 -426.0 595.0 -426.0 595.0 -426.0
+  smooth off
+  602.5 -438.0
+  602.0 -446.0
+  596.5 -457.5
+  588.0 -461.0
+endline
+
+line rock-border
+  552.0 -435.5
+  547.5 -429.5
+  536.0 -429.0
+  531.5 -434.5
+endline
+
+line rock-border
+  570.5 -440.0
+  561.5 -441.5
+  551.0 -442.0
+endline
+
+line rock-border
+  465.0 -463.0
+  459.0 -452.0
+  461.0 -435.0
+  478.0 -427.0
+  492.0 -438.0
+endline
+
+point 508.0 -279.0 water-flow -orientation 179.1
+
+point 422.0 -322.0 continuation -code "RAA4" -text condotta
+
+point 515.0 -206.0 continuation -code "RA-B10"
+
+line wall
+  440.0 -337.0
+  465.0 -342.0
+  465.0 -342.0 475.0 -355.0 479.0 -357.0
+  483.0 -359.0 489.0 -365.0 489.0 -365.0
+  smooth off
+  493.0 -381.0
+  493.0 -381.0 490.0 -388.0 487.0 -391.0
+  484.0 -394.0 469.0 -401.0 469.0 -401.0
+  smooth off
+  445.0 -412.0
+  433.0 -411.0
+  419.0 -407.0
+  412.0 -420.0
+  397.0 -423.0
+  384.0 -418.0
+  384.0 -418.0 385.0 -410.0 390.0 -406.0
+  395.0 -402.0 405.0 -393.0 405.0 -393.0
+  smooth off
+  408.0 -382.0
+  408.0 -382.0 411.0 -369.0 402.0 -366.0
+  393.0 -363.0 379.0 -353.0 379.0 -353.0
+  smooth off
+  358.0 -332.0
+endline
+
+line wall
+  492.0 -228.0
+  492.0 -238.0
+  481.0 -253.0
+  478.0 -268.0
+  477.0 -284.0
+  474.0 -299.0
+  474.0 -317.0
+  474.0 -317.0 462.0 -316.0 455.0 -315.0
+  448.0 -314.0 441.0 -313.0 441.0 -313.0
+  smooth off
+endline
+
+line wall
+  644.0 -435.0
+  644.0 -435.0 642.0 -417.0 633.0 -406.0
+  624.0 -395.0 617.0 -384.0 617.0 -384.0
+  smooth off
+  617.0 -384.0 607.0 -374.0 597.0 -365.0
+  587.0 -356.0 567.0 -344.0 567.0 -344.0
+  smooth off
+  543.0 -327.0
+  539.0 -310.0
+  536.0 -296.0
+  536.0 -296.0 541.0 -282.0 540.0 -277.0
+  539.0 -272.0 531.0 -261.0 531.0 -261.0
+  smooth off
+  534.0 -243.0
+endline
+
+line wall
+  577.0 -500.0
+  593.0 -502.0
+  593.0 -502.0 608.0 -494.0 612.0 -491.0
+  616.0 -488.0 623.0 -485.0 623.0 -485.0
+  smooth off
+endline
+
+line wall
+  354.0 -360.0
+  354.0 -360.0 363.0 -361.0 367.0 -365.0
+  371.0 -369.0 381.0 -383.0 381.0 -383.0
+  smooth off
+  381.0 -383.0 381.0 -389.0 377.0 -392.0
+  373.0 -395.0 368.0 -402.0 368.0 -402.0
+  smooth off
+  358.0 -417.0
+  349.0 -425.0
+  352.0 -433.0
+  352.0 -433.0 355.0 -435.0 367.0 -435.0
+  379.0 -435.0 388.0 -439.0 388.0 -439.0
+  smooth off
+  388.0 -439.0 385.0 -445.0 387.0 -455.0
+  389.0 -465.0 387.0 -474.0 387.0 -474.0
+  smooth off
+  387.0 -474.0 390.0 -485.0 405.0 -482.0
+  420.0 -479.0 435.0 -473.0 435.0 -473.0
+  smooth off
+  457.0 -471.0
+  466.0 -457.0
+  483.0 -443.0
+  494.0 -426.0
+  498.0 -414.0
+  498.0 -414.0 501.0 -423.0 507.0 -426.0
+  513.0 -429.0 529.0 -432.0 529.0 -432.0
+  smooth off
+  551.0 -442.0
+  562.0 -455.0
+  588.0 -461.0
+  578.0 -469.0
+endline
+
+point 645.0 -466.0 station -name 12
+
+point 633.0 -451.0 station -name 11
+
+point 495.0 -396.0 station -name 10
+
+point 483.0 -405.0 station -name 9
+
+point 433.0 -452.0 station -name 8
+
+point 363.0 -425.0 station -name 7
+
+point 394.0 -385.0 station -name 6
+
+line border
+  248.0 -275.0
+  248.0 -275.0 247.5 -277.0 248.0 -285.5
+  248.5 -294.0 249.0 -299.0 249.0 -299.0
+  smooth off
+endline
+
+line border
+  106.5 -231.0
+  106.5 -231.0 116.5 -223.0 131.0 -223.5
+  145.5 -224.0 161.0 -228.0 161.0 -228.0
+  smooth off
+  174.5 -235.5
+endline
+
+line border
+  100.0 -308.0
+  100.0 -308.0 112.5 -298.5 125.0 -297.5
+  137.5 -296.5 154.0 -298.0 161.0 -300.5
+  168.0 -303.0 179.0 -306.5 179.0 -306.5
+  smooth off
+endline
+
+point 43.0 -421.5 continuation -code "DB?" -text meandro
+
+point 271.0 -197.0 continuation -code "RAA7"
+
+point 100.5 -26.5 continuation
+
+point 89.0 -426.0 water-flow -orientation 236.0
+
+point 143.0 -249.5 water-flow -orientation 179.5
+
+line rock-border
+  118.0 -86.5
+  126.0 -92.0
+  128.5 -101.0
+endline
+
+line rock-border
+  118.0 -86.5
+  117.0 -95.0
+  124.0 -100.5
+  128.5 -101.0
+  135.0 -94.5
+endline
+
+line rock-border
+  101.0 -62.0
+  110.5 -64.0
+  109.0 -72.5
+  115.5 -78.0
+  118.0 -86.5
+  127.5 -86.0
+endline
+
+line rock-border
+  101.0 -62.0
+  101.0 -68.5
+  109.0 -72.5
+  118.5 -68.5
+endline
+
+line rock-border
+  97.0 -47.5
+  94.5 -56.5
+  101.0 -62.0
+  114.0 -58.0
+endline
+
+line rock-border
+  52.0 -114.0
+  51.0 -106.5
+  51.5 -95.5
+endline
+
+line rock-border -close on
+  57.5 -111.5
+  57.0 -100.5
+  51.5 -95.5
+  42.5 -103.5
+  42.5 -113.0
+  52.0 -114.0
+  57.5 -111.5
+endline
+
+line rock-border -close on
+  74.0 -124.0
+  64.0 -110.0
+  52.0 -119.0
+  56.5 -128.0
+  64.0 -135.0
+  74.0 -124.0
+endline
+
+line rock-border
+  98.0 -140.0
+  98.0 -140.0 91.0 -148.0 95.0 -155.0
+  99.0 -162.0 103.0 -168.0 111.0 -172.0
+  119.0 -176.0 154.0 -170.0 154.0 -170.0
+  smooth off
+  168.0 -160.0
+  170.0 -140.0
+  170.0 -140.0 156.0 -131.0 150.0 -132.0
+  144.0 -133.0 129.0 -129.0 129.0 -129.0
+  smooth off
+  109.0 -129.0
+endline
+
+line rock-border
+  100.0 -117.0
+  81.0 -139.0
+endline
+
+line rock-border -close on
+  81.0 -139.0
+  98.0 -140.0
+  109.0 -129.0
+  100.0 -117.0
+  89.0 -109.0
+  74.0 -124.0
+  81.0 -139.0
+endline
+
+line wall -close on -outline in
+  270.0 -366.0
+  270.0 -366.0 257.0 -364.0 256.0 -359.0
+  255.0 -354.0 259.0 -345.0 259.0 -345.0
+  smooth off
+  273.0 -333.0
+  285.0 -339.0
+  283.0 -351.0
+  270.0 -366.0
+endline
+
+line wall
+  84.0 -43.0
+  84.0 -43.0 78.0 -49.0 74.0 -54.0
+  70.0 -59.0 65.0 -57.0 60.0 -56.0
+  55.0 -55.0 42.0 -54.0 42.0 -54.0
+  smooth off
+endline
+
+line wall
+  262.0 -228.0
+  262.0 -228.0 264.0 -240.0 261.0 -251.0
+  258.0 -262.0 248.0 -275.0 248.0 -275.0
+  smooth off
+  237.0 -272.0
+  228.0 -249.0
+  228.0 -249.0 224.0 -251.0 222.0 -260.0
+  220.0 -269.0 218.0 -291.0 218.0 -291.0
+  smooth off
+  214.0 -307.0
+  200.0 -332.0
+  198.0 -294.0
+  202.0 -273.0
+  202.0 -273.0 199.0 -253.0 192.0 -243.0
+  185.0 -233.0 192.0 -240.0 178.0 -209.0
+  164.0 -178.0 165.0 -169.0 163.0 -155.0
+  161.0 -141.0 165.0 -126.0 165.0 -126.0
+  smooth off
+  154.0 -103.0
+  132.0 -99.0
+  114.0 -62.0
+  103.0 -52.0
+endline
+
+line wall
+  358.0 -332.0
+  358.0 -332.0 342.0 -315.0 336.0 -314.0
+  330.0 -313.0 306.0 -302.0 306.0 -302.0
+  smooth off
+  295.0 -290.0
+  289.0 -259.0
+  280.0 -245.0
+  279.0 -230.0
+endline
+
+line wall
+  63.0 -419.0
+  63.0 -419.0 75.0 -419.0 81.0 -416.0
+  87.0 -413.0 99.0 -406.0 99.0 -406.0
+  smooth off
+  110.0 -402.0
+  131.0 -391.0
+  131.0 -391.0 142.0 -396.0 155.0 -394.0
+  168.0 -392.0 185.0 -385.0 185.0 -385.0
+  smooth off
+  193.0 -374.0
+  215.0 -363.0
+  244.0 -358.0
+  244.0 -358.0 251.0 -375.0 251.0 -383.0
+  251.0 -391.0 244.0 -403.0 254.0 -403.0
+  264.0 -403.0 291.0 -399.0 291.0 -399.0
+  smooth off
+  313.0 -396.0
+  313.0 -396.0 320.0 -391.0 323.0 -385.0
+  326.0 -379.0 348.0 -366.0 348.0 -366.0
+  smooth off
+  354.0 -360.0
+endline
+
+line wall
+  64.0 -161.0
+  64.0 -161.0 82.0 -176.0 85.0 -181.0
+  88.0 -186.0 82.0 -184.0 86.0 -192.0
+  90.0 -200.0 97.0 -203.0 95.0 -214.0
+  93.0 -225.0 96.0 -252.0 89.0 -263.0
+  82.0 -274.0 75.0 -277.0 76.0 -293.0
+  77.0 -309.0 88.0 -323.0 91.0 -331.0
+  94.0 -339.0 99.0 -361.0 99.0 -361.0
+  smooth off
+  94.0 -373.0
+  95.0 -390.0
+  95.0 -390.0 84.0 -402.0 78.0 -404.0
+  72.0 -406.0 62.0 -406.0 62.0 -406.0
+  smooth off
+endline
+
+point 354.0 -341.0 station -name 5
+
+point 268.0 -322.0 station -name 4
+
+point 151.0 -359.0 station -name 3
+
+point 129.0 -370.0 station -name 2
+
+point 125.0 -116.0 station -name 1
+
+endscrap
+
+
+
+From martinsluka at mac.com  Wed Dec  5 23:06:22 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 5 Dec 2007 23:06:22 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <1196879791.4805.13.camel@localhost.localdomain>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+Message-ID: <017DD043-2EE4-4790-A6FA-EB2386DB21EC@mac.com>
+
+
+On 5.12.2007, at 19:36, marco corvi wrote:
+
+> in the process of drawing a not-so-big xelev scrap
+> got some wierd inside.
+> what's wrong ?
+
+simply - check attached files - two right most walls were -outline in
+
+m.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: orione_after_corr.pdf
+Type: application/pdf
+Size: 50018 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071205/294627bb/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: orione_before_corr.pdf
+Type: application/pdf
+Size: 50076 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071205/294627bb/attachment-0001.pdf>
+
+From marco.corvi at elsagdatamat.com  Thu Dec  6 10:13:46 2007
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Thu, 06 Dec 2007 10:13:46 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <017DD043-2EE4-4790-A6FA-EB2386DB21EC@mac.com>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+	<017DD043-2EE4-4790-A6FA-EB2386DB21EC@mac.com>
+Message-ID: <1196932426.4754.0.camel@localhost.localdomain>
+
+On Wed, 2007-12-05 at 23:06 +0100, Martin Sluka wrote:
+> On 5.12.2007, at 19:36, marco corvi wrote:
+> 
+> > in the process of drawing a not-so-big xelev scrap
+> > got some wierd inside.
+> > what's wrong ?
+> 
+> simply - check attached files - two right most walls were -outline in
+> 
+thanks martin,
+
+yesterday, maybe was too tired (or too lazy, or both).
+
+marco
+
+
+
+From martinsluka at mac.com  Thu Dec  6 08:45:47 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 6 Dec 2007 08:45:47 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <1196932426.4754.0.camel@localhost.localdomain>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+	<017DD043-2EE4-4790-A6FA-EB2386DB21EC@mac.com>
+	<1196932426.4754.0.camel@localhost.localdomain>
+Message-ID: <EC4B4BA3-23BD-4A36-B915-7918A75FF0A5@mac.com>
+
+
+On 6.12.2007, at 10:13, marco corvi wrote:
+
+> yesterday, maybe was too tired (or too lazy, or both).
+
+It is very common mistake as therion map editor preserves option  
+setup for object.
+
+But those ray looked shapes if you add color-fg into layout are very  
+good indication of this.
+
+Martin
+
+
+From luethi at vaw.baug.ethz.ch  Thu Dec  6 10:28:48 2007
+From: luethi at vaw.baug.ethz.ch (Martin =?iso-8859-1?Q?L=FCthi?=)
+Date: Thu, 6 Dec 2007 09:28:48 +0000
+Subject: [Therion] Geological features
+Message-ID: <18263.49360.825905.237670@gargle.gargle.HOWL>
+
+Hi
+
+The Therion / Loch ensemble is very impressive. Something I would like
+to do but don't know whether that is implemented, or would be easy to
+implement: geologic features. By this term I mean adding strike/dip data
+from fault planes, fold axes or layering to the input files. Then in
+Loch these planes would show up as planes cutting through the
+galleries.
+
+Having a feature like that would greatly enhance the ability to see how
+cave systems evolve along these geologic structures.
+
+Best, Martin
+
+
+From martinsluka at mac.com  Thu Dec  6 10:45:40 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 6 Dec 2007 10:45:40 +0100
+Subject: [Therion] Geological features
+In-Reply-To: <18263.49360.825905.237670@gargle.gargle.HOWL>
+References: <18263.49360.825905.237670@gargle.gargle.HOWL>
+Message-ID: <D1DF2A22-8166-4678-A340-B48A5D114468@mac.com>
+
+Not an answer, but do you know the project nvelope from middle of 90th?
+
+m.
+
+
+On 6.12.2007, at 10:28, Martin Lüthi wrote:
+
+> Hi
+>
+> The Therion / Loch ensemble is very impressive. Something I would like
+> to do but don't know whether that is implemented, or would be easy to
+> implement: geologic features. By this term I mean adding strike/dip  
+> data
+> from fault planes, fold axes or layering to the input files. Then in
+> Loch these planes would show up as planes cutting through the
+> galleries.
+>
+> Having a feature like that would greatly enhance the ability to see  
+> how
+> cave systems evolve along these geologic structures.
+>
+> Best, Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From luethi at vaw.baug.ethz.ch  Thu Dec  6 11:12:04 2007
+From: luethi at vaw.baug.ethz.ch (Martin =?iso-8859-1?Q?L=FCthi?=)
+Date: Thu, 6 Dec 2007 10:12:04 +0000
+Subject: [Therion] Geological features
+In-Reply-To: <D1DF2A22-8166-4678-A340-B48A5D114468@mac.com>
+References: <18263.49360.825905.237670@gargle.gargle.HOWL>
+	<D1DF2A22-8166-4678-A340-B48A5D114468@mac.com>
+Message-ID: <18263.51956.735462.376632@gargle.gargle.HOWL>
+
+Martin Sluka writes:
+ > Not an answer, but do you know the project nvelope from middle of 90th?
+
+Never heard of it, and its very hard to find on a search site. Could
+you give any pointers? 
+
+Thanks, Martin
+
+
+From martinsluka at mac.com  Thu Dec  6 11:19:49 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 6 Dec 2007 11:19:49 +0100
+Subject: [Therion] Geological features
+In-Reply-To: <18263.51956.735462.376632@gargle.gargle.HOWL>
+References: <18263.49360.825905.237670@gargle.gargle.HOWL>
+	<D1DF2A22-8166-4678-A340-B48A5D114468@mac.com>
+	<18263.51956.735462.376632@gargle.gargle.HOWL>
+Message-ID: <77A0875C-511F-4445-BF23-97674363F489@mac.com>
+
+
+On 6.12.2007, at 11:12, Martin Lüthi wrote:
+
+> Never heard of it, and its very hard to find on a search site. Could
+> you give any pointers?
+
+look for: "nvelope toporobot"
+
+m.
+
+From s.m at group-s.sk  Thu Dec  6 11:48:18 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Dec 2007 11:48:18 +0100
+Subject: [Therion] Geological features
+In-Reply-To: <18263.49360.825905.237670@gargle.gargle.HOWL>
+References: <18263.49360.825905.237670@gargle.gargle.HOWL>
+Message-ID: <1196938098.4757d3725708d@mail.atlantis.sk>
+
+Quoting Martin Lüthi <luethi at vaw.baug.ethz.ch>:
+> The Therion / Loch ensemble is very impressive. Something I would like
+> to do but don't know whether that is implemented, or would be easy to
+> implement: geologic features. By this term I mean adding strike/dip data
+> from fault planes, fold axes or layering to the input files. Then in
+> Loch these planes would show up as planes cutting through the
+> galleries.
+
+Well, this is not yet implemented, but as far as I remember, you are not the
+first one asking for these features. I think, it would not be very difficult to
+implement it, but there are some technical issues, that need to be solved
+first.
+
+1. What data needs to be stored. So far I see: feature type (falut, layering,
+fold axes?), srike and dip
+
+2. Where exactly would you like to enter these data. Maps or centerline or
+both? 
+
+If it is a centerline - then these data would be aattributes of the station -
+which position needs to be measured first. If it is map, then these data would
+be attributes of a point, that is positioned in the map (=> it's 3rd coordinate
+can not be given exactly).
+
+3. How to plot these data. Are there any standard symbols for these types of
+measurements, that can be used in the map? In the 3D: how to construct these
+planes? Each measurement will be single small plane? Have you already seen some
+3D models like this, that could be used as a template? Some time ago I have
+tried something similar, but it was not very successful - my 3D model was a
+mess of planes, in which it was very difficult to see what is what.
+
+Regards, S.
+
+
+From s.m at group-s.sk  Thu Dec  6 11:51:35 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Dec 2007 11:51:35 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <1196879791.4805.13.camel@localhost.localdomain>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+Message-ID: <1196938295.4757d437693d4@mail.atlantis.sk>
+
+Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> by the way, is there a point for water_drop
+> (ie, vertical water flow) ?
+
+Not yet. I think it is a good idea to add this symbol. Have you seen somewhere
+how this symbol looks like?
+
+Regards, S.
+
+
+From marco.corvi at elsagdatamat.com  Thu Dec  6 13:56:20 2007
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Thu, 06 Dec 2007 13:56:20 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <1196938295.4757d437693d4@mail.atlantis.sk>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+	<1196938295.4757d437693d4@mail.atlantis.sk>
+Message-ID: <1196945780.4754.34.camel@localhost.localdomain>
+
+On Thu, 2007-12-06 at 11:51 +0100, Stacho Mudrak wrote:
+> Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> > by the way, is there a point for water_drop
+> > (ie, vertical water flow) ?
+> 
+> Not yet. I think it is a good idea to add this symbol. Have you seen somewhere
+> how this symbol looks like?
+> 
+just a dashed vertcal arrow, as in the attached sketch
+(of course the symblo should be active only in elevation and x-section 
+scraps).
+
+thanks, marco
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: waterdrop.gif
+Type: image/gif
+Size: 281 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071206/0b87a84f/attachment.gif>
+
+From s.m at group-s.sk  Thu Dec  6 12:10:14 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 06 Dec 2007 12:10:14 +0100
+Subject: [Therion] scrap help needed
+In-Reply-To: <1196945780.4754.34.camel@localhost.localdomain>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+	<1196938295.4757d437693d4@mail.atlantis.sk>
+	<1196945780.4754.34.camel@localhost.localdomain>
+Message-ID: <1196939414.4757d89672f22@mail.atlantis.sk>
+
+Thanks, but what about plan projection - there is no symbol for water-drop? 
+And last question, what is the difference between "water drop" and "water fall"?
+Could we use water-fall keyword for this symbol?
+
+Regards, S.
+
+Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+
+> On Thu, 2007-12-06 at 11:51 +0100, Stacho Mudrak wrote:
+> > Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> > > by the way, is there a point for water_drop
+> > > (ie, vertical water flow) ?
+> > 
+> > Not yet. I think it is a good idea to add this symbol. Have you seen
+> somewhere
+> > how this symbol looks like?
+> > 
+> just a dashed vertcal arrow, as in the attached sketch
+> (of course the symblo should be active only in elevation and x-section 
+> scraps).
+> 
+> thanks, marco
+> 
+
+
+
+
+From luethi at vaw.baug.ethz.ch  Thu Dec  6 12:35:23 2007
+From: luethi at vaw.baug.ethz.ch (Martin =?iso-8859-1?Q?L=FCthi?=)
+Date: Thu, 6 Dec 2007 11:35:23 +0000
+Subject: [Therion] Geological features
+In-Reply-To: <1196938098.4757d3725708d@mail.atlantis.sk>
+References: <18263.49360.825905.237670@gargle.gargle.HOWL>
+	<1196938098.4757d3725708d@mail.atlantis.sk>
+Message-ID: <18263.56955.468368.434803@gargle.gargle.HOWL>
+
+Stacho
+
+Stacho Mudrak writes:
+ > Quoting Martin Lüthi <luethi at vaw.baug.ethz.ch>:
+ > > The Therion / Loch ensemble is very impressive. Something I would like
+ > > to do but don't know whether that is implemented, or would be easy to
+ > > implement: geologic features. By this term I mean adding strike/dip data
+ > > from fault planes, fold axes or layering to the input files. Then in
+ > > Loch these planes would show up as planes cutting through the
+ > > galleries.
+ > 
+ > Well, this is not yet implemented, but as far as I remember, you are not the
+ > first one asking for these features. I think, it would not be very difficult to
+ > implement it, but there are some technical issues, that need to be solved
+ > first.
+
+I just implemented the reading part, which of course is trivial. 
+
+ > 1. What data needs to be stored. So far I see: feature type (falut, layering,
+ > fold axes?), srike and dip
+
+And feature designation (e.g. "Kieselkalk")
+
+ > 2. Where exactly would you like to enter these data. Maps or centerline or
+ > both? 
+
+Centerline. The measurements would have to be referenced to
+well-defined points in the cave, maybe at the end of extra legs.
+
+ > 3. How to plot these data. Are there any standard symbols for these types of
+ > measurements, that can be used in the map? In the 3D: how to construct these
+ > planes? Each measurement will be single small plane? Have you already seen some
+ > 3D models like this, that could be used as a template? Some time ago I have
+ > tried something similar, but it was not very successful - my 3D model was a
+ > mess of planes, in which it was very difficult to see what is what.
+
+In 2D maps there is the standard geologist strike/dip symbol that
+looks like a T, with the bar in the plane, and the leg pointing in the
+direction of steepest descent.
+
+How to construct these planes in 3D is not exactly obvious. My guess
+is that using sqares or disks intersecting the tubes would be easiest
+to implement. These planes would just be rims around the tubes. Colors
+would be given based to feature designation (all "Kieselkalk" is blue,
+all "fault1" is red....).
+
+BTW: I have thrown together a therion-mode for Emacs (ripped out
+python-mode) which makes editing *.th files easier, and C-c C-c run
+therion. I'll still have to implement "jump to error" as in cc-mode. 
+If someone is interested I can post it here. 
+
+Best, Martin
+
+
+From m.budaj at gmail.com  Thu Dec  6 19:34:27 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 6 Dec 2007 19:34:27 +0100
+Subject: [Therion] Legend Size
+In-Reply-To: <1196163773.474c02bd2e539@mail.atlantis.sk>
+References: <011301c82062$32e966e0$6e01a8c0@PETRORAD.PT>
+	<FF95F218CFC59E44979B6F3FC0FE0A8C01D81BB3@GBMDDMH232AMSX.gb001.siemens.net>
+	<000f01c82624$4a822360$b925f6d2@JUICEBRAIN>
+	<FF95F218CFC59E44979B6F3FC0FE0A8C01DB0E9D@GBMDDMH232AMSX.gb001.siemens.net>
+	<000101c827bd$0b579310$ac25f6d2@JUICEBRAIN>
+	<473CB463.6050101@group-s.sk>
+	<000301c827ce$ee45fed0$ac25f6d2@JUICEBRAIN>
+	<FF95F218CFC59E44979B6F3FC0FE0A8C01E41907@GBMDDMH232AMSX.gb001.siemens.net>
+	<FF95F218CFC59E44979B6F3FC0FE0A8C01F63BD3@GBMDDMH232AMSX.gb001.siemens.net>
+	<1196163773.474c02bd2e539@mail.atlantis.sk>
+Message-ID: <f64c1c4a0712061034pcc73eb6vc5fc1224430e8e3e@mail.gmail.com>
+
+The latest snapshot (2007-12-06) makes this much easier. You can
+change both color and size of the legend text using the following code
+in the layout
+
+code tex-map
+  \legendwidth=20cm
+  \legendtextcolor={\color[0 0 100]}      # RGB values 0--100
+  \legendtextsize={\size[20]}
+  \legendtextheadersize={\size[60]}
+
+Martin
+
+
+On Nov 27, 2007 12:42 PM, Stacho Mudrak <s.m at group-s.sk> wrote:
+> Quoting "Cooper, Ben" <ben.cooper at siemens.com>:
+> > Can anyone help?  Is there a way of changing the font size and North
+> > Arrow size of the Legend text without changing the scale?
+>
+> It is a TeX specific question - but MartinB is quite busy right now, so I will
+> try to help. You need to predefine TeX macro called \legendcontent, that can be
+> found in tex/therion.tex file (see therion sources). You may do it in your
+> layout. Example:
+>
+> layout mylegend
+>
+> code tex-map
+> \legendcontent={%
+>   \hsize=\legendwidth
+>   \ifnortharrow\vbox to 0pt{\line{\hfil\northarrow}\vss}\fi
+>   \edef\tmp{\the\cavename} \ifx\tmp\empty \else
+>     \color[0 0 0]{\size[26]\the\cavename}\color[0 0 0]\vskip1cm
+>   \fi
+>   \ifscalebar\scalebar\vskip1cm\fi
+>   {\rightskip=0pt plus 3em\parskip=3bp
+>     \edef\tmp{\the\comment} \ifx\tmp\empty \else
+>       {\size[12]\the\comment} \par\medskip
+>     \fi
+>     \everypar{\hangindent=2em\hangafter=1}
+>     \edef\tmp{\the\cavelength} \ifx\tmp\empty \else
+>       {\size[12]\si\the\cavelengthtitle: \ss\the\cavelength\par}
+>     \fi
+>     \edef\tmp{\the\cavedepth} \ifx\tmp\empty \else
+>       {\size[12]\si\the\cavedepthtitle: \ss\the\cavedepth\par}
+>     \fi
+>     \edef\tmp{\the\exploteam} \ifx\tmp\empty \else
+>       {\size[12]\si\the\explotitle:
+> \ss\the\exploteam\quad\si\the\explodate\par}
+>     \fi
+>     \edef\tmp{\the\topoteam} \ifx\tmp\empty \else
+>       {\size[12]\si\the\topotitle: \ss\the\topoteam\quad\si\the\topodate\par}
+>     \fi
+>     \edef\tmp{\the\cartoteam} \ifx\tmp\empty \else
+>       {\size[12]\si\the\cartotitle:
+> \ss\the\cartoteam\quad\si\the\cartodate\par}
+>     \fi
+>     \edef\tmp{\the\copyrights} \ifx\tmp\empty \else
+>       {\size[12]\ss\the\copyrights\par}
+>     \fi
+>   }
+>   \formattedlegend
+> }
+> endcode
+>
+> endlayout
+>
+> export map -layout mylegend
+>
+> As you can see \size[12] is macro for setting font size. You may change font
+> sizes for all items as you need.
+>
+> HTH, S.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+From bruce.mutton at paradise.net.nz  Thu Dec  6 21:37:35 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Fri, 07 Dec 2007 09:37:35 +1300
+Subject: [Therion] Falling water symbol comment
+In-Reply-To: <1196938295.4757d437693d4@mail.atlantis.sk>
+References: <1196879791.4805.13.camel@localhost.localdomain>
+	<1196938295.4757d437693d4@mail.atlantis.sk>
+Message-ID: <000901c83847$d665fa20$1725f6d2@JUICEBRAIN>
+
+>From the Rabbit extended elevation example the vertical lines with type -
+rock border look quite effective as stalactites.  (I almost thought they
+were falling water)
+
+Multiple vertical parallel lines with say their lower half dashed would look
+quite effective, and I guess quite easy to code (not that I would know!) as
+a line type with orientation to determine which end is dashed, but would
+require some effort and artistic license on the part of the draftsperson. 
+Regards
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Thursday, 6 December 2007 11:52 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] scrap help needed
+
+Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> by the way, is there a point for water_drop
+> (ie, vertical water flow) ?
+
+Not yet. I think it is a good idea to add this symbol. Have you seen
+somewhere how this symbol looks like?
+
+Regards, S.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From bruce.mutton at paradise.net.nz  Thu Dec  6 21:37:35 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Fri, 07 Dec 2007 09:37:35 +1300
+Subject: [Therion] Hierarchy of Layouts,
+	overiding symbol set symbols individually
+Message-ID: <000a01c83847$d87e79e0$1725f6d2@JUICEBRAIN>
+
+I have a standard master thconfig file that contains two layouts, water-blue
+(copied from the rabbit cave example) and StandardLayout.
+
+ 
+
+I have other thconfig files that refer to the master file with an input
+command, as below;
+
+ 
+
+input ../StdFiles/thconfig-StdLayouts.thc   
+
+copy water-blue      # adopt blue water colour layout from 'input' file   
+
+copy StandardLayout  # adopt standard layout from 'input' file
+
+ 
+
+This works fine, except that when my StandardLayout contains, for example;
+
+  
+
+symbol-set UIS      # UIS, ASF, CCNP, SKBB  
+
+ 
+
+then the symbol set always overrides and I don't get my blue fill colour.
+
+ 
+
+I have tried changing the order of the two 'copy' commands above, to no
+avail.  There maybe something about this in the Therion Book but I'm not
+sure I understand it.
+
+ 
+
+For now I'm happy to leave out the 'symbol-set' command, but I foresee the
+day when I would adopt one of the other symbol sets and make personalised
+changes (such as water-blue).
+
+ 
+
+Any comments?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071207/8f2d2afe/attachment.htm>
+
+From chr_rossi at kartan.de  Thu Dec  6 22:53:45 2007
+From: chr_rossi at kartan.de (Christian =?iso-8859-1?q?R=F6=DFler?= (Roessler))
+Date: Thu, 6 Dec 2007 22:53:45 +0100
+Subject: [Therion] Mine sybols?
+Message-ID: <200712062253.45763.chr_rossi@kartan.de>
+
+Hallo everyone,
+
+hearing discussiong about symbols I thought again about mine specific symbols. 
+While I have to admit I have perhaps not searched thoroughly, I have not 
+found any included in therion.
+
+Well, I would be willing to design some. But it surely would be better to 
+determine which symbols/areas would be needed first. Many of these are 
+already in convention elsewhere, so work should be relatively 
+straightforward.
+
+To begin I have the following suggestions. Unforunately my english is not good 
+enough, so to avoid possible confusion I add the german words. I would be 
+glad if a german speaker could name the translations.
+
+1. Shaft / Schacht (up and down)
+2. Sinking (?) / Gesenk
+3. Weather (ventile) door / Wettertür
+4. Doorway (for supporting) / Türstock (standing and ruined)
+5. Where ore was mined / Abbau (up and down)
+6. Hole for rolling ore downwards / Rolloch
+7. Wagon rolling planks / Hundbretter
+8. Hand driven wind / Haspel
+9. Chamber for hand driven wind / Haspelkammer
+10. Water flowing gutter / Gerinne
+11. Lamp niche / Lampennische
+12. Upraise / Aufhauen
+13. Galley end (constr. end) / Ortsbrust
+14. Hewn material / Versatz
+15. Versturz
+16. Special tool traces / Werkzeugspuren
+(Please add to the list)
+
+If I provide drawn symbols, would anyone help me converting these to metapost? 
+It would also be nice if fellow miners would suggest symbols, too.
+
+Best greetings, and to my fellow miners a hearty Barbara's day!
+Christian
+
+-- 
+Wenn Schnaps die Kehle runterlauft,	(If liquor runs down the throat,)
+der Schacht im Wasser bald ersauft!	(the shaft in water soon will drown!)
+
+
+From ben.cooper at siemens.com  Fri Dec  7 10:38:33 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Fri, 7 Dec 2007 09:38:33 -0000
+Subject: [Therion] Legend Size
+In-Reply-To: <f64c1c4a0712061034pcc73eb6vc5fc1224430e8e3e@mail.gmail.com>
+References: <011301c82062$32e966e0$6e01a8c0@PETRORAD.PT><FF95F218CFC59E44979B6F3FC0FE0A8C01D81BB3@GBMDDMH232AMSX.gb001.siemens.net><000f01c82624$4a822360$b925f6d2@JUICEBRAIN><FF95F218CFC59E44979B6F3FC0FE0A8C01DB0E9D@GBMDDMH232AMSX.gb001.siemens.net><000101c827bd$0b579310$ac25f6d2@JUICEBRAIN><473CB463.6050101@group-s.sk><000301c827ce$ee45fed0$ac25f6d2@JUICEBRAIN><FF95F218CFC59E44979B6F3FC0FE0A8C01E41907@GBMDDMH232AMSX.gb001.siemens.net><FF95F218CFC59E44979B6F3FC0FE0A8C01F63BD3@GBMDDMH232AMSX.gb001.siemens.net><1196163773.474c02bd2e539@mail.atlantis.sk>
+	<f64c1c4a0712061034pcc73eb6vc5fc1224430e8e3e@mail.gmail.com>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C02162FF4@GBMDDMH232AMSX.gb001.siemens.net>
+
+Thanks Martin.  I'll try it out.
+- Ben 
+
+> -----Original Message-----
+> From: therion-bounces at speleo.sk 
+> [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Budaj
+> Sent: 06 December 2007 18:34
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Legend Size
+> 
+> The latest snapshot (2007-12-06) makes this much easier. You can
+> change both color and size of the legend text using the following code
+> in the layout
+> 
+> code tex-map
+>   \legendwidth=20cm
+>   \legendtextcolor={\color[0 0 100]}      # RGB values 0--100
+>   \legendtextsize={\size[20]}
+>   \legendtextheadersize={\size[60]}
+> 
+> Martin
+> 
+> 
+> On Nov 27, 2007 12:42 PM, Stacho Mudrak <s.m at group-s.sk> wrote:
+> > Quoting "Cooper, Ben" <ben.cooper at siemens.com>:
+> > > Can anyone help?  Is there a way of changing the font 
+> size and North
+> > > Arrow size of the Legend text without changing the scale?
+> >
+> > It is a TeX specific question - but MartinB is quite busy 
+> right now, so I will
+> > try to help. You need to predefine TeX macro called 
+> \legendcontent, that can be
+> > found in tex/therion.tex file (see therion sources). You 
+> may do it in your
+> > layout. Example:
+> >
+> > layout mylegend
+> >
+> > code tex-map
+> > \legendcontent={%
+> >   \hsize=\legendwidth
+> >   \ifnortharrow\vbox to 0pt{\line{\hfil\northarrow}\vss}\fi
+> >   \edef\tmp{\the\cavename} \ifx\tmp\empty \else
+> >     \color[0 0 0]{\size[26]\the\cavename}\color[0 0 0]\vskip1cm
+> >   \fi
+> >   \ifscalebar\scalebar\vskip1cm\fi
+> >   {\rightskip=0pt plus 3em\parskip=3bp
+> >     \edef\tmp{\the\comment} \ifx\tmp\empty \else
+> >       {\size[12]\the\comment} \par\medskip
+> >     \fi
+> >     \everypar{\hangindent=2em\hangafter=1}
+> >     \edef\tmp{\the\cavelength} \ifx\tmp\empty \else
+> >       {\size[12]\si\the\cavelengthtitle: \ss\the\cavelength\par}
+> >     \fi
+> >     \edef\tmp{\the\cavedepth} \ifx\tmp\empty \else
+> >       {\size[12]\si\the\cavedepthtitle: \ss\the\cavedepth\par}
+> >     \fi
+> >     \edef\tmp{\the\exploteam} \ifx\tmp\empty \else
+> >       {\size[12]\si\the\explotitle:
+> > \ss\the\exploteam\quad\si\the\explodate\par}
+> >     \fi
+> >     \edef\tmp{\the\topoteam} \ifx\tmp\empty \else
+> >       {\size[12]\si\the\topotitle: 
+> \ss\the\topoteam\quad\si\the\topodate\par}
+> >     \fi
+> >     \edef\tmp{\the\cartoteam} \ifx\tmp\empty \else
+> >       {\size[12]\si\the\cartotitle:
+> > \ss\the\cartoteam\quad\si\the\cartodate\par}
+> >     \fi
+> >     \edef\tmp{\the\copyrights} \ifx\tmp\empty \else
+> >       {\size[12]\ss\the\copyrights\par}
+> >     \fi
+> >   }
+> >   \formattedlegend
+> > }
+> > endcode
+> >
+> > endlayout
+> >
+> > export map -layout mylegend
+> >
+> > As you can see \size[12] is macro for setting font size. 
+> You may change font
+> > sizes for all items as you need.
+> >
+> > HTH, S.
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> >
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+> --
+> This email has been verified as Virus free
+> Virus Protection and more available at http://www.plus.net
+> 
+
+
+From ben.cooper at siemens.com  Fri Dec  7 12:35:18 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Fri, 7 Dec 2007 11:35:18 -0000
+Subject: [Therion] Mine sybols?
+In-Reply-To: <200712062253.45763.chr_rossi@kartan.de>
+References: <200712062253.45763.chr_rossi@kartan.de>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C021633D9@GBMDDMH232AMSX.gb001.siemens.net>
+
+Hi Christian,
+We need somebody with mining experience to get some of the technical English phrases correct, but here are are few suggestions for improved English.  I'm not precious about any of these, so other English speakers: feel free to contradict!  A question mark means that I think there is a technical English mining phrase, but I can't think of it at the moment.
+
+> 1. Shaft / Schacht (up and down).
+Yes
+
+> 2. Sinking (?) / Gesenk
+2. Sink
+
+> 3. Weather (ventile) door / Wettertür
+3. I've not heard of Weather Door!  Do you mean a door to seal the mine and stop a draught, or a door specifically to allow a draught?  "Ventile" suggests the latter.  The more straightforward English noun is just "vent" or "Vented Door".
+
+> 4. Doorway (for supporting) / Türstock (standing and ruined)
+?
+
+> 5. Where ore was mined / Abbau (up and down)
+Stope?  I think a stope is a specific type of space (step-like), so may not be generic enough?
+
+> 6. Hole for rolling ore downwards / Rolloch
+?
+
+> 7. Wagon rolling planks / Hundbretter
+I guess this are placed sideways rather than lengthwise?  If lengthwide, then I suppose they are a form of "rail" or "track"?  But I don't know if there is a specific mining phrase for wooden planks for rolling trucks over.
+
+> 8. Hand driven wind / Haspel
+8. Windlass 
+
+> 9. Chamber for hand driven wind / Haspelkammer
+9. Winding Room (but this suggests to my ear a man-made room, with powered machinery.  Question for English speaking miners: would there be "winding room" underground?)
+    or "Windlass Chamber" is descriptive but perhaps not very meaningful...?
+
+> 10. Water flowing gutter / Gerinne
+10.  just "Gutter"?, or perhaps do you mean "Leat" which is a mining term for a man-made water course (Gerinne = coagulate, suggests bringing waters together...so I wonder whether there is a specific mining phrase in English for this...?) 
+
+> 11. Lamp niche / Lampennische
+Sounds OK to me...?
+
+> 12. Upraise / Aufhauen
+?
+
+> 13. Galley end (constr. end) / Ortsbrust
+?
+
+> 14. Hewn material / Versatz
+14.  Spoil?  I think spoil usually refers to waste material that is mined out.
+
+> 15. Versturz
+15. Collapse?
+
+> 16. Special tool traces / Werkzeugspuren
+16. Tool marks
+
+Regards,
+- Ben
+
+
+> -----Original Message-----
+> From: therion-bounces at speleo.sk 
+> [mailto:therion-bounces at speleo.sk] On Behalf Of Christian 
+> Rößler (Roessler)
+> Sent: 06 December 2007 21:54
+> To: therion at speleo.sk
+> Subject: [Therion] Mine sybols?
+> 
+> Hallo everyone,
+> 
+> hearing discussiong about symbols I thought again about mine 
+> specific symbols. 
+> While I have to admit I have perhaps not searched thoroughly, 
+> I have not 
+> found any included in therion.
+> 
+> Well, I would be willing to design some. But it surely would 
+> be better to 
+> determine which symbols/areas would be needed first. Many of 
+> these are 
+> already in convention elsewhere, so work should be relatively 
+> straightforward.
+> 
+> To begin I have the following suggestions. Unforunately my 
+> english is not good 
+> enough, so to avoid possible confusion I add the german 
+> words. I would be 
+> glad if a german speaker could name the translations.
+> 
+> 
+> If I provide drawn symbols, would anyone help me converting 
+> these to metapost? 
+> It would also be nice if fellow miners would suggest symbols, too.
+> 
+> Best greetings, and to my fellow miners a hearty Barbara's day!
+> Christian
+> 
+> -- 
+> Wenn Schnaps die Kehle runterlauft,	(If liquor runs down 
+> the throat,)
+> der Schacht im Wasser bald ersauft!	(the shaft in water 
+> soon will drown!)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From chr_rossi at kartan.de  Fri Dec  7 15:48:17 2007
+From: chr_rossi at kartan.de (Christian =?iso-8859-1?q?R=F6=DFler?= (Roessler))
+Date: Fri, 7 Dec 2007 15:48:17 +0100
+Subject: [Therion] Mine sybols?
+In-Reply-To: <FF95F218CFC59E44979B6F3FC0FE0A8C021633D9@GBMDDMH232AMSX.gb001.siemens.net>
+References: <200712062253.45763.chr_rossi@kartan.de>
+	<FF95F218CFC59E44979B6F3FC0FE0A8C021633D9@GBMDDMH232AMSX.gb001.siemens.net>
+Message-ID: <200712071548.18198.chr_rossi@kartan.de>
+
+Am Freitag, 7. Dezember 2007 schrieb Cooper, Ben:
+
+Hallo Ben,
+
+> We need somebody with mining experience to get some of the technical
+> English phrases correct, but here are are few suggestions for improved
+> English.
+
+Thanks!
+
+> I'm not precious about any of these, so other English speakers: 
+> feel free to contradict!
+
+> > 1. Shaft / Schacht (up and down).
+> Yes
+
+Good. Symbol is just a diagonally divided rectangle with one triangle 
+blackened; should be easy.
+
+> > 2. Sinking (?) / Gesenk
+> 2. Sink
+
+No, a 'Gesenk' is just a kind of 'blind shaft' to search for ore beneath the 
+galley sole. Differentation to blind shaft would be that a 'Gesenk' has no 
+connection to a galley below. Usually water filled, but with no water flow.
+
+Symbol should be alike to 'shaft' but a bit differentiated.
+
+> > 3. Weather (ventile) door / Wettertür
+> 3. I've not heard of Weather Door!  Do you mean a door to seal the mine and
+> stop a draught, or a door specifically to allow a draught?  "Ventile"
+> suggests the latter.  The more straightforward English noun is just "vent"
+> or "Vented Door".
+
+Well, a door to regulate air flow: Flow when opened, no flow when closed. 
+Sorry for translating 'by the word': In the mining sense 'Wetter' means air 
+and air flow in a mine.
+
+> > 4. Doorway (for supporting) / Türstock (standing and ruined)
+
+Two side posts and a supporting beam above both for supporting the ceiling.
+
+> > 5. Where ore was mined / Abbau (up and down)
+> Stope?  I think a stope is a specific type of space (step-like), so may not
+> be generic enough?
+
+I also think so.
+
+> > 6. Hole for rolling ore downwards / Rolloch
+> ?
+
+Well, a narrow shaft from a place where ore was mined to the galley beneath, 
+in which the ore was thrown so it could be easier collected and loaded below. 
+Symbol should be perhaps alike to shaft, but a bit differentiated.
+
+> > 7. Wagon rolling planks / Hundbretter
+> I guess this are placed sideways rather than lengthwise?  If lengthwide,
+> then I suppose they are a form of "rail" or "track"?
+
+Yes. The wagon 'Hund' was steered with a nail which griped into the space 
+between the planks. Look eg here: 
+<http://silberbergwerk-suggental.de/fileadmin/bergwerk/bilder/galerie/Arbeit_unter_Tage/1024_Arbeit_unter_Tage_13.jpg>
+(That's 'our' mine, and me, by the way:).) You see?
+
+> > 8. Hand driven wind / Haspel
+> 8. Windlass
+
+Good!
+
+> > 9. Chamber for hand driven wind / Haspelkammer
+> 9. Winding Room (but this suggests to my ear a man-made room, with powered
+> machinery.  Question for English speaking miners: would there be "winding
+> room" underground?) or "Windlass Chamber" is descriptive but perhaps not
+> very meaningful...?
+
+perhaps just 'windlass chamber' would be the best fit, I think.
+
+> > 10. Water flowing gutter / Gerinne
+> 10.  just "Gutter"?, or perhaps do you mean "Leat" which is a mining term
+> for a man-made water course (Gerinne = coagulate, suggests bringing waters
+> together...so I wonder whether there is a specific mining phrase in English
+> for this...?)
+
+Yes, then 'leat' would be the word! 'Gerinne' comes flor 'rinnen' = flowing 
+slowly.
+
+> > 11. Lamp niche / Lampennische
+> Sounds OK to me...?
+
+Ok!
+
+> > 12. Upraise / Aufhauen
+> ?
+
+The opposite to 'Gesenk', but up, not down. A kind of blind shaft to search 
+for ore above the galley ceiling, but not connected to the galley above.
+
+> > 13. Galley end (constr. end) / Ortsbrust
+> ?
+
+Well, where the old miners ceased to drive the galley forward. If wanted I 
+will send an example picture.
+
+> > 14. Hewn material / Versatz
+> 14.  Spoil?  I think spoil usually refers to waste material that is mined
+> out.
+
+Not quite. 'Versatz' means usually hewn-out rock (oreless) filled into an old 
+galley to prevent cave-in (hehehe, _cave_-in), or into a shaft, or just lying 
+around.
+
+> > 15. Versturz
+> 15. Collapse?
+
+Yes! Taken!
+
+> > 16. Special tool traces / Werkzeugspuren
+> 16. Tool marks
+
+Much better!
+
+Thanks for your suggestions, Ben. Now I will have a look which symbols are 
+used elsewhere, so we stay consistent in Therion. Then I will try to 
+designing the missing ones, and put them to discussion. By the way, as I have 
+seen others are attaching files, I think it would be ok if I attach the 
+(small) graphics.
+
+I do also have some more symbol proposals, but perhaps some of these are abit 
+exotic so I will wait with these until the ones above are cleared.
+
+Best regards,
+Christian
+
+
+From bruce.mutton at paradise.net.nz  Fri Dec  7 20:29:13 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 08 Dec 2007 08:29:13 +1300
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+Message-ID: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+
+Is there a way to seek out the most recent Windows install file on the
+Therion website?
+
+ 
+
+The page http://therion.speleo.sk/download.php gives only the link to the
+0.5.1 files.  (I imagine these are the most recent 'official' release)
+
+ 
+
+More recently Martin directed us to
+http://therion.speleo.sk/downloads/therion-update-20071114.exe, but I notice
+that there appears to be no link to this on the Therion site, it has to be
+typed or pasted directly to a web browser.
+
+ 
+
+http://therion.speleo.sk/downloads just redirects me to the home page.
+
+ 
+
+I suspect there is a more recent install file, based on previous posts, but
+as I don't know the date, it is tedious to find by trial and error.  Perhaps
+I am missing something obvious?
+
+ 
+
+Thanks
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071208/1971a733/attachment.htm>
+
+From s.m at group-s.sk  Sat Dec  8 00:19:38 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Sat, 08 Dec 2007 00:19:38 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+Message-ID: <4759D50A.8040802@group-s.sk>
+
+See last line in the first section:
+
+Developer's snapshot update installer for Windows as of 2007-12-06, just 
+click on the date, it is pointing to the snapshot installer.
+
+Regards, S.
+
+Bruce Mutton wrote:
+> Is there a way to seek out the most recent Windows install file on the 
+> Therion website?
+> 
+>  
+> 
+> The page http://therion.speleo.sk/download.php gives only the link to 
+> the 0.5.1 files.  (I imagine these are the most recent ‘official’ release)
+> 
+>  
+> 
+> More recently Martin directed us to 
+> http://therion.speleo.sk/downloads/therion-update-20071114.exe, but I 
+> notice that there appears to be no link to this on the Therion site, it 
+> has to be typed or pasted directly to a web browser.
+> 
+>  
+> 
+> http://therion.speleo.sk/downloads just redirects me to the home page.
+> 
+>  
+> 
+> I suspect there is a more recent install file, based on previous posts, 
+> but as I don’t know the date, it is tedious to find by trial and error.  
+> Perhaps I am missing something obvious?
+> 
+>  
+> 
+> Thanks
+> 
+> Bruce
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Sat Dec  8 07:44:34 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 8 Dec 2007 07:44:34 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <4759D50A.8040802@group-s.sk>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+Message-ID: <970595B4-3C60-4332-B4F8-C80CFCB9B75A@mac.com>
+
+
+On 8.12.2007, at 0:19, Stacho Mudrak wrote:
+
+> See last line in the first section:
+
+Developer's snapshot as of 2007-12-06 for testing purposes.
+
+Developer's snapshot update installer for Windows as of 2007-12-06.
+
+
+
+m.
+
+
+From bruce.mutton at paradise.net.nz  Sat Dec  8 08:10:23 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 08 Dec 2007 20:10:23 +1300
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <4759D50A.8040802@group-s.sk>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+Message-ID: <000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+
+>See last line in the first section:
+>Developer's snapshot update installer for Windows as of 2007-12-06, just
+>click on the date, it is pointing to the snapshot installer.
+
+>Developer's snapshot as of 2007-12-06 for testing purposes.
+>Developer's snapshot update installer for Windows as of 2007-12-06.
+
+Sorry Stacho, you've lost me.  None of the dates in you message or on the
+website pages have links, nor can I find text that matches the above.
+
+In any case, all of the dates are August 29, 2007, quite old.
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Saturday, 8 December 2007 12:20 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] How to find most recent Therion Windows Install
+Files?
+
+See last line in the first section:
+
+Developer's snapshot update installer for Windows as of 2007-12-06, just 
+click on the date, it is pointing to the snapshot installer.
+
+Regards, S.
+
+Bruce Mutton wrote:
+> Is there a way to seek out the most recent Windows install file on the 
+> Therion website?
+> 
+>  
+> 
+> The page http://therion.speleo.sk/download.php gives only the link to 
+> the 0.5.1 files.  (I imagine these are the most recent 'official' release)
+> 
+>  
+> 
+> More recently Martin directed us to 
+> http://therion.speleo.sk/downloads/therion-update-20071114.exe, but I 
+> notice that there appears to be no link to this on the Therion site, it 
+> has to be typed or pasted directly to a web browser.
+> 
+>  
+> 
+> http://therion.speleo.sk/downloads just redirects me to the home page.
+> 
+>  
+> 
+> I suspect there is a more recent install file, based on previous posts, 
+> but as I don't know the date, it is tedious to find by trial and error.  
+> Perhaps I am missing something obvious?
+> 
+>  
+> 
+> Thanks
+> 
+> Bruce
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Sat Dec  8 08:17:54 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 8 Dec 2007 08:17:54 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+Message-ID: <9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+
+
+On 8.12.2007, at 8:10, Bruce Mutton wrote:
+
+> Sorry Stacho, you've lost me.  None of the dates in you message or  
+> on the
+> website pages have links, nor can I find text that matches the above.
+>
+> In any case, all of the dates are August 29, 2007, quite old.
+
+There should be something wrong with caches of your browser.
+
+I checked it 5 minutes later.
+
+http://therion.speleo.sk/downloads/therion-update-20071206.exe
+
+http://therion.speleo.sk/downloads/therion-20071206.tar.bz2
+
+Martin
+
+
+From bruce.mutton at paradise.net.nz  Sat Dec  8 09:27:45 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 08 Dec 2007 21:27:45 +1300
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+Message-ID: <000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+
+Funny Thing Stacho
+The Therion download page looks the same as it always has, since I
+discovered Therion a month or so ago, and viewed by three different
+computers at two different physical sites.  I can follow the links you post
+in your email, but there seems to be no way to navigate there via the
+website, unless one knows the exact name and date to type in directly.
+
+Ben may have been experiencing a similar issue a couple of weeks ago when
+you had to post a link to an earlier update
+
+As far as I am aware my browser(s) work perfectly, well not quite, but not
+this sort of problem. :) IE7 on Windows XP, MCE & Professional.
+
+Does anyone else find that these update pages are 'invisible', therefore
+unattainable unless you are advised, say by forum post, of the exact
+address?
+
+Thanks'
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Martin Sluka
+Sent: Saturday, 8 December 2007 8:18 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] How to find most recent Therion Windows Install
+Files?
+
+
+On 8.12.2007, at 8:10, Bruce Mutton wrote:
+
+> Sorry Stacho, you've lost me.  None of the dates in you message or  
+> on the
+> website pages have links, nor can I find text that matches the above.
+>
+> In any case, all of the dates are August 29, 2007, quite old.
+
+There should be something wrong with caches of your browser.
+
+I checked it 5 minutes later.
+
+http://therion.speleo.sk/downloads/therion-update-20071206.exe
+
+http://therion.speleo.sk/downloads/therion-20071206.tar.bz2
+
+Martin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From m.budaj at gmail.com  Sun Dec  9 10:34:34 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 9 Dec 2007 10:34:34 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+Message-ID: <f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+
+> As far as I am aware my browser(s) work perfectly, well not quite, but not
+> this sort of problem. :) IE7 on Windows XP, MCE & Professional.
+
+Links to snapshots are enclosed in tags <font size="-1">...</font> to
+make text smaller. Maybe this causes problems to IE7? Try Firefox or
+other browser.
+
+Martin
+
+
+From bruce.mutton at paradise.net.nz  Mon Dec 10 09:30:13 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Mon, 10 Dec 2007 21:30:13 +1300
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+Message-ID: <000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+
+Good tip Martin
+Firefox solved the problem for me.
+
+IE7 displays nothing more after the line "Therion for Windows [10MB]..."
+(Except for
+"-------------------------
+Updated: August 29, 2007")
+
+All the useful information, including the line "Therion for Debian
+GNU/Linux; Therion for Slackware linux" and below is missing.
+
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Martin Budaj
+Sent: Sunday, 9 December 2007 10:35 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] How to find most recent Therion Windows Install
+Files?
+
+> As far as I am aware my browser(s) work perfectly, well not quite, but not
+> this sort of problem. :) IE7 on Windows XP, MCE & Professional.
+
+Links to snapshots are enclosed in tags <font size="-1">...</font> to
+make text smaller. Maybe this causes problems to IE7? Try Firefox or
+other browser.
+
+Martin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From lada.blazek at gmail.com  Mon Dec 10 10:14:27 2007
+From: lada.blazek at gmail.com (=?WINDOWS-1252?Q?Ladislav_Bla=9Eek?=)
+Date: Mon, 10 Dec 2007 10:14:27 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+	<000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+Message-ID: <e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+
+<font> tag is deprecated in HTML standard for long time. If you need
+smaller font use p, div or span with style specification... <div
+style="font-size: 80%">text</div>
+
+L.
+
+On Dec 10, 2007 9:30 AM, Bruce Mutton <bruce.mutton at paradise.net.nz> wrote:
+> Good tip Martin
+> Firefox solved the problem for me.
+>
+> IE7 displays nothing more after the line "Therion for Windows [10MB]..."
+> (Except for
+> "-------------------------
+> Updated: August 29, 2007")
+>
+> All the useful information, including the line "Therion for Debian
+> GNU/Linux; Therion for Slackware linux" and below is missing.
+>
+> Bruce
+>
+> -----Original Message-----
+> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+> Of Martin Budaj
+> Sent: Sunday, 9 December 2007 10:35 p.m.
+> To: therion at speleo.sk
+> Subject: Re: [Therion] How to find most recent Therion Windows Install
+> Files?
+>
+>
+> > As far as I am aware my browser(s) work perfectly, well not quite, but not
+> > this sort of problem. :) IE7 on Windows XP, MCE & Professional.
+>
+> Links to snapshots are enclosed in tags <font size="-1">...</font> to
+> make text smaller. Maybe this causes problems to IE7? Try Firefox or
+> other browser.
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+From s.m at group-s.sk  Mon Dec 10 11:02:22 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 10 Dec 2007 11:02:22 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+	<000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+	<e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+Message-ID: <1197280942.475d0eae5457e@mail.atlantis.sk>
+
+Thanks, should be fixed now. S.
+
+Quoting Ladislav Blaek <lada.blazek at gmail.com>:
+
+> <font> tag is deprecated in HTML standard for long time. If you need
+> smaller font use p, div or span with style specification... <div
+> style="font-size: 80%">text</div>
+> 
+> L.
+> 
+> On Dec 10, 2007 9:30 AM, Bruce Mutton <bruce.mutton at paradise.net.nz> wrote:
+> > Good tip Martin
+> > Firefox solved the problem for me.
+> >
+> > IE7 displays nothing more after the line "Therion for Windows [10MB]..."
+> > (Except for
+> > "-------------------------
+> > Updated: August 29, 2007")
+> >
+> > All the useful information, including the line "Therion for Debian
+> > GNU/Linux; Therion for Slackware linux" and below is missing.
+> >
+> > Bruce
+> >
+> > -----Original Message-----
+> > From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On
+> Behalf
+> > Of Martin Budaj
+> > Sent: Sunday, 9 December 2007 10:35 p.m.
+> > To: therion at speleo.sk
+> > Subject: Re: [Therion] How to find most recent Therion Windows Install
+> > Files?
+> >
+> >
+> > > As far as I am aware my browser(s) work perfectly, well not quite, but
+> not
+> > > this sort of problem. :) IE7 on Windows XP, MCE & Professional.
+> >
+> > Links to snapshots are enclosed in tags <font size="-1">...</font> to
+> > make text smaller. Maybe this causes problems to IE7? Try Firefox or
+> > other browser.
+> >
+> > Martin
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+> >
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From marco.corvi at elsagdatamat.com  Tue Dec 11 18:20:56 2007
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Tue, 11 Dec 2007 18:20:56 +0100
+Subject: [Therion] links in kml export
+Message-ID: <1197393656.4819.32.camel@localhost.localdomain>
+
+kml can have references (= links) to external resources,
+e.g., images, through a Placemark. 
+probably pdf too.
+
+is it possible to define this in therion files,
+for example with a point of type link
+(uri as value) ?
+
+thanks, marco
+
+
+
+From roger at r-schuster.de  Tue Dec 11 21:41:22 2007
+From: roger at r-schuster.de (Roger Schuster)
+Date: Tue, 11 Dec 2007 21:41:22 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <1197280942.475d0eae5457e@mail.atlantis.sk>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>	<4759D50A.8040802@group-s.sk>	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>	<000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>	<e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+	<1197280942.475d0eae5457e@mail.atlantis.sk>
+Message-ID: <475EF5F2.2070304@r-schuster.de>
+
+Hi,
+
+
+unfortunately this bug on the download page is still there. In IE 7 and 
+Opera 9 the lines between "Therion for Windows [10 MB] – installs 
+everything necessary to run Therion. " and "Updated: December 10, 2007" 
+aren't visible. They are in the page source but they aren't rendered on 
+screen. You should check your pages with http://validator.w3.org/ to 
+prevent such problems.
+
+
+Roger
+
+
+Stacho Mudrak schrieb:
+> Thanks, should be fixed now. S.
+> 
+> Quoting Ladislav Blažek <lada.blazek at gmail.com>:
+> 
+>> <font> tag is deprecated in HTML standard for long time. If you need
+>> smaller font use p, div or span with style specification... <div
+>> style="font-size: 80%">text</div>
+
+
+
+From olly at survex.com  Tue Dec 11 21:58:08 2007
+From: olly at survex.com (Olly Betts)
+Date: Tue, 11 Dec 2007 20:58:08 +0000
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <475EF5F2.2070304@r-schuster.de>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+	<000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+	<e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+	<1197280942.475d0eae5457e@mail.atlantis.sk>
+	<475EF5F2.2070304@r-schuster.de>
+Message-ID: <20071211205808.GE29359@survex.com>
+
+On Tue, Dec 11, 2007 at 09:41:22PM +0100, Roger Schuster wrote:
+> unfortunately this bug on the download page is still there. In IE 7 and 
+> Opera 9 the lines between "Therion for Windows [10 MB] ? installs 
+> everything necessary to run Therion. " and "Updated: December 10, 2007" 
+> aren't visible. They are in the page source but they aren't rendered on 
+> screen. You should check your pages with http://validator.w3.org/ to 
+> prevent such problems.
+
+I suspect the problem is the HTML comment which ends "--!>" rather than
+"-->"...
+
+Cheers,
+    Olly
+
+
+From s.m at group-s.sk  Wed Dec 12 08:56:54 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 12 Dec 2007 08:56:54 +0100
+Subject: [Therion] How to find most recent Therion Windows Install Files?
+In-Reply-To: <20071211205808.GE29359@survex.com>
+References: <000501c83907$7ef1a8a0$aa34f6d2@JUICEBRAIN>
+	<4759D50A.8040802@group-s.sk>
+	<000301c83969$67d4ae80$9525f6d2@JUICEBRAIN>
+	<9C5E964A-7381-40F0-BCF4-3E6B1F0FC43A@mac.com>
+	<000501c83974$3612cb10$9525f6d2@JUICEBRAIN>
+	<f64c1c4a0712090134n5996d418gc3c8e2b6f859ef82@mail.gmail.com>
+	<000001c83b06$e36e5340$7e25f6d2@JUICEBRAIN>
+	<e4fa72560712100114hdb39cb4td0ce134eb711ea8a@mail.gmail.com>
+	<1197280942.475d0eae5457e@mail.atlantis.sk>
+	<475EF5F2.2070304@r-schuster.de>
+	<20071211205808.GE29359@survex.com>
+Message-ID: <1197446214.475f944606d2a@mail.atlantis.sk>
+
+Thanks Olly, this really helped - at least with my IE7.
+
+Regards, S.
+
+Quoting Olly Betts <olly at survex.com>:
+
+> On Tue, Dec 11, 2007 at 09:41:22PM +0100, Roger Schuster wrote:
+> > unfortunately this bug on the download page is still there. In IE 7 and 
+> > Opera 9 the lines between "Therion for Windows [10 MB] ? installs 
+> > everything necessary to run Therion. " and "Updated: December 10, 2007" 
+> > aren't visible. They are in the page source but they aren't rendered on 
+> > screen. You should check your pages with http://validator.w3.org/ to 
+> > prevent such problems.
+> 
+> I suspect the problem is the HTML comment which ends "--!>" rather than
+> "-->"...
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From s.m at group-s.sk  Wed Dec 12 15:14:00 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 12 Dec 2007 15:14:00 +0100
+Subject: [Therion] links in kml export
+In-Reply-To: <1197393656.4819.32.camel@localhost.localdomain>
+References: <1197393656.4819.32.camel@localhost.localdomain>
+Message-ID: <1197468840.475feca8798ec@mail.atlantis.sk>
+
+Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> kml can have references (= links) to external resources,
+> e.g., images, through a Placemark. 
+> probably pdf too.
+> 
+> is it possible to define this in therion files,
+> for example with a point of type link
+> (uri as value) ?
+
+There is no such symbol yet. Adding links should be also possible in PDF (at
+least acrobat reader supports it). I will add this feature into TODO list.
+
+Regards, S.
+
+
+From bruce.mutton at paradise.net.nz  Wed Dec 12 21:39:58 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 13 Dec 2007 09:39:58 +1300
+Subject: [Therion] Elevation Projected Direction? (and creation from
+	Extended Elevations)
+Message-ID: <001301c83cff$2a7532f0$af25f6d2@JUICEBRAIN>
+
+Hi, 
+
+I seem to have acquired more of a Therion mindset, and drawing plans is
+going quite well.
+
+Just trying to get the elevations sorted, and perhaps I'm trying too much at
+once.
+
+ 
+
+Using Therion 0.5.2.
+
+Have roughed up an extended elevation based on a scanned sketch (of a
+projected elevation - the passage runs more or less from north to south, and
+descends at about 30 deg, as surveyed).  
+
+ 
+
+I notice I had to add an 'extend left' to the centreline data to stop the
+passage plotting upside down and sort of inside out. (although interior of
+passage was correctly rendered) I assume that this approach is the correct
+way to address this issue??
+
+ 
+
+The extended elevation looks more or less OK, vertical lines a little
+slanting, no doubt due to the distortion caused by foreshortening as the
+survey legs range diagonally from side to side across the wide passage.  I
+guess I should adjust my survey technique!
+
+The code below produces the map.
+
+ 
+
+export map   -projection extended  -layout ThisCaveMapLayout \
+
+  -output ./Maps/SystemExtendedElev.pdf  -fmt pdf
+
+ 
+
+Now here's where I thought I'd cheat, to get a projected elevation from the
+same sketch.
+
+I copied my extended elevation.th2 file and renamed it projected
+elevation.th2, then edited it to change the scrap name and projection type
+from extended to elevation.  (It's not too different in concept to redrawing
+it manually in another file, where the passage is fairly straight and runs
+perpendicular to the desired projection direction)
+
+ 
+
+The trouble is, this always plots as though it is extended (dashed
+horizontal grid, no vertical grids) but with an obvious projection (of 000
+deg- assuming 0 deg means looking towards the north(?)) that does not change
+regardless of the bearing provided in the export command.  In other words
+it's partially working. For example the code I used is below.
+
+ 
+
+export map   -projection [elevation 270 deg]  -layout ThisCaveMapLayout \
+
+  -output ./Maps/SystemElev.pdf  -fmt pdf 
+
+ 
+
+(I have tried similar code for single surveys, individual caves and cave
+system levels of detail with the same result)
+
+ 
+
+These lines are all in the same thconfig file, and I had a few issues with
+map structure as interpreted by the Therion compiler window, until I
+realised that Therion seems to determine the hierarchy based in part on the
+map titles.  Duplicate map titles seem to create trouble!
+
+ 
+
+I realise there is not enough information here to properly assess, but is
+there something fundamental I'm doing wrong?  When I just had centreline
+data the projected elevations seemed to work OK for any direction.
+
+ 
+
+Any hints or comments appreciated.
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071213/fa770745/attachment.htm>
+
+From ben.cooper at siemens.com  Wed Dec 12 22:01:01 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Wed, 12 Dec 2007 21:01:01 -0000
+Subject: [Therion] Mine sybols?
+In-Reply-To: <200712071548.18198.chr_rossi@kartan.de>
+References: <200712062253.45763.chr_rossi@kartan.de><FF95F218CFC59E44979B6F3FC0FE0A8C021633D9@GBMDDMH232AMSX.gb001.siemens.net>
+	<200712071548.18198.chr_rossi@kartan.de>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C02235BDD@GBMDDMH232AMSX.gb001.siemens.net>
+
+Hi Christian,
+I've a couple of additions for you below.  I also stumbled on the following references that may be of interest.
+[1] http://www.aditnow.co.uk/dictionary/mining-dictionary.aspx
+[2] http://xmlwords.infomine.com/xmlwords.htm
+Regards,
+- Ben
+
+> -----Original Message-----
+> From: therion-bounces at speleo.sk 
+> [mailto:therion-bounces at speleo.sk] On Behalf Of Christian 
+> Rößler (Roessler)
+> Sent: 07 December 2007 14:48
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Mine sybols?
+> 
+> Am Freitag, 7. Dezember 2007 schrieb Cooper, Ben:
+> 
+> Hallo Ben,
+> 
+> > We need somebody with mining experience to get some of the technical
+> > English phrases correct, but here are are few suggestions 
+> for improved
+> > English.
+> 
+> Thanks!
+> 
+> > I'm not precious about any of these, so other English speakers: 
+> > feel free to contradict!
+> 
+> > > 1. Shaft / Schacht (up and down).
+> > Yes
+> 
+> Good. Symbol is just a diagonally divided rectangle with one triangle 
+> blackened; should be easy.
+> 
+> > > 2. Sinking (?) / Gesenk
+> > 2. Sink
+> 
+> No, a 'Gesenk' is just a kind of 'blind shaft' to search for 
+> ore beneath the 
+> galley sole. Differentation to blind shaft would be that a 
+> 'Gesenk' has no 
+> connection to a galley below. Usually water filled, but with 
+> no water flow.
+> 
+> Symbol should be alike to 'shaft' but a bit differentiated.
+
+2.  Winze?  (a shaft that only goes down from a level with no 
+corresponding shaft up to the surface).  Pronounced similar to English "wins".
+
+> 
+> > > 3. Weather (ventile) door / Wettertür
+> > 3. I've not heard of Weather Door!  Do you mean a door to 
+> seal the mine and
+> > stop a draught, or a door specifically to allow a draught?  
+> "Ventile"
+> > suggests the latter.  The more straightforward English noun 
+> is just "vent"
+> > or "Vented Door".
+> 
+> Well, a door to regulate air flow: Flow when opened, no flow 
+> when closed. 
+> Sorry for translating 'by the word': In the mining sense 
+> 'Wetter' means air 
+> and air flow in a mine.
+
+Well, an "air-lock" stops air flow, so perhaps air-lock or air-lock door, or even, given your explanation, Weather Door is OK!  In a cave, we use the UK word "draught" (or US "draft") , which has several meanings, including the flow of air.  
+So perhaps "draught door"...?
+
+> 
+> > > 4. Doorway (for supporting) / Türstock (standing and ruined)
+> 
+> Two side posts and a supporting beam above both for 
+> supporting the ceiling.
+> 
+> > > 5. Where ore was mined / Abbau (up and down)
+> > Stope?  I think a stope is a specific type of space 
+> (step-like), so may not
+> > be generic enough?
+> 
+> I also think so.
+> 
+> > > 6. Hole for rolling ore downwards / Rolloch
+> > ?
+> 
+> Well, a narrow shaft from a place where ore was mined to the 
+> galley beneath, 
+> in which the ore was thrown so it could be easier collected 
+> and loaded below. 
+> Symbol should be perhaps alike to shaft, but a bit differentiated.
+> 
+> > > 7. Wagon rolling planks / Hundbretter
+> > I guess this are placed sideways rather than lengthwise?  
+> If lengthwide,
+> > then I suppose they are a form of "rail" or "track"?
+> 
+> Yes. The wagon 'Hund' was steered with a nail which griped 
+> into the space 
+> between the planks. Look eg here: 
+> <http://silberbergwerk-suggental.de/fileadmin/bergwerk/bilder/
+> galerie/Arbeit_unter_Tage/1024_Arbeit_unter_Tage_13.jpg>
+> (That's 'our' mine, and me, by the way:).) You see?
+> 
+> > > 8. Hand driven wind / Haspel
+> > 8. Windlass
+> 
+> Good!
+> 
+> > > 9. Chamber for hand driven wind / Haspelkammer
+> > 9. Winding Room (but this suggests to my ear a man-made 
+> room, with powered
+> > machinery.  Question for English speaking miners: would 
+> there be "winding
+> > room" underground?) or "Windlass Chamber" is descriptive 
+> but perhaps not
+> > very meaningful...?
+> 
+> perhaps just 'windlass chamber' would be the best fit, I think.
+> 
+> > > 10. Water flowing gutter / Gerinne
+> > 10.  just "Gutter"?, or perhaps do you mean "Leat" which is 
+> a mining term
+> > for a man-made water course (Gerinne = coagulate, suggests 
+> bringing waters
+> > together...so I wonder whether there is a specific mining 
+> phrase in English
+> > for this...?)
+> 
+> Yes, then 'leat' would be the word! 'Gerinne' comes flor 
+> 'rinnen' = flowing 
+> slowly.
+> 
+> > > 11. Lamp niche / Lampennische
+> > Sounds OK to me...?
+> 
+> Ok!
+> 
+> > > 12. Upraise / Aufhauen
+> > ?
+> 
+> The opposite to 'Gesenk', but up, not down. A kind of blind 
+> shaft to search 
+> for ore above the galley ceiling, but not connected to the 
+> galley above.
+
+Could be a "rise" (or US "raise").  Note both a winze and a rise can connect levels, but I understand that this is not always the case.  
+
+> 
+> > > 13. Galley end (constr. end) / Ortsbrust
+> > ?
+> 
+> Well, where the old miners ceased to drive the galley 
+> forward. If wanted I 
+> will send an example picture.
+> 
+> > > 14. Hewn material / Versatz
+> > 14.  Spoil?  I think spoil usually refers to waste material 
+> that is mined
+> > out.
+> 
+> Not quite. 'Versatz' means usually hewn-out rock (oreless) 
+> filled into an old 
+> galley to prevent cave-in (hehehe, _cave_-in), or into a 
+> shaft, or just lying 
+> around.
+
+Waste rock is used in [1].
+"Deads" is a stack of waste rock, not necessarily to stop a cave-in.
+
+> 
+> > > 15. Versturz
+> > 15. Collapse?
+> 
+> Yes! Taken!
+> 
+> > > 16. Special tool traces / Werkzeugspuren
+> > 16. Tool marks
+> 
+> Much better!
+> 
+> Thanks for your suggestions, Ben. Now I will have a look 
+> which symbols are 
+> used elsewhere, so we stay consistent in Therion. Then I will try to 
+> designing the missing ones, and put them to discussion. By 
+> the way, as I have 
+> seen others are attaching files, I think it would be ok if I 
+> attach the 
+> (small) graphics.
+> 
+> I do also have some more symbol proposals, but perhaps some 
+> of these are abit 
+> exotic so I will wait with these until the ones above are cleared.
+> 
+> Best regards,
+> Christian
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+> --
+> This email has been verified as Virus free
+> Virus Protection and more available at http://www.plus.net
+> 
+
+
+From s.m at group-s.sk  Thu Dec 13 12:16:55 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 13 Dec 2007 12:16:55 +0100
+Subject: [Therion] Elevation Projected Direction? (and creation
+	from	Extended Elevations)
+In-Reply-To: <001301c83cff$2a7532f0$af25f6d2@JUICEBRAIN>
+References: <001301c83cff$2a7532f0$af25f6d2@JUICEBRAIN>
+Message-ID: <1197544615.476114a7b44e0@mail.atlantis.sk>
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+
+> I notice I had to add an 'extend left' to the centreline data to stop the
+> passage plotting upside down and sort of inside out. (although interior of
+> passage was correctly rendered) I assume that this approach is the correct
+> way to address this issue??
+
+Yes.
+
+> The trouble is, this always plots as though it is extended (dashed
+> horizontal grid, no vertical grids) but with an obvious projection (of 000
+> deg- assuming 0 deg means looking towards the north(?)) that does not change
+> regardless of the bearing provided in the export command.  In other words
+> it's partially working. For example the code I used is below.
+
+I am not sure, I understand 100% what you are asking for, but I will try. In the
+elevation projection, the facing angle parameter is part of projection
+definition. 
+
+So if you would like to have projected elevation scrap drawn when you are facing
+West (270 deg), you need to specify this not only in export command, but also in
+scraps. Example:
+
+scrap xxx -proj [elevation 270]
+
+If only elevation is used, than 0 direction is assumed. This is probably the
+source of your problems. If I am wrong, please let me know.
+
+Regards, S.
+
+
+From bruce.mutton at paradise.net.nz  Fri Dec 14 04:56:04 2007
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Fri, 14 Dec 2007 16:56:04 +1300
+Subject: [Therion] Elevation Projected Direction? (and
+	creation	fromExtended Elevations)
+In-Reply-To: <1197544615.476114a7b44e0@mail.atlantis.sk>
+References: <001301c83cff$2a7532f0$af25f6d2@JUICEBRAIN>
+	<1197544615.476114a7b44e0@mail.atlantis.sk>
+Message-ID: <000001c83e05$45de1500$5b25f6d2@JUICEBRAIN>
+
+Stacho wrote;
+
+>So if you would like to have projected elevation scrap drawn when you are
+>facing West (270 deg), you need to specify this not only in export command,
+>but also in the scrap. Example:
+>
+>scrap xxx -proj [elevation 270]
+>
+
+Thanks Stacho
+I wasn't aware of the requirement to specify the direction in the scrap, but
+it is logical that it is required there!  (Answered a future question of
+mine about how best to handle multiple elevation projections)
+
+I haven't tried it yet, but am sure you have identified my problem.
+Bruce
+
+
+
+From hilary.greaves at merton.ox.ac.uk  Fri Dec 14 10:57:26 2007
+From: hilary.greaves at merton.ox.ac.uk (Hilary Greaves)
+Date: Fri, 14 Dec 2007 09:57:26 +0000 (GMT)
+Subject: [Therion] Drawing rigging
+Message-ID: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+
+Hi folks,
+
+I am trying to draw rigging on my elevation in the usual way, i.e. black 
+dots for bolts and lines down pitches to indicate where the rope hangs.
+
+In Therion, "rope" seems (oddly?) to be a point symbol (allowing the user 
+to place a small pretty picture of a backed up belay anywhere on the 
+survey he chooses), rather than a line; further, there doesn't seem to be 
+any existing line symbol that will naturally do the trick. (Also, there 
+doesn't seem to be any natural way of user-defining a suitable line 
+symbol, since lines are oriented and ropes shouldn't be.)
+
+Is there a standard way of doing this?
+
+Thanks for any tips!
+Hilary.
+
+
+From martinsluka at mac.com  Fri Dec 14 12:35:06 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 14 Dec 2007 12:35:06 +0100
+Subject: [Therion] Drawing rigging
+In-Reply-To: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+Message-ID: <9AE39985-38C2-47E3-B0FA-161CEBC3A6D9@mac.com>
+
+
+On 14.12.2007, at 10:57, Hilary Greaves wrote:
+
+> Is there a standard way of doing this?
+
+It is not done yet. But in Metapost it should be no problem to "hang"  
+a line symbol. But ask Martin Budaj, please.
+
+Martin S.
+
+
+From s.m at group-s.sk  Fri Dec 14 12:43:49 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 14 Dec 2007 12:43:49 +0100
+Subject: [Therion] Drawing rigging
+In-Reply-To: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+Message-ID: <1197632629.47626c75b76a2@mail.atlantis.sk>
+
+The metapost code of line symbol for this (line with black dots at rigging
+points) is already prepared I think. All that needs to be done is to add "line
+rope" symbol main code. We will try to implement it ASAP.
+
+Regards, S.
+
+Quoting Hilary Greaves <hilary.greaves at merton.ox.ac.uk>:
+
+> Hi folks,
+> 
+> I am trying to draw rigging on my elevation in the usual way, i.e. black 
+> dots for bolts and lines down pitches to indicate where the rope hangs.
+> 
+> In Therion, "rope" seems (oddly?) to be a point symbol (allowing the user 
+> to place a small pretty picture of a backed up belay anywhere on the 
+> survey he chooses), rather than a line; further, there doesn't seem to be 
+> any existing line symbol that will naturally do the trick. (Also, there 
+> doesn't seem to be any natural way of user-defining a suitable line 
+> symbol, since lines are oriented and ropes shouldn't be.)
+> 
+> Is there a standard way of doing this?
+> 
+> Thanks for any tips!
+> Hilary.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From wookey at wookware.org  Fri Dec 14 12:53:40 2007
+From: wookey at wookware.org (Wookey)
+Date: Fri, 14 Dec 2007 11:53:40 +0000
+Subject: [Therion] Drawing rigging
+In-Reply-To: <1197632629.47626c75b76a2@mail.atlantis.sk>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+	<1197632629.47626c75b76a2@mail.atlantis.sk>
+Message-ID: <20071214115339.GV20810@knossos.aleph1.co.uk>
+
+On 2007-12-14 12:43 +0100, Stacho Mudrak wrote:
+> The metapost code of line symbol for this (line with black dots at rigging
+> points) is already prepared I think. All that needs to be done is to add "line
+> rope" symbol main code. We will try to implement it ASAP.
+
+Excellent, but don't forget some mechanism for 'spike' and 'thread' as
+well as 'bolt', and deviations. Obviously blob+line is a lot better
+than nothing but to a useful rigging guide needs the above details too
+IMHO.
+
+And then there is traverse lines. Will the existing code do a catenary
+hang between points? And for an implmentation that would actually work
+in practice some mechanism to have the rope not hang 'through' rocks
+and floors is needed - that could be trickier...
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From Eric.Madelaine at sophia.inria.fr  Fri Dec 14 13:04:49 2007
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Fri, 14 Dec 2007 13:04:49 +0100
+Subject: [Therion] Drawing rigging
+In-Reply-To: <20071214115339.GV20810@knossos.aleph1.co.uk>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>	<1197632629.47626c75b76a2@mail.atlantis.sk>
+	<20071214115339.GV20810@knossos.aleph1.co.uk>
+Message-ID: <47627161.9090604@sophia.inria.fr>
+
+But if I understand correctly, the rope would be a line, so you would 
+have to - and be able to - specify it the usual way with control points 
+and curves...
+The tricky point is for portions where you wish to constraint it to be a 
+vertical segment, unaffected by distorsions of the scrap.
+
+Eric.
+
+
+Wookey wrote:
+> On 2007-12-14 12:43 +0100, Stacho Mudrak wrote:
+>   
+>> The metapost code of line symbol for this (line with black dots at rigging
+>> points) is already prepared I think. All that needs to be done is to add "line
+>> rope" symbol main code. We will try to implement it ASAP.
+>>     
+>
+> Excellent, but don't forget some mechanism for 'spike' and 'thread' as
+> well as 'bolt', and deviations. Obviously blob+line is a lot better
+> than nothing but to a useful rigging guide needs the above details too
+> IMHO.
+>
+> And then there is traverse lines. Will the existing code do a catenary
+> hang between points? And for an implmentation that would actually work
+> in practice some mechanism to have the rope not hang 'through' rocks
+> and floors is needed - that could be trickier...
+>
+> Wookey
+>   
+
+
+From martinsluka at mac.com  Fri Dec 14 14:46:30 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 14 Dec 2007 14:46:30 +0100
+Subject: [Therion] Drawing rigging
+In-Reply-To: <47627161.9090604@sophia.inria.fr>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>
+	<1197632629.47626c75b76a2@mail.atlantis.sk>
+	<20071214115339.GV20810@knossos.aleph1.co.uk>
+	<47627161.9090604@sophia.inria.fr>
+Message-ID: <26CE6A7E-475F-4895-A531-CE2B046FC480@mac.com>
+
+
+On 14.12.2007, at 13:04, Eric Madelaine wrote:
+
+> The tricky point is for portions where you wish to constraint it to  
+> be a
+> vertical segment, unaffected by distorsions of the scrap.
+
+Hi Eric, check the samples - Rabbit cave - you may lock the  
+verticality or horizontality of segment of line:
+
+line border -id l153-922-620
+   933.5 607.0
+   adjust horizontal
+   932.5 949.5
+endline
+
+Thbook p. 24
+
+adjust <horizontal/vertical> . shifts the line point to be aligned  
+horizontally/vertically
+with the previous point (or next point if there is no previous  
+point). The result
+is horizontal/vertical line segment). If all line points have this  
+option, they are aligned
+to the average y or x coordinate, respectively. This option is not  
+allowed in the plan
+projection.
+
+m.
+
+
+From eric.madelaine at sophia.inria.fr  Fri Dec 14 19:30:39 2007
+From: eric.madelaine at sophia.inria.fr (Eric Madelaine, INRIA)
+Date: Fri, 14 Dec 2007 19:30:39 +0100
+Subject: [Therion] Drawing rigging
+In-Reply-To: <26CE6A7E-475F-4895-A531-CE2B046FC480@mac.com>
+References: <Pine.LNX.4.62.0712140947100.12697@crow.linux.ox.ac.uk>	<1197632629.47626c75b76a2@mail.atlantis.sk>	<20071214115339.GV20810@knossos.aleph1.co.uk>	<47627161.9090604@sophia.inria.fr>
+	<26CE6A7E-475F-4895-A531-CE2B046FC480@mac.com>
+Message-ID: <4762CBCF.1090008@sophia.inria.fr>
+
+Martin Sluka a écrit :
+> Hi Eric, check the samples - Rabbit cave - you may lock the
+> verticality or horizontality of segment of line:
+>   
+
+Good.
+Thanks Martin.
+
+
+
+From Xavier.Pennec at sophia.inria.fr  Sat Dec 15 11:34:53 2007
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sat, 15 Dec 2007 11:34:53 +0100
+Subject: [Therion] Editing svg therion results
+Message-ID: <4763ADCD.1000501@sophia.inria.fr>
+
+Hi
+
+One of the things that I would like to do with the maps generated by 
+Therion is embedding plans and elevations in a single document, 
+especially for small caves, and rework on subparts of the plans and 
+elevations to put some specific features into evidence for figures in a 
+text explaining things about the cave (or in this case the mine).
+
+I thought that it would be easy with any svg editor, but apparently this 
+is not the case at all. I can open and visualize the svg files produced 
+by therion using inkscape, but I cannot degroup the drawing in order to 
+edit some of the parts and, more importantly, importing the plan and the 
+elevation in  a single document lead to an incorrect result (see 
+NaduelRD5_fuse.svg). It seems that there is a namespace problem: as both 
+drawing refer to elements that have the same name, so that the 
+definition of one of the drawing overwrite the definitions of the other.
+
+Does anybody have an idea of how to overcome that? Is there any other 
+svg editor that behaves better (and which is not too expensive!)?
+
+By the way, it would be interesting to have a north arrow symbol that we 
+can place wherever we want in a plan and not only a north arrow 
+generated in the legend. That way, we could avoid using legends when 
+needed (e.g. to fuse maps outside therion).
+
+Thanks
+
+Xavier
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_plan.svg
+Type: image/svg+xml
+Size: 11926 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071215/0e77492c/attachment.svg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_proj315.svg
+Type: image/svg+xml
+Size: 14810 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071215/0e77492c/attachment-0001.svg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_fuse.svg
+Type: image/svg+xml
+Size: 40500 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071215/0e77492c/attachment-0002.svg>
+
+From m.budaj at gmail.com  Sat Dec 15 13:16:34 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 15 Dec 2007 13:16:34 +0100
+Subject: [Therion] Editing svg therion results
+In-Reply-To: <4763ADCD.1000501@sophia.inria.fr>
+References: <4763ADCD.1000501@sophia.inria.fr>
+Message-ID: <f64c1c4a0712150416j23b76f53j4abc46936f8e6d42@mail.gmail.com>
+
+On Dec 15, 2007 11:34 AM, Xavier Pennec <Xavier.Pennec at sophia.inria.fr> wrote:
+> I thought that it would be easy with any svg editor, but apparently this
+> is not the case at all. I can open and visualize the svg files produced
+> by therion using inkscape, but I cannot degroup the drawing in order to
+> edit some of the parts and, more importantly, importing the plan and the
+> elevation in  a single document lead to an incorrect result (see
+> NaduelRD5_fuse.svg). It seems that there is a namespace problem: as both
+> drawing refer to elements that have the same name, so that the
+> definition of one of the drawing overwrite the definitions of the other.
+
+You are right. We will fix it by introducing some kind of user-defined
+prefix for named SVG elements.
+
+> Does anybody have an idea of how to overcome that? Is there any other
+> svg editor that behaves better (and which is not too expensive!)?
+
+I tried Karbon14 from koffice and it could merge both files (by
+opening them separately and then copying and pasting one of the files
+to another). It can also ungroup the graphics. (But didn't display the
+texts.)
+
+> By the way, it would be interesting to have a north arrow symbol that we
+> can place wherever we want in a plan and not only a north arrow
+> generated in the legend. That way, we could avoid using legends when
+> needed (e.g. to fuse maps outside therion).
+
+You can do it already. See the chapter Map layout in map mode in the thbook.
+
+Martin
+
+
+From ben.cooper at siemens.com  Sun Dec 16 20:48:45 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Sun, 16 Dec 2007 19:48:45 -0000
+Subject: [Therion] XVI scale
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C02294BFB@GBMDDMH232AMSX.gb001.siemens.net>
+
+Has there been a change to the XVI scaling?  I regenerate XVI files
+whenever I re-compile my survey, but I've noticed recently that they no
+longer fit some of my older scraps, where I use XVI as the base image
+for drawing over.  They appear to be 10 or 20% smaller than before.  How
+can I enlarge them without re-drawing all of my scraps?
+- Ben
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071216/a4190789/attachment.htm>
+
+From ben.cooper at siemens.com  Sun Dec 16 21:05:15 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Sun, 16 Dec 2007 20:05:15 -0000
+Subject: [Therion] XVI scale
+In-Reply-To: <FF95F218CFC59E44979B6F3FC0FE0A8C02294BFB@GBMDDMH232AMSX.gb001.siemens.net>
+References: <FF95F218CFC59E44979B6F3FC0FE0A8C02294BFB@GBMDDMH232AMSX.gb001.siemens.net>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C02294C00@GBMDDMH232AMSX.gb001.siemens.net>
+
+Answering my own question, The Book does say that the XVI is controlled
+by the -layout scale option.  I must have changed this recently without
+realising.
+Regards,
+- Ben
+
+
+________________________________
+
+	From: therion-bounces at speleo.sk
+[mailto:therion-bounces at speleo.sk] On Behalf Of Cooper, Ben
+	Sent: 16 December 2007 19:49
+	To: therion at speleo.sk
+	Subject: [Therion] XVI scale
+	
+	
+	Has there been a change to the XVI scaling?  I regenerate XVI
+files whenever I re-compile my survey, but I've noticed recently that
+they no longer fit some of my older scraps, where I use XVI as the base
+image for drawing over.  They appear to be 10 or 20% smaller than
+before.  How can I enlarge them without re-drawing all of my scraps?
+	- Ben
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071216/849f147a/attachment.htm>
+
+From Xavier.Pennec at sophia.inria.fr  Mon Dec 17 14:29:27 2007
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Mon, 17 Dec 2007 14:29:27 +0100
+Subject: [Therion] Editing svg therion results
+In-Reply-To: <f64c1c4a0712150416j23b76f53j4abc46936f8e6d42@mail.gmail.com>
+References: <4763ADCD.1000501@sophia.inria.fr>
+	<f64c1c4a0712150416j23b76f53j4abc46936f8e6d42@mail.gmail.com>
+Message-ID: <476679B7.8030308@sophia.inria.fr>
+
+Martin Budaj wrote:
+> On Dec 15, 2007 11:34 AM, Xavier Pennec <Xavier.Pennec at sophia.inria.fr> wrote:
+>   
+>> I thought that it would be easy with any svg editor, but apparently this
+>> is not the case at all. I can open and visualize the svg files produced
+>> by therion using inkscape, but I cannot degroup the drawing in order to
+>> edit some of the parts and, more importantly, importing the plan and the
+>> elevation in  a single document lead to an incorrect result (see
+>> NaduelRD5_fuse.svg). It seems that there is a namespace problem: as both
+>> drawing refer to elements that have the same name, so that the
+>> definition of one of the drawing overwrite the definitions of the other.
+>>     
+>
+> You are right. We will fix it by introducing some kind of user-defined
+> prefix for named SVG elements.
+>   
+Yes, the file-name in which the svg is written should be a good prefix 
+to disambiguate.
+>   
+>> Does anybody have an idea of how to overcome that? Is there any other
+>> svg editor that behaves better (and which is not too expensive!)?
+>>     
+>
+> I tried Karbon14 from koffice and it could merge both files (by
+> opening them separately and then copying and pasting one of the files
+> to another). It can also ungroup the graphics. (But didn't display the
+> texts.)
+>   
+So far, I could not  try that one but I tried glipsgrafiti, sketsa and a 
+few others without beeing able to overcome the namespace pb.
+>   
+>> By the way, it would be interesting to have a north arrow symbol that we
+>> can place wherever we want in a plan and not only a north arrow
+>> generated in the legend. That way, we could avoid using legends when
+>> needed (e.g. to fuse maps outside therion).
+>>     
+>
+> You can do it already. See the chapter Map layout in map mode in the thbook.
+>   
+OK, I understand the philosophy: as north and scalebar are graphical 
+elements belonging to the final maps, they should not belong to the 
+scraps but should be put in place at the last moment.  However, none of 
+the legend elements (including text but also the scalebar and the 
+northarrow, and probably the grid) are exported in the svg file. I 
+included the pdf and the correspond svg to show that. Exporting them to 
+svg would be the behavior that I would expect, unless there is a special 
+difficulty there.
+
+Cheers
+
+Xavier
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_plan.pdf
+Type: application/pdf
+Size: 19750 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071217/6a969d21/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_plan.svg
+Type: image/svg+xml
+Size: 11926 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071217/6a969d21/attachment.svg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xavier.Pennec.vcf
+Type: text/x-vcard
+Size: 438 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071217/6a969d21/attachment.vcf>
+
+From m.budaj at gmail.com  Mon Dec 17 15:49:11 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 17 Dec 2007 15:49:11 +0100
+Subject: [Therion] Editing svg therion results
+In-Reply-To: <476679B7.8030308@sophia.inria.fr>
+References: <4763ADCD.1000501@sophia.inria.fr>
+	<f64c1c4a0712150416j23b76f53j4abc46936f8e6d42@mail.gmail.com>
+	<476679B7.8030308@sophia.inria.fr>
+Message-ID: <f64c1c4a0712170649j3b538a60pe1bb62ed9ef79e69@mail.gmail.com>
+
+On Dec 17, 2007 2:29 PM, Xavier Pennec <Xavier.Pennec at sophia.inria.fr> wrote:
+
+> OK, I understand the philosophy: as north and scalebar are graphical
+> elements belonging to the final maps, they should not belong to the
+> scraps but should be put in place at the last moment.  However, none of
+> the legend elements (including text but also the scalebar and the
+> northarrow, and probably the grid) are exported in the svg file. I
+> included the pdf and the correspond svg to show that. Exporting them to
+> svg would be the behavior that I would expect, unless there is a special
+> difficulty there.
+
+There is a difficulty, because SVG 1.1 does not support text
+formatting (line breaking...). So the legend is exported only in xhtml
+format (where arrow, scale bar, map and all legend symbols are
+embedded as svg code) -- open it in recent firefox or opera. You could
+also write a simple script to extract all svg object from therion
+xhtml export.
+
+Regards
+Martin
+
+
+From ben.cooper at siemens.com  Tue Dec 18 22:47:45 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Tue, 18 Dec 2007 21:47:45 -0000
+Subject: [Therion] Preview above / below
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+
+Has something changed with preview above / below since 0.5.0?  
+ 
+My thconfig files that used to produce grey outline now produce nothing.
+I've gone back to my original sources from September, and re-built them
+using the current snapshot only to find that nothing is produced.  See
+attached.
+ 
+The pdf files were created using the thconfig file attached.  I've also
+included my main source file, UpperFlood.th, which defines the map
+Outline_m2500 containing the preview above and below commands.  
+ 
+I've always found the description of preview above / below very
+difficult to understand in The Book.  For example, I've found that I
+have to put a scrap reference into map Outline_m2500 before the preview
+above command, otherwise I get the error "incompatible map projection".
+
+ 
+Any help appreciated.
+Regards,
+- Ben
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071218/ac785f44/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: UF_Outline_0.5.0.pdf
+Type: application/octet-stream
+Size: 58591 bytes
+Desc: UF_Outline_0.5.0.pdf
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071218/ac785f44/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: UF_Outline_0.5.1+.pdf
+Type: application/octet-stream
+Size: 55300 bytes
+Desc: UF_Outline_0.5.1+.pdf
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071218/ac785f44/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig.2500.T-shirt.tp
+Type: application/octet-stream
+Size: 484 bytes
+Desc: thconfig.2500.T-shirt.tp
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071218/ac785f44/attachment-0002.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: UpperFlood.th
+Type: application/octet-stream
+Size: 9977 bytes
+Desc: UpperFlood.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071218/ac785f44/attachment-0003.obj>
+
+From martinsluka at mac.com  Wed Dec 19 09:54:47 2007
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 19 Dec 2007 09:54:47 +0100
+Subject: [Therion] Preview above / below
+In-Reply-To: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+References: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+Message-ID: <6D256B77-D1CA-410B-9626-E944EF777996@mac.com>
+
+
+On 18.12.2007, at 22:47, Cooper, Ben wrote:
+
+> Has something changed with preview above / below since 0.5.0?
+
+Anyway you don't need to use preview above / below in single sheet  
+map. There is enough the "break" command in list of scraps or maps in  
+map definition. The break simply means that all scraps or maps after  
+break are in lower level relatively. Therion will in this case  
+automatically detect what is above and what is below.
+
+Preview above/below is for atlas generation meanly where one must  
+define the layers of atlas. In one layer you may have several overlap  
+passages differenced by break commands.
+
+Martin
+
+
+From marco.corvi at elsagdatamat.com  Wed Dec 19 14:48:50 2007
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Wed, 19 Dec 2007 14:48:50 +0100
+Subject: [Therion] map above / below problem
+In-Reply-To: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+References: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+Message-ID: <1198072130.4816.24.camel@localhost.localdomain>
+
+
+
+got a problem:
+between snapshots 20071126 and 20071206, maps with offsets
+above/below do not show the outline.
+
+marco
+
+
+
+From m.budaj at gmail.com  Wed Dec 19 15:26:11 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 19 Dec 2007 15:26:11 +0100
+Subject: [Therion] Preview above / below
+In-Reply-To: <6D256B77-D1CA-410B-9626-E944EF777996@mac.com>
+References: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net>
+	<6D256B77-D1CA-410B-9626-E944EF777996@mac.com>
+Message-ID: <f64c1c4a0712190626w72d11685r830f6c797b350869@mail.gmail.com>
+
+On Dec 19, 2007 9:54 AM, Martin Sluka <martinsluka at mac.com> wrote:
+>
+> On 18.12.2007, at 22:47, Cooper, Ben wrote:
+>
+> > Has something changed with preview above / below since 0.5.0?
+
+There was a bug introduced a few days ago. It should be fixed in the
+today's snapshot.
+
+> Anyway you don't need to use preview above / below in single sheet
+> map. There is enough the "break" command in list of scraps or maps in
+
+Previews can be used in maps, too. They have completely another
+meaning as the break command and are to be used simultaneously.
+
+Regards,
+Martin
+
+
+From ben.cooper at siemens.com  Wed Dec 19 23:02:59 2007
+From: ben.cooper at siemens.com (Cooper, Ben)
+Date: Wed, 19 Dec 2007 22:02:59 -0000
+Subject: [Therion] Preview above / below
+In-Reply-To: <f64c1c4a0712190626w72d11685r830f6c797b350869@mail.gmail.com>
+References: <FF95F218CFC59E44979B6F3FC0FE0A8C022FF5A5@GBMDDMH232AMSX.gb001.siemens.net><6D256B77-D1CA-410B-9626-E944EF777996@mac.com>
+	<f64c1c4a0712190626w72d11685r830f6c797b350869@mail.gmail.com>
+Message-ID: <FF95F218CFC59E44979B6F3FC0FE0A8C0232B463@GBMDDMH232AMSX.gb001.siemens.net>
+
+Thanks - all working now!
+- Ben 
+
+> -----Original Message-----
+> From: therion-bounces at speleo.sk 
+> [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Budaj
+> Sent: 19 December 2007 14:26
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Preview above / below
+> 
+> On Dec 19, 2007 9:54 AM, Martin Sluka <martinsluka at mac.com> wrote:
+> >
+> > On 18.12.2007, at 22:47, Cooper, Ben wrote:
+> >
+> > > Has something changed with preview above / below since 0.5.0?
+> 
+> There was a bug introduced a few days ago. It should be fixed in the
+> today's snapshot.
+> 
+> > Anyway you don't need to use preview above / below in single sheet
+> > map. There is enough the "break" command in list of scraps 
+> or maps in
+> 
+> Previews can be used in maps, too. They have completely another
+> meaning as the break command and are to be used simultaneously.
+> 
+> Regards,
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+> --
+> This email has been verified as Virus free
+> Virus Protection and more available at http://www.plus.net
+> 
+
+
+From wolfgang.zillig at web.de  Thu Dec 20 14:43:18 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Thu, 20 Dec 2007 14:43:18 +0100
+Subject: [Therion] declination
+Message-ID: <476A7176.8030608@web.de>
+
+Hi,
+
+I've just changed one input file from survex format to therion format to 
+get the LRUD data into the model. The declination is corrected manually 
+by "declination xx degree" within the centreline. I've noticed that I 
+had to change the prefix from "-" (minus) to "+" to get the same result 
+as with survex. In survex it is done by "*calibrate declination xx".
+
+It would be nice to add a comment in the Therion book that declination 
+correction is opposite from Survex.
+
+Regards
+Wolfgang
+
+
+From s.m at group-s.sk  Thu Dec 20 16:03:24 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 20 Dec 2007 16:03:24 +0100
+Subject: [Therion] declination
+In-Reply-To: <476A7176.8030608@web.de>
+References: <476A7176.8030608@web.de>
+Message-ID: <1198163004.476a843c1daaa@mail.atlantis.sk>
+
+According to Wikipedia (http://en.wikipedia.org/wiki/Magnetic_declination)
+
+Declination converts between true and magnetic bearings: True Bearing equals
+Magnetic Bearing plus Magnetic Declination. (See
+http://www.ngdc.noaa.gov/seg/geomag/faqgeom.shtml#q5d).
+
+In therion - declination is implemented this way (to avoid confusion), while in
+survex:
+
+(true bearing) = ((bearing)-(declination zero err))
+
+Thanks for pointing out, we will mention this difference in thbook.
+
+Regards, S.
+
+
+
+Quoting Wolfgang Zillig <wolfgang.zillig at web.de>:
+
+> Hi,
+> 
+> I've just changed one input file from survex format to therion format to 
+> get the LRUD data into the model. The declination is corrected manually 
+> by "declination xx degree" within the centreline. I've noticed that I 
+> had to change the prefix from "-" (minus) to "+" to get the same result 
+> as with survex. In survex it is done by "*calibrate declination xx".
+> 
+> It would be nice to add a comment in the Therion book that declination 
+> correction is opposite from Survex.
+> 
+> Regards
+> Wolfgang
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From Xavier.Pennec at sophia.inria.fr  Sat Dec 22 19:59:50 2007
+From: Xavier.Pennec at sophia.inria.fr (Xavier Pennec)
+Date: Sat, 22 Dec 2007 19:59:50 +0100
+Subject: [Therion] Metapost and user attributes
+Message-ID: <476D5EA6.3060409@sophia.inria.fr>
+
+Dear all,
+
+I have a survey with lots of sections (which are on another map than the 
+plan and the elevation, see attached files NaduelFilonCerisiersPlan.pdf 
+and  NaduelRD8_sections.pdf) and I would like to add automatically a 
+label numbering each section at the end of the section line in the plan. 
+As I want to be able not to display the section lines AND the their 
+numbers when I inlcude that survey into the larger map, I thought that 
+adding a user attribute to the section line would be the right way.
+
+Thus, I used a user attribute called label in my th2 file:
+   line section -reverse on -direction both -attr label "one"
+     312.0 327.0
+     334.09 327.0 396.0 327.0 425.0 327.0
+   endline
+
+and I redefined the section line metapost command into in my layout:
+
+code metapost
+def l_section (expr P)(text txt) =
+  T:=identity;
+  path Q; Q = punked P;
+  pickup PenC;
+  for t = 0 upto length P - 1:
+    pair zz[];
+    zz1 := point t of P;
+    zz2 := point t+1 of P;
+    zz3 := postcontrol t of P;
+    zz4 := precontrol t+1 of P;
+    if (length(zz3-1/3[zz1,zz2]) > 0.1pt) or
+       (length(zz4-2/3[zz1,zz2]) > 0.1pt):
+      zz5 = whatever[zz1,zz2];
+      (zz3-zz5) = whatever * (zz1-zz2) rotated 90;
+      draw zz1--zz5;
+      zz6 = whatever[zz1,zz2];
+      (zz4-zz6) = whatever * (zz1-zz2) rotated 90;
+      draw zz2--zz6;
+    else:
+      draw zz1--zz2;
+    fi;
+  endfor;
+  for pnt=txt:
+    if pnt=-1:
+    else:
+      T:=identity rotated angle(thdir(Q,pnt)) shifted (point pnt of Q);
+      pickup PenC;
+      thdraw (0,0)--(0,.8u);
+      thdraw (-.1u,.55u)--(0,.8u)--(.1u,.55u);
+      if known ATTR_label:
+        p_label( ATTR_label, (point pnt of Q), 0, 5);
+      fi;
+    fi;
+    exitif pnt=-1;
+  endfor;
+enddef;
+endcode
+
+The file NaduelRD5_plan.pdf is an example on what it gives. With that 
+solution, I have two problems:
+- the first one is that is I change     -attr label "one"    with     
+-attr label "1"     then metapost crashes because ATTR_label is 
+intrepreted in that case as a known numeric and not as a string.
+- the second problem is how to give an offset to the label so that it is 
+actually above and below the lines?
+
+If there is any metapost guru that can help, I'll appreciate.
+
+Xavier
+
+PS: there would be another solution to my problem, which would be to put 
+sections and their labels in separate scraps, simulating different 
+layers as in gimp, and not to include these scraps into the large map. 
+However, to define properly a scrap as a layer of another one, it would 
+be needed to deform both scarps exactly in the same way, which is not 
+the case right now if some reference survey station is moved in one 
+scrap only. Thus, I would imagine that a bettre solution would be a 
+special type of layer scrap where the geometry is copied from another 
+(e.g. something like scrap scrap2_layer2 -copy scrap2). Is that 
+something feasible?
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelFilonCerisiersPlan.pdf
+Type: application/pdf
+Size: 177269 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071222/0bbc6ded/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD8_sections.pdf
+Type: application/pdf
+Size: 206878 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071222/0bbc6ded/attachment-0001.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: NaduelRD5_plan.pdf
+Type: application/pdf
+Size: 19981 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20071222/0bbc6ded/attachment-0002.pdf>
+
+From m.budaj at gmail.com  Sun Dec 23 11:53:21 2007
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 23 Dec 2007 11:53:21 +0100
+Subject: [Therion] Metapost and user attributes
+In-Reply-To: <476D5EA6.3060409@sophia.inria.fr>
+References: <476D5EA6.3060409@sophia.inria.fr>
+Message-ID: <f64c1c4a0712230253g28ca421ejc7e8fa84f33a90@mail.gmail.com>
+
+On Dec 22, 2007 7:59 PM, Xavier Pennec <Xavier.Pennec at sophia.inria.fr> wrote:
+> As I want to be able not to display the section lines AND the their
+> numbers when I inlcude that survey into the larger map, I thought that
+> adding a user attribute to the section line would be the right way.
+>
+> Thus, I used a user attribute called label in my th2 file:
+>    line section -reverse on -direction both -attr label "one"
+>      312.0 327.0
+>      334.09 327.0 396.0 327.0 425.0 327.0
+>    endline
+>
+> and I redefined the section line metapost command into in my layout:
+> The file NaduelRD5_plan.pdf is an example on what it gives. With that
+> solution, I have two problems:
+> - the first one is that is I change     -attr label "one"    with
+> -attr label "1"     then metapost crashes because ATTR_label is
+> intrepreted in that case as a known numeric and not as a string.
+
+Yes, that is intended behaviour. You sometimes need to evaluate
+numerical attibutes.
+
+Try the following:
+
+     if known ATTR_label:
+       old_lo := labeloffset;
+       labeloffset := 2 mm;
+       push_label_fill_color(0.7,0.7,0.7);
+       p_label.bot(if numeric ATTR_label: decimal ATTR_label else:
+ATTR_label fi, (point pnt of Q), angle(thdir(Q,pnt)), 8);
+       labeloffset := old_lo;
+       pop_label_fill_color;
+     fi;
+
+The conversion of numeric to string argument is "decimal ATTR_label"
+
+The example also shows how to change alignment, offset and rotation of
+the label.
+
+Unfortunately the rotation (currently) does not work for circled
+labels (type 5 in your example) so i used type 8 for a label with
+coloured background.
+
+Martin
+
+

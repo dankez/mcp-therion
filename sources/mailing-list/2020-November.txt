@@ -1,0 +1,2811 @@
+From bruce at tomo.co.nz  Sun Nov  1 03:47:58 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 1 Nov 2020 15:47:58 +1300
+Subject: [Therion] copyright for survey centrelines not recognised
+Message-ID: <000001d6aff9$6a0888b0$3e199a10$@tomo.co.nz>
+
+ 
+
+For many years I have been adding a copyright date and text string to each
+of my scraps and survey centrelines.
+
+Always the same text string, and the date according to when the scrap and
+centreline was created.
+
+Always with the same result - a statistic in the pdf export that includes
+the string and a date range.
+
+
+
+ 
+
+Just now I broke with tradition, and added a new string to a centreline.  To
+my surprise the new copyright did not appear in the output.
+
+After a little experimentation I have come to come tentative conclusions.
+
+ 
+
+1.	Copyrights added to survey centrelines are not added to the
+statistics in pdf exports that include only survey centrelines.
+2.	Copyrights added to survey centrelines are not added to the
+statistics in pdf exports that include maps.
+3.	Copyright strings (different to the majority) added to scraps in
+large projects may not be added to statistics in pdf exports.  In smaller
+projects they are however.
+4.	Copyrights sorting in the pdf output is unpredictable.  
+It is not according to spelling A to Z, but changing the spelling changes
+the output sorting.
+
+
+It is not according to date, changing the date does not change the sort
+order.
+
+In all these examples, there are a number of scraps with "NZSS" as the
+copyright string, and there is only one example of the other string ("NSG"
+or "caves.org.nz" respectively.
+So the sort order is also not related to the number of instances of the same
+string, because sometimes NZSS sorts first, and sometimes last.
+
+ 
+
+Any one have insights or experience with this?
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201101/3cac2f4c/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 10185 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201101/3cac2f4c/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 13025 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201101/3cac2f4c/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 11739 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201101/3cac2f4c/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image012.png
+Type: image/png
+Size: 11166 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201101/3cac2f4c/attachment-0003.png>
+
+From herich at speleodd.sk  Mon Nov  2 08:26:44 2020
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 02 Nov 2020 08:26:44 +0100
+Subject: [Therion] Symbol assign
+In-Reply-To: <000001d6aff9$6a0888b0$3e199a10$@tomo.co.nz>
+References: <000001d6aff9$6a0888b0$3e199a10$@tomo.co.nz>
+Message-ID: <7ee4e7c81e9e0d2beeb7cb8c98ef5fcc@speleodd.sk>
+
+Hi,
+when exporting maps to a large scale, I´d like to assign wall:debris, 
+wall:presumed etc. to just "wall". "Symbol-assign line wall:debris 
+wall:bedrock" in config file doesn´t work, any idea?
+Thank you
+Pavel
+
+
+From beni at hallinger.org  Mon Nov  2 08:58:58 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 02 Nov 2020 08:58:58 +0100
+Subject: [Therion] Symbol assign
+In-Reply-To: <7ee4e7c81e9e0d2beeb7cb8c98ef5fcc@speleodd.sk>
+References: <000001d6aff9$6a0888b0$3e199a10$@tomo.co.nz>
+ <7ee4e7c81e9e0d2beeb7cb8c98ef5fcc@speleodd.sk>
+Message-ID: <67addec726073d7f4c4677954645e0df@hallinger.org>
+
+No idea, but i second the reques - that would be utterly useful for me 
+too!
+
+Am 2020-11-02 8:26, schrieb Pavel Herich:
+> Hi,
+> when exporting maps to a large scale, I´d like to assign wall:debris,
+> wall:presumed etc. to just "wall". "Symbol-assign line wall:debris
+> wall:bedrock" in config file doesn´t work, any idea?
+> Thank you
+> Pavel
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Mon Nov  2 09:25:38 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 2 Nov 2020 21:25:38 +1300
+Subject: [Therion] Symbol assign - use metapost def instead
+Message-ID: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+
+I have done exactly that, but with conjectural water to be shown with the permanent water symbol.
+Need to use a little metapost in your layout...
+
+  #replace conjectural waterflow symbol with permanent symbol to improve visibility
+	code metapost
+	def l_waterflow_conjectural (expr Path) =
+	  l_waterflow_permanent_UIS (Path);
+	enddef;
+	endcode
+
+You need to do a similar thing with the definition of your debris and presumed wall lines to show instead as bedrock.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich
+Sent: Monday, 2 November 2020 20:27
+To: List for Therion users <therion at speleo.sk>
+Subject: [Therion] Symbol assign
+
+Hi,
+when exporting maps to a large scale, I´d like to assign wall:debris, wall:presumed etc. to just "wall". "Symbol-assign line wall:debris wall:bedrock" in config file doesn´t work, any idea?
+Thank you
+Pavel
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From beni at hallinger.org  Mon Nov  2 09:53:19 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 02 Nov 2020 09:53:19 +0100
+Subject: [Therion] Symbol assign - use metapost def instead
+In-Reply-To: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+References: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+Message-ID: <a3ebf9499552658dd83cb4f326fd83e8@hallinger.org>
+
+I just did that with the AUT symbol set and it looks good:
+
+--------------- snip ----------------------------------------
+layout ....
+...
+
+         code metapost
+                 def l_wall_underlying_UIS (expr Path) = 
+l_wall_bedrock_UIS (Path); enddef;
+                 def l_wall_presumed_UIS (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_pit_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_sand_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_clay_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_pebbles_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_debris_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_blocks_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_ice_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_underlying_AUT (expr Path) = 
+l_wall_bedrock_UIS (Path); enddef;
+                 def l_wall_overlying_AUT (expr Path) = 
+l_wall_bedrock_UIS (Path); enddef;
+                 def l_wall_moonmilk_AUT (expr Path) = l_wall_bedrock_UIS 
+(Path); enddef;
+                 def l_wall_flowstone_AUT (expr Path) = 
+l_wall_bedrock_UIS (Path); enddef;
+         endcode
+
+...
+endlayout
+--------------- snap ----------------------------------
+
+
+Am 2020-11-02 9:25, schrieb Bruce Mutton:
+> I have done exactly that, but with conjectural water to be shown with
+> the permanent water symbol.
+> Need to use a little metapost in your layout...
+> 
+>   #replace conjectural waterflow symbol with permanent symbol to
+> improve visibility
+> 	code metapost
+> 	def l_waterflow_conjectural (expr Path) =
+> 	  l_waterflow_permanent_UIS (Path);
+> 	enddef;
+> 	endcode
+> 
+> You need to do a similar thing with the definition of your debris and
+> presumed wall lines to show instead as bedrock.
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich
+> Sent: Monday, 2 November 2020 20:27
+> To: List for Therion users <therion at speleo.sk>
+> Subject: [Therion] Symbol assign
+> 
+> Hi,
+> when exporting maps to a large scale, I´d like to assign wall:debris,
+> wall:presumed etc. to just "wall". "Symbol-assign line wall:debris
+> wall:bedrock" in config file doesn´t work, any idea?
+> Thank you
+> Pavel
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From herich at speleodd.sk  Mon Nov  2 10:08:00 2020
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 02 Nov 2020 10:08:00 +0100
+Subject: [Therion] Symbol assign - use metapost def instead
+In-Reply-To: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+References: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+Message-ID: <5ef637c8e3ac2ceb3665f5fd8b12d28a@speleodd.sk>
+
+It does work, thank You!
+Pavel
+
+Dňa 2020-11-02 09:25 Bruce Mutton napísal(a):
+> I have done exactly that, but with conjectural water to be shown with
+> the permanent water symbol.
+> Need to use a little metapost in your layout...
+> 
+>   #replace conjectural waterflow symbol with permanent symbol to
+> improve visibility
+> 	code metapost
+> 	def l_waterflow_conjectural (expr Path) =
+> 	  l_waterflow_permanent_UIS (Path);
+> 	enddef;
+> 	endcode
+> 
+> You need to do a similar thing with the definition of your debris and
+> presumed wall lines to show instead as bedrock.
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich
+> Sent: Monday, 2 November 2020 20:27
+> To: List for Therion users <therion at speleo.sk>
+> Subject: [Therion] Symbol assign
+> 
+> Hi,
+> when exporting maps to a large scale, I´d like to assign wall:debris,
+> wall:presumed etc. to just "wall". "Symbol-assign line wall:debris
+> wall:bedrock" in config file doesn´t work, any idea?
+> Thank you
+> Pavel
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From eqr at ecgracia.com  Mon Nov  2 18:37:31 2020
+From: eqr at ecgracia.com (Evaristo Quiroga)
+Date: Mon, 2 Nov 2020 18:37:31 +0100
+Subject: [Therion] Therion/Survex <=> COMPASS conversion
+Message-ID: <c7fa737b-adf0-1148-1ade-cd69ffd53e28@ecgracia.com>
+
+Hi,
+
+I have been a COMPASS user the last two decades. Four years ago I have 
+switched to Therion for the mainly tasks, but I need also powerful 
+COMPASS  tools like:
+
+  * Blunder and gross errors detection:
+    https://www.fountainware.com/compass/HTML_Help/Project_Manager/findblunders.htm
+  * Complex Plotting:
+    https://www.fountainware.com/compass/HTML_Help/Compass_Viewer/complexplot.htm
+  * Graph Tools:
+    https://www.fountainware.com/compass/HTML_Help/Compass_Viewer/graphtools.htm
+
+To can use this tools and need to convert files: " .th" --> " .dat"  and 
+Export from Therion to ".plt"
+
+To use  "COMPASS Viewer", where are the graph and complex plotting 
+tools,  I need ".plt" files.
+
+Therion export directly to ".plt" but don't use Compass surveys and 
+sections.  A  Therion survey is equivalent to Compass section. And 
+Therion centerline is equivalent to Compass survey. All the data  
+exported from Therion to .plt are in only one Compass Section/survey.
+
+And the export option  "-disable splay-shots" do anything, the ".plt" 
+have  always the splay shots.
+
+An other approach is to export to ".3d". From AVEN I can disable the 
+splays an export to ".plt". The files have the same problem, don't 
+export the data by surveys.
+
+Actually I am exporting to ".3d". In AVEN  I disable splay shoots, and 
+select one survey and export. I repeat for all surveys. After I 
+copy&paste all the data to one only file, and do two tweaks to have a 
+good ".plt" to work with "Compass Viewer tools".
+
+It would be much more efficient to be able to export Therion models 
+directly to .plt files, with Compass section and survey.
+I really only need to export in one of the concepts (section or survey) 
+the Therion surveys to be able to use the tools.
+
+To import Compass ".dat" files to Therion ".th" I use Auriga or 
+Topodroid. It's fine.
+
+Searching in the mail Archive I have found Torsten have made a excel 
+macro tool too.
+
+https://www.mail-archive.com/therion at speleo.sk/msg07339.html
+
+The inverse conversion is more problematic. Topodroid do a similar 
+Therion/Survey approach, and put all the data in only one survey. Here 
+is very important to have all the data in surveys (centerline) and 
+sections (survey), with its survey date  and fix station or declination. 
+To be able to use the Blunder detection tool I will have to reconstruct 
+by hand all the header information of the survey (date and fix station 
+or declination).
+
+I'm doing tests with Auriga, but for now I don't have good results either.
+
+Regards,
+
+Evaristo.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201102/ce7ca383/attachment.htm>
+
+From martinsluka at me.com  Mon Nov  2 18:54:53 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Mon, 2 Nov 2020 18:54:53 +0100
+Subject: [Therion] Symbol assign - use metapost def instead
+In-Reply-To: <5ef637c8e3ac2ceb3665f5fd8b12d28a@speleodd.sk>
+References: <000001d6b0f1$c01b9b90$4052d2b0$@tomo.co.nz>
+ <5ef637c8e3ac2ceb3665f5fd8b12d28a@speleodd.sk>
+Message-ID: <51359E94-AD74-4334-8CE9-6F75C28398A2@me.com>
+
+Anyway you may hack the file thTrans.mp
+
+Martin
+
+> 2. 11. 2020 v 10:08, Pavel Herich <herich at speleodd.sk>:
+> 
+> It does work, thank You!
+> Pavel
+> 
+> Dňa 2020-11-02 09:25 Bruce Mutton napísal(a):
+>> I have done exactly that, but with conjectural water to be shown with
+>> the permanent water symbol.
+>> Need to use a little metapost in your layout...
+>>  #replace conjectural waterflow symbol with permanent symbol to
+>> improve visibility
+>> 	code metapost
+>> 	def l_waterflow_conjectural (expr Path) =
+>> 	  l_waterflow_permanent_UIS (Path);
+>> 	enddef;
+>> 	endcode
+>> You need to do a similar thing with the definition of your debris and
+>> presumed wall lines to show instead as bedrock.
+>> Bruce
+>> -----Original Message-----
+>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Pavel Herich
+>> Sent: Monday, 2 November 2020 20:27
+>> To: List for Therion users <therion at speleo.sk>
+>> Subject: [Therion] Symbol assign
+>> Hi,
+>> when exporting maps to a large scale, I´d like to assign wall:debris,
+>> wall:presumed etc. to just "wall". "Symbol-assign line wall:debris
+>> wall:bedrock" in config file doesn´t work, any idea?
+>> Thank you
+>> Pavel
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From alastairgott at hotmail.com  Sat Nov 14 12:48:18 2020
+From: alastairgott at hotmail.com (alastair gott)
+Date: Sat, 14 Nov 2020 11:48:18 +0000
+Subject: [Therion] Connection of Really straight mine level to surveyed
+ passage
+Message-ID: <VI1PR0302MB32158FB1ABAF0114FAE36E05D6E50@VI1PR0302MB3215.eurprd03.prod.outlook.com>
+
+HI Therion people,
+
+I'm helping with a project we've got a cave/mine system with a really straight mine level for one of the entrances, which we have the centreline data for (but no sketches to show where the points are).
+
+When the system was joined up together with all the entrances there was a kink in the mine level. so to counteract this, I removed some of the unknown survey points in the centre of the level and hung the survey on some points at the beginning and end of the level.
+
+I now want to add in a section of cave in the centre of the level. I have connected this quite well in a map at a lower level with just the one entrance coordinates in it, but when I run the full map with all the entrances in, the model then tries to remove the loop error by doing it's statisical wizardry.
+
+Unfortunately in doing so, it shifts the start of the level (the entrance) to the east. and then leaves the section of cave out unconnected.
+
+If anyone can help, then the config for the full system is here: http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/
+
+This is what I get:
+
+[cid:cf9af856-bce2-41b6-859d-eaf9ad834135]
+
+the config for the one entrance coordinate is here:
+http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/speedwell_mine/Speedwell_mine_thconfig.thc
+
+and these are the two selects if you want to run it at the lower level:
+
+select bottomless_pit.speedwell_mine
+select oakden_level.speedwell_mine
+
+This is what I want:
+
+[cid:5cd571d7-989c-4c14-bc4f-70f62c960ee6]
+
+
+If I add in a survey point to hook it to, then I get this:
+[cid:23a6877d-ee5f-4234-a4d7-6c0914272d98]
+
+Rather than this:
+[cid:6489090d-0c10-442e-8bf6-885e301e1cc0]
+
+Adding in more survey points further down the passage to the south only increases the amount of distortion in a small space of passage. as there are three loop closures at the bottom of the picture [just below the red circle) which the model is running (i've just not included the maps on the drawing for clarity).
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/018fc0c3/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 39409 bytes
+Desc: image.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/018fc0c3/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 29415 bytes
+Desc: image.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/018fc0c3/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 21411 bytes
+Desc: image.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/018fc0c3/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 26381 bytes
+Desc: image.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/018fc0c3/attachment-0007.png>
+
+From alastairgott at hotmail.com  Sat Nov 14 14:21:55 2020
+From: alastairgott at hotmail.com (alastair gott)
+Date: Sat, 14 Nov 2020 13:21:55 +0000
+Subject: [Therion] Blended colour by gradient?
+In-Reply-To: <DB3PR0302MB320977F4974AF4DD91AC2253D60A0@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+References: <DB3PR0302MB320977F4974AF4DD91AC2253D60A0@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+Message-ID: <VI1PR0302MB3215B6C1EB88EF3885F54012D6E50@VI1PR0302MB3215.eurprd03.prod.outlook.com>
+
+Hi Therion guys,
+
+I've had a go at this today, is there anyone who would be able to automate the repetitive process to enable the software to implement this itself for a projected elevation?
+
+and then add it as a background for a projected elevation survey.
+
+I've taken a look at the therion mailing list and can see replies, so thank you for those, i'm going to need to sort my emails so I see your replies again 🙂
+
+TH2
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -129.0 -129.0 779.0 784.0
+##XTHERION## xth_me_area_zoom_to 400
+
+scrap cusseygradientSE65 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+point 325.0 650.0 station -name 65
+
+line wall -subtype invisible
+  650.0 645.0
+  650.0 655.0
+endline
+
+line wall -subtype invisible
+  0.0 645.0
+  650.0 645.0
+endline
+
+line wall -subtype invisible
+  650.0 655.0
+  0.0 655.0
+endline
+
+line wall -subtype invisible
+  0.0 655.0
+  0.0 645.0
+endline
+
+endscrap
+
+
+scrap cusseygradientSE64 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+point 325.0 640.0 station -name 64
+
+line wall -subtype invisible
+  650.0 635.0
+  650.0 645.0
+endline
+
+line wall -subtype invisible
+  650.0 645.0
+  0.0 645.0
+endline
+
+line wall -subtype invisible
+  0.0 635.0
+  650.0 635.0
+endline
+
+line wall -subtype invisible
+  0.0 645.0
+  0.0 635.0
+endline
+
+endscrap
+
+
+scrap cusseygradientSE63 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+point 325.0 630.0 station -name 63
+
+line wall -subtype invisible
+  0.0 625.0
+  650.0 625.0
+endline
+
+line wall -subtype invisible
+  650.0 625.0
+  650.0 635.0
+endline
+
+line wall -subtype invisible
+  650.0 635.0
+  0.0 635.0
+endline
+
+line wall -subtype invisible
+  0.0 635.0
+  0.0 625.0
+endline
+
+endscrap
+
+
+scrap cusseygradientSE62 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+line wall -subtype invisible
+  0.0 615.0
+  650.0 615.0
+endline
+
+point 325.0 620.0 station -name 62
+
+line wall -subtype invisible
+  650.0 615.0
+  650.0 625.0
+endline
+
+line wall -subtype invisible
+  650.0 625.0
+  0.0 625.0
+endline
+
+line wall -subtype invisible
+  0.0 625.0
+  0.0 615.0
+endline
+
+endscrap
+
+
+scrap cusseygradientSE61 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+line wall -subtype invisible
+  0.0 605.0
+  650.0 605.0
+endline
+
+point 325.0 610.0 station -name 61
+
+line wall -subtype invisible
+  650.0 605.0
+  650.0 615.0
+endline
+
+line wall -subtype invisible
+  650.0 615.0
+  0.0 615.0
+endline
+
+line wall -subtype invisible
+  0.0 615.0
+  0.0 605.0
+endline
+
+endscrap
+
+
+scrap cusseygradientSE60 -projection [elevation 0] -scale [0 0 650 0 0.0 0.0 65 0.0 m]
+
+point 325.0 600.0 station -name 60
+
+line wall -subtype invisible
+  650.0 595.0
+  650.0 605.0
+endline
+
+line wall -subtype invisible
+  650.0 605.0
+  0.0 605.0
+endline
+
+line wall -subtype invisible
+  0.0 605.0
+  0.0 595.0
+endline
+
+line wall
+  0.0 595.0
+  650.0 595.0
+endline
+
+endscrap
+
+
+
+TH FILE
+survey cusseygradients
+
+centreline
+  cs OSGB:SK
+
+  station 65 "main ent." entrance
+  fix 65 16350  75190  244
+data normal from to length compass clino
+0 1 1 0 90
+1   2 1 0 90
+2   3 1 0 90
+3   4 1 0 90
+4   5 1 0 90
+5   6 1 0 90
+6   7 1 0 90
+7   8 1 0 90
+8   9 1 0 90
+9   10 1 0 90
+10  11 1 0 90
+11  12 1 0 90
+12  13 1 0 90
+13  14 1 0 90
+14  15 1 0 90
+15  16 1 0 90
+16  17 1 0 90
+17  18 1 0 90
+18  19 1 0 90
+19  20 1 0 90
+20  21 1 0 90
+21  22 1 0 90
+22  23 1 0 90
+23  24 1 0 90
+24  25 1 0 90
+25  26 1 0 90
+26  27 1 0 90
+27  28 1 0 90
+28  29 1 0 90
+29  30 1 0 90
+30  31 1 0 90
+31  32 1 0 90
+32  33 1 0 90
+33  34 1 0 90
+34  35 1 0 90
+35  36 1 0 90
+36  37 1 0 90
+37  38 1 0 90
+38  39 1 0 90
+39  40 1 0 90
+40  41 1 0 90
+41  42 1 0 90
+42  43 1 0 90
+43  44 1 0 90
+44  45 1 0 90
+45  46 1 0 90
+46  47 1 0 90
+47  48 1 0 90
+48  49 1 0 90
+49  50 1 0 90
+50  51 1 0 90
+51  52 1 0 90
+52  53 1 0 90
+53  54 1 0 90
+54  55 1 0 90
+55  56 1 0 90
+56  57 1 0 90
+57  58 1 0 90
+58  59 1 0 90
+59  60 1 0 90
+60  61 1 0 90
+61  62 1 0 90
+62  63 1 0 90
+63  64 1 0 90
+64  65 1 0 90
+endcentreline
+
+input cusseygradients.th2
+
+map m1s -projection [elevation 0]
+cusseygradientSE65
+cusseygradientSE64
+cusseygradientSE63
+cusseygradientSE62
+cusseygradientSE61
+cusseygradientSE60
+endmap
+
+endsurvey
+
+
+Regards,
+Alastair Gott.
+________________________________
+From: alastair gott <alastairgott at hotmail.com>
+Sent: 07 October 2020 12:27
+To: therion at speleo.sk <therion at speleo.sk>
+Subject: Blended colour by gradient?
+
+Hi therion users,
+
+One of my friends has asked me whether it’s possible to colour an elevation survey by a blended gradient rather than a discrete scrap by scrap basis.
+
+I thought about it, but I don’t have the expertise in metapost, would it be possible to metapost a gradient which is predefined one colour through the normal rainbow of therion colours to the final colour and then bound this by the top and bottom of the cave.
+
+Then insert this gradient as a fill cave fg user.
+
+Just a thought?
+
+I know John Stevens has some good success with the Agen allwedd survey in South Wales (uk) but I think his solution relied upon the 1 colour for one scrap method, though my memory could be wrong.
+
+Regards,
+Alastair Gott,
+Alastairgott at hotmail.com
+
+Sent from my iPhone
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/123addc4/attachment.htm>
+
+From ben at caver.plus.com  Sat Nov 14 21:21:07 2020
+From: ben at caver.plus.com (Ben Cooper)
+Date: Sat, 14 Nov 2020 20:21:07 +0000
+Subject: [Therion] Connection of Really straight mine level to surveyed
+ passage
+Message-ID: <27885572-1871-460B-AD74-25A4C0D8B8E7@caver.plus.com>
+
+﻿Hi Alistair
+I would definitely link all the survey centrelines. The implication is that you have some errors in the survey, but you know that the straight mine level needs to be straight so the error isn’t there. One thing you could try is to set the SD for the level to be very low, and the SD for the rest of the cave to be quite high. When Therion distributes the error, most of this should go to the survey sections either the highest SD, and the level should be less distorted. 
+Best regards 
+Ben
+
+
+Sent from my iPhone
+
+> On 14 Nov 2020, at 11:49, alastair gott <alastairgott at hotmail.com> wrote:
+> ﻿
+> HI Therion people,
+> 
+> I'm helping with a project we've got a cave/mine system with a really straight mine level for one of the entrances, which we have the centreline data for (but no sketches to show where the points are).
+> 
+> When the system was joined up together with all the entrances there was a kink in the mine level. so to counteract this, I removed some of the unknown survey points in the centre of the level and hung the survey on some points at the beginning and end of the level.
+> 
+> I now want to add in a section of cave in the centre of the level. I have connected this quite well in a map at a lower level with just the one entrance coordinates in it, but when I run the full map with all the entrances in, the model then tries to remove the loop error by doing it's statisical wizardry.
+> 
+> Unfortunately in doing so, it shifts the start of the level (the entrance) to the east. and then leaves the section of cave out unconnected.
+> 
+> If anyone can help, then the config for the full system is here: http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/
+> 
+> This is what I get:
+> 
+> <image.png>
+> 
+> 
+> the config for the one entrance coordinate is here: 
+> http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/speedwell_mine/Speedwell_mine_thconfig.thc
+> 
+> and these are the two selects if you want to run it at the lower level:
+> select bottomless_pit.speedwell_mine
+> select oakden_level.speedwell_mine
+> This is what I want:
+> 
+> <image.png>
+> 
+> 
+> 
+> If I add in a survey point to hook it to, then I get this:
+> <image.png>
+> 
+> 
+> Rather than this:
+> <image.png>
+> 
+> 
+> Adding in more survey points further down the passage to the south only increases the amount of distortion in a small space of passage. as there are three loop closures at the bottom of the picture [just below the red circle) which the model is running (i've just not included the maps on the drawing for clarity).
+> 
+> 
+> Regards,
+> Alastair Gott.
+> 
+> AlastairGott at hotmail.com,
+> M: 07931779380.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201114/44bf54ec/attachment-0001.htm>
+
+From bruce at tomo.co.nz  Sun Nov 15 01:29:14 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 15 Nov 2020 13:29:14 +1300
+Subject: [Therion] map-connection does not display if map is both offset and
+ not offset
+Message-ID: <000001d6bae6$5c6c1580$15444080$@tomo.co.nz>
+
+I just discovered some behaviour that I did not expect.
+
+When a scrap has a point map-connection, any exports of that scrap have a
+dotted line from the 'true' location of the point map-location to the
+'offset' location.  Right?
+
+These two examples show what is expected.  The first with a single copy of
+an offset map, and the second with two offset copies of the map.
+
+ 
+
+
+
+
+
+However, if there is also a copy of the map that is not offset, then all of
+the map-connection points are hidden.  I tried using the -visibility on
+option for the point map-connection, that that had no effect.
+
+The image below shows an example of this behaviour.
+
+
+
+Although it is not very often that I want to show a map both in its proper
+location and offset, it seems to me that one should be able to do it and
+also have the map-connection points display properly for the offset maps.
+
+Is this a bug perhaps?
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/070202b0/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 270553 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/070202b0/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 313666 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/070202b0/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.png
+Type: image/png
+Size: 321923 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/070202b0/attachment-0005.png>
+
+From beni at hallinger.org  Sun Nov 15 09:09:53 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 15 Nov 2020 09:09:53 +0100
+Subject: [Therion] Connection of Really straight mine level to surveyed
+ passage
+In-Reply-To: <27885572-1871-460B-AD74-25A4C0D8B8E7@caver.plus.com>
+References: <27885572-1871-460B-AD74-25A4C0D8B8E7@caver.plus.com>
+Message-ID: <6BF77CCF-7B58-42B7-891A-7BF9B0E08920@hallinger.org>
+
+Another option would be to get the coordinates of the linking mine station and fixing it, and just giving that station a „perfect“ Standards deviation (isn’t that default if not given?)
+
+> Am 14.11.2020 um 21:29 schrieb Ben Cooper <ben at caver.plus.com>:
+> 
+> ﻿
+> ﻿Hi Alistair
+> I would definitely link all the survey centrelines. The implication is that you have some errors in the survey, but you know that the straight mine level needs to be straight so the error isn’t there. One thing you could try is to set the SD for the level to be very low, and the SD for the rest of the cave to be quite high. When Therion distributes the error, most of this should go to the survey sections either the highest SD, and the level should be less distorted. 
+> Best regards 
+> Ben
+> 
+> 
+> Sent from my iPhone
+> 
+>>> On 14 Nov 2020, at 11:49, alastair gott <alastairgott at hotmail.com> wrote:
+>>> 
+>> ﻿
+>> HI Therion people,
+>> 
+>> I'm helping with a project we've got a cave/mine system with a really straight mine level for one of the entrances, which we have the centreline data for (but no sketches to show where the points are).
+>> 
+>> When the system was joined up together with all the entrances there was a kink in the mine level. so to counteract this, I removed some of the unknown survey points in the centre of the level and hung the survey on some points at the beginning and end of the level.
+>> 
+>> I now want to add in a section of cave in the centre of the level. I have connected this quite well in a map at a lower level with just the one entrance coordinates in it, but when I run the full map with all the entrances in, the model then tries to remove the loop error by doing it's statisical wizardry.
+>> 
+>> Unfortunately in doing so, it shifts the start of the level (the entrance) to the east. and then leaves the section of cave out unconnected.
+>> 
+>> If anyone can help, then the config for the full system is here: http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/
+>> 
+>> This is what I get:
+>> 
+>> <image.png>
+>> 
+>> 
+>> the config for the one entrance coordinate is here: 
+>> http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/speedwell_mine/Speedwell_mine_thconfig.thc
+>> 
+>> and these are the two selects if you want to run it at the lower level:
+>> select bottomless_pit.speedwell_mine
+>> select oakden_level.speedwell_mine
+>> This is what I want:
+>> 
+>> <image.png>
+>> 
+>> 
+>> 
+>> If I add in a survey point to hook it to, then I get this:
+>> <image.png>
+>> 
+>> 
+>> Rather than this:
+>> <image.png>
+>> 
+>> 
+>> Adding in more survey points further down the passage to the south only increases the amount of distortion in a small space of passage. as there are three loop closures at the bottom of the picture [just below the red circle) which the model is running (i've just not included the maps on the drawing for clarity).
+>> 
+>> 
+>> Regards,
+>> Alastair Gott.
+>> 
+>> AlastairGott at hotmail.com,
+>> M: 07931779380.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/360432d7/attachment.htm>
+
+From alastairgott at hotmail.com  Sun Nov 15 12:32:43 2020
+From: alastairgott at hotmail.com (alastair gott)
+Date: Sun, 15 Nov 2020 11:32:43 +0000
+Subject: [Therion] Connection of Really straight mine level to surveyed
+ passage
+In-Reply-To: <6BF77CCF-7B58-42B7-891A-7BF9B0E08920@hallinger.org>
+References: <27885572-1871-460B-AD74-25A4C0D8B8E7@caver.plus.com>,
+ <6BF77CCF-7B58-42B7-891A-7BF9B0E08920@hallinger.org>
+Message-ID: <DB3PR0302MB32094C75A61D20C7F78F1C97D6E40@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+
+HI Beni and Ben,
+
+I have applied those fixes, it's looking much better now i've applied the following to the mine level and added the points back in.
+"centreline
+grade UISv1_5
+sd position 1 m
+sd x 1 m
+sd y 1 m"
+
+I have also changed the survey grade of some of the loop closure passages to be grade UISv1_3, which has helped loosen them up a little. I've asked the person i'm helping whether we can apply the grade 3 fix to some more passages, but I think we'll have to choose wisely which we alter with this fix.
+
+But I guess therion/survex is already applying this fix anyway, so it would be better for us to choose where it tightens and loosens the loop closer.
+
+Thank you for the suggestions, I'll try and let you know how it goes.
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+________________________________
+From: Therion <therion-bounces at speleo.sk> on behalf of Benedikt Hallinger <beni at hallinger.org>
+Sent: 15 November 2020 08:09
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Connection of Really straight mine level to surveyed passage
+
+Another option would be to get the coordinates of the linking mine station and fixing it, and just giving that station a „perfect“ Standards deviation (isn’t that default if not given?)
+
+Am 14.11.2020 um 21:29 schrieb Ben Cooper <ben at caver.plus.com>:
+
+﻿
+﻿Hi Alistair
+I would definitely link all the survey centrelines. The implication is that you have some errors in the survey, but you know that the straight mine level needs to be straight so the error isn’t there. One thing you could try is to set the SD for the level to be very low, and the SD for the rest of the cave to be quite high. When Therion distributes the error, most of this should go to the survey sections either the highest SD, and the level should be less distorted.
+Best regards
+Ben
+
+
+Sent from my iPhone
+
+On 14 Nov 2020, at 11:49, alastair gott <alastairgott at hotmail.com> wrote:
+
+﻿
+HI Therion people,
+
+I'm helping with a project we've got a cave/mine system with a really straight mine level for one of the entrances, which we have the centreline data for (but no sketches to show where the points are).
+
+When the system was joined up together with all the entrances there was a kink in the mine level. so to counteract this, I removed some of the unknown survey points in the centre of the level and hung the survey on some points at the beginning and end of the level.
+
+I now want to add in a section of cave in the centre of the level. I have connected this quite well in a map at a lower level with just the one entrance coordinates in it, but when I run the full map with all the entrances in, the model then tries to remove the loop error by doing it's statisical wizardry.
+
+Unfortunately in doing so, it shifts the start of the level (the entrance) to the east. and then leaves the section of cave out unconnected.
+
+If anyone can help, then the config for the full system is here: http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/<https://nam10.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.cave-registry.org.uk%2Fsvn%2FPeakDistrict%2FCastleton%2Fpeak_speedwell_model%2F&data=04%7C01%7C%7C1f1e9dd467c24016498a08d8893df764%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637410246519365911%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&sdata=ZPk8DRBXvmSvvJYqFyWGU15PCQsMqQ1nuM6UFMcRpWY%3D&reserved=0>
+
+This is what I get:
+
+<image.png>
+
+
+the config for the one entrance coordinate is here:
+http://www.cave-registry.org.uk/svn/PeakDistrict/Castleton/peak_speedwell_model/speedwell_mine/Speedwell_mine_thconfig.thc<https://nam10.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.cave-registry.org.uk%2Fsvn%2FPeakDistrict%2FCastleton%2Fpeak_speedwell_model%2Fspeedwell_mine%2FSpeedwell_mine_thconfig.thc&data=04%7C01%7C%7C1f1e9dd467c24016498a08d8893df764%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637410246519365911%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&sdata=AfKnso9AUbw0UzNSOYJxjwjf4edH7jnEqshbUCsBE44%3D&reserved=0>
+
+and these are the two selects if you want to run it at the lower level:
+
+select bottomless_pit.speedwell_mine
+select oakden_level.speedwell_mine
+
+This is what I want:
+
+<image.png>
+
+
+
+If I add in a survey point to hook it to, then I get this:
+<image.png>
+
+
+Rather than this:
+<image.png>
+
+
+Adding in more survey points further down the passage to the south only increases the amount of distortion in a small space of passage. as there are three loop closures at the bottom of the picture [just below the red circle) which the model is running (i've just not included the maps on the drawing for clarity).
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/30c1d929/attachment-0001.htm>
+
+From aag at posteo.de  Sun Nov 15 12:40:17 2020
+From: aag at posteo.de (Alvaro Aguilera)
+Date: Sun, 15 Nov 2020 12:40:17 +0100
+Subject: [Therion] Colorizing sections of centerline
+Message-ID: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+
+Hello everyone,
+
+is there a way to change the color of different sections of the centerline?
+
+I'm at the stickmap-stage of the survey and it would be really helpful 
+to put some colors to it.
+
+Regards
+Alvaro
+
+From beni at hallinger.org  Sun Nov 15 13:25:14 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 15 Nov 2020 13:25:14 +0100
+Subject: [Therion] Colorizing sections of centerline
+In-Reply-To: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+References: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+Message-ID: <EC70E720-E5A6-4AE0-B681-7D7D6F722635@hallinger.org>
+
+No idea, but i usually just use the generated .3d file and aven at this stage.
+Aven can also generate screenshots for printing, and can color the centerline based on various metrics.
+
+> Am 15.11.2020 um 12:48 schrieb Alvaro Aguilera <aag at posteo.de>:
+> 
+> ﻿Hello everyone,
+> 
+> is there a way to change the color of different sections of the centerline?
+> 
+> I'm at the stickmap-stage of the survey and it would be really helpful to put some colors to it.
+> 
+> Regards
+> Alvaro
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Sun Nov 15 18:44:54 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 15 Nov 2020 17:44:54 +0000
+Subject: [Therion] Colorizing sections of centerline
+In-Reply-To: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+References: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+Message-ID: <2edfc70f-f0a2-170e-9e79-67f6e37222d4@ntlworld.com>
+
+> is there a way to change the color of different sections of the centerline?
+
+Sort-of.
+
+https://therion.speleo.sk/wiki/metapost#centreline_that_is_only_visible_when_not_in_a_scrap
+
+So what you need is a way to detect your different centrelines. If they
+are fake centrelines ("line survey") in scraps, you can actually set
+"-attr somename somevalue" and then look for the corresponding
+ATTR_somename in your metapost. Like this:
+https://therion.speleo.sk/wiki/metapost#p-hangers_that_face_the_right_way_and_other_anchor_designs
+
+But automatically generated centrelines have fewer options, since there
+are fewer variables to look for. I use this in one place to colour the
+splays and centreline differently:
+
+  code metapost
+    def l_survey_cave (expr P) =
+      T:=identity;
+      pickup PenC;
+      if ATTR__shotflag_splay:
+        thdraw P withcolor (1,0.5,0.5);
+      else:
+        thdraw P;
+      fi;
+    enddef;
+  endcode
+
+You could look for ATTR__scrap instead, if scraps were involved...
+Or current_scrap := "scrap at section";
+
+I don't think it creates a variable like that for automatically
+generated scraps so that you can identify the survey though.
+
+Use the -d option to get the data.mp and look through the stuff at the
+end to see if there is a useful variable you can look for.
+
+I suspect that you won't find a useful variable.
+But let's assume you created a single scrap in each survey, with nothing
+in it, just a single survey station so it has a location. You create a
+map that includes that scrap, and then includes the survey itself (to
+render the centreline) - you may need to experiment to see which order
+Therion will render them. Now when you render that survey, I suspect
+that the current_scrap variable and ATTR__scrap variable will get
+created. You can use metapost to look for it, and change the colour.
+
+Not a complete idea, and definitely not as easy as you might have hoped,
+but it should be possible to make it work.
+
+Maybe someone else can get creative with this idea...
+
+Tarquin
+
+From tarquin.wilton-jones at ntlworld.com  Sun Nov 15 19:02:57 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 15 Nov 2020 18:02:57 +0000
+Subject: [Therion] Colorizing sections of centerline
+In-Reply-To: <2edfc70f-f0a2-170e-9e79-67f6e37222d4@ntlworld.com>
+References: <5a889781-aa39-74d2-d23f-6eb099ebd77c@posteo.de>
+ <2edfc70f-f0a2-170e-9e79-67f6e37222d4@ntlworld.com>
+Message-ID: <c68e6d1d-5da9-f4e4-fa0f-9dd49cba36b8@ntlworld.com>
+
+> But let's assume you created a single scrap in each survey, with nothing
+> in it, just a single survey station so it has a location. You create a
+> map that includes that scrap, and then includes the survey itself (to
+> render the centreline) - you may need to experiment to see which order
+> Therion will render them. Now when you render that survey, I suspect
+> that the current_scrap variable and ATTR__scrap variable will get
+> created. You can use metapost to look for it, and change the colour.
+
+Just to point out that this works.
+
+survey whatever
+	scrap emptyscrap
+		point 0 0 station -name 1 at somesurvey
+	endscrap
+	map emptymap -projection plan
+		emptyscrap
+	endmap
+	map outermap -projection plan
+		emptymap
+		somesurvey
+	endmap
+	survey somesurvey
+		centreline
+... data goes here ...
+
+Render the "outermap". Now the MetaPost output contains this:
+current_scrap := "emptyscrap at whatever";
+ATTR__scrap := "emptyscrap";
+And then a whole load of centreline stuff.
+
+  code metapost
+    def l_survey_cave (expr P) =
+      T:=identity;
+      pickup PenC;
+      if known current_scrap:
+        if current_scrap = "emptyscrap at whatever":
+          thdraw P withcolor (1,0.5,0.5);
+        else:
+          thdraw P;
+        fi;
+      else:
+        thdraw P;
+      fi;
+    enddef;
+  endcode
+
+You would need to add maps like that to each major survey section that
+you want to colour, as well as the first section that you do not want to
+colour, because it will keep applying that colour until it encounters
+another scrap.
+
+Not how you want to leave it when you are done, but useful for
+debugging, perhaps.
+
+From marco.corvi at gmail.com  Sun Nov 15 21:06:47 2020
+From: marco.corvi at gmail.com (Marco Corvi)
+Date: Sun, 15 Nov 2020 21:06:47 +0100
+Subject: [Therion] : map-connection does not display if map is both
+ offset and not offset
+In-Reply-To: <mailman.6.1605400182.1313.therion@speleo.sk>
+References: <mailman.6.1605400182.1313.therion@speleo.sk>
+Message-ID: <CAJiQYo0oq=86QcYJ82r0baJUf1LvuYnNgqsQv4Tw0snOtaKz2w@mail.gmail.com>
+
+@bruce
+
+that was a nice remark.
+
+i think that if you put scrap1 in map1 and scrap2 in map2, and then combine
+in a final map containing
+   map1
+   map2 […] above/below
+   map2
+
+and select the final map, then you get scrap1 and scrap2 in place,
+and also scrap2 offseted and the map-connection line
+
+marco
+
+
+> I just discovered some behaviour that I did not expect.
+>
+> When a scrap has a point map-connection, any exports of that scrap have a
+> dotted line from the 'true' location of the point map-location to the
+> 'offset' location.  Right?
+>
+> These two examples show what is expected.  The first with a single copy of
+> an offset map, and the second with two offset copies of the map.
+>
+> However, if there is also a copy of the map that is not offset, then all of
+> the map-connection points are hidden.  I tried using the -visibility on
+> option for the point map-connection, that that had no effect.
+>
+> The image below shows an example of this behaviour.
+>
+>
+>
+> Although it is not very often that I want to show a map both in its proper
+> location and offset, it seems to me that one should be able to do it and
+> also have the map-connection points display properly for the offset maps.
+>
+> Is this a bug perhaps?
+>
+>
+>
+> Bruce
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201115/491ecaad/attachment-0001.htm>
+
+From bruce at tomo.co.nz  Sun Nov 15 22:03:55 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 16 Nov 2020 10:03:55 +1300
+Subject: [Therion] map-connection does not display if map is both offset and
+ not offset
+Message-ID: <000001d6bb92$d60f3af0$822db0d0$@tomo.co.nz>
+
+Thanks for the suggestion Marco.
+
+I think what you suggest is what I was already doing, however I decided to try yet another level of hierarchical separation, but it also did not work.
+
+However I think the effect you are pointing me to is what is in-play here https://therion.speleo.sk/wiki/mapconnectors?s[]=offset <https://therion.speleo.sk/wiki/mapconnectors?s%5b%5d=offset> 
+
+I’ll tinker with it some more…  For me it is really only a debug process while I am drawing, so it is best if it soes not require special structures to activate and deactivate.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Marco Corvi
+Sent: Monday, 16 November 2020 09:07
+To: therion at speleo.sk
+Subject: Re: [Therion] : map-connection does not display if map is both offset and not offset
+
+ 
+
+@bruce
+
+ 
+
+that was a nice remark.
+
+ 
+
+i think that if you put scrap1 in map1 and scrap2 in map2, and then combine in a final map containing
+
+   map1
+
+   map2 […] above/below
+
+   map2
+
+ 
+
+and select the final map, then you get scrap1 and scrap2 in place,
+
+and also scrap2 offseted and the map-connection line
+
+ 
+
+marco
+
+ 
+
+
+I just discovered some behaviour that I did not expect.
+
+When a scrap has a point map-connection, any exports of that scrap have a
+dotted line from the 'true' location of the point map-location to the
+'offset' location.  Right?
+
+These two examples show what is expected.  The first with a single copy of
+an offset map, and the second with two offset copies of the map.
+
+However, if there is also a copy of the map that is not offset, then all of
+the map-connection points are hidden.  I tried using the -visibility on
+option for the point map-connection, that that had no effect.
+
+The image below shows an example of this behaviour.
+
+
+
+Although it is not very often that I want to show a map both in its proper
+location and offset, it seems to me that one should be able to do it and
+also have the map-connection points display properly for the offset maps.
+
+Is this a bug perhaps?
+
+
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201116/8a348ac8/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Nov 16 01:52:51 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 16 Nov 2020 13:52:51 +1300
+Subject: [Therion] map-connection does not display if map is both offset and
+ not offset
+Message-ID: <000001d6bbb2$d2f20ee0$78d62ca0$@tomo.co.nz>
+
+The more I look at the behaviour the more I think it is either a bug, or at best, unhelpful behaviour.
+
+I have a workaround that minimises the mess, simply by offsetting both scraps, one by 100 mm and the other by the desired offset distance.
+
+ 
+
+map FinalMap
+
+Map1 [000.1 000] above # to emulate map drawn in proper location but without disabling display of map-connection symbols
+
+Map2 [050    000] above # to draw the map in offset as well
+
+endmap
+
+ 
+
+
+
+ 
+
+I experimented with using ‘none’ in place of ‘above’, but that made no difference to whether the map-connection symbols are displayed.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Monday, 16 November 2020 10:04
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] map-connection does not display if map is both offset and not offset
+
+ 
+
+Thanks for the suggestion Marco.
+
+I think what you suggest is what I was already doing, however I decided to try yet another level of hierarchical separation, but it also did not work.
+
+However I think the effect you are pointing me to is what is in-play here https://therion.speleo.sk/wiki/mapconnectors?s[]=offset <https://therion.speleo.sk/wiki/mapconnectors?s%5b%5d=offset> 
+
+I’ll tinker with it some more…  For me it is really only a debug process while I am drawing, so it is best if it soes not require special structures to activate and deactivate.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Marco Corvi
+Sent: Monday, 16 November 2020 09:07
+To: therion at speleo.sk <mailto:therion at speleo.sk> 
+Subject: Re: [Therion] : map-connection does not display if map is both offset and not offset
+
+ 
+
+@bruce
+
+ 
+
+that was a nice remark.
+
+ 
+
+i think that if you put scrap1 in map1 and scrap2 in map2, and then combine in a final map containing
+
+   map1
+
+   map2 […] above/below
+
+   map2
+
+ 
+
+and select the final map, then you get scrap1 and scrap2 in place,
+
+and also scrap2 offseted and the map-connection line
+
+ 
+
+marco
+
+ 
+
+
+I just discovered some behaviour that I did not expect.
+
+When a scrap has a point map-connection, any exports of that scrap have a
+dotted line from the 'true' location of the point map-location to the
+'offset' location.  Right?
+
+These two examples show what is expected.  The first with a single copy of
+an offset map, and the second with two offset copies of the map.
+
+However, if there is also a copy of the map that is not offset, then all of
+the map-connection points are hidden.  I tried using the -visibility on
+option for the point map-connection, that that had no effect.
+
+The image below shows an example of this behaviour.
+
+
+
+Although it is not very often that I want to show a map both in its proper
+location and offset, it seems to me that one should be able to do it and
+also have the map-connection points display properly for the offset maps.
+
+Is this a bug perhaps?
+
+
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201116/a0a48c29/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 433044 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201116/a0a48c29/attachment-0001.png>
+
+From bruce at tomo.co.nz  Mon Nov 16 09:47:29 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 16 Nov 2020 21:47:29 +1300
+Subject: [Therion] Feature request - control over sort order for carto and
+ copyright similar to explo and topo
+Message-ID: <000201d6bbf5$208b9ad0$61a2d070$@tomo.co.nz>
+
+>From the Therion Book…
+
+• statistics <explo/topo/carto/copyright all/off/number> or
+• statistics <explo/topo-length on/hide/off> ▷ display some basic statistics; if set to oﬀ, team members are sorted alphabetically; otherwise according to their contribution to exploration and surveying (M, A; default: off)
+
+…and explained a little more completely here <https://therion.speleo.sk/wiki/faq?s%5b%5d=statistics#why_do_peoples_names_sort_alphabetically_when_they_used_to_sort_by_length_of_cave_explored_and_surveyed> 
+
+ie
+
+on = sorts by length and shows the length with each person’s name;
+
+hide = sorts as above and does not show the lengths;
+
+off = sorts alphabetically and does not show the lengths.
+
+ 
+
+I have a feature request (unless we can already do this?).  
+
+We have the option of sorting exploration and survey team members by the length of the passage centrelines that they have contributed to.
+
+Can we do a similar thing for scrap authors and copyrights?
+
+ 
+
+ie
+
+statistics <carto/copyright-count on/hide/off> where:
+
+on = sorts by number of scraps and surveys by a particular author, or number of scraps and surveys by a particular copyright, respectively, and displays the numbers;
+
+hide = sorts as above and does not show the numbers;
+
+off = sorts alphabetically by surname and does not show the numbers.
+
+ 
+
+This last setting matches the current behaviour for carto, and as I posted recently, the sort order for copyright seems to be unpredictable.
+
+Why do I want this feature?
+
+Because regularly I draw 98 scraps, and someone else will draw 2, and their name will be displayed in front because of the spelling of our names!
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201116/c345d132/attachment.htm>
+
+From lists at group-s.sk  Thu Nov 19 21:19:14 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 19 Nov 2020 21:19:14 +0100
+Subject: [Therion] Feature request - control over sort order for carto
+ and copyright similar to explo and topo
+In-Reply-To: <000201d6bbf5$208b9ad0$61a2d070$@tomo.co.nz>
+References: <000201d6bbf5$208b9ad0$61a2d070$@tomo.co.nz>
+Message-ID: <CAP35+gFiEe58nznRd6=B-5dwaBgP3+brtRccHYFiyE+NV1fL7Q@mail.gmail.com>
+
+Hi Bruce,
+
+I have tried to implement your feature in the latest commit (it will take a
+while until win installer will be available), I was able to count by scraps
+- hope this is OK.
+
+Could you please check, whether it works as expected?
+
+S.
+
+On Mon, 16 Nov 2020 at 09:48, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> From the Therion Book…
+>
+> • statistics <explo/topo/carto/copyright all/off/number> or
+> • statistics <explo/topo-length on/hide/off> ▷ display some basic
+> statistics; if set to oﬀ, team members are sorted alphabetically; otherwise
+> according to their contribution to exploration and surveying (M, A;
+> default: off)
+>
+> …and explained a little more completely here
+> <https://therion.speleo.sk/wiki/faq?s%5b%5d=statistics#why_do_peoples_names_sort_alphabetically_when_they_used_to_sort_by_length_of_cave_explored_and_surveyed>
+>
+> ie
+>
+> on = sorts by length and shows the length with each person’s name;
+>
+> hide = sorts as above and does not show the lengths;
+>
+> off = sorts alphabetically and does not show the lengths.
+>
+>
+>
+> I have a feature request (unless we can already do this?).
+>
+> We have the option of sorting exploration and survey team members by the
+> length of the passage centrelines that they have contributed to.
+>
+> Can we do a similar thing for scrap authors and copyrights?
+>
+>
+>
+> ie
+>
+> statistics <carto/copyright-count on/hide/off> where:
+>
+> on = sorts by number of scraps and surveys by a particular author, or
+> number of scraps and surveys by a particular copyright, respectively, and
+> displays the numbers;
+>
+> hide = sorts as above and does not show the numbers;
+>
+> off = sorts alphabetically by surname and does not show the numbers.
+>
+>
+>
+> This last setting matches the current behaviour for carto, and as I posted
+> recently, the sort order for copyright seems to be unpredictable.
+>
+> Why do I want this feature?
+>
+> Because regularly I draw 98 scraps, and someone else will draw 2, and
+> their name will be displayed in front because of the spelling of our names!
+>
+>
+>
+> Bruce
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201119/9a97caf5/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Nov 20 07:08:06 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 20 Nov 2020 19:08:06 +1300
+Subject: [Therion] Feature request - control over sort order for carto
+ and copyright similar to explo and topo
+In-Reply-To: <CAP35+gFiEe58nznRd6=B-5dwaBgP3+brtRccHYFiyE+NV1fL7Q@mail.gmail.com>
+Message-ID: <CF.B9.06582.C4D57BF5@sparkbusinessmail.co.nz>
+
+Thanks StachoAway for few days so will look next week. Bruce
+-------- Original message --------From: Stacho Mudrak <lists at group-s.sk> Date: 20/11/20  09:20  (GMT+12:00) To: List for Therion users <therion at speleo.sk> Subject: Re: [Therion] Feature request - control over sort order for carto and copyright similar to explo and topo Hi Bruce,I have tried to implement your feature in the latest commit (it will take a while until win installer will be available), I was able to count by scraps - hope this is OK.Could you please check, whether it works as expected?S.On Mon, 16 Nov 2020 at 09:48, Bruce Mutton <bruce at tomo.co.nz> wrote:From the Therion Book…• statistics <explo/topo/carto/copyright all/off/number> or• statistics <explo/topo-length on/hide/off> ▷ display some basic statistics; if set to oﬀ, team members are sorted alphabetically; otherwise according to their contribution to exploration and surveying (M, A; default: off)…and explained a little more completely hereieon = sorts by length and shows the length with each person’s name;hide = sorts as above and does not show the lengths;off = sorts alphabetically and does not show the lengths. I have a feature request (unless we can already do this?).  We have the option of sorting exploration and survey team members by the length of the passage centrelines that they have contributed to.Can we do a similar thing for scrap authors and copyrights? iestatistics <carto/copyright-count on/hide/off> where:on = sorts by number of scraps and surveys by a particular author, or number of scraps and surveys by a particular copyright, respectively, and displays the numbers;hide = sorts as above and does not show the numbers;off = sorts alphabetically by surname and does not show the numbers. This last setting matches the current behaviour for carto, and as I posted recently, the sort order for copyright seems to be unpredictable.Why do I want this feature?Because regularly I draw 98 scraps, and someone else will draw 2, and their name will be displayed in front because of the spelling of our names! Bruce _______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201120/84b45487/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Nov 25 09:56:06 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 25 Nov 2020 21:56:06 +1300
+Subject: [Therion] Feature request - control over sort order for carto and
+ copyright similar to explo and topo
+Message-ID: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+
+Stacho
+
+Looks like it is counting scraps correctly.  The following statements…
+
+  statistics carto all
+
+  statistics carto-count hide (or on or off)
+
+… work perfectly.
+
+ 
+
+One thing that does seem to be a problem however.  The syntax…
+
+statistics <explo/topo/carto/copyright> number 
+
+… is giving me problems.  They all seem to result in what seems to be an untrapped error, and truncating the therion.log file in random locations.
+
+For example this is what I have been trying…
+
+  statistics topo 10
+
+  statistics topo-length hide
+
+I checked with the previous recent version, 552f923 and after removing all the carto-count statements, I get the same behaviour, an untrapped error.  So I think the carto-count is working perfectly and I have just unearthed a different problem.
+
+ 
+
+Have not yet tested statistics copyright-count.  I presume it will be OK based on the success with carto-count.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Friday, 20 November 2020 09:19
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Feature request - control over sort order for carto and copyright similar to explo and topo
+
+ 
+
+Hi Bruce,
+
+ 
+
+I have tried to implement your feature in the latest commit (it will take a while until win installer will be available), I was able to count by scraps - hope this is OK.
+
+ 
+
+Could you please check, whether it works as expected?
+
+ 
+
+S.
+
+ 
+
+On Mon, 16 Nov 2020 at 09:48, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+>From the Therion Book…
+
+• statistics <explo/topo/carto/copyright all/off/number> or
+• statistics <explo/topo-length on/hide/off> ▷ display some basic statistics; if set to oﬀ, team members are sorted alphabetically; otherwise according to their contribution to exploration and surveying (M, A; default: off)
+
+…and explained a little more completely here <https://therion.speleo.sk/wiki/faq?s%5b%5d=statistics#why_do_peoples_names_sort_alphabetically_when_they_used_to_sort_by_length_of_cave_explored_and_surveyed> 
+
+ie
+
+on = sorts by length and shows the length with each person’s name;
+
+hide = sorts as above and does not show the lengths;
+
+off = sorts alphabetically and does not show the lengths.
+
+ 
+
+I have a feature request (unless we can already do this?).  
+
+We have the option of sorting exploration and survey team members by the length of the passage centrelines that they have contributed to.
+
+Can we do a similar thing for scrap authors and copyrights?
+
+ 
+
+ie
+
+statistics <carto/copyright-count on/hide/off> where:
+
+on = sorts by number of scraps and surveys by a particular author, or number of scraps and surveys by a particular copyright, respectively, and displays the numbers;
+
+hide = sorts as above and does not show the numbers;
+
+off = sorts alphabetically by surname and does not show the numbers.
+
+ 
+
+This last setting matches the current behaviour for carto, and as I posted recently, the sort order for copyright seems to be unpredictable.
+
+Why do I want this feature?
+
+Because regularly I draw 98 scraps, and someone else will draw 2, and their name will be displayed in front because of the spelling of our names!
+
+ 
+
+Bruce
+
+ 
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/b2d16fc0/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Nov 25 20:20:46 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 26 Nov 2020 08:20:46 +1300
+Subject: [Therion] testing control over sort order for copyright-count
+Message-ID: <000201d6c360$189f2d10$49dd8730$@tomo.co.nz>
+
+Stacho
+
+My first two test runs of copyright counting and sorting appeared to go OK,
+as below.  However the third shows up an anomaly.
+
+Adding a second copyright to one or two scraps results in that copyright
+counting as zero (0).
+
+If I remove the first copyright from each of those scraps, leaving just the
+second, there is no change to either of the counts ie (32) and (0).
+
+And then I make further changes as described below, and the output is
+sometimes updated, but other times not.
+
+Part of this is consistent with me making a mistake in my testing, but it
+seems repeatable just now, and is perhaps consistent with one of the effects
+that I posted on 1 November, and copied below.
+
+Authors (carto) are always counted correctly.  Copyright counting appears
+random and usually wrong.  I'm not sure there are actually 32 NZSS
+copyrights, but I guess that is something I should manually check.
+
+ 
+
+I'll reboot and try again tonight!
+
+ 
+
+Bruce
+
+ 
+
+  statistics carto all         # all/off/number
+
+  statistics carto-count on  # on/off/hide 
+
+  statistics copyright all     # all/off/number
+
+  statistics copyright-count off  # on/off/hide
+
+
+
+Copyright alpha-sorted. This is expected behaviour.
+
+ 
+
+ 
+
+  statistics carto all         # all/off/number 
+
+  statistics carto-count on  # on/off/hide
+
+  statistics copyright all     # all/off/number
+
+  statistics copyright-count hide  # on/off/hide
+
+
+
+Copy-right count-sorted and count hidden.  This is expected behaviour.
+
+ 
+
+ 
+
+  statistics carto all         # all/off/number
+
+  statistics carto-count on  # on/off/hide
+
+  statistics copyright all      # all/off/number 
+
+  statistics copyright-count on  # on/off/hide
+
+
+
+Copyright count-sorted and count shown, but note that:
+
+- count of NSG is (0) regardless of whether there are 1 or 2 scraps with NSG
+and whether those scraps have only NSG or both NSG and NZSS set,
+
+- count of NZSS is (32) regardless of whether copyright NZSS is removed and
+replaced with NSG for two of the scraps.
+
+ 
+
+.but after adding an author.
+
+
+
+. the authors are correctly listed
+
+. the NSG copyright-count is (1) when there are two NSG copyrights!
+
+. the NZSS copy-right-count is (32) when there should be two less, as I
+removed two of them!!
+
+ 
+
+On removing an author.
+
+
+
+. the authors are still correctly listed, but
+
+. NSG copyright is still (1) when it should be (2)
+
+. NZSS copyright has reduced to (31) when it would seem it should be (30) 
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Sunday, 1 November 2020 15:48
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] copyright for survey centrelines not recognised
+
+ 
+
+ 
+
+For many years I have been adding a copyright date and text string to each
+of my scraps and survey centrelines.
+
+Always the same text string, and the date according to when the scrap and
+centreline was created.
+
+Always with the same result - a statistic in the pdf export that includes
+the string and a date range.
+
+
+
+ 
+
+Just now I broke with tradition, and added a new string to a centreline.  To
+my surprise the new copyright did not appear in the output.
+
+After a little experimentation I have come to come tentative conclusions.
+
+ 
+
+1.	Copyrights added to survey centrelines are not added to the
+statistics in pdf exports that include only survey centrelines.
+2.	Copyrights added to survey centrelines are not added to the
+statistics in pdf exports that include maps.
+3.	Copyright strings (different to the majority) added to scraps in
+large projects may not be added to statistics in pdf exports.  In smaller
+projects they are however.
+4.	Copyrights sorting in the pdf output is unpredictable.  
+It is not according to spelling A to Z, but changing the spelling changes
+the output sorting.
+
+
+It is not according to date, changing the date does not change the sort
+order.
+
+In all these examples, there are a number of scraps with "NZSS" as the
+copyright string, and there is only one example of the other string ("NSG"
+or "caves.org.nz" respectively.
+So the sort order is also not related to the number of instances of the same
+string, because sometimes NZSS sorts first, and sometimes last.
+
+ 
+
+Any one have insights or experience with this?
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 19330 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0009.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 17646 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0010.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 17508 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0011.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 18482 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0012.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image012.png
+Type: image/png
+Size: 18411 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0013.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image013.png
+Type: image/png
+Size: 10185 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0014.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image014.png
+Type: image/png
+Size: 14445 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0015.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image015.png
+Type: image/png
+Size: 11739 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0016.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image017.png
+Type: image/png
+Size: 12566 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/a5163447/attachment-0017.png>
+
+From lists at group-s.sk  Wed Nov 25 21:24:38 2020
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 25 Nov 2020 21:24:38 +0100
+Subject: [Therion] testing control over sort order for copyright-count
+In-Reply-To: <000201d6c360$189f2d10$49dd8730$@tomo.co.nz>
+References: <000201d6c360$189f2d10$49dd8730$@tomo.co.nz>
+Message-ID: <CAP35+gFBiXwr5ADjBobBfHsBG1=M1mNoVJuVqMSoyidPLbTo9w@mail.gmail.com>
+
+Thanks a lot for the feedback Bruce, you are right - only copyrights from
+scraps are used for maps, not from the centerline.
+
+Definitely, this part of the code needs deeper refactoring, but
+unfortunately, I am leaving for a caving trip tomorrow, so I will not be
+able to work on it until next week.
+
+I have tried today to reproduce your untrapped error but without success.
+Could you please send me even a corrupted therion.log file, to have at
+least an idea, where these strange things happen?
+
+Thanks, S.
+
+On Wed, 25 Nov 2020 at 20:21, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Stacho
+>
+> My first two test runs of copyright counting and sorting appeared to go
+> OK, as below.  However the third shows up an anomaly.
+>
+> Adding a second copyright to one or two scraps results in that copyright
+> counting as zero (0).
+>
+> If I remove the first copyright from each of those scraps, leaving just
+> the second, there is no change to either of the counts ie (32) and (0).
+>
+> And then I make further changes as described below, and the output is
+> sometimes updated, but other times not.
+>
+> Part of this is consistent with me making a mistake in my testing, but it
+> seems repeatable just now, and is perhaps consistent with one of the
+> effects that I posted on 1 November, and copied below.
+>
+> Authors (carto) are always counted correctly.  Copyright counting appears
+> random and usually wrong.  I’m not sure there are actually 32 NZSS
+> copyrights, but I guess that is something I should manually check.
+>
+>
+>
+> I’ll reboot and try again tonight!
+>
+>
+>
+> Bruce
+>
+>
+>
+>   statistics carto all         # all/off/number
+>
+>   statistics carto-count on  # on/off/hide
+>
+>   statistics copyright all     # all/off/number
+>
+>   statistics copyright-count off  # on/off/hide
+>
+> Copyright alpha-sorted. This is expected behaviour.
+>
+>
+>
+>
+>
+>   statistics carto all         # all/off/number
+>
+>   statistics carto-count on  # on/off/hide
+>
+>   statistics copyright all     # all/off/number
+>
+>   statistics copyright-count hide  # on/off/hide
+>
+> Copy-right count-sorted and count hidden.  This is expected behaviour.
+>
+>
+>
+>
+>
+>   statistics carto all         # all/off/number
+>
+>   statistics carto-count on  # on/off/hide
+>
+>   statistics copyright all      # all/off/number
+>
+>   statistics copyright-count on  # on/off/hide
+>
+> Copyright count-sorted and count shown, but note that:
+>
+> - count of NSG is (0) regardless of whether there are 1 or 2 scraps with
+> NSG and whether those scraps have only NSG or both NSG and NZSS set,
+>
+> - count of NZSS is (32) regardless of whether copyright NZSS is removed
+> and replaced with NSG for two of the scraps.
+>
+>
+>
+> …but after adding an author…
+>
+> … the authors are correctly listed
+>
+> … the NSG copyright-count is (1) when there are *two* NSG copyrights!
+>
+> … the NZSS copy-right-count is (32) when there should be two less, as I
+> removed two of them!!
+>
+>
+>
+> On removing an author…
+>
+> … the authors are still correctly listed, but
+>
+> … NSG copyright is still (1) when it should be (2)
+>
+> … NZSS copyright has reduced to (31) when it would seem it should be (30)
+>
+>
+>
+>
+>
+> *From:* Therion <therion-bounces at speleo.sk> *On Behalf Of *Bruce Mutton
+> *Sent:* Sunday, 1 November 2020 15:48
+> *To:* 'List for Therion users' <therion at speleo.sk>
+> *Subject:* [Therion] copyright for survey centrelines not recognised
+>
+>
+>
+>
+>
+> For many years I have been adding a copyright date and text string to each
+> of my scraps and survey centrelines.
+>
+> Always the same text string, and the date according to when the scrap and
+> centreline was created.
+>
+> Always with the same result – a statistic in the pdf export that includes
+> the string and a date range.
+>
+>
+>
+> Just now I broke with tradition, and added a new string to a centreline.
+> To my surprise the new copyright did not appear in the output.
+>
+> After a little experimentation I have come to come tentative conclusions.
+>
+>
+>
+>    1. Copyrights added to survey centrelines are not added to the
+>    statistics in pdf exports that include only survey centrelines.
+>    2. Copyrights added to survey centrelines are not added to the
+>    statistics in pdf exports that include maps.
+>    3. Copyright strings (different to the majority) added to scraps in
+>    large projects may not be added to statistics in pdf exports.  In smaller
+>    projects they are however.
+>    4. Copyrights sorting in the pdf output is unpredictable.
+>    It is not according to spelling A to Z, but changing the spelling
+>    changes the output sorting.
+>
+>
+>    It is not according to date, changing the date does not change the
+>    sort order.
+>
+>    In all these examples, there are a number of scraps with “NZSS” as the
+>    copyright string, and there is only one example of the other string (“NSG”
+>    or “caves.org.nz” respectively.
+>    So the sort order is also not related to the number of instances of
+>    the same string, because sometimes NZSS sorts first, and sometimes last.
+>
+>
+>
+> Any one have insights or experience with this?
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 19330 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0009.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 17646 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0010.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 17508 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0011.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 18482 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0012.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image012.png
+Type: image/png
+Size: 18411 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0013.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image013.png
+Type: image/png
+Size: 10185 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0014.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image014.png
+Type: image/png
+Size: 14445 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0015.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image015.png
+Type: image/png
+Size: 11739 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0016.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image017.png
+Type: image/png
+Size: 12566 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201125/8962ffc6/attachment-0017.png>
+
+From martinsluka at me.com  Thu Nov 26 11:55:51 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Thu, 26 Nov 2020 11:55:51 +0100
+Subject: [Therion] Vertical scalebar created by Juraj Halama added to wiki
+In-Reply-To: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+References: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+Message-ID: <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+
+Vertical scalebar created by Juraj Halama added to wiki
+
+Martin Sluka
+
+From beni at hallinger.org  Thu Nov 26 14:12:03 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 26 Nov 2020 14:12:03 +0100
+Subject: [Therion] Vertical scalebar created by Juraj Halama added to
+ wiki
+In-Reply-To: <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+References: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+ <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+Message-ID: <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+
+Cool, do you have a link? :)
+
+Am 2020-11-26 11:55, schrieb Martin Sluka via Therion:
+> Vertical scalebar created by Juraj Halama added to wiki
+> 
+> Martin Sluka
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From martinsluka at me.com  Thu Nov 26 14:29:42 2020
+From: martinsluka at me.com (Martin Sluka)
+Date: Thu, 26 Nov 2020 14:29:42 +0100
+Subject: [Therion] Vertical scalebar created by Juraj Halama added to
+ wiki
+In-Reply-To: <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+References: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+ <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+ <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+Message-ID: <A315F3F3-85F5-4736-8FFA-39AC5AFBDEA5@me.com>
+
+therion.speleo.sk <http://therion.speleo.sk/>
+
+https://therion.speleo.sk/wiki/metapost <https://therion.speleo.sk/wiki/metapost>
+
+Martin
+
+> 26. 11. 2020 v 14:12, Benedikt Hallinger <beni at hallinger.org>:
+> 
+> Cool, do you have a link? :)
+> 
+> Am 2020-11-26 11:55, schrieb Martin Sluka via Therion:
+>> Vertical scalebar created by Juraj Halama added to wiki
+>> Martin Sluka
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201126/05a3a9ec/attachment.htm>
+
+From markus.boldt at gmx.net  Thu Nov 26 14:47:11 2020
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Thu, 26 Nov 2020 14:47:11 +0100
+Subject: [Therion] Vertical scalebar created by Juraj Halama added to
+ wiki
+In-Reply-To: <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+References: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+ <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+ <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+Message-ID: <001301d6c3fa$a4de9820$ee9bc860$@gmx.net>
+
+https://therion.speleo.sk/wiki/metapost?s[]=vertical&s[]=scalebar
+almost at the bottom
+
+
+-----Ursprüngliche Nachricht-----
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Benedikt Hallinger
+Gesendet: Donnerstag, 26. November 2020 14:12
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Vertical scalebar created by Juraj Halama added to wiki
+
+Cool, do you have a link? :)
+
+Am 2020-11-26 11:55, schrieb Martin Sluka via Therion:
+> Vertical scalebar created by Juraj Halama added to wiki
+> 
+> Martin Sluka
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Sun Nov 29 06:14:02 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 29 Nov 2020 18:14:02 +1300
+Subject: [Therion] statistics <explo/topo/carto/copyright> number untrapped
+ error
+Message-ID: <000001d6c60e$75a83cd0$60f8b670$@tomo.co.nz>
+
+Stacho
+
+Further to the untrapped error I mentioned last week…
+
+ 
+
+Looks like it is counting scraps correctly.  The following statements…
+
+  statistics carto all
+
+  statistics carto-count hide (or on or off)
+
+… work perfectly.
+
+ 
+
+One thing that does seem to be a problem however.  The syntax…
+
+statistics <explo/topo/carto/copyright> number 
+
+… is giving me problems.  They all seem to result in what seems to be an untrapped error, and truncating the therion.log file in random locations.
+
+For example this is what I have been trying…
+
+  statistics topo 10
+
+  statistics topo-length hide
+
+I checked with the previous recent version, 552f923 and after removing all the carto-count statements, I get the same behaviour, an untrapped error.  So I think the carto-count is working perfectly and I have just unearthed a different problem.
+
+ 
+
+ 
+
+Having left the problem for a few days (and rebooting a number of times) I thought I’d try my ‘top 10’ statistics layout (as in the attached LayoutStatisticsReporting.thc file).
+
+I ran my thconfig a number of times.  For a given input, the point at which the log file truncates seems to be consistent.
+
+ 
+
+The file log5 is what I get with a successful compile with all of the statistics.
+
+The file log1 is what statistics <whatever> 10 gives me.
+
+Thinking that the scraps reported near either side of the log file truncation might be associated, I commented them out of the map.
+
+The file log04 shows what happens then – the truncation just occurs a few more characters along the file.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/7d731ce0/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: LayoutStatisticsReporting.thc
+Type: application/octet-stream
+Size: 4461 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/7d731ce0/attachment-0004.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-log01-Dwarfs-Plan-LayoutStatisticsTop10-is-NOT-OK.log
+Type: application/octet-stream
+Size: 12288 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/7d731ce0/attachment-0005.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-log04-Dwarfs-Plan-LayoutStatisticsTop10 but with D-K1Plan-s8 and s7 commented out-is-NOT-OK.log
+Type: application/octet-stream
+Size: 12288 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/7d731ce0/attachment-0006.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-log05-Dwarfs-Plan-LayoutSatisticsVerbose-is-OK.log
+Type: application/octet-stream
+Size: 122509 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/7d731ce0/attachment-0007.obj>
+
+From bruce at tomo.co.nz  Sun Nov 29 06:14:02 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 29 Nov 2020 18:14:02 +1300
+Subject: [Therion] FYI Therion explorer name and explored length counting
+ insight
+Message-ID: <000601d6c60e$75eb1230$61c13690$@tomo.co.nz>
+
+This is just an 'I should have known better' story, in case you are
+interested.
+
+ 
+
+Learnings about map output statistics (that are or probably should have been
+self-evident):
+
+This is for a cave where some plan scraps were drawn on the original
+centreline and were retained in the final map, when the entire original
+survey was made duplicate due to a subsequent more comprehensive survey that
+was flagged 'not-duplicate'. For the extended elevation scraps, these were
+all drawn on the subsequent 'not-duplicate' survey.
+
+1.	If a whole centreline is made 'flags duplicate' then the explorers
+names appear in the list, but not the length that they explored (it is shown
+as zero).  You must (also) add the explorers to the corresponding
+'not-duplicated' centreline to have their explored length credited!
+2.	Only the statistics for the centrelines that are (partly) included
+in scraps that are output are presented.
+
+ 
+
+For this plan map, where the duplicated centrelines are actually the ones
+for which the scraps are exported, the 'not-duplicate' centrelines did not
+have the explorer's names entered (repeated) and so their names are
+recorded, but their survey length is not.  Lesson: Always record the
+original explorers in subsequent survey centrelines.  This behaviour is nice
+because it alerts the author to a problem with their data entry.
+
+
+
+ 
+
+For this extended map, where the 'not-duplicate' surveys have scraps
+exported, but the duplicate surveys do not, the 'duplicate' explorers names
+are not presented.  This is appropriate behaviour.
+
+But why is there a surveyor whose name appears with a zero length?  I think
+it is because, for the entire 'not-duplicate' survey, I only contributed to
+one survey leg (and it is in its very own centreline) and this leg is a
+surface leg connecting the subsequent 'not-duplicate' survey to the original
+'duplicate' survey.  So my name is recorded as a surveyor, but I have no
+'cave length' and Therion records zero.  Possibly this is not ideal
+behaviour, but it would seem inconsistent to change it.
+
+
+
+Here is part of the html survey-list for the cave, with the statistics
+discussed above highlighted.
+
+
+
+ 
+
+I then thought that if I associated the cave survey with the plan and the
+elevation maps, the statistics might have been better (a feature that I was
+involved in requesting if I recall correctly).  They are.
+
+For the plan, there is no change (I still need to add the original explorers
+to the 'not-duplicate' centrelines).
+
+
+
+ 
+
+And for the extended elevation, the duplicate zero length explorers names
+are brought in, as have the surveyors for the centrelines for which there
+are no scraps.  It matches the plan statistics.  Perfect (once I fix my
+centreline metadata as mentioned above).
+
+
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 51361 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 182113 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 56321 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 21386 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0009.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image013.png
+Type: image/png
+Size: 272569 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0010.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image014.png
+Type: image/png
+Size: 190989 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/698e5adc/attachment-0011.png>
+
+From beni at hallinger.org  Sun Nov 29 08:57:41 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 29 Nov 2020 08:57:41 +0100
+Subject: [Therion] FYI Therion explorer name and explored length
+ counting insight
+In-Reply-To: <000601d6c60e$75eb1230$61c13690$@tomo.co.nz>
+References: <000601d6c60e$75eb1230$61c13690$@tomo.co.nz>
+Message-ID: <F8A13ADE-526F-4ABB-BD03-C4CFACD0A045@hallinger.org>
+
+Thank you very much for sharing!
+
+> Am 29.11.2020 um 06:15 schrieb Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> ﻿
+> This is just an ‘I should have known better’ story, in case you are interested…
+>  
+> Learnings about map output statistics (that are or probably should have been self-evident):
+> This is for a cave where some plan scraps were drawn on the original centreline and were retained in the final map, when the entire original survey was made duplicate due to a subsequent more comprehensive survey that was flagged ‘not-duplicate’. For the extended elevation scraps, these were all drawn on the subsequent ‘not-duplicate’ survey.
+> If a whole centreline is made ‘flags duplicate’ then the explorers names appear in the list, but not the length that they explored (it is shown as zero).  You must (also) add the explorers to the corresponding ‘not-duplicated’ centreline to have their explored length credited!
+> Only the statistics for the centrelines that are (partly) included in scraps that are output are presented.
+>  
+> For this plan map, where the duplicated centrelines are actually the ones for which the scraps are exported, the ‘not-duplicate’ centrelines did not have the explorer’s names entered (repeated) and so their names are recorded, but their survey length is not.  Lesson: Always record the original explorers in subsequent survey centrelines.  This behaviour is nice because it alerts the author to a problem with their data entry.
+> <image002.png>
+>  
+> For this extended map, where the ‘not-duplicate’ surveys have scraps exported, but the duplicate surveys do not, the ‘duplicate’ explorers names are not presented.  This is appropriate behaviour.
+> But why is there a surveyor whose name appears with a zero length?  I think it is because, for the entire ‘not-duplicate’ survey, I only contributed to one survey leg (and it is in its very own centreline) and this leg is a surface leg connecting the subsequent ‘not-duplicate’ survey to the original ‘duplicate’ survey.  So my name is recorded as a surveyor, but I have no ‘cave length’ and Therion records zero.  Possibly this is not ideal behaviour, but it would seem inconsistent to change it.
+> <image005.png>
+> Here is part of the html survey-list for the cave, with the statistics discussed above highlighted.
+> <image006.png>
+>  
+> I then thought that if I associated the cave survey with the plan and the elevation maps,
+> <image009.png>
+> the statistics might have been better (a feature that I was involved in requesting if I recall correctly).  They are.
+> For the plan, there is no change (I still need to add the original explorers to the ‘not-duplicate’ centrelines).
+> <image013.png>
+>  
+> And for the extended elevation, the duplicate zero length explorers names are brought in, as have the surveyors for the centrelines for which there are no scraps.  It matches the plan statistics.  Perfect (once I fix my centreline metadata as mentioned above).
+> <image014.png>
+>  
+> Bruce
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201129/ee5bb2b7/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Nov 29 23:15:26 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 30 Nov 2020 11:15:26 +1300
+Subject: [Therion] Vertical scalebar created by Juraj Halama added to wiki
+In-Reply-To: <001301d6c3fa$a4de9820$ee9bc860$@gmx.net>
+References: <001201d6c308$d16489b0$742d9d10$@tomo.co.nz>
+ <CC2F674B-DCE1-4CFC-BC9F-69DE4B2B2569@me.com>
+ <f4b7b5b46deddb947015c9424347b25b@hallinger.org>
+ <001301d6c3fa$a4de9820$ee9bc860$@gmx.net>
+Message-ID: <000001d6c69d$29637f80$7c2a7e80$@tomo.co.nz>
+
+>  <https://therion.speleo.sk/wiki/metapost?s%5b%5d=vertical&s%5b%5d=scalebar> https://therion.speleo.sk/wiki/metapost?s[]=vertical&s[]=scalebar 
+
+> almost at the bottom
+
+ 
+
+> Vertical scalebar created by Juraj Halama added to wiki
+
+> Martin Sluka
+
+ 
+
+Quite aside from the vertical scalebar, that is a nicely prepared map of the cave.
+
+I’m interested in the way that Juraj has prepared the plan where the passages are over top of each other.  I’m about to start drawing a vertical cave with a similar level of complexity.  I will experiment myself, but may as well ask what may be silly questions.
+
+ 
+
+Has this been compiled entirely with Therion, or has it been post processed with the likes of Illustrator or Inkscape?
+
+I presume the black plan passage is ‘preview below’, and that all of the plan scraps are simply offset from that?
+
+The map-connection lines that connect all three instances of some stations. Is this standard behaviour or has this been custom coded?
+
+
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201130/72d6c920/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 65096 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20201130/72d6c920/attachment-0001.jpg>
+

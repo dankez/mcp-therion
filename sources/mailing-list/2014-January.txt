@@ -1,0 +1,2558 @@
+From bruce at tomo.co.nz  Thu Jan  2 00:01:11 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 2 Jan 2014 12:01:11 +1300
+Subject: [Therion] cross section minor bugs (station symbol and statistics
+	reporting)
+Message-ID: <E6474EB36BE646F5A545A7661B8F0B9C@JUICEBRAIN>
+
+Having unearthed the sample dataset I posted last week, I though I would
+progress the drawing a little more.
+
+I have noticed some minor bugs (I think) when drawing cross sections.
+
+1. In cross sections, point station symbols do not render with the correct
+symbol when they have 'mark fixed' set, as in the plan and section below.
+
+ 
+
+
+
+
+
+The point station in the section seems to plot with the temporary survey
+station symbol regardless.
+
+ 
+
+2. The map header 'drawn statistics' do not recognise the scrap author
+(person and date) and do not recognise the copyright date for scraps that
+are cross sections (projection none).  I noticed this because all the plan
+scraps were drawn in 2012 by someone else, and I have just added some 2014
+cross sections with myself as author.  However, although the cross sections
+are included in the pdf output, only the drawn and copyright statistics from
+the original plan scraps are reported.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140102/2c640df8/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 8279 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140102/2c640df8/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 4011 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140102/2c640df8/attachment-0001.jpg>
+
+From bruce at tomo.co.nz  Thu Jan  2 21:19:36 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 3 Jan 2014 09:19:36 +1300
+Subject: [Therion] symbol-colour point station-name affects some wall
+	altitudes
+Message-ID: <4495EBFB77FE4FBCA3224212EBDE84A9@JUICEBRAIN>
+
+While I am on the topic of minor bugs, I think there might be something
+'loose' wrt the coding of the colour for wall point altitudes and 'point
+station-names'.
+
+In the examples below I have a more or less black and white layout, but I
+have made the survey stations stand out as follows;
+
+            symbol-colour point station [54 7 60]       # affects +s, flag
+symbols and station text
+
+            symbol-colour point station-name [54 7 60] # affects
+station-names (and sometimes wall altitude . 's)
+
+ 
+
+
+
+The image above is as it should be, station symbols and names are coloured
+and the wall altitude is black. 
+
+ 
+
+
+
+However in the same output, there are usually a few wall altitudes that take
+on the station colour as above.
+
+ 
+
+It only happens when the 'symbol-colour point station-name' is defined, so I
+guess that is a clue.
+
+It usually happens when the altitude is near a station-name, but not always,
+as you can see in the example above.  The effect can be made to go away
+sometimes by moving either the station-name or the altitude, so it is
+perhaps related to the proximity, or drawing order, although in the example
+above moving the "3.11" down near the word "log" does not change the effect
+on the "185" altitude.
+
+ 
+
+Anyone else notice effects like this, or have suggestions as to why it might
+be happening.
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140103/5a828235/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 6183 bytes
+Desc: image001.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140103/5a828235/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 8421 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140103/5a828235/attachment-0001.jpg>
+
+From roger at r-schuster.de  Sat Jan  4 21:41:28 2014
+From: roger at r-schuster.de (Roger Schuster)
+Date: Sat, 04 Jan 2014 21:41:28 +0100
+Subject: [Therion] Drawing stairs / steps
+Message-ID: <52C871F8.1090300@r-schuster.de>
+
+Hi all,
+
+in Therion is line type "steps" available. I draw one line  for each 
+step of the stair in plan view. The compiler gives me the message 
+"Warning: Invalid stairs definition in scrap". Can somebody please 
+explain how the line type "steps" is to be used? The TH book explains 
+point type "steps" only.
+
+Regards
+
+Roger
+
+
+From martinsluka at mac.com  Sat Jan  4 23:12:44 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 04 Jan 2014 23:12:44 +0100
+Subject: [Therion] Drawing stairs / steps
+In-Reply-To: <52C871F8.1090300@r-schuster.de>
+References: <52C871F8.1090300@r-schuster.de>
+Message-ID: <8318034F-A060-4CC9-BA54-6E9588870354@mac.com>
+
+Draw polygon of shape of stairs (rectangle in simplest case) and write number of steps. In last version of therion it was: -attr c 4   for 4 steps and it looks it is for version 5.3.12 too.
+
+m.
+
+
+Jan 4, 2014 v 9:41 PM, Roger Schuster <roger at r-schuster.de>:
+
+> Can somebody please explain how the line type "steps" is to be used?
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140104/2b2f68ca/attachment.htm>
+
+From roger at r-schuster.de  Sun Jan  5 11:52:31 2014
+From: roger at r-schuster.de (Roger Schuster)
+Date: Sun, 05 Jan 2014 11:52:31 +0100
+Subject: [Therion] Drawing stairs / steps
+In-Reply-To: <8318034F-A060-4CC9-BA54-6E9588870354@mac.com>
+References: <52C871F8.1090300@r-schuster.de>
+	<8318034F-A060-4CC9-BA54-6E9588870354@mac.com>
+Message-ID: <52C9396F.3000907@r-schuster.de>
+
+Thank you Martin, this does the job.
+
+Roger
+
+
+Am 04.01.2014 23:12, schrieb Martin Sluka:
+> Draw polygon of shape of stairs (rectangle in simplest case) and write 
+> number of steps. In last version of therion it was: -attr c 4   for 4 
+> steps and it looks it is for version 5.3.12 too.
+>
+> m.
+>
+>
+> Jan 4, 2014 v 9:41 PM, Roger Schuster <roger at r-schuster.de 
+> <mailto:roger at r-schuster.de>>:
+>
+>> Can somebody please explain how the line type "steps" is to be used?
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140105/94c6b518/attachment.htm>
+
+From dirk.peinelt at t-online.de  Sun Jan  5 20:43:49 2014
+From: dirk.peinelt at t-online.de (Dirk Peinelt)
+Date: Sun, 5 Jan 2014 20:43:49 +0100
+Subject: [Therion] dip strike symbol
+Message-ID: <00da01cf0a4e$74a4d4c0$5dee7e40$@t-online.de>
+
+Hi,
+
+have anyone developed a dynamic "dip strike symbol" for stratification at
+this time?
+
+d
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140105/9d3e4afb/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: dss.JPG
+Type: image/jpeg
+Size: 28045 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140105/9d3e4afb/attachment.jpe>
+
+From martinsluka at mac.com  Sun Jan  5 21:32:25 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 05 Jan 2014 21:32:25 +0100
+Subject: [Therion] dip strike symbol
+In-Reply-To: <00da01cf0a4e$74a4d4c0$5dee7e40$@t-online.de>
+References: <00da01cf0a4e$74a4d4c0$5dee7e40$@t-online.de>
+Message-ID: <C8DD8131-0C40-46CD-B5A9-DB51508626A5@mac.com>
+
+I don't know, but look to wiki - modification of metapost - and there are links to books about metapost with plenty of samples. Some of them is quite easy to modify and use for user symbols.
+
+m. 
+
+
+Jan 5, 2014 v 8:43 PM, Dirk Peinelt <dirk.peinelt at t-online.de>:
+
+> have anyone developed a dynamic „dip strike symbol“ for stratification at this time?
+> 
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140105/3afac7a1/attachment.htm>
+
+From wookey at wookware.org  Tue Jan  7 15:12:04 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 7 Jan 2014 14:12:04 +0000
+Subject: [Therion] fixed point std error causes extreme survey network
+ distortion
+In-Reply-To: <20131227210622.GL14490@survex.com>
+References: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+	<20131227210622.GL14490@survex.com>
+Message-ID: <20140107141203.GL22290@stoneboat.aleph1.co.uk>
+
++++ Olly Betts [2013-12-27 21:06 +0000]:
+> On Fri, Dec 27, 2013 at 08:18:18PM +1300, Bruce wrote:
+> > Since I installed Survex 1.2.8 a few weeks agoi, my machine has been giving;
+> > 
+> > C:\Program Files\Therion\therion.exe: warning -- can't open cavern output
+> > 
+> > when survex loop closure is specified, and I suspect this is causing Therion
+> > to revert to therion loop closure and hence the distortion problem has been
+> > manifesting again if I specify std errors.  You can see samples of  my
+> > therion.log files in the attached dataset.
+> > 
+> > Xavier is using Survex 1.2.6 and his log files, which do not have this
+> > problem, are attached separately.
+> 
+> Survex 1.2.7 introduced a new 3d format version (v8), but it looks like
+> therion 5.3.12 wasn't updated to understand this.
+> 
+> Copying over img.h and img.c from the latest Survex sources to therion
+> and rebuilding should fix this.  Or making therion run cavern with the
+> -v7 option. 
+
+This has been done in the Debian version of therion, from 5.3.11 onwards.
+
+I was hoping that would be adopted in the 5.3.12 release upstream, but
+it hasn't been yet.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From olly at survex.com  Wed Jan  8 02:25:42 2014
+From: olly at survex.com (Olly Betts)
+Date: Wed, 8 Jan 2014 01:25:42 +0000
+Subject: [Therion] fixed point std error causes extreme survey network
+ distortion
+In-Reply-To: <20140107141203.GL22290@stoneboat.aleph1.co.uk>
+References: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+	<20131227210622.GL14490@survex.com>
+	<20140107141203.GL22290@stoneboat.aleph1.co.uk>
+Message-ID: <20140108012542.GA14490@survex.com>
+
+On Tue, Jan 07, 2014 at 02:12:04PM +0000, Wookey wrote:
+> +++ Olly Betts [2013-12-27 21:06 +0000]:
+> > Survex 1.2.7 introduced a new 3d format version (v8), but it looks like
+> > therion 5.3.12 wasn't updated to understand this.
+> > 
+> > Copying over img.h and img.c from the latest Survex sources to therion
+> > and rebuilding should fix this.  Or making therion run cavern with the
+> > -v7 option. 
+> 
+> This has been done in the Debian version of therion, from 5.3.11 onwards.
+
+Just to clarify, "this" being the copying over of the newer files,
+rather than running cavern with -v7.
+
+> I was hoping that would be adopted in the 5.3.12 release upstream, but
+> it hasn't been yet.
+
+It'd be really good to fix that in the next release.  Meanwhile, if
+anyone's building binary packages of therion, I'd encourage you to
+update img.c and img.h like Wookey has.
+
+Bruce asked off-list if there's a way to change how therion calls cavern
+on Windows.  I'm not an expert on the therion code, but it looks to me
+like therion on Windows looks up the "Process" action for .svx files and
+uses that, so if you can work out where to set that in Windows, you can
+probably just add "-v7" to the command it uses.  I'm afraid I have no
+idea where this is configured on recent versions of Windows though.
+
+Cheers,
+    Olly
+
+
+From roger at r-schuster.de  Wed Jan  8 08:14:36 2014
+From: roger at r-schuster.de (Roger Schuster)
+Date: Wed, 8 Jan 2014 08:14:36 +0100 (CET)
+Subject: [Therion] fixed point std error causes extreme survey network
+ distortion
+In-Reply-To: <20140108012542.GA14490@survex.com>
+References: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+	<20131227210622.GL14490@survex.com>
+	<20140107141203.GL22290@stoneboat.aleph1.co.uk>
+	<20140108012542.GA14490@survex.com>
+Message-ID: <387199850.30953.1389165276734.open-xchange@email.1und1.de>
+
+Hi,
+
+
+
+> Olly Betts <olly at survex.com> hat am 8. Januar 2014 um 02:25 geschrieben:
+
+> Bruce asked off-list if there's a way to change how therion calls cavern
+> on Windows. 
+
+I added Survex to PATH (in Windows control panel) and appended "-v7" to the
+cavern-path variable in therion.ini. The warning "cannot open cavern output" is
+now gone.
+
+HTH
+
+Roger
+
+
+From wookey at wookware.org  Wed Jan  8 16:04:57 2014
+From: wookey at wookware.org (Wookey)
+Date: Wed, 8 Jan 2014 15:04:57 +0000
+Subject: [Therion] What version of wxwidgets does therion windows build use?
+Message-ID: <20140108150457.GQ22290@stoneboat.aleph1.co.uk>
+
+Forwarded from the survex list. See query at bottom.
+
+----- Forwarded message from Olly Betts <olly at survex.com> -----
+
+Date: Wed, 8 Jan 2014 06:56:03 +0000
+From: Olly Betts <olly at survex.com>
+To: Footleg <drfootleg at gmail.com>
+Cc: survex <survex at survex.com>
+Subject: Re: Survex 1.2.8: Aven can't get out of full screen mode
+List-Id: List for Survex users and developers <survex.survex.com>
+X-Spam-Status: No, score=-4.4 required=4.5 tests=AWL,BAYES_00, RCVD_IN_DNSWL_MED autolearn=ham version=3.3.2
+
+On Tue, Jan 07, 2014 at 01:14:13PM +0000, Footleg wrote:
+> The only quirky thing I see is that in full screen view the Windows
+> task bar still appears on top of the window, even though the Aven
+> window is covering the entire screen (I can see my model though the
+> semi-transparent taskbar. Who says the glassy UI features of Windows 7
+> are not of any use?!). I see this same task bar z-order issue with
+> 1.2.7 too. Note that the Therion viewer Loch appears on top of the
+> task bar when I put that into full screen view.
+
+That's interesting, as Loch also uses wxWidgets, and the code in aven
+and loch to toggle full screen mode is essentially the same.
+
+The Windows build of Survex 1.2.7 was with wxWidgets 2.8.12 and 1.2.8
+was with 2.9.5 (and 1.2.9 uses wxWidgets 3.0.0).
+
+Do you know what version of wxWidgets therion is built with?  It doesn't
+seem to say on their website.
+
+Cheers,
+    Olly
+
+-- 
+Survex http://lists.survex.com/mailman/listinfo/survex
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From lists at group-s.sk  Thu Jan  9 19:06:26 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 9 Jan 2014 19:06:26 +0100
+Subject: [Therion] What version of wxwidgets does therion windows build
+	use?
+In-Reply-To: <20140108150457.GQ22290@stoneboat.aleph1.co.uk>
+References: <20140108150457.GQ22290@stoneboat.aleph1.co.uk>
+Message-ID: <CAP35+gFid9M+ftbv_0RXoEjv9oYhxvaw0u=Tq9Yg_=QB=kXwNQ@mail.gmail.com>
+
+We use wxWidgets version 2.8.10.
+
+S.
+
+
+On 8 January 2014 16:04, Wookey <wookey at wookware.org> wrote:
+
+> Forwarded from the survex list. See query at bottom.
+>
+> ----- Forwarded message from Olly Betts <olly at survex.com> -----
+>
+> Date: Wed, 8 Jan 2014 06:56:03 +0000
+> From: Olly Betts <olly at survex.com>
+> To: Footleg <drfootleg at gmail.com>
+> Cc: survex <survex at survex.com>
+> Subject: Re: Survex 1.2.8: Aven can't get out of full screen mode
+> List-Id: List for Survex users and developers <survex.survex.com>
+> X-Spam-Status: No, score=-4.4 required=4.5 tests=AWL,BAYES_00,
+> RCVD_IN_DNSWL_MED autolearn=ham version=3.3.2
+>
+> On Tue, Jan 07, 2014 at 01:14:13PM +0000, Footleg wrote:
+> > The only quirky thing I see is that in full screen view the Windows
+> > task bar still appears on top of the window, even though the Aven
+> > window is covering the entire screen (I can see my model though the
+> > semi-transparent taskbar. Who says the glassy UI features of Windows 7
+> > are not of any use?!). I see this same task bar z-order issue with
+> > 1.2.7 too. Note that the Therion viewer Loch appears on top of the
+> > task bar when I put that into full screen view.
+>
+> That's interesting, as Loch also uses wxWidgets, and the code in aven
+> and loch to toggle full screen mode is essentially the same.
+>
+> The Windows build of Survex 1.2.7 was with wxWidgets 2.8.12 and 1.2.8
+> was with 2.9.5 (and 1.2.9 uses wxWidgets 3.0.0).
+>
+> Do you know what version of wxWidgets therion is built with?  It doesn't
+> seem to say on their website.
+>
+> Cheers,
+>     Olly
+>
+> --
+> Survex http://lists.survex.com/mailman/listinfo/survex
+>
+> ----- End forwarded message -----
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140109/a0147626/attachment.htm>
+
+From graham.mullan at coly.org.uk  Wed Jan 15 15:48:43 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Wed, 15 Jan 2014 14:48:43 -0000
+Subject: [Therion] Compatibility with Survex
+Message-ID: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+
+In the latest project in which I am involved, I am having to import data
+from Survex (actually from Compass via Survex but that's another story!).
+This requires importing survex 3d files. The problem that I have is that .3d
+files generated in the most recent iterations of Survex cannot be read by
+Therion. I had the same problem some years back & eventually they caught up
+with each other, but it seems that the Survex format has changed too much
+once again.
+ 
+Can this be rectified, please 'cos it's a pain in the bum.
+ 
+Graham
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140115/8cb2e321/attachment.htm>
+
+From wookey at wookware.org  Wed Jan 15 15:57:02 2014
+From: wookey at wookware.org (Wookey)
+Date: Wed, 15 Jan 2014 14:57:02 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+Message-ID: <20140115145702.GJ21788@stoneboat.aleph1.co.uk>
+
++++ Graham Mullan [2014-01-15 14:48 -0000]:
+>    In the latest project in which I am involved, I am having to import data
+>    from Survex (actually from Compass via Survex but that's another story!).
+>    This requires importing survex 3d files. The problem that I have is that
+>    .3d files generated in the most recent iterations of Survex cannot be read
+>    by Therion. I had the same problem some years back & eventually they
+>    caught up with each other, but it seems that the Survex format has changed
+>    too much once again.
+>     
+>    Can this be rectified, please 'cos it's a pain in the bum.
+
+I already fixed this in Debian, and the necessary patch is here:
+http://sources.debian.net/src/therion/5.3.11-2/debian/patches/update-survex-img-parser-to-v8.patch
+
+There an uptodate 5.3.12 version in here:
+http://www.wookware.org/software/repo/pool/main/t/therion/therion_5.3.12-1.debian.tar.xz
+
+(That's not uploaded officially yet as I'm trying to solve the tk-img
+missing background image issue first)  ( http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294 )
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From drfootleg at gmail.com  Wed Jan 15 16:01:20 2014
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 15 Jan 2014 15:01:20 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+Message-ID: <CAJkGg4kWgL=usKO+X5hKvEOawP4qYb6CQ8M9-rMfKPYkO83pBg@mail.gmail.com>
+
+Hi Graham,
+
+I have the same scenario (some of my Therion projects import a Survex 3d
+file to define the centreline. The easiest solution is to use the version
+switch when generating the 3d files to generate the 3d file version which
+Therion can read. I wrote a batch file with the following line to do this
+for my main project:
+"C:\Program Files (x86)\Survex\cavern.exe" -v7 mycavedata.svx
+
+Other more technical solutions may enable Therion to read the newer format
+3D files (I expect Wookey is already typing something about the Debian
+version as I write this!)
+
+Footleg
+
+
+On 15 January 2014 14:48, Graham Mullan <graham.mullan at coly.org.uk> wrote:
+
+>  In the latest project in which I am involved, I am having to import data
+> from Survex (actually from Compass via Survex but that's another story!).
+> This requires importing survex 3d files. The problem that I have is that
+> .3d files generated in the most recent iterations of Survex cannot be read
+> by Therion. I had the same problem some years back & eventually they caught
+> up with each other, but it seems that the Survex format has changed too
+> much once again.
+>
+> Can this be rectified, please 'cos it's a pain in the bum.
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140115/ae5d7d7f/attachment.htm>
+
+From wookey at wookware.org  Wed Jan 15 17:29:41 2014
+From: wookey at wookware.org (Wookey)
+Date: Wed, 15 Jan 2014 16:29:41 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <20140115145702.GJ21788@stoneboat.aleph1.co.uk>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<20140115145702.GJ21788@stoneboat.aleph1.co.uk>
+Message-ID: <20140115162941.GL21788@stoneboat.aleph1.co.uk>
+
++++ Wookey [2014-01-15 14:57 +0000]:
+> +++ Graham Mullan [2014-01-15 14:48 -0000]:
+> >    In the latest project in which I am involved, I am having to import data
+> >    from Survex (actually from Compass via Survex but that's another story!).
+> >    This requires importing survex 3d files. The problem that I have is that
+> >    .3d files generated in the most recent iterations of Survex cannot be read
+> >    by Therion. I had the same problem some years back & eventually they
+> >    caught up with each other, but it seems that the Survex format has changed
+> >    too much once again.
+> >     
+> >    Can this be rectified, please 'cos it's a pain in the bum.
+> 
+> I already fixed this in Debian, and the necessary patch is here:
+> http://sources.debian.net/src/therion/5.3.11-2/debian/patches/update-survex-img-parser-to-v8.patch
+> 
+> There an uptodate 5.3.12 version in here:
+> http://www.wookware.org/software/repo/pool/main/t/therion/therion_5.3.12-1.debian.tar.xz
+> 
+> (That's not uploaded officially yet as I'm trying to solve the tk-img
+> missing background image issue first)  ( http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294 )
+
+Sorry, forgot to go on to say that I realise this isn't directly very
+useful to Graham or other Windows users, but it does mean that it should
+be very easy for the developers to just apply that and rebuild the
+Windows version.
+
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Wed Jan 15 18:46:36 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 16 Jan 2014 06:46:36 +1300
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+Message-ID: <342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+
+Graham
+
+The Windows solution is to either install Survex 1.2.6 (I think) which
+produces -v7 format .3d files, or
+
+use a current version of Survex and tell it to produce -v7 format, either
+Footleg' sway or as I just added to the wiki
+
+http://therion.speleo.sk/wiki/doku.php/faq#how_to_pass_survex_command_line_p
+arameters_using_therion
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Graham Mullan
+Sent: Thursday, 16 January 2014 3:49 a.m.
+To: therion at speleo.sk
+Subject: [Therion] Compatibility with Survex
+
+ 
+
+In the latest project in which I am involved, I am having to import data
+from Survex (actually from Compass via Survex but that's another story!).
+This requires importing survex 3d files. The problem that I have is that .3d
+files generated in the most recent iterations of Survex cannot be read by
+Therion. I had the same problem some years back & eventually they caught up
+with each other, but it seems that the Survex format has changed too much
+once again.
+
+ 
+
+Can this be rectified, please 'cos it's a pain in the bum.
+
+ 
+
+Graham
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140116/5f99543a/attachment.htm>
+
+From drfootleg at gmail.com  Wed Jan 15 19:17:14 2014
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 15 Jan 2014 18:17:14 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+Message-ID: <CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+
+Thanks Bruce.
+
+Just to be completely clear in case anyone is confused, the fix which Bruce
+has documented on the wiki is for when Therion is using Survex to generate
+centreline coordinates from survey data entered into Therion project files.
+My 'generate the 3d file using the -v7 argument' fix is for projects where
+you import an already generated 3d file into the Therion project to define
+the survey centreline (e.g. Within the 'survey' block: import
+West_Kingsdale_System.3d -surveys use -cs OSGB:SD  )
+
+Footleg
+
+
+
+On 15 January 2014 17:46, Bruce <bruce at tomo.co.nz> wrote:
+
+>  Graham
+>
+> The Windows solution is to either install Survex 1.2.6 (I think) which
+> produces –v7 format .3d files, or
+>
+> use a current version of Survex and tell it to produce –v7 format, either
+> Footleg’ sway or as I just added to the wiki
+>
+>
+> http://therion.speleo.sk/wiki/doku.php/faq#how_to_pass_survex_command_line_parameters_using_therion
+>
+>
+>
+> Bruce
+>
+>
+>  ------------------------------
+>
+> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Graham Mullan
+> *Sent:* Thursday, 16 January 2014 3:49 a.m.
+> *To:* therion at speleo.sk
+> *Subject:* [Therion] Compatibility with Survex
+>
+>
+>
+> In the latest project in which I am involved, I am having to import data
+> from Survex (actually from Compass via Survex but that's another story!).
+> This requires importing survex 3d files. The problem that I have is that
+> .3d files generated in the most recent iterations of Survex cannot be read
+> by Therion. I had the same problem some years back & eventually they caught
+> up with each other, but it seems that the Survex format has changed too
+> much once again.
+>
+>
+>
+> Can this be rectified, please 'cos it's a pain in the bum.
+>
+>
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140115/67896c23/attachment.htm>
+
+From graham.mullan at coly.org.uk  Wed Jan 15 20:02:52 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Wed, 15 Jan 2014 19:02:52 -0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <mailman.182.1389809756.2919.therion@speleo.sk>
+References: <mailman.182.1389809756.2919.therion@speleo.sk>
+Message-ID: <47485648E5E24466AF07C8802B14C865@GrahamsMainPC>
+
+Thanks guys.
+
+Yes, I am doing as Footleg suspected and importing already generated
+survex.3d files in this case. That's partially to save time, as I seem to be
+on a deadline with this, strange feeling for a survey project, and that's
+the way much of the data is getting to me. I have also been given some data
+in Compass.dat files & I can import that into Survex to generate a .3d but
+I've been never been able to get it to import directly into Therion. Does
+it?
+
+I could convert the data to Therion but that's time consuming to get right &
+as I said, I seem to have a deadline on this.
+
+However, thanks to Footleg I now know which version of Survex to use. I'd
+gone all the way back to 1.1.15 just to make sure it worked!
+
+Graham
+
+
+
+From jonathanprouty at gmail.com  Wed Jan 15 20:39:48 2014
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Wed, 15 Jan 2014 12:39:48 -0700
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <47485648E5E24466AF07C8802B14C865@GrahamsMainPC>
+References: <mailman.182.1389809756.2919.therion@speleo.sk>
+	<47485648E5E24466AF07C8802B14C865@GrahamsMainPC>
+Message-ID: <CAEzKa925t+sAK04ZeRjmmZBLuOspYDVD1iFgb-F1cH=6tVJ8HQ@mail.gmail.com>
+
+Hi Graham,
+
+You can import a Compass PLT file directly into Therion, but not a DAT as
+far as I know.
+
+Best regards,
+
+Jonny
+
+
+On Wed, Jan 15, 2014 at 12:02 PM, Graham Mullan
+<graham.mullan at coly.org.uk>wrote:
+
+> Thanks guys.
+>
+> Yes, I am doing as Footleg suspected and importing already generated
+> survex.3d files in this case. That's partially to save time, as I seem to
+> be
+> on a deadline with this, strange feeling for a survey project, and that's
+> the way much of the data is getting to me. I have also been given some data
+> in Compass.dat files & I can import that into Survex to generate a .3d but
+> I've been never been able to get it to import directly into Therion. Does
+> it?
+>
+> I could convert the data to Therion but that's time consuming to get right
+> &
+> as I said, I seem to have a deadline on this.
+>
+> However, thanks to Footleg I now know which version of Survex to use. I'd
+> gone all the way back to 1.1.15 just to make sure it worked!
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140115/e29b7312/attachment.htm>
+
+From lada at blazcata.cz  Wed Jan 15 23:15:51 2014
+From: lada at blazcata.cz (=?utf-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Wed, 15 Jan 2014 23:15:51 +0100
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+	<CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+Message-ID: <EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+
+FYI, Stacho is working on the issue so expect updated source/Windows build soon.
+
+15. 1. 2014 v 19:17, Footleg <drfootleg at gmail.com>:
+
+> Thanks Bruce.
+> 
+> Just to be completely clear in case anyone is confused, the fix which Bruce has documented on the wiki is for when Therion is using Survex to generate centreline coordinates from survey data entered into Therion project files. My 'generate the 3d file using the -v7 argument' fix is for projects where you import an already generated 3d file into the Therion project to define the survey centreline (e.g. Within the 'survey' block: import West_Kingsdale_System.3d -surveys use -cs OSGB:SD  )
+> 
+> Footleg
+> 
+> 
+> 
+>> On 15 January 2014 17:46, Bruce <bruce at tomo.co.nz> wrote:
+>> Graham
+>> 
+>> The Windows solution is to either install Survex 1.2.6 (I think) which produces –v7 format .3d files, or
+>> 
+>> use a current version of Survex and tell it to produce –v7 format, either Footleg’ sway or as I just added to the wiki
+>> 
+>> http://therion.speleo.sk/wiki/doku.php/faq#how_to_pass_survex_command_line_parameters_using_therion
+>> 
+>>  
+>> 
+>> Bruce
+>> 
+>>  
+>> 
+>> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Graham Mullan
+>> Sent: Thursday, 16 January 2014 3:49 a.m.
+>> To: therion at speleo.sk
+>> Subject: [Therion] Compatibility with Survex
+>> 
+>>  
+>> 
+>> In the latest project in which I am involved, I am having to import data from Survex (actually from Compass via Survex but that's another story!). This requires importing survex 3d files. The problem that I have is that .3d files generated in the most recent iterations of Survex cannot be read by Therion. I had the same problem some years back & eventually they caught up with each other, but it seems that the Survex format has changed too much once again.
+>> 
+>>  
+>> 
+>> Can this be rectified, please 'cos it's a pain in the bum.
+>> 
+>>  
+>> 
+>> Graham
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140115/6f7eea21/attachment.htm>
+
+From graham.mullan at coly.org.uk  Sat Jan 18 18:03:20 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Sat, 18 Jan 2014 17:03:20 -0000
+Subject: [Therion] Importing Compass files
+In-Reply-To: <mailman.1.1389870001.5528.therion@speleo.sk>
+References: <mailman.1.1389870001.5528.therion@speleo.sk>
+Message-ID: <A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+
+ Jonny Prouty wrote:
+
+Hi Graham,
+
+You can import a Compass PLT file directly into Therion, but not a DAT as
+far as I know.
+
+Best regards,
+
+Jonny
+
+Thanks Jonny, I assume that would be by using similar syntax to that used to
+import Survex.3d files. However, as I would need to firstly write a project
+level .dat file in order to include the necessary co-ordinate information
+before generating the plt file, that makes it no simpler than my 'quick and
+dirty' fix of importing the original .plt file into Survex and then
+importing the resultant .3d file into Therion.
+
+This also has the advantage of consistent syntax in my Therion file making
+it easier to see errors.
+
+Graham
+
+
+
+From olly at survex.com  Sat Jan 18 21:27:54 2014
+From: olly at survex.com (Olly Betts)
+Date: Sat, 18 Jan 2014 20:27:54 +0000
+Subject: [Therion] Importing Compass files
+In-Reply-To: <A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+References: <mailman.1.1389870001.5528.therion@speleo.sk>
+	<A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+Message-ID: <20140118202754.GF14490@survex.com>
+
+On Sat, Jan 18, 2014 at 05:03:20PM -0000, Graham Mullan wrote:
+> Thanks Jonny, I assume that would be by using similar syntax to that
+> used to import Survex.3d files.
+
+Therion's support for importing Compass PLT files is provided by the
+"img" library from Survex, which primarily provides reading and writing
+of .3d files, but can also read Survex .pos files, Compass PLT, and
+CMAP XYZ files.  The syntax should be the same except for the filename
+extension.
+
+If there are other formats people would find it useful to be able to
+read, it's probably not hard to add support for them.
+
+Cheers,
+    Olly
+
+
+From drfootleg at gmail.com  Sun Jan 19 08:22:20 2014
+From: drfootleg at gmail.com (Footleg)
+Date: Sun, 19 Jan 2014 07:22:20 +0000
+Subject: [Therion] Importing Compass files
+In-Reply-To: <A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+References: <mailman.1.1389870001.5528.therion@speleo.sk>
+	<A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+Message-ID: <CAJkGg4nbJHSU5ATcrDf2KpcEGBU-MtEh6KC25Tf=GVv=3FzH0A@mail.gmail.com>
+
+Is this a short term need Graham? I've been planning to add Compass format
+reading/writing and Therion writing to me cave data converter for a while.
+It might be another while before I get it done, but it is useful to know
+what there is a need for as it helps me chose what to prioritise.
+
+Footleg
+
+
+On 18 January 2014 17:03, Graham Mullan <graham.mullan at coly.org.uk> wrote:
+
+>  Jonny Prouty wrote:
+>
+> Hi Graham,
+>
+> You can import a Compass PLT file directly into Therion, but not a DAT as
+> far as I know.
+>
+> Best regards,
+>
+> Jonny
+>
+> Thanks Jonny, I assume that would be by using similar syntax to that used
+> to
+> import Survex.3d files. However, as I would need to firstly write a project
+> level .dat file in order to include the necessary co-ordinate information
+> before generating the plt file, that makes it no simpler than my 'quick and
+> dirty' fix of importing the original .plt file into Survex and then
+> importing the resultant .3d file into Therion.
+>
+> This also has the advantage of consistent syntax in my Therion file making
+> it easier to see errors.
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140119/1bb478b7/attachment.htm>
+
+From graham.mullan at coly.org.uk  Sun Jan 19 10:04:41 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Sun, 19 Jan 2014 09:04:41 -0000
+Subject: [Therion] Importing Compass files
+In-Reply-To: <20140118202754.GF14490@survex.com>
+References: <mailman.1.1389870001.5528.therion@speleo.sk>
+	<A27624BE76724F938C41F945934D2760@GrahamsMainPC>
+	<20140118202754.GF14490@survex.com>
+Message-ID: <E7C55B94041542A4B57C3220E5C83D71@GrahamsMainPC>
+
+Olly Betts wrote
+
+If there are other formats people would find it useful to be able to read,
+it's probably not hard to add support for them.
+
+Cheers,
+    Olly
+
+I am very rusty with the way they are organised, but if there is any way of
+getting Survex and/or Therion to read files from Walls I'd be grateful.
+
+Graham
+
+
+
+From martinsluka at mac.com  Sun Jan 19 10:50:12 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 19 Jan 2014 10:50:12 +0100
+Subject: [Therion] Interesting page
+Message-ID: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+
+http://jaskinie.jaszczur.org/index_en.html
+
+m.
+
+
+
+From roger at r-schuster.de  Sun Jan 19 15:08:57 2014
+From: roger at r-schuster.de (Roger Schuster)
+Date: Sun, 19 Jan 2014 15:08:57 +0100
+Subject: [Therion] Interesting page
+In-Reply-To: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+References: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+Message-ID: <52DBDC79.3030703@r-schuster.de>
+
+The Inkscape package looks good.
+
+Am 19.01.2014 10:50, schrieb Martin Sluka:
+> http://jaskinie.jaszczur.org/index_en.html
+>
+> m.
+>
+>
+
+
+
+From wookey at wookware.org  Tue Jan 21 15:48:12 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jan 2014 14:48:12 +0000
+Subject: [Therion] Background images and insert images not working
+In-Reply-To: <20131227013744.GU22290@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+	<20131225015946.GK22290@stoneboat.aleph1.co.uk>
+	<CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+	<20131227013744.GU22290@stoneboat.aleph1.co.uk>
+Message-ID: <20140121144811.GR21788@stoneboat.aleph1.co.uk>
+
++++ Wookey [2013-12-27 01:37 +0000]:
+> +++ cawa sorix [2013-12-25 17:25 +0100]:
+
+> Aha - it hapens on jessie and sid, but not wheezy. OK. I can reproduce now. Cheers Cawa.
+> 
+> Something to do with the libtk-img package perhaps, as that's
+> responsible for adding tck/tk png support. It's installed.
+> http://packages.qa.debian.org/libt/libtk-img.html shows that it changed
+> from 1.3 to 1.4  between stale (wheezy) and testing (jessie), which sugests that 1.3 works and 1.4 doesn't.
+> SImply reverting to v1.3 doesn't fix it, but maybe it's need to be rebuilt agianst the corresponding headers too?
+
+I rebuilt libtk-img 1:1.3-release-12 from stable in unstable and run
+xtherion against it. It still fails in exactly the same way as with
+libtk-img 1.4
+
+
+
+
+> So trying to insert background in a new (empty) .th2 file gives:
+> tag "command" doesn't match any items
+>     while executing
+> "$xth(me,can) lower $xth(me,imgs,$imgx,image) command"
+
+I have spend some time fiddling with this, but as I don;t really understand tcl I'm not getting very far.
+
+I beleive that "$xth(me,can)" is the xtherion map-editor canvas
+'object'?, and "lower $xth(me,imgs,$imgx,image) " is the image in
+question. 'command' just seems to e a string not a variable so I don't know what 'command' it is trying to do?
+
+Removing 'command' from that line stops the error "tag "command" doesn't
+match any items", but doesn't change the behaviour.
+
+I don't understand why this works OK on stable, but not unstable. Given
+that libtk-img 1.3 and 1.4 seem to behave exactly the same in this
+regard, I guess the problem must be something else. Does that 'command' string
+get passed into libtk-img or processed elsewhere in xtherion?
+
+I've tried and failed to find the API spec for the tk-img library to help understand this.
+
+There do seem to have been some quite significant changes in the layout
+and packaging between 1.3 and 1.4, but nominally not in the
+functionality so far as I can tell.
+
+Can someone who understands tcl and libtk-img please give me some clues on how to debug this.
+
+cc:ed to the libtk-img maintainer in the hope that he can shed some light.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From v_su at inbox.ru  Tue Jan 21 16:14:12 2014
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Tue, 21 Jan 2014 23:14:12 +0800
+Subject: [Therion] Background images and insert images not working
+In-Reply-To: <20140121144811.GR21788@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>	<20131224034148.GE22290@stoneboat.aleph1.co.uk>	<20131224042122.GF22290@stoneboat.aleph1.co.uk>	<20131225015946.GK22290@stoneboat.aleph1.co.uk>	<CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>	<20131227013744.GU22290@stoneboat.aleph1.co.uk>
+	<20140121144811.GR21788@stoneboat.aleph1.co.uk>
+Message-ID: <52DE8EC4.3050203@inbox.ru>
+
+Hello
+
+Probably imagemagick command line tools is missing?
+
+I had a similar problem and installing imagemagick helped to solve it
+
+
+21.01.2014 22:48, Wookey пишет:
+> +++ Wookey [2013-12-27 01:37 +0000]:
+>> +++ cawa sorix [2013-12-25 17:25 +0100]:
+>> Aha - it hapens on jessie and sid, but not wheezy. OK. I can reproduce now. Cheers Cawa.
+>>
+>> Something to do with the libtk-img package perhaps, as that's
+>> responsible for adding tck/tk png support. It's installed.
+>> http://packages.qa.debian.org/libt/libtk-img.html shows that it changed
+>> from 1.3 to 1.4  between stale (wheezy) and testing (jessie), which sugests that 1.3 works and 1.4 doesn't.
+>> SImply reverting to v1.3 doesn't fix it, but maybe it's need to be rebuilt agianst the corresponding headers too?
+> I rebuilt libtk-img 1:1.3-release-12 from stable in unstable and run
+> xtherion against it. It still fails in exactly the same way as with
+> libtk-img 1.4
+>
+>
+>
+>
+>> So trying to insert background in a new (empty) .th2 file gives:
+>> tag "command" doesn't match any items
+>>      while executing
+>> "$xth(me,can) lower $xth(me,imgs,$imgx,image) command"
+> I have spend some time fiddling with this, but as I don;t really understand tcl I'm not getting very far.
+>
+> I beleive that "$xth(me,can)" is the xtherion map-editor canvas
+> 'object'?, and "lower $xth(me,imgs,$imgx,image) " is the image in
+> question. 'command' just seems to e a string not a variable so I don't know what 'command' it is trying to do?
+>
+> Removing 'command' from that line stops the error "tag "command" doesn't
+> match any items", but doesn't change the behaviour.
+>
+> I don't understand why this works OK on stable, but not unstable. Given
+> that libtk-img 1.3 and 1.4 seem to behave exactly the same in this
+> regard, I guess the problem must be something else. Does that 'command' string
+> get passed into libtk-img or processed elsewhere in xtherion?
+>
+> I've tried and failed to find the API spec for the tk-img library to help understand this.
+>
+> There do seem to have been some quite significant changes in the layout
+> and packaging between 1.3 and 1.4, but nominally not in the
+> functionality so far as I can tell.
+>
+> Can someone who understands tcl and libtk-img please give me some clues on how to debug this.
+>
+> cc:ed to the libtk-img maintainer in the hope that he can shed some light.
+>
+> Wookey
+
+
+
+From wookey at wookware.org  Tue Jan 21 16:41:39 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jan 2014 15:41:39 +0000
+Subject: [Therion] Background images and insert images not working
+In-Reply-To: <52DE8EC4.3050203@inbox.ru>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+	<20131225015946.GK22290@stoneboat.aleph1.co.uk>
+	<CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+	<20131227013744.GU22290@stoneboat.aleph1.co.uk>
+	<20140121144811.GR21788@stoneboat.aleph1.co.uk>
+	<52DE8EC4.3050203@inbox.ru>
+Message-ID: <20140121154139.GT21788@stoneboat.aleph1.co.uk>
+
++++ Vasily Vl. Suhachev [2014-01-21 23:14 +0800]:
+> Hello
+> 
+> Probably imagemagick command line tools is missing?
+> 
+> I had a similar problem and installing imagemagick helped to solve it
+
+Thanks for the suggestion, but no, imagemagick is installed, so that's
+not it. And I don't think either therion or libtk-img should need this,
+not for displaying background images, anyway.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Tue Jan 21 18:37:07 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jan 2014 17:37:07 +0000
+Subject: [Therion] Bug#718294: Background images and insert images not
+ working
+In-Reply-To: <CAOq2pXFKE85TB7SjstEnpxG5wnhwQ+aFOpfg9uVnSkmGBvfEgA@mail.gmail.com>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+	<20131225015946.GK22290@stoneboat.aleph1.co.uk>
+	<CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+	<20131227013744.GU22290@stoneboat.aleph1.co.uk>
+	<20140121144811.GR21788@stoneboat.aleph1.co.uk>
+	<CAOq2pXFKE85TB7SjstEnpxG5wnhwQ+aFOpfg9uVnSkmGBvfEgA@mail.gmail.com>
+Message-ID: <20140121173707.GV21788@stoneboat.aleph1.co.uk>
+
++++ Sergei Golovan [2014-01-21 20:01 +0400]:
+> Hi!
+> 
+> On Tue, Jan 21, 2014 at 6:48 PM, Wookey <wookey at wookware.org> wrote:
+> > +++ Wookey [2013-12-27 01:37 +0000]:
+> >> +++ cawa sorix [2013-12-25 17:25 +0100]:
+> >
+> >> Aha - it hapens on jessie and sid, but not wheezy. OK. I can reproduce now. Cheers Cawa.
+> 
+> There was a similar bugreport for Wavesurfer:
+> http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719109
+> 
+> Turns out that the change is in Tk and it's deliberate. Try to add
+> [catch] command to the offending line. At least if a tag doesn't match
+> any items it doesn't matter whether you do something with it or not.
+
+OK. I can confirm that using libtk-img 1.4 and downgrading tk8.5
+8.5.14-2 to 8.5.11-2 makes it work as expected. So this indeed almost
+certainly the same bug.
+
+I tried this patch to put in the 'catch', which had already been
+suggested and tried in:
+http://mailman.speleo.sk/pipermail/therion/2013-July/004447.html and I
+already tried it myself to check.
+
+It didn't fix the problem, but I think I must have suffered from a) not
+fixing all 3 instances of this in the code and/or b) running the
+instaled version of xtherion, not the modified one, and/or c) modifiying
+the tcl me_imgs.tcl source but not rebuilding the xtherion app. Whatever it was it
+seemed not to be fixing the problem, and presumably Andrew made a
+similar mistake in the above mail thread.
+
+But in fact I have just made sure I got all of those right and this fix
+does indeed work. Grrr.
+
+Thank you Sergei for getting me back on the right track. Pity the
+previous mistakes kept me off it, otherwise this would have got fixed a
+lot sooner.
+
+Now I can finally upload a working version, and upstream can take this
+patch for 5.3.13.
+
+BTW can someone explain to me why giving an invalid tag 'command' here
+and then ignoring the error this generates is the right way to do
+things? Wouldn't it be better not to give an invalid tag?
+
+Index: therion-5.3.12/xtherion/me_imgs.tcl
+===================================================================
+--- therion-5.3.12.orig/xtherion/me_imgs.tcl	2011-06-08 16:06:08.000000000 +0100
++++ therion-5.3.12/xtherion/me_imgs.tcl	2014-01-21 17:21:55.568707794 +0000
+@@ -537,7 +537,7 @@
+   }
+ 
+   # and change coordinates
+-  $xth(me,can) lower $xth(me,imgs,$imgx,image) command
++  catch {$xth(me,can) lower $xth(me,imgs,$imgx,image) command}
+   set iidx [lsearch -exact $xth(me,imgs,xlist) $imgx]
+   if {$iidx > 0} {
+     $xth(me,can) lower $xth(me,imgs,$imgx,image) $xth(me,imgs,[lindex $xth(me,imgs,xlist) [expr $iidx - 1]],image)
+@@ -805,7 +805,7 @@
+       set iw [image width $imgid]
+       set ih [image height $imgid]
+       lappend xth(me,imgs,$imgx,subimgs) [list $subimg $subcimg 0 0 $iw $ih]
+-      $xth(me,can) lower $xth(me,imgs,$imgx,image) command
++      catch {$xth(me,can) lower $xth(me,imgs,$imgx,image) command}
+       if {$iidx > 0} {
+         $xth(me,can) lower $xth(me,imgs,$imgx,image) $xth(me,imgs,[lindex $xth(me,imgs,xlist) [expr $iidx - 1]],image)
+       }
+@@ -831,7 +831,7 @@
+           lappend xth(me,imgs,$imgx,subimgs) [list $subimg $subcimg $subx $suby $subxx $subyy]
+         }
+       }
+-      $xth(me,can) lower $xth(me,imgs,$imgx,image) command
++      catch {$xth(me,can) lower $xth(me,imgs,$imgx,image) command}
+       set iidx [lsearch -exact $xth(me,imgs,xlist) $imgx]
+       if {$iidx > 0} {
+         $xth(me,can) lower $xth(me,imgs,$imgx,image) $xth(me,imgs,[lindex $xth(me,imgs,xlist) [expr $iidx - 1]],image)
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Tue Jan 21 23:19:32 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 21 Jan 2014 22:19:32 +0000
+Subject: [Therion] Fw: therion_5.3.12-3_amd64.changes ACCEPTED into unstable
+Message-ID: <20140121221932.GW21788@stoneboat.aleph1.co.uk>
+
+As discussed in previous threads, there are various useful patches in here that should go upstream.
+
+In a few hours they will be available here: http://sources.debian.net/src/therion/5.3.12-3/debian/patches
+
+----- Forwarded message from Debian FTP Masters <ftpmaster at ftp-master.debian.org> -----
+
+Date: Tue, 21 Jan 2014 22:00:53 +0000
+From: Debian FTP Masters <ftpmaster at ftp-master.debian.org>
+To: Wookey <wookey at debian.org>
+Subject: therion_5.3.12-3_amd64.changes ACCEPTED into unstable
+
+Changes: 
+ therion (5.3.12-3) unstable; urgency=low
+ .
+   * Fix 'missing background images' tcl issue (Closes: #718294)
+   * Add Olly to uploaders.
+ .
+   [Olly Betts]
+   * "Standards-Version: 3.9.5" (no changes required).
+   * debian/copyright: Update copyright years.
+   * debian/rules: xz compression for binary packages is now the default, so
+     don't specify it explicitly.
+   * Update from debhelper compat level 5 to 9.
+   * wx3.0 w-i-p patch included but not applied
+
+----- End forwarded message -----
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From lists at group-s.sk  Wed Jan 22 23:02:02 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 22 Jan 2014 23:02:02 +0100
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+	<CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+	<EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+Message-ID: <CAP35+gEKT5PcJ4w7mSL43YiabCF9=Om4tEEbX2qiTu9xgK4_yg@mail.gmail.com>
+
+I have upgraded survex img parser in 5.3.13 version released few minutes
+ago.
+
+No other important changes have been made.
+
+S.
+
+
+On 15 January 2014 23:15, Ladislav Blažek <lada at blazcata.cz> wrote:
+
+> FYI, Stacho is working on the issue so expect updated source/Windows build
+> soon.
+>
+> 15. 1. 2014 v 19:17, Footleg <drfootleg at gmail.com>:
+>
+> Thanks Bruce.
+>
+> Just to be completely clear in case anyone is confused, the fix which
+> Bruce has documented on the wiki is for when Therion is using Survex to
+> generate centreline coordinates from survey data entered into Therion
+> project files. My 'generate the 3d file using the -v7 argument' fix is for
+> projects where you import an already generated 3d file into the Therion
+> project to define the survey centreline (e.g. Within the 'survey' block:
+> import West_Kingsdale_System.3d -surveys use -cs OSGB:SD  )
+>
+> Footleg
+>
+>
+>
+> On 15 January 2014 17:46, Bruce <bruce at tomo.co.nz> wrote:
+>
+>>  Graham
+>>
+>> The Windows solution is to either install Survex 1.2.6 (I think) which
+>> produces –v7 format .3d files, or
+>>
+>> use a current version of Survex and tell it to produce –v7 format, either
+>> Footleg’ sway or as I just added to the wiki
+>>
+>>
+>> http://therion.speleo.sk/wiki/doku.php/faq#how_to_pass_survex_command_line_parameters_using_therion
+>>
+>>
+>>
+>> Bruce
+>>
+>>
+>>  ------------------------------
+>>
+>> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+>> Behalf Of *Graham Mullan
+>> *Sent:* Thursday, 16 January 2014 3:49 a.m.
+>> *To:* therion at speleo.sk
+>> *Subject:* [Therion] Compatibility with Survex
+>>
+>>
+>>
+>> In the latest project in which I am involved, I am having to import data
+>> from Survex (actually from Compass via Survex but that's another story!).
+>> This requires importing survex 3d files. The problem that I have is that
+>> .3d files generated in the most recent iterations of Survex cannot be read
+>> by Therion. I had the same problem some years back & eventually they caught
+>> up with each other, but it seems that the Survex format has changed too
+>> much once again.
+>>
+>>
+>>
+>> Can this be rectified, please 'cos it's a pain in the bum.
+>>
+>>
+>>
+>> Graham
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140122/77736f67/attachment.htm>
+
+From wookey at wookware.org  Thu Jan 23 03:50:55 2014
+From: wookey at wookware.org (Wookey)
+Date: Thu, 23 Jan 2014 02:50:55 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <CAP35+gEKT5PcJ4w7mSL43YiabCF9=Om4tEEbX2qiTu9xgK4_yg@mail.gmail.com>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+	<CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+	<EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+	<CAP35+gEKT5PcJ4w7mSL43YiabCF9=Om4tEEbX2qiTu9xgK4_yg@mail.gmail.com>
+Message-ID: <20140123025054.GF21788@stoneboat.aleph1.co.uk>
+
++++ Stacho Mudrak [2014-01-22 23:02 +0100]:
+>    I have upgraded survex img parser in 5.3.13 version released few minutes
+>    ago.
+>    No other important changes have been made.
+
+Thanks for including nearly all the non debian-specific patches upstream Stacho.
+
+Is there any particualar reason you didn't include the 'wrong-size tabs'
+whitespace patch? That seems like an uncontroversial upstream fix.
+
+Anyway, it was a gloriously simple update - uscan, and quilt-delete the
+patches that are now upstream. I'll upload a 5.3.13 soon assuming it
+builds/tests OK.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From lists at group-s.sk  Thu Jan 23 08:52:36 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 23 Jan 2014 08:52:36 +0100
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <20140123025054.GF21788@stoneboat.aleph1.co.uk>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+	<CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+	<EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+	<CAP35+gEKT5PcJ4w7mSL43YiabCF9=Om4tEEbX2qiTu9xgK4_yg@mail.gmail.com>
+	<20140123025054.GF21788@stoneboat.aleph1.co.uk>
+Message-ID: <CAP35+gGf_9AiU0U_=4AzWQRD8c45AEpBLtX=uywYNPcTg7Sh4Q@mail.gmail.com>
+
+>
+> Is there any particualar reason you didn't include the 'wrong-size tabs'
+> whitespace patch? That seems like an uncontroversial upstream fix.
+>
+
+To be honest, not enough time to read the "patch" manpage. See
+https://xkcd.com/1168/ :)
+
+I modified files manually in mc, I would like to clean the code later,
+together with compiler warnings, there are still a lot of them.
+
+Thanks, S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140123/3e6393dc/attachment.htm>
+
+From graham.mullan at coly.org.uk  Thu Jan 23 13:55:31 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Thu, 23 Jan 2014 12:55:31 -0000
+Subject: [Therion] Compatibility with Survex
+Message-ID: <A961D0AC88A2407CBCA91A8E4B4B144A@GrahamsMainPC>
+
+Thanks Stacho
+ 
+Graham
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140123/d91abb17/attachment.htm>
+
+From wookey at wookware.org  Fri Jan 24 16:01:51 2014
+From: wookey at wookware.org (Wookey)
+Date: Fri, 24 Jan 2014 15:01:51 +0000
+Subject: [Therion] Compatibility with Survex
+In-Reply-To: <20140123025054.GF21788@stoneboat.aleph1.co.uk>
+References: <847CAD3366D446258D064D05EE6D2050@GrahamsMainPC>
+	<342587E5B1264379A74E4A4E32DC3D40@JUICEBRAIN>
+	<CAJkGg4=e8FqRPc_KdFy5HRCn-jF-AnTKhRX2dtupgiFn5PN8Vw@mail.gmail.com>
+	<EB80D9C9-F57F-4BDC-A551-29F7A88CEF1B@blazcata.cz>
+	<CAP35+gEKT5PcJ4w7mSL43YiabCF9=Om4tEEbX2qiTu9xgK4_yg@mail.gmail.com>
+	<20140123025054.GF21788@stoneboat.aleph1.co.uk>
+Message-ID: <20140124150151.GR21788@stoneboat.aleph1.co.uk>
+
++++ Wookey [2014-01-23 02:50 +0000]:
+> +++ Stacho Mudrak [2014-01-22 23:02 +0100]:
+> >    I have upgraded survex img parser in 5.3.13 version released few minutes
+> >    ago.
+> >    No other important changes have been made.
+> 
+> Thanks for including nearly all the non debian-specific patches upstream Stacho.
+> 
+> Is there any particualar reason you didn't include the 'wrong-size tabs'
+> whitespace patch? That seems like an uncontroversial upstream fix.
+> 
+> Anyway, it was a gloriously simple update - uscan, and quilt-delete the
+> patches that are now upstream. I'll upload a 5.3.13 soon assuming it
+> builds/tests OK.
+
+OK. Therion 5.3.13 is now in Debian unstable. With the serious 'no
+background images' bug finally fixed. As ever feedback is welcome if
+there are remaining issues..
+
+Hopefully this will be a good release to end up in the next stable
+release (it would be good to get the wx 3.0 transition done too for
+that, but currently loch hangs. Olly would be very happy if anyone did
+some work on looking into that, I'm sure. There is a patch to let it
+build in the package, but not applied:
+http://sources.debian.net/src/therion/5.3.13-1/debian/patches/wx3.0-compat.patch.diff).
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From herich at speleodd.sk  Sun Jan 26 09:51:25 2014
+From: herich at speleodd.sk (herich at speleodd.sk)
+Date: Sun, 26 Jan 2014 09:51:25 +0100
+Subject: [Therion] <br> problem
+Message-ID: <20140126095125.685561f88bde60zx@www.horde.sk>
+
+Hello,
+does anybody know, how to force the "<br>" (next line) make what it  
+should make in legend of pdf maps as comment, explo -, topo- team or  
+anything else. The example bellow does not work. ..
+
+code tex-map
+\comment={example<br>example}
+endcode
+
+
+Thank you
+Paľo Herich
+
+
+
+From andrew at wotcc.org.uk  Sun Jan 26 12:52:07 2014
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 26 Jan 2014 11:52:07 +0000
+Subject: [Therion] <br> problem
+In-Reply-To: <20140126095125.685561f88bde60zx@www.horde.sk>
+References: <20140126095125.685561f88bde60zx@www.horde.sk>
+Message-ID: <CAN+2M_FO=XAu0AiyEP_F=bueqsJzUHxRxxt=i307pkjOR8OjGA@mail.gmail.com>
+
+If you only want to change the comment it does not need to be done in code
+just use
+
+map-comment "example<br>example"
+
+Real example at
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfig_A0plan
+
+If you are making your own legend or doing something that requires tex, you
+need to use
+\medskip
+
+for a new line (think \bigskip also works)
+
+again real example altering the \cavename at
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfigres+whitespot
+
+The outcomes of the above (or maybe a little older version) can be seen at
+
+http://cave-registry.org.uk/cheddarcatchment
+
+Andrew
+On 26 Jan 2014 09:33, <herich at speleodd.sk> wrote:
+
+> Hello,
+> does anybody know, how to force the "<br>" (next line) make what it should
+> make in legend of pdf maps as comment, explo -, topo- team or anything
+> else. The example bellow does not work. ..
+>
+> code tex-map
+> \comment={example<br>example}
+> endcode
+>
+>
+> Thank you
+> Paľo Herich
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140126/97550e1a/attachment.htm>
+
+From herich at speleodd.sk  Sun Jan 26 18:04:32 2014
+From: herich at speleodd.sk (herich at speleodd.sk)
+Date: Sun, 26 Jan 2014 18:04:32 +0100
+Subject: [Therion] <br> problem
+In-Reply-To: <CAN+2M_FO=XAu0AiyEP_F=bueqsJzUHxRxxt=i307pkjOR8OjGA@mail.gmail.com>
+References: <20140126095125.685561f88bde60zx@www.horde.sk>
+	<CAN+2M_FO=XAu0AiyEP_F=bueqsJzUHxRxxt=i307pkjOR8OjGA@mail.gmail.com>
+Message-ID: <20140126180432.17386a4pi79f7cww@www.horde.sk>
+
+Thank You Andrew for very usefull lesson, everything works perfect  
+just as I did imagine..
+Paľo Herich
+
+
+
+Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> If you only want to change the comment it does not need to be done in code
+> just use
+>
+> map-comment "example<br>example"
+>
+> Real example at
+>
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfig_A0plan
+>
+> If you are making your own legend or doing something that requires tex, you
+> need to use
+> \medskip
+>
+> for a new line (think \bigskip also works)
+>
+> again real example altering the \cavename at
+>
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfigres+whitespot
+>
+> The outcomes of the above (or maybe a little older version) can be seen at
+>
+> http://cave-registry.org.uk/cheddarcatchment
+>
+> Andrew
+> On 26 Jan 2014 09:33, <herich at speleodd.sk> wrote:
+>
+>> Hello,
+>> does anybody know, how to force the "<br>" (next line) make what it should
+>> make in legend of pdf maps as comment, explo -, topo- team or anything
+>> else. The example bellow does not work. ..
+>>
+>> code tex-map
+>> \comment={example<br>example}
+>> endcode
+>>
+>>
+>> Thank you
+>> Paľo Herich
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+
+
+
+
+From graham.mullan at coly.org.uk  Mon Jan 27 09:21:01 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Mon, 27 Jan 2014 08:21:01 -0000
+Subject: [Therion] <br> problem
+In-Reply-To: <mailman.1.1390734002.21324.therion@speleo.sk>
+References: <mailman.1.1390734002.21324.therion@speleo.sk>
+Message-ID: <34C6EBD0321B4753839D856095DBE12B@GrahamsMainPC>
+
+ 
+I don't know much about coding, but our files contain <br>\ rather than just
+<br>
+
+You could try that.
+
+Graham
+
+
+
+From andrew at wotcc.org.uk  Mon Jan 27 10:07:00 2014
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 27 Jan 2014 09:07:00 +0000
+Subject: [Therion] <br> problem
+In-Reply-To: <34C6EBD0321B4753839D856095DBE12B@GrahamsMainPC>
+References: <mailman.1.1390734002.21324.therion@speleo.sk>
+	<34C6EBD0321B4753839D856095DBE12B@GrahamsMainPC>
+Message-ID: <CAN+2M_Hdsz1iF=S53h0sLgdaD=E73GhhL36QPwJ=UF=sLSg=Fw@mail.gmail.com>
+
+Used in map-comment context, the \ means the next line is continuation of
+the current line. It is convenient to use it after a break so the text is
+set out similar to the final output.
+
+Martin has also pointed out in TeX code \ (without the skip) is just a new
+line without a space, but I seem to rember having problems with it when
+used in Therion
+
+Andrew
+On 27 Jan 2014 08:21, "Graham Mullan" <graham.mullan at coly.org.uk> wrote:
+
+>
+> I don't know much about coding, but our files contain <br>\ rather than
+> just
+> <br>
+>
+> You could try that.
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140127/f0352bac/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Jan 30 17:21:35 2014
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 30 Jan 2014 16:21:35 +0000
+Subject: [Therion] Feature for the wish list
+Message-ID: <52EA7C0F.2030907@wotcc.org.uk>
+
+Hello
+
+Just been working on some complicated surveys, and inevitably when
+surveying new passage in the cave you draw a cross section and then the
+new cave goes over it, or even over itself.
+
+It strikes me that in xtherion you can hide images, I think that it
+would be really useful if scraps could be hidden then you could draw one
+scrap then hide it and draw the scrap that is under it. Currently I
+import the image twice and draw it displaced, but that has the
+disadvantage that the scraps do not automatically join.
+
+It is very minor, but if easy to do would be a really useful feature
+
+thanks
+
+Andrew
+
+
+From martinsluka at mac.com  Thu Jan 30 18:43:09 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jan 2014 18:43:09 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EA7C0F.2030907@wotcc.org.uk>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+Message-ID: <77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+
+Andrew,
+
+if you hide points section, you hide all cross sections. I use it for complex map. Cross sections are only in atlas.
+
+m.
+
+Jan 30, 2014 v 5:21 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> Hello
+> 
+> Just been working on some complicated surveys, and inevitably when
+> surveying new passage in the cave you draw a cross section and then the
+> new cave goes over it, or even over itself.
+> 
+> It strikes me that in xtherion you can hide images, I think that it
+> would be really useful if scraps could be hidden then you could draw one
+> scrap then hide it and draw the scrap that is under it. Currently I
+> import the image twice and draw it displaced, but that has the
+> disadvantage that the scraps do not automatically join.
+> 
+> It is very minor, but if easy to do would be a really useful feature
+> 
+> thanks
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/ea383f16/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Jan 30 19:01:44 2014
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 30 Jan 2014 18:01:44 +0000
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+Message-ID: <52EA9388.3080503@wotcc.org.uk>
+
+I meant when you are trying to draw it up in xtherion, not the output,
+which I think that you mean,
+
+Cross sections are available in map, hmmm are we understanding each other?
+
+In this file,
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Charterhouse/2009/StalPotInlet/StalPotInlet.th2
+
+
+because one passage was over the other, I have had to load copies of the
+image then drawn the scraps one on each one, if I could just hide a
+scrap I could have just drawn them on the same image, then the joins and
+everything would have been in the right place.
+
+Yes it would have been easier if I had started a new file for each part,
+but when exploring new cave sometimes you do not realise until it is too
+late. I have lots of examples of this, picked an old one as it is one of
+the clearest.
+
+Andrew
+
+On 30/01/14 17:43, Martin Sluka wrote:
+> Andrew,
+> 
+> if you hide points section, you hide all cross sections. I use it for complex map. Cross sections are only in atlas.
+> 
+> m.
+> 
+> Jan 30, 2014 v 5:21 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+>> Hello
+>>
+>> Just been working on some complicated surveys, and inevitably when
+>> surveying new passage in the cave you draw a cross section and then the
+>> new cave goes over it, or even over itself.
+>>
+>> It strikes me that in xtherion you can hide images, I think that it
+>> would be really useful if scraps could be hidden then you could draw one
+>> scrap then hide it and draw the scrap that is under it. Currently I
+>> import the image twice and draw it displaced, but that has the
+>> disadvantage that the scraps do not automatically join.
+>>
+>> It is very minor, but if easy to do would be a really useful feature
+>>
+>> thanks
+>>
+>> Andrew
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> Martin Sluka - Studio Sluka
+> 
+> prodej Hahnemühle DFA 
+> tisk fotografií, reprodukcí a volné tvorby
+> 
+> Na Rovnosti 2692/21
+> 130 00 Praha 3
+> tel.: +420 603513640
+> mail: martinsluka at mac.com
+> web: http://www.piezografie.cz
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From martinsluka at mac.com  Thu Jan 30 19:47:35 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jan 2014 19:47:35 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EA9388.3080503@wotcc.org.uk>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+	<52EA9388.3080503@wotcc.org.uk>
+Message-ID: <B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+
+I'm afraid I don't understand well. Is there any reason, way you don't insert two times the same image into map editor? Side by side.
+
+m.
+
+
+
+Jan 30, 2014 v 7:01 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> I meant when you are trying to draw it up in xtherion, not the output,
+> which I think that you mean,
+> 
+> Cross sections are available in map, hmmm are we understanding each other?
+> 
+> In this file,
+> 
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/Charterhouse/2009/StalPotInlet/StalPotInlet.th2
+> 
+> 
+> because one passage was over the other, I have had to load copies of the
+> image then drawn the scraps one on each one, if I could just hide a
+> scrap I could have just drawn them on the same image, then the joins and
+> everything would have been in the right place.
+> 
+> Yes it would have been easier if I had started a new file for each part,
+> but when exploring new cave sometimes you do not realise until it is too
+> late. I have lots of examples of this, picked an old one as it is one of
+> the clearest.
+> 
+> Andrew
+> 
+> On 30/01/14 17:43, Martin Sluka wrote:
+>> Andrew,
+>> 
+>> if you hide points section, you hide all cross sections. I use it for complex map. Cross sections are only in atlas.
+>> 
+>> m.
+>> 
+>> Jan 30, 2014 v 5:21 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+>> 
+>>> Hello
+>>> 
+>>> Just been working on some complicated surveys, and inevitably when
+>>> surveying new passage in the cave you draw a cross section and then the
+>>> new cave goes over it, or even over itself.
+>>> 
+>>> It strikes me that in xtherion you can hide images, I think that it
+>>> would be really useful if scraps could be hidden then you could draw one
+>>> scrap then hide it and draw the scrap that is under it. Currently I
+>>> import the image twice and draw it displaced, but that has the
+>>> disadvantage that the scraps do not automatically join.
+>>> 
+>>> It is very minor, but if easy to do would be a really useful feature
+>>> 
+>>> thanks
+>>> 
+>>> Andrew
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+>> Martin Sluka - Studio Sluka
+>> 
+>> prodej Hahnemühle DFA 
+>> tisk fotografií, reprodukcí a volné tvorby
+>> 
+>> Na Rovnosti 2692/21
+>> 130 00 Praha 3
+>> tel.: +420 603513640
+>> mail: martinsluka at mac.com
+>> web: http://www.piezografie.cz
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/41217540/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sn?mek obrazovky 2014-01-30 v?7.45.05 PM.png
+Type: image/png
+Size: 34140 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/41217540/attachment.png>
+
+From martinsluka at mac.com  Thu Jan 30 19:53:56 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jan 2014 19:53:56 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EA9388.3080503@wotcc.org.uk>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+	<52EA9388.3080503@wotcc.org.uk>
+Message-ID: <397C7871-B18D-4BA3-B7EB-8553904A54B3@mac.com>
+
+I'm afraid I don't understand where is the problem. I do it the same way. No problem with joins.
+
+Anyway you may generate PDF from first scrap and export it as png and use this png to draw second scrap.
+
+m.
+
+
+Jan 30, 2014 v 7:01 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> because one passage was over the other, I have had to load copies of the
+> image then drawn the scraps one on each one, if I could just hide a
+> scrap I could have just drawn them on the same image, then the joins and
+> everything would have been in the right place.
+> 
+> Yes it would have been easier if I had started a new file for each part,
+> but when exploring new cave sometimes you do not realise until it is too
+> late. I have lots of examples of this, picked an old one as it is one of
+> the clearest.
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/add63ab1/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Jan 30 19:57:27 2014
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 30 Jan 2014 18:57:27 +0000
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+	<52EA9388.3080503@wotcc.org.uk>
+	<B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+Message-ID: <52EAA097.8070206@wotcc.org.uk>
+
+That is the way that I do it, but thing like trying to see if labels
+overlap, and where cross section etc, would be easier if they are in the
+right place, but then drawing is difficult as there are the lines, but
+if you could turn a scrap visibility on and off, it would be good. If it
+is easy to impliment it might be worth doing, if it is not easy, as you
+say there are plenty of other ways to do it
+
+Andrew
+
+On 30/01/14 18:47, Martin Sluka wrote:
+> I'm afraid I don't understand well. Is there any reason, way you don't insert 
+> two times the same image into map editor? Side by side.
+> 
+
+
+From martinsluka at mac.com  Thu Jan 30 20:00:04 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jan 2014 20:00:04 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EAA097.8070206@wotcc.org.uk>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+	<52EA9388.3080503@wotcc.org.uk>
+	<B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+	<52EAA097.8070206@wotcc.org.uk>
+Message-ID: <359CE46C-8183-4638-8CD4-8E000791FD3E@mac.com>
+
+Just to add to first scrap in th2 file # in beginning. Maybe with a grep.
+
+;)
+
+m.
+Jan 30, 2014 v 7:57 PM, Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> say there are plenty of other ways to do it
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/4cc3e2bb/attachment.htm>
+
+From Raadjaa at seznam.cz  Thu Jan 30 15:58:17 2014
+From: Raadjaa at seznam.cz (Radek)
+Date: Thu, 30 Jan 2014 15:58:17 +0100 (CET)
+Subject: [Therion] Interesting page
+References: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+Message-ID: <3Fk.L5m5.5H4hgveHGxO.1IwcY9@seznam.cz>
+
+Ahoj Martine,
+ chtěl jsem se připomenout ohledně akumulátoru na Disto X 310. Máš už nějaký
+k dispozici?
+Radek
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/ab5092d3/attachment.htm>
+
+From martinsluka at mac.com  Thu Jan 30 20:53:29 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jan 2014 20:53:29 +0100
+Subject: [Therion] Interesting page
+In-Reply-To: <3Fk.L5m5.5H4hgveHGxO.1IwcY9@seznam.cz>
+References: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+	<3Fk.L5m5.5H4hgveHGxO.1IwcY9@seznam.cz>
+Message-ID: <61D255C1-6ED7-4197-BB14-665D8AEC61A2@mac.com>
+
+Mám, inzeroval jsem to všude.
+
+Pošli adresu, stojí 600 bez DPH
+
+m.
+
+
+Jan 30, 2014 v 3:58 PM, Radek <Raadjaa at seznam.cz>:
+
+> Ahoj Martine,
+>  chtěl jsem se připomenout ohledně akumulátoru na Disto X 310. Máš už nějaký k dispozici?
+> Radek
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/105db730/attachment.htm>
+
+From Raadjaa at seznam.cz  Thu Jan 30 21:59:25 2014
+From: Raadjaa at seznam.cz (Radek)
+Date: Thu, 30 Jan 2014 21:59:25 +0100 (CET)
+Subject: [Therion] Interesting page
+References: <0867905C-F5B5-4658-9747-9BF7AC631C24@mac.com>
+	<3Fk.L5m5.5H4hgveHGxO.1IwcY9@seznam.cz>
+	<61D255C1-6ED7-4197-BB14-665D8AEC61A2@mac.com>
+Message-ID: <4N{.L5nD.35nsCXjKPf4.1Iwhqj@seznam.cz>
+
+Aha, no, já teď poslední dobou občas nestíhám sledovat... Tak mi napiš číslo
+účtu a celkovou částku, příkazy k úhradě zasílá předseda naší ZO z Olomouce.
+A doručovací adresa na mě je:
+Radek Svojanovský
+Svojanov 93
+569 73
+ klidně můžeš poslat, až ti peníze přijdou na účet, on ten modul taky ještě 
+nějaký den pocestuje ze Švajcu. :-)
+R.
+
+
+
+---------- Původní zpráva ----------
+Od: Martin Sluka <martinsluka at mac.com>
+Datum: 30. 1. 2014
+Předmět: Re: [Therion] Interesting page
+
+"
+Mám, inzeroval jsem to všude.
+
+
+
+Pošli adresu, stojí 600 bez DPH
+
+
+
+
+m.
+
+
+
+
+
+
+
+Jan 30, 2014 v 3:58 PM, Radek <Raadjaa at seznam.cz(mailto:Raadjaa at seznam.cz)>:
+
+"
+Ahoj Martine,
+ chtěl jsem se připomenout ohledně akumulátoru na Disto X 310. Máš už nějaký
+k dispozici?
+Radek
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk(mailto:Therion at speleo.sk)
+http://mailman.speleo.sk/mailman/listinfo/therion
+"
+
+
+
+
+
+
+
+
+Martin Sluka - Studio Sluka
+
+
+
+
+prodej Hahnemühle DFA 
+
+tisk fotografií, reprodukcí a volné tvorby
+
+
+
+
+Na Rovnosti 2692/21
+
+130 00 Praha 3
+
+tel.: +420 603513640
+
+mail: martinsluka at mac.com(mailto:martinsluka at mac.com)
+
+web: http://www.piezografie.cz(http://www.piezografie.cz)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion"
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140130/7ae58a70/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Thu Jan 30 23:20:25 2014
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Thu, 30 Jan 2014 23:20:25 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EAA097.8070206@wotcc.org.uk>
+References: <52EA7C0F.2030907@wotcc.org.uk>	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>	<52EA9388.3080503@wotcc.org.uk>	<B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+	<52EAA097.8070206@wotcc.org.uk>
+Message-ID: <52EAD029.9050205@inria.fr>
+
+I agree with Andrew, it would be very nice to draw junctions exactly at 
+the place where they should be, especially for 3 or 4 levels that 
+interconnect.
+However, rather than rendering a whole scrap invisible, I would rather 
+like to be able to translate the whole scrap (ormore generaly several 
+objects together) in a single step. That way, I could draw the 
+connections exactly where they should be, and then move my scrap (and 
+the underlying image) to draw the parts which have nothing to do with 
+other levels but superimpose with them. However, moving a group of 
+object could also allow me to correct part of a scrap when I correct a 
+blunder a posteriori.
+
+My 2 cents
+
+Xavier
+
+
+
+Le 30/01/2014 19:57, Andrew Atkinson a écrit :
+> That is the way that I do it, but thing like trying to see if labels
+> overlap, and where cross section etc, would be easier if they are in the
+> right place, but then drawing is difficult as there are the lines, but
+> if you could turn a scrap visibility on and off, it would be good. If it
+> is easy to impliment it might be worth doing, if it is not easy, as you
+> say there are plenty of other ways to do it
+>
+> Andrew
+>
+> On 30/01/14 18:47, Martin Sluka wrote:
+>> I'm afraid I don't understand well. Is there any reason, way you don't insert
+>> two times the same image into map editor? Side by side.
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+
+
+From martinsluka at mac.com  Fri Jan 31 09:24:54 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 31 Jan 2014 09:24:54 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <52EAD029.9050205@inria.fr>
+References: <52EA7C0F.2030907@wotcc.org.uk>
+	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>
+	<52EA9388.3080503@wotcc.org.uk>
+	<B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>
+	<52EAA097.8070206@wotcc.org.uk> <52EAD029.9050205@inria.fr>
+Message-ID: <59D42344-1C90-460F-ABBF-BFD98BA44195@mac.com>
+
+New XTherion… Do you know anybody?  ;)
+
+m.
+
+Jan 30, 2014 v 11:20 PM, Xavier Pennec <Xavier.Pennec at inria.fr>:
+
+> My 2 cents
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140131/89966d57/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Fri Jan 31 15:28:56 2014
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 31 Jan 2014 15:28:56 +0100
+Subject: [Therion] Feature for the wish list
+In-Reply-To: <59D42344-1C90-460F-ABBF-BFD98BA44195@mac.com>
+References: <52EA7C0F.2030907@wotcc.org.uk>	<77EC7ED2-70AA-4558-80E1-09A32BA0BC5D@mac.com>	<52EA9388.3080503@wotcc.org.uk>	<B328D6BC-8A67-48C9-B774-8789B393110D@mac.com>	<52EAA097.8070206@wotcc.org.uk>
+	<52EAD029.9050205@inria.fr>
+	<59D42344-1C90-460F-ABBF-BFD98BA44195@mac.com>
+Message-ID: <52EBB328.9040309@inria.fr>
+
+No this was just a wish, I don't know anyone to implement it :-)
+
+Xavier
+
+
+
+Le 31/01/2014 09:24, Martin Sluka a écrit :
+> New XTherion... Do you know anybody?  ;)
+>
+> m.
+>
+> Jan 30, 2014 v 11:20 PM, Xavier Pennec <Xavier.Pennec at inria.fr 
+> <mailto:Xavier.Pennec at inria.fr>>:
+>
+>> My 2 cents
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140131/69feeea6/attachment.htm>
+

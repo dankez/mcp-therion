@@ -1,0 +1,2503 @@
+From dave.clucas at icloud.com  Sun Apr  1 02:19:41 2018
+From: dave.clucas at icloud.com (Dave Clucas)
+Date: Sun, 01 Apr 2018 08:19:41 +0800
+Subject: [Therion] scaling line ornamentation - metapost (Bruce Mutton)
+In-Reply-To: <mailman.1.1522490402.10438.therion@speleo.sk>
+References: <mailman.1.1522490402.10438.therion@speleo.sk>
+Message-ID: <B903E484-6CED-48E8-A8AA-72FE3C665F8F@icloud.com>
+
+I don’t know what happened to my last reply but it should have been this.
+
+I’m not sure about this but I suspect that it doesn’t involve parsing. It’s likely that the metapost expects a parameter or parameters to be passed to it which it then assigns to the variable Q in its own procedure. It won’t care what the calling program calls it. I think the arrowhead is probably defined within an arrow class (arrow.h perhaps).
+
+Dave Clucas
+dave.clucas at icloud.com
+
+Exploring the World - One cave at a time
+
+
+> On 31 Mar 2018, at 18:00, therion-request at speleo.sk wrote:
+> 
+> Send Therion mailing list submissions to
+> 	therion at speleo.sk
+> 
+> To subscribe or unsubscribe via the World Wide Web, visit
+> 	https://mailman.speleo.sk/listinfo/therion
+> or, via email, send a message with subject or body 'help' to
+> 	therion-request at speleo.sk
+> 
+> You can reach the person managing the list at
+> 	therion-owner at speleo.sk
+> 
+> When replying, please edit your Subject line so it is more specific
+> than "Re: Contents of Therion digest..."
+> 
+> 
+> Today's Topics:
+> 
+>   1. Re: scaling line ornamentation - metapost (Bruce Mutton)
+>      (Dave Clucas)
+> 
+> 
+> ----------------------------------------------------------------------
+> 
+> Message: 1
+> Date: Sat, 31 Mar 2018 09:27:56 +0800
+> From: Dave Clucas <dave.clucas at icloud.com>
+> To: therion at speleo.sk
+> Subject: Re: [Therion] scaling line ornamentation - metapost (Bruce
+> 	Mutton)
+> Message-ID: <AE9F115A-8402-4B59-8801-DEBD248FCAEB at icloud.com>
+> Content-Type: text/plain; charset="utf-8"
+> 
+> An HTML attachment was scrubbed...
+> URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180331/e73a8e70/attachment-0001.html>
+> 
+> ------------------------------
+> 
+> Subject: Digest Footer
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> ------------------------------
+> 
+> End of Therion Digest, Vol 147, Issue 32
+> ****************************************
+
+
+
+From bruce at tomo.co.nz  Mon Apr  2 06:03:20 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 2 Apr 2018 16:03:20 +1200
+Subject: [Therion] ***UNCHECKED*** scaling line ornamentation - metapost
+Message-ID: <000001d3ca37$8b5853b0$a208fb10$@tomo.co.nz>
+
+Thanks Dave
+
+I was not clear enough, -Head can have values; both, all, begin, end, whereas Q can be 0, 1, 2, 3, so some go-between is required.
+
+ 
+
+I finally looked and found part of it in source file thline.h
+
+ 
+
+// tags pre arrow
+
+  TT_LINE_TAG_HEAD_BEGIN = 1,
+
+  TT_LINE_TAG_HEAD_END = 2,
+
+ 
+
+Presumably somewhere else NONE is set to or implied as zero and BOTH is set to BEGIN + END.
+
+That would complete the mapping from the data type that -Head takes as input in a th2 file, to the 0, 1, 2 or 3 that ‘line arrow’ requires for variable Q.
+
+ 
+
+I rather suspect I don’t have the requisite knowledge for this, but sometimes I feel the need to push the boundaries anyway!
+
+ 
+
+:)
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Dave Clucas via Therion
+Sent: Saturday, 31 March 2018 2:28 PM
+To: therion at speleo.sk
+Cc: Dave Clucas <dave.clucas at icloud.com>
+Subject: Re: [Therion] scaling line ornamentation - metapost (Bruce Mutton)
+
+ 
+
+I’m not sure about this but I suspect that it doesn’t involve parsing. It’s likely that the metapost expects a parameter or parameters to be passed to it which it then assigns to the variable Q in its own procedure. It won’t care what the calling program calls it. I think the arrowhead is probably defined within an arrow class (arrow.h perhaps).
+
+ 
+
+ 
+
+On 30 Mar 2018, at 18:00, therion-request at speleo.sk <mailto:therion-request at speleo.sk>  wrote:
+
+ 
+
+I notice line arrow takes the special argument -head [both | none | begin].
+Somewhere between the th2 file and the metapost arrow definition, the
+argument -head gets changed to the variable Q that is parsed to the metapost
+code, that controls which ends of the arrow line get arrow heads. I have
+copied the code below.  Whereabouts is the code that tells Therion that
+-head is parsed to the metapost definition as Q?
+
+
+
+ 
+
+ 
+
+Dave Clucas
+ <mailto:daveclucas at icloud.com> dave.clucas at icloud.com
+
+Exploring the World - One cave at a time
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180402/546573bb/attachment.htm>
+
+From eqr at ecgracia.com  Tue Apr  3 16:38:02 2018
+From: eqr at ecgracia.com (Evaristo Quiroga)
+Date: Tue, 3 Apr 2018 16:38:02 +0200
+Subject: [Therion] Georeferenced PNG export problem - Bug in Xtherion
+ "\help\Calibrate bitmap"
+In-Reply-To: <bbd096d3-6012-cc54-b48f-8b50a791a030@ecgracia.com>
+References: <e2311b4e-2271-a9eb-6ee2-922f60368fa4@ecgracia.com>
+ <000701d3c4b4$93309b70$b991d250$@tomo.co.nz>
+ <56cb3e11-d6e3-9111-81c2-2fdb627f47e3@ecgracia.com>
+ <CAEEzkZHnj4z3K-z=4Wh2S-dWrCnujB7RHbU+2_ReFxi8SNW67g@mail.gmail.com>
+ <84992c44-351f-23c6-9747-8a20b74fa3ad@ecgracia.com>
+ <CAEEzkZE8JLWttKAw_DH-MvWTR6JWBXhP9jZAnxYHoeT+fe+GAw@mail.gmail.com>
+ <bbd096d3-6012-cc54-b48f-8b50a791a030@ecgracia.com>
+Message-ID: <b1e10bcb-43bf-e746-9da4-7eba0053e76b@ecgracia.com>
+
+I have found a bug in the Xtherion command  "\help\Calibrate bitmap".
+
+The command does not work when the longitude is between Greenwich and 1 
+degree west (example -0.2333). I do not think it should work for the 
+latitudes between the equator and 1 degree south.
+
+I think the problem comes from the "ll2ozi" function of the Xtherion 
+"mapcalc.tc" file. It takes the integer value of the longitude and 
+latitude (int [$ lat]). When the longitude  is between 0 and 1 of west 
+corresponds a negative value of 0, which the integer function considers 
+a error.
+
+The problem is that I just have two karstic zones that are located in 
+those longitude.
+
+As long as that error is not corrected I have developed in following trick.
+
+    /Process twice the pdf file with the command //"\help\Calibrate
+    bitmap". /
+    /With the first execution I create the png file. //Later it changed
+    the name to the pdf, and I open it in an editor, //and search
+    "thCalibrate". //I eliminate the minus signs of the coordinates (L,
+    F). /
+    /Execute again //"\help\Calibrate bitmap" with this new file,
+    generating the file ".map". //I open and edit the .map file changing
+    the E by W in the coordinates. /
+    ///Finally I rename the ".map" file to match the first created png
+    file./
+
+It works but it is a bit cumbersome.
+
+Regards,
+
+Evaristo.
+
+El 26/03/2018 a las 13:25, Evaristo Quiroga via Therion escribió:
+> The reverse engineering is not with the PDF. Martin do a good job here 
+> putting in all the therion output pdf a comment with the reference. 
+> You only have to open the file and search "thCalibrate". You found the 
+> next text:
+> /
+> ///thCalibrate0 (X=-22.16017pt, Y=260.12132pt, L=-0.3641990570, 
+> F=42.2992656650) //
+> ///thCalibrate1 (X=1921.38345pt, Y=199.8752pt, L=-0.3608862211, 
+> F=42.2991894208) //
+> ///thCalibrate2 (X=3864.92708pt, Y=139.62904pt, L=-0.3575733981, 
+> F=42.2991130810) //
+> ///thCalibrate3 (X=-0.2183pt, Y=967.96619pt, L=-0.3641616744, 
+> F=42.3001613659) //
+> ///thCalibrate4 (X=3886.86893pt, Y=847.47388pt, L=-0.3575359218, 
+> F=42.3000087771) //
+> ///thCalibrate5 (X=21.72351pt, Y=1675.81102pt, L=-0.3641242900, 
+> F=42.3010570667) //
+> ///thCalibrate6 (X=1965.26714pt, Y=1615.56487pt, L=-0.3608113605, 
+> F=42.3009808177) //
+> ///thCalibrate7 (X=3908.81078pt, Y=1555.31871pt, L=-0.3574984437, 
+> F=42.3009044731) //
+> ///thCalibrate8 (X=1943.32529pt, Y=907.72003pt, L=-0.3608487917, 
+> F=42.3000851193) //
+> ///thCalibrate (HS=3913.97253pt, VS=1573.34683pt, HD=546.7244489428)/
+>
+> All the information is here:  pdf coordinates (X,Y), real coordinates 
+> (L,F) and the pdf width (HS) and height (VS).
+>
+> You only need know the width and height from the generate PGN, and you 
+> have all the data to do the calculation.
+>
+> The reverse engineering is to understand the ".map" format and found 
+> in the tcl file (mapcalc.tc) the equations to do the conversion.
+>
+> Regards,
+>
+> Evaristo.
+>
+>
+> El 26/03/2018 a las 12:57, Nikita Kozlov via Therion escribió:
+>> You can export 2 PNGs one with grid to put GCPs on, and second PNG 
+>> without grid, but exactly same size (in pixels).
+>> And use GCPs put on first grid-equipped PNG to georeference second 
+>> "grid-free" PNG.
+>>
+>> Grid is used only to get pixel coordinates.
+>>
+>> Dealing with pdf and 'reverse engineering' for me seems a bit 
+>> complicated stuff,
+>> since in addition to 6 georeference parameters, you need to deal with 
+>> scale and so on,
+>> so I'd rather used quick and dirty solution with grid and rasters.
+>>
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180403/7fe5e984/attachment.htm>
+
+From eqr at ecgracia.com  Mon Apr 16 19:32:21 2018
+From: eqr at ecgracia.com (Evaristo Quiroga)
+Date: Mon, 16 Apr 2018 19:32:21 +0200
+Subject: [Therion] New messages to translate Loch to locale language
+Message-ID: <237d1833-6aa1-fd3b-972f-4c40eaddd257@ecgracia.com>
+
+Hi,
+
+I have compiled the messages that appeared not translated into the local 
+languages in Loch. I have added them to the file "loch.po", which I attach.
+
+The spanish translation is completed.
+To translate to other languages you can copy the new lines and translate 
+the messages "msgstr".
+
+Evaristo.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180416/871dc486/attachment.htm>
+-------------- next part --------------
+msgid ""
+msgstr ""
+"Project-Id-Version: Loch\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2017-04-20 21:25+0200\n"
+"Language-Team: Evaristo Quiroga\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Generator: Poedit 1.8.11\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+"X-Poedit-SearchPath-0: .\n"
+
+# C:/Projects/MSVCProjects/loch/lxAboutDlg.cxx:53
+#: lxAboutDlg.cxx:54
+msgid "About Loch"
+msgstr "Acerca de Loch"
+
+# C:/Projects/MSVCProjects/loch/lxAboutDlg.cxx:76
+#: lxAboutDlg.cxx:77
+msgid "3D visualization tool for caves"
+msgstr "Herramienta de visualización 3D de cavidades"
+
+# C:/Projects/MSVCProjects/loch/lxAboutDlg.cxx:78
+#: lxAboutDlg.cxx:79
+msgid "Version: "
+msgstr "Versión: "
+
+#: lxData.cxx:84
+msgid "No file open"
+msgstr "Ningún archivo abierto"
+
+# c:/cave/loch/loch/lxGLCs.cxx:381
+#: lxGLCs.cxx:412
+#, c-format
+msgid "Rendering at %.1f fps."
+msgstr "Representación a %.1f fps."
+
+# c:/cave/loch/loch/lxGLCx.cxx:542
+#: lxGLCx.cxx:605
+#, c-format
+msgid "%03d°"
+msgstr "%03d°"
+
+# c:/cave/loch/loch/lxGLCx.cxx:633
+#: lxGLCx.cxx:696
+#, c-format
+msgid "%+03d°"
+msgstr "%+03d°"
+
+# c:/cave/loch/loch/lxSScene.cxx:222
+# c:/cave/loch/loch/lxSScene.cxx:324
+#: lxGLCx.cxx:736 lxSScene.cxx:273
+msgid "Altitude"
+msgstr "Altitud"
+
+# c:/cave/loch/loch/lxGUI.cxx:94
+#: lxGUI.cxx:155
+msgid "noname"
+msgstr "Sin nombre"
+
+# c:/cave/loch/loch/lxGUI.cxx:98
+# c:/cave/loch/loch/lxGUI.cxx:354
+#: lxGUI.cxx:206 lxGUI.cxx:575
+msgid "Open"
+msgstr "Abrir"
+
+# c:/cave/loch/loch/lxGUI.cxx:98
+#: lxGUI.cxx:206
+msgid "Open file"
+msgstr "Abrir archivo"
+
+# c:/cave/loch/loch/lxGUI.cxx:99
+#: lxGUI.cxx:207
+msgid "Reload"
+msgstr "Recargar"
+
+# c:/cave/loch/loch/lxGUI.cxx:99
+#: lxGUI.cxx:207
+msgid "Reload file"
+msgstr "Recargar archivo"
+
+# c:/cave/loch/loch/lxGUI.cxx:100
+#: lxGUI.cxx:209
+msgid "Render"
+msgstr "Representar"
+
+# c:/cave/loch/loch/lxGUI.cxx:100
+#: lxGUI.cxx:209
+msgid "Render to file"
+msgstr "Representar en archivo"
+
+# c:/cave/loch/loch/lxPrint.cxx:291
+# c:/cave/loch/loch/lxRender.cxx:237
+#: lxGUI.cxx:210 lxRender.cxx:236
+msgid "Rendering setup"
+msgstr "Configurar Representación"
+
+# c:/cave/loch/loch/lxGUI.cxx:102
+# c:/cave/loch/loch/lxGUI.cxx:152
+# c:/cave/loch/loch/lxSView.cxx:257
+#: lxGUI.cxx:212 lxGUI.cxx:275 lxGUI.cxx:283 lxSView.cxx:262
+msgid "Rotation"
+msgstr "Rotación"
+
+# c:/cave/loch/loch/lxGUI.cxx:103
+# c:/cave/loch/loch/lxGUI.cxx:153
+# c:/cave/loch/loch/lxSView.cxx:400
+# c:/cave/loch/loch/lxSView.cxx:526
+#: lxGUI.cxx:213 lxGUI.cxx:276 lxGUI.cxx:284 lxSView.cxx:405 lxSView.cxx:532
+msgid "Lock rotation"
+msgstr "Bloquear rotación"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:217
+#: lxGUI.cxx:214
+msgid "Ortho"
+msgstr "Orto"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:217
+# C:/Projects/MSVCProjects/loch/lxSView.cxx:380
+#: lxGUI.cxx:214 lxSView.cxx:380
+msgid "Orthogonal view"
+msgstr "Vista ortogonal"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:218
+#: lxGUI.cxx:215
+msgid "Stereo"
+msgstr "Estereo"
+
+# c:/cave/loch/loch/lxGUI.cxx:107
+# c:/cave/loch/loch/lxSView.cxx:258
+#: lxGUI.cxx:215 lxSView.cxx:263
+msgid "Stereo mode"
+msgstr "Modo estereo"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:220
+#: lxGUI.cxx:217
+msgid "Plan"
+msgstr "Planta"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:220
+#: lxGUI.cxx:217
+msgid "Plan view"
+msgstr "Vista Planta"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:221
+#: lxGUI.cxx:218
+msgid "Profile"
+msgstr "Alzado"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:221
+#: lxGUI.cxx:218
+msgid "Profile view"
+msgstr "Vista Alzado"
+
+# c:/cave/loch/loch/lxGUI.cxx:104
+#: lxGUI.cxx:219
+msgid "Fit zoom"
+msgstr "Ajustar Zoom"
+
+# c:/cave/loch/loch/lxGUI.cxx:104
+#: lxGUI.cxx:219
+msgid "Zoom to fit"
+msgstr "Zoom extensión"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:223
+#: lxGUI.cxx:220
+msgid "Reset"
+msgstr "Reiniciar"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:223
+#: lxGUI.cxx:220
+msgid "Reset viewpoint"
+msgstr "Reiniciar punto de vista"
+
+# c:/cave/loch/loch/lxSScene.cxx:169
+# c:/cave/loch/loch/lxSScene.cxx:200
+# c:/cave/loch/loch/lxSScene.cxx:231
+# c:/cave/loch/loch/lxSScene.cxx:362
+#: lxGUI.cxx:222 lxSScene.cxx:218 lxSScene.cxx:249 lxSScene.cxx:286
+msgid "Centerline"
+msgstr "Poligonal"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:225
+#: lxGUI.cxx:222
+msgid "Show centerline"
+msgstr "Mostrar poligonal"
+
+# c:/cave/loch/loch/lxSScene.cxx:170
+# c:/cave/loch/loch/lxSScene.cxx:201
+# c:/cave/loch/loch/lxSScene.cxx:232
+# c:/cave/loch/loch/lxSScene.cxx:363
+#: lxGUI.cxx:223 lxSScene.cxx:219 lxSScene.cxx:250 lxSScene.cxx:287
+msgid "Walls"
+msgstr "Paredes"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:226
+#: lxGUI.cxx:223
+msgid "Show walls"
+msgstr "Mostrar paredes"
+
+# c:/cave/loch/loch/lxSScene.cxx:171
+# c:/cave/loch/loch/lxSScene.cxx:202
+# c:/cave/loch/loch/lxSScene.cxx:233
+# c:/cave/loch/loch/lxSScene.cxx:245
+# c:/cave/loch/loch/lxSScene.cxx:364
+#: lxGUI.cxx:224 lxSScene.cxx:220 lxSScene.cxx:251 lxSScene.cxx:300
+msgid "Surface"
+msgstr "Superficie"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:227
+#: lxGUI.cxx:224
+msgid "Show surface"
+msgstr "Mostrar superficie"
+
+# c:/cave/loch/loch/lxSScene.cxx:204
+# c:/cave/loch/loch/lxSScene.cxx:365
+#: lxGUI.cxx:225 lxSScene.cxx:253
+msgid "Bounding box"
+msgstr "Caja delimitadora"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:228
+#: lxGUI.cxx:225
+msgid "Show bounding box"
+msgstr "Mostrar caja delimitadora"
+
+# c:/cave/loch/loch/lxSScene.cxx:174
+#: lxGUI.cxx:226 lxSScene.cxx:223 lxSScene.cxx:255
+msgid "Indicators"
+msgstr "Indicadores"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:229
+#: lxGUI.cxx:226
+msgid "Mostrar indicadores"
+msgstr "Richtungsanzeiger anzeigen"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:231
+#: lxGUI.cxx:228
+msgid "Camera setup"
+msgstr "Configuración Camara"
+
+# c:/cave/loch/loch/lxGUI.cxx:110
+#: lxGUI.cxx:229
+msgid "Scene setup"
+msgstr "Configuración Escena"
+
+# c:/cave/loch/loch/lxGUI.cxx:112
+#: lxGUI.cxx:231
+msgid "Full screen"
+msgstr "Pantalla completa"
+
+# c:/cave/loch/loch/lxGUI.cxx:117
+#: lxGUI.cxx:236
+msgid "&Open...\tCtrl+O"
+msgstr "&Abrir...\tCtrl+O"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:240
+#: lxGUI.cxx:237
+msgid "&Reload\tCtrl+R"
+msgstr "&Recargar\tCtrl+R"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:242
+#: lxGUI.cxx:239
+msgid "&Render to file\tCtrl+P"
+msgstr "&Representar en archvo\tCtrl+P"
+
+# c:/cave/loch/loch/lxGUI.cxx:121
+#: lxGUI.cxx:240
+msgid "Rendering &setup..."
+msgstr "Configuración &representación"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:245
+#: lxGUI.cxx:242
+msgid "E&xit\tCtrl+Q"
+msgstr "S&alir\tCtrl+Q"
+
+# c:/cave/loch/loch/lxGUI.cxx:126
+#: lxGUI.cxx:247
+msgid "Rotate left\tRight"
+msgstr "Rotar izquierda\tDerecha"
+
+# c:/cave/loch/loch/lxGUI.cxx:127
+#: lxGUI.cxx:248
+msgid "Rotate right\tLeft"
+msgstr "Rotar derecha\tIzquierda"
+
+# c:/cave/loch/loch/lxGUI.cxx:129
+#: lxGUI.cxx:250
+msgid "Upper viewpoint\tDown"
+msgstr "Punto de Vista Superior\tInferior"
+
+# c:/cave/loch/loch/lxGUI.cxx:130
+#: lxGUI.cxx:251
+msgid "Lower viewpoint\tUp"
+msgstr "Punto de vista Inferior\tSuperior"
+
+# c:/cave/loch/loch/lxGUI.cxx:132
+#: lxGUI.cxx:253
+msgid "Move up\tShift+Down"
+msgstr "Mover arriba\tShift+Abajo"
+
+# c:/cave/loch/loch/lxGUI.cxx:133
+#: lxGUI.cxx:254
+msgid "Move down\tShift+Up"
+msgstr "Mover abajo\tShift+Arriba"
+
+# c:/cave/loch/loch/lxGUI.cxx:134
+#: lxGUI.cxx:255
+msgid "Move left\tShift+Right"
+msgstr "Mover izquierda\tShift+Derecha"
+
+# c:/cave/loch/loch/lxGUI.cxx:135
+#: lxGUI.cxx:256
+msgid "Move right\tShift+Left"
+msgstr "Mover derecha\tShift+Izquierda"
+
+# c:/cave/loch/loch/lxGUI.cxx:137
+#: lxGUI.cxx:258
+msgid "Zoom in\tCtrl+Up"
+msgstr "Zoom  +\tCtrl+Arriba"
+
+# c:/cave/loch/loch/lxGUI.cxx:138
+#: lxGUI.cxx:259
+msgid "Zoom out\tCtrl+Down"
+msgstr "Zoom -\tCtrl+Abajo"
+
+# c:/cave/loch/loch/lxGUI.cxx:139
+#: lxGUI.cxx:260
+msgid "Zoom to fit\tSpace"
+msgstr "Zoom extensión\tEspacio"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:266
+#: lxGUI.cxx:263
+msgid "&Plan"
+msgstr "&Planta"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:267
+#: lxGUI.cxx:264
+msgid "Pro&file"
+msgstr "&Alzado"
+
+# c:/cave/loch/loch/lxGUI.cxx:144
+#: lxGUI.cxx:266
+msgid "&North"
+msgstr "&Norte"
+
+# c:/cave/loch/loch/lxGUI.cxx:145
+#: lxGUI.cxx:267
+msgid "&West"
+msgstr "&Oeste"
+
+# c:/cave/loch/loch/lxGUI.cxx:146
+#: lxGUI.cxx:268
+msgid "&East"
+msgstr "&Este"
+
+# c:/cave/loch/loch/lxGUI.cxx:147
+#: lxGUI.cxx:269
+msgid "&South"
+msgstr "&Sud"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:274
+#: lxGUI.cxx:271
+msgid "&Reset"
+msgstr "&Reiniciar"
+
+# c:/cave/loch/loch/lxSView.cxx:256
+#: lxGUI.cxx:278
+msgid "Camera"
+msgstr "Camara"
+
+# c:/cave/loch/loch/lxGUI.cxx:161
+#: lxGUI.cxx:279
+msgid "Scene"
+msgstr "Escena"
+
+# c:/cave/loch/loch/lxGUI.cxx:151
+#: lxGUI.cxx:282
+msgid "Action"
+msgstr "Acción"
+
+# c:/cave/loch/loch/lxSView.cxx:254
+#: lxGUI.cxx:285 lxSView.cxx:259
+msgid "Orientation"
+msgstr "Orientación"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:289
+#: lxGUI.cxx:286
+msgid "Orthogonal"
+msgstr "Ortogonal"
+
+# c:/cave/loch/loch/lxGUI.cxx:157
+#: lxGUI.cxx:288
+msgid "Full screen\tF11"
+msgstr "Pantalla Completa\tF11"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:294
+#: lxGUI.cxx:291
+msgid "&Camera"
+msgstr "&Camara"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:295
+#: lxGUI.cxx:292
+msgid "&Scene"
+msgstr "&Escena"
+
+# c:/cave/loch/loch/lxGUI.cxx:117
+#: lxGUI.cxx:294
+msgid "&Options..."
+msgstr "&Opciones..."
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:300
+#: lxGUI.cxx:297
+msgid "&Contents...\tF1"
+msgstr "&Contenidos...\tF1"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:301
+#: lxGUI.cxx:298
+msgid "&Control"
+msgstr "%Controles"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:302
+#: lxGUI.cxx:299
+msgid "&Rendering"
+msgstr "&Visualización"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:303
+#: lxGUI.cxx:300
+msgid "&Bugs"
+msgstr "&Errores"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:305
+#: lxGUI.cxx:302
+msgid "&About..."
+msgstr "&Acerca..."
+
+# c:/cave/loch/loch/lxGUI.cxx:165
+#: lxGUI.cxx:305
+msgid "&File"
+msgstr "&Archivo"
+
+# c:/cave/loch/loch/lxGUI.cxx:166
+#: lxGUI.cxx:306
+msgid "&View"
+msgstr "&Vista"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:310
+#: lxGUI.cxx:307
+msgid "&Tools"
+msgstr "&Herramientas"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:311
+#: lxGUI.cxx:308
+msgid "&Help"
+msgstr "&Ayuda"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:581
+#: lxGUI.cxx:578
+msgid ""
+"All supported files (*.lox;*.plt;*.3d)|*.lox;*.plt;*.3d|Loch files (*.lox)|*."
+"lox|Compass PLT files (*.plt)|*.plt|Survex 3D files (*.3d)|*.3d"
+msgstr ""
+"Todos los archivos admitidos (*.lox;*.plt;*.3d)|*.lox;*.plt;*.3d|Loch "
+"Archivos (*.lox)|*.lox| Archivos Compass PLT (*.plt)|*.plt| Archivos Survex 3D "
+"(*.3d)|*.3d"
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:870
+#: lxGUI.cxx:867
+msgid "Building 3D model, please wait..."
+msgstr "Construyendo modelo 3D, esperar por favor..."
+
+# C:/Projects/MSVCProjects/loch/lxGUI.cxx:899
+#: lxGUI.cxx:896
+msgid "Error reading input file"
+msgstr "Error leyendo el archivo de entrada"
+
+# c:/cave/loch/loch/lxData.cxx:360
+# c:/cave/loch/loch/lxPrint.cxx:466
+# c:/cave/loch/loch/lxPrint.cxx:995
+# c:/cave/loch/loch/lxRender.cxx:655
+#: lxGUI.cxx:896 lxRender.cxx:664
+msgid "Error"
+msgstr "Error"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:43
+#: lxOptDlg.cxx:43
+msgid "Options"
+msgstr "Opciones"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:50
+#: lxOptDlg.cxx:50
+msgid "General options"
+msgstr "Opciones Generales"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:54
+#: lxOptDlg.cxx:54
+msgid "Default data files directory"
+msgstr "Directorio por defecto de los archivos de datos"
+
+# c:/cave/loch/loch/lxPrint.cxx:349
+#: lxOptDlg.cxx:60
+msgid "Browse..."
+msgstr "Buscar..."
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:65
+#: lxOptDlg.cxx:64
+msgid "Default stereo colors"
+msgstr "Colores estereo por defecto"
+
+# c:/cave/loch/loch/lxSView.cxx:430
+#: lxOptDlg.cxx:68 lxSView.cxx:435
+msgid "red & cyan"
+msgstr "rojo y cian"
+
+# c:/cave/loch/loch/lxSView.cxx:431
+#: lxOptDlg.cxx:69 lxSView.cxx:436
+msgid "red & green"
+msgstr "rojo y verde"
+
+# c:/cave/loch/loch/lxSView.cxx:432
+#: lxOptDlg.cxx:70 lxSView.cxx:437
+msgid "red & blue"
+msgstr "rojo y azul"
+
+# c:/cave/loch/loch/lxSView.cxx:433
+#: lxOptDlg.cxx:71 lxSView.cxx:438
+msgid "yellow & blue"
+msgstr "amarillo y azul"
+
+# c:/cave/loch/loch/lxSView.cxx:434
+#: lxOptDlg.cxx:72 lxSView.cxx:439
+msgid "cyan & red"
+msgstr "cian y rojo"
+
+# c:/cave/loch/loch/lxSView.cxx:435
+#: lxOptDlg.cxx:73 lxSView.cxx:440
+msgid "green & red"
+msgstr "verde y rojo"
+
+# c:/cave/loch/loch/lxSView.cxx:436
+#: lxOptDlg.cxx:74 lxSView.cxx:441
+msgid "blue & red"
+msgstr "azul y rojo"
+
+# c:/cave/loch/loch/lxSView.cxx:437
+#: lxOptDlg.cxx:75 lxSView.cxx:442
+msgid "blue & yellow"
+msgstr "azul y amarillo"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:77
+#: lxOptDlg.cxx:76
+msgid "remember last used channels"
+msgstr "Recordar el ultimo canal usado"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:85
+#: lxOptDlg.cxx:84
+msgid "Walls extrapolation"
+msgstr "Extrapolación de las paredes"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:89
+#: lxOptDlg.cxx:88
+msgid "Do not extrapolate walls"
+msgstr "No extrapolar las paredes"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:92
+#: lxOptDlg.cxx:91
+msgid "Extrapolate only files without walls information"
+msgstr "Extrapolar solo archivos sin información de paredes"
+
+# C:/Projects/MSVCProjects/loch/lxOptDlg.cxx:95
+#: lxOptDlg.cxx:94
+msgid "Extrapolate all missing walls information"
+msgstr "Extrapolar toda la información de paredes ausentes"
+
+# c:/cave/loch/loch/lxPrint.cxx:387
+# c:/cave/loch/loch/lxRender.cxx:322
+#: lxOptDlg.cxx:102 lxRender.cxx:321
+msgid "OK"
+msgstr "OK"
+
+# c:/cave/loch/loch/lxPrint.cxx:388
+# c:/cave/loch/loch/lxPrint.cxx:775
+# c:/cave/loch/loch/lxRender.cxx:323
+#: lxOptDlg.cxx:103 lxRender.cxx:322
+msgid "Cancel"
+msgstr "Cancelar"
+
+# c:/cave/loch/loch/lxRender.cxx:247
+#: lxRender.cxx:246
+msgid "Size and scaling"
+msgstr "Tamaño y escalado"
+
+# c:/cave/loch/loch/lxRender.cxx:251
+#: lxRender.cxx:250
+msgid "Screen shot"
+msgstr "Captura de pantalla"
+
+# c:/cave/loch/loch/lxRender.cxx:257
+#: lxRender.cxx:256
+msgid "Image width"
+msgstr "Anchura de imagen"
+
+# c:/cave/loch/loch/lxRender.cxx:260
+# c:/cave/loch/loch/lxRender.cxx:271
+#: lxRender.cxx:259 lxRender.cxx:270
+msgid "(mm)"
+msgstr "(mm)"
+
+# c:/cave/loch/loch/lxRender.cxx:268
+#: lxRender.cxx:267
+msgid "Image height"
+msgstr "Altura de imagen"
+
+# c:/cave/loch/loch/lxRender.cxx:279
+#: lxRender.cxx:278
+msgid "Scale"
+msgstr "Escala"
+
+# c:/cave/loch/loch/lxRender.cxx:282
+#: lxRender.cxx:281
+msgid "1 :"
+msgstr "1 :"
+
+# c:/cave/loch/loch/lxRender.cxx:293
+#: lxRender.cxx:292
+msgid "Image options"
+msgstr "Opciones de imagen"
+
+# c:/cave/loch/loch/lxPrint.cxx:302
+# c:/cave/loch/loch/lxRender.cxx:297
+#: lxRender.cxx:296
+msgid "Rendering resolution (dpi)"
+msgstr "Resolución de visualización (dpi)"
+
+# c:/cave/loch/loch/lxRender.cxx:307
+#: lxRender.cxx:306
+msgid "Image size:"
+msgstr "Tamaño de imagen:"
+
+# c:/cave/loch/loch/lxRender.cxx:310
+#: lxRender.cxx:309
+msgid "00 x 00 (00.0 MB)"
+msgstr "00 x 00 (00.0 MB)"
+
+# c:/cave/loch/loch/lxPrint.cxx:295
+# c:/cave/loch/loch/lxRender.cxx:315
+#: lxRender.cxx:314
+msgid "White background"
+msgstr "Fondo blanco"
+
+# c:/cave/loch/loch/lxRender.cxx:437
+#: lxRender.cxx:436
+msgid "Save rendering as"
+msgstr "Guardar visualización como"
+
+# c:/cave/loch/loch/lxPrint.cxx:183
+# c:/cave/loch/loch/lxRender.cxx:439
+#: lxRender.cxx:438
+msgid "PPM files (*.ppm)|*.ppm"
+msgstr "Archivos PPM (*.ppm)|*.ppm"
+
+# c:/cave/loch/loch/lxRender.cxx:441
+#: lxRender.cxx:440
+msgid "PDF files (*.pdf)|*.pdf |PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
+msgstr "Archivos PDF (*.pdf)|*.pdf|Archivos PNG (*.png)|*.png|Archivos BMP (*.bmp)|*.bmp"
+
+# c:/cave/loch/loch/lxPrint.cxx:627
+# c:/cave/loch/loch/lxPrint.cxx:647
+# c:/cave/loch/loch/lxPrint.cxx:872
+# c:/cave/loch/loch/lxPrint.cxx:892
+# c:/cave/loch/loch/lxRender.cxx:455
+#: lxRender.cxx:454
+msgid "Unable to open file for output."
+msgstr "Permitir abrir archivo para salida."
+
+# c:/cave/loch/loch/lxPrint.cxx:921
+# c:/cave/loch/loch/lxRender.cxx:493
+#: lxRender.cxx:492
+#, c-format
+msgid "Rendering (%d x %d, %.1f MB) ..."
+msgstr "Visualizando (%d x %d, %.1f MB) ..."
+
+# c:/cave/loch/loch/lxRender.cxx:494
+#: lxRender.cxx:493
+msgid "Rendering to bitmap"
+msgstr "Visualizar a bitmap"
+
+# c:/cave/loch/loch/lxSScene.cxx:147
+#: lxSScene.cxx:196
+msgid " Scene"
+msgstr " Escena"
+
+# c:/cave/loch/loch/lxSScene.cxx:167
+# c:/cave/loch/loch/lxSScene.cxx:335
+#: lxSScene.cxx:216
+msgid "Visibility"
+msgstr "Visibilidad"
+
+# c:/cave/loch/loch/lxSScene.cxx:168
+#: lxSScene.cxx:217 lxSScene.cxx:271
+msgid "Color mode"
+msgstr "Modo Color"
+
+# c:/cave/loch/loch/lxSScene.cxx:199
+#: lxSScene.cxx:248
+msgid "Scene items"
+msgstr "Detalles de escena"
+
+# c:/cave/loch/loch/lxSScene.cxx:224
+#: lxSScene.cxx:279
+msgid "Default"
+msgstr "Por defecto"
+
+# c:/cave/loch/loch/lxSScene.cxx:230
+#: lxSScene.cxx:285
+msgid "Applies to"
+msgstr "Aplicar a"
+
+# c:/cave/loch/loch/lxSScene.cxx:243
+#: lxSScene.cxx:298
+msgid "Centerline visibility"
+msgstr "Visibilidad de la poligonal"
+
+# c:/cave/loch/loch/lxSScene.cxx:244
+#: lxSScene.cxx:299
+msgid "Underground"
+msgstr "Subterránea"
+
+# c:/cave/loch/loch/lxSScene.cxx:265
+# c:/cave/loch/loch/lxSScene.cxx:278
+#: lxSScene.cxx:317 lxSScene.cxx:330
+msgid "Transparency"
+msgstr "Transparencia"
+
+# c:/cave/loch/loch/lxSScene.cxx:282
+#: lxSScene.cxx:334
+msgid "Texture"
+msgstr "Textura"
+
+# C:/Projects/MSVCProjects/loch/lxSScene.cxx:398
+#: lxSScene.cxx:392
+msgid "Project title"
+msgstr "Titulo del Proyecto"
+
+# c:/cave/loch/loch/lxSScene.cxx:389
+# c:/cave/loch/loch/lxSView.cxx:464
+#: lxSScene.cxx:424 lxSView.cxx:470
+msgid "Close"
+msgstr "Cerrar"
+
+# C:/Projects/MSVCProjects/loch/lxSView.cxx:228
+#: lxSView.cxx:228
+msgid " Camera"
+msgstr " Camara"
+
+# c:/cave/loch/loch/lxSView.cxx:255
+#: lxSView.cxx:260
+msgid "Center"
+msgstr "Centro"
+
+# C:/Projects/MSVCProjects/loch/lxSView.cxx:261
+#: lxSView.cxx:261
+msgid "Focus"
+msgstr "Foco"
+
+# c:/cave/loch/loch/lxSView.cxx:287
+#: lxSView.cxx:292
+msgid "Facing (deg)"
+msgstr "Orientación (Grados)"
+
+# c:/cave/loch/loch/lxSView.cxx:298
+#: lxSView.cxx:303
+msgid "Tilt (deg)"
+msgstr "Inclinación (Grados)"
+
+# c:/cave/loch/loch/lxSView.cxx:323
+#: lxSView.cxx:328
+msgid "Rotation center"
+msgstr "Centro de rotación"
+
+# c:/cave/loch/loch/lxSView.cxx:327
+#: lxSView.cxx:332
+msgid "Easting (m)"
+msgstr "Dirección Este (m)"
+
+# c:/cave/loch/loch/lxSView.cxx:335
+#: lxSView.cxx:340
+msgid "Northing (m)"
+msgstr "Dirección Norte (m)"
+
+# c:/cave/loch/loch/lxSView.cxx:343
+#: lxSView.cxx:348
+msgid "Altitude (m)"
+msgstr "Altitud (m)"
+
+# c:/cave/loch/loch/lxSView.cxx:364
+#: lxSView.cxx:369
+msgid "Distance (m)"
+msgstr "Distancia (m)"
+
+# c:/cave/loch/loch/lxSView.cxx:379
+#: lxSView.cxx:384
+msgid "Focus (mm)"
+msgstr "Foco (mm)"
+
+# c:/cave/loch/loch/lxSView.cxx:399
+#: lxSView.cxx:404
+msgid "Enable rotation"
+msgstr "Permitir rotación"
+
+# c:/cave/loch/loch/lxSView.cxx:401
+#: lxSView.cxx:406
+msgid "Rotation speed"
+msgstr "Velocidad de rotación"
+
+# c:/cave/loch/loch/lxSView.cxx:422
+#: lxSView.cxx:427
+msgid "Enable stereo mode"
+msgstr "Habilitar modo estereo"
+
+# c:/cave/loch/loch/lxSView.cxx:423
+#: lxSView.cxx:428
+msgid "Eye separation"
+msgstr "Separación de ojos"
+
+# C:/Projects/MSVCProjects/loch/lxSView.cxx:445
+#: lxSView.cxx:445
+msgid "Disable color textures"
+msgstr "Deshabilitar texturas de color"
+
+# c:/cave/loch/loch/lxSView.cxx:441
+#: lxSView.cxx:447
+msgid "Color channels"
+msgstr "Canales de color"
+
+# c:/cave/loch/loch/lxSView.cxx:524
+#: lxSView.cxx:530
+msgid "Lock rotation speed"
+msgstr "Bloquear la velocidad de rotación"
+
+# c:/cave/loch/loch/lxWX.cxx:200
+#: lxWX.cxx:200
+#, c-format
+msgid "%ld"
+msgstr "%ld"
+
+# c:/cave/loch/loch/lxWX.cxx:206
+#: lxWX.cxx:206
+#, c-format
+msgid "%.14e"
+msgstr "%.14e"
+
+
+
+#----------------------------------------------------------------------------------------------
+
+# c:/cave/loch/loch/lxGUI.cxx:263
+#: lxGUI.cxx:263
+msgid "&Import...\tCtrl+I"
+msgstr "&Importar...\tCtrl+I"
+
+# c:/cave/loch/loch/lxGUI.cxx:264
+#: lxGUI.cxx:264
+msgid "&Export...\tCtrl+X"
+msgstr "&Exportar...\tCtrl+X"
+
+# c:/cave/loch/loch/lxGUI.cxx:313
+#: lxGUI.cxx:313
+msgid "&Size..."
+msgstr "&Tamaño..."
+
+# c:/cave/loch/loch/lxGUI.cxx:318
+#: lxGUI.cxx:318
+msgid "&Selection"
+msgstr "&Selección"
+
+# c:/cave/loch/loch/lxGUI.cxx:319
+#: lxGUI.cxx:319
+msgid "&Presentation"
+msgstr "&Presentación"
+
+# c:/cave/loch/loch/lxGUI.cxx:320
+#: lxGUI.cxx:320
+msgid "&Animation"
+msgstr "&Animación"
+
+# c:/cave/loch/loch/lxGUI.cxx:237
+#: lxGUI.cxx:237
+msgid "Show entrances"
+msgstr "Mostrar entradas"
+
+# c:/cave/loch/loch/lxGUI.cxx:238
+#: lxGUI.cxx:238
+msgid "Show fixed stations"
+msgstr "Mostrar estaciones fijas"
+
+# c:/cave/loch/loch/lxGUI.cxx:239
+#: lxGUI.cxx:239
+msgid "Show all stations"
+msgstr "Mostrar todas las estaciones"
+
+# c:/cave/loch/loch/lxGUI.cxx:240
+#: lxGUI.cxx:240
+msgid "Toggle station labeling"
+msgstr "Alternar etiquetado estación"
+
+# c:/cave/loch/loch/lxGUI.cxx:246
+#: lxGUI.cxx:246
+msgid "Show indicators"
+msgstr "Mostrar indicadores"
+
+# c:/cave/loch/loch/lxSScene.cxx:402
+#: lxSScene.cxx:402
+msgid "Marked stations"
+msgstr "Estaciones marcadas"
+
+# c:/cave/loch/loch/lxSScene.cxx:403
+#: lxSScene.cxx:403
+msgid "Entrances"
+msgstr "Entradas"
+
+# c:/cave/loch/loch/lxSScene.cxx:404
+#: lxSScene.cxx:404
+msgid "Fixed stations"
+msgstr "Estaciones fijas"
+
+# c:/cave/loch/loch/lxSScene.cxx:404
+#: lxSScene.cxx:404
+msgid "All"
+msgstr "Todas"
+
+# c:/cave/loch/loch/lxSScene.cxx:408
+#: lxSScene.cxx:408
+msgid "Labels"
+msgstr "Etiquetas"
+
+# c:/cave/loch/loch/lxSScene.cxx:409
+#: lxSScene.cxx:409
+msgid "Comment"
+msgstr "Comentario"
+
+# c:/cave/loch/loch/lxSScene.cxx:410
+#: lxSScene.cxx:410
+msgid "Name"
+msgstr "Nombre"
+
+# c:/cave/loch/loch/lxSScene.cxx:411
+#: lxSScene.cxx:411
+msgid "Survey"
+msgstr "Topografias"
+
+# c:/cave/loch/loch/lxSScene.cxx:279
+#: lxSScene.cxx:279
+msgid "Stations"
+msgstr "Estaciones"
+
+# c:/cave/loch/loch/lxSScene.cxx:390
+#: lxSScene.cxx:390
+msgid "Lighting"
+msgstr "Iluminación"
+
+# c:/cave/loch/loch/lxSScene.cxx:361
+#: lxSScene.cxx:361
+msgid "Splay"
+msgstr "Radiante"
+
+# c:/cave/loch/loch/lxSScene.cxx:362
+#: lxSScene.cxx:362
+msgid "Duplicate"
+msgstr "Duplicada"
+
+# c:/cave/loch/loch/lxOptDlg.cxx:81
+#: lxOptDlg.cxx:81
+msgid "Measurement system"
+msgstr "Sistema de medida"
+
+# c:/cave/loch/loch/lxOptDlg.cxx:84
+#: lxOptDlg.cxx:84
+msgid "Metric"
+msgstr "Metrico"
+
+# c:/cave/loch/loch/lxOptDlg.cxx:86
+#: lxOptDlg.cxx:86
+msgid "Imperial"
+msgstr "Imperial"
+
+# c:/cave/loch/loch/lxPres.cxx:295
+#: lxPres.cxx:295
+msgid "Presentation"
+msgstr "Presentación"
+
+# c:/cave/loch/loch/lxPres.cxx:317
+#: lxPres.cxx:317
+msgid "Mark"
+msgstr "Marcar"
+
+# c:/cave/loch/loch/lxPres.cxx:320
+#: lxPres.cxx:320
+msgid "Update"
+msgstr "Actualizar"
+
+# c:/cave/loch/loch/lxPres.cxx:323
+#: lxPres.cxx:323
+msgid "Move up"
+msgstr "Mover arriba"
+
+# c:/cave/loch/loch/lxPres.cxx:326
+#: lxPres.cxx:326
+msgid "Move down"
+msgstr "Mover abajo"
+
+# c:/cave/loch/loch/lxPres.cxx:329
+#: lxPres.cxx:329
+msgid "Delete"
+msgstr "Borrar"
+
+# c:/cave/loch/loch/lxPres.cxx:335
+#: lxPres.cxx:335
+msgid "New"
+msgstr "Nueva"
+
+# c:/cave/loch/loch/lxPres.cxx:338
+#: lxPres.cxx:338
+msgid "Open..."
+msgstr "Abrir..."
+
+# c:/cave/loch/loch/lxPres.cxx:341
+#: lxPres.cxx:341
+msgid "Save"
+msgstr "Guardar"
+
+# c:/cave/loch/loch/lxPres.cxx:344
+#: lxPres.cxx:344
+msgid "Save as..."
+msgstr "Guardar como..."
+
+# c:/cave/loch/loch/lxPres.cxx:36
+#: lxPres.cxx:36
+msgid "presentation.lxp"
+msgstr "presentación.lxp"
+
+# c:/cave/loch/loch/lxPres.cxx:48
+#: lxPres.cxx:48
+msgid "Save presentation"
+msgstr "Guardar presentación"
+
+# c:/cave/loch/loch/lxPres.cxx:51
+#: lxPres.cxx:51
+msgid "Loch presentation file (*.lxp)|*.lxp"
+msgstr "Archivo de presentación Loch (*.lxp)|*.lxp"
+
+# c:/cave/loch/loch/lxPres.cxx:78
+#: lxPres.cxx:78
+msgid "Presentation was changed. Save it?"
+msgstr "La presentación ha cambiado. Guardarla?"
+
+# c:/cave/loch/loch/lxPres.cxx:78
+#: lxPres.cxx:78
+msgid "Warning"
+msgstr "Cuidado"
+
+
+
+From eqr at ecgracia.com  Mon Apr 16 19:34:36 2018
+From: eqr at ecgracia.com (Evaristo Quiroga)
+Date: Mon, 16 Apr 2018 19:34:36 +0200
+Subject: [Therion] New messages to translate Loch to locale language
+In-Reply-To: <237d1833-6aa1-fd3b-972f-4c40eaddd257@ecgracia.com>
+References: <237d1833-6aa1-fd3b-972f-4c40eaddd257@ecgracia.com>
+Message-ID: <64cfc946-10ad-10a3-f530-cf4c9ce6b8fe@ecgracia.com>
+
+The new messages appear from line 859 until the end.
+
+El 16/04/2018 a las 19:32, Evaristo Quiroga via Therion escribió:
+>
+> Hi,
+>
+> I have compiled the messages that appeared not translated into the 
+> local languages in Loch. I have added them to the file "loch.po", 
+> which I attach.
+>
+> The spanish translation is completed.
+> To translate to other languages you can copy the new lines and 
+> translate the messages "msgstr".
+>
+> Evaristo.
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180416/e0356bf4/attachment.htm>
+
+From v_su at inbox.ru  Wed Apr 18 08:26:07 2018
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Wed, 18 Apr 2018 13:26:07 +0700
+Subject: [Therion] *solve
+Message-ID: <b4b92e3c-ed75-4b61-a817-ce1d6c41e8d7@inbox.ru>
+
+Hello
+
+Is it possible to get the behavior of the "*solve" Survex command in 
+Therion?
+
+-- 
+   WBR, Vasily
+
+
+
+From martinsluka at mac.com  Wed Apr 18 09:19:47 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 18 Apr 2018 09:19:47 +0200
+Subject: [Therion] *solve
+In-Reply-To: <b4b92e3c-ed75-4b61-a817-ce1d6c41e8d7@inbox.ru>
+References: <b4b92e3c-ed75-4b61-a817-ce1d6c41e8d7@inbox.ru>
+Message-ID: <7D1670C1-6C81-4AE2-862E-E56F48898833@mac.com>
+
+Sorry, but isn’t „solve“ against basic principle of Therion?
+
+Martin S.
+
+> 18. 4. 2018 v 8:26, Vasily Vl. Suhachev via Therion <therion at speleo.sk>:
+> 
+> Hello
+> 
+> Is it possible to get the behavior of the "*solve" Survex command in Therion?
+> 
+> -- 
+>  WBR, Vasily
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Wed Apr 18 09:41:25 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 18 Apr 2018 09:41:25 +0200
+Subject: [Therion] *solve
+In-Reply-To: <b4b92e3c-ed75-4b61-a817-ce1d6c41e8d7@inbox.ru>
+References: <b4b92e3c-ed75-4b61-a817-ce1d6c41e8d7@inbox.ru>
+Message-ID: <3FACFD16-7C01-46B9-B0C2-3CAD1605B803@mac.com>
+
+the basic principle of Therion
+
+Martin Sluka
+
+
+> 18. 4. 2018 v 8:26, Vasily Vl. Suhachev via Therion <therion at speleo.sk>:
+> 
+> Hello
+> 
+> Is it possible to get the behavior of the "*solve" Survex command in Therion?
+> 
+> -- 
+>  WBR, Vasily
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bgee at campercaver.net  Thu Apr 26 16:51:27 2018
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 26 Apr 2018 09:51:27 -0500
+Subject: [Therion] How to "equate" between two caves
+Message-ID: <5074792.6L7HCnBPbe@main2.billgee.local>
+
+Hello everyone -
+ 
+I have been working on a multi-cave project for a while.  Each cave exists as 
+its own separate set of files.  A few months ago - with help from this group - 
+I figured out how to get a single output file that contains all four cave 
+maps.
+ 
+The combined map is generated from a single thconfig file that uses "source" 
+commands to bring in the .th files from each of the member caves.
+ 
+Now we have surveyed a link between two of the four caves.  I need to set up 
+an "equate" command so that the two caves actually link up.  According to 
+Aven, the gap is about 30 feet.  Some of that, I am sure, is due to rounding 
+errors in the GPS locates for the two caves.  
+ 
+Based on a message from Martin, I added a .th file which contains a "survey" 
+command.  However, that is generating an error from Therion:
+ 
+==========
+therion 5.4.1 (2017-04-18) 
+cavern - Survex 1.2.34 
+initialization file: /etc/therion.ini 
+reading ... done 
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded 
+format=pdfetex) 
+restricted \write18 enabled. 
+entering extended mode 
+(./fonttest.tex 
+checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT INSTALLED 
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded 
+format=pdfetex) 
+restricted \write18 enabled. 
+entering extended mode 
+(./fonttest.tex 
+checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT 
+INSTALLED 
+configuration file: thconfig 
+reading ... 
+therion: error -- BigCavernRanch.th [9] -- unknown configuration command -- 
+survey
+===============
+
+The thconfig and .th files I used are embedded below as text.
+ 
+Where should I put the "equate" command that will link the two caves?
+ 
+Thanks!
+-- 
+Bill Gee
+
+=============  thconfig  ============
+encoding  utf-8
+
+input BigCavernRanch.th
+input ../TherionMasterFiles/CustomSymbolsCode.txt
+
+# This layout is for the main 2D map, all on one page
+layout basics
+	units imperial
+	scale-bar 50 feet
+	page-numbers on
+	north true
+	rotate 0
+	symbol-color group centerline [80 20 0]
+	symbol-color area water [0 0 100]
+	map-comment "The caves of Big Cavern Ranch, Pulaski County, Missouri"
+	statistics explo all
+	legend on
+	map-header 3 65 w
+	symbol-set UIS
+
+# Section for PDF properties
+	doc-author "Bill Gee"
+	doc-title "The Caves of Big Cavern Ranch"
+	doc-subject "The Caves of Big Cavern Ranch"
+
+# Section for map photos
+
+# Bring in the custom symbols
+  copy CustomSymbols
+
+# Reassign names 
+  symbol-assign point gradient AMER
+  symbol-assign point stalagmite AMER
+  symbol-assign point stalactite AMER
+  symbol-assign point pillar AMER
+  symbol-assign point popcorn AMER
+  
+endlayout
+
+layout mainmapnocolor
+  copy basics
+  symbol-show group centerline
+  debug station-names
+  scale 1 200
+  color map-fg [100 86 66]
+endlayout
+
+layout mainmapwithcolor
+  copy basics
+  symbol-show group centerline
+  debug station-names
+  scale 1 200
+  color map-fg altitude
+endlayout
+
+layout mainmapprint
+  copy basics
+  scale 1 800
+  debug off
+  symbol-hide group centerline
+  color map-fg [100 86 66]
+endlayout
+
+layout mainmapnocolor
+  copy basics
+  symbol-show group centerline
+  debug station-names
+  scale 1 200
+  color map-fg [100 86 66]
+endlayout
+
+layout mainmapwithcolor
+  copy basics
+  symbol-show group centerline
+  debug station-names
+  scale 1 200
+  color map-fg altitude
+endlayout
+
+layout mainmapprint
+  copy basics
+  scale 1 800
+  debug off
+  symbol-hide group centerline
+  color map-fg [100 86 66]
+endlayout  
+
+# Change the legend callouts
+  text en_US "point u:stalagmaflat_AMER" "stalagmaflat"
+  text en_US "line u:dripline_AMER" "dripline"
+  text en_US "point u:pendant" "pendant"
+  text en_US "point u:stromatolite" "stromatolite"
+  
+# Now list all the map files to be created.
+
+# The main plan map
+export map -proj plan -layout mainmapnocolor -o BigCavernRanch.pdf
+
+# The main map for printing
+export map -proj plan -layout mainmapprint -o BigCavernRanchPrint.pdf
+
+# Main plan map with elevations colorized
+export map -proj plan -layout mainmapwithcolor -o BigCavernRanchColored.pdf
+
+# Create an atlas map
+# export atlas -proj plan -layout mainmapnocolor -o BigCavernRanchAtlas.pdf
+
+# create a centerline map using XVI format
+# export map -proj plan -fmt xvi -o BigCavernRanch.xvi
+
+# Create a 3d map for use with Loch
+export model -fmt loch -o BigCavernRanch.lox
+
+# Create a 3d map for use with Survex/Aven
+export model -fmt 3d -o BigCavernRanch.3d
+
+# Create a KML file for Google Earth
+export map -proj plan -fmt kml -output BigCavernRanch.kml
+  
+  
+==========  BigCavernRanch.th  ===========
+# Bring in subsidiary files
+
+# Name the input caves
+source ../AllieSpringCaveSurvey/AllieSpringCave.th
+source ../MillCreekCaveSurvey/MillCreekCave.th
+source ../ShiftyRockPit/ShiftyRockPit.th
+source ../CascadeCaverns/CascadeCaverns.th
+
+survey all
+  equate AA42 at ShiftyRockPit DR23 at AllieSpringCave
+endsurvey
+
+
+
+
+
+From bruce at tomo.co.nz  Mon Apr 30 08:01:09 2018
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 30 Apr 2018 18:01:09 +1200
+Subject: [Therion] Extended elevation page
+Message-ID: <000001d3e048$a45027e0$ecf077a0$@tomo.co.nz>
+
+Good morning all
+
+I have just put together a Therion Extended Elevations
+<https://therion.speleo.sk/wiki/extend>  page, having convinced myself that
+I have almost figured out how to make them work.  You can navigate there
+from the wiki start page <https://therion.speleo.sk/wiki/start> , via the
+'Data Organisation' link.
+
+ 
+
+Thanks and apologies to Marco Corvi, for the inspiration and words I have
+borrowed from his page.  Marco, is it OK?
+
+ 
+
+It is not quite complete yet (I have a history of not completing projects)
+however if someone can direct me to the centreline and drawing data for the
+famous Therion Extended Elevation Control
+<https://therion.speleo.sk/samples.doc/25.html>  sample, then I might remain
+inspired enough to generate a more comprehensive set of examples.
+
+ 
+
+Enjoy your caves
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180430/1b05218a/attachment.htm>
+
+From martinsluka at mac.com  Mon Apr 30 19:54:29 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 30 Apr 2018 19:54:29 +0200
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <5074792.6L7HCnBPbe@main2.billgee.local>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+Message-ID: <F6B3DEE0-341D-48C9-866A-8DF526DDE9AE@mac.com>
+
+Bill, you should create higher level of survey, input all particular .th files and use it as source in thconfig. In that higher level survey you may eguate stations from different base level surveys. 
+
+Martin S. 
+
+Odesláno z iPhonu
+
+26. 4. 2018 v 16:51, Bill Gee via Therion <therion at speleo.sk>:
+
+> Hello everyone -
+> 
+> I have been working on a multi-cave project for a while.  Each cave exists as 
+> its own separate set of files.  A few months ago - with help from this group - 
+> I figured out how to get a single output file that contains all four cave 
+> maps.
+> 
+> The combined map is generated from a single thconfig file that uses "source" 
+> commands to bring in the .th files from each of the member caves.
+> 
+> Now we have surveyed a link between two of the four caves.  I need to set up 
+> an "equate" command so that the two caves actually link up.  According to 
+> Aven, the gap is about 30 feet.  Some of that, I am sure, is due to rounding 
+> errors in the GPS locates for the two caves.  
+> 
+> Based on a message from Martin, I added a .th file which contains a "survey" 
+> command.  However, that is generating an error from Therion:
+> 
+> ==========
+> therion 5.4.1 (2017-04-18) 
+> cavern - Survex 1.2.34 
+> initialization file: /etc/therion.ini 
+> reading ... done 
+> This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded 
+> format=pdfetex) 
+> restricted \write18 enabled. 
+> entering extended mode 
+> (./fonttest.tex 
+> checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT INSTALLED 
+> This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded 
+> format=pdfetex) 
+> restricted \write18 enabled. 
+> entering extended mode 
+> (./fonttest.tex 
+> checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT 
+> INSTALLED 
+> configuration file: thconfig 
+> reading ... 
+> therion: error -- BigCavernRanch.th [9] -- unknown configuration command -- 
+> survey
+> ===============
+> 
+> The thconfig and .th files I used are embedded below as text.
+> 
+> Where should I put the "equate" command that will link the two caves?
+> 
+> Thanks!
+> -- 
+> Bill Gee
+> 
+> =============  thconfig  ============
+> encoding  utf-8
+> 
+> input BigCavernRanch.th
+> input ../TherionMasterFiles/CustomSymbolsCode.txt
+> 
+> # This layout is for the main 2D map, all on one page
+> layout basics
+>    units imperial
+>    scale-bar 50 feet
+>    page-numbers on
+>    north true
+>    rotate 0
+>    symbol-color group centerline [80 20 0]
+>    symbol-color area water [0 0 100]
+>    map-comment "The caves of Big Cavern Ranch, Pulaski County, Missouri"
+>    statistics explo all
+>    legend on
+>    map-header 3 65 w
+>    symbol-set UIS
+> 
+> # Section for PDF properties
+>    doc-author "Bill Gee"
+>    doc-title "The Caves of Big Cavern Ranch"
+>    doc-subject "The Caves of Big Cavern Ranch"
+> 
+> # Section for map photos
+> 
+> # Bring in the custom symbols
+>  copy CustomSymbols
+> 
+> # Reassign names 
+>  symbol-assign point gradient AMER
+>  symbol-assign point stalagmite AMER
+>  symbol-assign point stalactite AMER
+>  symbol-assign point pillar AMER
+>  symbol-assign point popcorn AMER
+> 
+> endlayout
+> 
+> layout mainmapnocolor
+>  copy basics
+>  symbol-show group centerline
+>  debug station-names
+>  scale 1 200
+>  color map-fg [100 86 66]
+> endlayout
+> 
+> layout mainmapwithcolor
+>  copy basics
+>  symbol-show group centerline
+>  debug station-names
+>  scale 1 200
+>  color map-fg altitude
+> endlayout
+> 
+> layout mainmapprint
+>  copy basics
+>  scale 1 800
+>  debug off
+>  symbol-hide group centerline
+>  color map-fg [100 86 66]
+> endlayout
+> 
+> layout mainmapnocolor
+>  copy basics
+>  symbol-show group centerline
+>  debug station-names
+>  scale 1 200
+>  color map-fg [100 86 66]
+> endlayout
+> 
+> layout mainmapwithcolor
+>  copy basics
+>  symbol-show group centerline
+>  debug station-names
+>  scale 1 200
+>  color map-fg altitude
+> endlayout
+> 
+> layout mainmapprint
+>  copy basics
+>  scale 1 800
+>  debug off
+>  symbol-hide group centerline
+>  color map-fg [100 86 66]
+> endlayout  
+> 
+> # Change the legend callouts
+>  text en_US "point u:stalagmaflat_AMER" "stalagmaflat"
+>  text en_US "line u:dripline_AMER" "dripline"
+>  text en_US "point u:pendant" "pendant"
+>  text en_US "point u:stromatolite" "stromatolite"
+> 
+> # Now list all the map files to be created.
+> 
+> # The main plan map
+> export map -proj plan -layout mainmapnocolor -o BigCavernRanch.pdf
+> 
+> # The main map for printing
+> export map -proj plan -layout mainmapprint -o BigCavernRanchPrint.pdf
+> 
+> # Main plan map with elevations colorized
+> export map -proj plan -layout mainmapwithcolor -o BigCavernRanchColored.pdf
+> 
+> # Create an atlas map
+> # export atlas -proj plan -layout mainmapnocolor -o BigCavernRanchAtlas.pdf
+> 
+> # create a centerline map using XVI format
+> # export map -proj plan -fmt xvi -o BigCavernRanch.xvi
+> 
+> # Create a 3d map for use with Loch
+> export model -fmt loch -o BigCavernRanch.lox
+> 
+> # Create a 3d map for use with Survex/Aven
+> export model -fmt 3d -o BigCavernRanch.3d
+> 
+> # Create a KML file for Google Earth
+> export map -proj plan -fmt kml -output BigCavernRanch.kml
+> 
+> 
+> ==========  BigCavernRanch.th  ===========
+> # Bring in subsidiary files
+> 
+> # Name the input caves
+> source ../AllieSpringCaveSurvey/AllieSpringCave.th
+> source ../MillCreekCaveSurvey/MillCreekCave.th
+> source ../ShiftyRockPit/ShiftyRockPit.th
+> source ../CascadeCaverns/CascadeCaverns.th
+> 
+> survey all
+>  equate AA42 at ShiftyRockPit DR23 at AllieSpringCave
+> endsurvey
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Mon Apr 30 20:26:56 2018
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 30 Apr 2018 13:26:56 -0500
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <F6B3DEE0-341D-48C9-866A-8DF526DDE9AE@mac.com>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+ <F6B3DEE0-341D-48C9-866A-8DF526DDE9AE@mac.com>
+Message-ID: <2483552.k6zoMEGyrh@main2.billgee.local>
+
+Hi Martin -
+
+I thought I *HAD* created a higher level of survey.  That is what the 
+BigCavernsRanch.th file does ...  It imports surveys from the other projects 
+by virtue of importing the .th files.  The subsidiary .th files reference the 
+centerline survey data through input statements.
+
+Right???  Or am I completely missing something?
+
+Maybe I should create a new file "AllMaps.th" which is nothing but an include 
+of BigCavernsRanch.th???  Would that establish a new top-level survey?
+
+(confused in Kansas...)
+
+-- 
+Bill Gee
+
+
+
+On Monday, April 30, 2018 12:54:29 PM CDT Martin Sluka via Therion wrote:
+> Bill, you should create higher level of survey, input all particular .th
+> files and use it as source in thconfig. In that higher level survey you may
+> eguate stations from different base level surveys.
+> 
+> Martin S.
+> 
+> Odesláno z iPhonu
+> 
+> 26. 4. 2018 v 16:51, Bill Gee via Therion <therion at speleo.sk>:
+> > Hello everyone -
+> > 
+> > I have been working on a multi-cave project for a while.  Each cave exists
+> > as its own separate set of files.  A few months ago - with help from this
+> > group - I figured out how to get a single output file that contains all
+> > four cave maps.
+> > 
+> > The combined map is generated from a single thconfig file that uses
+> > "source" commands to bring in the .th files from each of the member
+> > caves.
+> > 
+> > Now we have surveyed a link between two of the four caves.  I need to set
+> > up an "equate" command so that the two caves actually link up.  According
+> > to Aven, the gap is about 30 feet.  Some of that, I am sure, is due to
+> > rounding errors in the GPS locates for the two caves.
+> > 
+> > Based on a message from Martin, I added a .th file which contains a
+> > "survey" command.  However, that is generating an error from Therion:
+> > 
+> > ==========
+> > therion 5.4.1 (2017-04-18)
+> > cavern - Survex 1.2.34
+> > initialization file: /etc/therion.ini
+> > reading ... done
+> > This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded
+> > format=pdfetex)
+> > restricted \write18 enabled.
+> > entering extended mode
+> > (./fonttest.tex
+> > checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT
+> > INSTALLED This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+> > (preloaded format=pdfetex)
+> > restricted \write18 enabled.
+> > entering extended mode
+> > (./fonttest.tex
+> > checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT
+> > INSTALLED
+> > configuration file: thconfig
+> > reading ...
+> > therion: error -- BigCavernRanch.th [9] -- unknown configuration command
+> > --
+> > survey
+> > ===============
+> > 
+> > The thconfig and .th files I used are embedded below as text.
+> > 
+> > Where should I put the "equate" command that will link the two caves?
+> > 
+> > Thanks!
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+
+
+
+From martinsluka at mac.com  Mon Apr 30 20:39:41 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 30 Apr 2018 20:39:41 +0200
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <2483552.k6zoMEGyrh@main2.billgee.local>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+ <F6B3DEE0-341D-48C9-866A-8DF526DDE9AE@mac.com>
+ <2483552.k6zoMEGyrh@main2.billgee.local>
+Message-ID: <F61FA9DC-03C6-456D-8CB1-41E749911D0B@mac.com>
+
+I thought you used survey as command in thconfig file. 
+
+There is a misunderstanding of each other. 
+
+Between survey - endsurvey command could be many informations. 
+
+Without the data I'm not able to recognize where is a problem. 
+
+Martin S. 
+
+Odesláno z iPhonu
+
+30. 4. 2018 v 20:26, Bill Gee via Therion <therion at speleo.sk>:
+
+> Hi Martin -
+> 
+> I thought I *HAD* created a higher level of survey.  That is what the 
+> BigCavernsRanch.th file does ...  It imports surveys from the other projects 
+> by virtue of importing the .th files.  The subsidiary .th files reference the 
+> centerline survey data through input statements.
+> 
+> Right???  Or am I completely missing something?
+> 
+> Maybe I should create a new file "AllMaps.th" which is nothing but an include 
+> of BigCavernsRanch.th???  Would that establish a new top-level survey?
+> 
+> (confused in Kansas...)
+> 
+> -- 
+> Bill Gee
+> 
+> 
+> 
+>> On Monday, April 30, 2018 12:54:29 PM CDT Martin Sluka via Therion wrote:
+>> Bill, you should create higher level of survey, input all particular .th
+>> files and use it as source in thconfig. In that higher level survey you may
+>> eguate stations from different base level surveys.
+>> 
+>> Martin S.
+>> 
+>> Odesláno z iPhonu
+>> 
+>> 26. 4. 2018 v 16:51, Bill Gee via Therion <therion at speleo.sk>:
+>>> Hello everyone -
+>>> 
+>>> I have been working on a multi-cave project for a while.  Each cave exists
+>>> as its own separate set of files.  A few months ago - with help from this
+>>> group - I figured out how to get a single output file that contains all
+>>> four cave maps.
+>>> 
+>>> The combined map is generated from a single thconfig file that uses
+>>> "source" commands to bring in the .th files from each of the member
+>>> caves.
+>>> 
+>>> Now we have surveyed a link between two of the four caves.  I need to set
+>>> up an "equate" command so that the two caves actually link up.  According
+>>> to Aven, the gap is about 30 feet.  Some of that, I am sure, is due to
+>>> rounding errors in the GPS locates for the two caves.
+>>> 
+>>> Based on a message from Martin, I added a .th file which contains a
+>>> "survey" command.  However, that is generating an error from Therion:
+>>> 
+>>> ==========
+>>> therion 5.4.1 (2017-04-18)
+>>> cavern - Survex 1.2.34
+>>> initialization file: /etc/therion.ini
+>>> reading ... done
+>>> This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded
+>>> format=pdfetex)
+>>> restricted \write18 enabled.
+>>> entering extended mode
+>>> (./fonttest.tex
+>>> checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT
+>>> INSTALLED This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+>>> (preloaded format=pdfetex)
+>>> restricted \write18 enabled.
+>>> entering extended mode
+>>> (./fonttest.tex
+>>> checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT
+>>> INSTALLED
+>>> configuration file: thconfig
+>>> reading ...
+>>> therion: error -- BigCavernRanch.th [9] -- unknown configuration command
+>>> --
+>>> survey
+>>> ===============
+>>> 
+>>> The thconfig and .th files I used are embedded below as text.
+>>> 
+>>> Where should I put the "equate" command that will link the two caves?
+>>> 
+>>> Thanks!
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Mon Apr 30 21:08:18 2018
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 30 Apr 2018 14:08:18 -0500
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <F61FA9DC-03C6-456D-8CB1-41E749911D0B@mac.com>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+ <2483552.k6zoMEGyrh@main2.billgee.local>
+ <F61FA9DC-03C6-456D-8CB1-41E749911D0B@mac.com>
+Message-ID: <1580724.l7HprWfo9G@main2.billgee.local>
+
+Hi Martin -
+
+I fear you are right ...  We are not communicating somehow.  Let's try this 
+...
+
+I made a ZIP file containing the thconfig, *.th, *.,th2 and *.txt (centerline 
+data) files from all four projects plus the project that brings them together.  
+This file is called SampleData.zip and is copied to my public Dropbox 
+location.  It's a bit large to be emailing to the group.  You should not need 
+a Dropbox account to access the files in this folder.
+
+The link to my public Dropbox folder is
+
+https://www.dropbox.com/sh/8i520bdo8kr13w6/AAAIQOSi_WcKSpWxiibrAqDva?dl=0
+
+That folder also contains the various PDF maps from the projects.  At your 
+convenience I would very much appreciate if you could take a quick look.
+
+-- 
+Bill Gee
+
+
+
+On Monday, April 30, 2018 1:39:41 PM CDT Martin Sluka via Therion wrote:
+> I thought you used survey as command in thconfig file.
+> 
+> There is a misunderstanding of each other.
+> 
+> Between survey - endsurvey command could be many informations.
+> 
+> Without the data I'm not able to recognize where is a problem.
+> 
+> Martin S.
+> 
+> Odesláno z iPhonu
+> 
+> 30. 4. 2018 v 20:26, Bill Gee via Therion <therion at speleo.sk>:
+> > Hi Martin -
+> > 
+> > I thought I *HAD* created a higher level of survey.  That is what the
+> > BigCavernsRanch.th file does ...  It imports surveys from the other
+> > projects by virtue of importing the .th files.  The subsidiary .th files
+> > reference the centerline survey data through input statements.
+> > 
+> > Right???  Or am I completely missing something?
+> > 
+> > Maybe I should create a new file "AllMaps.th" which is nothing but an
+> > include of BigCavernsRanch.th???  Would that establish a new top-level
+> > survey?
+> > 
+> > (confused in Kansas...)
+> > 
+> >> On Monday, April 30, 2018 12:54:29 PM CDT Martin Sluka via Therion wrote:
+> >> Bill, you should create higher level of survey, input all particular .th
+> >> files and use it as source in thconfig. In that higher level survey you
+> >> may
+> >> eguate stations from different base level surveys.
+> >> 
+> >> Martin S.
+> >> 
+> >> Odesláno z iPhonu
+> >> 
+> >> 26. 4. 2018 v 16:51, Bill Gee via Therion <therion at speleo.sk>:
+> >>> Hello everyone -
+> >>> 
+> >>> I have been working on a multi-cave project for a while.  Each cave
+> >>> exists
+> >>> as its own separate set of files.  A few months ago - with help from
+> >>> this
+> >>> group - I figured out how to get a single output file that contains all
+> >>> four cave maps.
+> >>> 
+> >>> The combined map is generated from a single thconfig file that uses
+> >>> "source" commands to bring in the .th files from each of the member
+> >>> caves.
+> >>> 
+> >>> Now we have surveyed a link between two of the four caves.  I need to
+> >>> set
+> >>> up an "equate" command so that the two caves actually link up. 
+> >>> According
+> >>> to Aven, the gap is about 30 feet.  Some of that, I am sure, is due to
+> >>> rounding errors in the GPS locates for the two caves.
+> >>> 
+> >>> Based on a message from Martin, I added a .th file which contains a
+> >>> "survey" command.  However, that is generating an error from Therion:
+> >>> 
+> >>> ==========
+> >>> therion 5.4.1 (2017-04-18)
+> >>> cavern - Survex 1.2.34
+> >>> initialization file: /etc/therion.ini
+> >>> reading ... done
+> >>> This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+> >>> (preloaded
+> >>> format=pdfetex)
+> >>> restricted \write18 enabled.
+> >>> entering extended mode
+> >>> (./fonttest.tex
+> >>> checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT
+> >>> INSTALLED This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+> >>> (preloaded format=pdfetex)
+> >>> restricted \write18 enabled.
+> >>> entering extended mode
+> >>> (./fonttest.tex
+> >>> checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT
+> >>> INSTALLED
+> >>> configuration file: thconfig
+> >>> reading ...
+> >>> therion: error -- BigCavernRanch.th [9] -- unknown configuration command
+> >>> --
+> >>> survey
+> >>> ===============
+> >>> 
+> >>> The thconfig and .th files I used are embedded below as text.
+> >>> 
+> >>> Where should I put the "equate" command that will link the two caves?
+> >>> 
+> >>> Thanks!
+> >> 
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> > 
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+
+
+
+From martinsluka at mac.com  Mon Apr 30 21:13:49 2018
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 30 Apr 2018 21:13:49 +0200
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <1580724.l7HprWfo9G@main2.billgee.local>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+ <2483552.k6zoMEGyrh@main2.billgee.local>
+ <F61FA9DC-03C6-456D-8CB1-41E749911D0B@mac.com>
+ <1580724.l7HprWfo9G@main2.billgee.local>
+Message-ID: <1A2EEB23-3E3F-4DE2-8ABE-7AAA80E1A29F@mac.com>
+
+I'm not on computer now. After tomorrow. 
+
+M. 
+
+Odesláno z iPhonu
+
+30. 4. 2018 v 21:08, Bill Gee via Therion <therion at speleo.sk>:
+
+> Hi Martin -
+> 
+> I fear you are right ...  We are not communicating somehow.  Let's try this 
+> ...
+> 
+> I made a ZIP file containing the thconfig, *.th, *.,th2 and *.txt (centerline 
+> data) files from all four projects plus the project that brings them together.  
+> This file is called SampleData.zip and is copied to my public Dropbox 
+> location.  It's a bit large to be emailing to the group.  You should not need 
+> a Dropbox account to access the files in this folder.
+> 
+> The link to my public Dropbox folder is
+> 
+> https://www.dropbox.com/sh/8i520bdo8kr13w6/AAAIQOSi_WcKSpWxiibrAqDva?dl=0
+> 
+> That folder also contains the various PDF maps from the projects.  At your 
+> convenience I would very much appreciate if you could take a quick look.
+> 
+> -- 
+> Bill Gee
+> 
+> 
+> 
+>> On Monday, April 30, 2018 1:39:41 PM CDT Martin Sluka via Therion wrote:
+>> I thought you used survey as command in thconfig file.
+>> 
+>> There is a misunderstanding of each other.
+>> 
+>> Between survey - endsurvey command could be many informations.
+>> 
+>> Without the data I'm not able to recognize where is a problem.
+>> 
+>> Martin S.
+>> 
+>> Odesláno z iPhonu
+>> 
+>> 30. 4. 2018 v 20:26, Bill Gee via Therion <therion at speleo.sk>:
+>>> Hi Martin -
+>>> 
+>>> I thought I *HAD* created a higher level of survey.  That is what the
+>>> BigCavernsRanch.th file does ...  It imports surveys from the other
+>>> projects by virtue of importing the .th files.  The subsidiary .th files
+>>> reference the centerline survey data through input statements.
+>>> 
+>>> Right???  Or am I completely missing something?
+>>> 
+>>> Maybe I should create a new file "AllMaps.th" which is nothing but an
+>>> include of BigCavernsRanch.th???  Would that establish a new top-level
+>>> survey?
+>>> 
+>>> (confused in Kansas...)
+>>> 
+>>>> On Monday, April 30, 2018 12:54:29 PM CDT Martin Sluka via Therion wrote:
+>>>> Bill, you should create higher level of survey, input all particular .th
+>>>> files and use it as source in thconfig. In that higher level survey you
+>>>> may
+>>>> eguate stations from different base level surveys.
+>>>> 
+>>>> Martin S.
+>>>> 
+>>>> Odesláno z iPhonu
+>>>> 
+>>>> 26. 4. 2018 v 16:51, Bill Gee via Therion <therion at speleo.sk>:
+>>>>> Hello everyone -
+>>>>> 
+>>>>> I have been working on a multi-cave project for a while.  Each cave
+>>>>> exists
+>>>>> as its own separate set of files.  A few months ago - with help from
+>>>>> this
+>>>>> group - I figured out how to get a single output file that contains all
+>>>>> four cave maps.
+>>>>> 
+>>>>> The combined map is generated from a single thconfig file that uses
+>>>>> "source" commands to bring in the .th files from each of the member
+>>>>> caves.
+>>>>> 
+>>>>> Now we have surveyed a link between two of the four caves.  I need to
+>>>>> set
+>>>>> up an "equate" command so that the two caves actually link up. 
+>>>>> According
+>>>>> to Aven, the gap is about 30 feet.  Some of that, I am sure, is due to
+>>>>> rounding errors in the GPS locates for the two caves.
+>>>>> 
+>>>>> Based on a message from Martin, I added a .th file which contains a
+>>>>> "survey" command.  However, that is generating an error from Therion:
+>>>>> 
+>>>>> ==========
+>>>>> therion 5.4.1 (2017-04-18)
+>>>>> cavern - Survex 1.2.34
+>>>>> initialization file: /etc/therion.ini
+>>>>> reading ... done
+>>>>> This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+>>>>> (preloaded
+>>>>> format=pdfetex)
+>>>>> restricted \write18 enabled.
+>>>>> entering extended mode
+>>>>> (./fonttest.tex
+>>>>> checking optional fonts csr10 csti10 csbx10 csss10 csssi10 ... NOT
+>>>>> INSTALLED This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016)
+>>>>> (preloaded format=pdfetex)
+>>>>> restricted \write18 enabled.
+>>>>> entering extended mode
+>>>>> (./fonttest.tex
+>>>>> checking optional fonts cmcyr10 cmcti10 cmcbx10 cmcss10 cmcssi10 ... NOT
+>>>>> INSTALLED
+>>>>> configuration file: thconfig
+>>>>> reading ...
+>>>>> therion: error -- BigCavernRanch.th [9] -- unknown configuration command
+>>>>> --
+>>>>> survey
+>>>>> ===============
+>>>>> 
+>>>>> The thconfig and .th files I used are embedded below as text.
+>>>>> 
+>>>>> Where should I put the "equate" command that will link the two caves?
+>>>>> 
+>>>>> Thanks!
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From wookey at wookware.org  Mon Apr 30 22:48:29 2018
+From: wookey at wookware.org (Wookey)
+Date: Mon, 30 Apr 2018 21:48:29 +0100
+Subject: [Therion] How to "equate" between two caves
+In-Reply-To: <5074792.6L7HCnBPbe@main2.billgee.local>
+References: <5074792.6L7HCnBPbe@main2.billgee.local>
+Message-ID: <20180430204829.cbhyeogcvpqjoex5@mail.wookware.org>
+
+On 2018-04-26 09:51 -0500, Bill Gee via Therion wrote:
+
+> The combined map is generated from a single thconfig file that uses "source" 
+> commands to bring in the .th files from each of the member caves.
+>  
+> Now we have surveyed a link between two of the four caves.  I need to set up 
+> an "equate" command so that the two caves actually link up. 
+
+> Based on a message from Martin, I added a .th file which contains a "survey" 
+> command.  However, that is generating an error from Therion:
+
+...
+   
+> ==========  BigCavernRanch.th  ===========
+> # Bring in subsidiary files
+> 
+> # Name the input caves
+> source ../AllieSpringCaveSurvey/AllieSpringCave.th
+> source ../MillCreekCaveSurvey/MillCreekCave.th
+> source ../ShiftyRockPit/ShiftyRockPit.th
+> source ../CascadeCaverns/CascadeCaverns.th
+> 
+> survey all
+>   equate AA42 at ShiftyRockPit DR23 at AllieSpringCave
+> endsurvey
+
+'source' is a command that goes in a thconfig file.
+'survey' is a command that goes in a .th file.
+
+thconfig and .th files have different formats. So even though you've
+called the file 'BigCavernRanch.th', it's being treated as a thconfig
+file.
+
+I think if you change:
+input BigCavernRanch.th 
+to 
+source BigCavernRanch.th
+that should do the trick.
+
+input is 'insert file as if it was written here'
+source is 'read this .th data file here'
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20180430/733a392f/attachment.sig>
+

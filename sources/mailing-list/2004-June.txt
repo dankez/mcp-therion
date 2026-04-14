@@ -1,0 +1,1741 @@
+From wookey at aleph1.co.uk  Tue Jun  1 19:00:50 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 1 Jun 2004 18:00:50 +0100
+Subject: problem with 0.3.1
+In-Reply-To: <122@reconstruction>
+Message-ID: <125@reconstruction>
+
++++ Stacho Mudrak [04-05-26 09:22 +0200]:
+
+>> At 18:49 25. 5. 2004, you wrote:
+>
+>>> >I've upgraded to 0.3.0/0.3.1 and it does indeed fix the 'extra newline
+>>> >problem' which is great but it won't compile my dataset that was working OK
+>>> >with 0.2.19.
+>
+>>
+>> I've checked this (running 0.3.1 with your dataset), and on my machine
+>> (Mandrake 9.2, and WinXP) it did not generated this error. In any case,
+>> there is no error in the input data, so we have to search for error
+>> somewhere else. I can imagine following errors:
+>>
+>> 2. It is more serious error - but then it would be great, if you can
+>> compile debug version of therion (make config-debug; make). Then run this
+>> debug version with your data and send us the exact error message (there
+>> will be source position also included). Because there is no error in your
+>> input file => error must be in therion.
+
+
+OK - I did this and got the following: (hope this helps track it down)
+
+therion 0.3.1
+
+initialization file: /etc/therion.ini
+reading
+open file -- /etc/therion.ini
+close file -- /etc/therion.ini
+
+
+configuration file: thconfig
+reading
+open file -- thconfig
+close file -- thconfig
+
+
+reading input -- soundriver.th
+open file -- soundriver.th
+therion (therion.cxx:332): error -- (thdatareader.cxx:213): soundriver.th [6] -- (thdatabase.cxx:161): invalid command context
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From madelain at nerim.fr  Fri Jun 11 18:41:15 2004
+From: madelain at nerim.fr (Eric Madelaine)
+Date: Fri, 11 Jun 2004 18:41:15 +0200
+Subject: new user ....
+Message-ID: <126@reconstruction>
+
+Hi,
+
+I'm Eric Madelaine, caver from the Nice area, in france.
+I have been fiddling with survey softwares for a while (25 years? ),
+even building one myself years ago (never get outside my club, but this
+was in the glorious years of Multics and PL1... distribution was not
+like it is now (;-))
+I have been experimenting with therion for a couple weeks now, and i am
+really pleased with the results I already have. The concept of morphing
+vectorial drawings on the survey is of course the best we can imagine
+today, and the way that therion authors have integrated that in a
+specific survey tool in such a short time is impressive. A lot left to
+do yet in terms of 3D modelling, and certainly for getting the software
+accessible for non-computer people of course (;-)
+
+I have a number of questions, starting with things I ran into during my
+first tries( therion version 0.3.1 on Windows XP), for which I have not
+found the answer neither in the therin book, nor in wookey's tutorial paper.
+
+- How do you get a map (simple plan) with only the centerline, when you
+have not yet drawn, or scanned, the scraps ?
+
+- I have not been able to generate a correct extended elevation, it
+comes completely distorted. Is it supposed to work? (i've not found any
+example of elevation maps with the distribution)
+
+- I'd like to get a series of cross sections drawn on the side of a map
+page (or an atlas page), with only the cross-section lines drawn on the
+principal plan or elevation. Is there a simple way to do that ? It's
+rather difficult to attach those section points to a given scrap, that
+could be very far on the map...
+
+For more long term things:
+
+- Is there any plan, or any contact taken,  for a french translation? If
+not, and if you think that internationalisation could be easy enough in
+the current version of the code, I could find the time to help you for
+that...
+
+- I have no clue on how the 3D models are generated, but I'm impressed
+of what you get from a single plan.
+I understand how you can guess proportionnal heights from the plan. I
+also have played with passage-heigth point specs (with correct results
+for tube-like passages, but much less success for rooms...)
+Do you have any plans/ideas to use cross-section information when
+available? to use both plan and elevation information when you have both
+? or may be to use just LRUD data if you have nothing else ?
+
+Eric.
+
+
+
+
+From m.b at speleo.sk  Mon Jun 14 13:12:49 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 14 Jun 2004 13:12:49 +0200 (CEST)
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <127@reconstruction>
+
+Hello,
+
+>> - How do you get a map (simple plan) with only the centerline, when you
+>> have not yet drawn, or scanned, the scraps ?
+
+
+Currently it's possible only to export centreline data as 3d model and
+print it in Aven or Compass.
+
+We want to extend the map command such that it could contain both scraps
+and surveys. When survey would be included in the map, all centreline data
+contained in the given survey would be displayed in the map. This would
+allow to mix (finished) scraps and centreline in one map.
+
+>> - I have not been able to generate a correct extended elevation, it
+>> comes completely distorted. Is it supposed to work? (i've not found any
+>> example of elevation maps with the distribution)
+
+
+We have neither used nor tested this extensively, but it worked on some
+simple examples. We'll add an example on the page.
+
+>> - I'd like to get a series of cross sections drawn on the side of a map
+>> page (or an atlas page), with only the cross-section lines drawn on the
+>> principal plan or elevation. Is there a simple way to do that ?
+
+
+What a great idea! But will take some time to implement.
+
+>> - Is there any plan, or any contact taken,  for a french translation? If
+>> not, and if you think that internationalisation could be easy enough in
+>> the current version of the code, I could find the time to help you for
+>> that...
+
+
+Well, there were more requests to translate therion to other languages.
+This can be done on more levels (which one do you mean?):
+
+- map output
+- console messages from therion
+- xtherion's user interface
+- input language (commands)
+- documentation
+
+The first is fully supported and we have already Czech and Slovak
+translations. Contributions are welcome.
+
+The last requires more effort while the documentation is changing and
+growing rapidly.
+
+IMHO all other three fields (messages, UI, input language) are deeply
+wedded together -- I see no great advance in translating messages if
+xtherion's interface remains English, and only confusion if the UI gets
+translated but the user has to fill english options for commands
+(E.g. you see translated label 'options' in your language but have to fill
+'-subtype ...' in English)
+
+On the other side, translation of the input language could create a total
+mess. What about
+
+Punkt 0 0 Wurzel -Sichtbarkeit ein -abschneiden aus
+or
+bod 0 0 kore? -vidite?nos? áno -oreza? nie
+
+The only real solution I see is to make the GUI in such a way that therion
+and its language would be completely hidden. see
+http://labyrinth.speleo.sk
+
+>> Do you have any plans/ideas to use cross-section information when
+>> available? to use both plan and elevation information when you have both
+>> ? or may be to use just LRUD data if you have nothing else ?
+
+
+The short answer is yes, yes, yes. But these are longer-term wishes.
+
+Regards, Martin
+
+
+
+
+
+From s.m at speleo.sk  Mon Jun 14 13:53:52 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 14 Jun 2004 13:53:52 +0200
+Subject: new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <128@reconstruction>
+
+Hi,
+
+thanks a lot for your feedback and compliments. It's great to have another "computer" user :) Sorry for the late answers, we've been a little bit underground over the weekend. I would like to add something only to the last topic - 3D modelling:
+
+> - I have no clue on how the 3D models are generated, but I'm impressed
+> of what you get from a single plan.
+> I understand how you can guess proportionnal heights from the plan. I
+> also have played with passage-heigth point specs (with correct results
+> for tube-like passages, but much less success for rooms...)
+> Do you have any plans/ideas to use cross-section information when
+> available? to use both plan and elevation information when you have both
+> ? or may be to use just LRUD data if you have nothing else ?
+
+
+We have been thinking a lot how to generate "good" 3D models, because LRUD approach (eve if very very extended - various profiles, sections outside stations etc... was not good). So we have tried to generate models from a plan, but there was no idea how to do it - we have seen no software that is doing it (for caves), and we had no idea, how to specify the input format. So we have decided to have no 3D input, to avoid wrong input specification.
+
+The problem is, that specific data needed to generate 3D model depends on algorithm, we will use. Until now, we have implemented only one of them, that has some disadvantages - the rooms are one of big disadvantages of this algorithm. Now we are designing second version, that should be better - but until it will not work, I have no idea whether it will be...
+
+Things you have described (to use cross sections, plan & elevation data when available, also usage of LRUD if specified) are currently only our dreams (if I'm thinking about results) or nightmares (if I'm thinking about concrete algorithms). Our TODO in 3D is following:
+
+1. replace the algorithm, that is adding 3rd dimension to the map - this is completely wrong and lot of distortions have origin here and add 3D modelling for vertical passages from elevation or extended projection scraps.
+
+2. add special map symbol (not drawn on the map) that will specify up/down dimensions of the scrap. When this will be done, it will be easy also to use elevation data to generate correct ceiling/floor heights, and also LRUD data when available.
+
+3. change the way of triangulation - refine where necessary (rooms) and roughen where it is too fine (straight tunnel passages). When this step will be done, we can start thinking about applying cross-secion shapes to 3D model and modelling the rooms.
+
+Last special point are existing LRUD data. We are thinking also about this (usually people have only these data when migrating to therion), and it is painful for them (as it is also for us) to not have 3D model for passages, where there are at least some 3D data. I'm just lazy to do it, because doing 3D reconstruction from maps is much more interesting. But I agree, it should be done, because it's not so complicated to create simple tubes where no other 3D data exists. I'll think about it.
+
+S.
+
+
+
+
+
+
+From s.m at speleo.sk  Mon Jun 14 13:58:34 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 14 Jun 2004 13:58:34 +0200
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <129@reconstruction>
+
+
+> > - I'd like to get a series of cross sections drawn on the side of a map
+> > page (or an atlas page), with only the cross-section lines drawn on the
+> > principal plan or elevation. Is there a simple way to do that ?
+>
+> What a great idea! But will take some time to implement.
+
+
+In any case - we will introduce in the next release probably special projection type for cross sections "-projection section", because using "-projection none" is quite misleading. Also we will definitely need connection between section-line in the map and section scrap. It will be needed to generate automatical cross-section labels (is there any standard used in france?) and also for 3D in the future.
+
+S.
+
+
+
+
+From madelain at nerim.fr  Mon Jun 14 23:05:31 2004
+From: madelain at nerim.fr (Eric Madelaine)
+Date: Mon, 14 Jun 2004 23:05:31 +0200
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <130@reconstruction>
+
+Thanks Martin and Stacho,
+
+even if the first answers were... wait and see (;-)
+
+I will try to run simple examples for producing extended elevation maps, and I'll keep you informed of my progress...
+
+> Translations
+> - map output
+> The first is fully supported and we have already Czech and Slovak
+> translations. Contributions are welcome.
+
+
+  Ok, this one is easy, I volunteer gladly for a french translatin.
+
+> - documentation
+> The last requires more effort while the documentation is changing and
+> growing rapidly.
+
+
+    Well, yes... Ok, I will not promissed any large amount of work just now. But I'll think about what I can do, and I will certainly do some introduction paper in french, in the same spirit than wookey's paper in Compass Point.
+
+> - console messages from therion
+> - xtherion's user interface
+> - input language (commands)
+
+
+   Console messages and UI are going together (just as they go in survex  and the survex-related tools, for which I do contribute my own set of french sentences from time to time...). But this is why I wrote "if the code already supports internationalisation...". So I undertsand that it is not yet the case, and I will not push it anymore (:-(
+   Input language is a separate topic, I agree. But then, I'm not sure
+why you would not be able to change the lexer without changing the rest of the parser, and get variants for the language... (Again, I'm not suggesting that you should do it)
+
+
+By the way, from which part of Slovakia are your exactly?
+I'm going to Prague for a european project meeting during the first week of july, so I was wondering whether we could just meet and talk about it while tasting some of your local beers... (I know, Prague is not in Slovakia !)
+
+Eric.
+
+
+
+
+From martinsluka at mac.com  Tue Jun 15 07:47:33 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 15 Jun 2004 07:47:33 +0200
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <131@reconstruction>
+
+At 23:05 +0200 14.6.2004, Eric Madelaine wrote:
+*******************************************
+
+> By the way, from which part of Slovakia are your exactly?
+> I'm going to Prague for a european project meeting during the first week of july, so I was wondering whether we could just meet and talk about it while tasting some of your local beers... (I know, Prague is not in Slovakia !)
+>
+> Eric.
+
+
+Eric, Martin, Stacho - no problem, we may make a "therion camp" not far from Prague (30 km) - in small village Hriby. I have a small house there. What about Lada Blazek?
+
+Martin
+--
+
+
+
+From lblazek at speleo.cz  Tue Jun 15 08:44:12 2004
+From: lblazek at speleo.cz (Ladislav Blazek)
+Date: Tue, 15 Jun 2004 08:44:12 +0200 (CEST)
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <132@reconstruction>
+
+Martin Sluka napsal(a):
+
+>> At 23:05 +0200 14.6.2004, Eric Madelaine wrote:
+>> *******************************************
+>>
+>> Eric, Martin, Stacho - no problem, we may make a "therion camp" not
+>> far from Prague (30 km) - in small village Hriby. I have a small
+>> house there. What about Lada Blazek?
+
+
+Hi all,
+yes it's a good idea. What term you mean exactly?
+
+Lada
+
+
+
+
+From lblazek at speleo.cz  Tue Jun 15 09:12:51 2004
+From: lblazek at speleo.cz (Ladislav Blazek)
+Date: Tue, 15 Jun 2004 09:12:51 +0200 (CEST)
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <133@reconstruction>
+
+Eric Madelaine napsal(a):
+
+>> I will try to run simple examples for producing extended elevation maps,
+>> and I'll keep you informed of my progress...
+
+
+Hi Eric,
+I have at home some simple extended elevation maps generated from Therion...
+
+>From my point of view it's very simple.
+
+1. you need scanned sketch of extended elevation map  :-)
+2. set projection of the scrap -> extended
+3. set options of every point station -> name 11 at sifon1 -extend left (or
+right)
+
+Lada
+
+
+
+
+
+From s.m at speleo.sk  Tue Jun 15 10:08:21 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 15 Jun 2004 10:08:21 +0200
+Subject: new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <134@reconstruction>
+
+
+> even if the first answers were... wait and see (;-)
+
+
+Not exactly :) - there is new example on the Web page - Rabbit cave (download/sample data) also with extended elevation. Martin just forgot to anounce it yesterday... The 3D is much more difficult think - there you can just wait or help us coding and design algorithms. But I'm afraid, the algorithm design can not be done without sitting with a good beer.
+
+>   Ok, this one is easy, I volunteer gladly for a french translatin.
+
+
+OK, I'll have a look at the code and then I'll write you what exactly to do (I do not remember now :) .
+
+>> - documentation
+>> The last requires more effort while the documentation is changing and
+>> growing rapidly.
+>
+>
+>     Well, yes... Ok, I will not promissed any large amount of work just now. But I'll think about what I can do, and I will certainly do some introduction paper in french, in the same spirit than wookey's paper in Compass Point.
+
+
+I'm afraid, there is no comprehensive documentation to translate. ThBook is just a reference guide - I think, it will not help people, even if it will be translated.
+
+>   Console messages and UI are going together (just as they go in survex  and the survex-related tools, for which I do contribute my own set of french sentences from time to time...). But this is why I wrote "if the code already supports internationalisation...". So I undertsand that it is not yet the case, and I will not push it anymore (:-(
+
+
+Not exactly :) The internationalization code works in therion. Adding translation for 50 messages that therion generates is a work for 30 minutes. Also translating things in xtherion wouldn't be much work (I guess one evening) within the same framework.
+
+>    Input language is a separate topic, I agree. But then, I'm not sure
+> why you would not be able to change the lexer without changing the rest of the parser, and get variants for the language... (Again, I'm not suggesting that you should do it)
+
+
+This is again very easy - to add alternatives to parsing tables. In fact, they are already there to cover UK/US variants :))) pit/pitch, center/centre etc... We are just afraid of a mess, that can happen... I'm almost sure, that if I would write
+
+bod 0 0 -typ brèko
+
+nobody in the world with exception of CK/CZ would understand this code... In any case, internationalization is a topic for discussion. Last week we have realized, that at least, we should allow also real numbers with comma (e.g. 3,5), because otherwise people must allways switch to english keyboard.
+
+> By the way, from which part of Slovakia are your exactly?
+> I'm going to Prague for a european project meeting during the first week of july, so I was wondering whether we could just meet and talk about it while tasting some of your local beers... (I know, Prague is not in Slovakia !)
+
+
+We come from central Slovakia (Banska Bystrica), but we live in Bratislava. During this week, we (me and my wife) wanted to travel across central europe, so we can add Prague to our itinéraire - no problem. I'm looking forward to meet you and discuss these topics. All good ideas implemented in therion come from such a discussions (with a good beer) :)))
+
+Regards, S.
+
+
+
+
+From olly at survex.com  Tue Jun 15 17:22:15 2004
+From: olly at survex.com (Olly Betts)
+Date: Tue, 15 Jun 2004 16:22:15 +0100
+Subject: [therion] new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <135@reconstruction>
+
+On Mon, Jun 14, 2004 at 11:05:31PM +0200, Eric Madelaine wrote:
+
+>>    Input language is a separate topic, I agree. But then, I'm not sure
+>> why you would not be able to change the lexer without changing the rest
+>> of the parser, and get variants for the language... (Again, I'm not
+>> suggesting that you should do it)
+
+
+It's possible, but it's not a sane route to go down.
+
+The problem comes when users using different i18ns want to exchange
+files (for example, CUCC shares survey data with the German cavers who
+work in the same area of Austria).  Worse, what if I want to change a
+survey data file sent to me in German?  I'm forced to try to understand
+the German version of the file format, and either I have to make my
+changes in German, or the parser will need to understand every keyword
+from every language at once!
+
+A real world example - Microsoft translated keywords in the macro
+language for either Word or Excel (maybe both!) so a coworker had a fun
+time translating some macro scripts we shipped to clients by installing
+both versions and comparing the two manuals...)  And of course each time
+the macros changed, he had to dig out the manuals, and retest everything
+on the translated version.
+
+A better approach would be to translate the keywords from english (or
+some canonical form) and back to the canonical form on save.  That way
+I can edit a data file from a German surveyor in English, and the
+language used in the file format becomes just an implementation detail,
+
+Cheers,
+    Olly
+
+
+
+
+From wookey at aleph1.co.uk  Mon Jun 21 13:16:11 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 21 Jun 2004 12:16:11 +0100
+Subject: new user ....
+In-Reply-To: <126@reconstruction>
+Message-ID: <136@reconstruction>
+
++++ Eric Madelaine [04-06-14 23:05 +0200]:
+
+>>> >- documentation
+>>> >The last requires more effort while the documentation is changing and
+>>> >growing rapidly.
+>
+>>
+>>     Well, yes... Ok, I will not promissed any large amount of work just
+>> now. But I'll think about what I can do, and I will certainly do some
+>> introduction paper in french, in the same spirit than wookey's paper in
+>> Compass Point.
+
+
+I'll be sending the original to MartinB soon (when I have collected the right
+image files). I'll send it to you too, or maybe just stick it on my website
+for people to read/download/translate. It was GPLed to enable this sort of
+thing.
+
+It's going to need rewriting soon for all the 3D stuff  :-)
+
+I expect to do a new version for September (UK caving conference)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From Eric.Madelaine at sophia.inria.fr  Tue Jun 15 10:31:33 2004
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Tue, 15 Jun 2004 10:31:33 +0200
+Subject: Visit in Prague
+Message-ID: <137@reconstruction>
+
+I've been looking in more details to my agenda. And I need to book my flight
+very soon now...
+
+So I'm in Charles university in Prague all day on wednesday 7th and thursday
+8th. I will arrive in Prague tuesday 6th in the afternoon, and leaving either
+friday or saterday.
+It's the first time I go to this area of europe, so I will take some time to
+visit the city, of course.
+
+So I have mainly two options: if I book my return plane friday afternoon (there
+is one convenient at 5pm), I will have the first evening available (tuesday),
+plus a part of friday.
+If some of you are available (for whatever you plan, computer session, caving,
+or just eating and drinking), and willing to speak french for a while (;-), I
+can book my plane on saterday, but you'll have to host me for the night, and to
+drive me back to the airport...
+
+<martinsluka at mac.com>  wrote:
+
+>> Eric, Martin, Stacho - no problem, we may make a "therion camp" not
+>> far from Prague (30 km) - in small village Hriby. I have a small
+>> house there. What about Lada Blazek?
+
+
+Cheers,
+	Eric.
+
+
+
+
+
+From martinsluka at mac.com  Tue Jun 15 11:10:13 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 15 Jun 2004 11:10:13 +0200
+Subject: [therion] Re: Visit in Prague
+In-Reply-To: <137@reconstruction>
+Message-ID: <138@reconstruction>
+
+At 10:31 +0200 15.6.2004, Eric Madelaine wrote:
+*******************************************
+
+> So I have mainly two options: if I book my return plane friday afternoon (there
+> is one convenient at 5pm), I will have the first evening available (tuesday),
+> plus a part of friday.
+> If some of you are available (for whatever you plan, computer session, caving,
+> or just eating and drinking), and willing to speak french for a while (;-), I
+> can book my plane on saterday, but you'll have to host me for the night, and to
+> drive me back to the airport...
+
+
+After phone with Stacho - they (Stacho, his wife, Martin) may come on Friday July 9th at morning - visit a bit old Prague with you and afternoon we may drive to Hriby to barbecue a therion, drink beer, ... On Saturday we may continue and afternoon drive you to aiport.
+
+Anybody else?
+
+Martin
+--
+
+
+
+From Eric.Madelaine at sophia.inria.fr  Tue Jun 15 16:37:33 2004
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Tue, 15 Jun 2004 16:37:33 +0200
+Subject: [therion] Re: Visit in Prague
+In-Reply-To: <137@reconstruction>
+Message-ID: <139@reconstruction>
+
+martinsluka at mac.com said:
+
+>> After phone with Stacho - they (Stacho, his wife, Martin) may come on
+>> Friday July 9th at morning - visit a bit old Prague with you and
+>> afternoon we may drive to Hriby to barbecue a therion, drink beer,
+>> ... On Saturday we may continue and afternoon drive you to aiport.
+
+
+Well thanks all of you!
+So my plane is reserved now (pretty cheap on KLM), and I'll have to have it
+emitted confirmed on tomorrow (non modifiable, these companies are hard on
+us...).
+
+	Eric.
+
+
+
+
+
+From wookey at aleph1.co.uk  Sun Jun 20 14:14:33 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Sun, 20 Jun 2004 13:14:33 +0100
+Subject: Wook's persistent Therion bug
+Message-ID: <142@reconstruction>
+
+I spent some hours last week (whilst in a cottage in wales), trying to track
+down the problem I have with Therion not liking my data any more. Here is
+what I discovered, which I hope will give you a clue, or suggest some more
+tests for me to do because I am out of ideas.
+
+In summary the problem exists in 0.2.19 and 0.3.1 so it's not a feature of
+the new version as I first thought. And as 0.2.19 _used_ to work then
+ewither it's a bug in underlying libraries or my data/environment has
+changed in some way.
+
+All the gdb testing has been done in 0.3.1. There are two bugs: 'invalid
+command context' on the first 'end*' command and a segfault if I use 'end
+centreline' instead of 'endcentreline'.
+
+I have found the function the segfault occurs in but no more. And the
+'invalid command context' thing has been tracked down to the 'wrong' context
+value (NONE, SURVEY, SCRAP) being set when the endcommand happens, but I
+don't understand what this context is or enough about C++ to know how it
+might go wrong. The reading of the data seems to be OK so far as I can tell
+from using GDB.
+
+Here are my notes giving the details of what I did:
+
+debugging therion soundriver problem 2004.06.17
+
+soundriver.th gives 'invalid command context' with v0.2.19 and 0.3.1 at
+first 'end' command (endmap, endcenterline). If I change endcenterline to
+'end centerline' then I get a segfault instead.
+
+The top of the file looks like:
+encoding  utf-8
+
+#  map elevator -title "Terikan River Cave: Elevator Entrance"
+#    farside at river
+#    farside2 at river
+#  endmap
+
+
+  #connections
+
+#  join farside at river farside2 at river
+  join farsidewest1 at river farsidewest2 at river
+  join fsceil1 at river:0 farsidewest3 at river:7
+
+  centerline
+    equate 17 at evening 53 at river
+    equate 24 at evening 1 at river
+
+    #*equate 4 at river2 6 at evening  ; was it stn 6 cairn? closure suggests not
+
+    equate 1 at rifticious 2 at evening
+    equate 5 at rifticious 12 at evening
+
+    equate 1 at pooh 50 at river
+
+    equate 22 at rifticious 1 at rifticious2
+
+    equate 10 at penthouse 27 at river
+
+  end centerline
+
+
+Backtracing with gdb produces:
+reading input -- soundriver.th
+open file -- soundriver.th
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0806fe92 in thsurvey::get_decdef (this=0x0) at thsurvey.h:239
+239       bool get_decdef() { return this->decdef; }
+
+the backtrace looks like this:
+(gdb) bt
+#0  0x0806fe92 in thsurvey::get_decdef (this=0x0) at thsurvey.h:239
+#1  0x0806f5a2 in thdata::set_survey_declination (this=0x819da20) at
+thdata.cxx:1996
+#2  0x0806c605 in thdata::insert_data_leg (this=0x819da20, nargs=2,
+args=0x8195798) at thdata.cxx:1370
+#3  0x080676d6 in thdata::set (this=0x819da20, cod={id = 0, nargs = 1},
+args=0xbffffa60, argenc=6, indataline=1) at thdata.cxx:223
+#4  0x08063c16 in thdatareader::read (this=0x818b420, ifname=0x8197b70
+"soundriver.th",
+    spath=0x819b6a0
+"/home/wookey/.therion:/usr/share/therion:/usr/local/share/therion",
+dbptr=0x818b200) at thdatareader.cxx:119
+#5  0x0810c1ef in main (argc=1, argv=0xbffffb34) at therion.cxx:254
+(gdb)
+
+Now I changed the file to this:
+
+encoding  utf-8
+
+  map elevator -title "Terikan River Cave: Elevator Entrance"
+    farside at river
+    farside2 at river
+  endmap
+
+
+  #connections
+
+#  join farside at river farside2 at river
+  join farsidewest1 at river farsidewest2 at river
+  join fsceil1 at river:0 farsidewest3 at river:7
+
+  centerline
+    equate 17 at evening 53 at river
+    equate 24 at evening 1 at river
+
+    #*equate 4 at river2 6 at evening  ; was it stn 6 cairn? closure suggests not
+
+    equate 1 at rifticious 2 at evening
+    equate 5 at rifticious 12 at evening
+
+    equate 1 at pooh 50 at river
+
+    equate 22 at rifticious 1 at rifticious2
+
+    equate 10 at penthouse 27 at river
+
+  endcenterline
+
+stepping through to find out why 'invalid command context occurs on 'endmap'
+we find that 'endmap' matches at thdatareader::read line 87 and then barf
+happens at line 91
+            dbptr->insert(objptr);
+
+because in thdatabase::insert, line 159
+ if ((optr->get_context() & this->ccontext) == 0)
+
+(gdb) print optr->get_context()
+$2 = 2 -i.e THCTX_SURVEY
+(gdb) print this->ccontext
+$3 = 1 i.e THCTX_NONE
+(gdb) print (optr->get_context() & this->ccontext)
+$4 = 0
+so we get "invalid command context".
+
+I don't really understand what this context stuff is about but maybe this
+will be a clue.
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Tue Jun 22 10:12:44 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 22 Jun 2004 10:12:44 +0200
+Subject: [therion] Wook's persistent Therion bug
+In-Reply-To: <142@reconstruction>
+Message-ID: <143@reconstruction>
+
+After reading your file several time, it seems to be very simple error. You are missing survey command in the beginning of your file :))) Change your file to following:
+
+encoding utf-8
+survey soundriver
+
+[current file contents]
+
+endsurvey soundriver # if this command already does not exists at the end of your file
+
+I'm sending you your source files separately (they work on my computer). You can diff them and see, where is the difference.
+
+> soundriver.th gives 'invalid command context' with v0.2.19 and 0.3.1 at
+> first 'end' command (endmap, endcenterline). If I change endcenterline to
+> 'end centerline' then I get a segfault instead.
+
+
+This is OK. Multiline command (like map or centerline) is inserted into database when endmap(endcenterline) is readed. Note, that you must type "endcenterline" not "end centerline". The segfault is real therion bug - I'll fix in the next version.
+
+> I don't really understand what this context stuff is about but maybe this
+> will be a clue.
+
+
+It's very simple - in fact all therion commands must be placed between survey - endsurvey commands (survey context). And all 2D commands (point, line, area) must be placed between scrap - endscrap commands (scrap context). I'll send you your data files (once you have sent them to us) that work correctly. You can diff with your files to see the difference.
+
+Thanks for your feedback, I hope it will work now (at least the files I will send you).
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Mon Jun 28 15:57:23 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 28 Jun 2004 14:57:23 +0100
+Subject: Wook's persistent Therion bug
+In-Reply-To: <142@reconstruction>
+Message-ID: <144@reconstruction>
+
++++ Stacho Mudrak [04-06-22 10:12 +0200]:
+
+>> After reading your file several time, it seems to be very simple error. You
+>> are missing survey command in the beginning of your file :))) Change your
+>> file to following:
+>>
+>> encoding utf-8
+>> survey soundriver
+>>
+>> [current file contents]
+
+
+OK, you're right. That line must have got deleted at some point.
+
+So, it was a silly error, but given that this has taken some 6 weeks to
+solve with some fairly computer-savvy users, it suggests that the error
+messages could be rather more helpful.
+
+If it had said: "'survey' command missing before 'map' command", or "data
+must be enclosed in 'survey' at line blah", then we might have worked it out
+a bit quicker than 'invalid command context' which didn't help either of us,
+and so we started suspecting something complicated and looking through
+hex-dumps of the file! (this wasn't helped by my mistaken belief that it
+worked OK with 0.2.19 - sorry about that - "bloody users!").
+
+>> It's very simple - in fact all therion commands must be placed between
+>> survey - endsurvey commands (survey context). And all 2D commands (point,
+>> line, area) must be placed between scrap - endscrap commands (scrap
+>> context). I'll send you your data files (once you have sent them to us)
+>> that work correctly. You can diff with your files to see the difference.
+
+
+OK - so it shouldn't be too hard to generate a much more user-helpful
+message when this doesn't happen.
+
+>> Thanks for your feedback, I hope it will work now (at least the files I
+>> will send you).
+
+
+Yep - I'm back in business. I'll upload therion 0.3.1 today and try and get
+some drawing done soon...
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From m.b at speleo.sk  Tue Jun 29 07:45:53 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 29 Jun 2004 07:45:53 +0200 (CEST)
+Subject: [therion] Re: Wook's persistent Therion bug
+In-Reply-To: <142@reconstruction>
+Message-ID: <145@reconstruction>
+
+>> So, it was a silly error, but given that this has taken some 6 weeks to
+>> solve with some fairly computer-savvy users, it suggests that the error
+>> messages could be rather more helpful.
+
+
+In fact your original message with the bug report from May 25 contained
+the survey command :)) The message from June 20 didn't -- this explains
+why it took 6 weeks to discover it...
+
+M.
+
+---------------------
+I get:
+"Invalid command context" at line 6 in this file:
+
+1 encoding  utf-8
+2 survey soundriver
+3
+4  map elevator -title "Terikan: Elevator Entrance"
+5    farside at river
+6    farside2 at river
+7  endmap
+8
+ ....<lots more data>....
+---------------------
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Tue Jun 29 11:24:38 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 29 Jun 2004 10:24:38 +0100
+Subject: Wook's persistent Therion bug
+In-Reply-To: <142@reconstruction>
+Message-ID: <146@reconstruction>
+
++++ Martin Budaj [04-06-29 07:45 +0200]:
+
+>>> > So, it was a silly error, but given that this has taken some 6 weeks to
+>>> > solve with some fairly computer-savvy users, it suggests that the error
+>>> > messages could be rather more helpful.
+>
+>>
+>> In fact your original message with the bug report from May 25 contained
+>> the survey command :)) The message from June 20 didn't -- this explains
+>> why it took 6 weeks to discover it...
+
+
+Yes, - I have no explanation for how that happened. So far as I can see
+there was only ever one copy of this file. But yes, it did greatly confuse
+the issue. The 'line 6' error suggests that in fact the 'endmap' command was
+on line 6, so in fact line 2 must have been missing, but then where did I
+copy this version from to send to you? It's a mystery.
+
+Nevertheless - if the error had been 'missing survey command before 'map',
+then we would probably have got to the answer faster.
+
+>> M.
+>>
+>> ---------------------
+>> I get:
+>> "Invalid command context" at line 6 in this file:
+>>
+>> 1 encoding  utf-8
+>> 2 survey soundriver
+>> 3
+>> 4  map elevator -title "Terikan: Elevator Entrance"
+>> 5    farside at river
+>> 6    farside2 at river
+>> 7  endmap
+>> 8
+>>  ....<lots more data>....
+>> ---------------------
+>>
+>>
+>>
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Tue Jun 29 13:57:12 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 29 Jun 2004 13:57:12 +0200
+Subject: [therion] Re: Wook's persistent Therion bug
+In-Reply-To: <142@reconstruction>
+Message-ID: <147@reconstruction>
+
+
+> Nevertheless - if the error had been 'missing survey command before 'map',
+> then we would probably have got to the answer faster.
+
+
+Yes, you are right. I'll try to change this.
+
+Regards, S.
+
+
+
+
+
+From Eric.Madelaine at sophia.inria.fr  Tue Jun 29 15:42:24 2004
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Tue, 29 Jun 2004 15:42:24 +0200
+Subject: french translation (fwd)
+Message-ID: <148@reconstruction>
+
+Soory I send this message only to Stacho yesterday, I think it's better on the
+list.
+And I have corrected some of my translation, so this version is slightly better.
+
+Eric.
+
+==========================
+Subject: Re: french translation (fwd)
+From: madelain at nerim.net
+Date: Mon, 28 Jun 2004 18:58:10 +0200 (CEST)
+
+So there is a first try...
+I hope that the 8-bit accentuated chars will be ok, if you need another
+encoding, please tell me.
+
+There were 2 or 3 words on which I was not sure, depending on the context
+in which they are used (raft, flute, or scallop...). Anyway they are
+outside the proper UIS list (;-)
+We can dicuss them next week may be.
+
+I haven't recompiled, I would have to do it on my linux machine at work,
+and I'm too busy now for that. Anyway I'm not in a hurry, it can wait till
+next version.
+
+Cheers,
+     Eric.
+
+>> Adding another (french) language to therion is very simple, it's already
+>> written in thbook/appendix/Adding new translations. If you do not wish to
+>> recompile, just add lines starting with "fr:" and corresponding french
+>> translation to thlang/texts.txt file (you need therion sources and utf-8
+>> text editor for it) and send us this file. We will compile it to the next
+>> release.
+>>
+>> Thanks, S.
+
+
+
+
+therion: point station:temporary
+cz: mÄ›Å™iÄskÃ½ bod (nestabilizovanÃ½)
+en: temporary survey, station
+sk: meraÄskÃ½ bod (nestabilizovanÃ½)
+fr: station topo temporaire
+
+therion: point station:painted
+cz: mÄ›Å™iÄskÃ½ bod (zabarvenÃ½)
+en: painted survey station
+sk: meraÄskÃ½ bod (zafarbenÃ½)
+fr: station topo, peinte
+
+therion: point station:natural
+cz: mÄ›Å™iÄskÃ½ bod (pÅ™Ã­rodnÃ­)
+en: natural survey station
+sk: meraÄskÃ½ bod (prÃ­rodnÃ½)
+fr: station topo, naturelle
+
+therion: point station:fixed
+cz: mÄ›Å™iÄskÃ½ bod (stabilizovanÃ½)
+en: fixed survey station
+sk: meraÄskÃ½ bod (stabilizovanÃ½)
+fr: station topo, fixe
+
+therion: line survey
+cz: polygonovÃ½ tah
+en: survey lines
+sk: polygÃ³novÃ½ Å¥ah
+fr: visée topo
+
+therion: point station-name
+cz: ÄÃ­slo mÄ›Å™iÄskÃ©ho bodu
+en: survey station name
+sk: ÄÃ­slo meraÄskÃ©ho bodu
+fr: station topo, nom
+
+therion: point entrance
+cz: vchod
+en: entrance
+sk: vchod
+fr: entrée
+
+therion: line arrow
+cz: pomocnÃ¡ Å¡ipka
+en: arrow
+sk: pomocnÃ¡ Å¡Ã­pka
+fr: flèche
+
+therion: line wall:bedrock
+cz: stÄ›na
+en: wall
+sk: stena
+fr: mur
+
+therion: line wall:underlying
+cz: stÄ›na niÅ¾Å¡Ã­ ÃºrovnÄ›
+en: underlying wall
+sk: stena niÅ¾Å¡ej Ãºrovne
+fr: mur sousjacent
+
+therion: line wall:unsurveyed
+cz: nezamÄ›Å™enÃ¡ stÄ›na
+en: unsurveyed wall
+sk: nezameranÃ¡ stena
+fr: mur non topographié
+
+therion: line wall:presumed
+cz: pÅ™edpoklÃ¡danÃ¡ stÄ›na
+en: presumed wall
+sk: predpokladanÃ¡ stena
+fr: mur supposé
+
+therion: line wall:blocks
+cz: zÃ¡val
+en: breakdown
+sk: stena tvorenÃ¡ zÃ¡valom
+fr: effrondrement
+
+therion: line wall:debris
+cz: Å¡tÄ›rk
+en: debris
+sk: stena tvorenÃ¡ Å¡trkom
+fr: débris de roche
+
+therion: line wall:pebbles
+cz: valouny
+en: pebbles
+sk: stena tvorenÃ¡ okruhliakmi
+fr: cailloux
+
+therion: line wall:sand
+cz: pÃ­sek
+en: sand
+sk: stena tvorenÃ¡ pieskom
+fr: sable
+
+therion: line wall:clay
+cz: jÃ­l
+en: clay
+sk: stena tvorenÃ¡ bahnom
+fr: argile
+
+therion: line wall:ice
+cz: led
+en: ice
+sk: stena tvorenÃ¡ Ä¾adom
+fr: glace
+
+therion: point wall-altitude
+cz: nadmoÅ™skÃ¡ vÃ½Å¡ka bodu na stÄ›nÄ›
+en: altitude
+sk: nadmorskÃ¡ vÃ½Å¡ka bodu na stene
+fr: altitude
+
+therion: point altitude
+cz: nadmoÅ™skÃ¡ vÃ½Å¡ka bodu v chodbÄ›
+en: altitude
+sk: nadmorskÃ¡ vÃ½Å¡ka bodu v chodbe
+fr: altitude
+
+therion: line section
+cz: pÅ™Ã­ÄnÃ½ Å™ez
+en: cross-section
+sk: prieÄny rez
+fr: section
+
+therion: point passage-height:unsigned
+cz: vÃ½Å¡ka chodby
+en: passage height
+sk: vÃ½Å¡ka chodby
+fr: hauteur du passage
+
+therion: point passage-height:positive
+cz: vÃ½Å¡ka chodby nad hladinou
+en: height above water level
+sk: vÃ½Å¡ka nad hladinou
+fr: hauteur au-dessus de l'eau
+
+therion: point passage-height:negative
+cz: vÃ½Å¡ka chodby pod hladinou
+en: depth below water level
+sk: hÄºbka pod hladinou
+fr: hauteur en dessous de l'eau
+
+therion: point passage-height:both
+cz: vÃ½Å¡ka nad i pod hladinou
+en: height above and depth below water level
+sk: vÃ½Å¡ka nad a hÄºbka pod hladinou
+fr: hauteur au dessous et au dessus de l'eau
+
+therion: point air-draught
+cz: prÅ¯van
+en: air draught
+sk: prievan
+fr: courant d'air
+
+therion: point date
+cz: datum pozorovÃ¡nÃ­
+en: date of observation
+sk: dÃ¡tum pozorovania
+fr: date
+
+therion: point continuation
+cz: moÅ¾nÃ© pokraÄovÃ¡nÃ­
+en: possible continuation
+sk: moÅ¾nÃ© pokraÄovanie
+fr: suite possible
+
+therion: point narrow-end
+cz: neprÅ¯leznÃ© zÃºÅ¾enÃ­
+en: passage narrow end
+sk: neprieleznÃ© zÃºÅ¾enie
+fr: passage impénétrable
+
+therion: point low-end
+cz: neprÅ¯leznÃ© snÃ­Å¾enÃ­
+en: passage low end
+sk: neprieleznÃ© znÃ­Å¾enie
+fr: passage bas
+
+therion: point flowstone-choke
+cz: zasintrovanÃ½ konec
+en: flowstone choke
+sk: zasintrenÃ½ koniec
+fr: trémie calcifiée
+
+therion: point breakdown-choke
+cz: zavalenÃ½ konec
+en: breakdown choke
+sk: zavalenÃ½ koniec
+fr: trémie
+
+therion: line floor-step
+cz: stupeÅˆ
+en: floor step
+sk: stupeÅˆ
+fr: marche
+
+therion: line overhang
+cz: pÅ™evis
+en: overhang
+sk: previs
+fr: surplomb
+
+therion: line pit
+cz: propast
+en_UK: pitch
+en_US: pit
+sk: priepasÅ¥
+fr: puits
+
+therion: line ceiling-step
+cz: zmÄ›na vÃ½Å¡ky stropu
+en: step on the ceiling
+sk: zmena vÃ½Å¡ky stropu
+fr: marche de plafond
+
+therion: line chimney
+cz: komÃ­n
+en: chimney
+sk: komÃ­n
+fr: cheminée
+
+therion: line gradient
+cz: sklon chodby
+en: passage gradient
+sk: sklon chodby
+fr: pente
+
+therion: point gradient
+cz: sklon chodby
+en: passage gradient
+sk: sklon chodby
+fr: pente
+
+therion: point height:unsigned
+cz: vÃ½Å¡ka stupnÄ›
+en: the height of floor step
+sk: vÃ½Å¡ka stupÅˆa
+fr: hauteur d'une marche
+
+therion: point height:positive
+cz: vÃ½Å¡ka komÃ­nu
+en: chimney height
+sk: vÃ½Å¡ka komÃ­nu
+fr: hauteur d'une cheminée
+
+therion: point height:negative
+cz: hloubka propasti
+en: pit depth
+sk: hÄºbka priepasti
+fr: profondeur
+
+therion: line contour
+cz: vrstevnice
+en: contour
+sk: vrstevnica
+fr: contour
+
+therion: line slope
+cz: svah
+en: slope
+sk: Å¡ikmÃ¡ plocha
+fr: pente
+
+therion: line rock-border
+cz: kameny
+en: rock border
+sk: ohraniÄenie kameÅˆov
+fr: bord d'un rocher
+
+therion: line rock-edge
+cz: hrany kamenÅ¯
+en: rock edges
+sk: hrany kameÅˆov
+fr: arête d'un rocher
+
+therion: point bedrock
+cz: pevnÃ¡ skÃ¡la
+en: bedrock
+sk: pevnÃ¡ skala
+fr: roche
+
+therion: point blocks
+cz: kamennÃ© bloky
+en: blocks, breakdown
+sk: kamennÃ© bloky
+fr: blocs
+
+therion: point debris
+cz: Å¡tÄ›rk
+en: debris
+sk: Å¡trk
+fr: débris
+
+therion: point sand
+cz: pÃ­sek
+en: sand
+sk: piesok
+fr: sable
+
+therion: point clay
+cz: jÃ­l
+en: clay
+sk: blato
+fr: argile
+
+therion: point water
+cz: voda
+en: water
+sk: voda
+fr: eau
+
+therion: point ice
+cz: led
+en: ice
+sk: Ä¾ad
+fr: glace
+
+therion: point pebbles
+cz: valouny
+en: pebbles
+sk: okruhliaky
+fr: galets
+
+therion: point raft
+cz: nÃ¡plav
+en: raft
+sk: nÃ¡plav
+fr: calcite flottante
+
+therion: point guano
+cz: guano
+en: guano
+sk: guÃ¡no
+fr: guano
+
+therion: line border:visible
+cz: ohraniÄenÃ­
+en: border
+sk: ohraniÄenie
+fr: bord
+
+therion: line border:temporary
+cz: nestÃ¡lÃ© ohraniÄenÃ­
+en: temporary border
+sk: nestÃ¡le ohraniÄenie
+fr: bord, temporaire
+
+therion: area water
+cz: vodnÃ­ plocha
+en: water
+sk: vodnÃ¡ plocha
+fr: eau
+
+therion: area sump
+cz: sifon
+en: sump
+sk: zatopenÃ¡ plocha (sifÃ³n)
+fr: siphon
+
+therion: area debris
+cz: Å¡tÄ›rk
+en: debris
+sk: Å¡trk
+fr: débris
+
+therion: area sand
+cz: pÃ­sek
+en: sand
+sk: piesok
+fr: sable
+
+therion: point waterflow:permanent
+cz: vodnÃ­ tok
+en: waterflow
+sk: vodnÃ½ tok
+
+therion: point waterflow:intermittent
+cz: obÄasnÃ½ vodnÃ­ tok
+en: intermittent waterflow
+sk: obÄasnÃ½ vodnÃ½ tok
+fr: rivière, intermittente
+
+therion: point waterflow:paleo
+cz: paleoÅ™eÄiÅ¡tÄ›
+en: paleo waterflow
+sk: paleorieÄisko
+fr: rivière fossile
+
+therion: line waterflow:permanent
+cz: vodnÃ­ tok
+en: waterflow
+sk: vodnÃ½ tok
+fr: rivière, permanente
+
+therion: line waterflow:intermittent
+cz: obÄasnÃ½ vodnÃ­ tok
+en: intermittent waterflow
+sk: obÄasnÃ½ vodnÃ½ tok
+fr: rivière, intermittente
+
+therion: line waterflow:conjectural
+cz: pÅ™edpoklÃ¡danÃ½ vodnÃ­ tok
+en: conjectural waterflow
+sk: predpokladanÃ½ vodnÃ½ tok
+fr: rivière, conjoncturelle
+
+therion: point spring
+cz: vÃ½vÄ›r
+en: spring
+sk: vÃ½ver
+fr: source
+
+therion: point sink
+cz: ponor
+en: sink
+sk: ponor
+fr: perte
+
+therion: point flowstone
+cz: sintr
+en: flowstone
+sk: sinter
+fr: concrétions
+
+therion: line flowstone
+cz: sintrovÃ© nÃ¡teky
+en: flowstone
+sk: sintrovÃ© nÃ¡teky
+fr: concrétion
+
+therion: point moonmilk
+cz: nickamÃ­nek
+en: moonmilk
+sk: mÃ¤kkÃ½ sinter
+fr: mondmilch
+
+therion: point stalactite
+cz: stalaktit
+en: stalactite
+sk: stalaktit
+fr: stalactite
+
+therion: point stalagmite
+cz: stalagmit
+en: stalagmite
+sk: stalagmit
+fr: stalagmite
+
+therion: point pillar
+cz: stalagnÃ¡t
+en: pillar
+sk: stalagnÃ¡t
+fr: pillier
+
+therion: point curtain
+cz: sintrovÃ© zÃ¡clony
+en: curtain
+sk: sintrovÃ© zÃ¡clony
+fr: rideau
+
+therion: point soda-straw
+cz: brÄka
+en: soda straw
+sk: brÄkÃ¡
+fr: fistuleuse
+
+therion: point popcorn
+cz: pizolity
+en: popcorn
+sk: pizolity
+fr: choux-fleur
+
+therion: point cave-pearl
+cz: jeskynnÃ­ perly
+en: cave pearl
+sk: jaskynnÃ© perly
+fr: perle des cavernes
+
+therion: point disk
+cz: disk
+en: disk
+sk: disk
+fr: disque
+
+therion: point helictite
+cz: heliktit
+en: helictite
+sk: helektit
+fr: excentrique/hélictite
+
+therion: point aragonite
+cz: aragonit
+en: aragonite
+sk: aragonit
+fr: aragonite
+
+therion: point crystal
+cz: krystal
+en: crystal
+sk: kryÅ¡tÃ¡l
+fr: cristaux
+
+therion: point wall-calcite
+cz: vÃ¡pencovÃ½ povlak
+en: wall calcite
+sk: vÃ¡pencovÃ½ povlak
+fr: mur, calcite
+
+therion: point gypsum
+cz: sÃ¡drovec
+en: gypsum
+sk: sÃ¡drovec
+fr: gypse
+
+therion: point gypsum-flower
+cz: sÃ¡drovcovÃ½ kvÄ›t
+en: gypsum flower
+sk: sÃ¡drovcovÃ½ kvet
+fr: fleur de gypse
+
+therion: point rimstone-dam
+cz: sintrovÃ¡ hrÃ¡zka
+en: rimstone dam
+sk: sintrovÃ¡ hrÃ¡dza
+fr: gours
+
+therion: point rimstone-pool
+cz: sintrovÃ© jezÃ­rko
+en: rimstone pool
+sk: sintrovÃ© jazierko
+fr: gour
+
+therion: point anastomosis
+cz: anastomÃ³za
+en: anastomosis
+sk: anastomÃ³za
+fr: anastomose
+
+therion: point karren
+cz: Å¡krapy
+en: karren
+sk: Å¡krapy
+fr: lapiez
+
+therion: point scallop
+cz: eroznÃ­ Ãºtvary
+en: scallop
+sk: erÃ³zne Ãºtvary
+fr: vagues d'érosion (coups de gouge)
+
+therion: point flute
+cz: pÃ­Å¡Å¥aly
+en: flute
+sk: pÃ­Å¡Å¥aly
+fr: flute (?)
+
+therion: point raft-cone
+cz: nÃ¡plavovÃ½ kuÅ¾el
+en: raft cone
+sk: nÃ¡plavovÃ½ kuÅ¾eÄ¾
+fr: cone
+
+therion: point archeo-material
+cz: archeologickÃ© nÃ¡lezy
+en: archeo material
+sk: archeologickÃ© nÃ¡lezy
+fr: matériel archéo
+
+therion: point paleo-material
+cz: paleontologickÃ© nÃ¡lezy
+en: paleo material
+sk: paleontologickÃ© nÃ¡lezy
+fr: matériel paléo
+
+therion: point vegetable-debris
+cz: zbytky rostlin
+en: vegetable debris
+sk: zvyÅ¡ky rastlÃ­n
+fr: débris végétaux
+
+therion: point root
+cz: koÅ™eny
+en: root
+sk: korene
+fr: racine
+
+therion: point no-equipment
+cz: nevystrojenÃ© mÃ­sto
+en: place without equipement
+sk: nevystrojenÃ© miesto
+fr: pas d'équipement
+
+therion: point anchor
+cz: kotvenÃ­
+en: anchor
+sk: kotvenie
+fr: ancrage
+
+therion: point rope
+cz: lano
+en: rope
+sk: lano
+fr: corde
+
+therion: point rope-ladder
+cz: lanovÃ½ Å¾ebÅ™Ã­k
+en: rope ladder
+sk: lanovÃ½ rebrÃ­k
+fr: échelle de corde
+
+therion: point fixed-ladder
+cz: pevnÃ½ Å¾ebÅ™Ã­k
+en: fixed ladder
+sk: fixnÃ½ rebrÃ­k
+fr: échelle fixe
+
+therion: point steps
+cz: schody
+en: steps
+sk: schody
+fr: marches
+
+therion: point traverse
+cz: traverz
+en: traverse
+sk: traverz
+fr: traversée
+
+therion: point bridge
+cz: most
+en: bridge
+sk: most
+fr: pont
+
+therion: point camp
+cz: bivak
+en: camp
+sk: bivak
+fr: camp
+
+therion: title legend
+cz: Legenda
+en: Legend
+sk: Legenda
+fr: Légende
+
+therion: title cave length
+cz: DÃ©lka
+en: Length
+sk: DÄºÅ¾ka
+fr: Longueur
+
+therion: units m
+cz: m
+en: m
+sk: m
+fr: m
+
+therion: title cave depth
+cz: PÅ™evÃ½Å¡enÃ­
+en: Depth
+sk: PrevÃ½Å¡enie
+fr: Profondeur
+
+therion: title explo (plural)
+cz: Objevili
+en: Explored by
+sk: Objavili
+fr: Explorateurs
+
+therion: title explo
+cz: Objevil
+en: Explored by
+sk: Objavil
+fr: Explorateur
+
+therion: title topo (plural)
+cz: MÄ›Å™ili
+en: Surveyed by
+sk: Zamerali
+fr: Topographes
+
+therion: title topo
+cz: MÄ›Å™il
+en: Surveyed by
+sk: Zameral
+fr: Topographe
+
+therion: title carto (plural)
+cz: Kreslili
+en: Drawn by
+sk: Kreslili
+fr: Dessinateurs
+
+therion: title carto
+cz: Kreslil
+en: Drawn by
+sk: Kreslil
+fr: Dessinateur
+
+therion: title preview above
+cz: [NÃ¡hled hornÃ­ch vrstev]
+en: [Preview above]
+sk: [NÃ¡hÄ¾ad hornÃ½ch vrstiev]
+fr: [Prévisualisation au-dessus]
+
+therion: title preview below
+cz: [NÃ¡hled dolnÃ­ch vrstev]
+en: [Preview below]
+sk: [NÃ¡hÄ¾ad spodnÃ½ch vrstiev]
+fr: [Prévisualisation au-dessous]
+
+
+
+

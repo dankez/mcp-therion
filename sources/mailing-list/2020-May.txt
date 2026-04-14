@@ -1,0 +1,921 @@
+From therion at speleo.sk  Fri May  1 10:32:38 2020
+From: therion at speleo.sk (Therion)
+Date: Fri,  1 May 2020 10:32:38 +0200 (CEST)
+Subject: [Therion] new Therion 5.5.0
+Message-ID: <20200501083239.073C561205@mail.speleo.sk>
+
+Hi, there is a new release 5.5.0 of Therion.
+Release notes:
+
+v5.5.0          Therion 5.5.0 (2020-05-01):
+    
+    therion:
+     * maps-offset <on|off> feature in thconfig file to disable maps drawn
+       in offset [#159]
+     * maps <on|off> feature in thconfig file to produce map just from scraps,
+       ignoring the maps definition
+     * log extend feature in thconfig to log extended elevation construction
+     * added point mudcrack (thanks to Rodrigo Severo)
+     * added an extensive SBE symbol set (thanks to Rodrigo Severo)
+     * geomag data updated up to 2025
+     * added support for reproducible generation of PDF and SVG output
+       (command-line option --reproducible-output)
+     * make thbook.pdf build reproducible (derive the created/modified dates
+       of the PDF file from the commit date)
+     * improved support for Proj 6.0 and 7.0 (see proj-auto init file option)
+     * Catch2 unit testing library and Proj test cases added
+     * all python scripts use Python 3 now
+     * added Serbian (thanks to Ivana Miskovic) and Slovenian [PR#142] translations
+     * updated Portuguese translation [PR#170,220]
+     * thbook improvements by Benedikt Hallinger [PR#161,162]
+     * bugs fixed
+       - spelling in some thbook chapters
+       - html and kml output [PR#145,150]
+       - extend ingore <station> fixed
+       - Survex 3D output is missing the nodes on the end of anonymous
+         splay legs [#157]
+       - a_blocks_AUT missing semi-colon [#126]
+    
+    xtherion:
+     * add thconfig* to selectable config file list [PR#168]
+     * bugs fixed:
+       - Windows xtherion window geometry bugfix
+    
+    loch:
+     * bugs fixed:
+       - MacOS X compilation [PR#144]
+       - multiple minor fixes
+       - Linux off-screen rendering bugfix
+
+Best regards,
+Therion team
+
+
+From beni at hallinger.org  Fri May  1 21:22:31 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 01 May 2020 21:22:31 +0200
+Subject: [Therion] new Therion 5.5.0
+In-Reply-To: <20200501083239.073C561205@mail.speleo.sk>
+References: <20200501083239.073C561205@mail.speleo.sk>
+Message-ID: <e7c871b6f95ea3f3e390ce64b317a9cb@hallinger.org>
+
+Cool, thanks!
+
+what does --reproducible-output exactly do?
+i cannot derive this from the thbook. What does reproducible mean?
+
+Am 2020-05-01 10:32, schrieb Therion:
+> Hi, there is a new release 5.5.0 of Therion.
+> Release notes:
+> 
+> v5.5.0          Therion 5.5.0 (2020-05-01):
+> 
+>     therion:
+>      * maps-offset <on|off> feature in thconfig file to disable maps 
+> drawn
+>        in offset [#159]
+>      * maps <on|off> feature in thconfig file to produce map just from 
+> scraps,
+>        ignoring the maps definition
+>      * log extend feature in thconfig to log extended elevation 
+> construction
+>      * added point mudcrack (thanks to Rodrigo Severo)
+>      * added an extensive SBE symbol set (thanks to Rodrigo Severo)
+>      * geomag data updated up to 2025
+>      * added support for reproducible generation of PDF and SVG output
+>        (command-line option --reproducible-output)
+>      * make thbook.pdf build reproducible (derive the created/modified 
+> dates
+>        of the PDF file from the commit date)
+>      * improved support for Proj 6.0 and 7.0 (see proj-auto init file 
+> option)
+>      * Catch2 unit testing library and Proj test cases added
+>      * all python scripts use Python 3 now
+>      * added Serbian (thanks to Ivana Miskovic) and Slovenian [PR#142]
+> translations
+>      * updated Portuguese translation [PR#170,220]
+>      * thbook improvements by Benedikt Hallinger [PR#161,162]
+>      * bugs fixed
+>        - spelling in some thbook chapters
+>        - html and kml output [PR#145,150]
+>        - extend ingore <station> fixed
+>        - Survex 3D output is missing the nodes on the end of anonymous
+>          splay legs [#157]
+>        - a_blocks_AUT missing semi-colon [#126]
+> 
+>     xtherion:
+>      * add thconfig* to selectable config file list [PR#168]
+>      * bugs fixed:
+>        - Windows xtherion window geometry bugfix
+> 
+>     loch:
+>      * bugs fixed:
+>        - MacOS X compilation [PR#144]
+>        - multiple minor fixes
+>        - Linux off-screen rendering bugfix
+> 
+> Best regards,
+> Therion team
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Fri May  1 23:41:38 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 01 May 2020 23:41:38 +0200
+Subject: [Therion] new Therion 5.5.0
+In-Reply-To: <20200501213051.GK28897@survex.com>
+References: <20200501083239.073C561205@mail.speleo.sk>
+ <e7c871b6f95ea3f3e390ce64b317a9cb@hallinger.org>
+ <20200501213051.GK28897@survex.com>
+Message-ID: <f73ac0c5c22ae7698c71db85b1e7dde0@hallinger.org>
+
+Thanks for clarifying, i could imagine this is good for version control 
+too :)
+
+Am 2020-05-01 23:30, schrieb Olly Betts:
+> On Fri, May 01, 2020 at 09:22:31PM +0200, Benedikt Hallinger wrote:
+>> what does --reproducible-output exactly do?
+>> i cannot derive this from the thbook. What does reproducible mean?
+> 
+> It means that the output is exactly (bit-for-bit) determined by the
+> input.  For example, Therion uses pseudo-random numbers for drawing 
+> some
+> symbols so we need to seed the random number generator the same way to
+> get a reproducible output.
+> 
+> For normal Therion use, non-reproducible output probably doesn't matter
+> (though sometimes you might prefer that the rocks don't move just
+> because you regenerated the PDF), but it's very useful for getting
+> Therion packages to build reproducibly because Therion itself is used 
+> to
+> generate output for the examples as part of the build.
+> 
+> There's been a move over the last few years to make Free and Open
+> Source Software build reproducibly - for example, the majority of
+> packages in Debian now do:
+> 
+> https://tests.reproducible-builds.org/debian/unstable/amd64/stats_pkg_state.png
+> 
+> If you're wondering why that's a good thing, some motivations are
+> covered here:
+> 
+> https://reproducible-builds.org/
+> 
+> Cheers,
+>     Olly
+
+
+From olly at survex.com  Fri May  1 23:30:51 2020
+From: olly at survex.com (Olly Betts)
+Date: Fri, 1 May 2020 22:30:51 +0100
+Subject: [Therion] new Therion 5.5.0
+In-Reply-To: <e7c871b6f95ea3f3e390ce64b317a9cb@hallinger.org>
+References: <20200501083239.073C561205@mail.speleo.sk>
+ <e7c871b6f95ea3f3e390ce64b317a9cb@hallinger.org>
+Message-ID: <20200501213051.GK28897@survex.com>
+
+On Fri, May 01, 2020 at 09:22:31PM +0200, Benedikt Hallinger wrote:
+> what does --reproducible-output exactly do?
+> i cannot derive this from the thbook. What does reproducible mean?
+
+It means that the output is exactly (bit-for-bit) determined by the
+input.  For example, Therion uses pseudo-random numbers for drawing some
+symbols so we need to seed the random number generator the same way to
+get a reproducible output.
+
+For normal Therion use, non-reproducible output probably doesn't matter
+(though sometimes you might prefer that the rocks don't move just
+because you regenerated the PDF), but it's very useful for getting
+Therion packages to build reproducibly because Therion itself is used to
+generate output for the examples as part of the build.
+
+There's been a move over the last few years to make Free and Open
+Source Software build reproducibly - for example, the majority of
+packages in Debian now do:
+
+https://tests.reproducible-builds.org/debian/unstable/amd64/stats_pkg_state.png
+
+If you're wondering why that's a good thing, some motivations are
+covered here:
+
+https://reproducible-builds.org/
+
+Cheers,
+    Olly
+
+
+From bgee at campercaver.net  Fri May  8 23:59:52 2020
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 08 May 2020 16:59:52 -0500
+Subject: [Therion] For JM Begley - Rebuild for Fedora 32
+In-Reply-To: <CAGS-eH6rWLmgDE_giVo9dMXDFzLDB0aeL7RtKt01TnAR+fSx4g@mail.gmail.com>
+References: <1946605.DQTRuxKYjW@main2.billgee.local>
+ <CAGS-eH6rWLmgDE_giVo9dMXDFzLDB0aeL7RtKt01TnAR+fSx4g@mail.gmail.com>
+Message-ID: <2945240.1KDbxx1Pkj@main2.billgee.local>
+
+I noticed a few minutes ago that Jim Begley's COPR repository has a new package for Therion 5.5.0.  I tried it on my Fedora 32 test computer.  Worked like a champ!  Thanks, Jim!
+
+I also installed it on my main production system, still Fedora 31.  It works there, too.
+
+-- 
+Bill Gee
+
+
+
+On Wednesday, April 29, 2020 11:19:37 AM CDT James Begley wrote:
+> Hi Bill,
+> 
+> Unfortunately F32 has moved to proj v6, which has a number of fairly
+> significant changes associated with it. Therion support for proj v6
+> appears to be a bit of a work in progress, but I'm trying to pick out the
+> commits that are required to get it working. It might take a few days
+> though :(
+> 
+> Cheers,
+> James
+> 
+> On Wed, 29 Apr 2020 at 17:08, Bill Gee <bgee at campercaver.net> wrote:
+> 
+> > If it is not already in progress ... The Therion package in JM Begley's
+> > COPR repository needs to be rebuilt so it works on Fedora 32. When I try to
+> > run the upgrade from F31 to F32, it gives me this:
+> >
+> >
+> >
+> > ================
+> >
+> > <snip...>
+> >
+> >
+> >
+> > Problem 3: package therion-5.4.4-2.fc31.x86_64 requires
+> > libproj.so.13()(64bit), but none of the providers can be installed
+> >
+> > - proj-5.2.0-5.fc31.x86_64 does not belong to a distupgrade repository
+> >
+> > - problem with installed package therion-5.4.4-2.fc31.x86_64
+> >
+> >
+> >
+> > <snip ...>
+> >
+> > =================
+> >
+> >
+> >
+> > Thanks!
+> >
+> >
+> > --
+> >
+> > Bill Gee
+> >
+> >
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> >
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200508/ae714bfb/attachment.htm>
+
+From knollesimage at t-online.de  Thu May 14 18:05:47 2020
+From: knollesimage at t-online.de (Michael Ross)
+Date: Thu, 14 May 2020 18:05:47 +0200
+Subject: [Therion] Output without splays
+Message-ID: <000101d62a09$88066100$98132300$@t-online.de>
+
+Hello,
+How do I generate a .plt or .pdf file without splays?
+
+Thanks, Michael.
+
+
+
+From bruce at tomo.co.nz  Sat May 16 06:34:07 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 16 May 2020 16:34:07 +1200
+Subject: [Therion] Output without splays
+In-Reply-To: <000101d62a09$88066100$98132300$@t-online.de>
+References: <000101d62a09$88066100$98132300$@t-online.de>
+Message-ID: <000001d62b3b$3ed5c470$bc814d50$@tomo.co.nz>
+
+Hi Michael
+
+Assuming you have some drawings…
+
+If you include a survey within a map, you will tend to get the splays in the output.
+
+If you do not include the survey in the map, you will only get the survey lines and not the splays.
+
+In the rather messy example below, all of the survey data was collected electronically and has splays.  The ones on the left have the drawings and surveys explicitly included in the map definition.  The ones on the right have only the drawings included in the map definition.
+
+
+
+ 
+
+If you do not yet have any drawing I think you always get splays. I think symbol-hide might be best.  I’ve never wanted to remove splays when I don’t yet have drawing so I’ve never tried.  But perhaps this might work.
+
+ 
+
+symbol-hide line survey:splay
+
+ 
+
+The metapost to obtain the differentiation in survey and splay differentiation in the example above is here 
+
+https://therion.speleo.sk/wiki/metapost?s[]=splay <https://therion.speleo.sk/wiki/metapost?s%5b%5d=splay&s%5b%5d=grey#line_symbols> &s[]=grey#line_symbols
+
+ 
+
+You could edit this to omit the drawing of the splay, but that seems a potentially problematic way to do it.
+
+ 
+
+Hope that helps.
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Michael Ross
+Sent: Friday, 15 May 2020 04:06
+To: therion at speleo.sk
+Subject: [Therion] Output without splays
+
+ 
+
+Hello,
+
+How do I generate a .plt or .pdf file without splays?
+
+ 
+
+Thanks, Michael.
+
+ 
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200516/a5587c54/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 460869 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200516/a5587c54/attachment.png>
+
+From knollesimage at t-online.de  Sat May 16 09:43:36 2020
+From: knollesimage at t-online.de (Michael Ross)
+Date: Sat, 16 May 2020 09:43:36 +0200
+Subject: [Therion] Output without splays
+In-Reply-To: <000001d62b3b$3ed5c470$bc814d50$@tomo.co.nz>
+References: <000101d62a09$88066100$98132300$@t-online.de>
+ <000001d62b3b$3ed5c470$bc814d50$@tomo.co.nz>
+Message-ID: <000601d62b55$b599fa30$20cdee90$@t-online.de>
+
+Thanks, Bruce!
+
+Yes, our use case is „survey lines only, no drawings“. To overlay PLT-Output onto (Google-)maps. (not GoogleEarth).
+
+(For kml output, there is the “disable splays” option, but not for plt-output).
+
+ 
+
+We’ll try what you said.
+
+ 
+
+Cheers, Michael.
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Bruce Mutton
+Gesendet: Samstag, 16. Mai 2020 06:34
+An: 'List for Therion users' <therion at speleo.sk>
+Betreff: Re: [Therion] Output without splays
+
+ 
+
+Hi Michael
+
+Assuming you have some drawings…
+
+If you include a survey within a map, you will tend to get the splays in the output.
+
+If you do not include the survey in the map, you will only get the survey lines and not the splays.
+
+In the rather messy example below, all of the survey data was collected electronically and has splays.  The ones on the left have the drawings and surveys explicitly included in the map definition.  The ones on the right have only the drawings included in the map definition.
+
+
+
+ 
+
+If you do not yet have any drawing I think you always get splays. I think symbol-hide might be best.  I’ve never wanted to remove splays when I don’t yet have drawing so I’ve never tried.  But perhaps this might work.
+
+ 
+
+symbol-hide line survey:splay
+
+ 
+
+The metapost to obtain the differentiation in survey and splay differentiation in the example above is here 
+
+https://therion.speleo.sk/wiki/metapost?s[]=splay <https://therion.speleo.sk/wiki/metapost?s%5b%5d=splay&s%5b%5d=grey#line_symbols> &s[]=grey#line_symbols
+
+ 
+
+You could edit this to omit the drawing of the splay, but that seems a potentially problematic way to do it.
+
+ 
+
+Hope that helps.
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Michael Ross
+Sent: Friday, 15 May 2020 04:06
+To: therion at speleo.sk <mailto:therion at speleo.sk> 
+Subject: [Therion] Output without splays
+
+ 
+
+Hello,
+
+How do I generate a .plt or .pdf file without splays?
+
+ 
+
+Thanks, Michael.
+
+ 
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200516/76450599/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 275437 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200516/76450599/attachment.png>
+
+From bgee at campercaver.net  Wed May 27 15:51:28 2020
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 27 May 2020 08:51:28 -0500
+Subject: [Therion] North arrow and magnetic declination
+Message-ID: <1973999.aiPYRZItUj@main2.billgee.local>
+
+Hello everyone -
+
+I was looking at some of the sample code on the wiki for alternate north arrows.  At least two of them display both geographic north and magnetic north.  Those are northarrow4 and northarrow4a, both by Dirk Peinelt.
+
+My question is this:  What date is used when calculating the offset angle for the magnetic north arrow?
+
+This is especially relevant for caves that have been surveyed over a period of years.  The declination changes from year to year, and sometimes more often than that.  There are at least four possibilities:
+
+1) The date of the first survey.
+2) The date of the most recent survey.
+3) A date about half-way between the first and last surveys.  This assumes that the declination change is somewhat linear over time.
+4) The date the map is compiled.
+
+Does anyone know which date is used?
+
+For me this is mostly academic.  I am just curious!  I have never used a north arrow that shows both geographic and magnetic north.  Most of the maps I make are for caves in Missouri.  The magnetic declination is less than 1 degree.  It is almost irrelevant here.
+
+Thanks!
+
+-- 
+Bill Gee
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200527/9d74bf4b/attachment.htm>
+
+From phil.vernant at gmail.com  Wed May 27 17:39:27 2020
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Wed, 27 May 2020 17:39:27 +0200
+Subject: [Therion] North arrow and magnetic declination
+In-Reply-To: <1973999.aiPYRZItUj@main2.billgee.local>
+References: <1973999.aiPYRZItUj@main2.billgee.local>
+Message-ID: <D39D207E-602F-4673-9F77-4A8EE0184EE4@gmail.com>
+
+Hi,
+
+This seems strange. The magnetic north change over time so why bother to choose a date and plot the magnetic north if you can correct it thanks to therion and have the map with the geographic north? The only interesting point I see would be to draw the magnetic north at the time when the cavers will go caving so they can use their compass without headache ;-)
+
+Phil 
+
+
+
+
+> On 27 May 2020, at 15:51, Bill Gee <bgee at campercaver.net> wrote:
+> 
+> Hello everyone -
+>  
+> I was looking at some of the sample code on the wiki for alternate north arrows.  At least two of them display both geographic north and magnetic north.  Those are northarrow4 and northarrow4a, both by Dirk Peinelt.
+>  
+> My question is this:  What date is used when calculating the offset angle for the magnetic north arrow?
+>  
+> This is especially relevant for caves that have been surveyed over a period of years.  The declination changes from year to year, and sometimes more often than that.  There are at least four possibilities:
+>  
+> 1) The date of the first survey.
+> 2) The date of the most recent survey.
+> 3) A date about half-way between the first and last surveys.  This assumes that the declination change is somewhat linear over time.
+> 4) The date the map is compiled.
+>  
+> Does anyone know which date is used?
+>  
+> For me this is mostly academic.  I am just curious!  I have never used a north arrow that shows both geographic and magnetic north.  Most of the maps I make are for caves in Missouri.  The magnetic declination is less than 1 degree.  It is almost irrelevant here.
+>  
+> Thanks!
+> 
+> -- 
+> Bill Gee
+>  
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200527/11aa7c50/attachment.htm>
+
+From bruce at tomo.co.nz  Wed May 27 22:28:37 2020
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 28 May 2020 08:28:37 +1200
+Subject: [Therion] North arrow and magnetic declination
+In-Reply-To: <1973999.aiPYRZItUj@main2.billgee.local>
+References: <1973999.aiPYRZItUj@main2.billgee.local>
+Message-ID: <000001d63465$6899a7d0$39ccf770$@tomo.co.nz>
+
+Hi Bill
+
+I played with Dirk's north arrow back in 2018, making my own adjustments,
+and came to the conclusion that the magnetic north reported is that at the
+date of map compilation.   Looking at my comments in my metapost I am not
+absolutely convinced however.  Regardless, the reporting of a magnetic north
+direction needs to be accompanied by the date and location to avoid
+confusion.  Dirk's north arrow, and my variation, both report the date, so
+we have that covered, and Therion uses the 'centre' of the map as the
+location.
+
+ 
+
+It is somewhat relevant in New Zealand.  The magnetic deviation is
+approximately 20 degrees and has varied 2 or 3 degrees over my lifetime, and
+it varies by a similar amount across our caving regions.  There are surveys
+that span three decades.
+
+The only time I have encountered a problem with plan maps in Therion related
+to magnetic deviation is when a recent survey is added, and the compiling
+software version pre-dates that survey (geomagnetic model cuts out prior to
+the survey date).  In this circumstance Therion sets the magnetic deviation
+to zero and does not report the error, or reports it as something unrelated.
+
+ 
+
+Bruce 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Thursday, 28 May 2020 01:51
+To: Therion Mail List <therion at speleo.sk>
+Subject: [Therion] North arrow and magnetic declination
+
+ 
+
+Hello everyone -
+
+ 
+
+I was looking at some of the sample code on the wiki for alternate north
+arrows. At least two of them display both geographic north and magnetic
+north. Those are northarrow4 and northarrow4a, both by Dirk Peinelt.
+
+ 
+
+My question is this: What date is used when calculating the offset angle for
+the magnetic north arrow?
+
+ 
+
+This is especially relevant for caves that have been surveyed over a period
+of years. The declination changes from year to year, and sometimes more
+often than that. There are at least four possibilities:
+
+ 
+
+1) The date of the first survey.
+
+2) The date of the most recent survey.
+
+3) A date about half-way between the first and last surveys. This assumes
+that the declination change is somewhat linear over time.
+
+4) The date the map is compiled.
+
+ 
+
+Does anyone know which date is used?
+
+ 
+
+For me this is mostly academic. I am just curious! I have never used a north
+arrow that shows both geographic and magnetic north. Most of the maps I make
+are for caves in Missouri. The magnetic declination is less than 1 degree.
+It is almost irrelevant here.
+
+ 
+
+Thanks!
+
+-- 
+
+Bill Gee
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200528/a6cdef97/attachment.htm>
+
+From beni at hallinger.org  Wed May 27 22:41:06 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 27 May 2020 22:41:06 +0200
+Subject: [Therion] North arrow and magnetic declination
+In-Reply-To: <000001d63465$6899a7d0$39ccf770$@tomo.co.nz>
+References: <1973999.aiPYRZItUj@main2.billgee.local>
+ <000001d63465$6899a7d0$39ccf770$@tomo.co.nz>
+Message-ID: <0309b971394c29b883e416292f4176c8@hallinger.org>
+
+It is map compile time and it shows the declination for the day of map 
+compilation:
+
+As i understood, when compiling the map all directions are converted to 
+geographic north, because the station positions are georeferenced to the 
+coorindates. There, the date of the survey is taken into account to get 
+the corrected coordinates based on the magnetic model and the 
+location/survey date.
+
+Aligning the map to geographic north and putting out the magnetic north 
+is just an info "today the declination is this-and-that degrees".
+Aligning the map to magnethic north makes that info crucial to be able 
+to calculate geographic north.
+
+
+Am 2020-05-27 22:28, schrieb Bruce Mutton:
+> Hi Bill
+> 
+> I played with Dirk's north arrow back in 2018, making my own
+> adjustments, and came to the conclusion that the magnetic north
+> reported is that at the date of map compilation.   Looking at my
+> comments in my metapost I am not absolutely convinced however.
+> Regardless, the reporting of a magnetic north direction needs to be
+> accompanied by the date and location to avoid confusion.  Dirk's north
+> arrow, and my variation, both report the date, so we have that
+> covered, and Therion uses the 'centre' of the map as the location.
+> 
+> It is somewhat relevant in New Zealand.  The magnetic deviation is
+> approximately 20 degrees and has varied 2 or 3 degrees over my
+> lifetime, and it varies by a similar amount across our caving regions.
+>  There are surveys that span three decades.
+> 
+> The only time I have encountered a problem with plan maps in Therion
+> related to magnetic deviation is when a recent survey is added, and
+> the compiling software version pre-dates that survey (geomagnetic
+> model cuts out prior to the survey date).  In this circumstance
+> Therion sets the magnetic deviation to zero and does not report the
+> error, or reports it as something unrelated.
+> 
+> Bruce
+> 
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> Sent: Thursday, 28 May 2020 01:51
+> To: Therion Mail List <therion at speleo.sk>
+> Subject: [Therion] North arrow and magnetic declination
+> 
+> Hello everyone -
+> 
+> I was looking at some of the sample code on the wiki for alternate
+> north arrows. At least two of them display both geographic north and
+> magnetic north. Those are northarrow4 and northarrow4a, both by Dirk
+> Peinelt.
+> 
+> My question is this: What date is used when calculating the offset
+> angle for the magnetic north arrow?
+> 
+> This is especially relevant for caves that have been surveyed over a
+> period of years. The declination changes from year to year, and
+> sometimes more often than that. There are at least four possibilities:
+> 
+> 1) The date of the first survey.
+> 
+> 2) The date of the most recent survey.
+> 
+> 3) A date about half-way between the first and last surveys. This
+> assumes that the declination change is somewhat linear over time.
+> 
+> 4) The date the map is compiled.
+> 
+> Does anyone know which date is used?
+> 
+> For me this is mostly academic. I am just curious! I have never used a
+> north arrow that shows both geographic and magnetic north. Most of the
+> maps I make are for caves in Missouri. The magnetic declination is
+> less than 1 degree. It is almost irrelevant here.
+> 
+> Thanks!
+> 
+> --
+> 
+> Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Wed May 27 23:39:49 2020
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 27 May 2020 16:39:49 -0500
+Subject: [Therion] North arrow and magnetic declination
+In-Reply-To: <0309b971394c29b883e416292f4176c8@hallinger.org>
+References: <1973999.aiPYRZItUj@main2.billgee.local>
+ <000001d63465$6899a7d0$39ccf770$@tomo.co.nz>
+ <0309b971394c29b883e416292f4176c8@hallinger.org>
+Message-ID: <3056015.ciBtUerH68@main2.billgee.local>
+
+Thanks, Bruce and Benedikt.  That answers my question and satisfies my curiosity.
+
+I am well aware of how Therion processes declination when going through the survey data.  I take the trouble to make sure every set of survey data has a date associated with it so that the declinations can be properly calculated.
+
+As for putting declination on the map ... I have never done that and do not plan to start.   I think it is not useful to have it on a map.  In 20 years (or whenever) it will be wrong.  It is better to just leave it off.
+
+One of my cave mapping friends always takes the trouble to make his north arrow indicate both geographic and magnetic north.  He and I have not discussed this feature of his maps, so I do not know what his reasoning is.  He is not a Therion user.
+
+-- 
+Bill Gee
+
+
+
+On Wednesday, May 27, 2020 3:41:06 PM CDT Benedikt Hallinger wrote:
+> It is map compile time and it shows the declination for the day of map 
+> compilation:
+> 
+> As i understood, when compiling the map all directions are converted to 
+> geographic north, because the station positions are georeferenced to the 
+> coorindates. There, the date of the survey is taken into account to get 
+> the corrected coordinates based on the magnetic model and the 
+> location/survey date.
+> 
+> Aligning the map to geographic north and putting out the magnetic north 
+> is just an info "today the declination is this-and-that degrees".
+> Aligning the map to magnethic north makes that info crucial to be able 
+> to calculate geographic north.
+> 
+> 
+> Am 2020-05-27 22:28, schrieb Bruce Mutton:
+> > Hi Bill
+> > 
+> > I played with Dirk's north arrow back in 2018, making my own
+> > adjustments, and came to the conclusion that the magnetic north
+> > reported is that at the date of map compilation.   Looking at my
+> > comments in my metapost I am not absolutely convinced however.
+> > Regardless, the reporting of a magnetic north direction needs to be
+> > accompanied by the date and location to avoid confusion.  Dirk's north
+> > arrow, and my variation, both report the date, so we have that
+> > covered, and Therion uses the 'centre' of the map as the location.
+> > 
+> > It is somewhat relevant in New Zealand.  The magnetic deviation is
+> > approximately 20 degrees and has varied 2 or 3 degrees over my
+> > lifetime, and it varies by a similar amount across our caving regions.
+> >  There are surveys that span three decades.
+> > 
+> > The only time I have encountered a problem with plan maps in Therion
+> > related to magnetic deviation is when a recent survey is added, and
+> > the compiling software version pre-dates that survey (geomagnetic
+> > model cuts out prior to the survey date).  In this circumstance
+> > Therion sets the magnetic deviation to zero and does not report the
+> > error, or reports it as something unrelated.
+> > 
+> > Bruce
+> > 
+> > From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> > Sent: Thursday, 28 May 2020 01:51
+> > To: Therion Mail List <therion at speleo.sk>
+> > Subject: [Therion] North arrow and magnetic declination
+> > 
+> > Hello everyone -
+> > 
+> > I was looking at some of the sample code on the wiki for alternate
+> > north arrows. At least two of them display both geographic north and
+> > magnetic north. Those are northarrow4 and northarrow4a, both by Dirk
+> > Peinelt.
+> > 
+> > My question is this: What date is used when calculating the offset
+> > angle for the magnetic north arrow?
+> > 
+> > This is especially relevant for caves that have been surveyed over a
+> > period of years. The declination changes from year to year, and
+> > sometimes more often than that. There are at least four possibilities:
+> > 
+> > 1) The date of the first survey.
+> > 
+> > 2) The date of the most recent survey.
+> > 
+> > 3) A date about half-way between the first and last surveys. This
+> > assumes that the declination change is somewhat linear over time.
+> > 
+> > 4) The date the map is compiled.
+> > 
+> > Does anyone know which date is used?
+> > 
+> > For me this is mostly academic. I am just curious! I have never used a
+> > north arrow that shows both geographic and magnetic north. Most of the
+> > maps I make are for caves in Missouri. The magnetic declination is
+> > less than 1 degree. It is almost irrelevant here.
+> > 
+> > Thanks!
+> > 
+> > --
+> > 
+> > Bill Gee
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200527/ec8520f0/attachment.htm>
+
+From martinsluka at mac.com  Thu May 28 10:20:50 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 28 May 2020 10:20:50 +0200
+Subject: [Therion] North arrow and magnetic declination
+In-Reply-To: <3056015.ciBtUerH68@main2.billgee.local>
+References: <1973999.aiPYRZItUj@main2.billgee.local>
+ <000001d63465$6899a7d0$39ccf770$@tomo.co.nz>
+ <0309b971394c29b883e416292f4176c8@hallinger.org>
+ <3056015.ciBtUerH68@main2.billgee.local>
+Message-ID: <5F7D4097-52EC-4521-AE4F-9DB7D7A91AC1@mac.com>
+
+
+> 27. 5. 2020 v 23:39, Bill Gee <bgee at campercaver.net>:
+> 
+> I am well aware of how Therion processes declination when going through the survey data.  I take the trouble to make sure every set of survey data has a date associated with it so that the declinations can be properly calculated.
+>  
+> As for putting declination on the map ... I have never done that and do not plan to start.   I think it is not useful to have it on a map.  In 20 years (or whenever) it will be wrong.  It is better to just leave it off.
+> 
+
+Declination up to 1 degree could be not a problem. But there are regions where declination is more than 10 degree. And I know a false theory about development of two huge parallel caves instead of only one system because the author of that theory just omitted inclination of surveys of upper and lower part of that cave from upper and lover entrances (they were not connected). 
+
+Softwares for cave data offer the automatic calculation of declination (and grid convergence), so there is not reason not to use it. Therion calculates declination according each day from the model.
+
+Maybe there should be the date when a map was generated under North sign in such case.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200528/555a8194/attachment.htm>
+

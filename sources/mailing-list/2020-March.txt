@@ -1,0 +1,2626 @@
+From tarquin.wilton-jones at ntlworld.com  Sun Mar  1 08:44:33 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 1 Mar 2020 07:44:33 +0000
+Subject: [Therion] Metapost variable macro suffixes
+Message-ID: <08a9413c-eb90-54f4-f444-2f2ddf137b9d@ntlworld.com>
+
+Hi folks,
+
+hoping someone who really understands Metapost can give me a suggestion
+since I cannot find it in any manuals.
+
+In Therion's Metapost, there are a couple of wildcard suffixed macros
+like this:
+
+vardef p_label@#(expr txt,pos,rot,mode)
+
+I have a need to call the different ones depending on the value of a
+pair like this:
+
+if A = (-1,1):
+  p_label.ulft(thetext,P,R,style);
+elseif A = (0,1):
+  p_label.top(thetext,P,R,style);
+... more ...
+
+Based on the value of another variable, I need to run a different macro
+instead, which also has its own suffixes, which match the suffixes above:
+
+if A = (-1,1):
+  if Foo = "a"
+    thelabel.ulft(txt, pos);
+    ... other stuff ...
+  else:
+    p_label.ulft(thetext,P,R,style);
+  fi;
+elseif A = (0,1):
+  if Foo = "b"
+    thelabel.ulft(txt, pos);
+    ... other stuff ...
+  else:
+    p_label.top(thetext,P,R,style);
+  fi;
+... more ...
+
+This quickly gets tedious, since the same code gets repeated over and
+over again, just with a different suffix each time.
+
+In Metapost, is it possible to store the suffix in a variable, then use
+it when calling the macro like so?
+
+if A = (-1,1): sfx:="ulft";
+elseif A = (0,1): sfx:="top";
+...
+if Foo = "b"
+  thelabel.<sfx>(txt, pos);
+  ... other stuff ...
+else:
+  p_label.<sfx>(thetext,P,R,style);
+fi;
+
+Thanks for any advice.
+
+Tarquin
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun Mar  1 21:04:50 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 1 Mar 2020 20:04:50 +0000
+Subject: [Therion] Metapost variable macro suffixes
+In-Reply-To: <08a9413c-eb90-54f4-f444-2f2ddf137b9d@ntlworld.com>
+References: <08a9413c-eb90-54f4-f444-2f2ddf137b9d@ntlworld.com>
+Message-ID: <5692f342-a237-138b-7d19-2bae74687b4f@ntlworld.com>
+
+I do seem to like answering my own questions.
+
+3 days searching for the solution and ...
+
+if A = (-1,1): sfx:="ulft";
+elseif A = (0,1): sfx:="top";
+...
+if Foo = "b"
+  thelabel.scantokens(sfx)(txt, pos);
+  ... other stuff ...
+else:
+  p_label.scantokens(sfx)(thetext,P,R,style);
+fi;
+
+Yes, scantokens can be used inline, as a function-like call that returns
+an actual suffix token which becomes part of the macro's suffix when the
+macro is subsequently called.
+
+This is such a weird programming language :)
+
+
+From rhystyers1 at gmail.com  Sun Mar  1 22:13:28 2020
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Sun, 1 Mar 2020 21:13:28 +0000
+Subject: [Therion] Export EE as .3D and ignore "survey does not exist"
+Message-ID: <CAEg=DQG9YB1U4ieZyp=sex2b3tfK+Orp2VuKCSkcKZNEHFovAg@mail.gmail.com>
+
+Hello,
+
+I have two questions:
+
+1) Is it possible to export an extended elevation as a 3D file (like survex
+does)? For the purpose of 'debugging' the extends etc.
+
+2) Is it possible to ignore "survey does not exist" errors? I.e. I have a
+file with all the extend commands in and I just want the relevant ones to
+be applied, even if I am just looking at a small section.
+
+Thanks for any help,
+Rhys
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200301/c459d086/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Mar  1 22:23:37 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 1 Mar 2020 21:23:37 +0000
+Subject: [Therion] Need metapost wizard: new text label
+In-Reply-To: <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+Message-ID: <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+
+>> thelabel(txt, pos); 
+> 
+> I notice in the main Therion Metapost, it uses
+> lab:=thelabel@#(txt, pos);
+> to make sure that it can respect alignment, which your code cannot.
+> Don't suppose you worked out how to pass the correct alignment value to
+> it, did you?
+
+I have worked it out, see my thread "Metapost variable macro suffixes".
+I will add it to my existing function which takes the point alignment
+parameter and turns it into the right suffix in the "thelabel" call or
+p_label call, whichever one ends up getting used.
+
+Your code also didn't apply rotation to the ornamentation. You need
+something like this:
+draw ((bbox lab) smoothed 4) rotatedaround (pos,rotation);
+
+Note that this applies the rotation around the point position, so
+alignment and rotation at the same time is weird. This is the same with
+regular labels though - Therion bug that Bruce is fond of :) - so at
+least this is consistent with Therion itself.
+
+Your code hardcoded rotation to a very specific 0.001 degrees, which was
+weird. I assume you had intended to use 0 or a variable (my code uses
+the rotation parameter of the point symbol).
+
+>> interim bboxmargin:=6.5bp;    % padding border->text
+> 
+> Just checking, since I don't know the "interim" keyword very well ...
+> Doesn't it need to be inside a "begingroup/endgroup" pair, in order to
+> know when to stop applying the "interim" value to the internal
+> bboxmargin variable?
+> 
+> As far as I can tell, you are modifying the global value of it, so all
+> subsequent uses of that internal variable will end up with your padding.
+> At least until the next "endgroup" happens somewhere above your code in
+> the stack.
+
+This was correct. You needed to use begingroup+endgroup or use a vardef
+instead of a def (with vardef, it automatically applies a
+begingroup+endgroup). Therion's Metapost uses both of these approaches
+to avoid the problem.
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun Mar  1 22:34:32 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 1 Mar 2020 21:34:32 +0000
+Subject: [Therion] Export EE as .3D and ignore "survey does not exist"
+In-Reply-To: <CAEg=DQG9YB1U4ieZyp=sex2b3tfK+Orp2VuKCSkcKZNEHFovAg@mail.gmail.com>
+References: <CAEg=DQG9YB1U4ieZyp=sex2b3tfK+Orp2VuKCSkcKZNEHFovAg@mail.gmail.com>
+Message-ID: <51198e67-a12c-3d70-375b-fc80fe7200a0@ntlworld.com>
+
+> 1) Is it possible to export an extended elevation as a 3D file (like
+> survex does)? For the purpose of 'debugging' the extends etc.
+
+I doubt this is entirely possible. There are some kinds of extend
+options that Therion supports but Survex does not, such as "extend
+vertical". So I don't think you could turn it into a Survex-style 3D if
+you use those options.
+
+I usually export it to PDF to see how it renders.
+
+You could also export it as a Therion XVI (since that's what you will
+end up using anyway) and import that into a .th2 to see how it looks.
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun Mar  1 23:00:08 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 1 Mar 2020 22:00:08 +0000
+Subject: [Therion] Need metapost wizard: new text label
+In-Reply-To: <E91C3A35-72FA-4BDD-989C-3BA3E7C80F11@hallinger.org>
+References: <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <E91C3A35-72FA-4BDD-989C-3BA3E7C80F11@hallinger.org>
+Message-ID: <3096bcc4-d2b2-f92a-6e52-884d99fc4baf@ntlworld.com>
+
+> If you want to upload it to the wiki, im honored and please modify to your wills
+
+There you go:
+https://therion.speleo.sk/wiki/metapost#adding_custom_styled_labels_at_any_point_linepoint
+
+Second version of the code has a custom label style like yours (dashed
+for fun, and it specifies the padding and smoothing in terms of the PenA
+thickness).
+
+It supports scale, position, rotation, alignment, default styles and
+custom styles like yours.
+
+Hope this is useful.
+
+
+From beni at hallinger.org  Mon Mar  2 07:20:49 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 2 Mar 2020 07:20:49 +0100
+Subject: [Therion] Metapost variable macro suffixes
+In-Reply-To: <5692f342-a237-138b-7d19-2bae74687b4f@ntlworld.com>
+References: <5692f342-a237-138b-7d19-2bae74687b4f@ntlworld.com>
+Message-ID: <61417237-1AF9-4976-8A3F-9F66480FB0DE@hallinger.org>
+
+> This is such a weird programming language :)
+
+It is...
+And despite being plenty of documentation online, this one seems to be mastering me (and i usually love programming)
+
+> Am 01.03.2020 um 21:05 schrieb Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> ﻿I do seem to like answering my own questions.
+> 
+> 3 days searching for the solution and ...
+> 
+> if A = (-1,1): sfx:="ulft";
+> elseif A = (0,1): sfx:="top";
+> ...
+> if Foo = "b"
+>  thelabel.scantokens(sfx)(txt, pos);
+>  ... other stuff ...
+> else:
+>  p_label.scantokens(sfx)(thetext,P,R,style);
+> fi;
+> 
+> Yes, scantokens can be used inline, as a function-like call that returns
+> an actual suffix token which becomes part of the macro's suffix when the
+> macro is subsequently called.
+> 
+> This is such a weird programming language :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From rhystyers1 at gmail.com  Mon Mar  2 15:35:42 2020
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Mon, 2 Mar 2020 14:35:42 +0000
+Subject: [Therion] Export EE as .3D and ignore "survey does not exist"
+In-Reply-To: <51198e67-a12c-3d70-375b-fc80fe7200a0@ntlworld.com>
+References: <CAEg=DQG9YB1U4ieZyp=sex2b3tfK+Orp2VuKCSkcKZNEHFovAg@mail.gmail.com>
+ <51198e67-a12c-3d70-375b-fc80fe7200a0@ntlworld.com>
+Message-ID: <CAEg=DQEFhTaT4LUskB_c8E0R7SmOc1J3GPak7B5H3gep28WxrQ@mail.gmail.com>
+
+Thanks for the info.
+
+I have been using a PDF output but its a bit tricky to see everything. The
+3D view of the EE was nice because it handled large systems and preserved
+the station names.
+
+I am attempting to recreate the EE centerline of a ~ 20km section of a cave
+system which I have now done by adding passages one by one:
+
+[image: image.png]
+When things weren't working things would overlap and it became impossible
+to identify the stations.
+
+I wanted the center line done separate to drawing so I can 'crowd source'
+the drawing with other members of my expedition but they obviously need the
+center line completed to draw arbitrary bits of cave. My questions are
+probably stupid because this is a stupid thing to do 😁.
+
+I have another question but I will ask it in another thread. I also means I
+do not need an answer to question 2 about ignoring errors.
+
+On Sun, 1 Mar 2020 at 21:34, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> > 1) Is it possible to export an extended elevation as a 3D file (like
+> > survex does)? For the purpose of 'debugging' the extends etc.
+>
+> I doubt this is entirely possible. There are some kinds of extend
+> options that Therion supports but Survex does not, such as "extend
+> vertical". So I don't think you could turn it into a Survex-style 3D if
+> you use those options.
+>
+> I usually export it to PDF to see how it renders.
+>
+> You could also export it as a Therion XVI (since that's what you will
+> end up using anyway) and import that into a .th2 to see how it looks.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200302/aad6a8a6/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 197268 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200302/aad6a8a6/attachment.png>
+
+From beni at hallinger.org  Wed Mar  4 14:59:13 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 04 Mar 2020 14:59:13 +0100
+Subject: [Therion] Need metapost wizard: new text label
+In-Reply-To: <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+Message-ID: <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+
+Hello Tarquin,
+
+i tweaked and fiddled around and now have a version that correctly 
+scales, rotates and aligns.
+Your wiki page hint helped, but i already found it in the past... The 
+example code there does not work here for some reason (compile error).
+
+But anyhow, to answer your question regarding the "0.001" rotation 
+parameter in the label calling:
+if i use "0.0" or "0" or also "0.0001", it puts my label text in the 
+center of the generated map with rotation of the scrap-rotation applied. 
+I don't know why and found by try-and-error that this value works.
+
+
+Here is the updated code:, enhanced with a nicer legend output:
+-----------------------------------
+     # Symbol to denote assigned survey.
+     #   Option "-attr text <string>" shows given text; otherwise current 
+survey is shown.
+     #   Option "-attr bordersmooth <num>" overrides edge smoothness (0 
+for sharp edges)
+     #   Option "-attr bordermargin <num>" overrides margin text/border
+     #   Option "-attr basescale <num>" overrides basic text sizing 
+factor (default text size)
+     def p_u_mappe(expr pos, theta, sc, al) =
+       T:=identity aligned al rotated theta scaled sc shifted pos;
+       begingroup;
+         % Basic config
+         bordersmooth:=4;         % smoothness of box corners  (0=90° 
+edges)
+         bordermargin:=5.0bp;     % padding border->text
+         basescale:=1.0;          % basic scaling of default-sized text
+         if known(ATTR_bordersmooth): 
+bordersmooth:=scantokens(ATTR_bordersmooth); fi;
+         if known(ATTR_bordermargin): 
+bordermargin:=scantokens(ATTR_bordermargin); fi;
+         if known(ATTR_basescale):    
+basescale:=scantokens(ATTR_basescale);       fi;
+
+         % GET LABEL TEXT:
+         string txt;
+         if known(ATTR_text):
+             txt := ATTR_text;
+         else:
+                 txt := ATTR__survey;
+         fi;
+
+         % DRAW LABEL:
+         lab:=thelabel(txt, (0.0,0.0));
+         pickup PenA;                       % border thickness
+         interim bboxmargin:=bordermargin;  % padding border->text
+         q:=((bbox lab) smoothed bordersmooth) aligned al scaled (sc * 
+basescale) rotated theta shifted pos;
+         draw q;
+         lab:=lab aligned al;
+         lab:=lab scaled (sc * basescale);
+         lab:=lab rotated theta;
+         lab:=lab shifted pos;
+         process_label(pos, 0.001);   % for some weird reason "0.0" does 
+not work here and puts the label to map-center at scrap-rotation.
+
+       endgroup;
+     enddef;
+     def p_u_mappe_legend =
+         begingroup;
+         save ATTR_text;
+         string ATTR_text;
+         ATTR_text:="028";
+         p_u_mappe((.5,.5) inscale, 0, 1.0, (0,0));
+         endgroup;
+     enddef;
+
+-----------------------------------
+
+
+
+
+
+Am 2020-03-01 22:23, schrieb Tarquin Wilton-Jones via Therion:
+>>> thelabel(txt, pos);
+>> 
+>> I notice in the main Therion Metapost, it uses
+>> lab:=thelabel@#(txt, pos);
+>> to make sure that it can respect alignment, which your code cannot.
+>> Don't suppose you worked out how to pass the correct alignment value 
+>> to
+>> it, did you?
+> 
+> I have worked it out, see my thread "Metapost variable macro suffixes".
+> I will add it to my existing function which takes the point alignment
+> parameter and turns it into the right suffix in the "thelabel" call or
+> p_label call, whichever one ends up getting used.
+> 
+> Your code also didn't apply rotation to the ornamentation. You need
+> something like this:
+> draw ((bbox lab) smoothed 4) rotatedaround (pos,rotation);
+> 
+> Note that this applies the rotation around the point position, so
+> alignment and rotation at the same time is weird. This is the same with
+> regular labels though - Therion bug that Bruce is fond of :) - so at
+> least this is consistent with Therion itself.
+> 
+> Your code hardcoded rotation to a very specific 0.001 degrees, which 
+> was
+> weird. I assume you had intended to use 0 or a variable (my code uses
+> the rotation parameter of the point symbol).
+> 
+>>> interim bboxmargin:=6.5bp;    % padding border->text
+>> 
+>> Just checking, since I don't know the "interim" keyword very well ...
+>> Doesn't it need to be inside a "begingroup/endgroup" pair, in order to
+>> know when to stop applying the "interim" value to the internal
+>> bboxmargin variable?
+>> 
+>> As far as I can tell, you are modifying the global value of it, so all
+>> subsequent uses of that internal variable will end up with your 
+>> padding.
+>> At least until the next "endgroup" happens somewhere above your code 
+>> in
+>> the stack.
+> 
+> This was correct. You needed to use begingroup+endgroup or use a vardef
+> instead of a def (with vardef, it automatically applies a
+> begingroup+endgroup). Therion's Metapost uses both of these approaches
+> to avoid the problem.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Mar  4 15:08:52 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 4 Mar 2020 14:08:52 +0000
+Subject: [Therion] Need metapost wizard: new text label
+In-Reply-To: <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+Message-ID: <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+
+> example code there does not work here for some reason (compile error).
+
+Interesting ... I am using it myself and it works here. I wonder if
+there is something odd in what the wiki outputs. Or maybe you copy &
+pasted the "code metapost" inside an existing "code metapost" block. If
+you have time to check, what's your error message?
+
+Or alternatively, do you have a minimal survey where I can see the
+failure myself?
+
+> 0.001
+
+I won't pretend to understand what that is all about. Very weird indeed.
+
+
+From beni at hallinger.org  Wed Mar  4 15:17:10 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 04 Mar 2020 15:17:10 +0100
+Subject: [Therion] Need metapost wizard: new text label
+In-Reply-To: <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+Message-ID: <094bd38f101eb0bcd27ab2ef8d319aa8@hallinger.org>
+
+Hello again.
+I freshly copy-pasted your examples and now it works.
+I must have made something wrong like you described (therion 5.4.4 
+(2019-05-01)).
+
+Tanks!
+
+
+Am 2020-03-04 15:08, schrieb Tarquin Wilton-Jones via Therion:
+>> example code there does not work here for some reason (compile error).
+> 
+> Interesting ... I am using it myself and it works here. I wonder if
+> there is something odd in what the wiki outputs. Or maybe you copy &
+> pasted the "code metapost" inside an existing "code metapost" block. If
+> you have time to check, what's your error message?
+> 
+> Or alternatively, do you have a minimal survey where I can see the
+> failure myself?
+> 
+>> 0.001
+> 
+> I won't pretend to understand what that is all about. Very weird 
+> indeed.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From olly at survex.com  Thu Mar  5 00:41:31 2020
+From: olly at survex.com (Olly Betts)
+Date: Wed, 4 Mar 2020 23:41:31 +0000
+Subject: [Therion] Export EE as .3D and ignore "survey does not exist"
+In-Reply-To: <51198e67-a12c-3d70-375b-fc80fe7200a0@ntlworld.com>
+References: <CAEg=DQG9YB1U4ieZyp=sex2b3tfK+Orp2VuKCSkcKZNEHFovAg@mail.gmail.com>
+ <51198e67-a12c-3d70-375b-fc80fe7200a0@ntlworld.com>
+Message-ID: <20200304234130.GA29624@survex.com>
+
+On Sun, Mar 01, 2020 at 09:34:32PM +0000, Tarquin Wilton-Jones via Therion wrote:
+> > 1) Is it possible to export an extended elevation as a 3D file (like
+> > survex does)? For the purpose of 'debugging' the extends etc.
+> 
+> I doubt this is entirely possible. There are some kinds of extend
+> options that Therion supports but Survex does not, such as "extend
+> vertical". So I don't think you could turn it into a Survex-style 3D if
+> you use those options.
+
+An "extended elevation" .3d file is really just a normal .3d file with
+a flag set (as of v8 of the .3d format there's an explicit flag, while
+for older versions it's done by checking for a title ending
+" (extended)").  If this flag is present, aven limits the view to be an
+elevation looking North or South.
+
+The Survex extend program folds the centreline to lie in an East-West
+vertical plane through the origin, with splays rotated along with the
+centre-line they're adjacent to but allowed to stick out of this plane.
+
+There's no explicit representation of the extend operations which were
+applied, only of the results, so "extend vertical" shouldn't be a
+problem.  I can't think of an extend-like feature which couldn't be
+easily fitted into this "2D+" representation.
+
+Cheers,
+    Olly
+
+
+From martinsluka at mac.com  Thu Mar  5 21:39:40 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 5 Mar 2020 21:39:40 +0100
+Subject: [Therion] New DEM data from NASA
+Message-ID: <0E80ED0D-2BAE-4542-96E1-34A58FE95BE4@mac.com>
+
+https://www.gislounge.com/updated-global-elevation-data-released-by-nasa/
+
+Odesláno z iPhonu
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200305/1bea20bc/attachment.htm>
+
+From pawel.krawczyk at hush.com  Thu Mar  5 23:11:12 2020
+From: pawel.krawczyk at hush.com (=?UTF-8?Q?Pawe=c5=82_Krawczyk?=)
+Date: Thu, 5 Mar 2020 22:11:12 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <0E80ED0D-2BAE-4542-96E1-34A58FE95BE4@mac.com>
+References: <0E80ED0D-2BAE-4542-96E1-34A58FE95BE4@mac.com>
+Message-ID: <2c3675f313fce511574f3c9c67555b45@smtp.hushmail.com>
+
+On 05/03/2020 20:39, Martin Sluka via Therion wrote:
+> https://www.gislounge.com/updated-global-elevation-data-released-by-nasa/ 
+> <https://www.gislounge.com/updated-global-elevation-data-released-by-nasa/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+gislounge+%28GIS+Lounge%29&fbclid=IwAR2t_QTdFXSucf_9UcD5qZ6t8bYCxBCIoJs1aKxXeRMZSnWvdRqIdKYw35Q>
+>
+>
+With permission of the original author (Mike McCombe) and help of Wookey 
+I have recently started to refactor TerrainTool to use v3 ASTER files 
+but seems like we need to target the newest ones... Due to the 
+complexity of the old DEM file parser I'm considering using a dedicated 
+GeoTiff library - anyone has any experiences or suggestions?
+
+We're talking about Java GUI app, right now repacked as Maven project, 
+sources can be found here:
+
+https://git.sr.ht/~kravietz/TerrainTool
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200305/06fd0c7e/attachment.htm>
+
+From beni at hallinger.org  Fri Mar  6 08:12:22 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 6 Mar 2020 08:12:22 +0100
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <2c3675f313fce511574f3c9c67555b45@smtp.hushmail.com>
+References: <2c3675f313fce511574f3c9c67555b45@smtp.hushmail.com>
+Message-ID: <72E9A2FA-5A2D-42FA-9BF2-B52DAFCB81B1@hallinger.org>
+
+Hello, could gdal be of use here?
+At least it is what i use to process LIDAR data an i think i used it also to process aster+srtm data (including patching voids from the one with the other)
+
+> Am 05.03.2020 um 23:48 schrieb Paweł Krawczyk via Therion <therion at speleo.sk>:
+> 
+> ﻿
+> On 05/03/2020 20:39, Martin Sluka via Therion wrote:
+>> https://www.gislounge.com/updated-global-elevation-data-released-by-nasa/
+>> 
+>> 
+> With permission of the original author (Mike McCombe) and help of Wookey I have recently started to refactor TerrainTool to use v3 ASTER files but seems like we need to target the newest ones... Due to the complexity of the old DEM file parser I'm considering using a dedicated GeoTiff library - anyone has any experiences or suggestions?
+> 
+> We're talking about Java GUI app, right now repacked as Maven project, sources can be found here:
+> 
+> https://git.sr.ht/~kravietz/TerrainTool
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/3d819c96/attachment.htm>
+
+From pawel.krawczyk at hush.com  Fri Mar  6 08:31:33 2020
+From: pawel.krawczyk at hush.com (=?UTF-8?Q?Pawe=c5=82_Krawczyk?=)
+Date: Fri, 6 Mar 2020 07:31:33 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <72E9A2FA-5A2D-42FA-9BF2-B52DAFCB81B1@hallinger.org>
+References: <2c3675f313fce511574f3c9c67555b45@smtp.hushmail.com>
+ <72E9A2FA-5A2D-42FA-9BF2-B52DAFCB81B1@hallinger.org>
+Message-ID: <828a604fb44bb140f109287bb21f16d2@smtp.hushmail.com>
+
+On 06/03/2020 07:12, Benedikt Hallinger wrote:
+> Hello, could gdal be of use here?
+> At least it is what i use to process LIDAR data an i think i used it 
+> also to process aster+srtm data (including patching voids from the one 
+> with the other)
+>
+If there's a reliable workflow to generate surface files for Therion 
+using gdal then I guess so.
+
+
+
+From beni at hallinger.org  Fri Mar  6 09:02:41 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 6 Mar 2020 09:02:41 +0100
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <828a604fb44bb140f109287bb21f16d2@smtp.hushmail.com>
+References: <828a604fb44bb140f109287bb21f16d2@smtp.hushmail.com>
+Message-ID: <67467F27-61EC-4E3F-AA44-32699AB5F740@hallinger.org>
+
+I have a (german commented) bash script doing this.
+Only thing is that it is hatdcoded fir a specific case, but it shows the commands imvolved.
+
+Should i post it to you?
+
+> Am 06.03.2020 um 08:31 schrieb Paweł Krawczyk via Therion <therion at speleo.sk>:
+> 
+> ﻿On 06/03/2020 07:12, Benedikt Hallinger wrote:
+>> Hello, could gdal be of use here?
+>> At least it is what i use to process LIDAR data an i think i used it also to process aster+srtm data (including patching voids from the one with the other)
+>> 
+> If there's a reliable workflow to generate surface files for Therion using gdal then I guess so.
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From pawel.krawczyk at hush.com  Fri Mar  6 10:20:46 2020
+From: pawel.krawczyk at hush.com (=?UTF-8?Q?Pawe=c5=82_Krawczyk?=)
+Date: Fri, 6 Mar 2020 09:20:46 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <67467F27-61EC-4E3F-AA44-32699AB5F740@hallinger.org>
+References: <828a604fb44bb140f109287bb21f16d2@smtp.hushmail.com>
+ <67467F27-61EC-4E3F-AA44-32699AB5F740@hallinger.org>
+Message-ID: <572deda095e054a5fc766d2e8f1a61c6@smtp.hushmail.com>
+
+On 06/03/2020 08:02, Benedikt Hallinger wrote:
+> I have a (german commented) bash script doing this.
+> Only thing is that it is hatdcoded fir a specific case, but it shows the commands imvolved.
+>
+> Should i post it to you?
+
+
+Hi Benedikt, that would be great!
+
+
+
+
+From wookey at wookware.org  Fri Mar  6 12:25:55 2020
+From: wookey at wookware.org (Wookey)
+Date: Fri, 6 Mar 2020 11:25:55 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <67467F27-61EC-4E3F-AA44-32699AB5F740@hallinger.org>
+References: <828a604fb44bb140f109287bb21f16d2@smtp.hushmail.com>
+ <67467F27-61EC-4E3F-AA44-32699AB5F740@hallinger.org>
+Message-ID: <20200306112555.GP9273@mail.wookware.org>
+
+On 2020-03-06 09:02 +0100, Benedikt Hallinger wrote:
+> I have a (german commented) bash script doing this.
+> Only thing is that it is hatdcoded fir a specific case, but it shows the commands imvolved.
+> 
+> Should i post it to you?
+
+Post it here. I doubt if Paweł is the only one interested.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/16bf3e10/attachment.sig>
+
+From beni at hallinger.org  Fri Mar  6 13:12:41 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 6 Mar 2020 13:12:41 +0100
+Subject: [Therion] New DEM data from NASA
+Message-ID: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+
+here it comes :)
+
+It uses LIDAR data from austrian sourves, but should be able to be adapted accordingly. I hoe it gives some hints.
+Feel free to modify and share!
+
+
+
+﻿
+
+>>>> Am 06.03.2020 um 12:26 schrieb Wookey <wookey at wookware.org>:
+>>>>> 
+>>>>>> ﻿On 2020-03-06 09:02 +0100, Benedikt Hallinger wrote:
+>>>>>>> 
+>>>>>>>> I have a (german commented) bash script doing this.
+>>>>>>>>> 
+>>>>>>>>>> Only thing is that it is hatdcoded fir a specific case, but it shows the commands imvolved.
+>>>>>>>>>>> 
+>>>>>>>>>>>> Should i post it to you?
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> Post it here. I doubt if Paweł is the only one interested.
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> Wookey
+>>>>>>>>>>>>> -- 
+>>>>>>>>>>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>>>>>>>>>>> http://wookware.org/
+>>>>>>>>>>>>> _______________________________________________
+>>>>>>>>>>>>> Therion mailing list
+>>>>>>>>>>>>> Therion at speleo.sk
+>>>>>>>>>>>>> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/1dbc5219/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: generate.sh
+Type: application/octet-stream
+Size: 4364 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/1dbc5219/attachment.obj>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/1dbc5219/attachment-0001.htm>
+
+From beni at hallinger.org  Fri Mar  6 13:34:15 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 6 Mar 2020 13:34:15 +0100
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+References: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+Message-ID: <FAE5A843-C4B4-452F-806A-46529B7D9907@hallinger.org>
+
+... if it is needed, i can translate it to English. Just say so and i try to squeeze out some time...
+
+> Am 06.03.2020 um 13:13 schrieb Benedikt Hallinger <beni at hallinger.org>:
+> 
+> ﻿
+> here it comes :)
+> 
+> It uses LIDAR data from austrian sourves, but should be able to be adapted accordingly. I hoe it gives some hints.
+> Feel free to modify and share!
+> 
+> <generate.sh>
+> 
+> ﻿
+> 
+>>>> Am 06.03.2020 um 12:26 schrieb Wookey <wookey at wookware.org>:
+>>>>> 
+>>>>>> ﻿On 2020-03-06 09:02 +0100, Benedikt Hallinger wrote:
+>>>>>>> 
+>>>>>>>> I have a (german commented) bash script doing this.
+>>>>>>>>> 
+>>>>>>>>>> Only thing is that it is hatdcoded fir a specific case, but it shows the commands imvolved.
+>>>>>>>>>>> 
+>>>>>>>>>>>> Should i post it to you?
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> Post it here. I doubt if Paweł is the only one interested.
+>>>>>>>>>>>>> 
+>>>>>>>>>>>>> Wookey
+>>>>>>>>>>>>> -- 
+>>>>>>>>>>>>> Principal hats:  Linaro, Debian, Wookware, ARM
+>>>>>>>>>>>>> http://wookware.org/
+>>>>>>>>>>>>> _______________________________________________
+>>>>>>>>>>>>> Therion mailing list
+>>>>>>>>>>>>> Therion at speleo.sk
+>>>>>>>>>>>>> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200306/1a6c8769/attachment.htm>
+
+From rsev at protonmail.com  Sat Mar  7 14:27:43 2020
+From: rsev at protonmail.com (rsev at protonmail.com)
+Date: Sat, 07 Mar 2020 13:27:43 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <FAE5A843-C4B4-452F-806A-46529B7D9907@hallinger.org>
+References: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+ <FAE5A843-C4B4-452F-806A-46529B7D9907@hallinger.org>
+Message-ID: <0Vu8JXmo1-PBHLaUgP33JBlK0Qh1z8kBYPNP6bxjHkAXzftqCeekaX44hKrcs_03TxTIAvk2OV4aYfhB-Qtf560w0M3M_zrl22wc2YlMMrI=@protonmail.com>
+
+‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+On Friday, March 6, 2020 9:34 AM, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> ... if it is needed, i can translate it to English. Just say so and i try to squeeze out some time...
+
+It would certainly help a lot.
+
+Regards,
+
+Rodrigo
+
+
+From beni at hallinger.org  Sat Mar  7 15:26:17 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 07 Mar 2020 15:26:17 +0100
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <0Vu8JXmo1-PBHLaUgP33JBlK0Qh1z8kBYPNP6bxjHkAXzftqCeekaX44hKrcs_03TxTIAvk2OV4aYfhB-Qtf560w0M3M_zrl22wc2YlMMrI=@protonmail.com>
+References: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+ <FAE5A843-C4B4-452F-806A-46529B7D9907@hallinger.org>
+ <0Vu8JXmo1-PBHLaUgP33JBlK0Qh1z8kBYPNP6bxjHkAXzftqCeekaX44hKrcs_03TxTIAvk2OV4aYfhB-Qtf560w0M3M_zrl22wc2YlMMrI=@protonmail.com>
+Message-ID: <4c8c07b1fec23f39dff167d1d9d20f0a@hallinger.org>
+
+Here :)
+
+
+Am 2020-03-07 14:27, schrieb Rodrigo Severo via Therion:
+> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> On Friday, March 6, 2020 9:34 AM, Benedikt Hallinger 
+> <beni at hallinger.org> wrote:
+> 
+>> ... if it is needed, i can translate it to English. Just say so and i 
+>> try to squeeze out some time...
+> 
+> It would certainly help a lot.
+> 
+> Regards,
+> 
+> Rodrigo
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion_generate-DEM-DOM_en.sh
+Type: text/x-shellscript
+Size: 5515 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200307/c378cc0a/attachment.bin>
+
+From rsev at protonmail.com  Sat Mar  7 15:32:48 2020
+From: rsev at protonmail.com (rsev at protonmail.com)
+Date: Sat, 07 Mar 2020 14:32:48 +0000
+Subject: [Therion] New DEM data from NASA
+In-Reply-To: <4c8c07b1fec23f39dff167d1d9d20f0a@hallinger.org>
+References: <3871F1D8-6BD4-4A83-A8FE-8BFA8230182C@hallinger.org>
+ <FAE5A843-C4B4-452F-806A-46529B7D9907@hallinger.org>
+ <0Vu8JXmo1-PBHLaUgP33JBlK0Qh1z8kBYPNP6bxjHkAXzftqCeekaX44hKrcs_03TxTIAvk2OV4aYfhB-Qtf560w0M3M_zrl22wc2YlMMrI=@protonmail.com>
+ <4c8c07b1fec23f39dff167d1d9d20f0a@hallinger.org>
+Message-ID: <kPqT0OyCPf8FLpy_j4J1sxJfE8pauZyC6QB4eNtOvEdpJPSElUfr-ANZ9CtgXLpdVDAIk25xH6NPCW5JPwUnybwedVjPqxEt8d1daAsuFwM=@protonmail.com>
+
+‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+On Saturday, March 7, 2020 11:26 AM, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> Here :)
+
+Great!
+
+Thanks,
+
+
+Rodrigo
+
+
+
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Mon Mar 16 20:30:47 2020
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Mon, 16 Mar 2020 20:30:47 +0100 (CET)
+Subject: [Therion] How to add a "navbox"-type box in plan and extend pdfs?
+Message-ID: <1642259556.7355078.1584387047731.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Dear all, 
+
+I do not know if this is a request for a new feature, or if this can easily be solved with the present-day options of Therion. 
+
+With my caving club, I am working on relatively big caves (>10/20 km), and I am currently in charge of the survey synthesis. Almost each year, we add new explored passages to the general map, and we annually publish the crops on the passages newly explored/mapped in our caving club journal. To print the crops of the parts I am interesting for publishing, I am using selections with maps definitions. Nothing new until there. 
+
+Recently, I had a request from some cavers: For these crops, they asked me to add to the map an inset with the general view of the cave (plan and/or extended elevation) and the location of the crop. Two Illustrator example are in attachement. 
+
+With Therion I could do that (this is more or less what I have done for the attached Solitaire example): 
+
+
+    1. by plotting the whole cave at very small scale (with the options symbol-hide group all / symbol-hide special north-arrow / symbol-hide special scale-bar / symbol-show line wall and all the statistics to off or empty) , 
+    2. by adding a box manually on this first pdf with illustrator, where I want it and 
+    3. by using the "map-image" command to add this tuned pdf on the final map of the crop. 
+
+However, it will be a pain to do it manually each time I need to print a new part of the cave network. 
+
+Thus, do you know if there is an easy way to do it with a semi-automatic method based on the map selection? 
+I imagine that this should be possible as there are almost similar features for the Atlas mode (with the box \navbox). 
+Can we transpose it to plan or extended views ? 
+
+Otherwise a possible idea could be to add a new command for layout blocks like : map-box <x> <y> <n/s/e/w/ne/nw/se/sw/center> <scale/size> with for example: 
+
+
+    * <x> <y> : same definition as map-header or map-image 
+    * <n/s/e/w/ne/nw/se/sw/center> : same definition as map-header or map-image 
+    * <scale> : scale (in % of the page size? scale of the general map to use, like the base-scale or scale commands?) or size (in cm like for the width of the legend box?) of the box that contains the general map with the map-selection location 
+
+In fact, that would be great! Infortunately, I am not a good coder... But do you thing this is easy to implement? 
+
+Cheers, 
+
+Xavier 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200316/0c8447d7/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Solitaire-jb-Xav-2020-plan1000_plan-coupe_MIN.jpg
+Type: image/jpeg
+Size: 789659 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200316/0c8447d7/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: fondCP16.pdf
+Type: application/pdf
+Size: 371446 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200316/0c8447d7/attachment.pdf>
+
+From nikita.kozlov at gmail.com  Mon Mar 23 17:10:23 2020
+From: nikita.kozlov at gmail.com (Mykyta Kozlov)
+Date: Mon, 23 Mar 2020 18:10:23 +0200
+Subject: [Therion] Is there any method of accuracy control for database
+ outputs?
+Message-ID: <CAEEzkZFPVsnm=QvwFdQZFXTMz7-CcvxWF=aCyAmDsDKgVioW3w@mail.gmail.com>
+
+Hi,
+
+I am using therion (5.4.4 latest stable build for windows) in a following
+scenario:
+
+1. Make triangulation-like survey with/without Geo fix.
+2. Place 'visually-identifiable' markers exactly on a survey stations done
+on step 1.
+3. Do a photogrammetric scanning, making photos in the way markers are
+clearly visible on obtained images.
+4. Use a photogrammetry software to do a 3d reconstruction with a GCP fix,
+using markers from step 2 as ground control points.
+
+To obtain GCP coordinates I use therion-produced database output, with a
+sample line from .thconfig file
+"export database -o 350.sql"
+
+Produced .sql - file contains at its end series of SQL commands like
+following
+"insert into STATION values (9, '1', 33, 732175.84, 4728436.27, 2292.57);"
+for UTM-fixed survey
+and
+"insert into STATION values (9, '1', 33, 41.99, 8.51, 33.04);" for non-geo
+fixed survey.
+
+It is clearly seen that last 3 values are either UTM or local X, Y, Z
+coordinates.
+Both types of outputs are acceptable for my workflows, but
+the values produced with something like "%.2f" - 'printf' function
+parameter, or contain only 2 decimal digits after comma.
+
+Is there any way to control such behavior, without patching the therion
+source code, and get for example 3 digits after comma for database outputs?
+
+Workaround here is to produce .kml and then project it to desired
+coordinate system, but
+this requires a lot more work than simple dealing with .sql files.
+
+Both .sql files are attached
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200323/0f171bf0/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 350.sql
+Type: application/octet-stream
+Size: 8013 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200323/0f171bf0/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 350_local.sql
+Type: application/octet-stream
+Size: 7721 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200323/0f171bf0/attachment-0001.obj>
+
+From beni at hallinger.org  Thu Mar 26 22:37:01 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 26 Mar 2020 22:37:01 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+Message-ID: <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+
+Hello,
+does anybody know how i can measure the distance from a given station to 
+the surface, when i have a surface model loaded?
+
+Thanks,
+Beni
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Mar 26 22:49:05 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 26 Mar 2020 21:49:05 +0000
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+Message-ID: <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+
+> does anybody know how i can measure the distance from a given station to
+> the surface, when i have a surface model loaded?
+
+I have always done this with Survex's Aven. Export 3D, open in Aven,
+enable surface legs, click the station, hold mouse over the surface
+legs. (I do this with either surface survey stations, or surface grid
+that I prepared with TerrainTool.)
+
+Aside:
+If you use Survex rather than Therion to export this, the ends of the
+splays become clickable points in Aven, so you can measure from your
+highest splay. If you use a 3D exported by Therion, then you cannot
+click on the splays. Therion does not add the control point at the end
+of each splay (I have filed a bug for that).
+
+
+From beni at hallinger.org  Thu Mar 26 23:00:46 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 26 Mar 2020 23:00:46 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+Message-ID: <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+
+Hello,
+do i need some special options aside from "export model -o model.3d" to 
+enable surface in aven?
+If i try to enable the surface legs, aven prompts me to open some 
+file...
+
+
+Am 2020-03-26 22:49, schrieb Tarquin Wilton-Jones via Therion:
+>> does anybody know how i can measure the distance from a given station 
+>> to
+>> the surface, when i have a surface model loaded?
+> 
+> I have always done this with Survex's Aven. Export 3D, open in Aven,
+> enable surface legs, click the station, hold mouse over the surface
+> legs. (I do this with either surface survey stations, or surface grid
+> that I prepared with TerrainTool.)
+> 
+> Aside:
+> If you use Survex rather than Therion to export this, the ends of the
+> splays become clickable points in Aven, so you can measure from your
+> highest splay. If you use a 3D exported by Therion, then you cannot
+> click on the splays. Therion does not add the control point at the end
+> of each splay (I have filed a bug for that).
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Mar 26 23:06:52 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 26 Mar 2020 22:06:52 +0000
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+Message-ID: <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+
+> enable surface in aven?
+> If i try to enable the surface legs, aven prompts me to open some file...
+
+I assume you are trying to "file - open terrain" rather than "view -
+surface survey legs".
+
+Terrain is a different thing, which I have never used, and I don't think
+you can select parts of it for use with measuring. I think though that
+Survex's terrain is similar to the type of terrain used by Therion though.
+
+
+From beni at hallinger.org  Thu Mar 26 23:09:43 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 26 Mar 2020 23:09:43 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+Message-ID: <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+
+Yes i did. Thanks for that hint.
+However, my aven does not enable me to avtivate it in the view menu, its 
+disabled (greyed out), i assume because i do not have surface data in 
+the file?
+How do i tell therion to export this?
+
+
+Am 2020-03-26 23:06, schrieb Tarquin Wilton-Jones:
+>> enable surface in aven?
+>> If i try to enable the surface legs, aven prompts me to open some 
+>> file...
+> 
+> I assume you are trying to "file - open terrain" rather than "view -
+> surface survey legs".
+> 
+> Terrain is a different thing, which I have never used, and I don't 
+> think
+> you can select parts of it for use with measuring. I think though that
+> Survex's terrain is similar to the type of terrain used by Therion 
+> though.
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Mar 26 23:23:18 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 26 Mar 2020 22:23:18 +0000
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+Message-ID: <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+
+> However, my aven does not enable me to avtivate it in the view menu, its
+> disabled (greyed out), i assume because i do not have surface data in
+> the file?
+
+Sounds like it. It works based on legs that have:
+
+flags surface
+1 2 9.8 123 0
+flags not surface
+
+Or if you have used TerrainTool to export it as a grid, it will have
+added that for you.
+
+This has been very easy for us in our projects because we either knew
+exactly which line to follow on the surface beforehand, or we surveyed
+the cave first then surveyed over the surface afterwards, staying above
+the passage so we could have a useful measure of the surface above the cave.
+
+In more complex caves, I rely on TerrainTool to cover the surface.
+Looking forward to being able to use the new more accurate NASADEM so
+that the measurements are actually accurate.
+
+
+From beni at hallinger.org  Fri Mar 27 23:51:46 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 27 Mar 2020 23:51:46 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+Message-ID: <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+
+Hi there,
+i just wrote a small tool to do the conversion from a therion surface 
+mesh into survex format:
+https://github.com/hbeni/therionsurface2survex
+
+It would be nice if some C++ programmers can look over the code as this 
+is my first c++ endeavour.
+
+The program basically parses the therion source file and generates *fix 
+commands out of it together with nosurvey-centerline connecting the 
+stations to a mesh.
+The resulting .swx file then can be put trough survex' cavern program to 
+generate a 3d file of the mesh.
+That can be easily combined with a 3d file of the cave generated from 
+therion (using the import statements). For ease of use provided a basic 
+example for combining in the readme. A sample to parse a mesh is in the 
+projects example/ folder, however i also tested it positive with the 
+rabbit cave example.
+
+With my dataset the calculation seems to take a little longer.... there 
+are 388.800 fixe stations in the surface mesh giving a 31M swx-file in 
+total.
+I hope this will finish somtime (running already for 25 minutes) but 
+maybe i overloaded cavern with this.
+Otherwise i probably need to turn down the grid resolution (currently 
+10m grid size).
+
+
+
+Am 2020-03-26 23:23, schrieb Tarquin Wilton-Jones:
+>> However, my aven does not enable me to avtivate it in the view menu, 
+>> its
+>> disabled (greyed out), i assume because i do not have surface data in
+>> the file?
+> 
+> Sounds like it. It works based on legs that have:
+> 
+> flags surface
+> 1 2 9.8 123 0
+> flags not surface
+> 
+> Or if you have used TerrainTool to export it as a grid, it will have
+> added that for you.
+> 
+> This has been very easy for us in our projects because we either knew
+> exactly which line to follow on the surface beforehand, or we surveyed
+> the cave first then surveyed over the surface afterwards, staying above
+> the passage so we could have a useful measure of the surface above the 
+> cave.
+> 
+> In more complex caves, I rely on TerrainTool to cover the surface.
+> Looking forward to being able to use the new more accurate NASADEM so
+> that the measurements are actually accurate.
+
+
+From beni at hallinger.org  Sat Mar 28 00:28:44 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 28 Mar 2020 00:28:44 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+ <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+Message-ID: <cc710adeb83981c13af1e66875db0f05@hallinger.org>
+
+cavern had eaten itself, but after pushing ctrl-c in the shell running 
+therion, the 3d  file was written successfully and the output was nice.
+
+I enhanced the therion wiki a little with a link to the tool.
+
+Sorry, i have no clue how to cross compile this for windows.
+
+
+Am 2020-03-27 23:51, schrieb Benedikt Hallinger:
+> Hi there,
+> i just wrote a small tool to do the conversion from a therion surface
+> mesh into survex format:
+> https://github.com/hbeni/therionsurface2survex
+> 
+> It would be nice if some C++ programmers can look over the code as
+> this is my first c++ endeavour.
+> 
+> The program basically parses the therion source file and generates
+> *fix commands out of it together with nosurvey-centerline connecting
+> the stations to a mesh.
+> The resulting .swx file then can be put trough survex' cavern program
+> to generate a 3d file of the mesh.
+> That can be easily combined with a 3d file of the cave generated from
+> therion (using the import statements). For ease of use provided a
+> basic example for combining in the readme. A sample to parse a mesh is
+> in the projects example/ folder, however i also tested it positive
+> with the rabbit cave example.
+> 
+> With my dataset the calculation seems to take a little longer....
+> there are 388.800 fixe stations in the surface mesh giving a 31M
+> swx-file in total.
+> I hope this will finish somtime (running already for 25 minutes) but
+> maybe i overloaded cavern with this.
+> Otherwise i probably need to turn down the grid resolution (currently
+> 10m grid size).
+> 
+> 
+> 
+> Am 2020-03-26 23:23, schrieb Tarquin Wilton-Jones:
+>>> However, my aven does not enable me to avtivate it in the view menu, 
+>>> its
+>>> disabled (greyed out), i assume because i do not have surface data in
+>>> the file?
+>> 
+>> Sounds like it. It works based on legs that have:
+>> 
+>> flags surface
+>> 1 2 9.8 123 0
+>> flags not surface
+>> 
+>> Or if you have used TerrainTool to export it as a grid, it will have
+>> added that for you.
+>> 
+>> This has been very easy for us in our projects because we either knew
+>> exactly which line to follow on the surface beforehand, or we surveyed
+>> the cave first then surveyed over the surface afterwards, staying 
+>> above
+>> the passage so we could have a useful measure of the surface above the 
+>> cave.
+>> 
+>> In more complex caves, I rely on TerrainTool to cover the surface.
+>> Looking forward to being able to use the new more accurate NASADEM so
+>> that the measurements are actually accurate.
+
+
+From phil.vernant at gmail.com  Sat Mar 28 01:18:31 2020
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sat, 28 Mar 2020 01:18:31 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <cc710adeb83981c13af1e66875db0f05@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+ <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+ <cc710adeb83981c13af1e66875db0f05@hallinger.org>
+Message-ID: <9E0197FD-AC93-4D06-8E55-FD4559D07374@gmail.com>
+
+Hi,
+
+There is an easy way to extract coordinates from the therion sql export. Then using a shell script and GMT could provide the depth of each point below the surface. I know that there is now a GMT library under Python, if they have implemented the function in the library, everything could be wrapped up in a single python script. 
+
+Cheers,
+Phil
+
+
+> On 28 Mar 2020, at 00:28, Benedikt Hallinger <beni at hallinger.org> wrote:
+> 
+> cavern had eaten itself, but after pushing ctrl-c in the shell running therion, the 3d  file was written successfully and the output was nice.
+> 
+> I enhanced the therion wiki a little with a link to the tool.
+> 
+> Sorry, i have no clue how to cross compile this for windows.
+> 
+> 
+> Am 2020-03-27 23:51, schrieb Benedikt Hallinger:
+>> Hi there,
+>> i just wrote a small tool to do the conversion from a therion surface
+>> mesh into survex format:
+>> https://github.com/hbeni/therionsurface2survex
+>> It would be nice if some C++ programmers can look over the code as
+>> this is my first c++ endeavour.
+>> The program basically parses the therion source file and generates
+>> *fix commands out of it together with nosurvey-centerline connecting
+>> the stations to a mesh.
+>> The resulting .swx file then can be put trough survex' cavern program
+>> to generate a 3d file of the mesh.
+>> That can be easily combined with a 3d file of the cave generated from
+>> therion (using the import statements). For ease of use provided a
+>> basic example for combining in the readme. A sample to parse a mesh is
+>> in the projects example/ folder, however i also tested it positive
+>> with the rabbit cave example.
+>> With my dataset the calculation seems to take a little longer....
+>> there are 388.800 fixe stations in the surface mesh giving a 31M
+>> swx-file in total.
+>> I hope this will finish somtime (running already for 25 minutes) but
+>> maybe i overloaded cavern with this.
+>> Otherwise i probably need to turn down the grid resolution (currently
+>> 10m grid size).
+>> Am 2020-03-26 23:23, schrieb Tarquin Wilton-Jones:
+>>>> However, my aven does not enable me to avtivate it in the view menu, its
+>>>> disabled (greyed out), i assume because i do not have surface data in
+>>>> the file?
+>>> Sounds like it. It works based on legs that have:
+>>> flags surface
+>>> 1 2 9.8 123 0
+>>> flags not surface
+>>> Or if you have used TerrainTool to export it as a grid, it will have
+>>> added that for you.
+>>> This has been very easy for us in our projects because we either knew
+>>> exactly which line to follow on the surface beforehand, or we surveyed
+>>> the cave first then surveyed over the surface afterwards, staying above
+>>> the passage so we could have a useful measure of the surface above the cave.
+>>> In more complex caves, I rely on TerrainTool to cover the surface.
+>>> Looking forward to being able to use the new more accurate NASADEM so
+>>> that the measurements are actually accurate.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From beni at hallinger.org  Sat Mar 28 01:21:17 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 28 Mar 2020 01:21:17 +0100
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <9E0197FD-AC93-4D06-8E55-FD4559D07374@gmail.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+ <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+ <cc710adeb83981c13af1e66875db0f05@hallinger.org>
+ <9E0197FD-AC93-4D06-8E55-FD4559D07374@gmail.com>
+Message-ID: <20292f962131d687f12fbaf4c019c5b4@hallinger.org>
+
+Thanks, but i'm not into python :)
+
+
+Am 2020-03-28 1:18, schrieb Philippe Vernant:
+> Hi,
+> 
+> There is an easy way to extract coordinates from the therion sql
+> export. Then using a shell script and GMT could provide the depth of
+> each point below the surface. I know that there is now a GMT library
+> under Python, if they have implemented the function in the library,
+> everything could be wrapped up in a single python script.
+> 
+> Cheers,
+> Phil
+> 
+> 
+>> On 28 Mar 2020, at 00:28, Benedikt Hallinger <beni at hallinger.org> 
+>> wrote:
+>> 
+>> cavern had eaten itself, but after pushing ctrl-c in the shell running 
+>> therion, the 3d  file was written successfully and the output was 
+>> nice.
+>> 
+>> I enhanced the therion wiki a little with a link to the tool.
+>> 
+>> Sorry, i have no clue how to cross compile this for windows.
+>> 
+>> 
+>> Am 2020-03-27 23:51, schrieb Benedikt Hallinger:
+>>> Hi there,
+>>> i just wrote a small tool to do the conversion from a therion surface
+>>> mesh into survex format:
+>>> https://github.com/hbeni/therionsurface2survex
+>>> It would be nice if some C++ programmers can look over the code as
+>>> this is my first c++ endeavour.
+>>> The program basically parses the therion source file and generates
+>>> *fix commands out of it together with nosurvey-centerline connecting
+>>> the stations to a mesh.
+>>> The resulting .swx file then can be put trough survex' cavern program
+>>> to generate a 3d file of the mesh.
+>>> That can be easily combined with a 3d file of the cave generated from
+>>> therion (using the import statements). For ease of use provided a
+>>> basic example for combining in the readme. A sample to parse a mesh 
+>>> is
+>>> in the projects example/ folder, however i also tested it positive
+>>> with the rabbit cave example.
+>>> With my dataset the calculation seems to take a little longer....
+>>> there are 388.800 fixe stations in the surface mesh giving a 31M
+>>> swx-file in total.
+>>> I hope this will finish somtime (running already for 25 minutes) but
+>>> maybe i overloaded cavern with this.
+>>> Otherwise i probably need to turn down the grid resolution (currently
+>>> 10m grid size).
+>>> Am 2020-03-26 23:23, schrieb Tarquin Wilton-Jones:
+>>>>> However, my aven does not enable me to avtivate it in the view 
+>>>>> menu, its
+>>>>> disabled (greyed out), i assume because i do not have surface data 
+>>>>> in
+>>>>> the file?
+>>>> Sounds like it. It works based on legs that have:
+>>>> flags surface
+>>>> 1 2 9.8 123 0
+>>>> flags not surface
+>>>> Or if you have used TerrainTool to export it as a grid, it will have
+>>>> added that for you.
+>>>> This has been very easy for us in our projects because we either 
+>>>> knew
+>>>> exactly which line to follow on the surface beforehand, or we 
+>>>> surveyed
+>>>> the cave first then surveyed over the surface afterwards, staying 
+>>>> above
+>>>> the passage so we could have a useful measure of the surface above 
+>>>> the cave.
+>>>> In more complex caves, I rely on TerrainTool to cover the surface.
+>>>> Looking forward to being able to use the new more accurate NASADEM 
+>>>> so
+>>>> that the measurements are actually accurate.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From wookey at wookware.org  Sun Mar 29 04:38:17 2020
+From: wookey at wookware.org (Wookey)
+Date: Sun, 29 Mar 2020 03:38:17 +0100
+Subject: [Therion] Getting started with Therioning a trad survey
+In-Reply-To: <8407ba5f-2c63-f88f-3464-bf74db1b81c1@anti.al>
+References: <cd5ee691-bd15-3ee7-301c-54d39eaf68c0@anti.al>
+ <20200315170544.GM19072@mail.wookware.org>
+ <eb6c6902-5e52-a77e-6d96-f88b49abeb05@anti.al>
+ <20200315173019.GN19072@mail.wookware.org>
+ <8407ba5f-2c63-f88f-3464-bf74db1b81c1@anti.al>
+Message-ID: <20200329023817.GW12450@mail.wookware.org>
+
+Forwarding some queries as I only know the answer to 1 out of 4 :-)
+
+On 2020-03-29 02:25 +0100, Stuart Bennett wrote:
+> On 15/03/2020 17:30, Wookey wrote:
+> > It uses survex to do all the sums if survex is installed (and both use
+> > proj for the co-ordinate systems) so you should get exactly the same
+> > answers. Without survex it does a rather simple-minded job on its own.
+> 
+> Ok, so suddenly having a lot more time at home I've made reasonable
+> progress, but have a few new questions.  Various bits attached, should they
+> be relevant to the below.
+
+I don't know the answers to most of these, so forwarding to the therion list.
+
+> 1) I'd quite like it to say P33 next to the pitch, rather than just `33',
+> but using a `height' point type doesn't let me set a `value' including a
+> letter.  Is there a way to use what seems like the semantically correct
+> type, or should I just use a label?
+> 
+> 2) Having gone down the `import a .3d' route, I don't seem to get any dates
+> in the output, despite the 3d file knowing them, which is a shame.
+> Inserting a bogus centreline just to specify a date fails, as there's no
+> measurements.  Is there a neat way around this?
+
+I think this is a feature, but it may be fixable. 
+
+> 3) The boulders are enormous.  The ones you get with a `breakdown'-type
+> point are much more suitable, but that defeats the point of having an area
+> fill.  Is there a way to scale the area fill symbols?
+
+You want Andrew's 'fancy boulders' function. 'Customisable Area blocks' on
+https://therion.speleo.sk/wiki/metapost
+
+> 4) More generally, working with a survey drawn up in pencil over a Survex
+> printout is ok, but if I'd drawn up digitally first, would the LRUD data
+> have somehow been used/displayed automatically?  Does using a .3d import vs
+> transcribing to Therion native format affect this?
+> 
+> Thanks, Stuart
+
+
+
+
+> encoding utf-8
+> import daves_hole.3d -surveys use
+> survey dh -title "Dave's Höhle"
+> 	input daves_hole.th2
+> #	date 2017.09.17
+> #	team SB insts
+> #	team OGHM/KIH notes,dog
+> endsurvey
+
+> encoding  utf-8
+> ##XTHERION## xth_me_area_adjust -132.0 -1368 1883 141.0
+> ##XTHERION## xth_me_area_zoom_to 50
+> ##XTHERION## xth_me_image_insert {0 1 1.0} {0 {}} daves_hole_scan.png 0 {}
+> 
+> 
+> 
+> scrap scrap1 -projection plan -scale [709.0 -992.25 1654.5 -991.6666666666666 0.0 0.0 40 0.0 m]
+> 
+> point 686.0 -595.0 archeo-material
+> 
+> point 1301.0 -445.0 continuation
+> 
+> point 616.75 -766.5 height -value 1
+> 
+> point 648.0 -788.5 station -name 15
+> 
+> point 615.0 -698.0 station -name 14
+> 
+> point 848.5 -535.0 station -name 13
+> 
+> point 458.0 -681.5 station -name 12
+> 
+> point 564.5 -653.0 station -name 11
+> 
+> point 436.5 -141.0 station -name 10
+> 
+> point 504.0 -267.0 station -name 9
+> 
+> point 833.0 -769.0 station -name 8
+> 
+> point 946.5 -308.0 station -name 7
+> 
+> point 1180.5 -725.0 station -name 6
+> 
+> point 1284.0 -441.5 station -name 5
+> 
+> point 1241.5 -479.5 station -name 4
+> 
+> point 1026.5 -509.0 station -name 3
+> 
+> point 1219.0 -571.0 station -name 2
+> 
+> point 1350.5 -669.5 station -name 1
+> 
+> line pit -id l17-1162--732 -close on -reverse on
+>   1163.75 -734.25
+>   1158.99 -733.3 1175.47 -717.75 1176.5 -717.5
+>   1193.75 -713.25 1193.25 -722.0 1188.25 -729.25
+>   1181.83 -738.56 1170.0 -735.5 1163.75 -734.25
+> endline
+> 
+> line floor-step -id l65-1266--488 -reverse on
+>   1288.0 -489.5
+>   1275.0 -489.75 1238.0 -486.0 1241.5 -467.0
+>   smooth off
+> endline
+> 
+> area blocks
+>   l85-925--470
+>   l20-859--786
+>   l57-842--770
+>   l20-859--786
+>   l63-758--730
+> endarea
+> 
+> line border -id l85-925--470 -subtype invisible
+>   912.0 -716.0
+>   970.0 -655.5 1012.64 -524.97 883.5 -431.0
+>   777.0 -353.5 615.21 -361.72 582.0 -398.0
+>   501.0 -486.5 597.5 -684.5 603.0 -733.5
+>   smooth off
+> endline
+> 
+> area blocks
+>   l17-558--678
+>   l65-1266--488
+>   l19-1314--500
+>   l20-859--786
+>   l83-1147--640
+> endarea
+> 
+> line border -id l83-1147--640 -subtype invisible
+>   1175.0 -425.5
+>   1175.0 -598.59 1142.0 -677.0 1075.5 -804.0
+>   smooth off
+> endline
+> 
+> line floor-step
+>   628.5 -763.0
+>   633.25 -750.25 642.75 -743.25 653.25 -743.25
+>   smooth off
+> endline
+> 
+> line ceiling-step -id l63-758--730
+>   585.25 -700.75
+>   615.0 -692.75 682.53 -679.87 691.25 -681.75
+>   716.75 -687.25 773.0 -747.75 781.0 -754.0
+>   smooth off
+> endline
+> 
+> line ceiling-step
+>   1339.5 -680.0
+>   1406.6 -722.96 1433.75 -683.5 1362.0 -651.5
+>   smooth off
+> endline
+> 
+> line ceiling-step -reverse on
+>   1284.25 -485.0
+>   1272.25 -474.0 1254.5 -469.25 1243.0 -466.75
+>   smooth off
+> endline
+> 
+> area flowstone
+>   l17-558--678
+>   l60-937--312
+> endarea
+> 
+> area flowstone
+>   l74-532--285
+> endarea
+> 
+> point 482.5 -128.75 popcorn -orientation 46.8
+> 
+> point 417.0 -144.25 popcorn -orientation 298.3
+> 
+> point 507.75 -179.5 popcorn -orientation 61.7
+> 
+> point 436.5 -209.75 popcorn -orientation 255.8
+> 
+> point 444.5 -263.75 popcorn -orientation 269.2
+> 
+> line border -id l74-532--285 -close on -subtype invisible
+>   511.75 -250.5
+>   502.75 -252.5 471.8 -301.03 471.25 -313.0
+>   470.25 -334.75 487.75 -361.75 515.25 -326.75
+>   542.75 -291.75 530.51 -246.33 511.75 -250.5
+> endline
+> 
+> line ceiling-step -id l60-937--312 -reverse on
+>   953.5 -312.0
+>   943.75 -310.25 928.0 -312.5 917.75 -318.25
+>   smooth off
+> endline
+> 
+> line ceiling-step -id l59-500--232 -reverse on
+>   524.75 -224.75
+>   500.5 -219.0 460.25 -265.5 453.25 -296.5
+>   smooth off
+> endline
+> 
+> line ceiling-step -id l58-566--670 -reverse on
+>   544.25 -610.25
+>   545.5 -627.0 558.5 -663.5 570.5 -676.5
+>   smooth off
+> endline
+> 
+> area flowstone
+>   l20-859--786
+>   l57-842--770
+> endarea
+> 
+> line ceiling-step -id l57-842--770
+>   867.0 -762.0
+>   850.5 -768.0 833.5 -772.75 807.0 -773.0
+>   smooth off
+> endline
+> 
+> line ceiling-step -reverse on
+>   920.0 -714.0
+>   952.5 -704.5 983.5 -579.5 995.0 -531.5
+>   1014.75 -449.06 998.5 -333.5 998.5 -333.5
+>   smooth off
+> endline
+> 
+> area flowstone
+>   l17-558--678
+>   l59-500--232
+> endarea
+> 
+> area flowstone
+>   l17-558--678
+>   l58-566--670
+> endarea
+> 
+> line wall -close on -outline in -subtype presumed
+>   646.25 -687.75
+>   643.88 -687.92 646.17 -721.7 651.5 -735.5
+>   655.75 -746.5 670.75 -778.59 673.5 -775.75
+>   688.43 -760.32 679.52 -685.3 646.25 -687.75
+> endline
+> 
+> line wall -id l17-558--678
+>   1297.0 -437.5
+>   1248.0 -455.0 1243.26 -467.3 1241.5 -467.0
+>   1218.25 -463.0 1153.0 -415.5 1078.75 -367.25
+>   1074.97 -364.79 958.5 -320.75 950.0 -309.5
+>   940.91 -297.47 939.04 -268.9 933.0 -270.5
+>   919.75 -274.0 928.34 -306.17 922.0 -314.0
+>   920.73 -315.57 886.25 -358.0 820.5 -353.0
+>   780.12 -349.93 597.0 -276.0 524.75 -224.75
+>   492.66 -201.98 467.96 -122.94 456.0 -129.75
+>   437.84 -140.09 420.88 -144.41 429.5 -159.5
+>   447.5 -191.0 461.5 -235.0 456.5 -274.5
+>   451.26 -315.9 444.24 -318.15 481.0 -390.5
+>   512.5 -452.5 532.5 -579.0 545.0 -606.5
+>   551.66 -621.16 457.9 -642.39 452.0 -649.0
+>   435.5 -667.5 444.2 -705.23 461.5 -711.0
+>   467.5 -713.0 574.69 -663.83 577.75 -679.0
+>   584.0 -710.0 645.06 -785.62 647.5 -786.75
+>   652.16 -788.9 666.0 -788.75 676.25 -788.0
+>   smooth off
+> endline
+> 
+> line wall
+>   1286.0 -488.0
+>   1275.5 -480.0 1285.5 -455.5 1294.5 -452.0
+>   smooth off
+> endline
+> 
+> point 1312.0 -574.0 archeo-material
+> 
+> line wall -id l19-1314--500 -subtype presumed
+>   1273.0 -679.0
+>   1301.0 -711.5 1386.64 -736.93 1412.0 -695.0
+>   1428.85 -667.14 1396.2 -604.49 1373.5 -567.5
+>   1360.0 -545.5 1334.85 -504.99 1286.0 -488.0
+>   smooth off
+> endline
+> 
+> line wall -id l20-859--786
+>   781.0 -754.0
+>   845.76 -799.28 827.37 -779.93 851.0 -839.0
+>   854.0 -846.5 864.0 -844.29 864.0 -833.5
+>   864.0 -792.0 840.14 -787.93 892.5 -724.5
+>   943.43 -662.8 940.5 -850.0 1073.5 -798.5
+>   1193.86 -751.9 1167.39 -771.26 1196.5 -756.0
+>   1237.5 -734.5 1235.79 -659.08 1273.0 -679.0
+>   smooth off
+> endline
+> 
+> point 842.0 -535.75 passage-height -value 8
+> 
+> point 503.5 -288.0 stalagmite
+> 
+> point 493.0 -313.0 stalagmite
+> 
+> point 879.5 -791.5 wall-calcite -orientation 79.0
+> 
+> point 878.5 -819.5 wall-calcite -orientation 77.9
+> 
+> point 832.0 -827.5 wall-calcite -orientation 233.2
+> 
+> point 823.0 -802.5 wall-calcite -orientation 253.1
+> 
+> point 509.5 -651.5 stalagmite
+> 
+> point 488.0 -694.0 stalagmite
+> 
+> point 459.5 -692.0 stalagmite
+> 
+> point 535.0 -667.5 stalagmite
+> 
+> point 506.0 -677.0 stalactite
+> 
+> point 458.0 -664.5 stalactite
+> 
+> point 478.0 -646.5 stalactite
+> 
+> point 610.0 -697.75 gradient -orientation 343.3
+> 
+> point 570.25 -583.5 gradient -orientation 343.3
+> 
+> point 701.25 -628.5 gradient -orientation 355.4
+> 
+> point 682.25 -558.75 gradient -orientation 356.4
+> 
+> point 785.25 -651.25 gradient -orientation 44.4
+> 
+> point 825.5 -716.5 gradient -orientation 65.8
+> 
+> point 900.0 -659.0 gradient -orientation 65.8
+> 
+> point 867.5 -583.5 gradient -orientation 53.8
+> 
+> point 775.75 -572.25 gradient -orientation 25.9
+> 
+> point 806.0 -484.75 gradient -orientation 25.9
+> 
+> point 666.5 -465.25 gradient -orientation 0.4
+> 
+> point 535.0 -472.0 gradient -orientation 351.4
+> 
+> point 1199.5 -666.0 gradient -orientation 289.9
+> 
+> point 1182.25 -603.75 gradient -orientation 283.2
+> 
+> point 1303.0 -647.25 gradient -orientation 292.2
+> 
+> point 1191.0 -504.25 gradient -orientation 274.2
+> 
+> point 1246.0 -514.25 gradient -orientation 266.6
+> 
+> point 1321.25 -579.0 gradient -orientation 296.3
+> 
+> point 773.0 -681.0 bones
+> 
+> point 813.0 -576.0 bones
+> 
+> point 727.0 -508.0 bones
+> 
+> point 629.0 -595.0 bones
+> 
+> point 630.0 -715.0 bones
+> 
+> endscrap
+> 
+> 
+> 
+> scrap scrap96 -scale [709.0 -992.25 1654.5 -991.6666666666666 0.0 0.0 40 0.0 m]
+> 
+> point 737.0 -665.5 gradient -orientation 194.1
+> 
+> point 776.75 -709.75 gradient -orientation 259.7
+> 
+> point 694.0 -707.25 gradient -orientation 301.5
+> 
+> point 659.25 -771.75 gradient -orientation 306.6
+> 
+> point 728.0 -765.0 bones
+> 
+> point 670.0 -739.0 bones
+> 
+> line pit -close on -reverse on
+>   692.0 -690.0
+>   703.63 -693.74 728.73 -712.75 735.0 -722.25
+>   743.25 -734.75 766.36 -749.49 766.75 -756.75
+>   767.75 -775.5 714.11 -811.84 671.0 -786.25
+>   624.97 -758.92 678.0 -685.5 692.0 -690.0
+> endline
+> 
+> point 701.0 -732.0 archeo-material
+> 
+> point 777.0 -782.0 height -value 33
+> 
+> line wall -close on -subtype pit
+>   764.75 -635.75
+>   749.5 -630.5 686.83 -655.55 666.25 -678.75
+>   650.5 -696.5 644.05 -759.5 663.25 -787.0
+>   681.12 -812.59 734.6 -815.94 759.75 -784.5
+>   789.12 -747.78 806.75 -721.75 796.75 -677.75
+>   789.24 -644.69 773.95 -638.92 764.75 -635.75
+> endline
+> 
+> point 741.5 -822.75 station -name 20
+> 
+> point 714.0 -683.5 station -name 19
+> 
+> point 734.0 -721.5 station -name 17
+> 
+> endscrap
+> 
+> 
+
+> encoding  utf-8
+> source daves_hole.th
+> export map -projection plan -layout local -o daves_hole.pdf
+> 
+> layout local
+> 	legend on
+> 	symbol-hide group cave-centreline
+> 	colour map-fg [90]
+> endlayout
+
+> *begin dh
+> *title "Dave's H?hle"
+> 
+> *date 2017.09.17
+> *team SB dx
+> *team OGHM/KIH notes
+> *instrument dx "Wookey DistoX1"
+> 
+> ; BCRA Grade 5 specification file
+> ; tape error
+> ; 95.44% of readings are within 0.1m (2 S.D.)
+> *sd length backlength     0.05 metres
+> ; compass error
+> ; 95.44% of readings are within 1 degree (2 S.D.)
+> *sd bearing backbearing   0.5 degrees
+> ; clino error
+> ; 95.44% of readings are within 1 degree (2 S.D.)
+> *sd gradient backgradient 0.5 degrees
+> ; station position error
+> ; 95.44% of positions are within 0.1m (2 S.D.)
+> *sd position  0.05 metres
+> 
+> *data normal from to compass clino tape
+> 
+> ;from	to	compass	clino	tape	; remarks
+> 2	1	126.5	34.7	8.46
+> 2	3	287.7	-3.2	8.59
+> 4	3	262.4	-1.3	9.21
+> 4	5	49.0	-21.4	2.53
+> 6	3	323.9	0.6	11.17
+> 7	3	158.1	12.6	9.27
+> 7	8	194.0	16.4	20.60
+> 7	..	167.8	1.7	21.37	; to far wall
+> 7	..	183.8	5.7	16.82	; to wall by rubble slope
+> 9	3	114.6	4.5	24.41
+> 10	9	151.4	5.2	5.94
+> 11	9	350.9	-13.7	16.80
+> 11	12	254.7	9.3	4.74
+> 11	..	64.9	-1.7	19.54	; to chamber wall
+> 13	3	81.6	5.8	7.64
+> 13	.	172.6	88.1	13.52	; into roof aven
+> 14	9	345.3	-17.1	19.46
+> 14	15	159.6	44.2	5.65
+> 15	16	52.6	2.2	4.54
+> 16	.	298.2	-49.3	5.40	; to Ade's bottom hole
+> 17	16	-	down	18.3	; was 19.74 to floor, less 16's D
+> 17	..	231.9	46.4	5.83	; leaf on far wall (was station 18)
+> 19	17	153.0	-77.6	8.52
+> 20	19	348.5	-37.5	7.46
+> *entrance 20
+> *begin
+> *flags surface
+> 20	21	184.6	-10.6	11.41
+> 21	22	134.6	-2.4	11.16
+> *end
+> *fix 22	0 0 0
+> 
+> ;station details
+> ;name	L	R	U	D	description
+> ;LRUDs taken relative to first leg using the station
+> ;vertical LRUDs use U and D for forwards and backwards
+> ;1	1.0	0.5	1.5	0.5	alcove up boulder slope
+> ;2	4.6	9.0	0.7	0.2	rock near small animal bones
+> ;3	10.5	6.5	0.0	2.8	flake in roof
+> ;4	8.5	0.6	0.6	0.2	entrance to descending rift
+> ;5	0.0	0.6	0.7	4.0	wall above rift
+> ;6	5.7	3.8	1.6	1.2	rock point above hole in floor
+> ;7	0.0	1.0	0.6	1.5	right wall of entrance to alcove
+> ;8	1.3	2.4	13.2	0.7	above entrance to small chamber
+> ;9	1.9	4.1	2.0	0.5	truncated stal, near wall
+> ;10	1.0	0.4	1.2	0.4	rear of cauliflower chamber
+> ;11	2.0	1.3	0.3	1.5	entrance to stal chamber
+> ;12	1.3	1.4	2.9	0.5	broken-off stal (vertical on floor)
+> ;13	7.7	4.8	7.5	0.4	rock near pitch-fork
+> ;14	1.2	1.4	0.2	0.5	lowest point of entrance arch
+> ;15	1.1	0.1	5.4	1.5	cross scratched on right wall (as exiting)
+> ;16	1.7	2.1	999	1.4	wall of pitch
+> ;17	3.2	2.4	3.9	0.0	rebelay bolt (lower)
+> ;18	3.5	2.8	0.0	3.9	leaf on wall (misplaced)
+> ;19	3.3	2.9	4.0	0.0	mossy knob
+> ;20					boulder on south rim of pitch (surface)
+> ;21					boulder on surface
+> ;22					top-corner of third quoin of barn wall
+> 
+> *data passage station left right up down ignoreall
+> 1	0.5	1.0	1.5	0.5	alcove up boulder slope
+> 2	9.0	4.6	0.7	0.2	rock near small animal bones
+> 3	10.5	6.5	0.0	2.8	flake in roof
+> 13	7.7	4.8	7.5	0.4	rock near pitch-fork
+> 9	4.1	1.9	2.0	0.5	truncated stal, near wall
+> 14	1.4	1.2	0.2	0.5	lowest point of entrance arch
+> 15	1.1	0.1	5.4	1.5	cross scratched on right wall (as exiting)
+> 16	1.7	2.1	31	1.4	wall of pitch
+> 17	3.2	2.4	13	19.7	rebelay bolt (lower)
+> 19	2.9	3.3	5	1	mossy knob
+> 20	1	2	0	1	boulder on south rim of pitch (surface)
+> *data passage station left right up down ignoreall
+> 5	0.6	0.0	0.7	4.0	wall above rift
+> 4	2	0.6	0.6	0.2	entrance to descending rift
+> 3	12	7	0.0	2.8	flake in roof
+> *data passage station left right up down ignoreall
+> 6	5.7	3.8	1.6	1.2	rock point above hole in floor
+> 3	15	6	0.0	2.8	flake in roof
+> *data passage station left right up down ignoreall
+> 8	2.4	1.3	13.2	0.7	above entrance to small chamber
+> 7	0.0	1.0	0.6	1.5	right wall of entrance to alcove
+> 3	7	20	0.0	2.8	flake in roof
+> *data passage station left right up down ignoreall
+> 10	1.0	0.4	1.2	0.4	rear of cauliflower chamber
+> 9	2	2	2.0	0.5	truncated stal, near wall
+> *data passage station left right up down ignoreall
+> 12	1.4	1.3	2.9	0.5	broken-off stal (vertical on floor)
+> 11	2.0	1.3	0.3	1.5	entrance to stal chamber
+> 9	2	2	2.0	0.5	truncated stal, near wall
+> *data passage station left right up down ignoreall
+> 13	7.7	4.8	7.5	0.4	rock near pitch-fork
+> 11	2	15	0.3	1.5	entrance to stal chamber
+> *data passage station left right up down ignoreall
+> 16	0	2	0	2	wall of pitch
+> 11	1.3	2.0	0.3	1.5	entrance to stal chamber
+> 
+> *end dh
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+
+
+From david.eason84 at googlemail.com  Mon Mar 30 22:04:46 2020
+From: david.eason84 at googlemail.com (David Eason)
+Date: Mon, 30 Mar 2020 21:04:46 +0100
+Subject: [Therion] Running Xtherion on Mac OS X Catalina
+Message-ID: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+
+Dear Therion mailing list,
+
+I wonder if anyone has had any success building, installing and running
+Therion on Mac OS X Catalina (OS 10.15.2)? I have successfully built and
+installed Therion 5.4.4, and Therion and Loch both run fine. Before the
+upgrade, everything worked OK, but it looks like some things have moved
+around in this version of OS X, amongst other things breaking. When I try
+to run Xtherion, Tcl/Tk can't seem to locate BWidget, and the GUI can't run:
+
+Error in startup script: can't find package BWidget
+    while executing
+"package require BWidget"
+    (file "/usr/local/bin/xtherion" line 12268)
+
+I have tried unpacking the bwidget 1.9.14 scripts to /usr/local/lib
+thinking that tcl would check there, and then also tried to set auto_path
+to force tcl to look in there, but it won't seem to start up. There's a
+pause, and Wish seems to start up, and yet XQuartz actually opens; I have
+tcl 8.6 installed and can run the tclsh OK.
+
+It's been frustrating me for a while, and I saw this lockdown in the UK as
+an opportunity to have another look at this. Any pointers or tips would be
+most welcome.
+
+Regards,
+David Eason
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200330/972651ec/attachment.htm>
+
+From martinsluka at mac.com  Mon Mar 30 22:48:47 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 30 Mar 2020 22:48:47 +0200
+Subject: [Therion] Running Xtherion on Mac OS X Catalina
+In-Reply-To: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+References: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+Message-ID: <BEAB3FC6-DD0C-4EB8-BED2-7D780D2C4B9E@mac.com>
+
+Have you try to add path to tcl to PATH?
+
+Martin
+
+Odesláno z iPhonu
+
+30. 3. 2020 v 22:04, David Eason via Therion <therion at speleo.sk>:
+
+> Dear Therion mailing list,
+> 
+> I wonder if anyone has had any success building, installing and running Therion on Mac OS X Catalina (OS 10.15.2)? I have successfully built and installed Therion 5.4.4, and Therion and Loch both run fine. Before the upgrade, everything worked OK, but it looks like some things have moved around in this version of OS X, amongst other things breaking. When I try to run Xtherion, Tcl/Tk can't seem to locate BWidget, and the GUI can't run:
+> 
+> Error in startup script: can't find package BWidget
+>     while executing
+> "package require BWidget"
+>     (file "/usr/local/bin/xtherion" line 12268)
+> 
+> I have tried unpacking the bwidget 1.9.14 scripts to /usr/local/lib thinking that tcl would check there, and then also tried to set auto_path to force tcl to look in there, but it won't seem to start up. There's a pause, and Wish seems to start up, and yet XQuartz actually opens; I have tcl 8.6 installed and can run the tclsh OK.
+> 
+> It's been frustrating me for a while, and I saw this lockdown in the UK as an opportunity to have another look at this. Any pointers or tips would be most welcome.
+> 
+> Regards,
+> David Eason
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Tue Mar 31 12:59:01 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 31 Mar 2020 12:59:01 +0200
+Subject: [Therion] LOX: Measure distance from station to surface
+In-Reply-To: <20292f962131d687f12fbaf4c019c5b4@hallinger.org>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+ <45e02b678213ce0f24cd4777ef8f801b@hallinger.org>
+ <cc710adeb83981c13af1e66875db0f05@hallinger.org>
+ <9E0197FD-AC93-4D06-8E55-FD4559D07374@gmail.com>
+ <20292f962131d687f12fbaf4c019c5b4@hallinger.org>
+Message-ID: <027a0228dbf66c30aef08bccdd675da3@hallinger.org>
+
+Hi there,
+i released version 1.0 of therionsurface2survex 
+(https://github.com/hbeni/therionsurface2survex)
+and now the problem with this is, that the name is not fitting 
+anymore...
+
+Version 1.0 can:
+- read GDAL ASCII grids directly [1]
+- read therion "surface" blocks
+- write survex .swx files containing the mesh
+- write therion source files containing the mesh (flags surface) [2]
+
+
+[1] i niticed that those files do not contain information about the 
+coordinate-system used, so you need to add this manually afterwards. 
+Question to all of you: would you expect an option that the tool adds it 
+itself?
+[2] would be my preferred way because it allows better control about 
+further usage, also integration is more straightforward.
+
+
+Am 2020-03-28 1:21, schrieb Benedikt Hallinger:
+> Thanks, but i'm not into python :)
+> 
+> 
+> Am 2020-03-28 1:18, schrieb Philippe Vernant:
+>> Hi,
+>> 
+>> There is an easy way to extract coordinates from the therion sql
+>> export. Then using a shell script and GMT could provide the depth of
+>> each point below the surface. I know that there is now a GMT library
+>> under Python, if they have implemented the function in the library,
+>> everything could be wrapped up in a single python script.
+>> 
+>> Cheers,
+>> Phil
+>> 
+>> 
+>>> On 28 Mar 2020, at 00:28, Benedikt Hallinger <beni at hallinger.org> 
+>>> wrote:
+>>> 
+>>> cavern had eaten itself, but after pushing ctrl-c in the shell 
+>>> running therion, the 3d  file was written successfully and the output 
+>>> was nice.
+>>> 
+>>> I enhanced the therion wiki a little with a link to the tool.
+>>> 
+>>> Sorry, i have no clue how to cross compile this for windows.
+>>> 
+>>> 
+>>> Am 2020-03-27 23:51, schrieb Benedikt Hallinger:
+>>>> Hi there,
+>>>> i just wrote a small tool to do the conversion from a therion 
+>>>> surface
+>>>> mesh into survex format:
+>>>> https://github.com/hbeni/therionsurface2survex
+>>>> It would be nice if some C++ programmers can look over the code as
+>>>> this is my first c++ endeavour.
+>>>> The program basically parses the therion source file and generates
+>>>> *fix commands out of it together with nosurvey-centerline connecting
+>>>> the stations to a mesh.
+>>>> The resulting .swx file then can be put trough survex' cavern 
+>>>> program
+>>>> to generate a 3d file of the mesh.
+>>>> That can be easily combined with a 3d file of the cave generated 
+>>>> from
+>>>> therion (using the import statements). For ease of use provided a
+>>>> basic example for combining in the readme. A sample to parse a mesh 
+>>>> is
+>>>> in the projects example/ folder, however i also tested it positive
+>>>> with the rabbit cave example.
+>>>> With my dataset the calculation seems to take a little longer....
+>>>> there are 388.800 fixe stations in the surface mesh giving a 31M
+>>>> swx-file in total.
+>>>> I hope this will finish somtime (running already for 25 minutes) but
+>>>> maybe i overloaded cavern with this.
+>>>> Otherwise i probably need to turn down the grid resolution 
+>>>> (currently
+>>>> 10m grid size).
+>>>> Am 2020-03-26 23:23, schrieb Tarquin Wilton-Jones:
+>>>>>> However, my aven does not enable me to avtivate it in the view 
+>>>>>> menu, its
+>>>>>> disabled (greyed out), i assume because i do not have surface data 
+>>>>>> in
+>>>>>> the file?
+>>>>> Sounds like it. It works based on legs that have:
+>>>>> flags surface
+>>>>> 1 2 9.8 123 0
+>>>>> flags not surface
+>>>>> Or if you have used TerrainTool to export it as a grid, it will 
+>>>>> have
+>>>>> added that for you.
+>>>>> This has been very easy for us in our projects because we either 
+>>>>> knew
+>>>>> exactly which line to follow on the surface beforehand, or we 
+>>>>> surveyed
+>>>>> the cave first then surveyed over the surface afterwards, staying 
+>>>>> above
+>>>>> the passage so we could have a useful measure of the surface above 
+>>>>> the cave.
+>>>>> In more complex caves, I rely on TerrainTool to cover the surface.
+>>>>> Looking forward to being able to use the new more accurate NASADEM 
+>>>>> so
+>>>>> that the measurements are actually accurate.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Tue Mar 31 17:41:21 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 Mar 2020 17:41:21 +0200
+Subject: [Therion] Running Xtherion on Mac OS X Catalina
+In-Reply-To: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+References: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+Message-ID: <90512851-1054-4439-A6A7-CCAC0A3B8155@mac.com>
+
+This my file .bash_profile in my user directory
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
+
+export LDFLAGS="-L/usr/local/opt/tcl-tk/lib"
+export CPPFLAGS="-I/usr/local/opt/tcl-tk/include"
+
+export PKG_CONFIG_PATH="/usr/local/opt/tcl-tk/lib/pkgconfig”
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+But I’m not sure you may just copy it. It depends on your system configuration. It is not basic user level I’m afraid.
+
+Maybe somebody may explain it more detailed, please.
+
+Martin
+
+
+> 30. 3. 2020 v 22:04, David Eason via Therion <therion at speleo.sk>:
+> 
+> Dear Therion mailing list,
+> 
+> I wonder if anyone has had any success building, installing and running Therion on Mac OS X Catalina (OS 10.15.2)? I have successfully built and installed Therion 5.4.4, and Therion and Loch both run fine. Before the upgrade, everything worked OK, but it looks like some things have moved around in this version of OS X, amongst other things breaking. When I try to run Xtherion, Tcl/Tk can't seem to locate BWidget, and the GUI can't run:
+> 
+> Error in startup script: can't find package BWidget
+>     while executing
+> "package require BWidget"
+>     (file "/usr/local/bin/xtherion" line 12268)
+> 
+> I have tried unpacking the bwidget 1.9.14 scripts to /usr/local/lib thinking that tcl would check there, and then also tried to set auto_path to force tcl to look in there, but it won't seem to start up. There's a pause, and Wish seems to start up, and yet XQuartz actually opens; I have tcl 8.6 installed and can run the tclsh OK.
+> 
+> It's been frustrating me for a while, and I saw this lockdown in the UK as an opportunity to have another look at this. Any pointers or tips would be most welcome.
+> 
+> Regards,
+> David Eason
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200331/63568532/attachment.htm>
+
+From beni at hallinger.org  Tue Mar 31 18:26:00 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 31 Mar 2020 18:26:00 +0200
+Subject: [Therion] Question for lox generating strange spikes at passage end
+In-Reply-To: <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+References: <4B859DE7-87CF-42E4-8700-BDECDD7AB773@hallinger.org>
+ <acec8759e2b633229ef5612d17306e7b@hallinger.org>
+ <771c97c6-a533-dad0-1790-54fcab387177@ntlworld.com>
+ <32b577fdd48cb8fb8b059117ad7b8ac1@hallinger.org>
+ <54acea4d-55da-1cd8-1523-dfb2e0e32ef5@ntlworld.com>
+ <656ffd2b-f21e-8b4d-3096-054c30e25aef@ntlworld.com>
+ <3033a83dd8d3691e70dbdac864f185b6@hallinger.org>
+ <c837bf47-58aa-bf52-c5f7-5f50bc5cc2c6@ntlworld.com>
+ <f3c2c4308f985ef3db4a3c4b811c528f@hallinger.org>
+ <4de86657-94f2-771a-a102-b9557c676ec2@ntlworld.com>
+ <4e4689b3a962e9c85ce863a5dbf8e376@hallinger.org>
+ <15aaba76-4f8c-5ccf-4fda-db8a4f054c69@ntlworld.com>
+ <f83c12327daa73f801dc31960fec7c1b@hallinger.org>
+ <b6d1048c-5665-e615-e0a9-a0c507b7ebc0@ntlworld.com>
+Message-ID: <dae441f43b7a78a6356a58b26fa99d8f@hallinger.org>
+
+Hello,
+in a dataset i get a strange behavior regarding the loch model at 
+passage ends:
+
+At station 1.10 a weird spike is produced in the loch model, that should 
+not be there.
+If one comments out some branch that is not located near 1.10, the 
+problem goes away.
+
+What causes these spikes?
+
+Attached a test set with comented section, thus producing correct ending 
+of the tunnel.
+Also, an image showing the problem (left: wrong spike, right: correct 
+result with the branch commented)
+
+
+Thanks alot,
+Beni
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test.tar.gz
+Type: application/x-gzip
+Size: 46148 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200331/63090950/attachment.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: testesult.png
+Type: image/png
+Size: 33763 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200331/63090950/attachment.png>
+
+From phil.vernant at gmail.com  Tue Mar 31 18:27:03 2020
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Tue, 31 Mar 2020 18:27:03 +0200
+Subject: [Therion] Running Xtherion on Mac OS X Catalina
+In-Reply-To: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+References: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+Message-ID: <FA09A4A8-5BEF-4591-AEAE-F09114DB4EC5@gmail.com>
+
+Hi David,
+
+Did you try to reinstall Therion after updating to Catalina ? I don’t have Catalina, I’m sticking to High Sierra where everything is running fine so far.
+How do you usually install Therion on a Mac ?
+
+Best,
+Phil
+
+
+> On 30 Mar 2020, at 22:04, David Eason via Therion <therion at speleo.sk> wrote:
+> 
+> Dear Therion mailing list,
+> 
+> I wonder if anyone has had any success building, installing and running Therion on Mac OS X Catalina (OS 10.15.2)? I have successfully built and installed Therion 5.4.4, and Therion and Loch both run fine. Before the upgrade, everything worked OK, but it looks like some things have moved around in this version of OS X, amongst other things breaking. When I try to run Xtherion, Tcl/Tk can't seem to locate BWidget, and the GUI can't run:
+> 
+> Error in startup script: can't find package BWidget
+>     while executing
+> "package require BWidget"
+>     (file "/usr/local/bin/xtherion" line 12268)
+> 
+> I have tried unpacking the bwidget 1.9.14 scripts to /usr/local/lib thinking that tcl would check there, and then also tried to set auto_path to force tcl to look in there, but it won't seem to start up. There's a pause, and Wish seems to start up, and yet XQuartz actually opens; I have tcl 8.6 installed and can run the tclsh OK.
+> 
+> It's been frustrating me for a while, and I saw this lockdown in the UK as an opportunity to have another look at this. Any pointers or tips would be most welcome.
+> 
+> Regards,
+> David Eason
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200331/a32dfbeb/attachment.htm>
+
+From phil.vernant at gmail.com  Tue Mar 31 23:55:51 2020
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Tue, 31 Mar 2020 23:55:51 +0200
+Subject: [Therion] Running Xtherion on Mac OS X Catalina
+In-Reply-To: <FA09A4A8-5BEF-4591-AEAE-F09114DB4EC5@gmail.com>
+References: <CAFf50AR2BOu_W9ZhkoxV1qN2opSxBba0t9k4Z87_gDxs0G=hWg@mail.gmail.com>
+ <FA09A4A8-5BEF-4591-AEAE-F09114DB4EC5@gmail.com>
+Message-ID: <4EB89189-7D6B-412C-80D1-35CFC136C563@gmail.com>
+
+Here are my notes of the last install on High Sierra with homebrew, in case it can help …
+
+1) Install homebrew 
+2) Install survex via homebrew (cf. survex site web)
+3) brew install tcl-tk
+4) install the mactex package
+5) add in ~/.profile : 
+           export PATH=/Library/TeX/texbin:$PATH
+6) brew install vtk
+7) In therion/loch, change the Makefile :
+           comment: #VTKLIBPATH = $(shell tclsh ./getvtkver.tcl libpath)
+           add: VTKLIBPATH = /usr/local/lib/
+8) In Therion directory 
+           make config-macosx
+           make
+
+Phil
+
+
+> On 31 Mar 2020, at 18:27, Philippe Vernant <phil.vernant at gmail.com> wrote:
+> 
+> Hi David,
+> 
+> Did you try to reinstall Therion after updating to Catalina ? I don’t have Catalina, I’m sticking to High Sierra where everything is running fine so far.
+> How do you usually install Therion on a Mac ?
+> 
+> Best,
+> Phil
+> 
+> 
+>> On 30 Mar 2020, at 22:04, David Eason via Therion <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+>> 
+>> Dear Therion mailing list,
+>> 
+>> I wonder if anyone has had any success building, installing and running Therion on Mac OS X Catalina (OS 10.15.2)? I have successfully built and installed Therion 5.4.4, and Therion and Loch both run fine. Before the upgrade, everything worked OK, but it looks like some things have moved around in this version of OS X, amongst other things breaking. When I try to run Xtherion, Tcl/Tk can't seem to locate BWidget, and the GUI can't run:
+>> 
+>> Error in startup script: can't find package BWidget
+>>     while executing
+>> "package require BWidget"
+>>     (file "/usr/local/bin/xtherion" line 12268)
+>> 
+>> I have tried unpacking the bwidget 1.9.14 scripts to /usr/local/lib thinking that tcl would check there, and then also tried to set auto_path to force tcl to look in there, but it won't seem to start up. There's a pause, and Wish seems to start up, and yet XQuartz actually opens; I have tcl 8.6 installed and can run the tclsh OK.
+>> 
+>> It's been frustrating me for a while, and I saw this lockdown in the UK as an opportunity to have another look at this. Any pointers or tips would be most welcome.
+>> 
+>> Regards,
+>> David Eason
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200331/f213ff5e/attachment.htm>
+

@@ -1,0 +1,1880 @@
+From beni at hallinger.org  Mon Nov  7 22:57:56 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 07 Nov 2016 23:57:56 +0200
+Subject: [Therion] UISv1 grades: made a file, please give feedback
+In-Reply-To: <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+References: <b4751726-d44e-45d5-85eb-bf19bd3480b4@me.com>
+ <69c78ea6fb24c2995a04e2282ae58a61@hallinger.org>
+ <000001d218f6$f883e2e0$e98ba8a0$@tomo.co.nz>
+ <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+Message-ID: <db25da622af872f05b732c6de4093197@hallinger.org>
+
+Hello,
+
+for a recent project i made a grades file (based on the BCRE-example in 
+therion distribution) for UISv1 specifications (see attachment).
+It would be a pleasure for me if it is useful to somebody; it would also be 
+very nice if i could get some feedback on it.
+
+
+With the naming i had the intention that exporting from databases is easily 
+doable. The prefix is "UISv1_" followed by the actual grades number.
+I included all the grades to faciliate documentation inside the th-files, so 
+one can stright export "-1" surveys too.
+
+
+With best regards,
+Benedikt Hallinger
+
+
+
+
+For better archiving and searchability, here is the code reproduced:
+---------------- UISv1Grades.th -------------
+encoding utf-8
+# UIS Grades - International standard grades specification
+#   from: http://www.uisic.uis-speleo.org/UISmappingGrades.pdf
+# Version 2 from 14 Sep 2012 (cosmetic update; UISv1 values still apply)
+#
+# Note: UIS standards says nothing about accuracy of the stations
+#       positions, so it is probably good practice to include a
+#       "sd position <value> <units>" definition in your centrelines.
+#
+
+# Grade -1: no map available
+# Only for database purposes: It means that the cave map has not been drawn 
+yet.
+grade "UISv1_-1" -title "UISv1 ungraded survey without map"
+   # Not applicaple for therion data.
+   # It is mainly here to support automated data exports from
+   # databases wich may export such a number.
+endgrade
+
+
+# Grade 0: ungraded
+# Only for database purposes. If a cave survey is ungraded, its quality 
+cannot be
+# assessed. This is most usually true for historic or otherwise old maps.
+grade "UISv1_0" -title "UISv1 ungraded survey"
+   # Nothing defined here.
+   # Specifying such an grade may be useful to document that the survey was
+   # not graded. As it is documented in the *.th-datafiles it may easily be
+   # searched for. Use it as a kind of "todo" flag...
+endgrade
+
+
+# Grade 1: sketch from memory, not to scale
+grade "UISv1_1" -title "UISv1 survey grade 1"
+   # nothing defined here.
+   # Specifying such an grade may be useful to document that the survey was
+   # just the result of a sketch and shpuld be redone.
+endgrade
+
+
+# Grade 2: No instruments, from annotations/sketches/estimates
+# Map compiled from annotations, sketches and estimates made
+# in the cave. No instruments used.
+grade "UISv1_2" -title "UISv1 survey grade 2"
+   # nothing defined here.
+   # Specifying such an grade may be useful to document that the survey
+   # was the result of sketches/annotations in the cave.
+endgrade
+
+
+# Grade 3: Rough magnetic/analogue survey
+# Directions measured by compass, distances measured by chord,
+# pace, or body dimensions. Significant slopes estimated.
+#
+# A Silva clinometer or comparable, relatively simple means without precise
+# readings qualify for grade 3. Mapping from head to head of the surveyors
+# qualifies only for grade 3. Topofil measurements qualify generally for
+# grade 3 or 4.
+grade "UISv1_3" -title "UISv1 survey grade 3"
+
+   # 95.44% of readings are within 0.5m (2 S.D.)
+   length 0.25 metres
+
+   # 95.44% of readings are within 5.0 degrees (2 S.D.)
+   bearing 2.50 degrees
+
+   # 95.44% of readings are within 30.0 degrees (2 S.D.)
+   # (estimating is allowed, no measurement needed - value guessed by me)
+   gradient 15.0 degrees
+
+   # UIS specifications say nothing about station position accuracy.
+   # Add "sd position <value> <units>" to your centreline.
+
+endgrade
+
+
+# Grade 4: Magnetic survey
+# Compass and tape survey, using deliberately chosen and fixed
+# stations. Slopes measured by clinometer or horizontal and vertical
+# components of line.
+#
+# Topofil measurements may qualify for grade 4 if the survey shots are not 
+too
+# long and care is given to correctly read all data. Laser rangefinder can 
+be
+# used throughout grades 4 to 5. In order to attain grade 4, fixed and
+# re-findable survey stations must be made. They have not to be necessarily 
+on
+# the walls; tripod-mounted points with a defined length above the floor are
+# also accepted
+grade "UISv1_4" -title "UISv1 survey grade 4"
+
+   # 95.44% of readings are within 0.1m (2 S.D.)
+   length 0.05 metres
+
+   # 95.44% of readings are within 2.0 degrees (2 S.D.)
+   bearing 1.00 degrees
+
+   # 95.44% of readings are within 2.0 degrees (2 S.D.)
+   gradient 1.00 degrees
+
+   # UIS specifications say nothing about station position accuracy.
+   # Add "sd position <value> <units>" to your centreline.
+
+endgrade
+
+
+# Grade 5:
+# Compass and tape survey. Directions and slope by calibrated
+# instruments, distances by fibreglass or metallic tape, or tachometry.
+#
+# Calibrated DistoX, DUSI or comparable instruments attain grade 5. With a
+# calibration of the length measurement, they attain grade 6. If they are
+# uncalibrated, they are to be graded with 1! Topofil used for vertical pits
+# may reach grade 5. In order to reach grade 5, the survey coordinates have 
+to
+# be calculated (xyz coordinates, no polar coordinates plotted with scale 
+rule
+# a d protactor).
+grade "UISv1_5" -title "UISv1 survey grade 5"
+
+   # 95.44% of readings are within 0.05m (2 S.D.)
+   length 0.025 metres
+
+   # 95.44% of readings are within 1.0 degrees (2 S.D.)
+   bearing 0.5 degrees
+
+   # 95.44% of readings are within 1.0 degrees (2 S.D.)
+   gradient 0.5 degrees
+
+   # UIS specifications say nothing about station position accuracy.
+   # Add "sd position <value> <units>" to your centreline.
+
+endgrade
+
+
+# Grade 6:
+# Survey or triangulation using calibrated, tripod-mounted instruments
+# for directions and slope. Distances by calibrated tape, precise
+# tacheometry, or calibrated DistoX type (angles and length).
+grade "UISv1_6" -title "UISv1 survey grade 6"
+
+   # 95.44% of readings are within 0.02m (2 S.D.)
+   length 0.01 metres
+
+   # 95.44% of readings are within 0.25 degrees (2 S.D.)
+   bearing 0.125 degrees
+
+   # 95.44% of readings are within 0.25 degrees (2 S.D.)
+   gradient 1.125 degrees
+
+   # UIS specifications say nothing about station position accuracy.
+   # Add "sd position <value> <units>" to your centreline.
+
+endgrade
+
+
+# Grade X: Survey by theodolite or comparable means
+# Theodolite models or other similar equipment may vary as well as the 
+measuring
+# techniques. Therefore, all grade X surveys must include, in the written
+# description of the cave, descriptions of the instruments and techniques 
+used
+# as well as an estimate of the probable accuracy of the survey.
+grade "UISv1_X" -title "UISv1 survey grade X"
+   # Details must be laid out at the survey.
+   # custom "sd ... <value> <units>" have to be specified for your 
+centrelines!
+   #
+   # That said, a construction site thedolite is about 0.08 gon
+   # and a engineering theodolite about 0.02 gon.
+   # Example: "sd bearing gradient 0.08 grad" # theodolite
+endgrade
+-------------------- E O F ------------------
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: UISv1Grades.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161107/6a75df72/attachment.ksh>
+
+From drfootleg at gmail.com  Wed Nov  9 14:21:40 2016
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 09 Nov 2016 13:21:40 +0000
+Subject: [Therion] UISv1 grades: made a file, please give feedback
+In-Reply-To: <db25da622af872f05b732c6de4093197@hallinger.org>
+References: <b4751726-d44e-45d5-85eb-bf19bd3480b4@me.com>
+ <69c78ea6fb24c2995a04e2282ae58a61@hallinger.org>
+ <000001d218f6$f883e2e0$e98ba8a0$@tomo.co.nz>
+ <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+ <db25da622af872f05b732c6de4093197@hallinger.org>
+Message-ID: <CAJkGg4n1PgeQCZ7SB7aQuBJhRf4hb_6B5eoPDZDtbP+1y-meag@mail.gmail.com>
+
+This looks potentially very useful, but I have not yet explored defining sd
+settings in my survey data. So I may need to learn a bit more in order to
+use it.
+
+I spotted one potential error? In the grade 6 section, the compass bearing
+is to 0.125 degrees. But the clino is stated as 1.125 degrees. I think both
+should be 0.125 right?
+
+Footleg
+
+On Mon, Nov 7, 2016 at 10:17 PM Benedikt Hallinger <beni at hallinger.org>
+wrote:
+
+> Hello,
+>
+> for a recent project i made a grades file (based on the BCRE-example in
+> therion distribution) for UISv1 specifications (see attachment).
+> It would be a pleasure for me if it is useful to somebody; it would also be
+> very nice if i could get some feedback on it.
+>
+>
+> With the naming i had the intention that exporting from databases is easily
+> doable. The prefix is "UISv1_" followed by the actual grades number.
+> I included all the grades to faciliate documentation inside the th-files,
+> so
+> one can stright export "-1" surveys too.
+>
+>
+> With best regards,
+> Benedikt Hallinger
+>
+>
+>
+>
+> For better archiving and searchability, here is the code reproduced:
+> ---------------- UISv1Grades.th -------------
+> encoding utf-8
+> # UIS Grades - International standard grades specification
+> #   from: http://www.uisic.uis-speleo.org/UISmappingGrades.pdf
+> # Version 2 from 14 Sep 2012 (cosmetic update; UISv1 values still apply)
+> #
+> # Note: UIS standards says nothing about accuracy of the stations
+> #       positions, so it is probably good practice to include a
+> #       "sd position <value> <units>" definition in your centrelines.
+> #
+>
+> # Grade -1: no map available
+> # Only for database purposes: It means that the cave map has not been drawn
+> yet.
+> grade "UISv1_-1" -title "UISv1 ungraded survey without map"
+>    # Not applicaple for therion data.
+>    # It is mainly here to support automated data exports from
+>    # databases wich may export such a number.
+> endgrade
+>
+>
+> # Grade 0: ungraded
+> # Only for database purposes. If a cave survey is ungraded, its quality
+> cannot be
+> # assessed. This is most usually true for historic or otherwise old maps.
+> grade "UISv1_0" -title "UISv1 ungraded survey"
+>    # Nothing defined here.
+>    # Specifying such an grade may be useful to document that the survey was
+>    # not graded. As it is documented in the *.th-datafiles it may easily be
+>    # searched for. Use it as a kind of "todo" flag...
+> endgrade
+>
+>
+> # Grade 1: sketch from memory, not to scale
+> grade "UISv1_1" -title "UISv1 survey grade 1"
+>    # nothing defined here.
+>    # Specifying such an grade may be useful to document that the survey was
+>    # just the result of a sketch and shpuld be redone.
+> endgrade
+>
+>
+> # Grade 2: No instruments, from annotations/sketches/estimates
+> # Map compiled from annotations, sketches and estimates made
+> # in the cave. No instruments used.
+> grade "UISv1_2" -title "UISv1 survey grade 2"
+>    # nothing defined here.
+>    # Specifying such an grade may be useful to document that the survey
+>    # was the result of sketches/annotations in the cave.
+> endgrade
+>
+>
+> # Grade 3: Rough magnetic/analogue survey
+> # Directions measured by compass, distances measured by chord,
+> # pace, or body dimensions. Significant slopes estimated.
+> #
+> # A Silva clinometer or comparable, relatively simple means without precise
+> # readings qualify for grade 3. Mapping from head to head of the surveyors
+> # qualifies only for grade 3. Topofil measurements qualify generally for
+> # grade 3 or 4.
+> grade "UISv1_3" -title "UISv1 survey grade 3"
+>
+>    # 95.44% of readings are within 0.5m (2 S.D.)
+>    length 0.25 metres
+>
+>    # 95.44% of readings are within 5.0 degrees (2 S.D.)
+>    bearing 2.50 degrees
+>
+>    # 95.44% of readings are within 30.0 degrees (2 S.D.)
+>    # (estimating is allowed, no measurement needed - value guessed by me)
+>    gradient 15.0 degrees
+>
+>    # UIS specifications say nothing about station position accuracy.
+>    # Add "sd position <value> <units>" to your centreline.
+>
+> endgrade
+>
+>
+> # Grade 4: Magnetic survey
+> # Compass and tape survey, using deliberately chosen and fixed
+> # stations. Slopes measured by clinometer or horizontal and vertical
+> # components of line.
+> #
+> # Topofil measurements may qualify for grade 4 if the survey shots are not
+> too
+> # long and care is given to correctly read all data. Laser rangefinder can
+> be
+> # used throughout grades 4 to 5. In order to attain grade 4, fixed and
+> # re-findable survey stations must be made. They have not to be necessarily
+> on
+> # the walls; tripod-mounted points with a defined length above the floor
+> are
+> # also accepted
+> grade "UISv1_4" -title "UISv1 survey grade 4"
+>
+>    # 95.44% of readings are within 0.1m (2 S.D.)
+>    length 0.05 metres
+>
+>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>    bearing 1.00 degrees
+>
+>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>    gradient 1.00 degrees
+>
+>    # UIS specifications say nothing about station position accuracy.
+>    # Add "sd position <value> <units>" to your centreline.
+>
+> endgrade
+>
+>
+> # Grade 5:
+> # Compass and tape survey. Directions and slope by calibrated
+> # instruments, distances by fibreglass or metallic tape, or tachometry.
+> #
+> # Calibrated DistoX, DUSI or comparable instruments attain grade 5. With a
+> # calibration of the length measurement, they attain grade 6. If they are
+> # uncalibrated, they are to be graded with 1! Topofil used for vertical
+> pits
+> # may reach grade 5. In order to reach grade 5, the survey coordinates have
+> to
+> # be calculated (xyz coordinates, no polar coordinates plotted with scale
+> rule
+> # a d protactor).
+> grade "UISv1_5" -title "UISv1 survey grade 5"
+>
+>    # 95.44% of readings are within 0.05m (2 S.D.)
+>    length 0.025 metres
+>
+>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>    bearing 0.5 degrees
+>
+>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>    gradient 0.5 degrees
+>
+>    # UIS specifications say nothing about station position accuracy.
+>    # Add "sd position <value> <units>" to your centreline.
+>
+> endgrade
+>
+>
+> # Grade 6:
+> # Survey or triangulation using calibrated, tripod-mounted instruments
+> # for directions and slope. Distances by calibrated tape, precise
+> # tacheometry, or calibrated DistoX type (angles and length).
+> grade "UISv1_6" -title "UISv1 survey grade 6"
+>
+>    # 95.44% of readings are within 0.02m (2 S.D.)
+>    length 0.01 metres
+>
+>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>    bearing 0.125 degrees
+>
+>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>    gradient 1.125 degrees
+>
+>    # UIS specifications say nothing about station position accuracy.
+>    # Add "sd position <value> <units>" to your centreline.
+>
+> endgrade
+>
+>
+> # Grade X: Survey by theodolite or comparable means
+> # Theodolite models or other similar equipment may vary as well as the
+> measuring
+> # techniques. Therefore, all grade X surveys must include, in the written
+> # description of the cave, descriptions of the instruments and techniques
+> used
+> # as well as an estimate of the probable accuracy of the survey.
+> grade "UISv1_X" -title "UISv1 survey grade X"
+>    # Details must be laid out at the survey.
+>    # custom "sd ... <value> <units>" have to be specified for your
+> centrelines!
+>    #
+>    # That said, a construction site thedolite is about 0.08 gon
+>    # and a engineering theodolite about 0.02 gon.
+>    # Example: "sd bearing gradient 0.08 grad" # theodolite
+> endgrade
+> -------------------- E O F
+> ------------------_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161109/c0823b13/attachment.htm>
+
+From beni at hallinger.org  Thu Nov 10 17:15:34 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 10 Nov 2016 18:15:34 +0200
+Subject: [Therion] UISv1 grades: made a file, please give feedback
+In-Reply-To: <CAJkGg4n1PgeQCZ7SB7aQuBJhRf4hb_6B5eoPDZDtbP+1y-meag@mail.gmail.com>
+References: <b4751726-d44e-45d5-85eb-bf19bd3480b4@me.com>
+ <69c78ea6fb24c2995a04e2282ae58a61@hallinger.org>
+ <000001d218f6$f883e2e0$e98ba8a0$@tomo.co.nz>
+ <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+ <db25da622af872f05b732c6de4093197@hallinger.org>
+ <CAJkGg4n1PgeQCZ7SB7aQuBJhRf4hb_6B5eoPDZDtbP+1y-meag@mail.gmail.com>
+Message-ID: <d53ea02fdc463b8c7c8316141c026343@hallinger.org>
+
+Oops, yes, thank you for spotting this!
+It must read 0.125 of course!
+
+Am 2016-11-09 15:21, schrieb Footleg:
+> This looks potentially very useful, but I have not yet explored defining 
+> sd settings in my survey data. So I may need to learn a bit more in order to 
+> use it.
+>
+> I spotted one potential error? In the grade 6 section, the compass bearing 
+> is to 0.125 degrees. But the clino is stated as 1.125 degrees. I think both 
+> should be 0.125 right?
+>
+> Footleg
+>
+> On Mon, Nov 7, 2016 at 10:17 PM Benedikt Hallinger <beni at hallinger.org 
+> [4]> wrote:
+>
+>> Hello,
+>>
+>> for a recent project i made a grades file (based on the BCRE-example in
+>> therion distribution) for UISv1 specifications (see attachment).
+>> It would be a pleasure for me if it is useful to somebody; it would also 
+>> be
+>> very nice if i could get some feedback on it.
+>>
+>> With the naming i had the intention that exporting from databases is 
+>> easily
+>> doable. The prefix is "UISv1_" followed by the actual grades number.
+>> I included all the grades to faciliate documentation inside the th-files, 
+>> so
+>> one can stright export "-1" surveys too.
+>>
+>> With best regards,
+>> Benedikt Hallinger
+>>
+>> For better archiving and searchability, here is the code reproduced:
+>> ---------------- UISv1Grades.th -------------
+>> encoding utf-8
+>> # UIS Grades - International standard grades specification
+>> #   from: http://www.uisic.uis-speleo.org/UISmappingGrades.pdf [1]
+>> # Version 2 from 14 Sep 2012 (cosmetic update; UISv1 values still apply)
+>> #
+>> # Note: UIS standards says nothing about accuracy of the stations
+>> #       positions, so it is probably good practice to include a
+>> #       "sd position <value> <units>" definition in your centrelines.
+>> #
+>>
+>> # Grade -1: no map available
+>> # Only for database purposes: It means that the cave map has not been 
+>> drawn
+>> yet.
+>> grade "UISv1_-1" -title "UISv1 ungraded survey without map"
+>>    # Not applicaple for therion data.
+>>    # It is mainly here to support automated data exports from
+>>    # databases wich may export such a number.
+>> endgrade
+>>
+>> # Grade 0: ungraded
+>> # Only for database purposes. If a cave survey is ungraded, its quality
+>> cannot be
+>> # assessed. This is most usually true for historic or otherwise old maps.
+>> grade "UISv1_0" -title "UISv1 ungraded survey"
+>>    # Nothing defined here.
+>>    # Specifying such an grade may be useful to document that the survey 
+>> was
+>>    # not graded. As it is documented in the *.th-datafiles it may easily 
+>> be
+>>    # searched for. Use it as a kind of "todo" flag...
+>> endgrade
+>>
+>> # Grade 1: sketch from memory, not to scale
+>> grade "UISv1_1" -title "UISv1 survey grade 1"
+>>    # nothing defined here.
+>>    # Specifying such an grade may be useful to document that the survey 
+>> was
+>>    # just the result of a sketch and shpuld be redone.
+>> endgrade
+>>
+>> # Grade 2: No instruments, from annotations/sketches/estimates
+>> # Map compiled from annotations, sketches and estimates made
+>> # in the cave. No instruments used.
+>> grade "UISv1_2" -title "UISv1 survey grade 2"
+>>    # nothing defined here.
+>>    # Specifying such an grade may be useful to document that the survey
+>>    # was the result of sketches/annotations in the cave.
+>> endgrade
+>>
+>> # Grade 3: Rough magnetic/analogue survey
+>> # Directions measured by compass, distances measured by chord,
+>> # pace, or body dimensions. Significant slopes estimated.
+>> #
+>> # A Silva clinometer or comparable, relatively simple means without 
+>> precise
+>> # readings qualify for grade 3. Mapping from head to head of the 
+>> surveyors
+>> # qualifies only for grade 3. Topofil measurements qualify generally for
+>> # grade 3 or 4.
+>> grade "UISv1_3" -title "UISv1 survey grade 3"
+>>
+>>    # 95.44% of readings are within 0.5m (2 S.D.)
+>>    length 0.25 metres
+>>
+>>    # 95.44% of readings are within 5.0 degrees (2 S.D.)
+>>    bearing 2.50 degrees
+>>
+>>    # 95.44% of readings are within 30.0 degrees (2 S.D.)
+>>    # (estimating is allowed, no measurement needed - value guessed by me)
+>>    gradient 15.0 degrees
+>>
+>>    # UIS specifications say nothing about station position accuracy.
+>>    # Add "sd position <value> <units>" to your centreline.
+>>
+>> endgrade
+>>
+>> # Grade 4: Magnetic survey
+>> # Compass and tape survey, using deliberately chosen and fixed
+>> # stations. Slopes measured by clinometer or horizontal and vertical
+>> # components of line.
+>> #
+>> # Topofil measurements may qualify for grade 4 if the survey shots are 
+>> not
+>> too
+>> # long and care is given to correctly read all data. Laser rangefinder 
+>> can
+>> be
+>> # used throughout grades 4 to 5. In order to attain grade 4, fixed and
+>> # re-findable survey stations must be made. They have not to be 
+>> necessarily
+>> on
+>> # the walls; tripod-mounted points with a defined length above the floor 
+>> are
+>> # also accepted
+>> grade "UISv1_4" -title "UISv1 survey grade 4"
+>>
+>>    # 95.44% of readings are within 0.1m (2 S.D.)
+>>    length 0.05 metres
+>>
+>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>    bearing 1.00 degrees
+>>
+>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>    gradient 1.00 degrees
+>>
+>>    # UIS specifications say nothing about station position accuracy.
+>>    # Add "sd position <value> <units>" to your centreline.
+>>
+>> endgrade
+>>
+>> # Grade 5:
+>> # Compass and tape survey. Directions and slope by calibrated
+>> # instruments, distances by fibreglass or metallic tape, or tachometry.
+>> #
+>> # Calibrated DistoX, DUSI or comparable instruments attain grade 5. With 
+>> a
+>> # calibration of the length measurement, they attain grade 6. If they are
+>> # uncalibrated, they are to be graded with 1! Topofil used for vertical 
+>> pits
+>> # may reach grade 5. In order to reach grade 5, the survey coordinates 
+>> have
+>> to
+>> # be calculated (xyz coordinates, no polar coordinates plotted with scale
+>> rule
+>> # a d protactor).
+>> grade "UISv1_5" -title "UISv1 survey grade 5"
+>>
+>>    # 95.44% of readings are within 0.05m (2 S.D.)
+>>    length 0.025 metres
+>>
+>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>    bearing 0.5 degrees
+>>
+>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>    gradient 0.5 degrees
+>>
+>>    # UIS specifications say nothing about station position accuracy.
+>>    # Add "sd position <value> <units>" to your centreline.
+>>
+>> endgrade
+>>
+>> # Grade 6:
+>> # Survey or triangulation using calibrated, tripod-mounted instruments
+>> # for directions and slope. Distances by calibrated tape, precise
+>> # tacheometry, or calibrated DistoX type (angles and length).
+>> grade "UISv1_6" -title "UISv1 survey grade 6"
+>>
+>>    # 95.44% of readings are within 0.02m (2 S.D.)
+>>    length 0.01 metres
+>>
+>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>    bearing 0.125 degrees
+>>
+>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>    gradient 1.125 degrees
+>>
+>>    # UIS specifications say nothing about station position accuracy.
+>>    # Add "sd position <value> <units>" to your centreline.
+>>
+>> endgrade
+>>
+>> # Grade X: Survey by theodolite or comparable means
+>> # Theodolite models or other similar equipment may vary as well as the
+>> measuring
+>> # techniques. Therefore, all grade X surveys must include, in the written
+>> # description of the cave, descriptions of the instruments and techniques
+>> used
+>> # as well as an estimate of the probable accuracy of the survey.
+>> grade "UISv1_X" -title "UISv1 survey grade X"
+>>    # Details must be laid out at the survey.
+>>    # custom "sd ... <value> <units>" have to be specified for your
+>> centrelines!
+>>    #
+>>    # That said, a construction site thedolite is about 0.08 gon
+>>    # and a engineering theodolite about 0.02 gon.
+>>    # Example: "sd bearing gradient 0.08 grad" # theodolite
+>> endgrade
+>> -------------------- E O F 
+>> ------------------_______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [2]
+>> https://mailman.speleo.sk/listinfo/therion [3]
+>
+>
+> Links:
+> ------
+> [1] http://www.uisic.uis-speleo.org/UISmappingGrades.pdf
+> [2] mailto:Therion at speleo.sk
+> [3] https://mailman.speleo.sk/listinfo/therion
+> [4] mailto:beni at hallinger.org
+
+
+
+From beni at hallinger.org  Fri Nov 18 08:07:48 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 18 Nov 2016 09:07:48 +0200
+Subject: [Therion] Additional morphing points (type "extra") explained
+Message-ID: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+
+Hello,
+i struggle to understand how the extra morphing points are meant to be used.
+
+How do they work technically? How do i correctly set them?
+Are they linked to the nearest station and could i use more than two extra 
+points?
+Are they linked to LRUD data?
+
+I already investigated the "morohing" example from the documentation (both 
+in code and in thbook), so i think it would be good to stick to this example.
+
+Thank you very much!
+
+
+From martinsluka at mac.com  Fri Nov 18 10:20:26 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 18 Nov 2016 10:20:26 +0100
+Subject: [Therion] Additional morphing points (type "extra") explained
+In-Reply-To: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+References: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+Message-ID: <E184F854-4602-490E-A692-E8848CFD010A@mac.com>
+
+
+> 18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+> 
+> Hello,
+> i struggle to understand how the extra morphing points are meant to be used.
+> 
+> How do they work technically? How do i correctly set them?
+> Are they linked to the nearest station and could i use more than two extra points?
+> Are they linked to LRUD data?
+> 
+> I already investigated the "morohing" example from the documentation (both in code and in thbook), so i think it would be good to stick to this example.
+> 
+> Thank you very much!
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+Hi Benedikt,
+
+the purpose of these extra points is to correct differences between LRUD data (if available) and distances to walls in sketches.
+
+Check page 89 of TherionBook.
+
+m.
+
+
+
+From beni at hallinger.org  Fri Nov 18 11:52:46 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 18 Nov 2016 12:52:46 +0200
+Subject: [Therion] Additional morphing points (type "extra") explained
+In-Reply-To: <E184F854-4602-490E-A692-E8848CFD010A@mac.com>
+References: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+ <E184F854-4602-490E-A692-E8848CFD010A@mac.com>
+Message-ID: <9d94588f019edaae78f9b445a8cdd4b4@hallinger.org>
+
+Thank you for the fadt reply.
+If i understand and interpret correctly, the behavior unfolds in the 
+following way:
+- when i detect inproper morphing of walls compared to lrud data
+- i place "extra" points on my traced wall signature.
+- the extra point position is approximately where the lrud point is assumed 
+to be on the wall.
+- when rendering, therion morphes the wall to match the extra point position 
+to the corresponding lrud position for that point (which is the nearest 
+station).
+
+That would imply:
+a) there is no use for extra points without lrud data.
+b) extra points reference l+r positions of lrud data of the nearest station, 
+therefore it is not possible to set more than two extra points per station.
+
+Is the above true?
+
+
+
+Am 2016-11-18 11:20, schrieb Martin Sluka:
+>> 18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+>>
+>> Hello,
+>> i struggle to understand how the extra morphing points are meant to be 
+>> used.
+>>
+>> How do they work technically? How do i correctly set them?
+>> Are they linked to the nearest station and could i use more than two 
+>> extra points?
+>> Are they linked to LRUD data?
+>>
+>> I already investigated the "morohing" example from the documentation 
+>> (both in code and in thbook), so i think it would be good to stick to this 
+>> example.
+>>
+>> Thank you very much!
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> Hi Benedikt,
+>
+> the purpose of these extra points is to correct differences between LRUD 
+> data (if available) and distances to walls in sketches.
+>
+> Check page 89 of TherionBook.
+>
+> m.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From Xavier.Pennec at inria.fr  Fri Nov 18 13:13:16 2016
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 18 Nov 2016 13:13:16 +0100
+Subject: [Therion] Additional morphing points (type "extra") explained
+In-Reply-To: <9d94588f019edaae78f9b445a8cdd4b4@hallinger.org>
+References: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+ <E184F854-4602-490E-A692-E8848CFD010A@mac.com>
+ <9d94588f019edaae78f9b445a8cdd4b4@hallinger.org>
+Message-ID: <582EF05C.9090608@inria.fr>
+
+According to the therion book (p. 25), extra points can also be used 
+without LRUD by specifying the distance to either the closest station of 
+a specific station, e.g.: point 0.0 0.0 extra -dist 3 -from 2 at mysurvey
+I have not tried yet, though.
+
+Xavier
+
+Le 18/11/2016 11:52, Benedikt Hallinger a écrit :
+> Thank you for the fadt reply.
+> If i understand and interpret correctly, the behavior unfolds in the 
+> following way:
+> - when i detect inproper morphing of walls compared to lrud data
+> - i place "extra" points on my traced wall signature.
+> - the extra point position is approximately where the lrud point is 
+> assumed to be on the wall.
+> - when rendering, therion morphes the wall to match the extra point 
+> position to the corresponding lrud position for that point (which is 
+> the nearest station).
+>
+> That would imply:
+> a) there is no use for extra points without lrud data.
+> b) extra points reference l+r positions of lrud data of the nearest 
+> station, therefore it is not possible to set more than two extra 
+> points per station.
+>
+> Is the above true?
+>
+>
+>
+> Am 2016-11-18 11:20, schrieb Martin Sluka:
+>>> 18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+>>>
+>>> Hello,
+>>> i struggle to understand how the extra morphing points are meant to 
+>>> be used.
+>>>
+>>> How do they work technically? How do i correctly set them?
+>>> Are they linked to the nearest station and could i use more than two 
+>>> extra points?
+>>> Are they linked to LRUD data?
+>>>
+>>> I already investigated the "morohing" example from the documentation 
+>>> (both in code and in thbook), so i think it would be good to stick 
+>>> to this example.
+>>>
+>>> Thank you very much!
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> Hi Benedikt,
+>>
+>> the purpose of these extra points is to correct differences between 
+>> LRUD data (if available) and distances to walls in sketches.
+>>
+>> Check page 89 of TherionBook.
+>>
+>> m.
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+
+
+From martinsluka at mac.com  Fri Nov 18 13:00:00 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 18 Nov 2016 12:00:00 +0000 (GMT)
+Subject: [Therion]
+ =?utf-8?q?Additional_morphing_points_=28type_=22extra?=
+ =?utf-8?q?=22=29_explained?=
+In-Reply-To: <9d94588f019edaae78f9b445a8cdd4b4@hallinger.org>
+Message-ID: <355a7011-cb51-40ef-b45f-2c6fa6ce69dd@me.com>
+
+page 35:
+
+• dist <distance> ◃ valid for extra points, specifies the distance to the nearest station
+(or station specified using -from option. If not specified, appropriate value from LRUD
+data is used.
+• from <station> ◃ valid for extra points, specifies reference station.
+
+It means you may specify it "everywhere", not only on walls
+
+point extra -dist 12 m -from A1234
+
+m.
+
+On Nov 18, 2016, at 12:05 PM, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+Thank you for the fadt reply.
+If i understand and interpret correctly, the behavior unfolds in the 
+following way:
+- when i detect inproper morphing of walls compared to lrud data
+- i place "extra" points on my traced wall signature.
+- the extra point position is approximately where the lrud point is assumed 
+to be on the wall.
+- when rendering, therion morphes the wall to match the extra point position 
+to the corresponding lrud position for that point (which is the nearest 
+station).
+
+That would imply:
+a) there is no use for extra points without lrud data.
+b) extra points reference l+r positions of lrud data of the nearest station, 
+therefore it is not possible to set more than two extra points per station.
+
+Is the above true?
+
+
+
+Am 2016-11-18 11:20, schrieb Martin Sluka:
+18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+
+Hello,
+i struggle to understand how the extra morphing points are meant to be
+used.
+
+How do they work technically? How do i correctly set them?
+Are they linked to the nearest station and could i use more than two
+extra points?
+Are they linked to LRUD data?
+
+I already investigated the "morohing" example from the documentation
+(both in code and in thbook), so i think it would be good to stick to this
+example.
+
+Thank you very much!
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+Hi Benedikt,
+
+the purpose of these extra points is to correct differences between LRUD
+data (if available) and distances to walls in sketches.
+
+Check page 89 of TherionBook.
+
+m.
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161118/b104ec4e/attachment.htm>
+
+From beni at hallinger.org  Fri Nov 18 15:34:23 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 18 Nov 2016 16:34:23 +0200
+Subject: [Therion] Additional morphing points (type "extra") explained
+In-Reply-To: <582EF05C.9090608@inria.fr>
+References: <14c9f25cda5035913ee9b34e91a71b54@hallinger.org>
+ <E184F854-4602-490E-A692-E8848CFD010A@mac.com>
+ <9d94588f019edaae78f9b445a8cdd4b4@hallinger.org> <582EF05C.9090608@inria.fr>
+Message-ID: <02937d7878b8e68d8f49e65a41341e9a@hallinger.org>
+
+Thank you very much!
+
+The extra point then just basicly just indicates "this *known* point is xx 
+meters away from point y"; as is the (implicit) same for the LRUD data.
+In other words, the LRUD data generates implicitely such points if present.
+
+Just to clarify (and for the archive):
+To correct an arbitary wall between two long survey legs, i would place two 
+extra points at the middle of the leg at the position where i have drawn my 
+wall signature. Then i would enter the "-from" info and the respective -dist 
+to that point.
+
+I just tested this and it works like desired, however it involves a little 
+fiddling.
+
+
+Thanks again for clarifying this!
+
+
+
+
+Am 2016-11-18 14:13, schrieb Xavier Pennec:
+> According to the therion book (p. 25), extra points can also be used 
+> without LRUD by specifying the distance to either the closest station of a 
+> specific station, e.g.: point 0.0 0.0 extra -dist 3 -from 2 at mysurvey
+> I have not tried yet, though.
+>
+> Xavier
+>
+> Le 18/11/2016 11:52, Benedikt Hallinger a écrit :
+>> Thank you for the fadt reply.
+>> If i understand and interpret correctly, the behavior unfolds in the 
+>> following way:
+>> - when i detect inproper morphing of walls compared to lrud data
+>> - i place "extra" points on my traced wall signature.
+>> - the extra point position is approximately where the lrud point is 
+>> assumed to be on the wall.
+>> - when rendering, therion morphes the wall to match the extra point 
+>> position to the corresponding lrud position for that point (which is the 
+>> nearest station).
+>>
+>> That would imply:
+>> a) there is no use for extra points without lrud data.
+>> b) extra points reference l+r positions of lrud data of the nearest 
+>> station, therefore it is not possible to set more than two extra points per 
+>> station.
+>>
+>> Is the above true?
+>>
+>>
+>>
+>> Am 2016-11-18 11:20, schrieb Martin Sluka:
+>>>> 18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+>>>>
+>>>> Hello,
+>>>> i struggle to understand how the extra morphing points are meant to be 
+>>>> used.
+>>>>
+>>>> How do they work technically? How do i correctly set them?
+>>>> Are they linked to the nearest station and could i use more than two 
+>>>> extra points?
+>>>> Are they linked to LRUD data?
+>>>>
+>>>> I already investigated the "morohing" example from the documentation 
+>>>> (both in code and in thbook), so i think it would be good to stick to 
+>>>> this example.
+>>>>
+>>>> Thank you very much!
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> Hi Benedikt,
+>>>
+>>> the purpose of these extra points is to correct differences between LRUD 
+>>> data (if available) and distances to walls in sketches.
+>>>
+>>> Check page 89 of TherionBook.
+>>>
+>>> m.
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+> --
+>> -------------------------
+>> Xavier Pennec
+>> Senior Research Scientist / Directeur de recherche
+>> Asclepios project-team, INRIA Sophia-Antipolis
+>> 2004 Route des Lucioles, BP93
+>> F-06902 Sophia-Antipolis Cedex, France
+>> +33 4 92 38 76 64
+>> +33 6 78 35 16 90
+>> http://www-sop.inria.fr/asclepios/
+>> -------------------------------
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Fri Nov 18 15:49:11 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 18 Nov 2016 14:49:11 +0000 (GMT)
+Subject: [Therion]
+ =?utf-8?q?Additional_morphing_points_=28type_=22extra?=
+ =?utf-8?q?=22=29_explained?=
+In-Reply-To: <02937d7878b8e68d8f49e65a41341e9a@hallinger.org>
+Message-ID: <c6604a77-8f23-41fe-a4ec-7f18124b0c95@me.com>
+
+The purpose of this feature was to correct field sketches to LRUD for example.
+
+m.
+
+On Nov 18, 2016, at 03:47 PM, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+Thank you very much!
+
+The extra point then just basicly just indicates "this *known* point is xx 
+meters away from point y"; as is the (implicit) same for the LRUD data.
+In other words, the LRUD data generates implicitely such points if present.
+
+Just to clarify (and for the archive):
+To correct an arbitary wall between two long survey legs, i would place two 
+extra points at the middle of the leg at the position where i have drawn my 
+wall signature. Then i would enter the "-from" info and the respective -dist 
+to that point.
+
+I just tested this and it works like desired, however it involves a little 
+fiddling.
+
+
+Thanks again for clarifying this!
+
+
+
+
+Am 2016-11-18 14:13, schrieb Xavier Pennec:
+According to the therion book (p. 25), extra points can also be used
+without LRUD by specifying the distance to either the closest station of a
+specific station, e.g.: point 0.0 0.0 extra -dist 3 -from 2 at mysurvey
+I have not tried yet, though.
+
+Xavier
+
+Le 18/11/2016 11:52, Benedikt Hallinger a écrit :
+Thank you for the fadt reply.
+If i understand and interpret correctly, the behavior unfolds in the
+following way:
+- when i detect inproper morphing of walls compared to lrud data
+- i place "extra" points on my traced wall signature.
+- the extra point position is approximately where the lrud point is
+assumed to be on the wall.
+- when rendering, therion morphes the wall to match the extra point
+position to the corresponding lrud position for that point (which is the
+nearest station).
+
+That would imply:
+a) there is no use for extra points without lrud data.
+b) extra points reference l+r positions of lrud data of the nearest
+station, therefore it is not possible to set more than two extra points per
+station.
+
+Is the above true?
+
+
+
+Am 2016-11-18 11:20, schrieb Martin Sluka:
+18. 11. 2016 v 8:07, Benedikt Hallinger <beni at hallinger.org>:
+
+Hello,
+i struggle to understand how the extra morphing points are meant to be
+used.
+
+How do they work technically? How do i correctly set them?
+Are they linked to the nearest station and could i use more than two
+extra points?
+Are they linked to LRUD data?
+
+I already investigated the "morohing" example from the documentation
+(both in code and in thbook), so i think it would be good to stick to
+this example.
+
+Thank you very much!
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+Hi Benedikt,
+
+the purpose of these extra points is to correct differences between LRUD
+data (if available) and distances to walls in sketches.
+
+Check page 89 of TherionBook.
+
+m.
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+--
+-------------------------
+Xavier Pennec
+Senior Research Scientist / Directeur de recherche
+Asclepios project-team, INRIA Sophia-Antipolis
+2004 Route des Lucioles, BP93
+F-06902 Sophia-Antipolis Cedex, France
++33 4 92 38 76 64
++33 6 78 35 16 90
+http://www-sop.inria.fr/asclepios/
+-------------------------------
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161118/466ae92f/attachment.htm>
+
+From vld.georgiev at gmail.com  Tue Nov 22 13:01:49 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Tue, 22 Nov 2016 14:01:49 +0200
+Subject: [Therion] Updated Elevation grid labels
+Message-ID: <CAHzQzvT2Rhh3dEMzY8oWO9TBisy+-8SR70h1dW7wGZigHHCgug@mail.gmail.com>
+
+Hi
+
+Here are a couple of recent Therion updates I needed and added:
+ - I added 4 more symbol scales to the existing 5 ones: 2XS < XS < S < M <
+L < XL < 2XL < 3XL < 4XL. Each is approximately 50% larger than the
+previous. The 2 larger ones are a bit excessive, but might come in handy
+occasionally.
+
+ - Updated elevation grid to show both depth and altitude of cave, instead
+of altitude only. Depth is in the left column, altitude in the right. They
+are also aligned to match the 0 point, which is slightly different than the
+old one.
+You can see what I mean in the attached images.
+
+In a 2D map the depth is more important for me than the altitude. If
+someone uses that type of grid, can you share your opinion?
+I could add an additional layout option to control whether the grid is
+labeled in the new way, but it doesn't seem to be worth it.
+
+The compiled apps and code are here
+https://github.com/vldgeorgiev/therion/wiki
+
+Vladimir
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161122/9600fb8e/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-11-22 01_10_50.png
+Type: image/png
+Size: 59268 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161122/9600fb8e/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-11-22 01_15_43.png
+Type: image/png
+Size: 48173 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161122/9600fb8e/attachment-0001.png>
+
+From drfootleg at gmail.com  Thu Nov 24 13:28:26 2016
+From: drfootleg at gmail.com (Footleg)
+Date: Thu, 24 Nov 2016 12:28:26 +0000
+Subject: [Therion] Updated Elevation grid labels
+In-Reply-To: <CAHzQzvT2Rhh3dEMzY8oWO9TBisy+-8SR70h1dW7wGZigHHCgug@mail.gmail.com>
+References: <CAHzQzvT2Rhh3dEMzY8oWO9TBisy+-8SR70h1dW7wGZigHHCgug@mail.gmail.com>
+Message-ID: <CAJkGg4kH2UeOjpJNMk7NjKYwXA5Rua5COAbKG7th+Ut5Kcfdng@mail.gmail.com>
+
+Both of these updates look very useful to me.
+
+Footleg
+
+On Wed, Nov 23, 2016 at 8:14 PM Владимир Георгиев via Therion <
+therion at speleo.sk> wrote:
+
+> Hi
+>
+> Here are a couple of recent Therion updates I needed and added:
+>  - I added 4 more symbol scales to the existing 5 ones: 2XS < XS < S < M <
+> L < XL < 2XL < 3XL < 4XL. Each is approximately 50% larger than the
+> previous. The 2 larger ones are a bit excessive, but might come in handy
+> occasionally.
+>
+>  - Updated elevation grid to show both depth and altitude of cave, instead
+> of altitude only. Depth is in the left column, altitude in the right. They
+> are also aligned to match the 0 point, which is slightly different than the
+> old one.
+> You can see what I mean in the attached images.
+>
+> In a 2D map the depth is more important for me than the altitude. If
+> someone uses that type of grid, can you share your opinion?
+> I could add an additional layout option to control whether the grid is
+> labeled in the new way, but it doesn't seem to be worth it.
+>
+> The compiled apps and code are here
+> https://github.com/vldgeorgiev/therion/wiki
+>
+> Vladimir
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161124/7facf2c4/attachment.htm>
+
+From beni at hallinger.org  Fri Nov 25 21:17:49 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 25 Nov 2016 22:17:49 +0200
+Subject: [Therion] UISv1 grades: made a file, please give feedback
+In-Reply-To: <d53ea02fdc463b8c7c8316141c026343@hallinger.org>
+References: <b4751726-d44e-45d5-85eb-bf19bd3480b4@me.com>
+ <69c78ea6fb24c2995a04e2282ae58a61@hallinger.org>
+ <000001d218f6$f883e2e0$e98ba8a0$@tomo.co.nz>
+ <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+ <db25da622af872f05b732c6de4093197@hallinger.org>
+ <CAJkGg4n1PgeQCZ7SB7aQuBJhRf4hb_6B5eoPDZDtbP+1y-meag@mail.gmail.com>
+ <d53ea02fdc463b8c7c8316141c026343@hallinger.org>
+Message-ID: <519ebe2508c283286698b6de5be7a035@hallinger.org>
+
+Hi there, here the updated version.
+
+
+
+Am 2016-11-10 18:15, schrieb Benedikt Hallinger:
+> Oops, yes, thank you for spotting this!
+> It must read 0.125 of course!
+>
+> Am 2016-11-09 15:21, schrieb Footleg:
+>> This looks potentially very useful, but I have not yet explored defining 
+>> sd settings in my survey data. So I may need to learn a bit more in order 
+>> to use it.
+>>
+>> I spotted one potential error? In the grade 6 section, the compass 
+>> bearing is to 0.125 degrees. But the clino is stated as 1.125 degrees. I 
+>> think both should be 0.125 right?
+>>
+>> Footleg
+>>
+>> On Mon, Nov 7, 2016 at 10:17 PM Benedikt Hallinger <beni at hallinger.org 
+>> [4]> wrote:
+>>
+>>> Hello,
+>>>
+>>> for a recent project i made a grades file (based on the BCRE-example in
+>>> therion distribution) for UISv1 specifications (see attachment).
+>>> It would be a pleasure for me if it is useful to somebody; it would also 
+>>> be
+>>> very nice if i could get some feedback on it.
+>>>
+>>> With the naming i had the intention that exporting from databases is 
+>>> easily
+>>> doable. The prefix is "UISv1_" followed by the actual grades number.
+>>> I included all the grades to faciliate documentation inside the 
+>>> th-files, so
+>>> one can stright export "-1" surveys too.
+>>>
+>>> With best regards,
+>>> Benedikt Hallinger
+>>>
+>>> For better archiving and searchability, here is the code reproduced:
+>>> ---------------- UISv1Grades.th -------------
+>>> encoding utf-8
+>>> # UIS Grades - International standard grades specification
+>>> #   from: http://www.uisic.uis-speleo.org/UISmappingGrades.pdf [1]
+>>> # Version 2 from 14 Sep 2012 (cosmetic update; UISv1 values still apply)
+>>> #
+>>> # Note: UIS standards says nothing about accuracy of the stations
+>>> #       positions, so it is probably good practice to include a
+>>> #       "sd position <value> <units>" definition in your centrelines.
+>>> #
+>>>
+>>> # Grade -1: no map available
+>>> # Only for database purposes: It means that the cave map has not been 
+>>> drawn
+>>> yet.
+>>> grade "UISv1_-1" -title "UISv1 ungraded survey without map"
+>>>    # Not applicaple for therion data.
+>>>    # It is mainly here to support automated data exports from
+>>>    # databases wich may export such a number.
+>>> endgrade
+>>>
+>>> # Grade 0: ungraded
+>>> # Only for database purposes. If a cave survey is ungraded, its quality
+>>> cannot be
+>>> # assessed. This is most usually true for historic or otherwise old 
+>>> maps.
+>>> grade "UISv1_0" -title "UISv1 ungraded survey"
+>>>    # Nothing defined here.
+>>>    # Specifying such an grade may be useful to document that the survey 
+>>> was
+>>>    # not graded. As it is documented in the *.th-datafiles it may easily 
+>>> be
+>>>    # searched for. Use it as a kind of "todo" flag...
+>>> endgrade
+>>>
+>>> # Grade 1: sketch from memory, not to scale
+>>> grade "UISv1_1" -title "UISv1 survey grade 1"
+>>>    # nothing defined here.
+>>>    # Specifying such an grade may be useful to document that the survey 
+>>> was
+>>>    # just the result of a sketch and shpuld be redone.
+>>> endgrade
+>>>
+>>> # Grade 2: No instruments, from annotations/sketches/estimates
+>>> # Map compiled from annotations, sketches and estimates made
+>>> # in the cave. No instruments used.
+>>> grade "UISv1_2" -title "UISv1 survey grade 2"
+>>>    # nothing defined here.
+>>>    # Specifying such an grade may be useful to document that the survey
+>>>    # was the result of sketches/annotations in the cave.
+>>> endgrade
+>>>
+>>> # Grade 3: Rough magnetic/analogue survey
+>>> # Directions measured by compass, distances measured by chord,
+>>> # pace, or body dimensions. Significant slopes estimated.
+>>> #
+>>> # A Silva clinometer or comparable, relatively simple means without 
+>>> precise
+>>> # readings qualify for grade 3. Mapping from head to head of the 
+>>> surveyors
+>>> # qualifies only for grade 3. Topofil measurements qualify generally for
+>>> # grade 3 or 4.
+>>> grade "UISv1_3" -title "UISv1 survey grade 3"
+>>>
+>>>    # 95.44% of readings are within 0.5m (2 S.D.)
+>>>    length 0.25 metres
+>>>
+>>>    # 95.44% of readings are within 5.0 degrees (2 S.D.)
+>>>    bearing 2.50 degrees
+>>>
+>>>    # 95.44% of readings are within 30.0 degrees (2 S.D.)
+>>>    # (estimating is allowed, no measurement needed - value guessed by 
+>>> me)
+>>>    gradient 15.0 degrees
+>>>
+>>>    # UIS specifications say nothing about station position accuracy.
+>>>    # Add "sd position <value> <units>" to your centreline.
+>>>
+>>> endgrade
+>>>
+>>> # Grade 4: Magnetic survey
+>>> # Compass and tape survey, using deliberately chosen and fixed
+>>> # stations. Slopes measured by clinometer or horizontal and vertical
+>>> # components of line.
+>>> #
+>>> # Topofil measurements may qualify for grade 4 if the survey shots are 
+>>> not
+>>> too
+>>> # long and care is given to correctly read all data. Laser rangefinder 
+>>> can
+>>> be
+>>> # used throughout grades 4 to 5. In order to attain grade 4, fixed and
+>>> # re-findable survey stations must be made. They have not to be 
+>>> necessarily
+>>> on
+>>> # the walls; tripod-mounted points with a defined length above the floor 
+>>> are
+>>> # also accepted
+>>> grade "UISv1_4" -title "UISv1 survey grade 4"
+>>>
+>>>    # 95.44% of readings are within 0.1m (2 S.D.)
+>>>    length 0.05 metres
+>>>
+>>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>>    bearing 1.00 degrees
+>>>
+>>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>>    gradient 1.00 degrees
+>>>
+>>>    # UIS specifications say nothing about station position accuracy.
+>>>    # Add "sd position <value> <units>" to your centreline.
+>>>
+>>> endgrade
+>>>
+>>> # Grade 5:
+>>> # Compass and tape survey. Directions and slope by calibrated
+>>> # instruments, distances by fibreglass or metallic tape, or tachometry.
+>>> #
+>>> # Calibrated DistoX, DUSI or comparable instruments attain grade 5. With 
+>>> a
+>>> # calibration of the length measurement, they attain grade 6. If they 
+>>> are
+>>> # uncalibrated, they are to be graded with 1! Topofil used for vertical 
+>>> pits
+>>> # may reach grade 5. In order to reach grade 5, the survey coordinates 
+>>> have
+>>> to
+>>> # be calculated (xyz coordinates, no polar coordinates plotted with 
+>>> scale
+>>> rule
+>>> # a d protactor).
+>>> grade "UISv1_5" -title "UISv1 survey grade 5"
+>>>
+>>>    # 95.44% of readings are within 0.05m (2 S.D.)
+>>>    length 0.025 metres
+>>>
+>>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>>    bearing 0.5 degrees
+>>>
+>>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>>    gradient 0.5 degrees
+>>>
+>>>    # UIS specifications say nothing about station position accuracy.
+>>>    # Add "sd position <value> <units>" to your centreline.
+>>>
+>>> endgrade
+>>>
+>>> # Grade 6:
+>>> # Survey or triangulation using calibrated, tripod-mounted instruments
+>>> # for directions and slope. Distances by calibrated tape, precise
+>>> # tacheometry, or calibrated DistoX type (angles and length).
+>>> grade "UISv1_6" -title "UISv1 survey grade 6"
+>>>
+>>>    # 95.44% of readings are within 0.02m (2 S.D.)
+>>>    length 0.01 metres
+>>>
+>>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>>    bearing 0.125 degrees
+>>>
+>>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>>    gradient 1.125 degrees
+>>>
+>>>    # UIS specifications say nothing about station position accuracy.
+>>>    # Add "sd position <value> <units>" to your centreline.
+>>>
+>>> endgrade
+>>>
+>>> # Grade X: Survey by theodolite or comparable means
+>>> # Theodolite models or other similar equipment may vary as well as the
+>>> measuring
+>>> # techniques. Therefore, all grade X surveys must include, in the 
+>>> written
+>>> # description of the cave, descriptions of the instruments and 
+>>> techniques
+>>> used
+>>> # as well as an estimate of the probable accuracy of the survey.
+>>> grade "UISv1_X" -title "UISv1 survey grade X"
+>>>    # Details must be laid out at the survey.
+>>>    # custom "sd ... <value> <units>" have to be specified for your
+>>> centrelines!
+>>>    #
+>>>    # That said, a construction site thedolite is about 0.08 gon
+>>>    # and a engineering theodolite about 0.02 gon.
+>>>    # Example: "sd bearing gradient 0.08 grad" # theodolite
+>>> endgrade
+>>> -------------------- E O F 
+>>> ------------------_______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk [2]
+>>> https://mailman.speleo.sk/listinfo/therion [3]
+>>
+>>
+>> Links:
+>> ------
+>> [1] http://www.uisic.uis-speleo.org/UISmappingGrades.pdf
+>> [2] mailto:Therion at speleo.sk
+>> [3] https://mailman.speleo.sk/listinfo/therion
+>> [4] mailto:beni at hallinger.org
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: UISv1Grades.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20161125/ad420352/attachment.ksh>
+
+From beni at hallinger.org  Fri Nov 25 21:33:23 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 25 Nov 2016 22:33:23 +0200
+Subject: [Therion] UISv1 grades: made a file, please give feedback
+In-Reply-To: <519ebe2508c283286698b6de5be7a035@hallinger.org>
+References: <b4751726-d44e-45d5-85eb-bf19bd3480b4@me.com>
+ <69c78ea6fb24c2995a04e2282ae58a61@hallinger.org>
+ <000001d218f6$f883e2e0$e98ba8a0$@tomo.co.nz>
+ <b214e35ddb660c55bd18eda68d8776ab@hallinger.org>
+ <db25da622af872f05b732c6de4093197@hallinger.org>
+ <CAJkGg4n1PgeQCZ7SB7aQuBJhRf4hb_6B5eoPDZDtbP+1y-meag@mail.gmail.com>
+ <d53ea02fdc463b8c7c8316141c026343@hallinger.org>
+ <519ebe2508c283286698b6de5be7a035@hallinger.org>
+Message-ID: <80666a14c5313126efc554dd7d88ba4b@hallinger.org>
+
+... i made a github pull request to make incorporation easy.
+https://github.com/therion/test/pull/6
+
+Howevr, i do not know if that repository is the projects central main code 
+base?
+
+Greetings,
+Beni
+
+
+
+Am 2016-11-25 22:17, schrieb Benedikt Hallinger via Therion:
+> Hi there, here the updated version.
+>
+>
+>
+> Am 2016-11-10 18:15, schrieb Benedikt Hallinger:
+>> Oops, yes, thank you for spotting this!
+>> It must read 0.125 of course!
+>>
+>> Am 2016-11-09 15:21, schrieb Footleg:
+>>> This looks potentially very useful, but I have not yet explored defining 
+>>> sd settings in my survey data. So I may need to learn a bit more in order 
+>>> to use it.
+>>>
+>>> I spotted one potential error? In the grade 6 section, the compass 
+>>> bearing is to 0.125 degrees. But the clino is stated as 1.125 degrees. I 
+>>> think both should be 0.125 right?
+>>>
+>>> Footleg
+>>>
+>>> On Mon, Nov 7, 2016 at 10:17 PM Benedikt Hallinger <beni at hallinger.org 
+>>> [4]> wrote:
+>>>
+>>>> Hello,
+>>>>
+>>>> for a recent project i made a grades file (based on the BCRE-example in
+>>>> therion distribution) for UISv1 specifications (see attachment).
+>>>> It would be a pleasure for me if it is useful to somebody; it would 
+>>>> also be
+>>>> very nice if i could get some feedback on it.
+>>>>
+>>>> With the naming i had the intention that exporting from databases is 
+>>>> easily
+>>>> doable. The prefix is "UISv1_" followed by the actual grades number.
+>>>> I included all the grades to faciliate documentation inside the 
+>>>> th-files, so
+>>>> one can stright export "-1" surveys too.
+>>>>
+>>>> With best regards,
+>>>> Benedikt Hallinger
+>>>>
+>>>> For better archiving and searchability, here is the code reproduced:
+>>>> ---------------- UISv1Grades.th -------------
+>>>> encoding utf-8
+>>>> # UIS Grades - International standard grades specification
+>>>> #   from: http://www.uisic.uis-speleo.org/UISmappingGrades.pdf [1]
+>>>> # Version 2 from 14 Sep 2012 (cosmetic update; UISv1 values still 
+>>>> apply)
+>>>> #
+>>>> # Note: UIS standards says nothing about accuracy of the stations
+>>>> #       positions, so it is probably good practice to include a
+>>>> #       "sd position <value> <units>" definition in your centrelines.
+>>>> #
+>>>>
+>>>> # Grade -1: no map available
+>>>> # Only for database purposes: It means that the cave map has not been 
+>>>> drawn
+>>>> yet.
+>>>> grade "UISv1_-1" -title "UISv1 ungraded survey without map"
+>>>>    # Not applicaple for therion data.
+>>>>    # It is mainly here to support automated data exports from
+>>>>    # databases wich may export such a number.
+>>>> endgrade
+>>>>
+>>>> # Grade 0: ungraded
+>>>> # Only for database purposes. If a cave survey is ungraded, its quality
+>>>> cannot be
+>>>> # assessed. This is most usually true for historic or otherwise old 
+>>>> maps.
+>>>> grade "UISv1_0" -title "UISv1 ungraded survey"
+>>>>    # Nothing defined here.
+>>>>    # Specifying such an grade may be useful to document that the survey 
+>>>> was
+>>>>    # not graded. As it is documented in the *.th-datafiles it may 
+>>>> easily be
+>>>>    # searched for. Use it as a kind of "todo" flag...
+>>>> endgrade
+>>>>
+>>>> # Grade 1: sketch from memory, not to scale
+>>>> grade "UISv1_1" -title "UISv1 survey grade 1"
+>>>>    # nothing defined here.
+>>>>    # Specifying such an grade may be useful to document that the survey 
+>>>> was
+>>>>    # just the result of a sketch and shpuld be redone.
+>>>> endgrade
+>>>>
+>>>> # Grade 2: No instruments, from annotations/sketches/estimates
+>>>> # Map compiled from annotations, sketches and estimates made
+>>>> # in the cave. No instruments used.
+>>>> grade "UISv1_2" -title "UISv1 survey grade 2"
+>>>>    # nothing defined here.
+>>>>    # Specifying such an grade may be useful to document that the survey
+>>>>    # was the result of sketches/annotations in the cave.
+>>>> endgrade
+>>>>
+>>>> # Grade 3: Rough magnetic/analogue survey
+>>>> # Directions measured by compass, distances measured by chord,
+>>>> # pace, or body dimensions. Significant slopes estimated.
+>>>> #
+>>>> # A Silva clinometer or comparable, relatively simple means without 
+>>>> precise
+>>>> # readings qualify for grade 3. Mapping from head to head of the 
+>>>> surveyors
+>>>> # qualifies only for grade 3. Topofil measurements qualify generally 
+>>>> for
+>>>> # grade 3 or 4.
+>>>> grade "UISv1_3" -title "UISv1 survey grade 3"
+>>>>
+>>>>    # 95.44% of readings are within 0.5m (2 S.D.)
+>>>>    length 0.25 metres
+>>>>
+>>>>    # 95.44% of readings are within 5.0 degrees (2 S.D.)
+>>>>    bearing 2.50 degrees
+>>>>
+>>>>    # 95.44% of readings are within 30.0 degrees (2 S.D.)
+>>>>    # (estimating is allowed, no measurement needed - value guessed by 
+>>>> me)
+>>>>    gradient 15.0 degrees
+>>>>
+>>>>    # UIS specifications say nothing about station position accuracy.
+>>>>    # Add "sd position <value> <units>" to your centreline.
+>>>>
+>>>> endgrade
+>>>>
+>>>> # Grade 4: Magnetic survey
+>>>> # Compass and tape survey, using deliberately chosen and fixed
+>>>> # stations. Slopes measured by clinometer or horizontal and vertical
+>>>> # components of line.
+>>>> #
+>>>> # Topofil measurements may qualify for grade 4 if the survey shots are 
+>>>> not
+>>>> too
+>>>> # long and care is given to correctly read all data. Laser rangefinder 
+>>>> can
+>>>> be
+>>>> # used throughout grades 4 to 5. In order to attain grade 4, fixed and
+>>>> # re-findable survey stations must be made. They have not to be 
+>>>> necessarily
+>>>> on
+>>>> # the walls; tripod-mounted points with a defined length above the 
+>>>> floor are
+>>>> # also accepted
+>>>> grade "UISv1_4" -title "UISv1 survey grade 4"
+>>>>
+>>>>    # 95.44% of readings are within 0.1m (2 S.D.)
+>>>>    length 0.05 metres
+>>>>
+>>>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>>>    bearing 1.00 degrees
+>>>>
+>>>>    # 95.44% of readings are within 2.0 degrees (2 S.D.)
+>>>>    gradient 1.00 degrees
+>>>>
+>>>>    # UIS specifications say nothing about station position accuracy.
+>>>>    # Add "sd position <value> <units>" to your centreline.
+>>>>
+>>>> endgrade
+>>>>
+>>>> # Grade 5:
+>>>> # Compass and tape survey. Directions and slope by calibrated
+>>>> # instruments, distances by fibreglass or metallic tape, or tachometry.
+>>>> #
+>>>> # Calibrated DistoX, DUSI or comparable instruments attain grade 5. 
+>>>> With a
+>>>> # calibration of the length measurement, they attain grade 6. If they 
+>>>> are
+>>>> # uncalibrated, they are to be graded with 1! Topofil used for vertical 
+>>>> pits
+>>>> # may reach grade 5. In order to reach grade 5, the survey coordinates 
+>>>> have
+>>>> to
+>>>> # be calculated (xyz coordinates, no polar coordinates plotted with 
+>>>> scale
+>>>> rule
+>>>> # a d protactor).
+>>>> grade "UISv1_5" -title "UISv1 survey grade 5"
+>>>>
+>>>>    # 95.44% of readings are within 0.05m (2 S.D.)
+>>>>    length 0.025 metres
+>>>>
+>>>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>>>    bearing 0.5 degrees
+>>>>
+>>>>    # 95.44% of readings are within 1.0 degrees (2 S.D.)
+>>>>    gradient 0.5 degrees
+>>>>
+>>>>    # UIS specifications say nothing about station position accuracy.
+>>>>    # Add "sd position <value> <units>" to your centreline.
+>>>>
+>>>> endgrade
+>>>>
+>>>> # Grade 6:
+>>>> # Survey or triangulation using calibrated, tripod-mounted instruments
+>>>> # for directions and slope. Distances by calibrated tape, precise
+>>>> # tacheometry, or calibrated DistoX type (angles and length).
+>>>> grade "UISv1_6" -title "UISv1 survey grade 6"
+>>>>
+>>>>    # 95.44% of readings are within 0.02m (2 S.D.)
+>>>>    length 0.01 metres
+>>>>
+>>>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>>>    bearing 0.125 degrees
+>>>>
+>>>>    # 95.44% of readings are within 0.25 degrees (2 S.D.)
+>>>>    gradient 1.125 degrees
+>>>>
+>>>>    # UIS specifications say nothing about station position accuracy.
+>>>>    # Add "sd position <value> <units>" to your centreline.
+>>>>
+>>>> endgrade
+>>>>
+>>>> # Grade X: Survey by theodolite or comparable means
+>>>> # Theodolite models or other similar equipment may vary as well as the
+>>>> measuring
+>>>> # techniques. Therefore, all grade X surveys must include, in the 
+>>>> written
+>>>> # description of the cave, descriptions of the instruments and 
+>>>> techniques
+>>>> used
+>>>> # as well as an estimate of the probable accuracy of the survey.
+>>>> grade "UISv1_X" -title "UISv1 survey grade X"
+>>>>    # Details must be laid out at the survey.
+>>>>    # custom "sd ... <value> <units>" have to be specified for your
+>>>> centrelines!
+>>>>    #
+>>>>    # That said, a construction site thedolite is about 0.08 gon
+>>>>    # and a engineering theodolite about 0.02 gon.
+>>>>    # Example: "sd bearing gradient 0.08 grad" # theodolite
+>>>> endgrade
+>>>> -------------------- E O F 
+>>>> ------------------_______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk [2]
+>>>> https://mailman.speleo.sk/listinfo/therion [3]
+>>>
+>>>
+>>> Links:
+>>> ------
+>>> [1] http://www.uisic.uis-speleo.org/UISmappingGrades.pdf
+>>> [2] mailto:Therion at speleo.sk
+>>> [3] https://mailman.speleo.sk/listinfo/therion
+>>> [4] mailto:beni at hallinger.org
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+
+

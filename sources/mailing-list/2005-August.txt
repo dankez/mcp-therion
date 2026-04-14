@@ -1,0 +1,3424 @@
+From wookey at aleph1.co.uk  Tue Aug  9 18:29:45 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 9 Aug 2005 17:29:45 +0100
+Subject: Feedback on 0.3.8 - bugs
+Message-ID: <20050809162945.GE20544@xios>
+
+OK, I have been having another big bout of therion use. This has generated a
+few bugs, some observations for improvements and some more queries.
+
+I'll split these up into a few messages to avoid one huge list.
+
+The result so far is a 30km system in one plan which may be one of the
+largest therion maps drawn so far?
+
+A new expedition is going in 3 weeks so there is a lot of things I need to
+sort out before they go. Your help will be appreciated as ever - I hope
+everyone isn't on holiday....
+
+OK. lets start with a few bugs, which are not major but should be fixed (I
+understand why some of these things are happening and that they may be hard
+to fix but I am just being a 'user' here - these things need to be improved
+somehow to make therion useable by non-geeks):
+
+1) If you split a line the view moves to be centered on the previous/next
+line in the list (not sure which), whilst the selection moves to one half of
+the line. Sometimes this means the view moves so you can't see the selected
+line. The view should move to the line that is now selected (one half or the
+other of the split line).
+
+2) If you try to open a new image it asks you to create a .th2 file first
+presenting "(new file)" as the file name. If you exit without choosing one
+(cancel) then when you close the file in the map window it asks if you want
+to save "blah/blah/(new file)". A blank white square also appears in place
+of the image you didn't load. It should remain in the state it was before
+you tried to load an image.
+
+3) If you run out of disk space while Therion is processing then 
+therion-in-xtherion just blanks the log
+window and says 'error' - no way to find out what error without runninng
+therion in raw terminal mode. There it gives:
+This is pdfeTeX, Version 3.14159-1.10b-2.1 (Web2C 7.4.5)
+entering extended mode
+(./data.tex{/usr/share/texmf/pdftex/config/pdftex.cfg} (./th_enc.tex)
+(./th_texts.tex) (./th_resources.tex) (./th_fontdef.tex)
+(./th_formdef.texpdfetex: data: No space left on device
+therion: error -- pdftex exit code -- 256
+
+The 'No space left on device' should appear in the processing window (or
+some other way of working out what went wrong). 
+
+
+4) 'Sort of bug' (english language bug rather than computer language):
+
+There is a 'vtreshold' option. This makes no sense and presumably should be 
+'vthreshold' as it refers to a threshold value. The thbook explanation
+should have the spelling changed too.
+
+5) tcl/tk problem: If you maximise a window then swap to 'F2' window the
+menus disappear (I think they may be 'under' the window title bar). They can
+be brought back by un-maximising the window. This is using icewm window
+manager under Debian GNU/Linux and has been present for many versions.
+I suppose I should try it with another window manager and see what happens.
+
+
+6) Wish/xtherion still hangs regularly so I have to kill it. I save after
+every line (and _during_ long lines(!)) or boulder drawn to avoid losing a
+lot of work. Very tiresome. No pattern to it at all - sometime minutes,
+sometimes hours, sometimes days, doing various things. I don't know if it
+happens outside xtherion as I don't use anything else tcl/tk for hours on
+end. I tried running xtherion under strace a couple of times and caught the
+point where it hangs. I don't know if this is a clue. It seemed to crash
+faster when running under strace, and the output suggests that it is some
+kind of threading problem, perhaps in the underlying tcl/tk implementation?
+
+This time it crashed whilst I was using another window (the only time I have
+seen that - normally it only crashes when I am using xtherion - presumably
+the presence of strace caused this). This is the last 30 lines or so of
+output:
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 1
+clock_gettime(CLOCK_REALTIME, {1123365892, 37854000}) = 0
+futex(0x88b3590, FUTEX_WAIT, 12826, {0, 17829000}) = 0
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 0
+gettimeofday({1123365892, 44121}, {4294967236, 0}) = 0
+ioctl(5, FIONREAD, [32])                = 0
+read(5, "\6\0\216\2306@!\26@\0\0\0\30\0\340\0\0\0\0\0\21\2\223\1"..., 32) = 32
+write(4, "\0", 1)                       = 1
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 1
+futex(0x88b3580, FUTEX_WAKE, 1)         = 1
+futex(0x88b3590, FUTEX_WAIT, 12828, NULL) = -1 EAGAIN (Resource temporarily
+unavailable)
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 0
+gettimeofday({1123365892, 53678}, {4294967236, 0}) = 0
+write(5, "5\30\4\0.\2\340\0b\1\340\0o\0\24\0F\0\5\0.\2\340\0\2\0"..., 200) =
+200
+gettimeofday({1123365892, 54293}, {4294967236, 0}) = 0
+write(4, "\0", 1)                       = 1
+gettimeofday({1123365892, 54442}, {4294967236, 0}) = 0
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 1
+futex(0x88b3580, FUTEX_WAKE, 1)         = 1
+clock_gettime(CLOCK_REALTIME, {1123365892, 55967000}) = 0
+futex(0x88b3580, FUTEX_WAKE, 1)         = 0
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 0
+gettimeofday({1123365892, 56132}, {4294967236, 0}) = 0
+ioctl(5, FIONREAD, [32])                = 0
+read(5, "\16\0\227\230b\1\340\0\0\0>\0\0\0\0\0\0\0\0\0.\2\340\0"..., 32) = 32
+gettimeofday({1123365892, 56372}, {4294967236, 0}) = 0
+gettimeofday({1123365892, 58108}, {4294967236, 0}) = 0
+write(4, "\0", 1)                       = 1
+futex(0x804a8c0, FUTEX_WAKE, 1)         = 1
+futex(0x88b3580, FUTEX_WAKE, 1)         = 1
+futex(0x88b3590, FUTEX_WAIT, 12831, NULL
+
+Clearly it is getting stuck on a futex that never exits/returns/is released.
+Any suggestions as to what I should ask to try and get to the bottom of this
+are welcome. perhaps some other tcl/tk test I could run?
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Tue Aug  9 18:47:07 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 9 Aug 2005 17:47:07 +0100
+Subject: Feedback on 0.3.8 - queries
+Message-ID: <20050809164707.GF20544@xios>
+
+OK, and here are some queries I have:
+
+You can see the survey these problems refer to here:
+http://wookware.org/mulu/ 
+
+terikanaltitudecolour.pdf is the latest, but scrap-coloured
+(terikanmapcolour.pdf) and grey-shaded (terikan.pdf) versions exist too.
+
+I'll put the corresponding therion and survex dataset files there too.
+
+1) Is there a dripline symbol for the entrance extent? Do I use 'overhang'?
+I tried using overhang and nothing appears (because it is outside the clipped
+area?) Should I use overhang and add a -outline out option?
+
+2) How can I represent a surface cliff line between a series of caves? 
+
+I have a lot of cave entrances with a defined cliffline between them. the
+survey makes a lot more sense if this surface feature can be seen. How can I
+draw a line on to represent this?
+
+3)What to do when entrance line draws scrap end across to the wrong point
+(e.g. deception entrance?) In the bottom LH corner of the survey above is
+'Deception Cave'. If you look at '1st entrance' you will see the problem I
+mean. Therion has decided to ignore the last bit of wall and just draw a
+line across the gap between the nearest points. How do I make a wide, flared
+entrance like this have the 'correct' entrance area? This may be related to
+question 1. 
+
+
+4) How is length in legend calculated when data is imported from .3d file?
+The survey above consists of a lot of scraps round real data and a lot round
+'fake' data made from surveys which are nothing but drawings scaled with the
+scale bar or a few nearby or fake survey stations. The survex .3d file used
+includes survex data for the whole mountain including another 50km of cave
+or so. So where is the number in the legend coming from?
+
+5) How do I get rid of the 'dummy' survey surrounding all my data which
+means the title of the whole thing is 'dummy'. I may have been told this
+before in which case I apologise for forgetting the answer.
+
+6) When is a label under passage and when over?
+As you can see I have some of both in this survey. Is it to do with the
+ordering of walls and labels within the scrap? Or maybe there is an 'ontop'
+option? 
+
+I have a couple of more complex queries, but will put those in their own
+thread.
+
+TIA
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Tue Aug  9 19:01:47 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 9 Aug 2005 18:01:47 +0100
+Subject: Wishlist - scrap preview, low-res preview
+Message-ID: <20050809170146.GG20544@xios>
+
+The interface needs a better way of previewing scrap names so one can join
+up a lot of scraps without having to slowly open each file and click about.
+Being able to see a scrap number somehow without selecting the scrap would
+also be useful. At the moment if editing a .th2 file to put in joins one
+needs to close current scrap and open new one, then click on correct part to
+find out which bit is which. 
+
+Not sure how best to deal with this problem.
+Maybe showing scrap-names in the debug ouput would be sufficient. Or a
+separate low-res output with scraps coloured differently and labelled?
+
+The 'without pics' option helps somewhat here, but what I really need is
+some kind of low-res scrap overview.
+
+There is a related problem that the 1.5Mb PDF file now takes at least 2 minutes
+to render on my 900Mhz laptop. Having some kind of low-res ouput would be
+generally useful for checking that joins have worked and caves have appeared
+would be very handy - is that at all practical? I'm not sure where all the
+time goes.
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Tue Aug  9 19:13:38 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 9 Aug 2005 18:13:38 +0100
+Subject: Wishlist - colouring control improvements
+Message-ID: <20050809171338.GH20544@xios>
+
+I discivered the colouring features because Jenny Black used them, and they
+hare in one of the example files. Very nice indeed. But of course I am not
+satisfied with what I am given :-)
+
+Colour scrap by altitude is nice but the abrubt joins can look nasty in the
+middle of wide, nominally horizontal passage.  It works really well in the
+'soundriver' area where there are nicely-merging shades of green, but
+nastily in other some other areas. Some way to graduate the join a bit would
+make it look a lot nicer. Or apply more detailed colour control to a scrap
+like 'nearly the same as neighbour scrapname'.
+
+Also my users have complained that the colours are 'too random and garish'
+and I am inclined to agree. They like the depth colouring in Aven, so could
+we try to use the same gradient colours? 
+
+Probably what is really needed is a way to specify the colour set/gradient,
+and proably a way to specify it for individula scraps too. Perhaps I already
+can?
+
+In colour by map there should be some way to allocate colours to maps. This
+is particularly necessary where you have sloping levels - you would want to
+make one level one colour but the altitude will vary a lot. Making one level
+into one map should fix this, but I would want to be able to set the colours
+for a level. At the moment if you add a new map suddenly the colours will
+all change round - this would be a problem when doing an update for next
+year, when users might expect caves (maps) to retain old colours.
+
+I think the colouring is a major step forward, but some more detailed
+control is needed. There are a lot of ways this could be done and input for
+others is welcome.
+
+Also having blue water would make a lot of sense for water areas, streamflow
+arrows etc. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Tue Aug  9 19:20:32 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 9 Aug 2005 18:20:32 +0100
+Subject: PDF viewing comments
+Message-ID: <20050809172032.GI20544@xios>
+
+I have noticed that waterflow -subtype presumed symbols in the 'Blue
+Moonlight bay' area (top right hand corner). Appears fine in xpdf, but not
+at all in gpdf. Do they come out in acrobat? What is going on here?
+
+Someone else remarked that it was nice to have layers appear as 'bookmarks'
+and that acrobat could do this. It would be nice to have each 'map' appear
+in the 'bookmarks' list (so you could easily move to it) and maybe be a
+separate PDF 'layer'.
+
+I know almost nothing about PDF and maybe this is a bad idea, but I pass it
+on in case it is helpful.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wolfgang.zillig at web.de  Tue Aug  9 23:59:11 2005
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Tue, 09 Aug 2005 23:59:11 +0200
+Subject: PDF viewing comments
+In-Reply-To: <20050809172032.GI20544@xios>
+References: <20050809172032.GI20544@xios>
+Message-ID: <42F9272F.6020201@web.de>
+
+Hello Wookey,
+
+my laptop opens your pdf file in a few seconds (some win xp on a asus 
+laptop a intel m processor amd 500 mb ram. This is perhaps a linux 
+related problem?
+
+But I really have to say that even this pre state of your cave map is 
+really pretty! I'm far away to draw caves like this!
+
+Wolfgang
+
+
+Wookey schrieb:
+
+>I have noticed that waterflow -subtype presumed symbols in the 'Blue
+>Moonlight bay' area (top right hand corner). Appears fine in xpdf, but not
+>at all in gpdf. Do they come out in acrobat? What is going on here?
+>
+>Someone else remarked that it was nice to have layers appear as 'bookmarks'
+>and that acrobat could do this. It would be nice to have each 'map' appear
+>in the 'bookmarks' list (so you could easily move to it) and maybe be a
+>separate PDF 'layer'.
+>
+>I know almost nothing about PDF and maybe this is a bad idea, but I pass it
+>on in case it is helpful.
+>
+>Wookey
+>  
+>
+
+
+
+
+From m.b at speleo.sk  Wed Aug 10 10:24:11 2005
+From: m.b at speleo.sk (m.b)
+Date: Wed, 10 Aug 2005 10:24:11 +0200
+Subject: Feedback on 0.3.8 - bugs
+In-Reply-To: <20050809162945.GE20544@xios>
+References: <20050809162945.GE20544@xios>
+Message-ID: <20050810082341.M96161@speleo.sk>
+
+> The result so far is a 30km system in one plan which may be one of 
+> the largest therion maps drawn so far?
+
+Great map! May we link to the pdf file from the Therion web page? 
+The second largest map I am aware of is Dead Bats Cave system in Slovakia (21 
+km)
+
+> OK. lets start with a few bugs, which are not major but should be 
+> fixed (I understand why some of these things are happening and that 
+> they may be hard to fix but I am just being a 'user' here - these 
+> things need to be improved somehow to make therion useable by non-
+> geeks):
+
+Agree, all the bugs should be fixed. I suspect that tcl/tk crashas might be 
+debian-specific. I had been using xtherion quite intensively on Mandrake 9.
+1/10.1, Win 2000/XP and never have encountered any similar problam.
+
+Martin
+
+
+
+
+
+From m.b at speleo.sk  Wed Aug 10 10:37:01 2005
+From: m.b at speleo.sk (m.b)
+Date: Wed, 10 Aug 2005 10:37:01 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050809170146.GG20544@xios>
+References: <20050809170146.GG20544@xios>
+Message-ID: <20050810082916.M42308@speleo.sk>
+
+> Not sure how best to deal with this problem.
+> Maybe showing scrap-names in the debug ouput would be sufficient. Or 
+
+Agree. I had the same idea.
+
+> a separate low-res output with scraps coloured differently and labelled?
+> 
+> The 'without pics' option helps somewhat here, but what I really 
+> need is some kind of low-res scrap overview.
+
+That's easy -- use layout like
+
+scale 1 1000
+symbol hide group all
+symbol show group wall
+transparency off
+
+> There is a related problem that the 1.5Mb PDF file now takes at 
+> least 2 minutes to render on my 900Mhz laptop. Having some kind of 
+> low-res ouput would be generally useful for checking that joins have 
+> worked and caves have appeared would be very handy - is that at all 
+> practical? I'm not sure where all the time goes.
+
+use the same layout -- it's much faster to display if the transparency is not 
+used, and only passage walls are displayed.
+
+Martin
+
+
+
+
+From wookey at aleph1.co.uk  Wed Aug 10 12:28:41 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 10 Aug 2005 11:28:41 +0100
+Subject: Feedback on 0.3.8 - bugs
+In-Reply-To: <20050810082341.M96161@speleo.sk>
+References: <20050809162945.GE20544@xios> <20050810082341.M96161@speleo.sk>
+Message-ID: <20050810102840.GM20544@xios>
+
++++ m.b [05-08-10 10:24 +0200]:
+> > The result so far is a 30km system in one plan which may be one of 
+> > the largest therion maps drawn so far?
+> 
+> Great map! May we link to the pdf file from the Therion web page? 
+
+No, this map is actually quite sensitive due to the activities of people
+looking for swiftlets for birds-nest soup, and that the National Park
+authorities do not have enough money to control them. Now that I have
+mentioned it on this list I will have to move it soon (as this list is no
+doubt archived and linked).
+
+> The second largest map I am aware of is Dead Bats Cave system in Slovakia (21 
+> km)
+> 
+> > OK. lets start with a few bugs, which are not major but should be 
+> > fixed (I understand why some of these things are happening and that 
+> > they may be hard to fix but I am just being a 'user' here - these 
+> > things need to be improved somehow to make therion useable by non-
+> > geeks):
+> 
+> Agree, all the bugs should be fixed. I suspect that tcl/tk crashas might be 
+> debian-specific. I had been using xtherion quite intensively on Mandrake 9.
+> 1/10.1, Win 2000/XP and never have encountered any similar problam.
+
+I suspect you are right. They might even be specific to this laptop as I
+hardly use xtherion anywhere else. I will try asking the Debian tcl/tk
+people and see what they say.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From s.m at speleo.sk  Wed Aug 10 13:27:12 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 13:27:12 +0200
+Subject: [Therion] Re: Feedback on 0.3.8 - bugs
+In-Reply-To: <20050810102840.GM20544@xios>
+References: <20050809162945.GE20544@xios> <20050810082341.M96161@speleo.sk> <20050810102840.GM20544@xios>
+Message-ID: <42F9E490.7000007@speleo.sk>
+
+Wookey wrote:
+> No, this map is actually quite sensitive
+
+We know this well. Almost all detailed maps of huge cave systems are 
+quite sensitive :)
+
+>>Agree, all the bugs should be fixed. I suspect that tcl/tk crashas might be 
+>>debian-specific. I had been using xtherion quite intensively on Mandrake 9.
+>>1/10.1, Win 2000/XP and never have encountered any similar problam.
+> 
+> I suspect you are right. They might even be specific to this laptop as I
+> hardly use xtherion anywhere else. I will try asking the Debian tcl/tk
+> people and see what they say.
+
+Did you try using self-compiled TclTk with threads disabled? It compiles 
+quite easily.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 13:22:36 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 13:22:36 +0200
+Subject: [Therion] Feedback on 0.3.8 - bugs
+In-Reply-To: <20050809162945.GE20544@xios>
+References: <20050809162945.GE20544@xios>
+Message-ID: <42F9E37C.3030603@speleo.sk>
+
+Wookey wrote:
+> A new expedition is going in 3 weeks so there is a lot of things I need to
+> sort out before they go. Your help will be appreciated as ever - I hope
+> everyone isn't on holiday....
+
+Well, I am currently at home with a 5 days old baby :) If she will sleep 
+like she is sleeping now, I should have some time for improvements.
+
+> 1) If you split a line the view moves to be centered on the previous/next
+> line in the list (not sure which), whilst the selection moves to one half of
+> the line. Sometimes this means the view moves so you can't see the selected
+> line. The view should move to the line that is now selected (one half or the
+> other of the split line).
+
+OK, this should be easy to fix.
+
+> 2) If you try to open a new image it asks you to create a .th2 file first
+> presenting "(new file)" as the file name. If you exit without choosing one
+> (cancel) then when you close the file in the map window it asks if you want
+> to save "blah/blah/(new file)". A blank white square also appears in place
+> of the image you didn't load. It should remain in the state it was before
+> you tried to load an image.
+
+OK. I will try to fix it.
+
+> 3) If you run out of disk space while Therion is processing then 
+
+Yes. It is a problem. Therion loads TeX log file and writes it into 
+therion.log. If there is no more disk space - it can not write into log 
+file. Usually I do not check the result of "fprintf". OK - I will try.
+
+> 4) 'Sort of bug' (english language bug rather than computer language):
+
+Will be fixed immediately.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 14:59:04 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 14:59:04 +0200
+Subject: [Therion] PDF viewing comments
+In-Reply-To: <20050809172032.GI20544@xios>
+References: <20050809172032.GI20544@xios>
+Message-ID: <42F9FA18.2070207@speleo.sk>
+
+Wookey wrote:
+> I have noticed that waterflow -subtype presumed symbols in the 'Blue
+> Moonlight bay' area (top right hand corner). Appears fine in xpdf, but not
+> at all in gpdf. Do they come out in acrobat? What is going on here?
+
+No idea. Does gpdf supports transparency? I have never used it. In 
+acroread for linux I am using - everything is OK.
+
+> Someone else remarked that it was nice to have layers appear as 'bookmarks'
+> and that acrobat could do this. It would be nice to have each 'map' appear
+> in the 'bookmarks' list (so you could easily move to it) and maybe be a
+> separate PDF 'layer'.
+
+It's a good idea. I will mark this into TODO list. We will see what we 
+can do.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 14:30:13 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 14:30:13 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <20050809164707.GF20544@xios>
+References: <20050809164707.GF20544@xios>
+Message-ID: <42F9F355.4010701@speleo.sk>
+
+First of all, I am impressed with your map! It's a great feeling for me 
+to know, that someone else is using therion for such a huge cave.
+
+There was no traffic in the mailing list, so I was worried, that all the 
+people that tried therion are disappointed with it. So I left therion 
+developement and started to work on the new 3D viewer for therion. And 
+there was a lot of problems to solve - especially with unicode OpenGL 
+support and off-screen poster rendering. So there was no time for 
+therion developement.
+
+Wookey wrote:
+> 1) Is there a dripline symbol for the entrance extent? Do I use 'overhang'?
+> I tried using overhang and nothing appears (because it is outside the clipped
+> area?) Should I use overhang and add a -outline out option?
+> 
+> 2) How can I represent a surface cliff line between a series of caves? 
+> 
+> I have a lot of cave entrances with a defined cliffline between them. the
+> survey makes a lot more sense if this surface feature can be seen. How can I
+> draw a line on to represent this?
+
+We have been already thinking of some surface specific symbols.
+According to your mail - you would like to have two new line types:
+
+line drip (or dripline)
+line cliff (or cliffline)
+
+Could you plase write us, what syntax makes more sense? We should
+probably make difference also between underground and surface contours.
+Probably also
+
+line surface-contour
+
+is needed. All those lines will have clipping turned off by default.
+
+Another point - using "-outline out" for surface features is probably
+not correct. It will make huge problems when generating clipping paths
+and 3D model. Use instead "-clip off" option, if you do not want that
+line to be clipped.
+
+Another possibility is to add all surface features into specific scrap,
+where no outline will be defined (=> no lines will be clipped).
+
+> 3)What to do when entrance line draws scrap end across to the wrong point
+> (e.g. deception entrance?) In the bottom LH corner of the survey above is
+> 'Deception Cave'. If you look at '1st entrance' you will see the problem I
+> mean. Therion has decided to ignore the last bit of wall and just draw a
+> line across the gap between the nearest points. How do I make a wide, flared
+> entrance like this have the 'correct' entrance area? This may be related to
+> question 1.
+
+Very simple but quite often problem. Just connect the entrance ends with
+
+line wall -subtype invisible
+
+I know that invisible wall is not very intuitive, but it is very easy to
+use - because you do not need to stop entering line - you just type
+subtype spec to line point options.
+
+If you do not like it - you can use
+
+line border -subtype invisible -outline out
+
+instead. But we are using invisible walls.
+
+> 4) How is length in legend calculated when data is imported from .3d file?
+> The survey above consists of a lot of scraps round real data and a lot round
+> 'fake' data made from surveys which are nothing but drawings scaled with the
+> scale bar or a few nearby or fake survey stations. The survex .3d file used
+> includes survex data for the whole mountain including another 50km of cave
+> or so. So where is the number in the legend coming from?
+
+It should be the total length of all centerline objects, to which scraps
+in the map refers to (surface shots should be excluded). Uff, I am not
+sure whether you understand this explanation.
+
+In the case of import - centerline object is created for each survey
+object and shots are splitted into surveys. So in your case it is the
+sum of lengths of all surveys, you refers to in maps. Or at least it
+should be.
+
+If the number does not make sense - you can redefine it in layout. Use
+
+code tex-map
+\cavelength={1234 m}
+endcode
+
+or something like this. I am not sure.
+
+In the TODO list I already have something like setting survey in layout,
+from which length and depth will be taken. Example:
+
+statistics source-survey somesurvey.topsurvey
+
+Would it make sense for you?
+
+
+> 5) How do I get rid of the 'dummy' survey surrounding all my data which
+> means the title of the whole thing is 'dummy'. I may have been told this
+> before in which case I apologise for forgetting the answer.
+
+Import should work without this dummy survey (outside of survey
+context). Have you tried? If not, there is some bug.
+
+> 6) When is a label under passage and when over?
+> As you can see I have some of both in this survey. Is it to do with the
+> ordering of walls and labels within the scrap? Or maybe there is an 'ontop'
+> option?
+
+There is no 'ontop' option. Label is on the top of the scrap - in which
+it is defined. If some other map overlays it - the label will be under
+this passage. Would you like to have something like 'ontop' option?
+
+S.
+
+
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 14:42:40 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 14:42:40 +0200
+Subject: [Therion] Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050809170146.GG20544@xios>
+References: <20050809170146.GG20544@xios>
+Message-ID: <42F9F640.8090500@speleo.sk>
+
+Wookey wrote:
+> The interface needs a better way of previewing scrap names so one can join
+> up a lot of scraps without having to slowly open each file and click about.
+> Being able to see a scrap number somehow without selecting the scrap would
+> also be useful. At the moment if editing a .th2 file to put in joins one
+> needs to close current scrap and open new one, then click on correct part to
+> find out which bit is which. 
+> 
+> Not sure how best to deal with this problem.
+
+MartinB had a suggestion, that scraps that connect within one file (have 
+common end wall points) - should be joined automatically. Especially in 
+the case, when you are redrawing already existing maps - it would be 
+very usefull and it would save you some time.
+
+> Maybe showing scrap-names in the debug ouput would be sufficient. Or a
+> separate low-res output with scraps coloured differently and labelled?
+> 
+> The 'without pics' option helps somewhat here, but what I really need is
+> some kind of low-res scrap overview.
+> 
+> There is a related problem that the 1.5Mb PDF file now takes at least 2 minutes
+> to render on my 900Mhz laptop. Having some kind of low-res ouput would be
+> generally useful for checking that joins have worked and caves have appeared
+> would be very handy - is that at all practical? I'm not sure where all the
+> time goes.
+
+With the new 3D engine - there should be possibility to export also 2D 
+maps for 3D viewer. Having only coloured scrap outlines that are 
+interactivly zoomable and scrollable and generated very fast (no 
+metapost and PDFTeX needed) would be worth of it.
+
+The problem is, that new 3D engine is still only a future - I am not 
+sure when it will be ready for preliminary beta release. It does not 
+work now.
+
+But if you would like to - I can use survex 3d format also for 2D 
+output. You would write:
+
+export map -o map.3d
+
+and there will be centerline and walls shown as lines in this file. I 
+can label the wall points with scrap names, so you should be able to 
+preview your work easily. What do you think?
+
+I am just missing reload button in aven/xcaverot, but this I should 
+write to survex mailing list.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 14:54:36 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 14:54:36 +0200
+Subject: [Therion] Wishlist - colouring control improvements
+In-Reply-To: <20050809171338.GH20544@xios>
+References: <20050809171338.GH20544@xios>
+Message-ID: <42F9F90C.9050003@speleo.sk>
+
+Wookey wrote:
+> Colour scrap by altitude is nice but the abrubt joins can look nasty in the
+> middle of wide, nominally horizontal passage.  It works really well in the
+> 'soundriver' area where there are nicely-merging shades of green, but
+> nastily in other some other areas. Some way to graduate the join a bit would
+> make it look a lot nicer. Or apply more detailed colour control to a scrap
+> like 'nearly the same as neighbour scrapname'.
+
+This I have to discuss with MartinB. As far as I know PDF - some 
+gradient colorings are possible, but only for triangles. Not for bezier 
+curves. So in principle, there are two possibilities:
+
+1. Triangulate the outline = huge problem of contrained Delaunay 
+triangulation. All algorithms I have are GNU incompatible, or parts of 
+huge non-standard libraries or both :).
+
+In any case - triangulation is also important for 3D (current algorith 
+fails at some cases, especially on non Intel processors :) so this 
+problem must be solved somehow in the future. We will probably leave GPL 
+and come to some other license type (I prefer no licensing at all :)
+
+> Also my users have complained that the colours are 'too random and garish'
+> and I am inclined to agree. They like the depth colouring in Aven, so could
+> we try to use the same gradient colours? 
+> 
+> Probably what is really needed is a way to specify the colour set/gradient,
+> and proably a way to specify it for individula scraps too. Perhaps I already
+> can?
+
+No, it is in TODO only. When I will fix the bugs, I can start working on 
+it. It should be no problem. User must be able to define own colors for 
+altitudes, maps, surveys, dates and use multiple color gradients (aven 
+like for example). It is in TODO, but nobody was asking for this and my 
+main problem is 3D.
+
+> I think the colouring is a major step forward, but some more detailed
+> control is needed. There are a lot of ways this could be done and input for
+> others is welcome.
+
+Yes. 100% agree. I will put it higher priority.
+
+> Also having blue water would make a lot of sense for water areas, streamflow
+> arrows etc. 
+
+This you can do by redefinition of symbols. See "Rabbit-cave" example - 
+extended elevation. There the water should be blue. Simmilar way you can 
+redefine colors of other symbols in layout.
+
+S.
+
+
+
+
+
+From philip at balister.org  Wed Aug 10 15:20:23 2005
+From: philip at balister.org (Philip Balister)
+Date: Wed, 10 Aug 2005 09:20:23 -0400
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42F9F355.4010701@speleo.sk>
+References: <20050809164707.GF20544@xios>  <42F9F355.4010701@speleo.sk>
+Message-ID: <1123680023.32589.56.camel@localhost.localdomain>
+
+I have several miles with potential for more I would like to do in
+Therion, it is just a matter of getting started for me.
+
+Philip
+
+On Wed, 2005-08-10 at 14:30 +0200, Stacho Mudrak wrote:
+> First of all, I am impressed with your map! It's a great feeling for me 
+> to know, that someone else is using therion for such a huge cave.
+> 
+> There was no traffic in the mailing list, so I was worried, that all the 
+> people that tried therion are disappointed with it. So I left therion 
+> developement and started to work on the new 3D viewer for therion. And 
+> there was a lot of problems to solve - especially with unicode OpenGL 
+> support and off-screen poster rendering. So there was no time for 
+> therion developement.
+> 
+> Wookey wrote:
+> > 1) Is there a dripline symbol for the entrance extent? Do I use 'overhang'?
+> > I tried using overhang and nothing appears (because it is outside the clipped
+> > area?) Should I use overhang and add a -outline out option?
+> > 
+> > 2) How can I represent a surface cliff line between a series of caves? 
+> > 
+> > I have a lot of cave entrances with a defined cliffline between them. the
+> > survey makes a lot more sense if this surface feature can be seen. How can I
+> > draw a line on to represent this?
+> 
+> We have been already thinking of some surface specific symbols.
+> According to your mail - you would like to have two new line types:
+> 
+> line drip (or dripline)
+> line cliff (or cliffline)
+> 
+> Could you plase write us, what syntax makes more sense? We should
+> probably make difference also between underground and surface contours.
+> Probably also
+> 
+> line surface-contour
+> 
+> is needed. All those lines will have clipping turned off by default.
+> 
+> Another point - using "-outline out" for surface features is probably
+> not correct. It will make huge problems when generating clipping paths
+> and 3D model. Use instead "-clip off" option, if you do not want that
+> line to be clipped.
+> 
+> Another possibility is to add all surface features into specific scrap,
+> where no outline will be defined (=> no lines will be clipped).
+> 
+> > 3)What to do when entrance line draws scrap end across to the wrong point
+> > (e.g. deception entrance?) In the bottom LH corner of the survey above is
+> > 'Deception Cave'. If you look at '1st entrance' you will see the problem I
+> > mean. Therion has decided to ignore the last bit of wall and just draw a
+> > line across the gap between the nearest points. How do I make a wide, flared
+> > entrance like this have the 'correct' entrance area? This may be related to
+> > question 1.
+> 
+> Very simple but quite often problem. Just connect the entrance ends with
+> 
+> line wall -subtype invisible
+> 
+> I know that invisible wall is not very intuitive, but it is very easy to
+> use - because you do not need to stop entering line - you just type
+> subtype spec to line point options.
+> 
+> If you do not like it - you can use
+> 
+> line border -subtype invisible -outline out
+> 
+> instead. But we are using invisible walls.
+> 
+> > 4) How is length in legend calculated when data is imported from .3d file?
+> > The survey above consists of a lot of scraps round real data and a lot round
+> > 'fake' data made from surveys which are nothing but drawings scaled with the
+> > scale bar or a few nearby or fake survey stations. The survex .3d file used
+> > includes survex data for the whole mountain including another 50km of cave
+> > or so. So where is the number in the legend coming from?
+> 
+> It should be the total length of all centerline objects, to which scraps
+> in the map refers to (surface shots should be excluded). Uff, I am not
+> sure whether you understand this explanation.
+> 
+> In the case of import - centerline object is created for each survey
+> object and shots are splitted into surveys. So in your case it is the
+> sum of lengths of all surveys, you refers to in maps. Or at least it
+> should be.
+> 
+> If the number does not make sense - you can redefine it in layout. Use
+> 
+> code tex-map
+> \cavelength={1234 m}
+> endcode
+> 
+> or something like this. I am not sure.
+> 
+> In the TODO list I already have something like setting survey in layout,
+> from which length and depth will be taken. Example:
+> 
+> statistics source-survey somesurvey.topsurvey
+> 
+> Would it make sense for you?
+> 
+> 
+> > 5) How do I get rid of the 'dummy' survey surrounding all my data which
+> > means the title of the whole thing is 'dummy'. I may have been told this
+> > before in which case I apologise for forgetting the answer.
+> 
+> Import should work without this dummy survey (outside of survey
+> context). Have you tried? If not, there is some bug.
+> 
+> > 6) When is a label under passage and when over?
+> > As you can see I have some of both in this survey. Is it to do with the
+> > ordering of walls and labels within the scrap? Or maybe there is an 'ontop'
+> > option?
+> 
+> There is no 'ontop' option. Label is on the top of the scrap - in which
+> it is defined. If some other map overlays it - the label will be under
+> this passage. Would you like to have something like 'ontop' option?
+> 
+> S.
+> 
+> 
+> 
+
+
+
+From wookey at aleph1.co.uk  Wed Aug 10 15:23:52 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 10 Aug 2005 14:23:52 +0100
+Subject: PDF viewing comments
+In-Reply-To: <42F9FA18.2070207@speleo.sk>
+References: <20050809172032.GI20544@xios> <42F9FA18.2070207@speleo.sk>
+Message-ID: <20050810132352.GO20544@xios>
+
++++ Stacho Mudrak [05-08-10 14:59 +0200]:
+> Wookey wrote:
+> >I have noticed that waterflow -subtype presumed symbols in the 'Blue
+> >Moonlight bay' area (top right hand corner). Appears fine in xpdf, but not
+> >at all in gpdf. Do they come out in acrobat? What is going on here?
+> 
+> No idea. Does gpdf supports transparency? I have never used it. In 
+> acroread for linux I am using - everything is OK.
+
+gpdf does support transparency (xpdf does not) (which is odd because gpdf is
+based on xpdf). I don't use acrobat because it is non-free and not available
+
+for non-x86 platforms. But I suppose I could sully my system with it forcomparison purposes(especially if it is as fast as Wofgang suggests - that
+would imply that someone needs to do a bit of work on xpdf to get the
+rendering speed for this sort of document up to something useful, and I know
+a man to hassle about that sort of thing).
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From martinsluka at mac.com  Wed Aug 10 15:52:31 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 10 Aug 2005 15:52:31 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <1123680023.32589.56.camel@localhost.localdomain>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<1123680023.32589.56.camel@localhost.localdomain>
+Message-ID: <p05100304bf1fb6d49ff1@[10.225.149.35]>
+
+At 09:20 -0400 10.8.2005, Philip Balister wrote:
+*******************************************
+
+>I have several miles with potential for more I would like to do in
+>Therion, it is just a matter of getting started for me.
+>
+>Philip
+
+Invite i club.
+
+I'll send you an article with my way - to be prepared.
+
+:)
+
+MartinS.
+-- 
+
+
+
+From wookey at aleph1.co.uk  Wed Aug 10 16:34:49 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 10 Aug 2005 15:34:49 +0100
+Subject: [Therion] Wishlist - scrap preview, low-res preview
+In-Reply-To: <42F9F640.8090500@speleo.sk>
+References: <20050809170146.GG20544@xios> <42F9F640.8090500@speleo.sk>
+Message-ID: <42FA1089.1000800@aleph1.co.uk>
+
+Stacho Mudrak wrote:
+
+> Wookey wrote:
+>
+> MartinB had a suggestion, that scraps that connect within one file
+> (have common end wall points) - should be joined automatically.
+> Especially in the case, when you are redrawing already existing maps -
+> it would be very usefull and it would save you some time.
+
+Yes, that seems very sensible, it would hardly ever be the wrong thing
+to do. Might be a bit confusing to new users (some join happen
+magically, others do not), but certainly for the big redrawing I have
+just done this would have saved quite a lot of time and fiddling about.
+
+> With the new 3D engine - there should be possibility to export also 2D
+> maps for 3D viewer. Having only coloured scrap outlines that are
+> interactivly zoomable and scrollable and generated very fast (no
+> metapost and PDFTeX needed) would be worth of it.
+>
+> The problem is, that new 3D engine is still only a future - I am not
+> sure when it will be ready for preliminary beta release. It does not
+> work now.
+>
+> But if you would like to - I can use survex 3d format also for 2D
+> output. You would write:
+>
+> export map -o map.3d
+>
+> and there will be centerline and walls shown as lines in this file. I
+> can label the wall points with scrap names, so you should be able to
+> preview your work easily. What do you think?
+
+If it is not too hard then that sounds really useful -  let's try it.
+
+> I am just missing reload button in aven/xcaverot, but this I should
+> write to survex mailing list.
+
+
+Yes, I have wanted that many times too.
+
+Wookey
+
+
+
+From wookey at aleph1.co.uk  Wed Aug 10 16:25:59 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 10 Aug 2005 15:25:59 +0100
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42F9F355.4010701@speleo.sk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+Message-ID: <42FA0E77.20902@aleph1.co.uk>
+
+Stacho Mudrak wrote:
+
+> First of all, I am impressed with your map! It's a great feeling for
+> me to know, that someone else is using therion for such a huge cave.
+>
+> There was no traffic in the mailing list, so I was worried, that all
+> the people that tried therion are disappointed with it.
+
+
+No - just busy doing things :-) I am pretty happy with Therion overall
+and will continue to use it now that I have put so much effort into
+finding out how it works. One of the best things about it is your and
+Martin's responsiveness to queries and suggestions. I am still learning
+how to use it and whilst I have done a lot, most of it is very basic.
+(There is quite a small subset of possible symbols in that map, and very
+few areas, for example, because areas tends to 'go wrong' ).
+
+Having reached this stage there are some issues with speed. xtherion is
+slow to move from one .th2 file to another (mostly loading images), and
+the pdf rendering is _really_ slow. Therion itself does not take too
+long yet, but overall I find many hours are sucked away for not that
+much progress, just like drawing on paper! The speed matters because
+every time you make a change you have to process and render to check it
+is OK, and this is a fundamental feature. Adding some background
+rendering might be something to think about for the future (e.g. run
+therion every few mins on the data - if a valid result is produced then
+display it - if not (because the author is in the middle of a scrap and
+things are not yet valid (no stations) then forget the results and
+restore the previous version.
+
+I haver another set of queries to ask about splitting large surveys
+which would help solve the problem of regenerating a big map - I will
+put all that in another thread as it is complicated.
+
+Jenny Black has also done a very nice Therion map of EisluftHoehle in
+Austria. Hers is actually finished (the plan at least, and of course now
+they have found some more). She has some comments on the problems of
+adding a lot of labels, which she will no doubt post about when she gets
+back from expo.
+
+> So I left therion developement and started to work on the new 3D
+> viewer for therion. And there was a lot of problems to solve -
+> especially with unicode OpenGL support and off-screen poster
+> rendering. So there was no time for therion developement.
+
+Is it working/useable now? The expedition would like to try this if all
+I have to do is add a load of passage-height indicators. (note I am not
+going on the expedition, just preparing data and software for it).
+
+Survex-aven also has (finally!) acquired passage dimension rendering in
+the last 3 weeks as well, just to keep things interesting.
+
+> Wookey wrote:
+>
+>> 1) Is there a dripline symbol for the entrance extent? Do I use
+>> 'overhang'?
+>> I tried using overhang and nothing appears (because it is outside the
+>> clipped
+>> area?) Should I use overhang and add a -outline out option?
+>>
+>> 2) How can I represent a surface cliff line between a series of caves?
+>> I have a lot of cave entrances with a defined cliffline between them.
+>> the
+>> survey makes a lot more sense if this surface feature can be seen.
+>> How can I
+>> draw a line on to represent this?
+>
+>
+> We have been already thinking of some surface specific symbols.
+> According to your mail - you would like to have two new line types:
+>
+> line drip (or dripline)
+> line cliff (or cliffline)
+>
+> Could you plase write us, what syntax makes more sense? We should
+> probably make difference also between underground and surface contours.
+> Probably also
+
+'cliff' is tricky. It is a small cliff for my particular cave, and for
+some others, but often an equivalent line is used on surveys that does
+not represent a cliff (especially on elevations, where it represents the
+general surface level). A more general name would be better, but it is
+tricky to think of a good one. 'line surface-landform' might be best
+(just a line), and perhaps a different symbol for 'line cliff' (this is
+normally drawn as a series of short dashes perpendicular to the line
+direction)
+
+So I'd say 'line dripline', 'line cliff' and 'line landform'
+
+> line surface-contour
+>
+> is needed. All those lines will have clipping turned off by default.
+>
+> Another point - using "-outline out" for surface features is probably
+> not correct. It will make huge problems when generating clipping paths
+> and 3D model. Use instead "-clip off" option, if you do not want that
+> line to be clipped.
+
+But for the dripline (which always goes across the entrance) we want the
+passage fill to go up to this line (it defines the outline of the cave
+just like passage walls do), so I would think that -outline out is
+correct here, is it not?
+
+> Another possibility is to add all surface features into specific scrap,
+> where no outline will be defined (=> no lines will be clipped).
+
+That may well be useful where there is a lot of surface detail to draw
+(e.g buildings, paths, roads overlay). In fact it may well work quite
+well for my cliff between many entrances, although in that case I'm not
+sure how I would make it line up with the various entrances.
+
+>> 3)What to do when entrance line draws scrap end across to the wrong
+>> point
+>> (e.g. deception entrance?) In the bottom LH corner of the survey
+>> above is
+>> 'Deception Cave'. If you look at '1st entrance' you will see the
+>> problem I
+>> mean. Therion has decided to ignore the last bit of wall and just draw a
+>> line across the gap between the nearest points. How do I make a wide,
+>> flared
+>> entrance like this have the 'correct' entrance area? This may be
+>> related to
+>> question 1.
+>
+>
+> Very simple but quite often problem. Just connect the entrance ends with
+>
+> line wall -subtype invisible
+>
+> I know that invisible wall is not very intuitive, but it is very easy to
+> use - because you do not need to stop entering line - you just type
+> subtype spec to line point options.
+>
+> If you do not like it - you can use
+>
+> line border -subtype invisible -outline out
+>
+> instead. But we are using invisible walls.
+
+OK - right. makes sense. My 'line dripline' serves a very similar
+purpose, but has a visible symbol.
+
+>> 4) How is length in legend calculated when data is imported from .3d
+>> file?
+>> The survey above consists of a lot of scraps round real data and a
+>> lot round
+>> 'fake' data made from surveys which are nothing but drawings scaled
+>> with the
+>> scale bar or a few nearby or fake survey stations. The survex .3d
+>> file used
+>> includes survex data for the whole mountain including another 50km of
+>> cave
+>> or so. So where is the number in the legend coming from?
+>
+>
+> It should be the total length of all centerline objects, to which scraps
+> in the map refers to (surface shots should be excluded). Uff, I am not
+> sure whether you understand this explanation.
+>
+> In the case of import - centerline object is created for each survey
+> object and shots are splitted into surveys. So in your case it is the
+> sum of lengths of all surveys, you refers to in maps. Or at least it
+> should be.
+
+OK. I should check if it is right. (I wonder how it works for fake
+surveys which have no 'legs' - only a long list of fixed points?)
+
+> If the number does not make sense - you can redefine it in layout. Use
+>
+> code tex-map
+> \cavelength={1234 m}
+> endcode
+>
+> or something like this. I am not sure.
+>
+> In the TODO list I already have something like setting survey in layout,
+> from which length and depth will be taken. Example:
+>
+> statistics source-survey somesurvey.topsurvey
+>
+> Would it make sense for you?
+
+In general, yes, but in this case things are rather complicated - there
+are >30 entrances and a rather arbitrary split into caves (according to
+discovery history) and some caves are at the top level, others are under
+a cave they are part of (within the centreline dataset). A list of a few
+surveys (to be added together) would give the correct overall length: 
+terikan, bluemoon, menagerie, deception, david. Also useful would be to
+have a nuymber of entries of the form 'Cavename: length' for each of
+those surveys. I can presumably do that with some code tex-map?
+
+>
+>> 5) How do I get rid of the 'dummy' survey surrounding all my data which
+>> means the title of the whole thing is 'dummy'. I may have been told this
+>> before in which case I apologise for forgetting the answer.
+>
+>
+> Import should work without this dummy survey (outside of survey
+> context). Have you tried? If not, there is some bug.
+
+No - I did this back when it was needed and have not dared remove it as
+it was always an inconvenient time to break things :-) trying now...
+OK, it doesn't 'just work'. But I think all I really need to do is
+change the top-level survey to 'benarat' and give a sensible title. ( 
+See index.th at the top level of
+http://wookware.org/mulu/benarat-therion20050809.zip )
+I have to put a  survey round the top-level map and includes and joins.
+This used to be 'dummy' which worked but gave the map a silly title. I
+just changed this to 'benarat' with a proper title and that works OK,
+but I have to put it outside the import benarat.3d otherwise I get
+warnings about surveys that could not be imported and then objects which
+are needed are not found. This is the clever 'auto-stripping' stuff
+working as it should do. I could presumably have it outside and provide
+the correct options to import to make it work.
+
+I may want to discuss this further in my  'splitting up the maps' post,
+coming in the next couple of days.
+
+>> 6) When is a label under passage and when over?
+>> As you can see I have some of both in this survey. Is it to do with the
+>> ordering of walls and labels within the scrap? Or maybe there is an
+>> 'ontop'
+>> option?
+>
+>
+> There is no 'ontop' option. Label is on the top of the scrap - in which
+> it is defined. If some other map overlays it - the label will be under
+> this passage. 
+
+OK - that sounds sensible. With transparency that should give correct
+results. I think an important feature of colouring is that the labels
+should be the same colour as the scrap they are in. This is the only way
+to tell which bit they refer to in multi-layered systems. I see that my
+'Poor Man's Hand' label must be partly-obscured because it is on one of
+the lower scraps in that cave section. It shoul probably be attached to
+the highest one.
+
+
+> Would you like to have something like 'ontop' option?
+
+An 'ontop' might well be useful as well, but I will have to experiment a
+bit more to see if I think I need.
+
+Wookey (trying new mailer)
+
+
+
+From martinsluka at mac.com  Wed Aug 10 18:43:53 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 10 Aug 2005 18:43:53 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42FA0E77.20902@aleph1.co.uk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<42FA0E77.20902@aleph1.co.uk>
+Message-ID: <p05100305bf1fdeba01de@[10.225.149.35]>
+
+At 15:25 +0100 10.8.2005, Wookey wrote:
+*******************************************
+
+>Having reached this stage there are some issues with speed. xtherion is
+>slow to move from one .th2 file to another (mostly loading images), and
+>the pdf rendering is _really_ slow.
+
+Wookey, just a question - have you check "select" option in config 
+file? If I need only small part of large system, I may "select" and 
+therion will generate only this small part of cave.
+
+"select" works in manual way or if you doubleclick on part of cave in 
+map structure.
+
+MartinS
+-- 
+
+
+
+From john at pybus.org  Wed Aug 10 19:49:29 2005
+From: john at pybus.org (John Pybus)
+Date: Wed, 10 Aug 2005 18:49:29 +0100
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42F9F355.4010701@speleo.sk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+Message-ID: <42FA3E29.2020701@pybus.org>
+
+Stacho Mudrak wrote:
+> 
+> There was no traffic in the mailing list, so I was worried, that all 
+> the people that tried therion are disappointed with it.
+
+Or perhaps we're all away surveying new caves, rather than drawing them
+up ;-)
+
+I've just got back from a month on expedition, and as soon I've caught
+up with work will be scanning in some new scraps...
+
+> Wookey wrote:
+> 
+>> Colour scrap by altitude is nice but the abrubt joins can look
+>> nasty in the middle of wide, nominally horizontal passage.  It
+>> works really well in the 'soundriver' area where there are
+>> nicely-merging shades of green, but nastily in other some other
+>> areas. Some way to graduate the join a bit would make it look a lot
+>> nicer. Or apply more detailed colour control to a scrap like
+>> 'nearly the same as neighbour scrapname'.
+> 
+> 
+> This I have to discuss with MartinB. As far as I know PDF - some
+> gradient colorings are possible, but only for triangles. Not for
+> bezier curves. So in principle, there are two possibilities:
+
+I thought that the PDF spec provided considerable flexability in the
+shadings, and it seems that it does.  From the Fourth edition of the PDF
+reference, page 267 (avalable from:
+http://partners.adobe.com/public/developer/en/pdf/PDFReference15_v5.pdf .)
+
+------------
+Various shading types are available, depending on the value of the
+dictionary’s ShadingType entry:
+
+• Function-based shadings (type 1) define the color of every point in
+the domain using a mathematical function (not necessarily smooth or
+continuous).
+• Axial shadings (type 2) define a color blend along a line between two
+points, optionally extended beyond the boundary points by continuing the
+boundary colors.
+• Radial shadings (type 3) define a blend between two circles,
+optionally extended beyond the boundary circles by continuing the
+boundary colors. This type of shading is commonly used to represent
+three-dimensional spheres and cones.
+• Free-form Gouraud-shaded triangle meshes (type 4) define a common
+construct used by many three-dimensional applications to represent
+complex colored and shaded shapes. Vertices are specified in free-form
+geometry.
+• Lattice-form Gouraud-shaded triangle meshes (type 5) are based on the
+same geometrical construct as type 4, but with vertices specified as a
+pseudorectangular lattice.
+• Coons patch meshes (type 6) construct a shading from one or more color
+patches, each bounded by four cubic Bézier curves.
+• Tensor-product patch meshes (type 7) are similar to type 6, but with
+additional control points in each patch, affording greater control over
+color mapping.
+------------
+
+But a simple linear gradient across the join points of two scraps with
+different colours would give a big improvement.
+
+Cheers,
+
+John
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 22:24:30 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 22:24:30 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <p05100305bf1fdeba01de@[10.225.149.35]>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>	<42FA0E77.20902@aleph1.co.uk> <p05100305bf1fdeba01de@[10.225.149.35]>
+Message-ID: <42FA627E.5050208@speleo.sk>
+
+There is also possibility to work only with the smaller part of the cave 
+- not entire system at all. It should be fast enough.
+
+You can also have more xtherions open :) - when you need to switch from 
+one to another .th2 file.  I usually do - when searching for some join 
+errors.
+
+But my experience is the same: PDF rendering is the most time consuming 
+part of the process. Especially - when you need bigger maps. Acroread 
+does not have "reload" feature - therefore it is almost unusable. I am 
+usually using ghostscript or xpdf, but both of them are slow when 
+rendering bigger maps. We have tried SVG also - but those renderers are 
+even much slower.
+
+Therefore we have decided to do rendering of some limited 2D maps also 
+in OpenGL. When it is hardware accelerated - it is real fun - even there 
+are only labels and filled outlines.
+
+S.
+
+Martin Sluka wrote:
+> At 15:25 +0100 10.8.2005, Wookey wrote:
+> *******************************************
+> 
+>> Having reached this stage there are some issues with speed. xtherion is
+>> slow to move from one .th2 file to another (mostly loading images), and
+>> the pdf rendering is _really_ slow.
+> 
+> 
+> Wookey, just a question - have you check "select" option in config file? 
+> If I need only small part of large system, I may "select" and therion 
+> will generate only this small part of cave.
+> 
+> "select" works in manual way or if you doubleclick on part of cave in 
+> map structure.
+> 
+> MartinS
+
+
+
+
+
+
+From s.m at speleo.sk  Wed Aug 10 22:47:33 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 10 Aug 2005 22:47:33 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42FA0E77.20902@aleph1.co.uk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk> <42FA0E77.20902@aleph1.co.uk>
+Message-ID: <42FA67E5.1050407@speleo.sk>
+
+Wookey wrote:
+> Is it working/useable now? 
+
+Not yet. There are still problems with compilation of the stuff (it 
+depends on wxWidgets, OpenGL, VTK and freetype libraries)...
+
+> The expedition would like to try this if all
+> I have to do is add a load of passage-height indicators. (note I am not
+> going on the expedition, just preparing data and software for it).
+
+... and this part of therion code was not touched. 3D models from the 
+maps are still only experimental.
+
+> So I'd say 'line dripline', 'line cliff' and 'line landform'
+
+OK, it sounds reasonable.
+
+> But for the dripline (which always goes across the entrance) we want the
+> passage fill to go up to this line (it defines the outline of the cave
+> just like passage walls do), so I would think that -outline out is
+> correct here, is it not?
+
+Yes. You are right.
+
+> OK. I should check if it is right. (I wonder how it works for fake
+> surveys which have no 'legs' - only a long list of fixed points?)
+
+They should not be included.
+
+> terikan, bluemoon, menagerie, deception, david. Also useful would be to
+> have a nuymber of entries of the form 'Cavename: length' for each of
+> those surveys. I can presumably do that with some code tex-map?
+
+Yes. We already have in TODO to add some meta-language (simmilar to 
+html) for map headers. Usually people are not fammiliar with TeX syntax.
+
+> OK - that sounds sensible. With transparency that should give correct
+> results. I think an important feature of colouring is that the labels
+> should be the same colour as the scrap they are in. This is the only way
+> to tell which bit they refer to in multi-layered systems.
+
+May be, we have to try this. I am just not sure - how deep into code we 
+need to go to do it. I am afraid, we will need some special TeX macros 
+for that, because labels are generated by TeX.
+
+S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 11 01:03:03 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 11 Aug 2005 00:03:03 +0100
+Subject: Feedback on 0.3.8 - queries
+In-Reply-To: <42FA627E.5050208@speleo.sk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<42FA0E77.20902@aleph1.co.uk>
+	<p05100305bf1fdeba01de@[10.225.149.35]>
+	<42FA627E.5050208@speleo.sk>
+Message-ID: <20050810230302.GA11993@xios>
+
++++ Stacho Mudrak [05-08-10 22:24 +0200]:
+> There is also possibility to work only with the smaller part of the cave 
+> - not entire system at all. It should be fast enough.
+
+Yes, this is something I've been looking at. There are actually two aspects
+to this. 
+
+1) For final results I want to produce both an overall map and maps of
+individual caves. I haven't yet understood how I can do this. So far as I
+can tell I need multiple thconfig files to do this, because 
+'export map -proj plan -layout <layout> -o <file.pdf>' seems to include
+everything of the relevant projection. How do I add more export map line
+which just contian a specific map? Can I specify a particular map in a layout?
+
+Doing this will of course mean it takes longer to process, but each smaller
+map will render faster.
+
+2) Whilst working on the system, working with subsections as you describe
+above. This would presumably take the form of adding some selects
+temporarily, then removing them for final map production - right?
+
+> You can also have more xtherions open :) - when you need to switch from 
+> one to another .th2 file.  I usually do - when searching for some join 
+> errors.
+
+That is a good idea, which I never thought of. One for the hints and
+tips/FAQ I suspect (along with some of the other answers in these threads).
+
+Although I may well run out of memory on this machine and have things go
+very slowly - I'll try it.
+
+> >Wookey, just a question - have you check "select" option in config file? 
+> >If I need only small part of large system, I may "select" and therion 
+> >will generate only this small part of cave.
+
+so far I have been ignoring it as the default 'select all' did what I
+wanted, but clearly I need to start using it.
+
+> >"select" works in manual way or if you doubleclick on part of cave in 
+> >map structure.
+
+Aha - that's something else I hadn't discovered. Now I just have to work out
+exactly where to put it.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 11 03:04:29 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 11 Aug 2005 02:04:29 +0100
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050810082916.M42308@speleo.sk>
+References: <20050809170146.GG20544@xios> <20050810082916.M42308@speleo.sk>
+Message-ID: <20050811010429.GB11993@xios>
+
++++ m.b [05-08-10 10:37 +0200]:
+> > Not sure how best to deal with this problem.
+> > Maybe showing scrap-names in the debug ouput would be sufficient. Or 
+> 
+> Agree. I had the same idea.
+> 
+> > a separate low-res output with scraps coloured differently and labelled?
+> > 
+> > The 'without pics' option helps somewhat here, but what I really 
+> > need is some kind of low-res scrap overview.
+> 
+> That's easy -- use layout like
+> 
+> scale 1 1000
+> symbol hide group all
+> symbol show group wall
+> transparency off
+
+OK - just for reference the correct syntax is:
+ symbol-hide group all 
+ symbol-show line wall 
+
+And that is a lot faster - so can I get the scrap-names written on it too?
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From martinsluka at mac.com  Thu Aug 11 07:49:18 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 11 Aug 2005 07:49:18 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050811010429.GB11993@xios>
+References: <20050809170146.GG20544@xios>
+	<20050810082916.M42308@speleo.sk> <20050811010429.GB11993@xios>
+Message-ID: <p05100300bf2090ed8b03@[10.225.149.35]>
+
+At 02:04 +0100 11.8.2005, Wookey wrote:
+*******************************************
+
+>And that is a lot faster - so can I get the scrap-names written on it too?
+
+The  "select" command works for maps and for symbols.
+
+Check the command part of xtherion editor window - down are two 
+sections - Survey structure and Map structure. They start be activew 
+only after first succesfull compilation.  If you open them you may 
+see outline of surveys and particular maps. Very usefull you check 
+for duplicities (duplicite scraps or surveys in maps, ...) and very 
+usefull you want to select only part of cave.
+
+You may add several lines in thconfig file :
+
+select map1
+select map2
+select map3
+select map4
+
+or
+
+unselect map1
+unselect map2
+unselect map3
+unselect map4
+
+and at export definition section ad:
+
+export map -proj plan -layout <layout> -o <file1.pdf
+export map -proj plan -layout <layout> -o <file2.pdf
+export map -proj plan -layout <layout> -o <file3.pdf
+export map -proj plan -layout <layout> -o <file4.pdf
+
+end just comment and uncomment the particular lines.
+
+I add an example, but you may check the example in wiki section too - 
+quite simple one.
+
+MartinS.
+
+xxxxxxxxxxxxxxxxxxxxx
+
+encoding  utf-8
+#source "pod30/POD30"
+#source paralelky/PARALELKY
+source	lenjmn
+#source jsv/JSV
+
+#unselect pod30_m at pod30.jmn
+#unselect paralelky_m at paralelky.jmn
+#unselect vych_hor_m at vych_hor.jmn
+
+#select velkom_m at vych_hor.jmn
+
+#export model -fmt survex
+#export atlas plan -o "atlas.pdf" -layout-doc-title "J.M.N."
+#export atlas plan -o "atlas_paralelky.pdf" -layout-doc-title "J.M.N. 
+Paralelky"
+export map plan -layout-scale 1 500 -o "jmn.pdf"
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+
+-- 
+
+
+
+From s.m at speleo.sk  Thu Aug 11 21:14:16 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 11 Aug 2005 21:14:16 +0200
+Subject: Feedback on 0.3.8 - queries
+In-Reply-To: <20050810230302.GA11993@xios>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<42FA0E77.20902@aleph1.co.uk> <p05100305bf1fdeba01de@[10.225.149.35]>
+	<42FA627E.5050208@speleo.sk> <20050810230302.GA11993@xios>
+Message-ID: <42FBA388.4020006@speleo.sk>
+
+Wookey wrote:
+> 1) For final results I want to produce both an overall map and maps of
+> individual caves. I haven't yet understood how I can do this. So far as I
+> can tell I need multiple thconfig files to do this, because 
+> 'export map -proj plan -layout <layout> -o <file.pdf>' seems to include
+> everything of the relevant projection. How do I add more export map line
+> which just contian a specific map? Can I specify a particular map in a layout?
+
+I am sorry, but it is not possible. Map selection is something specific
+to configuration file, not layout. So you need to have multiple
+configuration files for such cases.
+
+But thconfig files can be included one into another, so you can specify
+your layout in one file and have multiple files for different
+selections, that include one layout.
+
+> 2) Whilst working on the system, working with subsections as you describe
+> above. This would presumably take the form of adding some selects
+> temporarily, then removing them for final map production - right?
+
+I thought having thconfig file e.g. for each cave - where only sources
+of that cave will be processed. Still everything will be selected, but
+not everything will be loaded.
+
+Joins between caves are specified in upper level (directory) source
+files. At least, we do it like this (each standalone part has about
+3-5km) and it seems to work.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Thu Aug 11 21:16:55 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 11 Aug 2005 21:16:55 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <42FA1089.1000800@aleph1.co.uk>
+References: <20050809170146.GG20544@xios> <42F9F640.8090500@speleo.sk>
+	<42FA1089.1000800@aleph1.co.uk>
+Message-ID: <42FBA427.30709@speleo.sk>
+
+Wookey wrote:
+>>and there will be centerline and walls shown as lines in this file. I
+>>can label the wall points with scrap names, so you should be able to
+>>preview your work easily. What do you think?
+> 
+> If it is not too hard then that sounds really useful -  let's try it.
+
+In the latest developement snapshot published today, there should be .3d
+map export available. Is is quite fast, but outlines that are not filled
+with the color look a little bit chaotic.
+
+Also bugs you wrote about should be removed.
+
+Regards, S.
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Fri Aug 12 13:22:55 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 12 Aug 2005 12:22:55 +0100
+Subject: changed thconfig files not noticed
+Message-ID: <20050812112254.GG18100@xios>
+
+Therion now notices if you have edited a file externmally and asks what do
+about it. However this doesn't seem to work for thconfig files. If I have an
+xtherion open (and have processed data so it has a thconfig file
+open/referenced) then if I edit a thconfig file externally, then hit F9
+again to reprocess - the thconfig in xtherion overwrites the modified
+thconfig on disk. It would be nice if xtherion noticed the changed thconfig
+file and used that, or at least asked before overwriting the modified one.
+
+(this is with 0.3.8)
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From martinsluka at mac.com  Fri Aug 12 14:54:54 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 12 Aug 2005 14:54:54 +0200
+Subject: changed thconfig files not noticed
+In-Reply-To: <20050812112254.GG18100@xios>
+References: <20050812112254.GG18100@xios>
+Message-ID: <p05100307bf224c461a2d@[10.225.149.35]>
+
+At 12:22 +0100 12.8.2005, Wookey wrote:
+*******************************************
+
+> However this doesn't seem to work for thconfig files
+
+After you press F9, therion saves all files you have open in xtherion first.
+
+Martin
+-- 
+
+
+
+From wookey at aleph1.co.uk  Fri Aug 12 15:00:28 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 12 Aug 2005 14:00:28 +0100
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <p05100300bf2090ed8b03@[10.225.149.35]>
+References: <20050809170146.GG20544@xios> <20050810082916.M42308@speleo.sk>
+	<20050811010429.GB11993@xios>
+	<p05100300bf2090ed8b03@[10.225.149.35]>
+Message-ID: <20050812130028.GH18100@xios>
+
++++ Martin Sluka [05-08-11 07:49 +0200]:
+> At 02:04 +0100 11.8.2005, Wookey wrote:
+> *******************************************
+> 
+> >And that is a lot faster - so can I get the scrap-names written on it too?
+> 
+> The  "select" command works for maps and for symbols.
+
+OK, so what is the symbol name for 'scrapnames' This is not something that
+is normally shown?
+
+> Check the command part of xtherion editor window - down are two 
+> sections - Survey structure and Map structure. They start be activew 
+> only after first succesfull compilation.  If you open them you may 
+> see outline of surveys and particular maps. Very usefull you check 
+> for duplicities (duplicite scraps or surveys in maps, ...) and very 
+> usefull you want to select only part of cave.
+
+So it is - I have never taken any notice of this bit. 
+
+> You may add several lines in thconfig file :
+> 
+> select map1
+> select map2
+> select map3
+> select map4
+> 
+> or
+> 
+> unselect map1
+> unselect map2
+> unselect map3
+> unselect map4
+> 
+> and at export definition section ad:
+> 
+> export map -proj plan -layout <layout> -o <file1.pdf
+> export map -proj plan -layout <layout> -o <file2.pdf
+> export map -proj plan -layout <layout> -o <file3.pdf
+> export map -proj plan -layout <layout> -o <file4.pdf
+> 
+> end just comment and uncomment the particular lines.
+
+Right - thanx. The bit of this that seems rather naff is having to comment
+and uncomment different map outputs. It ought to be possible to produce more
+than one 'section set' at a time from a given dataset in the same projection.
+
+I will try Stacho's suggestion of chained thconfig files, or maybe a script
+which runs therion on a series of thconfig files. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Fri Aug 12 15:27:24 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 12 Aug 2005 14:27:24 +0100
+Subject: changed thconfig files not noticed
+In-Reply-To: <p05100307bf224c461a2d@[10.225.149.35]>
+References: <20050812112254.GG18100@xios>
+	<p05100307bf224c461a2d@[10.225.149.35]>
+Message-ID: <20050812132723.GI18100@xios>
+
++++ Martin Sluka [05-08-12 14:54 +0200]:
+> At 12:22 +0100 12.8.2005, Wookey wrote:
+> *******************************************
+> 
+> >However this doesn't seem to work for thconfig files
+> 
+> After you press F9, therion saves all files you have open in xtherion first.
+
+It used to do that. But for .th and .th2 files it now checks if there is a
+modified version on disk. (I think). I was suggesting that this should be
+true for thconfig files too.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Fri Aug 12 16:31:23 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 12 Aug 2005 15:31:23 +0100
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050812130028.GH18100@xios>
+References: <20050809170146.GG20544@xios>
+	<20050810082916.M42308@speleo.sk>	<20050811010429.GB11993@xios>	<p05100300bf2090ed8b03@[10.225.149.35]>
+	<20050812130028.GH18100@xios>
+Message-ID: <42FCB2BB.4090705@aleph1.co.uk>
+
+Wookey wrote:
+> +++ Martin Sluka [05-08-11 07:49 +0200]:
+> 
+>>At 02:04 +0100 11.8.2005, Wookey wrote:
+
+> Right - thanx. The bit of this that seems rather naff is having to comment
+> and uncomment different map outputs. It ought to be possible to produce more
+> than one 'section set' at a time from a given dataset in the same projection.
+
+That should be 'selection set' - i.e. arrangements of possible map
+selections. (bit confusing as I wrote it)
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From martinsluka at mac.com  Fri Aug 12 16:51:03 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 12 Aug 2005 16:51:03 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050812130028.GH18100@xios>
+References: <20050809170146.GG20544@xios>
+	<20050810082916.M42308@speleo.sk> <20050811010429.GB11993@xios>
+	<p05100300bf2090ed8b03@[10.225.149.35]> <20050812130028.GH18100@xios>
+Message-ID: <p05100308bf2265bf179c@[10.225.149.35]>
+
+At 14:00 +0100 12.8.2005, Wookey wrote:
+*******************************************
+
+>So it is - I have never taken any notice of this bit.
+
+wiki - I had add it there.
+
+>I will try Stacho's suggestion of chained thconfig files, or maybe a script
+>which runs therion on a series of thconfig files.
+
+It's my  "the poor man way". But you may create many cave_X_thconfig 
+or thconfig_caveX_midifcationY files and run them directly from 
+therion, I'm sure. The string thcongig is important for xtherion to 
+recognize the configuration files, but the rest of name is only on 
+your choice.
+
+Martin
+-- 
+
+
+
+From martinsluka at mac.com  Fri Aug 12 17:29:28 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 12 Aug 2005 17:29:28 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <42FCB2BB.4090705@aleph1.co.uk>
+References: <20050809170146.GG20544@xios>
+	<20050810082916.M42308@speleo.sk> <20050811010429.GB11993@xios>
+	<p05100300bf2090ed8b03@[10.225.149.35]> <20050812130028.GH18100@xios>
+	<42FCB2BB.4090705@aleph1.co.uk>
+Message-ID: <p05100302bf2270b409d2@[10.225.149.35]>
+
+therion / wiki / FAQ / How to arange maps?
+
+ms.
+-- 
+
+
+
+From s.m at speleo.sk  Fri Aug 12 13:54:20 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 12 Aug 2005 13:54:20 +0200
+Subject: changed thconfig files not noticed
+In-Reply-To: <20050812112254.GG18100@xios>
+References: <20050812112254.GG18100@xios>
+Message-ID: <42FC8DEC.4050704@speleo.sk>
+
+Yes, it should be done this way. Thanks for pointing out - I will put it 
+in the todo list.
+
+S.
+
+Wookey wrote:
+> Therion now notices if you have edited a file externmally and asks what do
+> about it. However this doesn't seem to work for thconfig files. If I have an
+> xtherion open (and have processed data so it has a thconfig file
+> open/referenced) then if I edit a thconfig file externally, then hit F9
+> again to reprocess - the thconfig in xtherion overwrites the modified
+> thconfig on disk. It would be nice if xtherion noticed the changed thconfig
+> file and used that, or at least asked before overwriting the modified one.
+> 
+> (this is with 0.3.8)
+> 
+> Wookey
+
+
+
+
+
+From s.m at speleo.sk  Sat Aug 13 09:51:13 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Sat, 13 Aug 2005 09:51:13 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050812130028.GH18100@xios>
+References: <20050809170146.GG20544@xios> <20050810082916.M42308@speleo.sk>
+	<20050811010429.GB11993@xios> <p05100300bf2090ed8b03@[10.225.149.35]>
+	<20050812130028.GH18100@xios>
+Message-ID: <42FDA671.6050105@speleo.sk>
+
+Wookey wrote:
+> OK, so what is the symbol name for 'scrapnames' This is not something that
+> is normally shown?
+
+Well, it is not possible to show the name of the scraps yet. But I will 
+put this into TODO list. Probably
+
+debug scrap-names
+
+would be better.
+
+> I will try Stacho's suggestion of chained thconfig files, or maybe a script
+> which runs therion on a series of thconfig files. 
+
+May be writing a simple Makefile for such a complicated projects is 
+another standard solution.
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Sat Aug 13 09:55:38 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Sat, 13 Aug 2005 09:55:38 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <42FCB2BB.4090705@aleph1.co.uk>
+References: <20050809170146.GG20544@xios> <20050810082916.M42308@speleo.sk>
+	<20050811010429.GB11993@xios> <p05100300bf2090ed8b03@[10.225.149.35]>
+	<20050812130028.GH18100@xios> <42FCB2BB.4090705@aleph1.co.uk>
+Message-ID: <42FDA77A.3050702@speleo.sk>
+
+Wookey wrote:
+> That should be 'selection set' - i.e. arrangements of possible map
+> selections. (bit confusing as I wrote it)
+
+Yes, understood - but I am not sure whether it is possible. One 
+selection set per thconfig file is an assumption used quite deep in the 
+code. It would be probably difficult to implement it.
+
+But it would be nice, if it would be possible, so I will put this into 
+"Would be nice" list.
+
+S.
+
+
+
+
+From wolfgang.zillig at web.de  Sun Aug 14 20:31:30 2005
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sun, 14 Aug 2005 20:31:30 +0200
+Subject: questions on therion
+Message-ID: <42FF8E02.1050509@web.de>
+
+Hello,
+
+I'm not really using therion yet (there were always other people who 
+draw the caves ;-) but that will change propably.
+
+
+a) I try to get an overlay of the centreline on a scanned topographical 
+map but I always get an error ( test.th [47] -- number expected -- end) 
+but I don't know where to insert more numbers
+examplecode:
+    surface
+    bitmap ur.png  [1  11  211065.0  2139614.0  6310  4474  237623.0  
+2158455.0 meters]
+    grid-units meters
+    grid 211000.0 2139000.0 20000.0 15000.0 2 2
+    10.0 10.0 10.0 10.0
+    end surface
+
+b) at loops: is the standard error for the measurement devices included 
+when the loops are closed? IE when more than one GPS measurements (with 
+high errors are used to fix the cave)?
+
+Thanks for any help
+
+Wolfgang
+
+
+
+From m.b at speleo.sk  Mon Aug 15 08:22:46 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 15 Aug 2005 08:22:46 +0200
+Subject: questions on therion
+In-Reply-To: <42FF8E02.1050509@web.de>
+References: <42FF8E02.1050509@web.de>
+Message-ID: <20050815061738.M59138@speleo.sk>
+
+> a) I try to get an overlay of the centreline on a scanned 
+> topographical map but I always get an error ( test.th [47] -- number 
+> expected -- end) but I don't know where to insert more numbers examplecode:
+>     surface
+>     bitmap ur.png  [1  11  211065.0  2139614.0  6310  4474  237623.0 
+>  2158455.0 meters]    grid-units meters    grid 211000.0 2139000.0 
+> 20000.0 15000.0 2 2
+>     10.0 10.0 10.0 10.0    end surface
+
+'end surface' should be written without space; the 'end' hadn't been 
+recognized as a keyword and therion expected another row of numbers.
+
+If you want only to display scanned map, grid-units and grid commands are not 
+necessary -- they are only used in 3d model. 
+
+> b) at loops: is the standard error for the measurement devices 
+> included when the loops are closed? IE when more than one GPS 
+> measurements (with high errors are used to fix the cave)?
+
+Yes.
+
+Martin
+
+
+
+
+From wolfgang.zillig at web.de  Mon Aug 15 09:46:26 2005
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 15 Aug 2005 09:46:26 +0200
+Subject: questions on therion
+In-Reply-To: <20050815061738.M59138@speleo.sk>
+References: <42FF8E02.1050509@web.de> <20050815061738.M59138@speleo.sk>
+Message-ID: <43004852.9070401@web.de>
+
+Martin Budaj schrieb:
+
+>>a) I try to get an overlay of the centreline on a scanned 
+>>topographical map but I always get an error ( test.th [47] -- number 
+>>expected -- end) but I don't know where to insert more numbers examplecode:
+>>    surface
+>>    bitmap ur.png  [1  11  211065.0  2139614.0  6310  4474  237623.0 
+>> 2158455.0 meters]    grid-units meters    grid 211000.0 2139000.0 
+>>20000.0 15000.0 2 2
+>>    10.0 10.0 10.0 10.0    end surface
+>>    
+>>
+>
+>'end surface' should be written without space; the 'end' hadn't been 
+>recognized as a keyword and therion expected another row of numbers.
+>
+>  
+>
+If you want only to display scanned map, grid-units and grid commands 
+are not
+
+>necessary -- they are only used in 3d model. 
+>
+>  
+>
+
+ok, small typo.
+When I delete grid-units and grid command therion complains about 
+missing grid (I produce only 2d map at the moment)! So I think I have to 
+use them.
+
+But now an other error occurs (dimension too large). I think it is from 
+pdftex. I have a scan from a topographical map and specified the 
+koordinates with UTM.
+
+Thanks
+
+Wolfgang
+
+here the output:
+This is pdfeTeX, Version 3.141592-1.11a-2.1 (Web2c 7.5.2)
+entering extended mode
+(./data.tex{c:/Program Files/Therion/texmf/tex/pdftex.cfg} (./th_enc.tex)
+(./th_texts.tex) (./th_resources.tex) (./th_fontdef.tex{c:/Program 
+Files/Therio
+n/texmf/dvips/config/pdftex.map})
+(./th_formdef.tex) (./th_pagedef.tex D:/temp/therion_tham_nam_eng/ur.png
+
+! Dimension too large.
+<to be read again>
+                   \advance
+\bitmapcorr #1#2#3#4#5#6#7->\xcorr =#5bp\advance
+                                                 \xcorr by\extraW 
+\advance \...
+l.46 ...59}{-55447.570688}{-35658.111806}{\THBMPa}
+                                                  %
+! Dimension too large.
+<to be read again>
+                   \advance
+\bitmapcorr ...rr by\overlap \ycorr =#6bp\advance
+                                                  \ycorr by\extraS 
+\advance ...
+l.46 ...59}{-55447.570688}{-35658.111806}{\THBMPa}
+                                                  %
+
+
+
+From s.m at speleo.sk  Tue Aug 16 09:12:29 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 16 Aug 2005 09:12:29 +0200
+Subject: Wishlist - scrap preview, low-res preview
+In-Reply-To: <20050812130028.GH18100@xios>
+References: <20050809170146.GG20544@xios> <20050810082916.M42308@speleo.sk>
+	<20050811010429.GB11993@xios> <p05100300bf2090ed8b03@[10.225.149.35]>
+	<20050812130028.GH18100@xios>
+Message-ID: <430191DD.6060508@speleo.sk>
+
+Wookey wrote:
+> OK, so what is the symbol name for 'scrapnames' This is not something that
+> is normally shown?
+
+In the latest developement snapshot - you should be able to show scrap 
+names in the map. Just type
+
+debug scrap-names
+
+into layout.
+
+Hope it helps, S.
+
+
+
+From s.m at speleo.sk  Tue Aug 16 09:23:29 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 16 Aug 2005 09:23:29 +0200
+Subject: questions on therion
+In-Reply-To: <43004852.9070401@web.de>
+References: <42FF8E02.1050509@web.de> <20050815061738.M59138@speleo.sk>
+	<43004852.9070401@web.de>
+Message-ID: <43019471.8030802@speleo.sk>
+
+Wolfgang Zillig wrote:
+> ok, small typo.
+> When I delete grid-units and grid command therion complains about 
+> missing grid (I produce only 2d map at the moment)! So I think I have to 
+> use them.
+
+This is strange, I have just tested following lines:
+
+surface
+   bitmap map.png [1335 816 400419.2 5421275.2 1781 257 401357.1 
+5420034.05]
+endsurface
+
+and there was no complain. It worked without problems. What version of 
+therion and OS do you use?
+
+> But now an other error occurs (dimension too large). I think it is from 
+> pdftex. I have a scan from a topographical map and specified the 
+> koordinates with UTM.
+
+This may happen - it is already in TODO to generate some more user 
+friendly warnings.
+
+Therion by default generate map in 1:200 scale (for caves), which is in 
+your case (map at 20x30km a PDF with dimensions 100x150 m. Try using
+
+-layout-scale 1 20000
+
+or some even smaller scale.
+
+Regards, S.
+
+
+
+From m.b at speleo.sk  Tue Aug 16 09:26:34 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 16 Aug 2005 09:26:34 +0200
+Subject: questions on therion
+In-Reply-To: <43019471.8030802@speleo.sk>
+References: <42FF8E02.1050509@web.de> <20050815061738.M59138@speleo.sk>
+	<43004852.9070401@web.de> <43019471.8030802@speleo.sk>
+Message-ID: <20050816072453.M78531@speleo.sk>
+
+On Tue, 16 Aug 2005 09:23:29 +0200, Stacho Mudrak wrote
+> Wolfgang Zillig wrote:
+> > But now an other error occurs (dimension too large). I think it is from 
+> > pdftex. I have a scan from a topographical map and specified the 
+> > koordinates with UTM.
+> 
+> This may happen - it is already in TODO to generate some more user 
+> friendly warnings.
+> 
+> Therion by default generate map in 1:200 scale (for caves), which is 
+> in your case (map at 20x30km a PDF with dimensions 100x150 m. Try using
+> 
+> -layout-scale 1 20000
+> 
+> or some even smaller scale.
+
+Or use SVG output instead of PDF -- there is no arbitrary limit on page size.
+
+Martin
+
+
+
+
+From wolfgang.zillig at web.de  Tue Aug 16 10:00:26 2005
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Tue, 16 Aug 2005 10:00:26 +0200
+Subject: questions on therion
+In-Reply-To: <43019471.8030802@speleo.sk>
+References: <42FF8E02.1050509@web.de>
+	<20050815061738.M59138@speleo.sk>	<43004852.9070401@web.de>
+	<43019471.8030802@speleo.sk>
+Message-ID: <43019D1A.5080107@web.de>
+
+Thanks a lot!
+
+That was it! I'm quite new to therion but the reason is quite obvious. 
+But there is another problem with symbol scaling (station marks)
+
+
+>
+> This is strange, I have just tested following lines:
+>
+> surface
+>   bitmap map.png [1335 816 400419.2 5421275.2 1781 257 401357.1 
+> 5420034.05]
+> endsurface
+>
+> and there was no complain. It worked without problems. What version of 
+> therion and OS do you use?
+>
+Hm, I tested it again today and it works now even without grid. Strange, 
+I don't know what I did yesterday. It also seems that Therion crops the 
+image to the layout size. Is there a way to get the whole image with the 
+centrelines (or outlines,..) but with no additional north arrow or other 
+layout stuff?
+
+>> But now an other error occurs (dimension too large). I think it is 
+>> from pdftex. I have a scan from a topographical map and specified the 
+>> koordinates with UTM.
+>
+>
+> This may happen - it is already in TODO to generate some more user 
+> friendly warnings.
+>
+> Therion by default generate map in 1:200 scale (for caves), which is 
+> in your case (map at 20x30km a PDF with dimensions 100x150 m. Try using
+>
+> -layout-scale 1 20000
+>
+> or some even smaller scale.
+
+This works but it changes the symbol sizes of the stations also. I've 
+added two pdfs which show the different scales. I only have the 
+centreline data (and stationmarks) visible with some metapost code. The 
+best would be to swich station marks off. Here the  layout part of my 
+config:
+
+layout test
+ #scale 1 20000
+  scale 1 1000
+     surface bottom
+ 
+  code metapost
+  def l_survey_cave (expr p) = draw p withpen PenD withcolor (0.1,0.3,0.1);
+  enddef;
+endlayout
+
+Thanks
+
+Wolfgang
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: map20000.pdf
+Type: application/pdf
+Size: 53799 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20050816/2cf51bda/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: map1000.pdf
+Type: application/pdf
+Size: 58010 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20050816/2cf51bda/attachment-0001.pdf>
+-------------- next part --------------
+
+
+From m.b at speleo.sk  Tue Aug 16 10:16:15 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 16 Aug 2005 10:16:15 +0200
+Subject: questions on therion
+In-Reply-To: <43019D1A.5080107@web.de>
+References: <42FF8E02.1050509@web.de>
+	<20050815061738.M59138@speleo.sk>	<43004852.9070401@web.de>
+	<43019471.8030802@speleo.sk> <43019D1A.5080107@web.de>
+Message-ID: <20050816080701.M93194@speleo.sk>
+
+On Tue, 16 Aug 2005 10:00:26 +0200, Wolfgang Zillig wrote
+
+> Hm, I tested it again today and it works now even without grid. 
+> Strange, I don't know what I did yesterday. It also seems that 
+> Therion crops the image to the layout size. Is there a way to get 
+> the whole image with the centrelines (or outlines,..) but with no 
+> additional north arrow or other layout stuff?
+
+It crops the image to the area of map + header + border around them. You may 
+increase the border by setting 'overlap' in the layout.
+
+You may hide header (north arrow etc.) using 'map-header 100 100 off' option 
+in layout.
+
+> This works but it changes the symbol sizes of the stations also. 
+> I've added two pdfs which show the different scales. I only have the 
+> centreline data (and stationmarks) visible with some metapost code. 
+> The best would be to swich station marks off. Here the  layout part 
+> of my config:
+> 
+> layout test
+>  #scale 1 20000
+>   scale 1 1000
+>      surface bottom
+> 
+>   code metapost
+>   def l_survey_cave (expr p) = draw p withpen PenD withcolor (0.1,
+> 0.3,0.1);  enddef; endlayout
+
+You may switch station marks off using 'symbol-hide point station' in layout 
+without the need of metapost redefinitions.
+
+If you want to display cave in the scale 1:1000 with the topographical map as 
+a background, try cropping the bitmap to an area slightly larger than the 
+cave; or use SVG. 
+
+Martin
+
+
+
+
+From wolfgang.zillig at web.de  Tue Aug 16 10:23:46 2005
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Tue, 16 Aug 2005 10:23:46 +0200
+Subject: questions on therion
+In-Reply-To: <20050816080701.M93194@speleo.sk>
+References: <42FF8E02.1050509@web.de>	<20050815061738.M59138@speleo.sk>	<43004852.9070401@web.de>	<43019471.8030802@speleo.sk>
+	<43019D1A.5080107@web.de> <20050816080701.M93194@speleo.sk>
+Message-ID: <4301A292.7020306@web.de>
+
+Thanks a lot for your help!
+
+I will also test svg but I first have to chack what software is able to 
+view that files on Win.
+
+Wolfgang
+
+Martin Budaj schrieb:
+
+>On Tue, 16 Aug 2005 10:00:26 +0200, Wolfgang Zillig wrote
+>
+>  
+>
+>>Hm, I tested it again today and it works now even without grid. 
+>>Strange, I don't know what I did yesterday. It also seems that 
+>>Therion crops the image to the layout size. Is there a way to get 
+>>the whole image with the centrelines (or outlines,..) but with no 
+>>additional north arrow or other layout stuff?
+>>    
+>>
+>
+>It crops the image to the area of map + header + border around them. You may 
+>increase the border by setting 'overlap' in the layout.
+>
+>You may hide header (north arrow etc.) using 'map-header 100 100 off' option 
+>in layout.
+>
+>  
+>
+>>This works but it changes the symbol sizes of the stations also. 
+>>I've added two pdfs which show the different scales. I only have the 
+>>centreline data (and stationmarks) visible with some metapost code. 
+>>The best would be to swich station marks off. Here the  layout part 
+>>of my config:
+>>
+>>layout test
+>> #scale 1 20000
+>>  scale 1 1000
+>>     surface bottom
+>>
+>>  code metapost
+>>  def l_survey_cave (expr p) = draw p withpen PenD withcolor (0.1,
+>>0.3,0.1);  enddef; endlayout
+>>    
+>>
+>
+>You may switch station marks off using 'symbol-hide point station' in layout 
+>without the need of metapost redefinitions.
+>
+>If you want to display cave in the scale 1:1000 with the topographical map as 
+>a background, try cropping the bitmap to an area slightly larger than the 
+>cave; or use SVG. 
+>
+>Martin
+>
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>http://www.speleo.cz/mailman/listinfo/therion
+>  
+>
+
+
+
+
+From olly at survex.com  Tue Aug 16 18:43:12 2005
+From: olly at survex.com (Olly Betts)
+Date: Tue, 16 Aug 2005 17:43:12 +0100
+Subject: [Therion] Wishlist - scrap preview, low-res preview
+In-Reply-To: <42FA1089.1000800@aleph1.co.uk>
+References: <20050809170146.GG20544@xios> <42F9F640.8090500@speleo.sk>
+	<42FA1089.1000800@aleph1.co.uk>
+Message-ID: <20050816164312.GA6386@survex.com>
+
+On Wed, Aug 10, 2005 at 03:34:49PM +0100, Wookey wrote:
+> Stacho Mudrak wrote:
+> > I am just missing reload button in aven/xcaverot, but this I should
+> > write to survex mailing list.
+> 
+> Yes, I have wanted that many times too.
+
+Me too!
+
+This should appear soon.  For now, "Alt-F" and then press "1" sort of
+does the job, except it resets the view.
+
+Cheers,
+    Olly
+
+
+
+From olly at survex.com  Tue Aug 16 20:09:02 2005
+From: olly at survex.com (Olly Betts)
+Date: Tue, 16 Aug 2005 19:09:02 +0100
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <42FA0E77.20902@aleph1.co.uk>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<42FA0E77.20902@aleph1.co.uk>
+Message-ID: <20050816180902.GD14551@survex.com>
+
+On Wed, Aug 10, 2005 at 03:25:59PM +0100, Wookey wrote:
+> Jenny Black has also done a very nice Therion map of EisluftHoehle in
+> Austria. Hers is actually finished (the plan at least, and of course now
+> they have found some more).
+
+Here's the plan from after the 2004 expedition:
+
+http://cucc.survex.com/expo/plateau/76/76_final_col_small.png
+
+(It's a fairly big image so you may need to click on it to see it full
+size if your browser resizes large images to fit the window.)
+
+Cheers,
+    Olly
+
+
+
+From martinsluka at mac.com  Wed Aug 17 09:09:47 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 17 Aug 2005 09:09:47 +0200
+Subject: [Therion] Feedback on 0.3.8 - queries
+In-Reply-To: <20050816180902.GD14551@survex.com>
+References: <20050809164707.GF20544@xios> <42F9F355.4010701@speleo.sk>
+	<42FA0E77.20902@aleph1.co.uk> <20050816180902.GD14551@survex.com>
+Message-ID: <p05100300bf28931f41e8@[10.225.149.35]>
+
+At 19:09 +0100 16.8.2005, Olly Betts wrote:
+*******************************************
+
+>Here's the plan from after the 2004 expedition:
+
+Great work!
+
+Martin
+-- 
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 18 01:10:01 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 18 Aug 2005 00:10:01 +0100
+Subject: Scale and Base-scale and font sizes
+Message-ID: <20050817231001.GA7882@xios>
+
+I used to have 
+ scale 1 2000
+ base-scale 1 1000
+
+in my layout. That worked OK, but the symbols were very small and the text
+was microscopic.
+
+So I added 
+ code metapost
+ fonts_setup(10,16,20,24,28)
+
+And that made the text a sensible size.
+
+I just changed base scale to read
+base-scale 1 2000
+
+which makes the symbols a much more sensible size, but makes the text too big.
+
+My understanding of these two values is that scale sets the scale of the
+output (i.e how big the final PDF sheet is in map mode, or how many sheets
+in atlas mode) , whilst base-scale 'has the same effect as if the map
+printed in base-scale would be photreduced to the scale' (quote from thbook)
+
+But if it was photoreduced then the fonts and symbol size shouldn't change.
+So I am confused about how this should work. When would I ever want scale
+and base-scale to be different? Why does changing base-scale effect the size
+of symbols and text?
+
+On a related point I tried doing an atlas version with the defaults (i.e.
+1:200) and get loads of 'number too big errors' from metafont.
+
+I can see why such a scale is a problem in map mode (page larger than PDF
+can manage), but in atlas mode the page size is limited to A4 (or whatever)
+- so why can I not print an atlas (with a lot of sheets) showing the system in
+high detail? Is it a fundamental problem of the way the PDFs are generated
+or can it be fixed?
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 18 01:36:39 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 18 Aug 2005 00:36:39 +0100
+Subject: Problems with areas
+Message-ID: <20050817233639.GC7882@xios>
+
+The area control is better than it used to be, but is still a major pain in
+the arse.
+
+I have put very few areas in the Terikan survey because I know they cause
+trouble. I've just tried putting some in and it was a rather frustrating
+experience. I'll detail the problems I had so we can decide how to make
+things more user-friendly.
+
+First one question - what to do about areas which join across scraps?
+
+Obviously we try to avoid areas which cross scrap joins but cannot always do
+so. Other considerations like altitude colouring make it difficult, and in a
+cave which has a lot of mud or water we could find that most scrap joins
+have areas crossing them.
+
+Currently if an area crosses a scrap join we just put an area either side -
+one in each scrap. This needs a 'border -subtype invisible' line across the
+passage at the join on _both_ scraps - these lines are directly on top of
+each other. The problem here is that you can't click on the line which is
+'below' so you can't complete one of the areas without first moving the top
+line to the side temporarily. This is clearly not satisfactory. Is there a
+better way? If not then selecting the new scrap should move the border line
+to the 'top' for the purpose of clicking.
+
+There is also a big problem with line id's disappearing. I find I sometimes
+need to split a line (e.g. a very long wall, or a wall passing behind a feature
+that I want to include in the area boundary (e.g. a mudbank) (if the wall
+has the same id either side of the mudbank then the mudbank tends to get
+ignored when setting the area outline). The problem is that if a line has
+been used in another area anywhere, then splitting it loses the id and
+breaks the area.
+
+When this happens I get an error saying 'id does not exist at line nnnn',
+but I can see no way to find the offending area in the map editor. I have to
+find it in the text editor, then try to work out where it is in the map
+editor, and having both open at once leads to the usual problem of which
+changes end up getting saved last.
+
+Ultimately, so far as the user is concerned id's that have been used
+shouldn't  'disappear' unless the line is deleted. Obviously there is a
+problem of knowing which id to use when a line is split but xtherion could
+probably make a good guess...
+
+One other comment - the 'show area' button is useful but it only seems to
+show 'border' lines, not walls or contours, so it's difficult to know whether
+an area is broken or not.
+
+Bit of a whinge that, sorry - I've just had a rather frustrating hour.
+Thought it was best to record the problems before I forget.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From m.b at speleo.sk  Thu Aug 18 08:38:11 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Thu, 18 Aug 2005 08:38:11 +0200
+Subject: Problems with areas
+In-Reply-To: <20050817233639.GC7882@xios>
+References: <20050817233639.GC7882@xios>
+Message-ID: <20050818062946.M64050@speleo.sk>
+
+On Thu, 18 Aug 2005 00:36:39 +0100, Wookey wrote
+> Obviously we try to avoid areas which cross scrap joins but cannot 
+> always do so. Other considerations like altitude colouring make it 
+> difficult, and in a cave which has a lot of mud or water we could 
+> find that most scrap joins have areas crossing them.
+
+We try also to reduce the usage of areas to minimum -- water/sump only. For 
+debris/sand and similar it seems that it's enough to use a few point symbols 
+of an appropriate type. The map is than much more clear.
+ 
+> Currently if an area crosses a scrap join we just put an area either 
+> side - one in each scrap. This needs a 'border -subtype invisible' 
+> line across the passage at the join on _both_ scraps - these lines 
+> are directly on top of each other. The problem here is that you 
+> can't click on the line which is 'below' so you can't complete one 
+> of the areas without first moving the top line to the side 
+> temporarily. This is clearly not satisfactory. Is there a better 
+> way? If not then selecting the new scrap should move the border line 
+> to the 'top' for the purpose of clicking.
+
+Did you try right-click on the line point? Each rightclick changes the line 
+used for editing if there are more of them on top of each other.
+
+> There is also a big problem with line id's disappearing. I find I sometimes
+> need to split a line (e.g. a very long wall, or a wall passing 
+> behind a feature that I want to include in the area boundary (e.g. a 
+> mudbank) (if the wall has the same id either side of the mudbank 
+> then the mudbank tends to get ignored when setting the area outline)
+> . The problem is that if a line has been used in another area 
+> anywhere, then splitting it loses the id and breaks the area.
+
+I think the best solution would be if therion displayed a warning that the 
+line being splitted contained ID. User would have possibility to copy it and 
+assign to whichever line he liked. Therion wouldn't have to do any guesses, 
+which could lead to other obscure errors...
+
+Cheers,
+Martin
+
+
+
+
+From olly at survex.com  Thu Aug 18 11:13:17 2005
+From: olly at survex.com (Olly Betts)
+Date: Thu, 18 Aug 2005 10:13:17 +0100
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050817231001.GA7882@xios>
+References: <20050817231001.GA7882@xios>
+Message-ID: <20050818091317.GF9292@survex.com>
+
+On Thu, Aug 18, 2005 at 12:10:01AM +0100, Wookey wrote:
+> But if it was photoreduced then the fonts and symbol size shouldn't change.
+
+If you printed the survey at 1:1000 and photoreduced it to 1:2000, the
+symbols and text would be halved in size by the photoreduction.  Just
+printing at 1:2000 will give symbols and text twice as large as this, so
+changing base-scale from 1:1000 to 1:2000 should double the symbol and
+text sizes.  And it sounds like it does for you...
+
+Cheers,
+    Olly
+
+
+
+From m.b at speleo.sk  Thu Aug 18 11:23:50 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Thu, 18 Aug 2005 11:23:50 +0200
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050817231001.GA7882@xios>
+References: <20050817231001.GA7882@xios>
+Message-ID: <20050818090711.M82433@speleo.sk>
+
+On Thu, 18 Aug 2005 00:10:01 +0100, Wookey wrote
+> I used to have 
+>  scale 1 2000
+>  base-scale 1 1000
+> 
+> in my layout. That worked OK, but the symbols were very small and 
+> the text was microscopic.
+
+They were printed in 1/2 size because of base-scale setting.
+ 
+> So I added 
+>  code metapost
+>  fonts_setup(10,16,20,24,28)
+> 
+> And that made the text a sensible size.
+> 
+> I just changed base scale to read
+> base-scale 1 2000
+> 
+> which makes the symbols a much more sensible size, but makes the 
+> text too big.
+
+If the base-scale is equal the scale, it has no effect (such as 1:1 photocopy)
+. The text was large because of your fonts_setup setting.
+ 
+> My understanding of these two values is that scale sets the scale of 
+> the output (i.e how big the final PDF sheet is in map mode, or how 
+> many sheets in atlas mode) , whilst base-scale 'has the same effect 
+> as if the map printed in base-scale would be photreduced to the 
+> scale' (quote from thbook)
+
+You may forget the base-scale if the default settings work well. We introduced 
+the base-scale to make it possible to do simple adjustments to the size of 
+symbols used without the need of metapost programming (e.g. when symbols 
+appear too big in the 1:400 scale, but OK in 1:200 scale, it's enough to set 
+base-scale 1 200 and scale 1 400 and I get map in 1:400 scale with symbols 
+proportionally as large as on 1:200 map)
+
+> But if it was photoreduced then the fonts and symbol size shouldn't change.
+
+I think photocopy 1:2 changes everything to be 1/2 smaller
+
+> So I am confused about how this should work. When would I ever want scale
+> and base-scale to be different? Why does changing base-scale effect 
+> the size of symbols and text?
+
+See above. If therion gives you suitable symbol sizes, use only scale setting. 
+If not, experiment with base-scale or redefine metapost.
+
+> On a related point I tried doing an atlas version with the defaults (i.e.
+> 1:200) and get loads of 'number too big errors' from metafont.
+>
+> I can see why such a scale is a problem in map mode (page larger 
+> than PDF can manage), but in atlas mode the page size is limited to 
+> A4 (or whatever) - so why can I not print an atlas (with a lot of 
+> sheets) showing the system in high detail? Is it a fundamental 
+> problem of the way the PDFs are generated or can it be fixed?
+
+An additional limitation is the size of a picture, which can metapost process 
+-- it's about 2.8 m. Each scrap is processed separately in one picture, so it 
+means, that each scrap must be smaller than 2.8 * 2.8 m _in the output scale_. 
+I don't think it's a big issue unless you try to draw the whole cave in one 
+scrap. (At 1:100 scale a scrap can contain 280*280 m section of the cave). 
+
+Atlas size (and SVG map size) is unlimited.
+
+Martin
+
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 18 12:26:26 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 18 Aug 2005 11:26:26 +0100
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050818090711.M82433@speleo.sk>
+References: <20050817231001.GA7882@xios> <20050818090711.M82433@speleo.sk>
+Message-ID: <20050818102626.GA31729@xios>
+
++++ Martin Budaj [05-08-18 11:23 +0200]:
+> On Thu, 18 Aug 2005 00:10:01 +0100, Wookey wrote
+> > I can see why such a scale is a problem in map mode (page larger 
+> > than PDF can manage), but in atlas mode the page size is limited to 
+> > A4 (or whatever) - so why can I not print an atlas (with a lot of 
+> > sheets) showing the system in high detail? Is it a fundamental 
+> > problem of the way the PDFs are generated or can it be fixed?
+> 
+> An additional limitation is the size of a picture, which can metapost process 
+> -- it's about 2.8 m. Each scrap is processed separately in one picture, so it 
+> means, that each scrap must be smaller than 2.8 * 2.8 m _in the output scale_. 
+> I don't think it's a big issue unless you try to draw the whole cave in one 
+> scrap. (At 1:100 scale a scrap can contain 280*280 m section of the cave). 
+
+Hmm, so as it goes wrong with the default (scale 1:200) that suggets I have
+one scrap which is >560m long. I don't think I do have anything that big (I
+try to keep scraps to <200m). 
+
+If anyone cares to investigate this then the benarat dataset illustrates the
+problem. 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 18 12:27:56 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 18 Aug 2005 11:27:56 +0100
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050818091317.GF9292@survex.com>
+References: <20050817231001.GA7882@xios> <20050818091317.GF9292@survex.com>
+Message-ID: <20050818102756.GB31729@xios>
+
++++ Olly Betts [05-08-18 10:13 +0100]:
+> On Thu, Aug 18, 2005 at 12:10:01AM +0100, Wookey wrote:
+> > But if it was photoreduced then the fonts and symbol size shouldn't change.
+> 
+> If you printed the survey at 1:1000 and photoreduced it to 1:2000, the
+> symbols and text would be halved in size by the photoreduction.  Just
+> printing at 1:2000 will give symbols and text twice as large as this, so
+> changing base-scale from 1:1000 to 1:2000 should double the symbol and
+> text sizes.  And it sounds like it does for you...
+
+That makes sense. Quite why I couldn't manage that logic last night I don't
+know. Putting that para in the thbook might allow confused people like
+myself to get their heads round it (as clearly the current text didn't quite
+do it for me).
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From s.m at speleo.sk  Thu Aug 18 12:59:46 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 18 Aug 2005 12:59:46 +0200
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050818102626.GA31729@xios>
+References: <20050817231001.GA7882@xios> <20050818090711.M82433@speleo.sk>
+	<20050818102626.GA31729@xios>
+Message-ID: <43046A22.20507@speleo.sk>
+
+Wookey wrote:
+> If anyone cares to investigate this then the benarat dataset illustrates the
+> problem. 
+
+This stuff is already in the TODO list (at least displaying some 
+reasonable errors by therion). I will look at it next week, I'm leaving 
+right now to do a bit of real caving.
+
+S.
+
+
+
+From m.b at speleo.sk  Thu Aug 18 13:33:46 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Thu, 18 Aug 2005 13:33:46 +0200
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050818102626.GA31729@xios>
+References: <20050817231001.GA7882@xios> <20050818090711.M82433@speleo.sk>
+	<20050818102626.GA31729@xios>
+Message-ID: <20050818111823.M37400@speleo.sk>
+
+On Thu, 18 Aug 2005 11:26:26 +0100, Wookey wrote
+
+> Hmm, so as it goes wrong with the default (scale 1:200) that suggets 
+> I have one scrap which is >560m long. I don't think I do have 
+> anything that big (I try to keep scraps to <200m).
+> 
+> If anyone cares to investigate this then the benarat dataset 
+> illustrates the problem.
+
+It's the scrap faketerikan_s15, which contains two survey stations (used for 
+calibration?) really far from the passage.
+
+---
+
+How to find where the problem is:
+* therion log window displays metapost's progress, it displays [33] just 
+before the error; that means that picture number 33 has been sucessfuly 
+processed and the error is in the next one
+* run therion in the -d (debug) mode
+* go to thTMPDIR
+* open the file data.mp and find picture 34 (it starts "beginfig(34);" ;-)
+* find the "current_scrap" assignment preceding the picture
+* it's "faketerikan_s15 at terikan.dummy"
+
+It's really not straightforward but it's hard to make a better link between 
+metapost and therion when an error occurs. In this particular case it's enough 
+for therion to check the size of scraps and give a reasonable error message -- 
+hopefully Stacho will do it.
+
+Martin
+
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 18 16:26:18 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 18 Aug 2005 15:26:18 +0100
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <20050818111823.M37400@speleo.sk>
+References: <20050817231001.GA7882@xios>
+	<20050818090711.M82433@speleo.sk>	<20050818102626.GA31729@xios>
+	<20050818111823.M37400@speleo.sk>
+Message-ID: <43049A8A.6090204@aleph1.co.uk>
+
+Martin Budaj wrote:
+> On Thu, 18 Aug 2005 11:26:26 +0100, Wookey wrote
+> 
+> 
+>>Hmm, so as it goes wrong with the default (scale 1:200) that suggets 
+>>I have one scrap which is >560m long. I don't think I do have 
+>>anything that big (I try to keep scraps to <200m).
+>>
+>>If anyone cares to investigate this then the benarat dataset 
+>>illustrates the problem.
+> 
+> 
+> It's the scrap faketerikan_s15, which contains two survey stations (used for 
+> calibration?) really far from the passage.
+
+Ah yes. All those faketerikan scraps use the same two (fake) stations -
+which are just two random well-spaced stations in the fake survey we
+generated from the original drawing.
+
+This scheme worked a lot better than using fake stations with each scrap
+(as used on the fakebluemoon survey) - that led to a lot of distortions in
+scraps where there should have been none.
+
+> ---
+> 
+> How to find where the problem is:
+> * therion log window displays metapost's progress, it displays [33] just 
+> before the error; that means that picture number 33 has been sucessfuly 
+> processed and the error is in the next one
+> * run therion in the -d (debug) mode
+> * go to thTMPDIR
+> * open the file data.mp and find picture 34 (it starts "beginfig(34);" ;-)
+> * find the "current_scrap" assignment preceding the picture
+> * it's "faketerikan_s15 at terikan.dummy"
+
+Thanx - that's useful to know. I've been wondering what all those numbers
+meant :-) As you say, a message like 'scrap <foo> is too large to be
+processed' would be better.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From martinsluka at mac.com  Thu Aug 18 23:39:28 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 18 Aug 2005 23:39:28 +0200
+Subject: Scale and Base-scale and font sizes
+In-Reply-To: <43049A8A.6090204@aleph1.co.uk>
+References: <20050817231001.GA7882@xios> <20050818090711.M82433@speleo.sk>
+	<20050818102626.GA31729@xios> <20050818111823.M37400@speleo.sk>
+	<43049A8A.6090204@aleph1.co.uk>
+Message-ID: <p05100302bf2ab04bf5c6@[10.225.149.35]>
+
+At 15:26 +0100 18.8.2005, Wookey wrote:
+*******************************************
+
+>  > How to find where the problem is:
+
+Please check (and correct) the wiki/FAQ page. I added few Q/A.
+
+Martin
+-- 
+
+
+
+From martinsluka at mac.com  Fri Aug 19 08:11:23 2005
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 19 Aug 2005 08:11:23 +0200
+Subject: Problems with areas
+In-Reply-To: <20050817233639.GC7882@xios>
+References: <20050817233639.GC7882@xios>
+Message-ID: <p05100303bf2b280ee9c2@[10.225.149.35]>
+
+At 00:36 +0100 18.8.2005, Wookey wrote:
+*******************************************
+
+>There is also a big problem with line id's disappearing.
+
+Isn't better to use for area separate line - simply rounded the scrap 
+which is filled with area fil? The walls will clip the outside parts 
+of area automaticaly.
+
+MS.
+-- 
+
+
+
+From wookey at aleph1.co.uk  Fri Aug 19 15:17:27 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 19 Aug 2005 14:17:27 +0100
+Subject: Problems with areas
+In-Reply-To: <p05100303bf2b280ee9c2@[10.225.149.35]>
+References: <20050817233639.GC7882@xios>
+	<p05100303bf2b280ee9c2@[10.225.149.35]>
+Message-ID: <20050819131727.GF9125@xios>
+
++++ Martin Sluka [05-08-19 08:11 +0200]:
+> At 00:36 +0100 18.8.2005, Wookey wrote:
+> *******************************************
+> 
+> >There is also a big problem with line id's disappearing.
+> 
+> Isn't better to use for area separate line - simply rounded the scrap 
+> which is filled with area fill? The walls will clip the outside parts 
+> of area automaticaly.
+
+That may well work sometimes, but often the area is bounded not only by the
+walls but also by say a mud-bank (a line I have already drawn), and it would
+be nice to use these lines as they already define the area, rather than draw
+another.
+
+You are right that it does (at least sometimes) make sense to turn this idea
+upside down and draw the mudbank line as part of the area border which is
+connected in a big loop. I will consider where this would make sense.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From wookey at aleph1.co.uk  Tue Aug 23 01:06:31 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 23 Aug 2005 00:06:31 +0100
+Subject: labelling the grid
+Message-ID: <20050822230630.GA3408@xios>
+
+Can I make therion put numbers on the edges of the grid to match the
+co-ordinates used in the dataset?
+
+I see various things about grid and page-grid but don't see how to get
+numbers at the edge of the sheet saying what northing/easting the grid-lines
+represent.
+
+Also I don't fully understand the distinction between grid and page-grid,
+except that 'grid' shows intersection crosses and 'page-grid' draws full
+squares - is one aligned with the page, and the other with the co-ordinate
+system? The thbook could expand upon this point I feel.
+
+What I really want is a fullly-drawn grid, aligned with the dataset, and the
+number the line represents printed at the edge of the page (map), each page
+(atlas). My current layout is:
+
+  grid bottom
+  grid-size 200 200 200 m
+	  
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From m.b at speleo.sk  Tue Aug 23 08:33:00 2005
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 23 Aug 2005 08:33:00 +0200
+Subject: labelling the grid
+In-Reply-To: <20050822230630.GA3408@xios>
+References: <20050822230630.GA3408@xios>
+Message-ID: <20050823062815.M68068@speleo.sk>
+
+On Tue, 23 Aug 2005 00:06:31 +0100, Wookey wrote
+> Can I make therion put numbers on the edges of the grid to match the
+> co-ordinates used in the dataset?
+
+Unfortunately, not yet. It's somewhere in to-do list.
+ 
+> Also I don't fully understand the distinction between grid and page-
+> grid, except that 'grid' shows intersection crosses and 'page-grid' 
+> draws full squares - is one aligned with the page, and the other 
+> with the co-ordinate system? The thbook could expand upon this point 
+> I feel.
+
+Grid is usual grid, aligned with coordinates (by default it crosses 0 0 0 but 
+may be adjusted using grid-origin); page grid is available in map mode only 
+and shows how the atlas pages will be divided.
+ 
+> What I really want is a fullly-drawn grid, aligned with the dataset, 
+> and the number the line represents printed at the edge of the page 
+> (map), each page
+> (atlas).
+
+Atlas will be tricky because of clipping of each page.
+
+Martin
+
+
+
+
+From s.m at speleo.sk  Tue Aug 23 09:30:51 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 23 Aug 2005 09:30:51 +0200
+Subject: labelling the grid
+In-Reply-To: <20050823062815.M68068@speleo.sk>
+References: <20050822230630.GA3408@xios> <20050823062815.M68068@speleo.sk>
+Message-ID: <430AD0AB.40502@speleo.sk>
+
+Martin Budaj wrote:
+> Unfortunately, not yet. It's somewhere in to-do list.
+
+Yes, I have been already thinking of this many times - especially for 
+altitude bars in extended elevations.
+
+If it is important for you to have those labels, I can put it on the top 
+of TODO list.
+
+Regards, S.
+
+
+
+From wookey at aleph1.co.uk  Tue Aug 23 13:54:04 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 23 Aug 2005 12:54:04 +0100
+Subject: Bug in overlap setting in layout
+Message-ID: <20050823115404.GE3408@xios>
+
+If you set overlap 2 cm in the atlas layout, then each 'page' in the atlas
+takes 2 pages, the second of which is blank, and the 'overview' thingy in
+the bottom right-hand corner goes slightly off the bottom of the page.
+
+Looks like the extra space needed for the larger overlap is not properly
+allowed for.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From s.m at speleo.sk  Tue Aug 23 14:24:08 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 23 Aug 2005 14:24:08 +0200
+Subject: Bug in overlap setting in layout
+In-Reply-To: <20050823115404.GE3408@xios>
+References: <20050823115404.GE3408@xios>
+Message-ID: <430B1568.3010303@speleo.sk>
+
+Now I am not sure - but you just probably need to reduce atlas map size 
+by 2cm in each dimension.
+
+Try add this to layout.
+
+size 16 20 cm
+
+Or you can increase page size to something else then A4 using page-setup.
+
+But therion should probably check these numbers and generate some 
+reasonable warning, if they are not consistent.
+
+Regards, S.
+
+Wookey wrote:
+> If you set overlap 2 cm in the atlas layout, then each 'page' in the atlas
+> takes 2 pages, the second of which is blank, and the 'overview' thingy in
+> the bottom right-hand corner goes slightly off the bottom of the page.
+> 
+> Looks like the extra space needed for the larger overlap is not properly
+> allowed for.
+> 
+> Wookey
+
+
+
+
+From wookey at aleph1.co.uk  Tue Aug 23 16:11:45 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 23 Aug 2005 15:11:45 +0100
+Subject: Bug in overlap setting in layout
+In-Reply-To: <430B1568.3010303@speleo.sk>
+References: <20050823115404.GE3408@xios> <430B1568.3010303@speleo.sk>
+Message-ID: <20050823141145.GI3408@xios>
+
++++ Stacho Mudrak [05-08-23 14:24 +0200]:
+> Now I am not sure - but you just probably need to reduce atlas map size 
+> by 2cm in each dimension.
+> 
+> Try add this to layout.
+> 
+> size 16 20 cm
+
+Yep - that fixes it. 
+
+> Or you can increase page size to something else then A4 using page-setup.
+> 
+> But therion should probably check these numbers and generate some 
+> reasonable warning, if they are not consistent.
+
+Indeed. On in the case where overlap is specified and so is the page format
+(A4) but size isn't it should probably just 'do the right thing', which is
+calculate the new size that will make things fit.
+
+Then if you really did want it to be the 'wrong' size for the page you'd
+have to specify all the settings explicitly.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+From s.m at speleo.sk  Tue Aug 23 20:56:37 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 23 Aug 2005 20:56:37 +0200
+Subject: Bug in overlap setting in layout
+In-Reply-To: <20050823141145.GI3408@xios>
+References: <20050823115404.GE3408@xios> <430B1568.3010303@speleo.sk>
+	<20050823141145.GI3408@xios>
+Message-ID: <430B7165.3060302@speleo.sk>
+
+Wookey wrote:
+> Indeed. On in the case where overlap is specified and so is the page format
+> (A4) but size isn't it should probably just 'do the right thing', which is
+> calculate the new size that will make things fit.
+
+It is a good idea, I will do it like that. All the time I am dealing 
+with this - I need to study therion book - which layout setting I need 
+to modify. Doing it automatically would siplify things for user a lot.
+
+Thanks, S.
+
+
+
+
+From dzach at hol.gr  Fri Aug 26 06:37:48 2005
+From: dzach at hol.gr (dzach)
+Date: Fri, 26 Aug 2005 07:37:48 +0300
+Subject: A Toolbar and a few other enhancements
+In-Reply-To: <20050826015816.GN12986@xios>
+References: <20050826015816.GN12986@xios>
+Message-ID: <430E9C9C.9080406@hol.gr>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20050826/33ba4b74/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: moz-screenshot-1.jpg
+Type: image/jpeg
+Size: 39961 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20050826/33ba4b74/attachment.jpg>
+-------------- next part --------------
+
+
+From wookey at aleph1.co.uk  Fri Aug 26 03:58:16 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 26 Aug 2005 02:58:16 +0100
+Subject: bug with joins and comments
+Message-ID: <20050826015816.GN12986@xios>
+
+Here's an interesting one. There is something about comments containing the
+work join that breaks actual join commands - presumably the parser gets
+confused:
+
+I had this in the file:
+ join wilfords1_s4 grumble3_s1    #(grumble3 -> grumble1 join)
+ # wilfords1_s4 grumble2_s3 line joins:
+  join grumb2_s3_l2 wilf1_s4_l2:3
+  join grumb2_s3_l1 wilf1_s4_l1   
+
+With this neither of the joins 'worked'
+
+I changed it to:
+ join wilfords1_s4 grumble3_s1 
+ join wilfords1_s4 grumble2_s3 #line joins:
+ #  join grumb2_s3_l2 wilf1_s4_l2:3
+ #  join grumb2_s3_l1 wilf1_s4_l1   
+
+Now the  wilfords1_s4 grumble3_s1   join works, but the wilfords1_s4
+grumble2_s3 join still doesn't.
+
+Then I changed it back to: 
+  join wilfords1_s4 grumble3_s1
+  #  join wilfords1_s4 grumble2_s3 #line joins:
+   join grumb2_s3_l2 wilf1_s4_l2:3
+   join grumb2_s3_l1 wilf1_s4_l1
+
+to try and isolate the problem. This works the same as above (first join OK,
+second broken).
+
+This doesn't work either (I was hoping it would :-( )
+  join wilfords1_s4 grumble3_s1 
+  #  join wilfords1_s4 grumble2_s3
+   join grumb2_s3_l2 wilf1_s4_l2:3     
+   join grumb2_s3_l1 wilf1_s4_l1
+
+
+Prety wierd huh? It really does look like using the word 'join' in a comment
+breaks things. And what exactly is going on ( I can't quite see a pattern
+about it affecting the current line or the next line)
+
+If you need the whole dataset it's at
+http://wookware.org/mulu/benarat-therion<date>.zip
+
+and the above is in benarat/terikan/terikan.th2
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+

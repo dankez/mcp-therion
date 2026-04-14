@@ -1,0 +1,119 @@
+From wookey at aleph1.co.uk  Fri Jun 13 16:09:31 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 13 Jun 2003 15:09:31 +0100
+Subject: [therion-users] THerion 0.2.9 fails to compile with g++3.3
+Message-ID: <20030613140931.GA19533@knossos.aleph1.co.uk>
+
+Therion doesn't compile with g++3.3 which means it is (partly) responsible for
+holding back the Debian transition to gcc3.3.
+
+I don't understand C++ to an embarassing degree so I post the error here in
+the hope that someone who does can explain what might be wrong:
+
+Looks like it seems to think some standard library function is missing?
+
+g++ -c -Wall -D_GNU_SOURCE -DTHLINUX -g -Wall -O2 -o thdata.o thdata.cxx
+thdata.cxx: In member function void thdata::insert_data_leg(int, char**)':
+thdata.cxx:1223: error: no matching function for call to std::list<thdataleg, 
+   std::allocator<thdataleg> >::insert(std::_List_iterator<thdataleg, 
+   thdataleg&, thdataleg*>)'
+/usr/include/c++/3.3/bits/list.tcc:88: error: candidates are: 
+   std::_List_iterator<_Tp, _Tp&, _Tp*> std::list<_Tp, 
+   _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, const_Tp&) [with _Tp 
+   = thdataleg, _Alloc = std::allocator<thdataleg>]
+/usr/include/c++/3.3/bits/stl_list.h:831: error:                 void 
+   std::list<_Tp, _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, 
+   unsigned int, const _Tp&) [with _Tp = thdataleg, _Alloc = 
+   std::allocator<thdataleg>]
+thdata.cxx: In member function void thdata::set_data_fix(int, char**)':
+thdata.cxx:1642: error: no matching function for call to std::list<thdatafix, 
+   std::allocator<thdatafix> >::insert(std::_List_iterator<thdatafix, 
+   thdatafix&, thdatafix*>)'
+/usr/include/c++/3.3/bits/list.tcc:88: error: candidates are: 
+   std::_List_iterator<_Tp, _Tp&, _Tp*> std::list<_Tp, 
+   _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, const_Tp&) [with _Tp 
+   = thdatafix, _Alloc = std::allocator<thdatafix>]
+/usr/include/c++/3.3/bits/stl_list.h:831: error:                 void 
+   std::list<_Tp, _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, 
+   unsigned int, const _Tp&) [with _Tp = thdatafix, _Alloc = 
+   std::allocator<thdatafix>]
+thdata.cxx: In member function void thdata::set_data_equate(int,char**)':
+thdata.cxx:1718: error: no matching function for call to 
+std::list<thdataequate, std::allocator<thdataequate> >::insert(
+   std::_List_iterator<thdataequate, thdataequate&, thdataequate*>)'
+/usr/include/c++/3.3/bits/list.tcc:88: error: candidates are: 
+   std::_List_iterator<_Tp, _Tp&, _Tp*> std::list<_Tp, 
+   _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, const _Tp&) [with _Tp 
+   = thdataequate, _Alloc = std::allocator<thdataequate>]
+/usr/include/c++/3.3/bits/stl_list.h:831: error:                 void 
+   std::list<_Tp, _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, 
+   unsigned int, const _Tp&) [with _Tp = thdataequate, _Alloc = 
+   std::allocator<thdataequate>]
+thdata.cxx: In member function void thdata::set_data_station(int, char**, int) ':
+thdata.cxx:1731: error: no matching function for call to std::list<thdatass, 
+   std::allocator<thdatass> >::insert(std::_List_iterator<thdatass, thdatass&, 
+   thdatass*>)'
+/usr/include/c++/3.3/bits/list.tcc:88: error: candidates are: 
+   std::_List_iterator<_Tp, _Tp&, _Tp*> std::list<_Tp, 
+   _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, const _Tp&) [with _Tp 
+   = thdatass, _Alloc = std::allocator<thdatass>]
+/usr/include/c++/3.3/bits/stl_list.h:831: error:                 void 
+   std::list<_Tp, _Alloc>::insert(std::_List_iterator<_Tp, _Tp&, _Tp*>, 
+   unsigned int, const _Tp&) [with _Tp = thdatass, _Alloc = 
+   std::allocator<thdatass>]
+make[1]: *** [thdata.o] Error 1
+make[1]: Leaving directory /home/wookey/survex/therion/therion-0.2.9/src'
+	    
+
+-- 
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at group-s.sk  Tue Jun 17 11:00:59 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 17 Jun 2003 11:00:59 +0200
+Subject: [therion-users] THerion 0.2.9 fails to compile with g++3.3
+In-Reply-To: <20030613140931.GA19533@knossos.aleph1.co.uk>
+References: <20030613140931.GA19533@knossos.aleph1.co.uk>
+Message-ID: <oprqwlzxwxyfws2v@internet.sk>
+
+I've put version 0.2.13 on the server. There are sever major improvements:
+
+1. No environment variables setup is necessary
+2. No special TeX and MPost setup is needed any more
+3. PDF output layers are supported (Acrobat Reader 6.0)
+
+... and a lot of other details (see CHANGES file). Also compilation with 
+GCC3.3 works OK.
+
+Best regards, S.
+
+
+
+
+
+
+From s.m at group-s.sk  Wed Jun 18 10:19:46 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 18 Jun 2003 10:19:46 +0200
+Subject: [therion-users] Developement version
+Message-ID: <oprqyeq8cbyfws2v@internet.sk>
+
+Hello everybody,
+
+yesterday I've changed the Win32 installation again, now it seems to work 
+really without any additional user setup (it reads all necessary 
+configuration info from Windows registry - including path to cavern). The 
+developement 0.2.14 version is on the WEB.
+
+S.
+
+
+
+
+

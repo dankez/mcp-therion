@@ -1,0 +1,3664 @@
+From m.budaj at gmail.com  Mon Jan  6 11:18:04 2025
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 6 Jan 2025 11:18:04 +0100
+Subject: [Therion] new Therion 6.3.3
+Message-ID: <CALPsdSteit9AXucCNeixU2iUC2+wqfw3fO0KXQMjCpag3Mi76A@mail.gmail.com>
+
+Hi all,
+
+today, there were two new releases. Most of the changes are in 6.3.2:
+
+https://github.com/therion/therion/releases/tag/v6.3.2
+https://github.com/therion/therion/releases/tag/v6.3.3
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250106/e58b0e05/attachment.htm>
+
+From bgee at campercaver.net  Mon Jan  6 16:44:03 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 6 Jan 2025 09:44:03 -0600
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <8734jf58cj.fsf@yentna.tnoo.net>
+References: <1aa6471d-eeb1-4528-9073-2d884a7f8cfd@campercaver.net>
+ <77a40388-e22d-4b61-9ba3-7de1c53abb55@campercaver.net>
+ <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+Message-ID: <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+
+I did not pursue this during the holidays.  Now that Therion 6.3.3 is 
+out, it is probably time to dig into it a bit deeper.
+
+I downloaded Therion 6.3.3 from the git repository, compiled and 
+installed it.  No errors, that all went very smoothly.
+
+Loch still does not run in a Wayland session.  It gives a segmentation 
+error and dumps core within about 2 seconds of launching.
+
+I tried it on three different machines.  They all have the same basic 
+configuration.  All three fail in the same way.
+
+SCINU reports that Loch works in a Wayland session running on Debian 
+Testing.  I am on Fedora 41.  Something is different, but I have no idea 
+what it is.  Could it be a different version of xwayland?
+
+A bit more information about my system:
+
+bgee at main2:~$ rpm -qi xwaylandvideobridge
+Name        : xwaylandvideobridge
+Version     : 0.4.0
+Release     : 7.fc41
+Architecture: x86_64
+Install Date: Fri Nov  8 07:08:53 2024
+Group       : Unspecified
+Size        : 214303
+License     : (GPL-2.0-only or GPL-3.0-only) and LGPL-2.0-or-later and 
+BSD-3-Clause
+Signature   : RSA/SHA256, Thu Oct 31 05:14:12 2024, Key ID d0622462e99d6ad1
+Source RPM  : xwaylandvideobridge-0.4.0-7.fc41.src.rpm
+Build Date  : Wed Oct 30 15:46:50 2024
+<snip>
+
+bgee at main2:~$ inxi -G
+Graphics:
+   Device-1: Intel Xeon E3-1200 v3/4th Gen Core Processor Integrated 
+Graphics
+     driver: i915 v: kernel
+   Device-2: Logitech Webcam C270 driver: snd-usb-audio,uvcvideo type: USB
+   Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+     compositor: kwin_wayland driver: X: loaded: modesetting unloaded: 
+fbdev,vesa
+     dri: crocus gpu: i915 resolution: 1920x1080
+   API: EGL v: 1.5 drivers: crocus,swrast
+     platforms: gbm,wayland,x11,surfaceless,device
+   API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8
+     renderer: Mesa Intel HD Graphics 4600 (HSW GT2)
+   API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+
+This system is a Dell Optiplex.  The other two systems are a Dell laptop 
+and a Lenovo laptop.  All are running Intel i915 displays.
+
+===============
+Bill Gee
+
+On 11/25/24 15:09, Scinu via Therion wrote:
+>> On Thu, Nov 21, 2024 at 2:14?PM Bill Gee <bgee at campercaver.net> wrote:
+>>
+>>> Confirmed - This problem has something to do with Wayland.  I logged
+>>> into a test computer using X instead of Wayland.  Loch starts without
+>>> error.  Logging out and back in with a Wayland session causes loch to fail.
+>>
+>> Hmm, no problem in the Wayland session with KDE on Debian Testing (and
+>> no problem in the X session, either). Any other Wayland users here
+>> that could report crashes or good operation?
+> 
+> With a fresh install from the AUR (archlinux user repository) loch
+> starts without problems on both X and wayland (sway).
+> 
+> therion 6.3.1 (2024-11-22)
+>    - using Proj 9.5.0, compiled against 9.5.0
+> 
+> loch 6.3.1
+> (why is loch --version not implemented?)
+> 
+> If I can help test more, pls let me know
+> 
+> Best,
+> 
+> Scinu
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From alex_pologea at yahoo.com  Sun Jan 12 14:28:21 2025
+From: alex_pologea at yahoo.com (Alexandru Pologea)
+Date: Sun, 12 Jan 2025 15:28:21 +0200
+Subject: [Therion] PROJ error - no usable coordinate transformation found
+ (not matching proj.db file version)
+References: <857e9999-3ec4-41bc-8e04-da86fac7ddff.ref@yahoo.com>
+Message-ID: <857e9999-3ec4-41bc-8e04-da86fac7ddff@yahoo.com>
+
+After installing therion 6.3.3 (and Survex 1.4.15) on Windows 10 Pro, I 
+get this error:
+
+"no usable coordinate transformation found"
+Full log here: https://pastebin.com/Dkn95nzE
+
+It seems that Therion uses the PROJ installation from my QGIS 
+installation (QGIS updated the PROJ path and it points to proj.db file 
+path from QGIS's PROJ package).
+
+After installing updated PROJ separately using << osgeo4w-setup.exe -q 
+-k -r -A -s https://download.osgeo.org/osgeo4w/v2/ -P proj >> I get a 
+similar error. This time it doesn't find the proj.db file at all: 
+https://pastebin.com/TcEDbKmF
+
+It seems like Therion/PROJ library is using the path defined in the 
+PROJ_LIB path variable so you need to set it back to the proj.db file 
+version path that comes in the therion installation directory, in my case:
+SET PROJ_LIB="C:\Program Files\Therion\lib\proj-9\"
+
+You can set this globally or for the current batch session only if you 
+don't want permanent path modification, in case QGIS or other software 
+need it as it was before. If you want to see details on errors from PROJ 
+library, you can set a debug flag
+SET PROJ_DEBUG=3
+
+Is there another fix?
+Maybe a future fix would be for Therion to use it's PROJ distributable 
+instead of the default one in the system, if possible.
+
+
+Alex
+
+
+-- 
+This email has been checked for viruses by Avast antivirus software.
+www.avast.com
+
+From m.budaj at gmail.com  Sun Jan 12 19:40:02 2025
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sun, 12 Jan 2025 19:40:02 +0100
+Subject: [Therion] PROJ error - no usable coordinate transformation
+ found (not matching proj.db file version)
+In-Reply-To: <857e9999-3ec4-41bc-8e04-da86fac7ddff@yahoo.com>
+References: <857e9999-3ec4-41bc-8e04-da86fac7ddff.ref@yahoo.com>
+ <857e9999-3ec4-41bc-8e04-da86fac7ddff@yahoo.com>
+Message-ID: <CALPsdSukPKLRrfSFYDAqn1TGOeHLUbfafsXY6bdUdgTLR+zxvQ@mail.gmail.com>
+
+Hi,
+
+try the updated installer from the latest commit
+(https://github.com/therion/therion/actions/runs/12736026010). You
+need to be logged in to Github to be able to download it.
+
+M.
+
+On Sun, Jan 12, 2025 at 2:28?PM Alexandru Pologea via Therion
+<therion at speleo.sk> wrote:
+>
+> After installing therion 6.3.3 (and Survex 1.4.15) on Windows 10 Pro, I
+> get this error:
+>
+> "no usable coordinate transformation found"
+> Full log here: https://pastebin.com/Dkn95nzE
+>
+> It seems that Therion uses the PROJ installation from my QGIS
+> installation (QGIS updated the PROJ path and it points to proj.db file
+> path from QGIS's PROJ package).
+>
+> After installing updated PROJ separately using << osgeo4w-setup.exe -q
+> -k -r -A -s https://download.osgeo.org/osgeo4w/v2/ -P proj >> I get a
+> similar error. This time it doesn't find the proj.db file at all:
+> https://pastebin.com/TcEDbKmF
+>
+> It seems like Therion/PROJ library is using the path defined in the
+> PROJ_LIB path variable so you need to set it back to the proj.db file
+> version path that comes in the therion installation directory, in my case:
+> SET PROJ_LIB="C:\Program Files\Therion\lib\proj-9\"
+>
+> You can set this globally or for the current batch session only if you
+> don't want permanent path modification, in case QGIS or other software
+> need it as it was before. If you want to see details on errors from PROJ
+> library, you can set a debug flag
+> SET PROJ_DEBUG=3
+>
+> Is there another fix?
+> Maybe a future fix would be for Therion to use it's PROJ distributable
+> instead of the default one in the system, if possible.
+>
+>
+> Alex
+>
+>
+> --
+> This email has been checked for viruses by Avast antivirus software.
+> www.avast.com
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jan 13 08:11:01 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 13 Jan 2025 07:11:01 +0000
+Subject: [Therion] Combining PDFs with a page break
+Message-ID: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+
+Hi,
+
+Fairly sure the answer is "that will need an external application". But 
+I have two Therion output PDFs. (Imagine plan and elevation, if that 
+helps you.) I want to combine them into a single PDF. Easy enough, use:
+map-image 0 0 ne
+
+But what if I want them in the same PDF, but always separated by a page 
+break in the PDF, so that the user can select "print page 2" to print 
+just one of them?
+
+Cheers,
+
+Tarquin
+
+From beni at hallinger.org  Mon Jan 13 11:19:01 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 13 Jan 2025 11:19:01 +0100
+Subject: [Therion] Combining PDFs with a page break
+In-Reply-To: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+References: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+Message-ID: <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+
+Yes, you need an external tool to combine them.
+In case you use linux that is easy: `pdfjam file1.pdf file2.pdf -o 
+out.pdf"
+
+Am 2025-01-13 08:11, schrieb Tarquin Wilton-Jones via Therion:
+> Hi,
+> 
+> Fairly sure the answer is "that will need an external application". But 
+> I have two Therion output PDFs. (Imagine plan and elevation, if that 
+> helps you.) I want to combine them into a single PDF. Easy enough, use:
+> map-image 0 0 ne
+> 
+> But what if I want them in the same PDF, but always separated by a page 
+> break in the PDF, so that the user can select "print page 2" to print 
+> just one of them?
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jan 13 11:37:30 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 13 Jan 2025 10:37:30 +0000
+Subject: [Therion] Combining PDFs with a page break
+In-Reply-To: <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+References: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+ <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+Message-ID: <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+
+> Yes, you need an external tool to combine them.
+
+
+Thanks for confirming my suspicions.
+
+> In case you use linux that is easy: `pdfjam file1.pdf file2.pdf -o out.pdf"
+
+
+Since this is intended to be open source, I was really hoping not to 
+rely on an external tool. Code branching is the opposite of fun for;
+if windows and the user has installed PDFtk, use this external 
+executable path,
+else if linux and pdfjam, use this command
+else if mac, use this command
+else go into meltdown
+
+I already have to do that for wkhtmltopdf to tidy up a bunch of the HTML 
+outputs and incorporate them, and it is a maintenance nightmare when 
+sharing the codebase.
+
+Hence my wish for something internal. Much sadness.
+
+But thanks for the answer anyway.
+
+Tarquin
+
+From beni at hallinger.org  Mon Jan 13 11:42:08 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 13 Jan 2025 11:42:08 +0100
+Subject: [Therion] Combining PDFs with a page break
+In-Reply-To: <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+References: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+ <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+ <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+Message-ID: <09bb2d20cb715121cd2843866c6f5712@hallinger.org>
+
+For such cases, I ususally make myself a "build script" that executes 
+the neccessary steps to produce my desired output.
+in this case it would be some therion commands, and then a final pdfjam 
+one.
+I would think that adding something "internal" like this could very 
+easily lead to code bloat and feature creep.
+
+But wasn't there some thconfig command to execute arbitary code after he 
+compile?
+
+
+Am 2025-01-13 11:37, schrieb Tarquin Wilton-Jones via Therion:
+>> Yes, you need an external tool to combine them.
+> 
+> 
+> Thanks for confirming my suspicions.
+> 
+>> In case you use linux that is easy: `pdfjam file1.pdf file2.pdf -o 
+>> out.pdf"
+> 
+> 
+> Since this is intended to be open source, I was really hoping not to 
+> rely on an external tool. Code branching is the opposite of fun for;
+> if windows and the user has installed PDFtk, use this external 
+> executable path,
+> else if linux and pdfjam, use this command
+> else if mac, use this command
+> else go into meltdown
+> 
+> I already have to do that for wkhtmltopdf to tidy up a bunch of the 
+> HTML outputs and incorporate them, and it is a maintenance nightmare 
+> when sharing the codebase.
+> 
+> Hence my wish for something internal. Much sadness.
+> 
+> But thanks for the answer anyway.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Mon Jan 13 11:52:57 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 13 Jan 2025 10:52:57 +0000
+Subject: [Therion] Combining PDFs with a page break
+In-Reply-To: <09bb2d20cb715121cd2843866c6f5712@hallinger.org>
+References: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+ <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+ <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+ <09bb2d20cb715121cd2843866c6f5712@hallinger.org>
+Message-ID: <26f31e31-1533-4918-8bc3-713c1393d491@ntlworld.com>
+
+On 13/01/2025 10:42, Benedikt Hallinger wrote:
+> For such cases, I ususally make myself a "build script" that executes 
+> the neccessary steps to produce my desired output.
+> in this case it would be some therion commands, and then a final pdfjam 
+> one.
+> I would think that adding something "internal" like this could very 
+> easily lead to code bloat and feature creep.
+
+
+I don't really see "add a page break at this point" to be feature creep. 
+We can already combine PDFs internally, but only onto the same page.
+Having a combined plan, elevation, overview, in the same PDF seems 
+pretty much within scope of Therion - many surveys are produced that way 
+already, but with the restriction that they can only be on one page.
+
+Therion also natively creates multi-page PDFs when using atlas mode.
+
+> But wasn't there some thconfig command to execute arbitary code after he 
+> compile?
+
+
+Yes, I do that to run wtkhtmltopdf so it is just a Therion .thconfig to 
+run. Run it, it outputs the cavelist, then my wtkhtmltopdf script cleans 
+it up, generates a PDF of the cave coordinates, and then the main 
+plan.thconfig embeds that PDF in the plan survey, so you can see the 
+coordinates.
+
+From m.budaj at gmail.com  Mon Jan 13 18:45:49 2025
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 13 Jan 2025 18:45:49 +0100
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+References: <1aa6471d-eeb1-4528-9073-2d884a7f8cfd@campercaver.net>
+ <77a40388-e22d-4b61-9ba3-7de1c53abb55@campercaver.net>
+ <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+Message-ID: <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+
+Hi,
+
+Loch runs fine on a Debian + KDE machine with this configuration:
+
+1) no xwaylandvideobridge installed
+2) inxi -G output:
+Graphics:
+  Device-1: Intel CometLake-U GT2 [UHD Graphics] driver: i915 v: kernel
+  Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+    compositor: kwin_wayland driver: X: loaded: modesetting unloaded: fbdev,vesa
+    dri: iris gpu: i915 resolution: 2194x1234
+  API: EGL v: 1.5 drivers: iris,swrast
+    platforms: gbm,wayland,x11,surfaceless,device
+  API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8-1
+    renderer: Mesa Intel UHD Graphics (CML GT2)
+  API: Vulkan Message: No Vulkan data available.
+
+M.
+
+On Mon, Jan 6, 2025 at 4:44?PM Bill Gee <bgee at campercaver.net> wrote:
+>
+> I did not pursue this during the holidays.  Now that Therion 6.3.3 is
+> out, it is probably time to dig into it a bit deeper.
+>
+> I downloaded Therion 6.3.3 from the git repository, compiled and
+> installed it.  No errors, that all went very smoothly.
+>
+> Loch still does not run in a Wayland session.  It gives a segmentation
+> error and dumps core within about 2 seconds of launching.
+>
+> I tried it on three different machines.  They all have the same basic
+> configuration.  All three fail in the same way.
+>
+> SCINU reports that Loch works in a Wayland session running on Debian
+> Testing.  I am on Fedora 41.  Something is different, but I have no idea
+> what it is.  Could it be a different version of xwayland?
+>
+> A bit more information about my system:
+>
+> bgee at main2:~$ rpm -qi xwaylandvideobridge
+> Name        : xwaylandvideobridge
+> Version     : 0.4.0
+> Release     : 7.fc41
+> Architecture: x86_64
+> Install Date: Fri Nov  8 07:08:53 2024
+> Group       : Unspecified
+> Size        : 214303
+> License     : (GPL-2.0-only or GPL-3.0-only) and LGPL-2.0-or-later and
+> BSD-3-Clause
+> Signature   : RSA/SHA256, Thu Oct 31 05:14:12 2024, Key ID d0622462e99d6ad1
+> Source RPM  : xwaylandvideobridge-0.4.0-7.fc41.src.rpm
+> Build Date  : Wed Oct 30 15:46:50 2024
+> <snip>
+>
+> bgee at main2:~$ inxi -G
+> Graphics:
+>    Device-1: Intel Xeon E3-1200 v3/4th Gen Core Processor Integrated
+> Graphics
+>      driver: i915 v: kernel
+>    Device-2: Logitech Webcam C270 driver: snd-usb-audio,uvcvideo type: USB
+>    Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+>      compositor: kwin_wayland driver: X: loaded: modesetting unloaded:
+> fbdev,vesa
+>      dri: crocus gpu: i915 resolution: 1920x1080
+>    API: EGL v: 1.5 drivers: crocus,swrast
+>      platforms: gbm,wayland,x11,surfaceless,device
+>    API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8
+>      renderer: Mesa Intel HD Graphics 4600 (HSW GT2)
+>    API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+>
+> This system is a Dell Optiplex.  The other two systems are a Dell laptop
+> and a Lenovo laptop.  All are running Intel i915 displays.
+>
+> ===============
+> Bill Gee
+>
+> On 11/25/24 15:09, Scinu via Therion wrote:
+> >> On Thu, Nov 21, 2024 at 2:14?PM Bill Gee <bgee at campercaver.net> wrote:
+> >>
+> >>> Confirmed - This problem has something to do with Wayland.  I logged
+> >>> into a test computer using X instead of Wayland.  Loch starts without
+> >>> error.  Logging out and back in with a Wayland session causes loch to fail.
+> >>
+> >> Hmm, no problem in the Wayland session with KDE on Debian Testing (and
+> >> no problem in the X session, either). Any other Wayland users here
+> >> that could report crashes or good operation?
+> >
+> > With a fresh install from the AUR (archlinux user repository) loch
+> > starts without problems on both X and wayland (sway).
+> >
+> > therion 6.3.1 (2024-11-22)
+> >    - using Proj 9.5.0, compiled against 9.5.0
+> >
+> > loch 6.3.1
+> > (why is loch --version not implemented?)
+> >
+> > If I can help test more, pls let me know
+> >
+> > Best,
+> >
+> > Scinu
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From wookey at wookware.org  Mon Jan 13 19:10:57 2025
+From: wookey at wookware.org (Wookey)
+Date: Mon, 13 Jan 2025 18:10:57 +0000
+Subject: [Therion] Combining PDFs with a page break
+In-Reply-To: <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+References: <a2a5c4ce-ea26-42c8-b23e-8861d93a848f@ntlworld.com>
+ <dd663b9e8cb5a77173ac712445fc0150@hallinger.org>
+ <b81b6820-de95-4564-b543-652e358164bb@ntlworld.com>
+Message-ID: <20250113181057.GF23837@mail.wookware.org>
+
+On 2025-01-13 10:37 +0000, Tarquin Wilton-Jones via Therion wrote:
+> Since this is intended to be open source, I was really hoping not to rely on
+> an external tool. Code branching is the opposite of fun for;
+> if windows and the user has installed PDFtk, use this external executable
+> path,
+> else if linux and pdfjam, use this command
+
+pdftk works on linux too, and in fact is what I would have used/suggested as I never heard of pdfjam.
+Seem it is part of TeX, which of course we have anyway for Therion, so it does make sense in this context.
+
+> Hence my wish for something internal. Much sadness.
+
+I take your point that therion probably could be extended to do
+multipage non-atlas PDFs with maps and headers allocated to different
+pages, or as you say: <some layout><page break><more mayout> might be
+the right paradigm. It might not even be too difficult...
+
+
+Wookey
+-- 
+Principal hats:  Debian, Wookware
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250113/9173f955/attachment.sig>
+
+From beni at hallinger.org  Mon Jan 13 20:25:14 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 13 Jan 2025 20:25:14 +0100
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+References: <1aa6471d-eeb1-4528-9073-2d884a7f8cfd@campercaver.net>
+ <77a40388-e22d-4b61-9ba3-7de1c53abb55@campercaver.net>
+ <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+Message-ID: <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+
+Same here, confirming a stable loch.
+
+Device-1: Advanced Micro Devices [AMD/ATI] Ellesmere [Radeon RX
+     470/480/570/570X/580/580X/590] driver: amdgpu v: kernel
+   Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+     compositor: kwin_wayland driver: X: loaded: amdgpu
+     unloaded: fbdev,modesetting,vesa dri: radeonsi gpu: amdgpu
+     resolution: 1920x1080
+   API: EGL v: 1.5 drivers: kms_swrast,radeonsi,swrast
+     platforms: gbm,wayland,x11,surfaceless,device
+   API: OpenGL v: 4.6 compat-v: 4.5 vendor: amd mesa v: 24.2.8-1 
+renderer: AMD
+     Radeon RX 580 Series (radeonsi polaris10 LLVM 19.1.4 DRM 3.59
+     6.12.6-amd64)
+   API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+
+Debian GNU/Linux trixie
+Linux segin 6.12.6-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.6-1 
+(2024-12-21) x86_64 GNU/Linux
+
+
+
+Am 2025-01-13 18:45, schrieb Martin Budaj:
+> Hi,
+> 
+> Loch runs fine on a Debian + KDE machine with this configuration:
+> 
+> 1) no xwaylandvideobridge installed
+> 2) inxi -G output:
+> Graphics:
+>   Device-1: Intel CometLake-U GT2 [UHD Graphics] driver: i915 v: kernel
+>   Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+>     compositor: kwin_wayland driver: X: loaded: modesetting unloaded: 
+> fbdev,vesa
+>     dri: iris gpu: i915 resolution: 2194x1234
+>   API: EGL v: 1.5 drivers: iris,swrast
+>     platforms: gbm,wayland,x11,surfaceless,device
+>   API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8-1
+>     renderer: Mesa Intel UHD Graphics (CML GT2)
+>   API: Vulkan Message: No Vulkan data available.
+> 
+> M.
+> 
+> On Mon, Jan 6, 2025 at 4:44?PM Bill Gee <bgee at campercaver.net> wrote:
+>> 
+>> I did not pursue this during the holidays.  Now that Therion 6.3.3 is
+>> out, it is probably time to dig into it a bit deeper.
+>> 
+>> I downloaded Therion 6.3.3 from the git repository, compiled and
+>> installed it.  No errors, that all went very smoothly.
+>> 
+>> Loch still does not run in a Wayland session.  It gives a segmentation
+>> error and dumps core within about 2 seconds of launching.
+>> 
+>> I tried it on three different machines.  They all have the same basic
+>> configuration.  All three fail in the same way.
+>> 
+>> SCINU reports that Loch works in a Wayland session running on Debian
+>> Testing.  I am on Fedora 41.  Something is different, but I have no 
+>> idea
+>> what it is.  Could it be a different version of xwayland?
+>> 
+>> A bit more information about my system:
+>> 
+>> bgee at main2:~$ rpm -qi xwaylandvideobridge
+>> Name        : xwaylandvideobridge
+>> Version     : 0.4.0
+>> Release     : 7.fc41
+>> Architecture: x86_64
+>> Install Date: Fri Nov  8 07:08:53 2024
+>> Group       : Unspecified
+>> Size        : 214303
+>> License     : (GPL-2.0-only or GPL-3.0-only) and LGPL-2.0-or-later and
+>> BSD-3-Clause
+>> Signature   : RSA/SHA256, Thu Oct 31 05:14:12 2024, Key ID 
+>> d0622462e99d6ad1
+>> Source RPM  : xwaylandvideobridge-0.4.0-7.fc41.src.rpm
+>> Build Date  : Wed Oct 30 15:46:50 2024
+>> <snip>
+>> 
+>> bgee at main2:~$ inxi -G
+>> Graphics:
+>>    Device-1: Intel Xeon E3-1200 v3/4th Gen Core Processor Integrated
+>> Graphics
+>>      driver: i915 v: kernel
+>>    Device-2: Logitech Webcam C270 driver: snd-usb-audio,uvcvideo type: 
+>> USB
+>>    Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 
+>> 24.1.4
+>>      compositor: kwin_wayland driver: X: loaded: modesetting unloaded:
+>> fbdev,vesa
+>>      dri: crocus gpu: i915 resolution: 1920x1080
+>>    API: EGL v: 1.5 drivers: crocus,swrast
+>>      platforms: gbm,wayland,x11,surfaceless,device
+>>    API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8
+>>      renderer: Mesa Intel HD Graphics 4600 (HSW GT2)
+>>    API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+>> 
+>> This system is a Dell Optiplex.  The other two systems are a Dell 
+>> laptop
+>> and a Lenovo laptop.  All are running Intel i915 displays.
+>> 
+>> ===============
+>> Bill Gee
+>> 
+>> On 11/25/24 15:09, Scinu via Therion wrote:
+>> >> On Thu, Nov 21, 2024 at 2:14?PM Bill Gee <bgee at campercaver.net> wrote:
+>> >>
+>> >>> Confirmed - This problem has something to do with Wayland.  I logged
+>> >>> into a test computer using X instead of Wayland.  Loch starts without
+>> >>> error.  Logging out and back in with a Wayland session causes loch to fail.
+>> >>
+>> >> Hmm, no problem in the Wayland session with KDE on Debian Testing (and
+>> >> no problem in the X session, either). Any other Wayland users here
+>> >> that could report crashes or good operation?
+>> >
+>> > With a fresh install from the AUR (archlinux user repository) loch
+>> > starts without problems on both X and wayland (sway).
+>> >
+>> > therion 6.3.1 (2024-11-22)
+>> >    - using Proj 9.5.0, compiled against 9.5.0
+>> >
+>> > loch 6.3.1
+>> > (why is loch --version not implemented?)
+>> >
+>> > If I can help test more, pls let me know
+>> >
+>> > Best,
+>> >
+>> > Scinu
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Mon Jan 13 21:13:06 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 13 Jan 2025 14:13:06 -0600
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+References: <1aa6471d-eeb1-4528-9073-2d884a7f8cfd@campercaver.net>
+ <77a40388-e22d-4b61-9ba3-7de1c53abb55@campercaver.net>
+ <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+Message-ID: <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+
+Thanks Benedikt and Martin for taking a look at this.  The first step in 
+fixing a problem is figuring out how to duplicate it.  So far we are not 
+having much luck with that!
+
+So far the only thing that jumps out at me is that I am using an older 
+computer.  Martin's Intel display is much newer than mine, and Benedikt 
+is using an AMD display adapter.  I wonder if the Intel i915 display 
+driver on my hardware is missing some needed function?
+
+===============
+Bill Gee
+
+On 1/13/25 13:25, Benedikt Hallinger via Therion wrote:
+> Same here, confirming a stable loch.
+> 
+> Device-1: Advanced Micro Devices [AMD/ATI] Ellesmere [Radeon RX
+>  ??? 470/480/570/570X/580/580X/590] driver: amdgpu v: kernel
+>  ? Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+>  ??? compositor: kwin_wayland driver: X: loaded: amdgpu
+>  ??? unloaded: fbdev,modesetting,vesa dri: radeonsi gpu: amdgpu
+>  ??? resolution: 1920x1080
+>  ? API: EGL v: 1.5 drivers: kms_swrast,radeonsi,swrast
+>  ??? platforms: gbm,wayland,x11,surfaceless,device
+>  ? API: OpenGL v: 4.6 compat-v: 4.5 vendor: amd mesa v: 24.2.8-1 
+> renderer: AMD
+>  ??? Radeon RX 580 Series (radeonsi polaris10 LLVM 19.1.4 DRM 3.59
+>  ??? 6.12.6-amd64)
+>  ? API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+> 
+> Debian GNU/Linux trixie
+> Linux segin 6.12.6-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.6-1 
+> (2024-12-21) x86_64 GNU/Linux
+> 
+> 
+> 
+> Am 2025-01-13 18:45, schrieb Martin Budaj:
+>> Hi,
+>>
+>> Loch runs fine on a Debian + KDE machine with this configuration:
+>>
+>> 1) no xwaylandvideobridge installed
+>> 2) inxi -G output:
+>> Graphics:
+>> ? Device-1: Intel CometLake-U GT2 [UHD Graphics] driver: i915 v: kernel
+>> ? Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+>> ??? compositor: kwin_wayland driver: X: loaded: modesetting unloaded: 
+>> fbdev,vesa
+>> ??? dri: iris gpu: i915 resolution: 2194x1234
+>> ? API: EGL v: 1.5 drivers: iris,swrast
+>> ??? platforms: gbm,wayland,x11,surfaceless,device
+>> ? API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8-1
+>> ??? renderer: Mesa Intel UHD Graphics (CML GT2)
+>> ? API: Vulkan Message: No Vulkan data available.
+>>
+>> M.
+>>
+>> On Mon, Jan 6, 2025 at 4:44?PM Bill Gee <bgee at campercaver.net> wrote:
+>>>
+>>> I did not pursue this during the holidays.? Now that Therion 6.3.3 is
+>>> out, it is probably time to dig into it a bit deeper.
+>>>
+>>> I downloaded Therion 6.3.3 from the git repository, compiled and
+>>> installed it.? No errors, that all went very smoothly.
+>>>
+>>> Loch still does not run in a Wayland session.? It gives a segmentation
+>>> error and dumps core within about 2 seconds of launching.
+>>>
+>>> I tried it on three different machines.? They all have the same basic
+>>> configuration.? All three fail in the same way.
+>>>
+>>> SCINU reports that Loch works in a Wayland session running on Debian
+>>> Testing.? I am on Fedora 41.? Something is different, but I have no idea
+>>> what it is.? Could it be a different version of xwayland?
+>>>
+>>> A bit more information about my system:
+>>>
+>>> bgee at main2:~$ rpm -qi xwaylandvideobridge
+>>> Name??????? : xwaylandvideobridge
+>>> Version???? : 0.4.0
+>>> Release???? : 7.fc41
+>>> Architecture: x86_64
+>>> Install Date: Fri Nov? 8 07:08:53 2024
+>>> Group?????? : Unspecified
+>>> Size??????? : 214303
+>>> License???? : (GPL-2.0-only or GPL-3.0-only) and LGPL-2.0-or-later and
+>>> BSD-3-Clause
+>>> Signature?? : RSA/SHA256, Thu Oct 31 05:14:12 2024, Key ID 
+>>> d0622462e99d6ad1
+>>> Source RPM? : xwaylandvideobridge-0.4.0-7.fc41.src.rpm
+>>> Build Date? : Wed Oct 30 15:46:50 2024
+>>> <snip>
+>>>
+>>> bgee at main2:~$ inxi -G
+>>> Graphics:
+>>> ?? Device-1: Intel Xeon E3-1200 v3/4th Gen Core Processor Integrated
+>>> Graphics
+>>> ???? driver: i915 v: kernel
+>>> ?? Device-2: Logitech Webcam C270 driver: snd-usb-audio,uvcvideo 
+>>> type: USB
+>>> ?? Display: wayland server: X.org v: 1.21.1.15 with: Xwayland v: 24.1.4
+>>> ???? compositor: kwin_wayland driver: X: loaded: modesetting unloaded:
+>>> fbdev,vesa
+>>> ???? dri: crocus gpu: i915 resolution: 1920x1080
+>>> ?? API: EGL v: 1.5 drivers: crocus,swrast
+>>> ???? platforms: gbm,wayland,x11,surfaceless,device
+>>> ?? API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 24.2.8
+>>> ???? renderer: Mesa Intel HD Graphics 4600 (HSW GT2)
+>>> ?? API: Vulkan v: 1.3.296 drivers: N/A surfaces: xcb,xlib,wayland
+>>>
+>>> This system is a Dell Optiplex.? The other two systems are a Dell laptop
+>>> and a Lenovo laptop.? All are running Intel i915 displays.
+>>>
+>>> ===============
+>>> Bill Gee
+>>>
+>>> On 11/25/24 15:09, Scinu via Therion wrote:
+>>> >> On Thu, Nov 21, 2024 at 2:14?PM Bill Gee <bgee at campercaver.net> 
+>>> wrote:
+>>> >>
+>>> >>> Confirmed - This problem has something to do with Wayland.? I logged
+>>> >>> into a test computer using X instead of Wayland.? Loch starts 
+>>> without
+>>> >>> error.? Logging out and back in with a Wayland session causes 
+>>> loch to fail.
+>>> >>
+>>> >> Hmm, no problem in the Wayland session with KDE on Debian Testing 
+>>> (and
+>>> >> no problem in the X session, either). Any other Wayland users here
+>>> >> that could report crashes or good operation?
+>>> >
+>>> > With a fresh install from the AUR (archlinux user repository) loch
+>>> > starts without problems on both X and wayland (sway).
+>>> >
+>>> > therion 6.3.1 (2024-11-22)
+>>> >??? - using Proj 9.5.0, compiled against 9.5.0
+>>> >
+>>> > loch 6.3.1
+>>> > (why is loch --version not implemented?)
+>>> >
+>>> > If I can help test more, pls let me know
+>>> >
+>>> > Best,
+>>> >
+>>> > Scinu
+>>> > _______________________________________________
+>>> > Therion mailing list
+>>> > Therion at speleo.sk
+>>> > https://mailman.speleo.sk/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From olly at survex.com  Mon Jan 13 23:33:07 2025
+From: olly at survex.com (Olly Betts)
+Date: Mon, 13 Jan 2025 22:33:07 +0000
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+References: <1aa6471d-eeb1-4528-9073-2d884a7f8cfd@campercaver.net>
+ <77a40388-e22d-4b61-9ba3-7de1c53abb55@campercaver.net>
+ <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+ <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+Message-ID: <20250113223307.GB3418@survex.com>
+
+On Mon, Jan 13, 2025 at 02:13:06PM -0600, Bill Gee wrote:
+> Thanks Benedikt and Martin for taking a look at this.  The first step in
+> fixing a problem is figuring out how to duplicate it.  So far we are not
+> having much luck with that!
+> 
+> So far the only thing that jumps out at me is that I am using an older
+> computer.  Martin's Intel display is much newer than mine, and Benedikt is
+> using an AMD display adapter.  I wonder if the Intel i915 display driver on
+> my hardware is missing some needed function?
+
+Try running loch from a terminal like so:
+
+GDK_BACKEND=x11 loch
+
+If that works, the problem is probably to do with your wxWidgets
+packages - the Debian ones have a patch to force use of X11 when the wx
+GL library is loaded:
+
+https://sources.debian.org/src/wxwidgets3.2/3.2.6%2Bdfsg-2/debian/patches/force-x11-for-wxgl.patch/
+
+Without this patch, you get a segfault if you try to use OpenGL under
+Wayland in wxWidgets built with Gtk3.  (I'd expect most distros will
+have moved to Gtk3 by now; things just work with Gtk2 because it doesn't
+have wayland support so is always using X11 on Linux.)
+
+Things have moved on a bit since that patch metadata was written as
+wxWidgets does now support OpenGL on Wayland via EGL, but there's some
+issue I don't fully remember the details of with enabling this support
+within Debian (and probably within any distro) - I think it's something
+like it needs to be enabled in libglew at the same time and there's some
+problem with enabling it there.
+
+Cheers,
+    Olly
+
+From olly at survex.com  Tue Jan 14 02:38:34 2025
+From: olly at survex.com (Olly Betts)
+Date: Tue, 14 Jan 2025 01:38:34 +0000
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <8b0b4e81-6402-46d2-b798-84b2f545ef1b@campercaver.net>
+References: <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+ <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+ <20250113223307.GB3418@survex.com>
+ <8b0b4e81-6402-46d2-b798-84b2f545ef1b@campercaver.net>
+Message-ID: <20250114013834.GP20045@survex.com>
+
+[Including the list in my reply as this seems of broader interest]
+
+On Mon, Jan 13, 2025 at 04:52:46PM -0600, Bill Gee wrote:
+> Olly, you're a wizard for remembering that bit of arcana.  The command line
+> you suggested works.  No more seg faults in loch!
+
+Great.
+
+> I do not have any packages called "wxWidgets" installed.  On Fedora they are
+> called wxGTK.  Here is the list of packages I have:
+> 
+> bgee at main2:~$ rpm -qa | grep -i wxGTK
+> wxGTK-i18n-3.2.6-1.fc41.noarch
+> wxGTK-3.2.6-1.fc41.x86_64
+> wxGTK-gl-3.2.6-1.fc41.x86_64
+> wxGTK-webview-3.2.6-1.fc41.x86_64
+> wxGTK-media-3.2.6-1.fc41.x86_64
+> wxGTK-devel-3.2.6-1.fc41.x86_64
+
+Its upstream project name is wxWidgets - wxGTK is the flavour using GTK,
+which Fedora have chosen to use as their package name.
+
+> I also do not have any packages like "libglew".  It might be part of the VTK
+> package.  I see a file named vtk-glew.h.
+
+It's not part of VTK - that header seems to be some VTK layer for
+supporting building with different versions of glew.
+
+I don't think wxWidgets or therion uses glew so you may well not have it
+installed, but some other apps which use wxWidgets also use glew - I
+think it's necessary that wxWidgets and glew agree on whether to use EGL
+or not for those apps.
+
+> I will modify the launcher for loch to set the environment variable.
+
+We have a workaround in Survex's aven for this - I'd suggest something
+similar in loch would be helpful as it would avoid these crashes
+completely.  I'm not easily able to test this patch actually works as I
+don't have Fedora but this or something like it should do the job (I
+have checked it compiles on a platform where the conditionals both
+evaluate true):
+
+diff --git a/loch/lxGUI.cxx b/loch/lxGUI.cxx
+index fc00b31e..41a4583c 100644
+--- a/loch/lxGUI.cxx
++++ b/loch/lxGUI.cxx
+@@ -73,7 +73,29 @@
+ #endif
+ 
+ 
++#ifdef __WXGTK3__
++# if !(wxUSE_GLCANVAS_EGL-0)
++#  include <stdlib.h>
++
++// The GLX-based wxGLCanvas doesn't work under Wayland, and the code
++// segfaults: https://github.com/wxWidgets/wxWidgets/issues/17702
++//
++// Therefore we force X11 unless we're using the EGL-based wxGLCanvas
++// (which was added in wxWidgets 3.1.5 and hasn't been backported to
++// 3.0.x).
++//
++// Setting GDK_BACKEND=x11 is the recommended workaround, and it seems to
++// work to set it here.  GTK2 doesn't support Wayland, so doesn't need
++// this.
++struct ForceX11 {
++    ForceX11() {
++       setenv("GDK_BACKEND", "x11", 1);
++    }
++};
++static ForceX11 forcex11;
+ 
++# endif
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////
+ // Main frame
+
+
+Cheers,
+    Olly
+
+From bgee at campercaver.net  Tue Jan 14 15:08:42 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Tue, 14 Jan 2025 08:08:42 -0600
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <40a4a40c-246a-483a-bd78-1e8edb6f086f@campercaver.net>
+References: <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+ <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+ <20250113223307.GB3418@survex.com>
+ <8b0b4e81-6402-46d2-b798-84b2f545ef1b@campercaver.net>
+ <20250114013834.GP20045@survex.com>
+ <40a4a40c-246a-483a-bd78-1e8edb6f086f@campercaver.net>
+Message-ID: <b947d36b-5c21-4af6-872d-20cfa187c13f@campercaver.net>
+
+Oops!  I meant to send this to the entire list rather than just Olly.
+
+===============
+Bill Gee
+
+On 1/14/25 07:06, Bill Gee wrote:
+> Thanks Olly!? I gave this a try.? It works well.? This is on Fedora 41.
+> 
+> I am not familiar with how to build patch files, so I did this in a 
+> slightly different way.
+> 
+> 1) Change to the source directory for loch (presumably already 
+> downloaded from GIT).? In my case that is ~/Installs/therion-6.3.3/loch
+> 
+> 2) cp lxGUI.cxx lxGUI.cxx.backup
+> 
+> 3) Use a text editor to modify lxGUI.cxx.? Copy the lines from Olly's 
+> message below starting with +#ifdev __WXGTK3__ and continuing to the 
+> last +#endif.
+> 
+> 4) Paste those lines into lxGUI.cxx starting at line 75.? Save the file.
+> 
+> 5) Change to the build directory.? In my case: cd ~/Installs/ 
+> therion-6.3.3/build
+> 
+> 6) Clean up files from previous compile:? make clean
+> 
+> 7) Compile just loch:? make -j 4 loch
+> 
+> 8) The new binary is in loch/loch.? In my case: ~/Installs/ 
+> therion-6.3.3/build/loch/loch is the filename.
+> 
+> 9) Become root, then copy the new loch over the old one.? In my case:
+> 
+> #cp /home/bgee/Installs/therion-6.3.3/build/loch/loch /usr/local/bin
+> 
+> 
+> ===============
+> Bill Gee
+> 
+> On 1/13/25 19:38, Olly Betts wrote:
+>> [Including the list in my reply as this seems of broader interest]
+>>
+>> On Mon, Jan 13, 2025 at 04:52:46PM -0600, Bill Gee wrote:
+>>> Olly, you're a wizard for remembering that bit of arcana.? The 
+>>> command line
+>>> you suggested works.? No more seg faults in loch!
+>>
+>> Great.
+>>
+>>> I do not have any packages called "wxWidgets" installed.? On Fedora 
+>>> they are
+>>> called wxGTK.? Here is the list of packages I have:
+>>>
+>>> bgee at main2:~$ rpm -qa | grep -i wxGTK
+>>> wxGTK-i18n-3.2.6-1.fc41.noarch
+>>> wxGTK-3.2.6-1.fc41.x86_64
+>>> wxGTK-gl-3.2.6-1.fc41.x86_64
+>>> wxGTK-webview-3.2.6-1.fc41.x86_64
+>>> wxGTK-media-3.2.6-1.fc41.x86_64
+>>> wxGTK-devel-3.2.6-1.fc41.x86_64
+>>
+>> Its upstream project name is wxWidgets - wxGTK is the flavour using GTK,
+>> which Fedora have chosen to use as their package name.
+>>
+>>> I also do not have any packages like "libglew".? It might be part of 
+>>> the VTK
+>>> package.? I see a file named vtk-glew.h.
+>>
+>> It's not part of VTK - that header seems to be some VTK layer for
+>> supporting building with different versions of glew.
+>>
+>> I don't think wxWidgets or therion uses glew so you may well not have it
+>> installed, but some other apps which use wxWidgets also use glew - I
+>> think it's necessary that wxWidgets and glew agree on whether to use EGL
+>> or not for those apps.
+>>
+>>> I will modify the launcher for loch to set the environment variable.
+>>
+>> We have a workaround in Survex's aven for this - I'd suggest something
+>> similar in loch would be helpful as it would avoid these crashes
+>> completely.? I'm not easily able to test this patch actually works as I
+>> don't have Fedora but this or something like it should do the job (I
+>> have checked it compiles on a platform where the conditionals both
+>> evaluate true):
+>>
+>> diff --git a/loch/lxGUI.cxx b/loch/lxGUI.cxx
+>> index fc00b31e..41a4583c 100644
+>> --- a/loch/lxGUI.cxx
+>> +++ b/loch/lxGUI.cxx
+>> @@ -73,7 +73,29 @@
+>> ? #endif
+>> +#ifdef __WXGTK3__
+>> +# if !(wxUSE_GLCANVAS_EGL-0)
+>> +#? include <stdlib.h>
+>> +
+>> +// The GLX-based wxGLCanvas doesn't work under Wayland, and the code
+>> +// segfaults: https://github.com/wxWidgets/wxWidgets/issues/17702
+>> +//
+>> +// Therefore we force X11 unless we're using the EGL-based wxGLCanvas
+>> +// (which was added in wxWidgets 3.1.5 and hasn't been backported to
+>> +// 3.0.x).
+>> +//
+>> +// Setting GDK_BACKEND=x11 is the recommended workaround, and it 
+>> seems to
+>> +// work to set it here.? GTK2 doesn't support Wayland, so doesn't need
+>> +// this.
+>> +struct ForceX11 {
+>> +??? ForceX11() {
+>> +?????? setenv("GDK_BACKEND", "x11", 1);
+>> +??? }
+>> +};
+>> +static ForceX11 forcex11;
+>> +# endif
+>> +#endif
+>> ? ////////////////////////////////////////////////////////////////////////
+>> ? // Main frame
+>>
+>>
+>> Cheers,
+>> ???? Olly
+> 
+
+
+From m.budaj at gmail.com  Tue Jan 14 20:41:51 2025
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 14 Jan 2025 20:41:51 +0100
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <20250114013834.GP20045@survex.com>
+References: <CALPsdSufmcGqsu5WFe=LavYK2r5K8oDcqyjQxsdpu-ECs61y8g@mail.gmail.com>
+ <1dbe8119-464f-473d-8d8f-374b5881ea2f@campercaver.net>
+ <CALPsdSu_-DscPp-Apuf_JcF2phEDGYXngO8RgZmRyiNYaesi0g@mail.gmail.com>
+ <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+ <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+ <20250113223307.GB3418@survex.com>
+ <8b0b4e81-6402-46d2-b798-84b2f545ef1b@campercaver.net>
+ <20250114013834.GP20045@survex.com>
+Message-ID: <CALPsdSvMbjFa1O-_8ufz=LmqAhdjZsX46262q_DP=HLZ8mxncw@mail.gmail.com>
+
+Thanks Olly, patch applied in Git repo.
+M.
+
+On Tue, Jan 14, 2025 at 2:39?AM Olly Betts <olly at survex.com> wrote:
+>
+> [Including the list in my reply as this seems of broader interest]
+>
+> On Mon, Jan 13, 2025 at 04:52:46PM -0600, Bill Gee wrote:
+> > Olly, you're a wizard for remembering that bit of arcana.  The command line
+> > you suggested works.  No more seg faults in loch!
+>
+> Great.
+>
+> > I do not have any packages called "wxWidgets" installed.  On Fedora they are
+> > called wxGTK.  Here is the list of packages I have:
+> >
+> > bgee at main2:~$ rpm -qa | grep -i wxGTK
+> > wxGTK-i18n-3.2.6-1.fc41.noarch
+> > wxGTK-3.2.6-1.fc41.x86_64
+> > wxGTK-gl-3.2.6-1.fc41.x86_64
+> > wxGTK-webview-3.2.6-1.fc41.x86_64
+> > wxGTK-media-3.2.6-1.fc41.x86_64
+> > wxGTK-devel-3.2.6-1.fc41.x86_64
+>
+> Its upstream project name is wxWidgets - wxGTK is the flavour using GTK,
+> which Fedora have chosen to use as their package name.
+>
+> > I also do not have any packages like "libglew".  It might be part of the VTK
+> > package.  I see a file named vtk-glew.h.
+>
+> It's not part of VTK - that header seems to be some VTK layer for
+> supporting building with different versions of glew.
+>
+> I don't think wxWidgets or therion uses glew so you may well not have it
+> installed, but some other apps which use wxWidgets also use glew - I
+> think it's necessary that wxWidgets and glew agree on whether to use EGL
+> or not for those apps.
+>
+> > I will modify the launcher for loch to set the environment variable.
+>
+> We have a workaround in Survex's aven for this - I'd suggest something
+> similar in loch would be helpful as it would avoid these crashes
+> completely.  I'm not easily able to test this patch actually works as I
+> don't have Fedora but this or something like it should do the job (I
+> have checked it compiles on a platform where the conditionals both
+> evaluate true):
+>
+> diff --git a/loch/lxGUI.cxx b/loch/lxGUI.cxx
+> index fc00b31e..41a4583c 100644
+> --- a/loch/lxGUI.cxx
+> +++ b/loch/lxGUI.cxx
+> @@ -73,7 +73,29 @@
+>  #endif
+>
+>
+> +#ifdef __WXGTK3__
+> +# if !(wxUSE_GLCANVAS_EGL-0)
+> +#  include <stdlib.h>
+> +
+> +// The GLX-based wxGLCanvas doesn't work under Wayland, and the code
+> +// segfaults: https://github.com/wxWidgets/wxWidgets/issues/17702
+> +//
+> +// Therefore we force X11 unless we're using the EGL-based wxGLCanvas
+> +// (which was added in wxWidgets 3.1.5 and hasn't been backported to
+> +// 3.0.x).
+> +//
+> +// Setting GDK_BACKEND=x11 is the recommended workaround, and it seems to
+> +// work to set it here.  GTK2 doesn't support Wayland, so doesn't need
+> +// this.
+> +struct ForceX11 {
+> +    ForceX11() {
+> +       setenv("GDK_BACKEND", "x11", 1);
+> +    }
+> +};
+> +static ForceX11 forcex11;
+>
+> +# endif
+> +#endif
+>
+>  ////////////////////////////////////////////////////////////////////////
+>  // Main frame
+>
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From olly at survex.com  Tue Jan 14 20:59:32 2025
+From: olly at survex.com (Olly Betts)
+Date: Tue, 14 Jan 2025 19:59:32 +0000
+Subject: [Therion] loch segmentation fault at launch
+In-Reply-To: <b947d36b-5c21-4af6-872d-20cfa187c13f@campercaver.net>
+References: <8734jf58cj.fsf@yentna.tnoo.net>
+ <65e6b015-6a5c-403b-bffb-1076e43fa5a0@campercaver.net>
+ <CALPsdSt143S1stsPxrRKBg4mBjAW2M6=hHos2F9GUK1bSaqxPw@mail.gmail.com>
+ <c99bde978a7f6e4dbbf300e85a4b9297@hallinger.org>
+ <a2740f27-c974-464b-9b96-c214890bee80@campercaver.net>
+ <20250113223307.GB3418@survex.com>
+ <8b0b4e81-6402-46d2-b798-84b2f545ef1b@campercaver.net>
+ <20250114013834.GP20045@survex.com>
+ <40a4a40c-246a-483a-bd78-1e8edb6f086f@campercaver.net>
+ <b947d36b-5c21-4af6-872d-20cfa187c13f@campercaver.net>
+Message-ID: <20250114195932.GC3418@survex.com>
+
+On 1/14/25 07:06, Bill Gee wrote:
+> Thanks Olly!? I gave this a try.? It works well.? This is on Fedora 41.
+
+Thanks for testing - I see Martin has already committed the patch.
+
+> I am not familiar with how to build patch files, so I did this in a
+> slightly different way.
+
+Quick primer - in the top of the source tree (~/Installs/therion-6.3.3
+for you):
+
+patch -p1 < example.patch
+
+(The number after -p is the number of levels to remove from the paths,
+here for "a/loch/lxGUI.cxx" you want to remove "a/" - 1 is usually what
+you want.)
+
+Or if you checked out from git, then:
+
+git apply example.patch
+
+In both cases the tools are smart enough to ignore text before and/or
+after the actual patch so e.g. you can feed in a whole email body.
+
+Cheers,
+    Olly
+
+From francesco.serafin2 at gmail.com  Fri Jan 17 11:12:07 2025
+From: francesco.serafin2 at gmail.com (Francesco Serafin)
+Date: Fri, 17 Jan 2025 11:12:07 +0100
+Subject: [Therion] Error in compiling (v 6.3.3)
+Message-ID: <CAFqMiUDhXtFGfj4FqA3yKn3dLnjtbOZ6EmuAe7pNrDbt0BOJmw@mail.gmail.com>
+
+Hi,
+
+I installed therion 6.3.3 on MacOS Sequoia (v 15.2).
+When I compile a config file, it gives
+ERROR: Can not execute "therion -x  cave1.thcfg".
+
+Is there a way to fix this?
+
+
+Thank you,
+Best,
+Francesco
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250117/eeb52ceb/attachment.htm>
+
+From bgee at campercaver.net  Fri Jan 17 14:42:04 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 17 Jan 2025 07:42:04 -0600
+Subject: [Therion] Scope of select and unselect
+Message-ID: <a539aa7d-f001-4cc0-9aa0-792c20825eb6@campercaver.net>
+
+Hello everyone -
+
+I am starting a new cave map project and trying to apply some stuff I 
+learned a few weeks ago.  I am not getting what I want, and I think it 
+is because I do not understand the scope of select and unselect in a 
+thconfig file.
+
+Reading the Therion Book - page 50 - It appears that "select" is not 
+processed sequentially.  It has the same effect no matter where it 
+appears in a thconfig file.  Is that correct?
+
+And if that is correct, then what purpose is served by "unselect"?
+
+What I want is a variety of exported maps showing only the drawn parts 
+of the cave.  Then I want a map which shows all drawn parts AND all 
+centerline.  I defined several maps and surveys in the .th file to cover 
+this.
+
+However, when I do the compile it acts like BOTH sets of defined maps 
+are exported.  My thconfig file looks like this:
+
+source main.th
+
+# repeated for all the layouts I want to use
+layout
+endlayout
+
+# produce the basic maps
+select MainMap
+export ...
+export ...
+
+# produce the debug map
+unselect MainMap
+select MainMap-Debug
+export ...
+
+Thanks!
+-- 
+===============
+Bill Gee
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Jan 17 16:50:44 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 17 Jan 2025 15:50:44 +0000
+Subject: [Therion] Cross platform clean-up of system commands
+Message-ID: <6270e019-f78d-4672-9127-295fae48c6b6@ntlworld.com>
+
+Hi,
+
+I am making a survey intended to be open source, which means it needs to 
+compile everywhere, with minimal edits.
+
+I use PDFtk for post-processing the PDF output, to include something 
+else in the PDF. This generates some temp files, that I don't want to 
+leave in the output folder, in case someone uses them by mistake, so I 
+want to delete them.
+
+Windows and Linux/Mac use different syntax, but "system" is a blunt 
+tool, and does not seem to allow me to check which command to use:
+system "del tempfile.pdf"
+system "rm -f tempfile.pdf"
+
+That generates an error message, and Therion thinks the file has failed 
+to compile when it is actually unimportant.
+
+Is it possible to code branch, like this:
+if( windows ) {
+	system "del tempfile.pdf"
+} else {
+	system "rm -f tempfile.pdf"
+}
+
+Is it possible to tell Therion not to consider the result of a "system" 
+command when determining if compilation failed? Like using @system to 
+ignore the output.
+
+Alternatively, does someone have a syntax of command that works on any 
+of these three platforms? This almost works, but Linux chucks junk into 
+a file called "nul" (even though it is not using that command):
+del tempfile.pdf 2>nul || rm -f tempfile.pdf 2>/dev/null
+
+And yes, I know I could demand installation of Python and clean up that 
+way, but it seems like such overkill when all I want to do is delete a 
+temp file. I would rather not add yet another dependency.
+
+Cheers,
+
+Tarquin
+
+From tarquin.wilton-jones at ntlworld.com  Sat Jan 18 09:59:59 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 18 Jan 2025 08:59:59 +0000
+Subject: [Therion] Cross platform clean-up of system commands
+In-Reply-To: <6270e019-f78d-4672-9127-295fae48c6b6@ntlworld.com>
+References: <6270e019-f78d-4672-9127-295fae48c6b6@ntlworld.com>
+Message-ID: <36a04695-fc7b-4081-9e36-7948e6e6091a@ntlworld.com>
+
+I have a hackaround that basically allows code branching on Windows and 
+Linux/Mac from within Therion's system command, so it always clears up 
+temp files no matter what the platform is.
+
+Create a file called "rm.bat" in the .thconfig directory. Give it these 
+contents:
+
+@echo off
+::simulate the Linux rm command on Windows, since Therion's "system"
+::command cannot cope with code branching for platforms
+if "%~2"=="" exit /b
+del "%~2" 2>nul
+
+Then the .thconfig can use this:
+system "rm -f deleteme-temp.pdf"
+
+On Linux, it uses the native "rm" command, and -f means it can silently 
+ignore any temp files that didn't get created.
+
+On Windows, it uses rm.bat, and that redirects any error messages to 
+nul. So Therion always considers it a success no matter what, and files 
+get cleaned up no matter what.
+
+Anyone have anything better?
+(Did anyone cringe from that "solution"?)
+
+Cheers,
+
+Tarquin
+
+From thomas at thomas-holder.de  Sat Jan 18 18:14:57 2025
+From: thomas at thomas-holder.de (Thomas Holder)
+Date: Sat, 18 Jan 2025 18:14:57 +0100
+Subject: [Therion] Cross platform clean-up of system commands
+In-Reply-To: <36a04695-fc7b-4081-9e36-7948e6e6091a@ntlworld.com>
+References: <6270e019-f78d-4672-9127-295fae48c6b6@ntlworld.com>
+ <36a04695-fc7b-4081-9e36-7948e6e6091a@ntlworld.com>
+Message-ID: <CAH+rX49vyNpW57g2tP4teVWAGOfbMfP8e8QX996hYL9Ac7-bdQ@mail.gmail.com>
+
+I like your "rm.bat" hackaround, I would do the same :)
+
+Thomas
+
+On Sat, Jan 18, 2025 at 10:00?AM Tarquin Wilton-Jones via Therion
+<therion at speleo.sk> wrote:
+>
+> I have a hackaround that basically allows code branching on Windows and
+> Linux/Mac from within Therion's system command, so it always clears up
+> temp files no matter what the platform is.
+>
+> Create a file called "rm.bat" in the .thconfig directory. Give it these
+> contents:
+>
+> @echo off
+> ::simulate the Linux rm command on Windows, since Therion's "system"
+> ::command cannot cope with code branching for platforms
+> if "%~2"=="" exit /b
+> del "%~2" 2>nul
+>
+> Then the .thconfig can use this:
+> system "rm -f deleteme-temp.pdf"
+>
+> On Linux, it uses the native "rm" command, and -f means it can silently
+> ignore any temp files that didn't get created.
+>
+> On Windows, it uses rm.bat, and that redirects any error messages to
+> nul. So Therion always considers it a success no matter what, and files
+> get cleaned up no matter what.
+>
+> Anyone have anything better?
+> (Did anyone cringe from that "solution"?)
+>
+> Cheers,
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From martin.dehautenbas at gmail.com  Wed Jan 22 10:30:31 2025
+From: martin.dehautenbas at gmail.com (Martin Kern)
+Date: Wed, 22 Jan 2025 03:30:31 -0600
+Subject: [Therion] Disable lookup legend
+Message-ID: <CAPXMhw7JB=L9U=+mVAbXR1V4cDO6QnGNsnmkg+c+V1RaaDpwCw@mail.gmail.com>
+
+Hi,
+
+I?m looking for disable lookup legend in the legend box.
+Does anyone know how to do it?
+
+Thanks !
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250122/a0738a5e/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Jan 23 08:08:10 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 23 Jan 2025 20:08:10 +1300
+Subject: [Therion] Disable lookup legend
+In-Reply-To: <CAPXMhw7JB=L9U=+mVAbXR1V4cDO6QnGNsnmkg+c+V1RaaDpwCw@mail.gmail.com>
+References: <CAPXMhw7JB=L9U=+mVAbXR1V4cDO6QnGNsnmkg+c+V1RaaDpwCw@mail.gmail.com>
+Message-ID: <000201db6d65$918c3110$b4a49330$@tomo.co.nz>
+
+Martin
+
+colour-legend <smooth/discrete/off/on>
+
+ 
+
+have a look at https://therion.speleo.sk/wiki/examples?s[]=lookup#colour_palette_scales_-_lookups <https://therion.speleo.sk/wiki/examples?s%5b%5d=lookup#colour_palette_scales_-_lookups>  
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Kern
+Sent: Wednesday, 22 January 2025 22:31
+To: therion at speleo.sk
+Subject: [Therion] Disable lookup legend
+
+ 
+
+Hi,
+
+ 
+
+I?m looking for disable lookup legend in the legend box.
+
+Does anyone know how to do it?
+
+ 
+
+Thanks !
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250123/b28dc247/attachment.htm>
+
+From martin.dehautenbas at gmail.com  Thu Jan 23 12:49:06 2025
+From: martin.dehautenbas at gmail.com (Martin Kern)
+Date: Thu, 23 Jan 2025 05:49:06 -0600
+Subject: [Therion] Therion Digest, Vol 229, Issue 12
+In-Reply-To: <mailman.1.1737630001.196798.therion@speleo.sk>
+References: <mailman.1.1737630001.196798.therion@speleo.sk>
+Message-ID: <CAPXMhw5auig=qUB4s2NYgCu_=qQA_XuX_AOZqc2TonUTc1sbnQ@mail.gmail.com>
+
+Thank you Bruce !
+I always thought this option was used to set a black&white legend, not to
+hide lookup...
+
+
+Le 23 janvier 2025 ? 12:00:18, therion-request at speleo.sk (
+therion-request at speleo.sk) a ?crit:
+
+Send Therion mailing list submissions to
+therion at speleo.sk
+
+To subscribe or unsubscribe via the World Wide Web, visit
+https://mailman.speleo.sk/listinfo/therion
+or, via email, send a message with subject or body 'help' to
+therion-request at speleo.sk
+
+You can reach the person managing the list at
+therion-owner at speleo.sk
+
+When replying, please edit your Subject line so it is more specific
+than "Re: Contents of Therion digest..."
+
+
+Today's Topics:
+
+1. Disable lookup legend (Bruce Mutton)
+
+
+----------------------------------------------------------------------
+
+Message: 1
+Date: Thu, 23 Jan 2025 20:08:10 +1300
+From: "Bruce Mutton" <bruce at tomo.co.nz>
+To: "'List for Therion users'" <therion at speleo.sk>
+Subject: [Therion] Disable lookup legend
+Message-ID: <000201db6d65$918c3110$b4a49330$@tomo.co.nz>
+Content-Type: text/plain; charset="utf-8"
+
+Martin
+
+colour-legend <smooth/discrete/off/on>
+
+
+
+have a look at
+https://therion.speleo.sk/wiki/examples?s[]=lookup#colour_palette_scales_-_lookups
+<
+https://therion.speleo.sk/wiki/examples?s%5b%5d=lookup#colour_palette_scales_-_lookups>
+
+
+
+
+Bruce
+
+
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Kern
+Sent: Wednesday, 22 January 2025 22:31
+To: therion at speleo.sk
+Subject: [Therion] Disable lookup legend
+
+
+
+Hi,
+
+
+
+I?m looking for disable lookup legend in the legend box.
+
+Does anyone know how to do it?
+
+
+
+Thanks !
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <
+http://mailman.speleo.sk/pipermail/therion/attachments/20250123/b28dc247/attachment-0001.htm>
+
+
+------------------------------
+
+Subject: Digest Footer
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+------------------------------
+
+End of Therion Digest, Vol 229, Issue 12
+****************************************
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250123/756ee91d/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Jan 24 23:59:21 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 25 Jan 2025 11:59:21 +1300
+Subject: [Therion] Therion 6.3.3 problems compiling thconfigs on Windows
+Message-ID: <001001db6eb3$9d41d420$d7c57c60$@tomo.co.nz>
+
+Good morning
+
+Just installed 6.3.3 on Windows 10, and noticed some odd behaviours,
+including an untrapped crash that does not happen with 6.3.1, briefly
+documented here.
+
+https://github.com/therion/therion/issues/629 
+
+ 
+
+Anyone else?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250125/a1f2d408/attachment.htm>
+
+From jeanflorent at no-log.org  Tue Jan 28 16:48:27 2025
+From: jeanflorent at no-log.org (Jean-Florent Raymond)
+Date: Tue, 28 Jan 2025 16:48:27 +0100
+Subject: [Therion] Drawing the map of a vertical cave
+Message-ID: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+
+Hello,
+
+I am drawing the map of a cave that is so far mostly vertical. In the 
+map editor of xtherion is very hard to distinguish which lines / 
+stations of the xvi belong to which part of the cave, because they are 
+all drawn over each other when seen from above. When adding walls and 
+objects it becomes even worse.
+
+Is there an easy way to deal with this? Maybe generating different xvi's 
+for the different levels in the cave and drawing the scraps in different 
+th2 files?
+
+Best,
+Jean-Florent.
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jan 28 17:17:38 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 28 Jan 2025 16:17:38 +0000
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+References: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+Message-ID: <ffaeb5c7-f879-46a3-887d-9ebf609a14ea@ntlworld.com>
+
+Hi Jean-Florent,
+
+> I am drawing the map of a cave that is so far mostly vertical. In the 
+> map editor of xtherion is very hard to distinguish which lines / 
+> stations of the xvi belong to which part of the cave, because they are 
+> all drawn over each other when seen from above. When adding walls and 
+> objects it becomes even worse.
+
+
+In general, I can say "me too". We had this exact same issue. We kept 
+our surveys short, so there were not too many stations overlapping. This 
+was also important when gathering the data, though SexyTopo is actually 
+very helpful there, and highlights the "current station" and its splays 
+(this feature was added specifically because of our needs while 
+surveying). I would dearly love something similar in XTherion...
+
+This is part of our survey, where 10 passages overlap, within a vertical 
+range of just 62 metres;
+https://www.cavinguk.co.uk/pwlldwfn/pwlldwfnarticle/normal/Chaos.png
+XTherion shows this as a grey jumbled mass of nonsense. Shorter surveys 
+really, really helps to keep the noise down. However, it is often hard 
+to find a convenient place to end a survey in a really vertical cave, 
+and you end up giving yourself a load of ugly "join" commands to make up 
+for it.
+
+In these situations, XTherion seems to expect you to have drawn perfect 
+lines in the cave, so you don't have to rely on the splays.
+
+> Is there an easy way to deal with this? Maybe generating different xvi's 
+> for the different levels in the cave and drawing the scraps in different 
+> th2 files?
+
+
+I don't worry about the drawn scraps, since they feel unimportant when 
+not focused. I worry more about "which splay am I trying to touch with 
+this line". We used Survex Aven to render the .3d output, click to focus 
+a splay end, and repeatedly flick from plan (P) to elevation (E) to see 
+the splays move, and work out which one ended up where in the plan view, 
+then try to locate that same splay in XTherion. It was very helpful 
+being able to have the two apps running on two screens at the same time, 
+to compare them. Aven makes things a lot more easy to see. Loch does not 
+have any useful splay focusing or keyboard shortcuts to help with that.
+
+As for your proposal; sure, you can do that. Move the subset of the data 
+into its own survey, create a .thconfig, select it, export an XVI. Use 
+that in a .th2. But then you need to import your sketches and overlay 
+them somehow to make it useful. And I don't know how to do that part. 
+Maybe someone else here does?
+
+I also note that exported XVIs use a much lower natural resolution than 
+our surveying app's export. I think it might be possible to change that 
+in the properties of the embedding command in the .th2, but again, I 
+don't know how to do that.
+
+Was that any better of an answer than shrugging my shoulders?
+?\_(?)_/?
+
+Cheers,
+
+Tarquin
+
+From beni at hallinger.org  Tue Jan 28 19:18:07 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 28 Jan 2025 19:18:07 +0100
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <ffaeb5c7-f879-46a3-887d-9ebf609a14ea@ntlworld.com>
+References: <ffaeb5c7-f879-46a3-887d-9ebf609a14ea@ntlworld.com>
+Message-ID: <6AB90596-36C7-40C3-B849-AE7BDE5456A5@hallinger.org>
+
+Two things come to my mind:
+
+1. I also often use aven to assist my drawing. What helps me alot here is linux/kde, because I can do stuff in aven, put the window below xtherions and make the xtherion window  transparent. Aven works as a kind of ?background image? in that regard.
+
+2. when drawing vertically, isn?t drawing (and rendering)  exendet elevations far more useful and expressive?
+You also can export xvis in that projection.
+
+
+> Am 28.01.2025 um 17:17 schrieb Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> ?Hi Jean-Florent,
+> 
+>> I am drawing the map of a cave that is so far mostly vertical. In the map editor of xtherion is very hard to distinguish which lines / stations of the xvi belong to which part of the cave, because they are all drawn over each other when seen from above. When adding walls and objects it becomes even worse.
+> 
+> 
+> In general, I can say "me too". We had this exact same issue. We kept our surveys short, so there were not too many stations overlapping. This was also important when gathering the data, though SexyTopo is actually very helpful there, and highlights the "current station" and its splays (this feature was added specifically because of our needs while surveying). I would dearly love something similar in XTherion...
+> 
+> This is part of our survey, where 10 passages overlap, within a vertical range of just 62 metres;
+> https://www.cavinguk.co.uk/pwlldwfn/pwlldwfnarticle/normal/Chaos.png
+> XTherion shows this as a grey jumbled mass of nonsense. Shorter surveys really, really helps to keep the noise down. However, it is often hard to find a convenient place to end a survey in a really vertical cave, and you end up giving yourself a load of ugly "join" commands to make up for it.
+> 
+> In these situations, XTherion seems to expect you to have drawn perfect lines in the cave, so you don't have to rely on the splays.
+> 
+>> Is there an easy way to deal with this? Maybe generating different xvi's for the different levels in the cave and drawing the scraps in different th2 files?
+> 
+> 
+> I don't worry about the drawn scraps, since they feel unimportant when not focused. I worry more about "which splay am I trying to touch with this line". We used Survex Aven to render the .3d output, click to focus a splay end, and repeatedly flick from plan (P) to elevation (E) to see the splays move, and work out which one ended up where in the plan view, then try to locate that same splay in XTherion. It was very helpful being able to have the two apps running on two screens at the same time, to compare them. Aven makes things a lot more easy to see. Loch does not have any useful splay focusing or keyboard shortcuts to help with that.
+> 
+> As for your proposal; sure, you can do that. Move the subset of the data into its own survey, create a .thconfig, select it, export an XVI. Use that in a .th2. But then you need to import your sketches and overlay them somehow to make it useful. And I don't know how to do that part. Maybe someone else here does?
+> 
+> I also note that exported XVIs use a much lower natural resolution than our surveying app's export. I think it might be possible to change that in the properties of the embedding command in the .th2, but again, I don't know how to do that.
+> 
+> Was that any better of an answer than shrugging my shoulders?
+> ?\_(?)_/?
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bruce at tomo.co.nz  Tue Jan 28 19:31:32 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 29 Jan 2025 07:31:32 +1300
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+References: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+Message-ID: <000201db71b2$dbcffd00$936ff700$@tomo.co.nz>
+
+Hi Jean-Florent
+
+As Tarquin said!
+
+However solutions I have used to good effect...
+
+ 
+
+If your data is pencil and paper, then printing and sketching on paper
+(while viewing models, plan and elevation on-screen simultaneously) then
+scanning those sketches can be an easier way of untangling.
+
+Or break the survey into small sections of survey that only minimally
+overlap, and export one at a time for eventual sketching.
+
+ 
+
+If your data is paperless, then the best option is to anticipate this while
+in the cave - if it is becoming hard to decipher in the cave on your device,
+then it won't be better in XTherion.
+
+In this case, create a new survey file.
+
+ 
+
+In both cases, limit the scope of your xvi only to the individual survey.
+
+Good luck!
+
+Bruce
+
+ 
+
+PS: Perhaps a key thing to remember is that if the plan is becoming
+difficult, an elevation drawing will be a better way of conveying to viewers
+an understanding of the cave.
+
+
+
+(An example of a 5 or 6 level shaft spiral that is somewhat OK in plan)
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250129/d75909df/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 43315 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250129/d75909df/attachment-0001.png>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jan 28 19:50:32 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 28 Jan 2025 18:50:32 +0000
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <6AB90596-36C7-40C3-B849-AE7BDE5456A5@hallinger.org>
+References: <ffaeb5c7-f879-46a3-887d-9ebf609a14ea@ntlworld.com>
+ <6AB90596-36C7-40C3-B849-AE7BDE5456A5@hallinger.org>
+Message-ID: <c1f4262d-01ca-4360-99e2-92259f595860@ntlworld.com>
+
+> 1. I also often use aven to assist my drawing. What helps me alot here is linux/kde, because I can do stuff in aven, put the window below xtherions and make the xtherion window  transparent. Aven works as a kind of ?background image? in that regard.
+
+
+Now that is a really useful tip!
+Shame Windows still seems to lack that feature, and every app that can 
+do it is either abandonware or domain squatted, or an unsigned download 
+from a dodgy site.
+
+> 2. when drawing vertically, isn?t drawing (and rendering)  exendet elevations far more useful and expressive?
+> You also can export xvis in that projection.
+
+
+For a vertical cave, almost always!
+For a vein-based mine, not really, since you want to preserve the 
+relationships between levels, because the standard view is a cross 
+section through a mountain, and they regularly join each other. 
+Projected elevation can often be best there.
+
+But I think Jean-Florent's question is almost certainly about drawing 
+the plan view, which is a nightmare when everything overlaps everything 
+else.
+
+From jeanflorent at no-log.org  Wed Jan 29 10:15:46 2025
+From: jeanflorent at no-log.org (Jean-Florent Raymond)
+Date: Wed, 29 Jan 2025 10:15:46 +0100
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <000201db71b2$dbcffd00$936ff700$@tomo.co.nz>
+References: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+ <000201db71b2$dbcffd00$936ff700$@tomo.co.nz>
+Message-ID: <5fc890ad-52b7-46c4-b437-abab7588cd0d@no-log.org>
+
+Hello,
+
+Thank you all for your answers ! So there is no easy way.
+
+Yes indeed the elevation drawing is much easier to read in this case and 
+was also much easier to draw. But I cannot resign myself not to draw the 
+plan, which is useful to guide the exploration. (For instance it might 
+reveal that that one chimney is located just below the base of a pit 
+above, in which case we probably won't waste time to climb that 
+chimney.) The 3D view is even better for that but quite hard to print on 
+paper :) and more generally hard to share with people who are not too 
+familiar with computers.
+I will try some of your suggestions.
+
+Best regards,
+Jean-Florent.
+
+
+Le 28/01/2025 ? 19:31, Bruce Mutton a ?crit?:
+> Hi Jean-Florent
+> 
+> As Tarquin said!
+> 
+> However solutions I have used to good effect...
+> 
+>   
+> 
+> If your data is pencil and paper, then printing and sketching on paper
+> (while viewing models, plan and elevation on-screen simultaneously) then
+> scanning those sketches can be an easier way of untangling.
+> 
+> Or break the survey into small sections of survey that only minimally
+> overlap, and export one at a time for eventual sketching.
+> 
+>   
+> 
+> If your data is paperless, then the best option is to anticipate this while
+> in the cave - if it is becoming hard to decipher in the cave on your device,
+> then it won't be better in XTherion.
+> 
+> In this case, create a new survey file.
+> 
+>   
+> 
+> In both cases, limit the scope of your xvi only to the individual survey.
+> 
+> Good luck!
+> 
+> Bruce
+> 
+>   
+> 
+> PS: Perhaps a key thing to remember is that if the plan is becoming
+> difficult, an elevation drawing will be a better way of conveying to viewers
+> an understanding of the cave.
+> 
+> 
+> 
+> (An example of a 5 or 6 level shaft spiral that is somewhat OK in plan)
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Wed Jan 29 10:45:56 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Wed, 29 Jan 2025 10:45:56 +0100
+Subject: [Therion] Drawing the map of a vertical cave
+In-Reply-To: <5fc890ad-52b7-46c4-b437-abab7588cd0d@no-log.org>
+References: <183e013c-aab2-4b77-8862-5cb6e107db08@no-log.org>
+ <000201db71b2$dbcffd00$936ff700$@tomo.co.nz>
+ <5fc890ad-52b7-46c4-b437-abab7588cd0d@no-log.org>
+Message-ID: <3727E0E5-12D5-4326-8F4E-1E9ADD7C8864@univ-grenoble-alpes.fr>
+
+Hi Jean-Florent,
+
+I also had this issue in some caves in Haute Savoie (France). Generally, to avoid this issue, I separate the survey in several sub-surveys corresponding more or less to a small horizontal level, and I draw each subsurvey separately. Then, this is not hard to merge everything together. You may have a look on https://github.com/robertxa/Topographies-Samoens_Folly to get examples on how to separate surveys and merge them.
+I also use a lot the 3D view with Loch to be sure about the station to be taken in account.
+
+To share the 3D view with other people, I am using the Caveview web-app. The great point is that as soon you already have a model on line, if you share a lox file, you can tell your contacts to just grad-and-drop the new lox file in the Caveview window: it will load the local lox file you sent.
+
+Cheers,
+
+Xavier
+
+
+
+> Le 29 janv. 2025 ? 10:15, Jean-Florent Raymond <jeanflorent at no-log.org> a ?crit :
+> 
+> Hello,
+> 
+> Thank you all for your answers ! So there is no easy way.
+> 
+> Yes indeed the elevation drawing is much easier to read in this case and was also much easier to draw. But I cannot resign myself not to draw the plan, which is useful to guide the exploration. (For instance it might reveal that that one chimney is located just below the base of a pit above, in which case we probably won't waste time to climb that chimney.) The 3D view is even better for that but quite hard to print on paper :) and more generally hard to share with people who are not too familiar with computers.
+> I will try some of your suggestions.
+> 
+> Best regards,
+> Jean-Florent.
+> 
+> 
+> Le 28/01/2025 ? 19:31, Bruce Mutton a ?crit :
+>> Hi Jean-Florent
+>> As Tarquin said!
+>> However solutions I have used to good effect...
+>>  If your data is pencil and paper, then printing and sketching on paper
+>> (while viewing models, plan and elevation on-screen simultaneously) then
+>> scanning those sketches can be an easier way of untangling.
+>> Or break the survey into small sections of survey that only minimally
+>> overlap, and export one at a time for eventual sketching.
+>>  If your data is paperless, then the best option is to anticipate this while
+>> in the cave - if it is becoming hard to decipher in the cave on your device,
+>> then it won't be better in XTherion.
+>> In this case, create a new survey file.
+>>  In both cases, limit the scope of your xvi only to the individual survey.
+>> Good luck!
+>> Bruce
+>>  PS: Perhaps a key thing to remember is that if the plan is becoming
+>> difficult, an elevation drawing will be a better way of conveying to viewers
+>> an understanding of the cave.
+>> (An example of a 5 or 6 level shaft spiral that is somewhat OK in plan)
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From rsev at pm.me  Wed Jan 29 15:16:46 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 29 Jan 2025 14:16:46 +0000
+Subject: [Therion] Two scraps in the same .TH2
+Message-ID: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+
+Hi,
+
+A general question: can someone point me a reasonable situation where having 2 scraps in the same TH2 file makes sense/is important?
+
+Regards,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250129/a72b2c36/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Wed Jan 29 15:48:16 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Wed, 29 Jan 2025 15:48:16 +0100
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+Message-ID: <9D35182C-7DF2-40A7-B089-7F8D0EE7DB67@univ-grenoble-alpes.fr>
+
+Hi Rodrigo,
+
+I often draw several scraps in the same th2 file : generally, I use one th2 file for each survey session. If I have a survey with several hundreds of meters and/or more than 15/20 stations, I will used different scraps, even if everything is on a similar altitude. The reason is that it is easier for me to draw everything in the same th2 because I see what I have done before (except when the cave is vertically too complex), and it facilitates me maps building and management, especially if this th2 is part of much larger cave with numerous overlaps.
+
+Cheers,
+
+Xavier
+
+
+> Le 29 janv. 2025 ? 15:16, Rodrigo Severo via Therion <therion at speleo.sk> a ?crit :
+> 
+> Hi,
+> A general question: can someone point me a reasonable situation where having 2 scraps in the same TH2 file makes sense/is important?
+> Regards,
+> Rodrigo
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250129/2e61a16d/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Jan 29 15:50:40 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 29 Jan 2025 14:50:40 +0000
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+Message-ID: <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+
+Hi Rodrigo,
+
+
+> A general question: can someone point me a reasonable situation where 
+> having 2 scraps in the same TH2 file makes sense/is important?
+
+It is exceedingly rare for me to have a .th2 with just one scrap.
+
+If one passage overlaps another, then you need two scraps do they can be 
+drawn below above/below each other properly (eg. with translucency, or 
+just hiding the lower passage, or with background colours). That could 
+just be a short roof tube, or a fork where one climbs over the other. It 
+would be crazy to have another .th2 file for each of them, since you 
+probably surveyed them at the same time. So instead, you have two scraps 
+in the one .th2 file.
+
+Back before you had smooth-shading, you needed to break your survey into 
+several scraps just so it could colour them differently by altitude as 
+the passage sloped uphill (eg. one scrap for every 5 metres altitude 
+change). You still need to do that if you have abrupt changes in height, 
+since smooth-shading will not change colour nicely at the edge of the 
+drop, but it will change colour nicely at the edge of a scrap, as long 
+as it has the correct stations marked.
+
+If you have a high level passage that intersects a lower level passage 
+(so you have a pitch down into it), then continues at high level on the 
+other side, and you surveyed the upper level stuff all in one survey, 
+you would have to end the first scrap where it joins the passage, then 
+create a new scrap on the other side. This is because a scrap cannot 
+have multiple outlines. Although Therion might sometimes understand it 
+if you do have 2 outlines in one scrap, it cannot export it properly in 
+KML format, and struggles with some other outputs too. So you are not 
+supposed to do it. You are supposed to use two scraps.
+
+I also have my ropes on a rigging topo in separate scraps from the cave, 
+so we can use maps to select the rendering with and without some of the 
+ropes (where a layout can only disable them completely).
+
+Sometimes, I have another scrap just for adding another layer of 
+information on a survey, such as hardware serial number labels for fixed 
+aid maintenance. I don't want them on the main survey since regular 
+cavers won't know why XY123 is written next to an anchor, but I want 
+them for when I create a special version of the survey for the hardware 
+maintainer.
+
+Lots and lots of reasons :)
+
+
+Cheers,
+
+Tarquin
+
+From bgee at campercaver.net  Wed Jan 29 16:07:43 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 29 Jan 2025 09:07:43 -0600
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+Message-ID: <0fcac0a7-c4c0-4346-a226-5c95d6f076f0@campercaver.net>
+
+I generally use one .th2 file per sheet of sketching.  If there are 
+several scraps on one sheet, then all of them go in the same .th2 file.
+
+Also - I often draw cross-sections and profiles on a separate sheet of 
+paper.  Each sheet is one .th2, and it contains whatever cross-sections 
+and profiles are on that sheet.
+
+You can, of course, do one .th2 per scrap.  I think the only real 
+problem with that is typing all those file names as "input" statements 
+in the .th file.
+
+===============
+Bill Gee
+
+On 1/29/25 08:16, Rodrigo Severo via Therion wrote:
+> Hi,
+> 
+> 
+> A general question: can someone point me a reasonable situation where 
+> having 2 scraps in the same TH2 file makes sense/is important?
+> 
+> 
+> Regards,
+> 
+> Rodrigo
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From rsev at pm.me  Wed Jan 29 16:06:12 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 29 Jan 2025 15:06:12 +0000
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+ <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+Message-ID: <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+
+
+Well,
+
+That's definitely not what I wanted to hear but that's life...
+
+Can you both send me one or 2 th2 files so I can better understand how to deal with them? A typical one and, maybe, a non-typical but important one also?
+
+After a way too long respite I am working again in Mapiah the, I wish some day, userfriendly and non-vaporware Therion Graphical Interface.
+
+
+Thanks.
+
+
+On Wednesday, January 29th, 2025 at 11:50 AM, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+
+> 
+> 
+> Hi Rodrigo,
+> 
+> 
+> > A general question: can someone point me a reasonable situation where
+> > having 2 scraps in the same TH2 file makes sense/is important?
+> 
+> 
+> It is exceedingly rare for me to have a .th2 with just one scrap.
+> 
+> If one passage overlaps another, then you need two scraps do they can be
+> drawn below above/below each other properly (eg. with translucency, or
+> just hiding the lower passage, or with background colours). That could
+> just be a short roof tube, or a fork where one climbs over the other. It
+> would be crazy to have another .th2 file for each of them, since you
+> probably surveyed them at the same time. So instead, you have two scraps
+> in the one .th2 file.
+> 
+> Back before you had smooth-shading, you needed to break your survey into
+> several scraps just so it could colour them differently by altitude as
+> the passage sloped uphill (eg. one scrap for every 5 metres altitude
+> change). You still need to do that if you have abrupt changes in height,
+> since smooth-shading will not change colour nicely at the edge of the
+> drop, but it will change colour nicely at the edge of a scrap, as long
+> as it has the correct stations marked.
+> 
+> If you have a high level passage that intersects a lower level passage
+> (so you have a pitch down into it), then continues at high level on the
+> other side, and you surveyed the upper level stuff all in one survey,
+> you would have to end the first scrap where it joins the passage, then
+> create a new scrap on the other side. This is because a scrap cannot
+> have multiple outlines. Although Therion might sometimes understand it
+> if you do have 2 outlines in one scrap, it cannot export it properly in
+> KML format, and struggles with some other outputs too. So you are not
+> supposed to do it. You are supposed to use two scraps.
+> 
+> I also have my ropes on a rigging topo in separate scraps from the cave,
+> so we can use maps to select the rendering with and without some of the
+> ropes (where a layout can only disable them completely).
+> 
+> Sometimes, I have another scrap just for adding another layer of
+> information on a survey, such as hardware serial number labels for fixed
+> aid maintenance. I don't want them on the main survey since regular
+> cavers won't know why XY123 is written next to an anchor, but I want
+> them for when I create a special version of the survey for the hardware
+> maintainer.
+> 
+> Lots and lots of reasons :)
+> 
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Wed Jan 29 16:25:36 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 29 Jan 2025 09:25:36 -0600
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+ <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+ <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+Message-ID: <28a7f5de-20da-4529-a171-9e64f89f0941@campercaver.net>
+
+Hi Rodrigo -
+
+Attached is a .th2 file from a cave I have recently been working on. 
+This contains two plan scraps and several cross sections, all of which 
+were drawn on one sheet of paper.
+
+===============
+Bill Gee
+
+On 1/29/25 09:06, Rodrigo Severo via Therion wrote:
+> 
+> Well,
+> 
+> That's definitely not what I wanted to hear but that's life...
+> 
+> Can you both send me one or 2 th2 files so I can better understand how to deal with them? A typical one and, maybe, a non-typical but important one also?
+> 
+> After a way too long respite I am working again in Mapiah the, I wish some day, userfriendly and non-vaporware Therion Graphical Interface.
+> 
+> 
+> Thanks.
+> 
+> 
+> On Wednesday, January 29th, 2025 at 11:50 AM, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+> 
+>>
+>>
+>> Hi Rodrigo,
+>>
+>>
+>>> A general question: can someone point me a reasonable situation where
+>>> having 2 scraps in the same TH2 file makes sense/is important?
+>>
+>>
+>> It is exceedingly rare for me to have a .th2 with just one scrap.
+>>
+>> If one passage overlaps another, then you need two scraps do they can be
+>> drawn below above/below each other properly (eg. with translucency, or
+>> just hiding the lower passage, or with background colours). That could
+>> just be a short roof tube, or a fork where one climbs over the other. It
+>> would be crazy to have another .th2 file for each of them, since you
+>> probably surveyed them at the same time. So instead, you have two scraps
+>> in the one .th2 file.
+>>
+>> Back before you had smooth-shading, you needed to break your survey into
+>> several scraps just so it could colour them differently by altitude as
+>> the passage sloped uphill (eg. one scrap for every 5 metres altitude
+>> change). You still need to do that if you have abrupt changes in height,
+>> since smooth-shading will not change colour nicely at the edge of the
+>> drop, but it will change colour nicely at the edge of a scrap, as long
+>> as it has the correct stations marked.
+>>
+>> If you have a high level passage that intersects a lower level passage
+>> (so you have a pitch down into it), then continues at high level on the
+>> other side, and you surveyed the upper level stuff all in one survey,
+>> you would have to end the first scrap where it joins the passage, then
+>> create a new scrap on the other side. This is because a scrap cannot
+>> have multiple outlines. Although Therion might sometimes understand it
+>> if you do have 2 outlines in one scrap, it cannot export it properly in
+>> KML format, and struggles with some other outputs too. So you are not
+>> supposed to do it. You are supposed to use two scraps.
+>>
+>> I also have my ropes on a rigging topo in separate scraps from the cave,
+>> so we can use maps to select the rendering with and without some of the
+>> ropes (where a layout can only disable them completely).
+>>
+>> Sometimes, I have another scrap just for adding another layer of
+>> information on a survey, such as hardware serial number labels for fixed
+>> aid maintenance. I don't want them on the main survey since regular
+>> cavers won't know why XY123 is written next to an anchor, but I want
+>> them for when I create a special version of the survey for the hardware
+>> maintainer.
+>>
+>> Lots and lots of reasons :)
+>>
+>>
+>> Cheers,
+>>
+>> Tarquin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -132.0 -2652 3428 141.0
+##XTHERION## xth_me_area_zoom_to 100
+##XTHERION## xth_me_image_insert {0 1 1.0} {0 {}} {2017_09_22 SHN-017 CAVE SPRING CAVE SKETCH 2.jpg} 0 {}
+
+
+
+scrap U20-U23 -projection plan -scale [-128 -2644 3414 -2644 0.0 0.0 89.96679999999999 0.0 m]
+
+point 777.0 -1224.0 passage-height -value [7 ft]
+
+point 373.0 -840.0 section -scrap CrossSection-U21
+
+line section -direction both
+  473.0 -947.0
+  676.0 -1191.0
+endline
+
+line arrow
+  405.0 -1069.5
+  456.5 -1145.0
+endline
+
+line arrow
+  532.0 -1385.5
+  442.5 -1282.0
+endline
+
+line arrow
+  223.5 -1348.0
+  291.0 -1460.5
+endline
+
+point 546.0 -1407.5 passage-height -value [6 ft]
+
+point 392.0 -1047.5 height -value [3 ft]
+
+point 211.0 -1327.0 height -value [1 ft]
+
+point 335.0 -1497.0 popcorn -orientation 320 -scale xs
+
+line ceiling-step
+  866.0 -1165.0
+  866.0 -1165.0 830.0 -1192.0 819.0 -1219.5
+  808.0 -1247.0 783.5 -1292.0 778.5 -1307.0
+  773.5 -1322.0 743.5 -1353.0 738.5 -1375.0
+  733.5 -1397.0 722.5 -1442.5 716.5 -1456.0
+  710.5 -1469.5 697.5 -1488.0 693.5 -1497.5
+  689.5 -1507.0 674.5 -1536.5 673.0 -1553.5
+  671.5 -1570.5 674.0 -1580.5 665.0 -1595.5
+  656.0 -1610.5 637.5 -1621.5 637.5 -1621.5
+  smooth off
+endline
+
+line ceiling-step
+  647.5 -1847.0
+  647.5 -1847.0 642.0 -1909.0 641.5 -1920.5
+  641.0 -1932.0 642.5 -1941.5 635.5 -1960.5
+  628.5 -1979.5 599.5 -2017.0 599.5 -2017.0
+  smooth off
+endline
+
+line ceiling-step
+  571.5 -2219.0
+  571.5 -2219.0 553.5 -2272.5 548.0 -2288.5
+  542.5 -2304.5 529.5 -2338.0 525.0 -2354.0
+  520.5 -2370.0 492.5 -2386.5 488.0 -2405.5
+  483.5 -2424.5 474.0 -2450.5 462.0 -2460.0
+  450.0 -2469.5 435.5 -2489.5 435.5 -2489.5
+  smooth off
+endline
+
+point 451.5 -2429.5 stalactite -scale xs
+
+point 472.0 -2382.5 stalactite -scale xs
+
+point 496.0 -2292.5 stalactite -scale xs
+
+point 507.5 -2212.0 stalactite -scale xs
+
+point 638.5 -1973.5 stalactite -scale xs
+
+point 730.5 -1912.5 stalactite -scale xs
+
+point 668.5 -1664.0 stalactite -scale xs
+
+point 762.0 -1385.0 stalactite -scale xs
+
+point 808.0 -1295.0 stalactite -scale xs
+
+point 942.5 -1064.0 stalactite -scale xs
+
+point 508.5 -1140.0 stalactite -scale xs
+
+point 290.5 -1384.0 stalactite -scale xs
+
+point 262.0 -1536.0 stalactite -scale xs
+
+point 185.5 -1586.5 stalactite -scale xs
+
+point 555.5 -2407.5 soda-straw -scale xs
+
+point 577.5 -2316.5 soda-straw -scale xs
+
+point 595.5 -2251.5 soda-straw -scale xs
+
+point 625.0 -2129.5 soda-straw -scale xs
+
+point 648.0 -2051.0 soda-straw -scale xs
+
+point 680.5 -1934.5 soda-straw -scale xs
+
+point 692.5 -1871.0 soda-straw -scale xs
+
+point 667.0 -1817.0 soda-straw -scale xs
+
+point 703.0 -1674.0 soda-straw -scale xs
+
+point 723.5 -1592.0 soda-straw -scale xs
+
+point 735.5 -1532.5 soda-straw -scale xs
+
+point 783.5 -1457.5 soda-straw -scale xs
+
+point 795.0 -1405.5 soda-straw -scale xs
+
+point 819.5 -1331.0 soda-straw -scale xs
+
+point 888.5 -1313.0 soda-straw -scale xs
+
+point 870.0 -1239.5 soda-straw -scale xs
+
+point 852.0 -1170.5 soda-straw -scale xs
+
+point 971.0 -1165.0 soda-straw -scale xs
+
+point 833.5 -1039.0 soda-straw -scale xs
+
+point 826.5 -999.5 soda-straw -scale xs
+
+point 701.0 -1048.5 soda-straw -scale xs
+
+point 654.5 -1052.0 soda-straw -scale xs
+
+point 542.0 -1137.5 soda-straw -scale xs
+
+point 573.5 -1187.5 soda-straw -scale xs
+
+point 381.5 -1232.0 soda-straw -scale xs
+
+point 480.5 -1243.5 soda-straw -scale xs
+
+point 468.5 -1333.0 soda-straw -scale xs
+
+point 327.5 -1329.5 soda-straw -scale xs
+
+point 859.5 -1203.5 u:brokenstal -scale xs
+
+point 785.5 -1101.0 u:brokenstal -scale xs
+
+point 534.5 -1110.5 curtain -scale xs
+
+point 501.0 -1084.0 curtain -scale xs
+
+point 365.0 -1451.5 curtain -scale xs
+
+point 354.0 -1285.0 curtain -scale xs
+
+point 855.0 -1415.5 stalagmite -scale xs
+
+point 830.5 -1475.0 stalagmite -scale xs
+
+line flowstone -close on -scale xs
+  679.5 -1477.5
+  679.5 -1477.5 679.5 -1465.0 692.5 -1463.5
+  705.5 -1462.0 708.5 -1460.0 716.5 -1466.0
+  724.5 -1472.0 728.0 -1476.5 729.5 -1484.0
+  731.0 -1491.5 731.5 -1495.5 725.5 -1503.5
+  719.5 -1511.5 717.0 -1513.5 707.5 -1520.5
+  698.0 -1527.5 693.5 -1530.0 685.0 -1526.0
+  676.5 -1522.0 672.0 -1518.5 669.5 -1512.5
+  667.0 -1506.5 664.5 -1490.5 665.5 -1488.5
+  666.5 -1486.5 679.5 -1477.5 679.5 -1477.5
+  smooth off
+endline
+
+point 611.0 -2199.5 curtain -scale xs
+
+point 830.0 -1119.5 curtain -scale xs
+
+point 546.0 -1026.0 curtain -scale xs
+
+point 532.0 -1186.5 curtain -scale xs
+
+point 598.5 -1138.5 pillar -scale small
+
+point 759.5 -1043.0 pillar
+
+point 901.5 -1215.5 pillar
+
+point 685.0 -2048.0 pillar -scale small
+
+point 732.5 -1849.0 pillar -scale small
+
+point 682.0 -1770.0 pillar -scale small
+
+point 867.0 -992.5 pillar -scale small
+
+point 951.0 -1177.5 pillar -scale small
+
+point 658.0 -1014.0 pillar -scale small
+
+point 596.0 -1018.0 pillar -scale small
+
+point 398.5 -1408.5 pillar -scale small
+
+point 210.0 -1569.0 pillar -scale small
+
+point 520.5 -1264.0 curtain -scale small
+
+line flowstone -scale xs
+  445.5 -2415.0
+  445.5 -2415.0 454.5 -2447.0 446.5 -2464.0
+  438.5 -2481.0 405.5 -2506.5 405.5 -2506.5
+  smooth off
+endline
+
+line flowstone -scale xs
+  493.0 -2207.0
+  493.0 -2207.0 480.5 -2241.0 479.0 -2251.0
+  477.5 -2261.0 481.0 -2271.0 476.5 -2289.5
+  472.0 -2308.0 462.5 -2337.5 462.5 -2344.5
+  462.5 -2351.5 458.5 -2368.5 456.5 -2384.5
+  454.5 -2400.5 447.0 -2413.5 442.5 -2422.5
+  438.0 -2431.5 425.5 -2451.5 420.0 -2462.5
+  414.5 -2473.5 388.5 -2497.5 388.5 -2497.5
+  smooth off
+endline
+
+line flowstone -scale xs
+  590.0 -2029.5
+  590.0 -2029.5 590.5 -2068.0 585.5 -2081.5
+  580.5 -2095.0 566.0 -2112.0 563.5 -2123.0
+  561.0 -2134.0 546.0 -2160.0 546.0 -2160.0
+  smooth off
+endline
+
+line flowstone -scale xs
+  615.0 -2003.0
+  615.0 -2003.0 609.0 -2060.5 602.0 -2075.0
+  595.0 -2089.5 591.0 -2107.5 584.0 -2123.5
+  577.0 -2139.5 546.0 -2172.0 546.0 -2172.0
+  smooth off
+endline
+
+line flowstone -scale xs
+  595.5 -1892.5
+  595.5 -1892.5 595.0 -1908.5 592.5 -1920.5
+  590.0 -1932.5 586.0 -1960.0 586.0 -1960.0
+  smooth off
+endline
+
+line flowstone -scale xs
+  613.0 -1889.5
+  613.0 -1889.5 612.5 -1911.0 611.0 -1923.5
+  609.5 -1936.0 600.0 -1962.0 600.0 -1962.0
+  smooth off
+endline
+
+line flowstone -scale xs
+  617.5 -1816.5
+  617.5 -1816.5 627.0 -1820.5 623.5 -1838.0
+  620.0 -1855.5 621.5 -1858.5 611.0 -1868.5
+  600.5 -1878.5 584.0 -1883.5 584.0 -1883.5
+  smooth off
+endline
+
+area water
+  l55-657--2085
+endarea
+
+area water
+  l57-516--2419
+endarea
+
+line border -id l57-516--2419 -close on -subtype invisible
+  541.5 -2485.5
+  541.5 -2485.5 510.0 -2461.5 513.0 -2438.5
+  516.0 -2415.5 521.0 -2394.0 531.0 -2376.0
+  541.0 -2358.0 555.5 -2324.0 559.5 -2312.5
+  563.5 -2301.0 563.5 -2307.5 567.0 -2289.0
+  570.5 -2270.5 570.5 -2264.5 570.0 -2250.0
+  569.5 -2235.5 566.0 -2223.5 556.5 -2221.0
+  547.0 -2218.5 541.0 -2216.0 538.0 -2226.0
+  535.0 -2236.0 532.0 -2262.0 525.5 -2279.0
+  519.0 -2296.0 501.0 -2323.5 496.0 -2341.0
+  491.0 -2358.5 480.0 -2396.5 479.0 -2411.5
+  478.0 -2426.5 471.0 -2456.0 472.5 -2466.5
+  474.0 -2477.0 478.0 -2505.0 478.0 -2505.0
+  smooth off
+  541.5 -2485.5
+endline
+
+line border -id l55-657--2085 -close on -subtype invisible
+  638.0 -2145.0
+  638.0 -2145.0 649.5 -2120.0 652.0 -2103.5
+  654.5 -2087.0 664.5 -2064.5 665.0 -2052.5
+  665.5 -2040.5 667.0 -2028.5 670.5 -2018.0
+  674.0 -2007.5 680.0 -1993.0 681.5 -1986.5
+  683.0 -1980.0 675.5 -1973.0 667.0 -1976.5
+  658.5 -1980.0 646.0 -1999.0 641.5 -2008.0
+  637.0 -2017.0 620.5 -2054.0 618.5 -2063.5
+  616.5 -2073.0 610.5 -2084.5 609.0 -2099.0
+  607.5 -2113.5 596.5 -2131.5 605.0 -2142.5
+  613.5 -2153.5 631.0 -2149.0 631.0 -2149.0
+  smooth off
+  638.0 -2145.0
+endline
+
+point 563.0 -2450.0 stalagmite -scale xs
+
+point 760.5 -1814.5 stalagmite -scale xs
+
+point 669.0 -1714.5 stalagmite -scale xs
+
+point 695.0 -1618.5 stalagmite -scale xs
+
+point 751.5 -1701.5 stalagmite -scale xs
+
+point 774.5 -1600.0 stalagmite -scale xs
+
+point 747.5 -1438.5 stalagmite -scale xs
+
+point 784.0 -1357.5 stalagmite -scale xs
+
+point 825.5 -1254.5 stalagmite -scale xs
+
+point 928.0 -1256.0 stalagmite -scale xs
+
+point 968.0 -1117.5 stalagmite -scale xs
+
+point 966.0 -1035.5 stalagmite -scale xs
+
+point 915.0 -1003.5 stalagmite -scale xs
+
+point 843.5 -1065.5 stalagmite -scale xs
+
+point 771.5 -1136.0 stalagmite -scale xs
+
+point 710.0 -1112.5 stalagmite -scale xs
+
+point 496.5 -1197.0 stalagmite -scale xs
+
+point 210.0 -1483.5 stalagmite -scale xs
+
+point 434.5 -1201.0 water-flow -orientation 185 -scale small
+
+point 297.0 -1469.0 water-flow -orientation 230 -scale small
+
+area water
+  l19-706--1076
+endarea
+
+area water
+  l20-938--1096
+endarea
+
+line border -id l20-938--1096 -close on -subtype invisible
+  834.5 -1077.5
+  834.5 -1077.5 857.0 -1087.0 859.0 -1099.0
+  861.0 -1111.0 856.5 -1125.5 861.5 -1134.5
+  866.5 -1143.5 872.0 -1152.5 882.0 -1152.5
+  892.0 -1152.5 902.5 -1149.5 910.5 -1146.0
+  918.5 -1142.5 929.5 -1137.5 931.5 -1128.0
+  933.5 -1118.5 941.5 -1098.0 938.0 -1082.5
+  934.5 -1067.0 932.5 -1057.5 933.5 -1045.0
+  934.5 -1032.5 921.5 -1022.0 909.0 -1020.0
+  896.5 -1018.0 867.5 -1019.0 855.0 -1023.0
+  842.5 -1027.0 818.0 -1041.5 810.5 -1045.0
+  803.0 -1048.5 784.0 -1060.0 784.0 -1065.5
+  784.0 -1071.0 805.0 -1072.5 812.5 -1073.0
+  820.0 -1073.5 834.5 -1077.5 834.5 -1077.5
+  smooth off
+endline
+
+line border -id l19-706--1076 -close on -subtype invisible
+  144.5 -1614.5
+  144.5 -1614.5 182.5 -1573.5 197.0 -1562.0
+  211.5 -1550.5 233.0 -1526.0 250.5 -1516.5
+  268.0 -1507.0 287.0 -1497.0 305.0 -1486.0
+  323.0 -1475.0 341.5 -1452.5 349.0 -1438.5
+  356.5 -1424.5 361.5 -1409.0 376.0 -1400.0
+  390.5 -1391.0 416.0 -1381.0 425.5 -1372.5
+  435.0 -1364.0 446.0 -1344.0 451.0 -1333.0
+  456.0 -1322.0 456.5 -1296.5 459.0 -1287.0
+  461.5 -1277.5 459.5 -1245.5 460.0 -1233.5
+  460.5 -1221.5 455.5 -1188.5 460.5 -1178.5
+  465.5 -1168.5 487.5 -1152.5 492.5 -1142.0
+  497.5 -1131.5 515.5 -1099.5 521.5 -1091.0
+  527.5 -1082.5 537.0 -1072.5 544.0 -1068.0
+  551.0 -1063.5 570.0 -1052.0 576.0 -1050.5
+  582.0 -1049.0 592.0 -1052.5 603.0 -1059.5
+  614.0 -1066.5 637.5 -1075.0 651.0 -1080.0
+  664.5 -1085.0 679.0 -1087.0 690.0 -1083.0
+  701.0 -1079.0 713.5 -1075.5 721.5 -1067.0
+  729.5 -1058.5 737.0 -1040.0 738.0 -1036.5
+  739.0 -1033.0 727.0 -1029.0 722.5 -1028.5
+  718.0 -1028.0 669.5 -1031.0 660.5 -1031.5
+  651.5 -1032.0 637.0 -1034.0 627.0 -1031.5
+  617.0 -1029.0 605.5 -1020.0 584.0 -1022.0
+  562.5 -1024.0 533.0 -1041.5 527.5 -1048.5
+  522.0 -1055.5 481.5 -1103.0 476.0 -1107.5
+  470.5 -1112.0 441.0 -1143.5 433.5 -1155.5
+  426.0 -1167.5 415.0 -1191.5 411.5 -1203.0
+  408.0 -1214.5 404.5 -1252.5 402.0 -1261.0
+  399.5 -1269.5 395.5 -1315.5 388.5 -1330.0
+  381.5 -1344.5 355.0 -1380.5 347.0 -1390.5
+  339.0 -1400.5 310.0 -1430.5 300.0 -1441.0
+  290.0 -1451.5 260.0 -1477.0 245.5 -1482.5
+  231.0 -1488.0 204.0 -1500.0 192.0 -1507.5
+  180.0 -1515.0 159.0 -1526.5 150.5 -1533.5
+  142.0 -1540.5 111.0 -1578.5 111.0 -1578.5
+  smooth off
+  144.5 -1614.5
+endline
+
+line wall
+  597.0 -2427.0
+  597.0 -2427.0 582.0 -2399.0 587.0 -2383.0
+  592.0 -2367.0 593.0 -2308.0 604.0 -2286.0
+  615.0 -2264.0 619.0 -2229.0 642.0 -2197.0
+  665.0 -2165.0 676.0 -2158.0 689.0 -2118.0
+  702.0 -2078.0 709.0 -2020.0 719.0 -2002.0
+  729.0 -1984.0 739.0 -1960.0 748.0 -1927.0
+  757.0 -1894.0 758.0 -1871.0 764.0 -1851.0
+  770.0 -1831.0 774.0 -1797.0 775.0 -1781.0
+  776.0 -1765.0 772.0 -1721.0 777.0 -1693.0
+  782.0 -1665.0 797.0 -1611.0 817.0 -1581.0
+  837.0 -1551.0 863.0 -1503.0 869.0 -1485.0
+  875.0 -1467.0 886.0 -1446.0 895.0 -1415.0
+  904.0 -1384.0 916.0 -1355.0 929.0 -1331.0
+  942.0 -1307.0 953.0 -1289.0 965.0 -1261.0
+  977.0 -1233.0 989.0 -1193.0 992.0 -1164.0
+  995.0 -1135.0 980.0 -1111.0 984.0 -1089.0
+  988.0 -1067.0 980.0 -1038.0 980.0 -1011.0
+  980.0 -984.0 981.0 -963.0 957.0 -944.0
+  933.0 -925.0 909.0 -919.0 892.0 -927.0
+  875.0 -935.0 852.0 -956.0 829.0 -964.0
+  806.0 -972.0 806.0 -989.0 767.0 -990.0
+  728.0 -991.0 690.0 -981.0 655.0 -976.0
+  620.0 -971.0 602.0 -968.0 574.0 -981.0
+  546.0 -994.0 508.0 -1026.0 496.0 -1044.0
+  484.0 -1062.0 446.0 -1104.0 434.0 -1121.0
+  422.0 -1138.0 398.0 -1180.0 377.0 -1199.0
+  356.0 -1218.0 326.0 -1269.0 320.0 -1279.0
+  314.0 -1289.0 285.0 -1323.0 281.0 -1332.0
+  277.0 -1341.0 257.0 -1391.0 245.0 -1408.0
+  233.0 -1425.0 210.0 -1445.0 198.0 -1458.0
+  186.0 -1471.0 137.0 -1510.0 137.0 -1510.0
+  smooth off
+  83.0 -1537.0
+endline
+
+line wall
+  175.0 -1631.0
+  175.0 -1631.0 224.0 -1597.0 263.0 -1568.0
+  302.0 -1539.0 330.0 -1508.0 367.0 -1479.0
+  404.0 -1450.0 441.0 -1409.0 460.0 -1391.0
+  479.0 -1373.0 496.0 -1338.0 511.0 -1313.0
+  526.0 -1288.0 549.0 -1261.0 570.0 -1231.0
+  591.0 -1201.0 596.0 -1180.0 614.0 -1168.0
+  632.0 -1156.0 641.0 -1143.0 665.0 -1136.0
+  689.0 -1129.0 681.0 -1124.0 706.0 -1133.0
+  731.0 -1142.0 762.0 -1150.0 777.0 -1150.0
+  792.0 -1150.0 803.0 -1143.0 817.0 -1148.0
+  831.0 -1153.0 824.0 -1164.0 815.0 -1166.0
+  806.0 -1168.0 768.0 -1160.0 764.0 -1174.0
+  760.0 -1188.0 749.0 -1214.0 738.0 -1235.0
+  727.0 -1256.0 727.0 -1297.0 714.0 -1322.0
+  701.0 -1347.0 673.0 -1394.0 664.0 -1434.0
+  655.0 -1474.0 656.0 -1557.0 650.0 -1584.0
+  644.0 -1611.0 625.0 -1650.0 627.0 -1693.0
+  629.0 -1736.0 645.0 -1753.0 633.0 -1783.0
+  621.0 -1813.0 585.0 -1874.0 580.0 -1899.0
+  575.0 -1924.0 561.0 -1988.0 560.0 -2007.0
+  559.0 -2026.0 553.0 -2065.0 537.0 -2109.0
+  521.0 -2153.0 483.0 -2213.0 474.0 -2233.0
+  465.0 -2253.0 454.0 -2291.0 453.0 -2320.0
+  452.0 -2349.0 443.0 -2379.0 438.0 -2393.0
+  433.0 -2407.0 418.0 -2442.0 408.0 -2457.0
+  398.0 -2472.0 376.0 -2492.0 376.0 -2492.0
+  smooth off
+endline
+
+point 502.0 -2498.0 station -name U23
+
+point 902.0 -1066.0 station -name U22
+
+point 578.0 -1062.0 station -name U21
+
+point 144.0 -1584.0 station -name U20
+
+endscrap
+
+
+
+scrap CrossSection-U21 -projection none -scale [745.0 -686.0 1044.0 -686.0 0.0 0.0 10 0.0 ft]
+
+line rock-edge
+  376.0 -753.5
+  376.0 -753.5 372.5 -744.5 366.5 -739.0
+  360.5 -733.5 354.5 -737.0 349.0 -726.0
+  346.32 -720.63 345.0 -719.5 350.5 -705.5
+  356.0 -691.5 349.5 -668.0 349.5 -668.0
+  smooth off
+endline
+
+line rock-edge
+  326.5 -832.5
+  326.5 -832.5 335.0 -828.0 337.0 -819.5
+  339.0 -811.0 333.0 -797.0 337.5 -790.0
+  342.0 -783.0 352.5 -782.0 359.0 -780.0
+  365.5 -778.0 369.0 -779.0 369.0 -779.0
+  smooth off
+endline
+
+point 333.5 -675.0 soda-straw -scale xs
+
+point 265.0 -660.0 soda-straw -scale xs
+
+point 201.0 -694.5 curtain -scale xs
+
+point 170.5 -713.5 curtain -scale xs
+
+point 228.0 -685.5 stalactite -scale small
+
+point 361.0 -763.5 stalagmite -scale xs
+
+point 338.5 -774.0 stalagmite -scale xs
+
+point 233.5 -819.0 stalagmite -scale xs
+
+line flowstone -scale xs
+  161.0 -756.0
+  161.0 -756.0 166.5 -757.0 182.0 -765.5
+  197.5 -774.0 199.5 -775.5 207.0 -783.0
+  214.5 -790.5 211.5 -792.0 214.5 -800.0
+  217.5 -808.0 217.5 -828.0 217.5 -828.0
+  smooth off
+endline
+
+area water
+  l136-350--836
+endarea
+
+line border -id l136-350--836 -close on -subtype invisible
+  212.5 -832.5
+  363.0 -828.5
+  327.0 -853.5
+  258.0 -858.5
+  212.5 -832.5
+endline
+
+line wall -close on
+  239.0 -835.5
+  239.0 -835.5 261.5 -849.0 276.5 -848.0
+  291.5 -847.0 295.0 -842.0 314.0 -839.5
+  333.0 -837.0 345.5 -836.0 349.0 -829.5
+  352.5 -823.0 361.0 -815.0 362.0 -805.5
+  363.0 -796.0 367.0 -784.0 371.0 -777.5
+  375.0 -771.0 378.0 -777.5 377.5 -761.0
+  377.0 -744.5 373.5 -728.5 372.5 -724.5
+  371.5 -720.5 372.5 -724.0 369.0 -709.0
+  365.5 -694.0 374.0 -684.5 360.5 -674.5
+  347.0 -664.5 342.0 -665.5 328.0 -655.5
+  314.0 -645.5 280.5 -641.0 274.5 -642.0
+  268.5 -643.0 248.5 -645.5 238.0 -650.5
+  227.5 -655.5 206.0 -672.0 198.0 -677.0
+  190.0 -682.0 179.0 -682.5 171.0 -692.0
+  163.0 -701.5 146.5 -719.5 146.0 -728.0
+  145.5 -736.5 151.0 -753.5 154.5 -756.5
+  158.0 -759.5 163.0 -765.0 173.0 -769.0
+  183.0 -773.0 188.0 -770.5 195.5 -781.0
+  203.0 -791.5 206.0 -795.5 208.0 -807.0
+  210.0 -818.5 207.71 -816.36 212.0 -823.5
+  216.5 -831.0 239.0 -835.5 239.0 -835.5
+  smooth off
+endline
+
+endscrap
+
+
+
+scrap U23-U28 -projection plan -scale [-128 -2644 3414 -2644 0.0 0.0 89.96679999999999 0.0 m]
+
+point 2833.0 -1311.0 pillar -scale xs
+
+point 2493.0 -1338.0 stalagmite -scale xs
+
+point 2008.0 -1697.0 stalagmite -scale xs
+
+point 1338.0 -1064.0 stalagmite -scale xs
+
+point 1452.0 -1125.0 stalagmite -scale xs
+
+point 1623.0 -1051.0 stalagmite -scale xs
+
+point 1551.0 -1010.0 stalagmite -scale xs
+
+point 1423.0 -1032.0 stalagmite -scale xs
+
+point 1406.0 -956.0 stalagmite -scale xs
+
+line floor-step
+  1609.0 -1124.0
+  1609.0 -1124.0 1657.0 -1163.0 1662.0 -1178.0
+  1667.0 -1193.0 1681.0 -1218.0 1684.0 -1241.0
+  1687.0 -1264.0 1686.0 -1299.0 1686.0 -1299.0
+  smooth off
+endline
+
+area clay
+  l151-3136--1181
+endarea
+
+point 2332.0 -1352.0 curtain -scale xs
+
+point 1703.0 -1618.0 curtain -scale xs
+
+point 1538.0 -1050.0 curtain -scale xs
+
+point 2320.0 -1263.0 stalagmite -scale xs
+
+point 2909.0 -1071.0 gradient -orientation 140 -scale xs
+
+point 2029.0 -1754.0 gradient -orientation 285 -scale xs
+
+point 1838.0 -1491.0 gradient -orientation 250 -scale xs
+
+point 1398.0 -1095.0 gradient -orientation 30 -scale xs
+
+point 1509.0 -1132.0 gradient -orientation 30 -scale xs
+
+point 2311.0 -1386.0 u:brokenstal -scale xs
+
+point 1693.0 -1749.0 u:brokenstal -scale xs
+
+point 1341.0 -933.0 u:brokenstal -scale xs
+
+point 1373.0 -1031.0 pillar -scale xs
+
+point 1463.0 -978.0 pillar -scale xs
+
+line border -id l151-3136--1181 -close on -subtype invisible
+  3142.0 -1193.0
+  3007.0 -934.0
+  1225.0 -867.0
+  1407.0 -1591.0
+  1407.0 -1591.0 1647.0 -1976.0 1652.0 -1980.0
+  1657.0 -1984.0 2047.0 -1990.0 2047.0 -1990.0
+  smooth off
+  2458.0 -1576.0
+  2956.0 -1504.0
+  3142.0 -1193.0
+endline
+
+line wall
+  2996.0 -972.0
+  2996.0 -972.0 2958.0 -972.0 2945.0 -993.0
+  2932.0 -1014.0 2911.0 -1048.0 2886.0 -1067.0
+  2861.0 -1086.0 2839.0 -1106.0 2807.0 -1111.0
+  2775.0 -1116.0 2729.0 -1096.0 2692.0 -1102.0
+  2655.0 -1108.0 2605.0 -1131.0 2586.0 -1141.0
+  2567.0 -1151.0 2523.0 -1182.0 2495.0 -1192.0
+  2467.0 -1202.0 2424.0 -1224.0 2396.0 -1221.0
+  2368.0 -1218.0 2325.0 -1214.0 2307.0 -1221.0
+  2289.0 -1228.0 2279.0 -1229.0 2244.0 -1243.0
+  2209.0 -1257.0 2159.0 -1275.0 2129.0 -1278.0
+  2099.0 -1281.0 2042.0 -1272.0 2021.0 -1283.0
+  2000.0 -1294.0 1970.0 -1314.0 1967.0 -1331.0
+  1964.0 -1348.0 1955.0 -1358.0 1958.0 -1382.0
+  1961.0 -1406.0 1966.0 -1429.0 1977.0 -1446.0
+  1988.0 -1463.0 1993.0 -1468.0 1989.0 -1480.0
+  1985.0 -1492.0 1958.0 -1533.0 1953.0 -1548.0
+  1948.0 -1563.0 1941.0 -1584.0 1936.0 -1604.0
+  1931.0 -1624.0 1918.0 -1652.0 1909.0 -1674.0
+  1900.0 -1696.0 1906.0 -1719.0 1887.0 -1734.0
+  1868.0 -1749.0 1855.0 -1770.0 1841.0 -1777.0
+  1827.0 -1784.0 1799.0 -1782.0 1791.0 -1782.0
+  1783.0 -1782.0 1773.0 -1770.0 1773.0 -1751.0
+  1773.0 -1732.0 1781.0 -1709.0 1788.0 -1682.0
+  1795.0 -1655.0 1800.0 -1628.0 1816.0 -1607.0
+  1832.0 -1586.0 1854.0 -1562.0 1862.0 -1539.0
+  1870.0 -1516.0 1858.0 -1475.0 1849.0 -1458.0
+  1840.0 -1441.0 1822.0 -1422.0 1823.0 -1390.0
+  1824.0 -1358.0 1811.0 -1299.0 1803.0 -1268.0
+  1795.0 -1237.0 1766.0 -1195.0 1765.0 -1175.0
+  1764.0 -1155.0 1738.0 -1119.0 1724.0 -1095.0
+  1710.0 -1071.0 1712.0 -1039.0 1697.0 -1029.0
+  1682.0 -1019.0 1667.0 -1007.0 1661.0 -992.0
+  1655.0 -977.0 1649.0 -967.0 1634.0 -959.0
+  1619.0 -951.0 1550.0 -937.0 1537.0 -935.0
+  1524.0 -933.0 1495.0 -933.0 1487.0 -923.0
+  1479.0 -913.0 1472.0 -899.0 1472.0 -899.0
+  smooth off
+endline
+
+point 2781.0 -1194.0 gradient -orientation 60 -scale xs
+
+point 2721.0 -1211.0 gradient -orientation 240 -scale xs
+
+line ceiling-step -close on
+  2091.0 -1459.0
+  2109.0 -1464.0 2113.0 -1469.0 2124.0 -1461.0
+  2135.0 -1453.0 2138.0 -1456.0 2137.0 -1439.0
+  2136.0 -1422.0 2117.0 -1410.0 2103.0 -1413.0
+  2089.0 -1416.0 2077.0 -1420.0 2077.0 -1428.0
+  2077.0 -1436.0 2073.0 -1454.0 2091.0 -1459.0
+endline
+
+line arrow
+  1242.0 -1044.0
+  1277.0 -1009.0
+endline
+
+line arrow
+  1883.0 -1497.0
+  1835.0 -1515.0
+endline
+
+line arrow
+  2141.0 -1519.0
+  2105.0 -1438.0
+endline
+
+point 1537.0 -1248.0 height -value [1 ft]
+
+point 2975.0 -1212.0 passage-height -value [2 ft] -scale small
+
+point 2658.0 -1239.0 passage-height -value [5 ft]
+
+point 2779.0 -1328.0 passage-height -value [1 ft]
+
+point 2326.0 -1160.0 passage-height -value [1 ft]
+
+line arrow
+  1567.0 -1245.0
+  1682.0 -1223.0
+endline
+
+line ceiling-step
+  2438.0 -1251.0
+  2438.0 -1251.0 2400.0 -1255.0 2369.0 -1265.0
+  2338.0 -1275.0 2325.0 -1283.0 2308.0 -1282.0
+  2291.0 -1281.0 2226.0 -1250.0 2226.0 -1250.0
+  smooth off
+endline
+
+point 2376.0 -1308.0 passage-height -value [5 ft]
+
+point 2220.0 -1349.0 passage-height -value [7 ft]
+
+point 2160.0 -1544.0 passage-height -value [7 ft]
+
+point 1910.0 -1504.0 passage-height -value [1 ft]
+
+point 1779.0 -1285.0 passage-height -value [1 ft]
+
+point 1213.0 -1044.0 passage-height -value [2 ft]
+
+line ceiling-step
+  1326.0 -917.0
+  1326.0 -917.0 1291.0 -932.0 1291.0 -950.0
+  1291.0 -968.0 1297.0 -1030.0 1297.0 -1030.0
+  smooth off
+endline
+
+line ceiling-step -reverse on
+  1714.0 -1080.0
+  1714.0 -1080.0 1702.0 -1170.0 1711.0 -1198.0
+  1720.0 -1226.0 1733.0 -1273.0 1740.0 -1311.0
+  1747.0 -1349.0 1738.0 -1388.0 1757.0 -1419.0
+  1776.0 -1450.0 1798.0 -1478.0 1802.0 -1521.0
+  1806.0 -1564.0 1797.0 -1590.0 1793.0 -1605.0
+  1789.0 -1620.0 1764.0 -1665.0 1764.0 -1665.0
+  smooth off
+endline
+
+line arrow
+  2309.0 -1170.0
+  2310.0 -1167.0 2041.0 -1322.0 2041.0 -1322.0
+  smooth off
+endline
+
+line arrow
+  2326.0 -1177.0
+  2341.0 -1239.0
+endline
+
+line ceiling-step -reverse on
+  1996.0 -1475.0
+  1996.0 -1475.0 2048.0 -1400.0 2061.0 -1381.0
+  2074.0 -1362.0 2082.0 -1341.0 2100.0 -1327.0
+  2118.0 -1313.0 2143.0 -1276.0 2143.0 -1276.0
+  smooth off
+endline
+
+line ceiling-step -close on -reverse on
+  2181.0 -1333.0
+  2181.0 -1333.0 2197.0 -1312.0 2231.0 -1306.0
+  2265.0 -1300.0 2271.0 -1299.0 2278.0 -1322.0
+  2285.0 -1345.0 2297.0 -1341.0 2279.0 -1363.0
+  2261.0 -1385.0 2243.0 -1394.0 2229.0 -1398.0
+  2215.0 -1402.0 2224.0 -1407.0 2195.0 -1396.0
+  2166.0 -1385.0 2154.0 -1379.0 2163.0 -1363.0
+  2172.0 -1347.0 2181.0 -1333.0 2181.0 -1333.0
+  smooth off
+endline
+
+line ceiling-step
+  2925.0 -1266.0
+  2925.0 -1266.0 2905.0 -1270.0 2875.0 -1269.0
+  2845.0 -1268.0 2810.0 -1254.0 2789.0 -1265.0
+  2768.0 -1276.0 2748.0 -1270.0 2736.0 -1290.0
+  2724.0 -1310.0 2707.0 -1349.0 2692.0 -1355.0
+  2677.0 -1361.0 2665.0 -1366.0 2665.0 -1366.0
+  smooth off
+endline
+
+line ceiling-step
+  3030.0 -1145.0
+  3030.0 -1145.0 2960.0 -1175.0 2949.0 -1183.0
+  2938.0 -1191.0 2902.0 -1240.0 2902.0 -1240.0
+  smooth off
+endline
+
+point 2033.0 -1492.0 stalactite -scale xs
+
+point 1953.0 -1793.0 stalactite -scale xs
+
+point 1895.0 -1904.0 stalactite -scale xs
+
+point 1718.0 -1382.0 stalactite -scale xs
+
+point 1660.0 -1384.0 stalactite -scale xs
+
+point 1460.0 -917.0 stalactite -scale xs
+
+point 2494.0 -1245.0 soda-straw -scale xs
+
+point 2577.0 -1331.0 soda-straw -scale xs
+
+point 2436.0 -1324.0 soda-straw -scale xs
+
+point 2105.0 -1372.0 soda-straw -scale xs
+
+point 2062.0 -1427.0 soda-straw -scale xs
+
+point 2041.0 -1626.0 soda-straw -scale xs
+
+point 1952.0 -1692.0 soda-straw -scale xs
+
+point 1895.0 -1758.0 soda-straw -scale xs
+
+point 1952.0 -1853.0 soda-straw -scale xs
+
+point 1836.0 -1905.0 soda-straw -scale xs
+
+point 1703.0 -1707.0 soda-straw -scale xs
+
+point 1738.0 -1575.0 soda-straw -scale xs
+
+point 1720.0 -1469.0 soda-straw -scale xs
+
+point 1689.0 -1336.0 soda-straw -scale xs
+
+point 1608.0 -993.0 soda-straw -scale xs
+
+line flowstone
+  2527.0 -1174.0
+  2527.0 -1174.0 2542.0 -1199.0 2526.0 -1216.0
+  2510.0 -1233.0 2503.0 -1236.0 2477.0 -1242.0
+  2451.0 -1248.0 2436.0 -1247.0 2428.0 -1246.0
+  2420.0 -1245.0 2382.0 -1217.0 2382.0 -1217.0
+  smooth off
+endline
+
+line flowstone
+  2517.0 -1183.0
+  2517.0 -1183.0 2513.0 -1204.0 2505.0 -1213.0
+  2497.0 -1222.0 2476.0 -1225.0 2462.0 -1227.0
+  2448.0 -1229.0 2422.0 -1217.0 2422.0 -1217.0
+  smooth off
+endline
+
+line flowstone
+  2506.0 -1186.0
+  2506.0 -1186.0 2504.0 -1201.0 2495.0 -1204.0
+  2486.0 -1207.0 2451.0 -1207.0 2451.0 -1207.0
+  smooth off
+endline
+
+line flowstone
+  1699.0 -1817.0
+  1699.0 -1817.0 1706.0 -1851.0 1713.0 -1857.0
+  1720.0 -1863.0 1743.0 -1889.0 1743.0 -1889.0
+  smooth off
+endline
+
+line flowstone
+  1674.0 -1809.0
+  1674.0 -1809.0 1668.0 -1824.0 1675.0 -1842.0
+  1682.0 -1860.0 1692.0 -1877.0 1697.0 -1882.0
+  1702.0 -1887.0 1727.0 -1905.0 1727.0 -1905.0
+  smooth off
+endline
+
+line flowstone
+  1648.0 -1803.0
+  1648.0 -1803.0 1650.0 -1820.0 1657.0 -1848.0
+  1664.0 -1876.0 1670.0 -1888.0 1675.0 -1893.0
+  1680.0 -1898.0 1711.0 -1923.0 1711.0 -1923.0
+  smooth off
+endline
+
+line flowstone
+  1551.0 -1160.0
+  1551.0 -1160.0 1555.0 -1161.0 1574.0 -1163.0
+  1593.0 -1165.0 1595.0 -1164.0 1601.0 -1172.0
+  1607.0 -1180.0 1622.0 -1207.0 1622.0 -1207.0
+  smooth off
+endline
+
+line flowstone
+  1274.0 -938.0
+  1274.0 -938.0 1267.0 -945.0 1267.0 -959.0
+  1267.0 -973.0 1269.0 -996.0 1269.0 -996.0
+  smooth off
+endline
+
+line wall
+  1257.0 -946.0
+  1257.0 -946.0 1244.0 -988.0 1255.0 -1012.0
+  1266.0 -1036.0 1276.0 -1044.0 1292.0 -1054.0
+  1308.0 -1064.0 1322.0 -1066.0 1346.0 -1084.0
+  1370.0 -1102.0 1368.0 -1114.0 1374.0 -1120.0
+  1380.0 -1126.0 1402.0 -1121.0 1412.0 -1126.0
+  1422.0 -1131.0 1479.0 -1144.0 1490.0 -1150.0
+  1501.0 -1156.0 1513.0 -1163.0 1538.0 -1169.0
+  1563.0 -1175.0 1582.0 -1172.0 1591.0 -1183.0
+  1600.0 -1194.0 1607.0 -1220.0 1609.0 -1230.0
+  1611.0 -1240.0 1609.0 -1251.0 1621.0 -1292.0
+  1633.0 -1333.0 1614.0 -1362.0 1620.0 -1385.0
+  1626.0 -1408.0 1619.0 -1432.0 1640.0 -1462.0
+  1661.0 -1492.0 1678.0 -1495.0 1681.0 -1520.0
+  1684.0 -1545.0 1678.0 -1579.0 1672.0 -1604.0
+  1666.0 -1629.0 1649.0 -1648.0 1643.0 -1680.0
+  1637.0 -1712.0 1648.0 -1703.0 1645.0 -1743.0
+  1642.0 -1783.0 1630.0 -1824.0 1640.0 -1858.0
+  1650.0 -1892.0 1661.0 -1888.0 1679.0 -1906.0
+  1697.0 -1924.0 1716.0 -1940.0 1738.0 -1941.0
+  1760.0 -1942.0 1788.0 -1941.0 1809.0 -1935.0
+  1830.0 -1929.0 1822.0 -1921.0 1850.0 -1926.0
+  1878.0 -1931.0 1907.0 -1938.0 1931.0 -1926.0
+  1955.0 -1914.0 1977.0 -1882.0 1995.0 -1856.0
+  2013.0 -1830.0 2037.0 -1794.0 2046.0 -1771.0
+  2055.0 -1748.0 2061.0 -1681.0 2074.0 -1637.0
+  2087.0 -1593.0 2097.0 -1571.0 2108.0 -1547.0
+  2119.0 -1523.0 2113.0 -1498.0 2146.0 -1473.0
+  2179.0 -1448.0 2175.0 -1428.0 2214.0 -1428.0
+  2255.0 -1428.0 2259.0 -1425.0 2293.0 -1419.0
+  2327.0 -1413.0 2404.0 -1405.0 2428.0 -1397.0
+  2452.0 -1389.0 2507.0 -1370.0 2528.0 -1371.0
+  2549.0 -1372.0 2556.0 -1377.0 2604.0 -1372.0
+  2652.0 -1367.0 2660.0 -1370.0 2689.0 -1364.0
+  2718.0 -1358.0 2716.0 -1355.0 2749.0 -1360.0
+  2782.0 -1365.0 2771.0 -1378.0 2799.0 -1375.0
+  2827.0 -1372.0 2876.0 -1362.0 2900.0 -1338.0
+  2924.0 -1314.0 2971.0 -1274.0 2988.0 -1255.0
+  3005.0 -1236.0 3016.0 -1205.0 3029.0 -1188.0
+  3042.0 -1171.0 3068.0 -1148.0 3068.0 -1148.0
+  smooth off
+endline
+
+point 3030.0 -1069.0 station -name U28
+
+point 2141.0 -1387.0 station -name U27
+
+point 1862.0 -1864.0 station -name U26
+
+point 1751.0 -1786.0 station -name U25
+
+point 1634.0 -1089.0 station -name U24
+
+point 1344.0 -985.0 station -name U23
+
+endscrap
+
+
+
+From bruce at tomo.co.nz  Wed Jan 29 19:27:15 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 30 Jan 2025 07:27:15 +1300
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+Message-ID: <000001db727b$6dc061f0$494125d0$@tomo.co.nz>
+
+Rodrigo
+
+For me, all the reasons that Xavier and Tarquin have pointed out.  If a survey encompasses only say 20 m of passage, then it is likely only to contain a single scrap.  If it is 50 m of passage, then likely two?
+
+My process typically has one th2 for a survey trip/file (there might be multiple ?trips/files? per day, for instance if we have the scenario of a vertical cave like that discussed recently on this forum, or if there are multiple teams surveying on the day).
+
+To the reasons for multiple scraps per th2 I would add:
+
+*	Scrap joins are fully automatic within the same th2, if they are drawn contiguously, so it is better than creating a new th2, where at best they will be semi-automatic.  See https://therion.speleo.sk/wiki/tips?s[]=scrap <https://therion.speleo.sk/wiki/tips?s%5b%5d=scrap&s%5b%5d=join#joining_scraps_together> &s[]=join#joining_scraps_together 
+*	Many small scraps means that you are readily able to adjust the boundaries, with a degree of granularity, of sub-maps and maps in large multi-sheet caves (when exporting map outputs, not relevant when exporting atlas outputs).  I want to adjust the boundaries because I prefer to use ?map outputs? to manually emulate what might usually be done with ?atlas outputs?.  I find maps are easier to control than atlas (counter-intuitive perhaps).  I adjust the boundaries because as exploration and the cave develops, parts of the cave that ?naturally go with each other? can change over time.
+*	Another reason that escapes me now?
+
+On the topic of alternatives to XTherion?s graphical editor.  It would be nice to have one, although after 15 years I am quite used to it, and only a couple of new (probably impossible for XTherion) features would make it superb!
+
+ 
+
+For me a critical feature of Therion ecosystems is the ability to collaborate and retain project histories, such as with git.  A possible shortcoming of alternative editors is that so far each rearranges the content of the th2 file, without necessarily making any changes to the output.  ie open the file, make NO changes, save the file.  The ?output? of the file is the same, but internally objects and formatting are completely rearranged.  This obfuscates the ability of git to highlight for users changes that have been made in any particular commit.
+
+This is a problem because each user on a project should have the freedom to use whatever editor they like ? one using XTherion, one using Mapiah etc.
+
+Also alternative editors need to be able to edit the th2 file ?in place? on the storage device.  Browser based editors have so far made a copy of the th2, and edit that in the browsers storage, making  the original th2 an orphan. This relyies on meticulous document management by users to compensate for that.
+
+ 
+
+It would be great to see alternative editors ? I?m just adding more constraints to the development brief!
+
+ 
+
+Thanks for thinking about this.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Rodrigo Severo via Therion
+Sent: Thursday, 30 January 2025 03:17
+To: therion <therion at speleo.sk>
+Cc: Rodrigo Severo <rsev at pm.me>
+Subject: [Therion] Two scraps in the same .TH2
+
+ 
+
+Hi,
+
+ 
+
+A general question: can someone point me a reasonable situation where having 2 scraps in the same TH2 file makes sense/is important?
+
+ 
+
+Regards,
+
+ 
+
+Rodrigo
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250130/e3d1af00/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Jan 30 12:56:54 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 30 Jan 2025 11:56:54 +0000
+Subject: [Therion] Two scraps in the same .TH2
+In-Reply-To: <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+ <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+ <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+Message-ID: <5448082a-1106-4b09-bd55-940c2ad74fed@ntlworld.com>
+
+Hi Rodrigo,
+
+> Can you both send me one or 2 th2 files so I can better understand how to deal with them? A typical one and, maybe, a non-typical but important one also?
+
+
+My real data is so full of different configurations that it would be 
+hard to understand. So I made you a quick demo (attached) of the 
+different situations:
+
+* a passage underneath another passage
+* a drop where you want a more abrupt colour change
+* a passage continuing on the other side of a junction where you 
+surveyed them on the same trip, but not the other junction branches (in 
+my case, a high level passage connecting to the roof of a chamber which 
+was surveyed on another trip)
+* a scrap for extra notes that are not normally included
+
+The .thconfig files can select:
+* a standard map of "everything"
+* a map of everything with extra labels for hardware maintainers
+* a map that only shows the major route
+* a map that displaces some passages to remove overlaps
+
+These are all things that I personally use multiple scraps in a single 
+.th2 file for.
+
+Not saying that you will use displaced passages, or extra notes layers, 
+or even a survey of "the major route only", but these are all things 
+that can depend on having multiple scraps if those passages all get 
+surveyed in one "survey".
+
+However, you will absolutely end up with overlapping passages, and 
+abrupt drops, and you are quite likely to end up with passages that stop 
+and start again at junctions, unless your caves are extremely simple.
+
+Cheers,
+
+Tarquin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: scraps.zip
+Type: application/x-zip-compressed
+Size: 136737 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250130/77d20c78/attachment-0001.bin>
+
+From phil.vernant at gmail.com  Thu Jan 30 16:10:10 2025
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Thu, 30 Jan 2025 16:10:10 +0100
+Subject: [Therion] Extended profile coordinates of station
+In-Reply-To: <5448082a-1106-4b09-bd55-940c2ad74fed@ntlworld.com>
+References: <ly3Wwle00VRIl6TWTcuB009V5vp-33QH72id21Y5Uqh37zyQwmBi3P9eIMRvgh_WW6fLyFpZIQwF4fFzVfUg4F3iC0Ch9Zi0TiqnAPDfQgw=@pm.me>
+ <6d5b3dd8-a941-462d-a505-f7b051ecb2e2@ntlworld.com>
+ <Y4rxpucMLAs3luJeMaNj0ekIjYwBLBAe5ELOHW8_7s2b8-ScdMb6huQbz796JW7bq7_cl4K3Gp_csDlYoa0xmZ3Fdj2gUJWpt0NUZdtAZrA=@pm.me>
+ <5448082a-1106-4b09-bd55-940c2ad74fed@ntlworld.com>
+Message-ID: <D1CA33A8-82C9-4B8E-886F-8178BA6C5C62@gmail.com>
+
+Hi guys,
+
+I?ve been looking at SQL export, but it doesn?t seem that it will do the trick. I would like to have the along distance and height/depth of the stations sorted so I could redraw the extended profile, or use the dist/height coordinates to compare to different metrics. Therion computes that  to draw the extended profiles, but is there a way to export the data and not only the plot of the extended profile ?
+
+Thanks,
+Phil
+
+
+From bgee at campercaver.net  Fri Jan 31 17:01:48 2025
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 31 Jan 2025 10:01:48 -0600
+Subject: [Therion] Application error in xTherion
+Message-ID: <cc6fef91-ca1f-49e7-9548-fe9704278c2d@campercaver.net>
+
+Therion version 6.3.1+dev running on Fedora 41.
+
+I came across something interesting today.  I was working on a map when 
+this application error occurred.  I had to use the "kill" command at a 
+command line to make xTherion close out.
+
+I restarted xTherion.  Loaded the .th2 file I was working on.  Added a 
+user-defined point.  Clicked the arrow icon, then the icon to insert a 
+line.  At that point this error appears.
+
+============================
+can't read "xth(me,cmds,83,31,x)": no such element in array
+can't read "xth(me,cmds,83,31,x)": no such element in array
+     while executing
+"set ox $xth(me,cmds,$id,$pid,x)"
+     (procedure "xth_me_cmds_update_line" line 12)
+     invoked from within
+"xth_me_cmds_update_line $id $pid $xth(ctrl,me,line,type) 
+$xth(ctrl,me,line,name) $xth(ctrl,me,line,opts) 
+$xth(ctrl,me,line,reverse) $xth(ctrl,me,lin..."
+     (procedure "xth_me_cmds_update" line 28)
+     invoked from within
+"xth_me_cmds_update {}"
+     (procedure "xth_me_cmds_select_linept" line 4)
+     invoked from within
+"xth_me_cmds_select_linept $id $pid"
+     (procedure "xth_me_cmds_select" line 63)
+     invoked from within
+"xth_me_cmds_select $id"
+     (procedure "xth_me_cmds_create_line" line 205)
+     invoked from within
+"xth_me_cmds_create_line {} 1 "" "" """
+     invoked from within
+".xth.tb.edif.lnrb invoke"
+     ("uplevel" body line 1)
+     invoked from within
+"uplevel #0 [list $w $cmd]"
+     (procedure "tk::CheckRadioInvoke" line 3)
+     invoked from within
+"tk::CheckRadioInvoke .xth.tb.edif.lnrb"
+     (command bound to event)
+=======================
+
+After this - no matter what I do - The same error appears.  I cannot 
+save or close the file, I cannot open a different file, I cannot compile 
+from within xTherion.  The only exit is "kill ..." from a command prompt.
+
+The map compiles without error from the command line, so I doubt there 
+is anything wrong with the .th2 file.
+
+What did I do????
+
+-- 
+===============
+Bill Gee
+
+

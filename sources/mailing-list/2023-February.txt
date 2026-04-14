@@ -1,0 +1,185 @@
+From omrigas at gmail.com  Sat Feb  4 23:24:23 2023
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 5 Feb 2023 00:24:23 +0200
+Subject: [Therion] Convex hall in loch file wall interpolation
+Message-ID: <CAOjFj0=FA-uQ7zk4A_uGKZVoJpVenswiP-BwDyjHkhfvg7GjUw@mail.gmail.com>
+
+Hi All,
+I wondered if there is a possibility to add an option of convex hall to
+interpolate the walls in the loch file.
+
+I really like that option in Topodroid 3d app and I believe it can generate
+a volume calculation that is more reliable.
+
+What do you think about it?
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230205/dcd8d287/attachment.htm>
+
+From nikita.kozlov at gmail.com  Wed Feb 22 05:43:06 2023
+From: nikita.kozlov at gmail.com (Mykyta Kozlov)
+Date: Wed, 22 Feb 2023 06:43:06 +0200
+Subject: [Therion] Line convert-to-curve seems to be broken in XTherion
+Message-ID: <CAEEzkZFa5WWnjdWHrKfCiVkyu537eDThZ6a8aJ5i7F+Zu1NNng@mail.gmail.com>
+
+Looks like converting polylines to beziers in Xtherion stopped working
+correctly starting from version 6.1.4.
+
+With 6.1.3 all works ok.
+
+Screenshots attached.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230222/9786ec35/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: line-to-curve_err_msgbox_expanded.png
+Type: image/png
+Size: 39446 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230222/9786ec35/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: line-to-curve_err_msgbox.png
+Type: image/png
+Size: 34849 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230222/9786ec35/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: line-to-curve-invoke.png
+Type: image/png
+Size: 34085 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230222/9786ec35/attachment-0005.png>
+
+From mark at markdickey.net  Wed Feb 22 18:08:35 2023
+From: mark at markdickey.net (Mark Dickey)
+Date: Wed, 22 Feb 2023 12:08:35 -0500
+Subject: [Therion] Line convert-to-curve seems to be broken in XTherion
+In-Reply-To: <CAEEzkZFa5WWnjdWHrKfCiVkyu537eDThZ6a8aJ5i7F+Zu1NNng@mail.gmail.com>
+References: <CAEEzkZFa5WWnjdWHrKfCiVkyu537eDThZ6a8aJ5i7F+Zu1NNng@mail.gmail.com>
+Message-ID: <fb78907c-9a0e-bd7a-7958-877a754d441c@markdickey.net>
+
+Hi Mykyta,
+
+Well bother. That lines up with when I added the "convert all eligible 
+poly lines to curves" and it was accepted in version 6.1.4. I'm 
+reviewing the code and I found the issue.
+
+(I think I know where the issue came from -- I was trying to figure out 
+how to delay the gui updates till all the processing was done; but I 
+couldn't get that part and reverted my development code base. I 
+overlooked that I had changed the variable from mandatory to optional as 
+a cleaner implementation and caused this issue. My apologies for the 
+inconvenience and time loss caused by my silly mistake.)
+
+*Explanation:*
+
+In the new version, I updated xth_me_cmds_line_poly2bezier to accept an 
+id as an argument.
+
+Version 6.1.3:? proc xth_me_cmds_line_poly2bezier {} {
+Version 6.1.4:? proc xth_me_cmds_line_poly2bezier {id} {
+
+However, it should have been an optional parameter, not a mandatory one 
+(default value set). I believe the following is the correct code, but I 
+don't use tcl much at all and this is by memory.
+
+proc xth_me_cmds_line_poly2bezier {{id ""}} {
+
+I removed everything from my computer. I'll get on it ASAP to 
+test/submit the correction, but I fly out to Israel for an expedition in 
+just a few days. I'll do my best to have it done before leaving. :(
+
+Mark Dickey
+mark at markdickey.net
+914-879-7803
+
+On 2/21/2023 11:43 PM, Mykyta Kozlov wrote:
+> Looks like converting polylines to beziers in Xtherion stopped working 
+> correctly starting from version 6.1.4.
+>
+> With 6.1.3 all works ok.
+>
+> Screenshots attached.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230222/83ff9ea7/attachment.htm>
+
+From lists at group-s.sk  Sun Feb 26 15:06:49 2023
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sun, 26 Feb 2023 15:06:49 +0100
+Subject: [Therion] Line convert-to-curve seems to be broken in XTherion
+In-Reply-To: <fb78907c-9a0e-bd7a-7958-877a754d441c@markdickey.net>
+References: <CAEEzkZFa5WWnjdWHrKfCiVkyu537eDThZ6a8aJ5i7F+Zu1NNng@mail.gmail.com>
+ <fb78907c-9a0e-bd7a-7958-877a754d441c@markdickey.net>
+Message-ID: <CAP35+gEj82-CtiNko5r+zHaWzaP9kgKf4PddWVHRugwXwn7ngw@mail.gmail.com>
+
+Hi, thanks for finding out about this error. It should be fixed now.
+
+S.
+
+On Wed, 22 Feb 2023 at 18:16, Mark Dickey <mark at markdickey.net> wrote:
+
+> Hi Mykyta,
+>
+> Well bother. That lines up with when I added the "convert all eligible
+> poly lines to curves" and it was accepted in version 6.1.4. I'm reviewing
+> the code and I found the issue.
+>
+> (I think I know where the issue came from -- I was trying to figure out
+> how to delay the gui updates till all the processing was done; but I
+> couldn't get that part and reverted my development code base. I overlooked
+> that I had changed the variable from mandatory to optional as a cleaner
+> implementation and caused this issue. My apologies for the inconvenience
+> and time loss caused by my silly mistake.)
+>
+> *Explanation:*
+>
+> In the new version, I updated xth_me_cmds_line_poly2bezier to accept an id
+> as an argument.
+>
+> Version 6.1.3:  proc xth_me_cmds_line_poly2bezier {} {
+> Version 6.1.4:  proc xth_me_cmds_line_poly2bezier {id} {
+>
+> However, it should have been an optional parameter, not a mandatory one
+> (default value set). I believe the following is the correct code, but I
+> don't use tcl much at all and this is by memory.
+>
+> proc xth_me_cmds_line_poly2bezier {{id ""}} {
+>
+> I removed everything from my computer. I'll get on it ASAP to test/submit
+> the correction, but I fly out to Israel for an expedition in just a few
+> days. I'll do my best to have it done before leaving. :(
+>
+> Mark Dickeymark at markdickey.net
+> 914-879-7803
+>
+> On 2/21/2023 11:43 PM, Mykyta Kozlov wrote:
+>
+> Looks like converting polylines to beziers in Xtherion stopped working
+> correctly starting from version 6.1.4.
+>
+> With 6.1.3 all works ok.
+>
+> Screenshots attached.
+>
+> _______________________________________________
+> Therion mailing listTherion at speleo.skhttps://mailman.speleo.sk/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230226/cb56ee27/attachment.htm>
+

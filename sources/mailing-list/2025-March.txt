@@ -1,0 +1,518 @@
+From lists at group-s.sk  Sat Mar  1 15:16:05 2025
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 1 Mar 2025 15:16:05 +0100
+Subject: [Therion] smooth option details
+In-Reply-To: <75qOCVJWVgiRfZsheCY_Vyx9YK-xgnZ2m4KDd0oECvjKMrYgF6wwR-4b9F0ftir7-Dw9xnuMcZ_CHHKXwfcqO65S-7OMVmOlnhYbwtVv5EQ=@pm.me>
+References: <75qOCVJWVgiRfZsheCY_Vyx9YK-xgnZ2m4KDd0oECvjKMrYgF6wwR-4b9F0ftir7-Dw9xnuMcZ_CHHKXwfcqO65S-7OMVmOlnhYbwtVv5EQ=@pm.me>
+Message-ID: <CAP35+gF6bJYTdA-A2XV7VAo5K+wB1u82pEXTU-OSfYKrOJXm0Q@mail.gmail.com>
+
+Hi Rodrigo,
+
+your detailed explanation is correct. Auto option can be useful, if bezier
+curves are imported from somewhere - then smoothness turns automatically on
+when the previous control point, line point and next control points are on
+a straight line +-5 degrees.
+
+S.
+
+
+
+On Fri, 28 Feb 2025 at 09:08, Rodrigo Severo via Therion <therion at speleo.sk>
+wrote:
+
+> Hi,
+>
+>
+> I am trying to better uderstand the line segment smooth option. Therion
+> Book currently states that:
+>
+> "* smooth <on/off/auto> -> whether the line is smooth at the given point.
+> Auto is default."
+>
+> From some tests I believe that the resulting behaviour could be explained
+> in details as:
+>
+> "* smooth <on/off/auto> -> whether the line is smooth at the given point.
+> Auto is default. This setting only has any effect if both segments that
+> passes through the  point affected by the smooth setting are Bezier Curves
+> (the one arriving at it and the one leaving it). On means that the line
+> connection at this point will be smoothed, both by therion and by xTherion.
+> Off means that smoothness at the point is not guaranteded. Auto means that,
+> if both segments that passes through the point are Bezier Curves, Therion
+> will automatically detected if they are smooth and, if they are detected as
+> smooth, Therion will keep them smooth in it's transformations. xTherion
+> always creates Bezier Curves as smooth, even if the previous segment was a
+> straight one."
+>
+> Is this detailed explanation correct? Is there any correction or inclusion
+> that would be appropriate?
+>
+>
+> Regards,
+>
+> Rodrigo
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250301/42725675/attachment.htm>
+
+From eoghan at speleo.dev  Thu Mar  6 17:49:38 2025
+From: eoghan at speleo.dev (Eoghan)
+Date: Thu, 06 Mar 2025 16:49:38 +0000
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+Message-ID: <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+
+Hi Benedikt,
+
+I wrote up this for you as an example.
+
+SELECT DISTINCT p.NAME, p.SURNAME, SUM(c.LENGTH) OVER(PARTITION BY p.NAME) as sum_len FROM PERSON p JOIN TOPO t ON p.ID = t.PERSON_ID JOIN CENTRELINE c ON c.ID = t.CENTRELINE_ID;
+
+I hope this get?s you started.
+
+
+Eoghan
+
+> On 20 Feb 2025, at 13:54, Benedikt Hallinger via Therion <therion at speleo.sk> wrote:
+> 
+> Hi,
+> before I dig into SQL myself, does by chance somebody already made a
+> script or SQL to generate a list showing: "who has drawn how much length
+> of the surveys".
+> 
+> Something along:
+> Person A: 250m
+> Person B:  199m
+> Person C: 80m
+> ...
+> 
+> 
+> Thank you :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From beni at hallinger.org  Thu Mar  6 18:00:55 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 06 Mar 2025 18:00:55 +0100
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+ <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+Message-ID: <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+
+Well, that gives me "survey length per person" (isn't it?)
+But I need "drawed length", to see who contributet how much to the maps 
+drawings.
+
+Am 2025-03-06 17:49, schrieb Eoghan:
+> Hi Benedikt,
+> 
+> I wrote up this for you as an example.
+> 
+> SELECT DISTINCT p.NAME, p.SURNAME, SUM(c.LENGTH) OVER(PARTITION BY 
+> p.NAME) as sum_len FROM PERSON p JOIN TOPO t ON p.ID = t.PERSON_ID JOIN 
+> CENTRELINE c ON c.ID = t.CENTRELINE_ID;
+> 
+> I hope this get?s you started.
+> 
+> 
+> Eoghan
+> 
+>> On 20 Feb 2025, at 13:54, Benedikt Hallinger via Therion 
+>> <therion at speleo.sk> wrote:
+>> 
+>> Hi,
+>> before I dig into SQL myself, does by chance somebody already made a
+>> script or SQL to generate a list showing: "who has drawn how much 
+>> length
+>> of the surveys".
+>> 
+>> Something along:
+>> Person A: 250m
+>> Person B:  199m
+>> Person C: 80m
+>> ...
+>> 
+>> 
+>> Thank you :)
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+From andrew at wotcc.org.uk  Thu Mar  6 18:24:03 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 6 Mar 2025 17:24:03 +0000
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+ <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+Message-ID: <524abaec-1c26-404b-99d8-c6cc29d2d146@wotcc.org.uk>
+
+There are lots of searches, unfortunately in old php, so the websites 
+are long gone at
+
+https://therion.speleo.sk/wiki/contrib:databasequery:install
+
+It looks like Searches/Who might have the search you need. But might be 
+useful for other things, if the php does not get in the way too much
+
+Andrew
+
+On 06/03/2025 16:49, Eoghan via Therion wrote:
+> Hi Benedikt,
+> 
+> I wrote up this for you as an example.
+> 
+> SELECT DISTINCT p.NAME, p.SURNAME, SUM(c.LENGTH) OVER(PARTITION BY p.NAME) as sum_len FROM PERSON p JOIN TOPO t ON p.ID = t.PERSON_ID JOIN CENTRELINE c ON c.ID = t.CENTRELINE_ID;
+> 
+> I hope this get?s you started.
+> 
+> 
+> Eoghan
+> 
+>> On 20 Feb 2025, at 13:54, Benedikt Hallinger via Therion <therion at speleo.sk> wrote:
+>>
+>> Hi,
+>> before I dig into SQL myself, does by chance somebody already made a
+>> script or SQL to generate a list showing: "who has drawn how much length
+>> of the surveys".
+>>
+>> Something along:
+>> Person A: 250m
+>> Person B:  199m
+>> Person C: 80m
+>> ...
+>>
+>>
+>> Thank you :)
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From andrew at wotcc.org.uk  Thu Mar  6 18:29:20 2025
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 6 Mar 2025 17:29:20 +0000
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+ <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+ <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+Message-ID: <99038b30-a263-4d15-9f30-77f3a8de0c3b@wotcc.org.uk>
+
+
+
+On 06/03/2025 17:00, Benedikt Hallinger via Therion wrote:
+> But I need "drawed length", to see who contributet how much to the maps 
+> drawings.
+
+Looking again at p67 of the Therion Book, all the length and people are 
+associated with the centreline, so I don't think the information you are 
+after is in the database!
+
+Andrew
+
+From tarquin.wilton-jones at ntlworld.com  Thu Mar  6 18:48:12 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 6 Mar 2025 17:48:12 +0000
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+ <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+ <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+Message-ID: <e6df9285-7452-4e99-9041-3006cd4dfce2@ntlworld.com>
+
+> But I need "drawed length", to see who contributet how much to the maps 
+> drawings.
+
+
+Is that how Therion works it out on the PDFs? I would have assumed it 
+uses "how many scraps" with that person as -author, since it cannot 
+really work out the "length". I could have a scrap containing only one 
+station, which would mean 0 length. I could have a scrap containing only 
+stations 1 and 100 (if the passage forms a loop). I could also have 5 
+scraps overlaying each other, all covering the same 2 stations. I don't 
+think Therion uses any logic to count stations-per-scrap in order to 
+boost the relative numbers. This is why there is no option for
+"statistics carto-length on"
+Instead, it just ranks people by number of scraps. I think.
+
+Assuming you mean length of cave covered by:
+scrap somethingSP -projection plan -author 2025.01.01 "Foo bar"
+(which it sounds like you do) rather than:
+team "Baz Qux" notes pictures
+Since both of those are someone doing drawings.
+
+I think you need to do a query for scraps, and
+count(*) AS scrapcount GROUP BY author
+(Sorry, I don't play with the SQL so I don't know the column titles, 
+hoping this is enough to make sense for you.)
+
+This does mean that if you have one scrap covering 500 metres of cave, 
+it means the same as one scrap covering 1 metre of cave. But I think 
+that is what Therion does.
+
+From bruce at tomo.co.nz  Thu Mar  6 20:10:35 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 7 Mar 2025 08:10:35 +1300
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <e6df9285-7452-4e99-9041-3006cd4dfce2@ntlworld.com>
+References: <a6ef9cec383db2f0b432fe57b137a21a@hallinger.org>
+ <C1EFC446-7E8B-4B52-9B83-D80B60A0E494@speleo.dev>
+ <c27dcb43a8992e998957da62d44c530b@hallinger.org>
+ <e6df9285-7452-4e99-9041-3006cd4dfce2@ntlworld.com>
+Message-ID: <000001db8ecb$743ea750$5cbbf5f0$@tomo.co.nz>
+
+> But I need "drawed length", to see who contributet how much to the 
+> maps drawings.
+
+My understanding (from much forum watching rather than actual knowledge) is
+that when Therion exports map(s) made of scraps (ie not with any maps
+comprised of centrelines), then the length presented in the statistics is
+length of 'whole centrelines' associated with those scraps.  Unfortunately
+(perhaps) the finest resolution of the length calculation is on a 'per
+centreline' basis (as opposed to 'per leg').  That means that the length
+reported will almost always overestimate the length that is directly 'under'
+the 'footprint' of scraps exported.
+So while yes, it is easiest to count the number of scraps authored by each
+person, it should also be possible to use a similar logic to report the
+length of whole centrelines beneath scraps drawn by each person.  If there
+are many scrap authors per centreline, the statistic would be worthless due
+to double reporting of authors for each centreline, but if it is reasonable
+to assume that mostly a scrap author will draw all the scraps for a
+particular days survey, the double reporting will be minimised.
+For surveys that contain only one centreline, the blurring of resolution
+probably make this a forlorn effort.  May as well count scraps per person
+instead - this is a way of encouraging and rewarding what I consider to be
+the good practice of drawing short scraps!
+Bruce
+
+
+From beni at hallinger.org  Thu Mar  6 21:00:20 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 6 Mar 2025 21:00:20 +0100
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <000001db8ecb$743ea750$5cbbf5f0$@tomo.co.nz>
+References: <000001db8ecb$743ea750$5cbbf5f0$@tomo.co.nz>
+Message-ID: <925D7194-299E-4002-B305-3F9656227120@hallinger.org>
+
+Thank you? seems like counting -author in the scrap files is the way to go then? maybe its an idea to count objects in a scrap, to get a very raw estimate of ?workload done?.
+
+> Am 06.03.2025 um 20:11 schrieb Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> ?
+>> 
+>> But I need "drawed length", to see who contributet how much to the
+>> maps drawings.
+> 
+> My understanding (from much forum watching rather than actual knowledge) is
+> that when Therion exports map(s) made of scraps (ie not with any maps
+> comprised of centrelines), then the length presented in the statistics is
+> length of 'whole centrelines' associated with those scraps.  Unfortunately
+> (perhaps) the finest resolution of the length calculation is on a 'per
+> centreline' basis (as opposed to 'per leg').  That means that the length
+> reported will almost always overestimate the length that is directly 'under'
+> the 'footprint' of scraps exported.
+> So while yes, it is easiest to count the number of scraps authored by each
+> person, it should also be possible to use a similar logic to report the
+> length of whole centrelines beneath scraps drawn by each person.  If there
+> are many scrap authors per centreline, the statistic would be worthless due
+> to double reporting of authors for each centreline, but if it is reasonable
+> to assume that mostly a scrap author will draw all the scraps for a
+> particular days survey, the double reporting will be minimised.
+> For surveys that contain only one centreline, the blurring of resolution
+> probably make this a forlorn effort.  May as well count scraps per person
+> instead - this is a way of encouraging and rewarding what I consider to be
+> the good practice of drawing short scraps!
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From beni at hallinger.org  Sat Mar  8 19:40:37 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 08 Mar 2025 19:40:37 +0100
+Subject: [Therion] Generating list of drawers
+In-Reply-To: <925D7194-299E-4002-B305-3F9656227120@hallinger.org>
+References: <000001db8ecb$743ea750$5cbbf5f0$@tomo.co.nz>
+ <925D7194-299E-4002-B305-3F9656227120@hallinger.org>
+Message-ID: <22d14e3add7d515a69097c79a30b3484@hallinger.org>
+
+So I finally wrote up something:
+https://gist.github.com/hbeni/33b807659d8d3a8ff692193712abace0
+
+It counts scraps per author, and individual objects of the scraps.
+If a scrap is linked to more than one author, it counts toward all of 
+them.
+All th2 files are recursively read and processed.
+
+Call with:
+$ therion-statistics-scrapauthors.sh             # evaluate from current 
+directory
+$ therion-statistics-scrapauthors.sh  ../survey  # evaluate from that 
+directory
+
+
+
+Am 2025-03-06 21:00, schrieb Benedikt Hallinger via Therion:
+> Thank you? seems like counting -author in the scrap files is the way to 
+> go then? maybe its an idea to count objects in a scrap, to get a very 
+> raw estimate of ?workload done?.
+> 
+>> Am 06.03.2025 um 20:11 schrieb Bruce Mutton <bruce at tomo.co.nz>:
+>> 
+>> ?
+>>> 
+>>> But I need "drawed length", to see who contributet how much to the
+>>> maps drawings.
+>> 
+>> My understanding (from much forum watching rather than actual 
+>> knowledge) is
+>> that when Therion exports map(s) made of scraps (ie not with any maps
+>> comprised of centrelines), then the length presented in the statistics 
+>> is
+>> length of 'whole centrelines' associated with those scraps.  
+>> Unfortunately
+>> (perhaps) the finest resolution of the length calculation is on a 'per
+>> centreline' basis (as opposed to 'per leg').  That means that the 
+>> length
+>> reported will almost always overestimate the length that is directly 
+>> 'under'
+>> the 'footprint' of scraps exported.
+>> So while yes, it is easiest to count the number of scraps authored by 
+>> each
+>> person, it should also be possible to use a similar logic to report 
+>> the
+>> length of whole centrelines beneath scraps drawn by each person.  If 
+>> there
+>> are many scrap authors per centreline, the statistic would be 
+>> worthless due
+>> to double reporting of authors for each centreline, but if it is 
+>> reasonable
+>> to assume that mostly a scrap author will draw all the scraps for a
+>> particular days survey, the double reporting will be minimised.
+>> For surveys that contain only one centreline, the blurring of 
+>> resolution
+>> probably make this a forlorn effort.  May as well count scraps per 
+>> person
+>> instead - this is a way of encouraging and rewarding what I consider 
+>> to be
+>> the good practice of drawing short scraps!
+>> Bruce
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From kartirane at abv.bg  Mon Mar 24 11:04:13 2025
+From: kartirane at abv.bg (Kartirane)
+Date: Mon, 24 Mar 2025 12:04:13 +0200
+Subject: [Therion] please remove my mail address
+Message-ID: <5265D175-C67E-4A82-8B52-E8A67D4F84B1@abv.bg>
+
+Please remove my mail address from this list
+
+From herich at speleodd.sk  Mon Mar 31 12:20:50 2025
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 31 Mar 2025 12:20:50 +0200
+Subject: [Therion] SQL problem
+Message-ID: <67748307eca27ec8abeabae3ae5724d7@speleodd.sk>
+
+Hi all,
+
+recently, when I try to import an sql Therion export in DB browser, an 
+error message apears (in attachment):
+
+Error importing data: Error in statement #67789: no such column: nan. 
+Aborting execution.
+
+Any idea what might be the problem? Especially how to find it in source 
+Therion data...
+
+Thank you
+Pavel
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: SQL_error.jpg
+Type: image/jpeg
+Size: 325316 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250331/02b51e99/attachment-0001.jpg>
+
+From herich at speleodd.sk  Mon Mar 31 13:45:33 2025
+From: herich at speleodd.sk (Pavel Herich)
+Date: Mon, 31 Mar 2025 13:45:33 +0200
+Subject: [Therion] SQL problem - solved/possible bug
+In-Reply-To: <67748307eca27ec8abeabae3ae5724d7@speleodd.sk>
+References: <67748307eca27ec8abeabae3ae5724d7@speleodd.sk>
+Message-ID: <88226fec3380f7f077fb4d0650f2080f@speleodd.sk>
+
+In newer Therion releases (previously using 6.1.8 version) something has 
+been changed for sql creation:
+column "nan" is produced when a survey doesn?t contain any centerline 
+with (underground) lenght. So if there are only surface legs, an error 
+importing sql file will occur based on line:
+
+insert into MAPS values (110, 32, 'velky_previs_elem', NULL, 3, 0.000, 
+nan);
+
+Adding underground leg 1  1_  0.00  0  0  to centerline changes result 
+as following:
+
+insert into MAPS values (110, 32, 'velky_previs_elem', NULL, 3, 0.000, 
+0.000);
+
+
+I really don?t know how things work in these exports, hope this will 
+help to improve things. Or maybe I am missing something.
+
+Pavel
+
+
+
+D?a 2025-03-31 12:20 Pavel Herich nap?sal(a):
+> Hi all,
+> 
+> recently, when I try to import an sql Therion export in DB browser, an 
+> error message apears (in attachment):
+> 
+> Error importing data: Error in statement #67789: no such column: nan. 
+> Aborting execution.
+> 
+> Any idea what might be the problem? Especially how to find it in source 
+> Therion data...
+> 
+> Thank you
+> Pavel
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+

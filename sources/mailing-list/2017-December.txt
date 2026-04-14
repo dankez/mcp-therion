@@ -1,0 +1,4205 @@
+From m.budaj at gmail.com  Sat Dec  2 08:55:00 2017
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 2 Dec 2017 08:55:00 +0100
+Subject: [Therion] Scrap limits
+In-Reply-To: <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+Message-ID: <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+
+Hi,
+
+there is no change regarding the limits in Therion. If there is a real
+need, following could be done:
+
+- in the current version of MetaPost, it's possible to used "double"
+arithmetic just by specifying a command line option, which practically
+eliminates MetaPost limits
+
+- instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+doubles the number of registers available from 32768 to 65536.
+Registers are needed to reference the fragments of all
+scraps/sections; you usually need up to 6 of them for a scrap. So you
+would get maybe 12000 instead of 6000 scraps in one output file. It
+would require some substantial work to support LuaTeX (there is e.g.
+completely different font handling compared to PdfTeX).
+
+And yes, the limit applies just to the data selected for export.
+
+Martin
+
+
+On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+<therion at speleo.sk> wrote:
+> Maybe another question:
+> Assume a large cave with thousands of scraps.
+> When i make a thconfig file sourcing all that data, but using "select"
+> statements i only select partial data,
+> does the metapost limit apply to the whole dataset or just the scraps
+> covered by the select command?
+>
+>
+>
+> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>
+>> Hello Martin,
+>> is the blow limit of 4096 scraps still valid in the current version?
+>> Or is it already fixed so we can use more scraps?
+>>
+>>
+>>
+>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu>
+>>> wrote:
+>>>>
+>>>> It looks like the solution is to issue the following metapost command:
+>>>> warningcheck := 0;
+>>>
+>>>
+>>> Indeed. The new limit will be 32768 and could not be increased further
+>>> in Metapost itself.
+>>>
+>>> The solution would be modification of how therion manages metapost
+>>> pictures (currently they are stored in files data.1 to data.4000, with
+>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>> numbering scheme could be modified to allow more file name prefixes
+>>> and consequently theoretically unlimited number of scraps processed by
+>>> metapost.
+>>>
+>>> On the other hand there is still pdfTeX limit which would not allow
+>>> much more scraps. PdfTeX uses internal registers for scraps
+>>> referencing (scrap data is included only once in pdf file and can be
+>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>> SVG output (if SVG viewers would process large number of internal
+>>> references).
+>>>
+>>> In the longer-term future (a few years) I would like to use metapost
+>>> as a library instead of external metapost executable, which would
+>>> solve the problems with temporary files (and other problems as well).
+>>>
+>>>> However adding it in a
+>>>> code metapost
+>>>> warningcheck := 0;
+>>>> endcode
+>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>> scraps.
+>>>
+>>>
+>>> Therion currently inserts warningcheck:=1; before scraps without good
+>>> reason, so it will be fixed soon.
+>>>
+>>> If the new warningcheck setting would work for you, I would prefer not
+>>> to modify current file numbering scheme for metapost pictures and have
+>>> it fixed later with implementation of metapost library.
+>>>
+>>> Martin
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Sun Dec  3 09:41:05 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 03 Dec 2017 10:41:05 +0200
+Subject: [Therion] Scrap limits
+In-Reply-To: <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+Message-ID: <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+
+Thank, how could i switch this?
+I also wrote a small testcase that segfaulted at about 3000 scraps.
+
+Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+> Hi,
+>
+> there is no change regarding the limits in Therion. If there is a real
+> need, following could be done:
+>
+> - in the current version of MetaPost, it's possible to used "double"
+> arithmetic just by specifying a command line option, which practically
+> eliminates MetaPost limits
+>
+> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+> doubles the number of registers available from 32768 to 65536.
+> Registers are needed to reference the fragments of all
+> scraps/sections; you usually need up to 6 of them for a scrap. So you
+> would get maybe 12000 instead of 6000 scraps in one output file. It
+> would require some substantial work to support LuaTeX (there is e.g.
+> completely different font handling compared to PdfTeX).
+>
+> And yes, the limit applies just to the data selected for export.
+>
+> Martin
+>
+>
+> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+> <therion at speleo.sk> wrote:
+>> Maybe another question:
+>> Assume a large cave with thousands of scraps.
+>> When i make a thconfig file sourcing all that data, but using "select"
+>> statements i only select partial data,
+>> does the metapost limit apply to the whole dataset or just the scraps
+>> covered by the select command?
+>>
+>>
+>>
+>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>
+>>> Hello Martin,
+>>> is the blow limit of 4096 scraps still valid in the current version?
+>>> Or is it already fixed so we can use more scraps?
+>>>
+>>>
+>>>
+>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu>
+>>>> wrote:
+>>>>>
+>>>>> It looks like the solution is to issue the following metapost command:
+>>>>> warningcheck := 0;
+>>>>
+>>>>
+>>>> Indeed. The new limit will be 32768 and could not be increased further
+>>>> in Metapost itself.
+>>>>
+>>>> The solution would be modification of how therion manages metapost
+>>>> pictures (currently they are stored in files data.1 to data.4000, with
+>>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>>> numbering scheme could be modified to allow more file name prefixes
+>>>> and consequently theoretically unlimited number of scraps processed by
+>>>> metapost.
+>>>>
+>>>> On the other hand there is still pdfTeX limit which would not allow
+>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>> referencing (scrap data is included only once in pdf file and can be
+>>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>>> SVG output (if SVG viewers would process large number of internal
+>>>> references).
+>>>>
+>>>> In the longer-term future (a few years) I would like to use metapost
+>>>> as a library instead of external metapost executable, which would
+>>>> solve the problems with temporary files (and other problems as well).
+>>>>
+>>>>> However adding it in a
+>>>>> code metapost
+>>>>> warningcheck := 0;
+>>>>> endcode
+>>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>>> scraps.
+>>>>
+>>>>
+>>>> Therion currently inserts warningcheck:=1; before scraps without good
+>>>> reason, so it will be fixed soon.
+>>>>
+>>>> If the new warningcheck setting would work for you, I would prefer not
+>>>> to modify current file numbering scheme for metapost pictures and have
+>>>> it fixed later with implementation of metapost library.
+>>>>
+>>>> Martin
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From lists at group-s.sk  Sun Dec  3 11:04:06 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sun, 3 Dec 2017 11:04:06 +0100
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+Message-ID: <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+
+Hello, ​I have just posted a commit, that enables movement of selected
+object in xtherion (line or area) according to specified vector.
+
+It is not interactive (too much work), but you can select or enter 2 points
+of vector and move entire line or scrap just by one click. Controls for
+this feature are at the end of objects toolbar.
+
+S.
+
+​
+
+On 9 November 2017 at 11:22, Benedikt Hallinger via Therion <
+therion at speleo.sk> wrote:
+
+> It would be cool to be  able to cl7ck to a line point, and while pressing
+> ctrl and move the mouse to m8ve the entire line.
+>
+>
+> Am 2017-11-09 8:55, schrieb Martin Sluka via Therion:
+>
+>> 8. 11. 2017 v 20:47, Benedikt Hallinger via Therion <therion at speleo.sk>:
+>>>
+>>> for the future: it would be very cool to have a nice drag&drop solution
+>>> in the editor
+>>>
+>>
+>> This feature is in Therion text editor too. Search/Replace too.
+>>
+>> But for me is regular plain text editor faster.
+>>
+>> m.s.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171203/4ea83445/attachment.htm>
+
+From beni at hallinger.org  Sun Dec  3 13:59:52 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 03 Dec 2017 14:59:52 +0200
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+Message-ID: <c8ba7361a086bcbafddd3a4c254fb0b2@hallinger.org>
+
+Very nice, than you very much! This will help alot!
+
+Am 2017-12-03 12:04, schrieb Stacho Mudrak via Therion:
+> Hello, ​I have just posted a commit, that enables movement of selected 
+> object in xtherion (line or area) according to specified vector.
+>
+> It is not interactive (too much work), but you can select or enter 2 
+> points of vector and move entire line or scrap just by one click. Controls 
+> for this feature are at the end of objects toolbar.
+>
+> S.
+>
+> ​
+>
+> On 9 November 2017 at 11:22, Benedikt Hallinger via Therion 
+> <therion at speleo.sk [6]> wrote:
+>
+>> It would be cool to be  able to cl7ck to a line point, and while pressing 
+>> ctrl and move the mouse to m8ve the entire line.
+>>
+>> Am 2017-11-09 8:55, schrieb Martin Sluka via Therion:
+>>
+>>>> 8. 11. 2017 v 20:47, Benedikt Hallinger via Therion <therion at speleo.sk 
+>>>> [1]>:
+>>>>
+>>>> for the future: it would be very cool to have a nice drag&drop solution 
+>>>> in the editor
+>>>
+>>> This feature is in Therion text editor too. Search/Replace too.
+>>>
+>>> But for me is regular plain text editor faster.
+>>>
+>>> m.s.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk [2]
+>>> https://mailman.speleo.sk/listinfo/therion [3]
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [4]
+>> https://mailman.speleo.sk/listinfo/therion [5]
+>
+>
+>
+> Links:
+> ------
+> [1] mailto:therion at speleo.sk
+> [2] mailto:Therion at speleo.sk
+> [3] https://mailman.speleo.sk/listinfo/therion
+> [4] mailto:Therion at speleo.sk
+> [5] https://mailman.speleo.sk/listinfo/therion
+> [6] mailto:therion at speleo.sk
+
+
+
+From bruce at tomo.co.nz  Sun Dec  3 23:00:26 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 4 Dec 2017 11:00:26 +1300
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+Message-ID: <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+
+Very cool.
+
+If I might expand on the instructions, as I almost did not figure out the easy way.
+
+ 
+
+1.	Create or select a point (or line point) that defines the start of the movement vector.  Click ‘shift from’.
+2.	Create or select a point that defines the end (destination) of the movement vector.  Click ‘shift to’.
+3.	If you did that in the wrong order, click ‘Swap’ to swap the vector coordinates.
+4.	Select the object (point or line) that you want to move.  Click ‘Shift object’.
+5.	Repeat step 4 until you have moved all the objects that you wish to move.
+
+(for version 5.4.1 + ce29e7b)
+
+Bruce
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Stacho Mudrak via Therion
+Sent: Sunday, 3 December 2017 11:04 PM
+To: List for Therion users <therion at speleo.sk>
+Cc: Stacho Mudrak <lists at group-s.sk>
+Subject: Re: [Therion] How to move a line in xtherion
+
+ 
+
+Hello, ​I have just posted a commit, that enables movement of selected object in xtherion (line or area) according to specified vector.
+
+ 
+
+It is not interactive (too much work), but you can select or enter 2 points of vector and move entire line or scrap just by one click. Controls for this feature are at the end of objects toolbar.
+
+ 
+
+S.
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171204/1ea599e7/attachment.htm>
+
+From beni at hallinger.org  Mon Dec  4 10:52:15 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 04 Dec 2017 11:52:15 +0200
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+ <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+Message-ID: <b5db8f1a6d24b6e0951037c709eeaf7f@hallinger.org>
+
+It would be very good if one could add this to the wiki and/or book :)
+
+Am 2017-12-04 0:00, schrieb Bruce Mutton via Therion:
+> Very cool.
+>
+> If I might expand on the instructions, as I almost did not figure out the 
+> easy way.
+>
+> 	* Create or select a point (or line point) that defines the start of the 
+> movement vector.  Click ‘shift from’.
+> 	* Create or select a point that defines the end (destination) of the 
+> movement vector.  Click ‘shift to’.
+> 	* If you did that in the wrong order, click ‘Swap’ to swap the vector 
+> coordinates.
+> 	* Select the object (point or line) that you want to move.  Click ‘Shift 
+> object’.
+> 	* Repeat step 4 until you have moved all the objects that you wish to 
+> move.
+>
+> (for version 5.4.1 + ce29e7b)
+>
+> Bruce
+>
+> FROM: Therion [mailto:therion-bounces at speleo.sk] ON BEHALF OF Stacho 
+> Mudrak via Therion
+> SENT: Sunday, 3 December 2017 11:04 PM
+> TO: List for Therion users <therion at speleo.sk>
+> CC: Stacho Mudrak <lists at group-s.sk>
+> SUBJECT: Re: [Therion] How to move a line in xtherion
+>
+> Hello, ​I have just posted a commit, that enables movement of selected 
+> object in xtherion (line or area) according to specified vector.
+>
+> It is not interactive (too much work), but you can select or enter 2 
+> points of vector and move entire line or scrap just by one click. Controls 
+> for this feature are at the end of objects toolbar.
+>
+> S.
+
+
+
+From lists at group-s.sk  Mon Dec  4 11:18:18 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 4 Dec 2017 11:18:18 +0100
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <b5db8f1a6d24b6e0951037c709eeaf7f@hallinger.org>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+ <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+ <b5db8f1a6d24b6e0951037c709eeaf7f@hallinger.org>
+Message-ID: <CAP35+gFjHkZS3FEqW9f0P-j3iynt8MnpDd74hrdEHzKKpvCr+Q@mail.gmail.com>
+
+https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_within_drawing_area
+
+Feel free to modify it.
+
+S.
+
+On 4 December 2017 at 10:52, Benedikt Hallinger via Therion <
+therion at speleo.sk> wrote:
+
+> It would be very good if one could add this to the wiki and/or book :)
+>
+> Am 2017-12-04 0:00, schrieb Bruce Mutton via Therion:
+>
+>> Very cool.
+>>
+>> If I might expand on the instructions, as I almost did not figure out the
+>> easy way.
+>>
+>>         * Create or select a point (or line point) that defines the start
+>> of the movement vector.  Click ‘shift from’.
+>>         * Create or select a point that defines the end (destination) of
+>> the movement vector.  Click ‘shift to’.
+>>         * If you did that in the wrong order, click ‘Swap’ to swap the
+>> vector coordinates.
+>>         * Select the object (point or line) that you want to move.  Click
+>> ‘Shift object’.
+>>         * Repeat step 4 until you have moved all the objects that you
+>> wish to move.
+>>
+>> (for version 5.4.1 + ce29e7b)
+>>
+>> Bruce
+>>
+>> FROM: Therion [mailto:therion-bounces at speleo.sk] ON BEHALF OF Stacho
+>> Mudrak via Therion
+>> SENT: Sunday, 3 December 2017 11:04 PM
+>> TO: List for Therion users <therion at speleo.sk>
+>> CC: Stacho Mudrak <lists at group-s.sk>
+>> SUBJECT: Re: [Therion] How to move a line in xtherion
+>>
+>> Hello, ​I have just posted a commit, that enables movement of selected
+>> object in xtherion (line or area) according to specified vector.
+>>
+>> It is not interactive (too much work), but you can select or enter 2
+>> points of vector and move entire line or scrap just by one click. Controls
+>> for this feature are at the end of objects toolbar.
+>>
+>> S.
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171204/9ccabc9e/attachment.htm>
+
+From martinsluka at mac.com  Mon Dec  4 13:02:15 2017
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 04 Dec 2017 12:02:15 +0000 (GMT)
+Subject: [Therion] How to move a line in xtherion
+Message-ID: <858d228d-601f-43c5-a2b6-7e8258c46aa5@me.com>
+
+You may use top most menu (File commands) to select objects or scraps.
+
+m.s.
+
+On Dec 04, 2017, at 11:19 AM, Stacho Mudrak via Therion <therion at speleo.sk> wrote:
+
+https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_within_drawing_area
+
+Feel free to modify it.
+
+S.
+
+On 4 December 2017 at 10:52, Benedikt Hallinger via Therion <therion at speleo.sk> wrote:
+It would be very good if one could add this to the wiki and/or book :)
+
+Am 2017-12-04 0:00, schrieb Bruce Mutton via Therion:
+Very cool.
+
+If I might expand on the instructions, as I almost did not figure out the easy way.
+
+        * Create or select a point (or line point) that defines the start of the movement vector.  Click ‘shift from’.
+        * Create or select a point that defines the end (destination) of the movement vector.  Click ‘shift to’.
+        * If you did that in the wrong order, click ‘Swap’ to swap the vector coordinates.
+        * Select the object (point or line) that you want to move.  Click ‘Shift object’.
+        * Repeat step 4 until you have moved all the objects that you wish to move.
+
+(for version 5.4.1 + ce29e7b)
+
+Bruce
+
+FROM: Therion [mailto:therion-bounces at speleo.sk] ON BEHALF OF Stacho Mudrak via Therion
+SENT: Sunday, 3 December 2017 11:04 PM
+TO: List for Therion users <therion at speleo.sk>
+CC: Stacho Mudrak <lists at group-s.sk>
+SUBJECT: Re: [Therion] How to move a line in xtherion
+
+Hello, ​I have just posted a commit, that enables movement of selected object in xtherion (line or area) according to specified vector.
+
+It is not interactive (too much work), but you can select or enter 2 points of vector and move entire line or scrap just by one click. Controls for this feature are at the end of objects toolbar.
+
+S.
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171204/5d43a2ff/attachment.htm>
+
+From beni at hallinger.org  Mon Dec  4 20:21:34 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 04 Dec 2017 21:21:34 +0200
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <CAP35+gFjHkZS3FEqW9f0P-j3iynt8MnpDd74hrdEHzKKpvCr+Q@mail.gmail.com>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+ <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+ <b5db8f1a6d24b6e0951037c709eeaf7f@hallinger.org>
+ <CAP35+gFjHkZS3FEqW9f0P-j3iynt8MnpDd74hrdEHzKKpvCr+Q@mail.gmail.com>
+Message-ID: <aa5808a65ae07a4394cd464cf43e6693@hallinger.org>
+
+Thank you very much, i was not aware that it already was in the wiki :)
+
+Am 2017-12-04 12:18, schrieb Stacho Mudrak via Therion:
+> 
+> https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_within_drawing_area 
+> [6]
+>
+> Feel free to modify it.
+>
+> S.
+>
+> On 4 December 2017 at 10:52, Benedikt Hallinger via Therion 
+> <therion at speleo.sk [7]> wrote:
+>
+>> It would be very good if one could add this to the wiki and/or book :)
+>>
+>> Am 2017-12-04 0:00, schrieb Bruce Mutton via Therion:
+>>
+>>> Very cool.
+>>>
+>>> If I might expand on the instructions, as I almost did not figure out 
+>>> the easy way.
+>>>
+>>>         * Create or select a point (or line point) that defines the 
+>>> start of the movement vector.  Click ‘shift from’.
+>>>         * Create or select a point that defines the end (destination) of 
+>>> the movement vector.  Click ‘shift to’.
+>>>         * If you did that in the wrong order, click ‘Swap’ to swap the 
+>>> vector coordinates.
+>>>         * Select the object (point or line) that you want to move.  
+>>> Click ‘Shift object’.
+>>>         * Repeat step 4 until you have moved all the objects that you 
+>>> wish to move.
+>>>
+>>> (for version 5.4.1 + ce29e7b)
+>>>
+>>> Bruce
+>>>
+>>> FROM: Therion [mailto:therion-bounces at speleo.sk [1]] ON BEHALF OF Stacho 
+>>> Mudrak via Therion
+>>> SENT: Sunday, 3 December 2017 11:04 PM
+>>> TO: List for Therion users <therion at speleo.sk [2]>
+>>> CC: Stacho Mudrak <lists at group-s.sk [3]>
+>>> SUBJECT: Re: [Therion] How to move a line in xtherion
+>>>
+>>> Hello, ​I have just posted a commit, that enables movement of selected 
+>>> object in xtherion (line or area) according to specified vector.
+>>>
+>>> It is not interactive (too much work), but you can select or enter 2 
+>>> points of vector and move entire line or scrap just by one click. Controls 
+>>> for this feature are at the end of objects toolbar.
+>>>
+>>> S.
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [4]
+>> https://mailman.speleo.sk/listinfo/therion [5]
+>
+>
+>
+> Links:
+> ------
+> [1] mailto:therion-bounces at speleo.sk
+> [2] mailto:therion at speleo.sk
+> [3] mailto:lists at group-s.sk
+> [4] mailto:Therion at speleo.sk
+> [5] https://mailman.speleo.sk/listinfo/therion
+> [6] 
+> https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_within_drawing_area
+> [7] mailto:therion at speleo.sk
+
+
+
+From lists at group-s.sk  Mon Dec  4 21:15:06 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 4 Dec 2017 21:15:06 +0100
+Subject: [Therion] How to move a line in xtherion
+In-Reply-To: <aa5808a65ae07a4394cd464cf43e6693@hallinger.org>
+References: <000001d353b9$be3cff00$3ab6fd00$@tomo.co.nz>
+ <42c6db5b123834af0e073b1d426d303f@hallinger.org>
+ <6F5C8598-AF76-4C13-B2BF-5DDF6C2F5A80@mac.com>
+ <d62156cf9fe4278bc6d57fa0e6e1177a@hallinger.org>
+ <1F343DF8-E3CE-4408-AA9C-F7CE7AF360C0@mac.com>
+ <d4a238dddf9e140899d93927e87f5a3f@hallinger.org>
+ <CAP35+gHHUAP+dd1NMSoHnjs7-_2fcJ2VOqvZe7uXhcJLtrKczw@mail.gmail.com>
+ <000401d36c82$22269ae0$6673d0a0$@tomo.co.nz>
+ <b5db8f1a6d24b6e0951037c709eeaf7f@hallinger.org>
+ <CAP35+gFjHkZS3FEqW9f0P-j3iynt8MnpDd74hrdEHzKKpvCr+Q@mail.gmail.com>
+ <aa5808a65ae07a4394cd464cf43e6693@hallinger.org>
+Message-ID: <CAP35+gFz1SB851rNCC35_bSJ61CPabRwN4DvN29kyVcAfTLwsw@mail.gmail.com>
+
+Sorry, it was not, I have put it there after your suggestion :)
+
+On Dec 4, 2017 8:24 PM, "Benedikt Hallinger via Therion" <therion at speleo.sk>
+wrote:
+
+> Thank you very much, i was not aware that it already was in the wiki :)
+>
+> Am 2017-12-04 12:18, schrieb Stacho Mudrak via Therion:
+>
+>>
+>> https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_
+>> within_drawing_area [6]
+>>
+>> Feel free to modify it.
+>>
+>> S.
+>>
+>> On 4 December 2017 at 10:52, Benedikt Hallinger via Therion <
+>> therion at speleo.sk [7]> wrote:
+>>
+>> It would be very good if one could add this to the wiki and/or book :)
+>>>
+>>> Am 2017-12-04 0:00, schrieb Bruce Mutton via Therion:
+>>>
+>>> Very cool.
+>>>>
+>>>> If I might expand on the instructions, as I almost did not figure out
+>>>> the easy way.
+>>>>
+>>>>         * Create or select a point (or line point) that defines the
+>>>> start of the movement vector.  Click ‘shift from’.
+>>>>         * Create or select a point that defines the end (destination)
+>>>> of the movement vector.  Click ‘shift to’.
+>>>>         * If you did that in the wrong order, click ‘Swap’ to swap the
+>>>> vector coordinates.
+>>>>         * Select the object (point or line) that you want to move.
+>>>> Click ‘Shift object’.
+>>>>         * Repeat step 4 until you have moved all the objects that you
+>>>> wish to move.
+>>>>
+>>>> (for version 5.4.1 + ce29e7b)
+>>>>
+>>>> Bruce
+>>>>
+>>>> FROM: Therion [mailto:therion-bounces at speleo.sk [1]] ON BEHALF OF
+>>>> Stacho Mudrak via Therion
+>>>> SENT: Sunday, 3 December 2017 11:04 PM
+>>>> TO: List for Therion users <therion at speleo.sk [2]>
+>>>> CC: Stacho Mudrak <lists at group-s.sk [3]>
+>>>> SUBJECT: Re: [Therion] How to move a line in xtherion
+>>>>
+>>>> Hello, ​I have just posted a commit, that enables movement of selected
+>>>> object in xtherion (line or area) according to specified vector.
+>>>>
+>>>> It is not interactive (too much work), but you can select or enter 2
+>>>> points of vector and move entire line or scrap just by one click. Controls
+>>>> for this feature are at the end of objects toolbar.
+>>>>
+>>>> S.
+>>>>
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk [4]
+>>> https://mailman.speleo.sk/listinfo/therion [5]
+>>>
+>>
+>>
+>>
+>> Links:
+>> ------
+>> [1] mailto:therion-bounces at speleo.sk
+>> [2] mailto:therion at speleo.sk
+>> [3] mailto:lists at group-s.sk
+>> [4] mailto:Therion at speleo.sk
+>> [5] https://mailman.speleo.sk/listinfo/therion
+>> [6] https://therion.speleo.sk/wiki/tips#moving_lines_and_scraps_
+>> within_drawing_area
+>> [7] mailto:therion at speleo.sk
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171204/b959a0b7/attachment.htm>
+
+From bgee at campercaver.net  Fri Dec  8 17:56:41 2017
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 08 Dec 2017 10:56:41 -0600
+Subject: [Therion] Including compile time in map legend
+Message-ID: <126065570.aSMsQy0RBb@main2.billgee.local>
+
+Hello everyone - 
+
+I am back with more TeX questions1  I can hear the groaning already ...  :-)
+
+The goal is to include the time of compilation in the map legend.  I already 
+found the Therion macro for \currentdate, and it works perfectly.  However, 
+there is no equivalent macro for \currenttime.
+
+I have been reading Knuth's tome "The TeXbook" and searching all over the 
+Internet.  What I have tried:
+
+1) Use the pdfLaTeX macro \pdfcreationdate.  This works, but produces a string 
+that is nearly unintelligible.  It looks like this:  
+
+	D:20171208103654-06’00’
+
+Yep, that is the time ...  and the date, and the time zone offset!  Too much 
+and not in a useful format.
+
+2) Use the \the\time primitive from TeX.  This also works, except the time it 
+prints is the number of minutes since midnight.  Not quite as busy as option 
+one, but still not readable by ordinary mortals.
+
+3) Using either the datetime (deprecated) or the datetime2 package.  Datetime2 
+includes a definition for \DTMtime which produces the output I want.  The 
+problem here is that Therion does not pass "\usepackage{datetime2}" to 
+pdfLaTeX in any usable form.  I put it right after the "code tex-map" line.
+
+The error message is:
+
+=========
+(./data.tex (./th_enc.tex) (./th_texts.tex) (./th_resources.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pdftex/glyphtounicode.tex))
+(./th_fontdef.tex{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/
+pdftex.
+map})
+! Undefined control sequence.
+l.622 \usepackage
+                 {datetime2}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+===========
+
+Yes, I have the datetime2 package on my computer.  I can create sample TeX 
+documents where it works as expected.
+
+4) I created test TeX document to see if I could convert the output of \time 
+into a pair of numbers that can be joined with a string.  The math is easy, 
+except that pdfLateX complains about missing numbers.  The problem is that 
+\time produces a string, not a number, and the \divide macro can't work with 
+that.
+
+Possible solutions:
+
+1) Figure out a way to get pdfLaTeX to convert the output of \time into a 
+number without using packages.
+
+2) Figure out a way to get Therion to pass \usepackage{} to pdfLaTeX.
+
+3) Add a \currenttime macro to Therion in the next version.
+
+Any other suggestions?
+
+
+-- 
+Bill Gee
+
+
+
+
+From bruce at tomo.co.nz  Sat Dec  9 04:52:16 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 9 Dec 2017 16:52:16 +1300
+Subject: [Therion] Development 5.4.1+4369eea inverts and recolours altitude
+	legend
+Message-ID: <001501d370a1$1ca99e00$55fcda00$@tomo.co.nz>
+
+Stacho
+
+FYI not only are the colours inverted, but they are a bit out of order as well.
+
+Refer the images.
+
+ 
+
+I have not used any lookup syntax yet, partly as I am keeping my projects compatible with earlier Therion versions.
+
+These were generated with 5.4.1+ce29e7b
+
+ 
+
+Bruce
+
+
+
+ 
+
+
+
+ 
+
+ 
+
+
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Stacho Mudrak via Therion
+Sent: Thursday, 9 November 2017 11:54 PM
+To: List for Therion users <therion at speleo.sk>
+Cc: Stacho Mudrak <lists at group-s.sk>
+Subject: Re: [Therion] Development 5.4.1+4369eea inverts and recolours altitude legend
+
+ 
+
+Hi Bruce,
+
+ 
+
+thanks for pointing out this bug. I will check the order of numbers, I have probably made some mistake when dealing with automatic color scale generation.
+
+ 
+
+I have rewritten the scale code completely, but I had no time until now to write the docs. But if you want to try, something like that should now work in the layout:
+
+ 
+
+lookup altitude -title "Altitude legend"
+
+700 [100 0 0] "700 m a.s.l."
+
+680 
+
+660
+
+640
+
+620
+
+600 [0 0 100] "below 600 m"
+
+endlookup
+
+ 
+
+It should generate red -> blue scale with desired values. Also explo-date, topo-date should now work with addition to maps, scraps. E.g.
+
+ 
+
+export map -layout-color map-fp topo-date
+
+ 
+
+and for example:
+
+ 
+
+lookup topo-date
+
+2010.12.31 [] "2010 and before"
+
+2011.12.31 [] 2011
+
+2012.12.31 [] 2012
+
+- [] "2013 and later"
+
+endlookup
+
+ 
+
+You may specify multiple lookup tables for same criterion using ":" separator in label
+
+ 
+
+lookup altitude:scale1
+
+600
+
+800
+
+endlookup
+
+ 
+
+and
+
+ 
+
+lookup altitude:scale2
+
+800
+
+750
+
+700
+
+endlookup
+
+ 
+
+and use then "color map-fg altitude:scale1" or "color map-fg altitude:scale2"
+
+ 
+
+You may use also:
+
+ 
+
+lookup maps
+
+map1 at some_survey [color]
+
+map2 [color]
+
+map3 [color]
+
+endlookup
+
+ 
+
+Same should work with scraps. With maps, also more simple way should work - you may specify color of a particular map within selection. 
+
+ 
+
+select map1 -color [100 0 0]
+
+ 
+
+Also intervals should work:
+
+ 
+
+lookup altitude
+
+[1500 1600] [] "cave floor 1"
+
+[1800 1900] [] "cave floor 2"
+
+endlookup
+
+ 
+
+If you are willing to try, I would appreciate any feedback. Probably there are a lot of bugs because a lot of use-cases. I was not able to test them all.
+
+ 
+
+S.
+
+ 
+
+On 2 November 2017 at 10:05, Bruce Mutton via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+
+I’ve just noticed that the latest development snapshot 5.4.1+4369eea seems to have messed with the altitude legend.
+
+You can see from the screenshot below, which shows part of identical project compilations, one with 9d96803 and then one with 4369eea.
+
+Pretty sure I have not made any other changes that could have caused this at my end, and I see that some of the intervening commits on github relate to colour changes.
+
+ 
+
+Neutral (perhaps) changes are that there are more colour bands and the colours are brighter, in the legend at least, though not in the map.
+
+A negative change is that the altitude range is now upside down.
+
+ 
+
+Bruce
+
+ 
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171209/9a3bc2f6/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 31239 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171209/9a3bc2f6/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 14475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171209/9a3bc2f6/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 19007 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171209/9a3bc2f6/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.jpg
+Type: image/jpeg
+Size: 7157 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171209/9a3bc2f6/attachment-0003.jpg>
+
+From lists at group-s.sk  Thu Dec 14 15:48:04 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 14 Dec 2017 15:48:04 +0100
+Subject: [Therion] Development 5.4.1+4369eea inverts and recolours
+ altitude legend
+In-Reply-To: <001501d370a1$1ca99e00$55fcda00$@tomo.co.nz>
+References: <001501d370a1$1ca99e00$55fcda00$@tomo.co.nz>
+Message-ID: <CAP35+gH+XAspovPJdtg9NZVzQg9pswO3NCApwkisMO_YwOj05w@mail.gmail.com>
+
+Hi Bruce,
+
+I have fixed the altitude coloring in latest commit, but I was not able to
+reproduce your strange coloring of scraps. For me it seems to work fine.
+
+Could you please send me some data sample for inspection of this bug?
+
+Thanks, S.
+
+On 9 December 2017 at 04:52, Bruce Mutton via Therion <therion at speleo.sk>
+wrote:
+
+> Stacho
+>
+> FYI not only are the colours inverted, but they are a bit out of order as
+> well.
+>
+> Refer the images.
+>
+>
+>
+> I have not used any lookup syntax yet, partly as I am keeping my projects
+> compatible with earlier Therion versions.
+>
+> These were generated with 5.4.1+ce29e7b
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *Stacho
+> Mudrak via Therion
+> *Sent:* Thursday, 9 November 2017 11:54 PM
+> *To:* List for Therion users <therion at speleo.sk>
+> *Cc:* Stacho Mudrak <lists at group-s.sk>
+> *Subject:* Re: [Therion] Development 5.4.1+4369eea inverts and recolours
+> altitude legend
+>
+>
+>
+> Hi Bruce,
+>
+>
+>
+> thanks for pointing out this bug. I will check the order of numbers, I
+> have probably made some mistake when dealing with automatic color scale
+> generation.
+>
+>
+>
+> I have rewritten the scale code completely, but I had no time until now to
+> write the docs. But if you want to try, something like that should now work
+> in the layout:
+>
+>
+>
+> lookup altitude -title "Altitude legend"
+>
+> 700 [100 0 0] "700 m a.s.l."
+>
+> 680
+>
+> 660
+>
+> 640
+>
+> 620
+>
+> 600 [0 0 100] "below 600 m"
+>
+> endlookup
+>
+>
+>
+> It should generate red -> blue scale with desired values. Also explo-date,
+> topo-date should now work with addition to maps, scraps. E.g.
+>
+>
+>
+> export map -layout-color map-fp topo-date
+>
+>
+>
+> and for example:
+>
+>
+>
+> lookup topo-date
+>
+> 2010.12.31 [] "2010 and before"
+>
+> 2011.12.31 [] 2011
+>
+> 2012.12.31 [] 2012
+>
+> - [] "2013 and later"
+>
+> endlookup
+>
+>
+>
+> You may specify multiple lookup tables for same criterion using ":"
+> separator in label
+>
+>
+>
+> lookup altitude:scale1
+>
+> 600
+>
+> 800
+>
+> endlookup
+>
+>
+>
+> and
+>
+>
+>
+> lookup altitude:scale2
+>
+> 800
+>
+> 750
+>
+> 700
+>
+> endlookup
+>
+>
+>
+> and use then "color map-fg altitude:scale1" or "color map-fg
+> altitude:scale2"
+>
+>
+>
+> You may use also:
+>
+>
+>
+> lookup maps
+>
+> map1 at some_survey [color]
+>
+> map2 [color]
+>
+> map3 [color]
+>
+> endlookup
+>
+>
+>
+> Same should work with scraps. With maps, also more simple way should work
+> - you may specify color of a particular map within selection.
+>
+>
+>
+> select map1 -color [100 0 0]
+>
+>
+>
+> Also intervals should work:
+>
+>
+>
+> lookup altitude
+>
+> [1500 1600] [] "cave floor 1"
+>
+> [1800 1900] [] "cave floor 2"
+>
+> endlookup
+>
+>
+>
+> If you are willing to try, I would appreciate any feedback. Probably there
+> are a lot of bugs because a lot of use-cases. I was not able to test them
+> all.
+>
+>
+>
+> S.
+>
+>
+>
+> On 2 November 2017 at 10:05, Bruce Mutton via Therion <therion at speleo.sk>
+> wrote:
+>
+> I’ve just noticed that the latest development snapshot 5.4.1+4369eea seems
+> to have messed with the altitude legend.
+>
+> You can see from the screenshot below, which shows part of identical
+> project compilations, one with 9d96803 and then one with 4369eea.
+>
+> Pretty sure I have not made any other changes that could have caused this
+> at my end, and I see that some of the intervening commits on github relate
+> to colour changes.
+>
+>
+>
+> Neutral (perhaps) changes are that there are more colour bands and the
+> colours are brighter, in the legend at least, though not in the map.
+>
+> A negative change is that the altitude range is now upside down.
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/ac3ac8ca/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.jpg
+Type: image/jpeg
+Size: 7157 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/ac3ac8ca/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 19007 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/ac3ac8ca/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 14475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/ac3ac8ca/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 31239 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/ac3ac8ca/attachment-0003.jpg>
+
+From bruce at tomo.co.nz  Thu Dec 14 19:11:29 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 15 Dec 2017 07:11:29 +1300
+Subject: [Therion] Development 5.4.1+4369eea inverts and recolours
+	altitude legend
+In-Reply-To: <CAP35+gH+XAspovPJdtg9NZVzQg9pswO3NCApwkisMO_YwOj05w@mail.gmail.com>
+References: <001501d370a1$1ca99e00$55fcda00$@tomo.co.nz>
+ <CAP35+gH+XAspovPJdtg9NZVzQg9pswO3NCApwkisMO_YwOj05w@mail.gmail.com>
+Message-ID: <000001d37506$f8dec940$ea9c5bc0$@tomo.co.nz>
+
+Hi Stacho
+
+Therion-setup-dev-e7e9d34 has fixed both problems.  I have double checked, and if 4369eea is reinstalled the ‘out of order’ colours reappear.
+
+Do you still want a sample for future reference?
+
+Bruce
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Stacho Mudrak via Therion
+Sent: Friday, 15 December 2017 3:48 AM
+To: List for Therion users <therion at speleo.sk>
+Cc: Stacho Mudrak <lists at group-s.sk>
+Subject: Re: [Therion] Development 5.4.1+4369eea inverts and recolours altitude legend
+
+ 
+
+Hi Bruce,
+
+ 
+
+I have fixed the altitude coloring in latest commit, but I was not able to reproduce your strange coloring of scraps. For me it seems to work fine.
+
+ 
+
+Could you please send me some data sample for inspection of this bug?
+
+ 
+
+Thanks, S.
+
+ 
+
+On 9 December 2017 at 04:52, Bruce Mutton via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+
+Stacho
+
+FYI not only are the colours inverted, but they are a bit out of order as well.
+
+Refer the images.
+
+ 
+
+I have not used any lookup syntax yet, partly as I am keeping my projects compatible with earlier Therion versions.
+
+These were generated with 5.4.1+ce29e7b
+
+ 
+
+Bruce
+
+
+
+ 
+
+
+
+ 
+
+ 
+
+
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> ] On Behalf Of Stacho Mudrak via Therion
+Sent: Thursday, 9 November 2017 11:54 PM
+To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Stacho Mudrak <lists at group-s.sk <mailto:lists at group-s.sk> >
+Subject: Re: [Therion] Development 5.4.1+4369eea inverts and recolours altitude legend
+
+ 
+
+Hi Bruce,
+
+ 
+
+thanks for pointing out this bug. I will check the order of numbers, I have probably made some mistake when dealing with automatic color scale generation.
+
+ 
+
+I have rewritten the scale code completely, but I had no time until now to write the docs. But if you want to try, something like that should now work in the layout:
+
+ 
+
+lookup altitude -title "Altitude legend"
+
+700 [100 0 0] "700 m a.s.l."
+
+680 
+
+660
+
+640
+
+620
+
+600 [0 0 100] "below 600 m"
+
+endlookup
+
+ 
+
+It should generate red -> blue scale with desired values. Also explo-date, topo-date should now work with addition to maps, scraps. E.g.
+
+ 
+
+export map -layout-color map-fp topo-date
+
+ 
+
+and for example:
+
+ 
+
+lookup topo-date
+
+2010.12.31 [] "2010 and before"
+
+2011.12.31 [] 2011
+
+2012.12.31 [] 2012
+
+- [] "2013 and later"
+
+endlookup
+
+ 
+
+You may specify multiple lookup tables for same criterion using ":" separator in label
+
+ 
+
+lookup altitude:scale1
+
+600
+
+800
+
+endlookup
+
+ 
+
+and
+
+ 
+
+lookup altitude:scale2
+
+800
+
+750
+
+700
+
+endlookup
+
+ 
+
+and use then "color map-fg altitude:scale1" or "color map-fg altitude:scale2"
+
+ 
+
+You may use also:
+
+ 
+
+lookup maps
+
+map1 at some_survey [color]
+
+map2 [color]
+
+map3 [color]
+
+endlookup
+
+ 
+
+Same should work with scraps. With maps, also more simple way should work - you may specify color of a particular map within selection. 
+
+ 
+
+select map1 -color [100 0 0]
+
+ 
+
+Also intervals should work:
+
+ 
+
+lookup altitude
+
+[1500 1600] [] "cave floor 1"
+
+[1800 1900] [] "cave floor 2"
+
+endlookup
+
+ 
+
+If you are willing to try, I would appreciate any feedback. Probably there are a lot of bugs because a lot of use-cases. I was not able to test them all.
+
+ 
+
+S.
+
+ 
+
+On 2 November 2017 at 10:05, Bruce Mutton via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+
+I’ve just noticed that the latest development snapshot 5.4.1+4369eea seems to have messed with the altitude legend.
+
+You can see from the screenshot below, which shows part of identical project compilations, one with 9d96803 and then one with 4369eea.
+
+Pretty sure I have not made any other changes that could have caused this at my end, and I see that some of the intervening commits on github relate to colour changes.
+
+ 
+
+Neutral (perhaps) changes are that there are more colour bands and the colours are brighter, in the legend at least, though not in the map.
+
+A negative change is that the altitude range is now upside down.
+
+ 
+
+Bruce
+
+ 
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171215/170abd20/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 14475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171215/170abd20/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 19007 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171215/170abd20/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 7157 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171215/170abd20/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 31239 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171215/170abd20/attachment-0003.jpg>
+
+From lists at group-s.sk  Thu Dec 14 20:37:08 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 14 Dec 2017 20:37:08 +0100
+Subject: [Therion] Development 5.4.1+4369eea inverts and recolours
+ altitude legend
+In-Reply-To: <000001d37506$f8dec940$ea9c5bc0$@tomo.co.nz>
+References: <001501d370a1$1ca99e00$55fcda00$@tomo.co.nz>
+ <CAP35+gH+XAspovPJdtg9NZVzQg9pswO3NCApwkisMO_YwOj05w@mail.gmail.com>
+ <000001d37506$f8dec940$ea9c5bc0$@tomo.co.nz>
+Message-ID: <CAP35+gGTjp5Dk+iywsY9jVXFbLZL6aheeytkXzhPWt7puWidGw@mail.gmail.com>
+
+Great, thanks for testing it. If it works, then no need for that sample.
+
+S.
+
+
+
+On Dec 14, 2017 6:12 PM, "Bruce Mutton via Therion" <therion at speleo.sk>
+wrote:
+
+Hi Stacho
+
+Therion-setup-dev-e7e9d34 has fixed both problems.  I have double checked,
+and if 4369eea is reinstalled the ‘out of order’ colours reappear.
+
+Do you still want a sample for future reference?
+
+Bruce
+
+
+
+*From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *Stacho
+Mudrak via Therion
+*Sent:* Friday, 15 December 2017 3:48 AM
+
+*To:* List for Therion users <therion at speleo.sk>
+*Cc:* Stacho Mudrak <lists at group-s.sk>
+*Subject:* Re: [Therion] Development 5.4.1+4369eea inverts and recolours
+altitude legend
+
+
+
+Hi Bruce,
+
+
+
+I have fixed the altitude coloring in latest commit, but I was not able to
+reproduce your strange coloring of scraps. For me it seems to work fine.
+
+
+
+Could you please send me some data sample for inspection of this bug?
+
+
+
+Thanks, S.
+
+
+
+On 9 December 2017 at 04:52, Bruce Mutton via Therion <therion at speleo.sk>
+wrote:
+
+Stacho
+
+FYI not only are the colours inverted, but they are a bit out of order as
+well.
+
+Refer the images.
+
+
+
+I have not used any lookup syntax yet, partly as I am keeping my projects
+compatible with earlier Therion versions.
+
+These were generated with 5.4.1+ce29e7b
+
+
+
+Bruce
+
+
+
+
+
+
+
+
+
+*From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *Stacho
+Mudrak via Therion
+*Sent:* Thursday, 9 November 2017 11:54 PM
+*To:* List for Therion users <therion at speleo.sk>
+*Cc:* Stacho Mudrak <lists at group-s.sk>
+*Subject:* Re: [Therion] Development 5.4.1+4369eea inverts and recolours
+altitude legend
+
+
+
+Hi Bruce,
+
+
+
+thanks for pointing out this bug. I will check the order of numbers, I have
+probably made some mistake when dealing with automatic color scale
+generation.
+
+
+
+I have rewritten the scale code completely, but I had no time until now to
+write the docs. But if you want to try, something like that should now work
+in the layout:
+
+
+
+lookup altitude -title "Altitude legend"
+
+700 [100 0 0] "700 m a.s.l."
+
+680
+
+660
+
+640
+
+620
+
+600 [0 0 100] "below 600 m"
+
+endlookup
+
+
+
+It should generate red -> blue scale with desired values. Also explo-date,
+topo-date should now work with addition to maps, scraps. E.g.
+
+
+
+export map -layout-color map-fp topo-date
+
+
+
+and for example:
+
+
+
+lookup topo-date
+
+2010.12.31 [] "2010 and before"
+
+2011.12.31 [] 2011
+
+2012.12.31 [] 2012
+
+- [] "2013 and later"
+
+endlookup
+
+
+
+You may specify multiple lookup tables for same criterion using ":"
+separator in label
+
+
+
+lookup altitude:scale1
+
+600
+
+800
+
+endlookup
+
+
+
+and
+
+
+
+lookup altitude:scale2
+
+800
+
+750
+
+700
+
+endlookup
+
+
+
+and use then "color map-fg altitude:scale1" or "color map-fg
+altitude:scale2"
+
+
+
+You may use also:
+
+
+
+lookup maps
+
+map1 at some_survey [color]
+
+map2 [color]
+
+map3 [color]
+
+endlookup
+
+
+
+Same should work with scraps. With maps, also more simple way should work -
+you may specify color of a particular map within selection.
+
+
+
+select map1 -color [100 0 0]
+
+
+
+Also intervals should work:
+
+
+
+lookup altitude
+
+[1500 1600] [] "cave floor 1"
+
+[1800 1900] [] "cave floor 2"
+
+endlookup
+
+
+
+If you are willing to try, I would appreciate any feedback. Probably there
+are a lot of bugs because a lot of use-cases. I was not able to test them
+all.
+
+
+
+S.
+
+
+
+On 2 November 2017 at 10:05, Bruce Mutton via Therion <therion at speleo.sk>
+wrote:
+
+I’ve just noticed that the latest development snapshot 5.4.1+4369eea seems
+to have messed with the altitude legend.
+
+You can see from the screenshot below, which shows part of identical
+project compilations, one with 9d96803 and then one with 4369eea.
+
+Pretty sure I have not made any other changes that could have caused this
+at my end, and I see that some of the intervening commits on github relate
+to colour changes.
+
+
+
+Neutral (perhaps) changes are that there are more colour bands and the
+colours are brighter, in the legend at least, though not in the map.
+
+A negative change is that the altitude range is now upside down.
+
+
+
+Bruce
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/e80c5208/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 14475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/e80c5208/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 19007 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/e80c5208/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.jpg
+Type: image/jpeg
+Size: 31239 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/e80c5208/attachment-0002.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 7157 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171214/e80c5208/attachment-0003.jpg>
+
+From bruce at tomo.co.nz  Sat Dec 23 21:34:02 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 24 Dec 2017 09:34:02 +1300
+Subject: [Therion] Therion compiles but overwrites log file
+Message-ID: <001b01d37c2d$5ff99100$1fecb300$@tomo.co.nz>
+
+Back in September I mentioned similar problem to what I am experiencing now,
+with one project.
+
+ 
+
+An error deleting temporary log files causes the log file contents to be
+deleted and replaced with this message.  On this occasion, Therion seems to
+be compiling just fine, but I have no (meaningful) log file!
+
+ 
+
+"C:\Program Files (x86)\Therion\therion.exe: warning -- error deleting
+temporary directory -- C:\Users\Bruce\AppData\Local\Temp\th7916"
+
+ 
+
+The temporary folder contains a single file like data.1 attached.
+
+ 
+
+This is only an occasional problem.  Mostly I get a valid log file, but it
+does seem to be persistent with some projects and not others.
+
+ 
+
+What I would like is for the above message to be appended to the log file,
+and not replace the contents of the log file.
+
+ 
+
+Therion 5.4.1+e7e9d34 (2017-12-14)
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171224/6b168dbc/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: data.1
+Type: application/octet-stream
+Size: 178 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171224/6b168dbc/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.log
+Type: application/octet-stream
+Size: 135 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171224/6b168dbc/attachment-0001.obj>
+
+From bruce at tomo.co.nz  Mon Dec 25 23:03:14 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 26 Dec 2017 11:03:14 +1300
+Subject: [Therion] Group text request
+Message-ID: <000201d37dcc$2ad68aa0$80839fe0$@tomo.co.nz>
+
+Merry Christmas all
+
+ 
+
+I was just trying to hide all text on a map, and noticed that 
+
+group text 
+
+does not include 
+
+point station-name,
+
+                point wall-altitude, or
+
+point continuation
+
+ 
+
+It currently includes point label, remark, date and line label, as far as I
+know.
+
+May I request that these three types of point object (station-name,
+wall-altitude and continuation) be added to 'group text' with the next
+update.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171226/cadfdc3b/attachment.htm>
+
+From beni at hallinger.org  Wed Dec 27 13:26:12 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 27 Dec 2017 14:26:12 +0200
+Subject: [Therion] Scrap limits
+In-Reply-To: <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+Message-ID: <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+
+Hello,
+for further testing i wrote a small script generating a sample cave of 
+variable length.
+
+The bash-script generateTestCave.sh generates a th-file one main survey and 
+*n* linked subusrveys with included scrap and is called as following:
+   ./generateTestCave.sh <number-of-surveys> test.th
+eg "./generateTestCave.sh 1000 test.th" generates a survey "test" containing 
+1000 linked subsurveys containing each a suitable inline-copy of the 
+scrap.th. On the main "test"-survey level also for each subsurvey a "map 
+n-Plan" is generated.
+This is then selected in the "thconfig" file.
+
+With the contained thconig file one can pay a little to explore behavior.
+
+What i encounter is the following unexepected:
+With raising survey count the memory needed and time to compile increases 
+very heavily. This is DESPITE i only select 3 distinct maps for output in lox 
+and pdf plan projection.
+Why is that so? i expected, that the selection influences the scraps 
+selected and thus compile time should nearly remain constant (at least only 
+increase slightly due to more data processed and discarded)?
+Also, in the mailing list there was an encounter of strange behavior of the 
+select/unselect command - do we have a bug here somewhere that also causes 
+the behavior i see here?
+
+
+
+
+Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+> Thank, how could i switch this?
+> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>
+> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>> Hi,
+>>
+>> there is no change regarding the limits in Therion. If there is a real
+>> need, following could be done:
+>>
+>> - in the current version of MetaPost, it's possible to used "double"
+>> arithmetic just by specifying a command line option, which practically
+>> eliminates MetaPost limits
+>>
+>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>> doubles the number of registers available from 32768 to 65536.
+>> Registers are needed to reference the fragments of all
+>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>> would require some substantial work to support LuaTeX (there is e.g.
+>> completely different font handling compared to PdfTeX).
+>>
+>> And yes, the limit applies just to the data selected for export.
+>>
+>> Martin
+>>
+>>
+>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>> <therion at speleo.sk> wrote:
+>>> Maybe another question:
+>>> Assume a large cave with thousands of scraps.
+>>> When i make a thconfig file sourcing all that data, but using "select"
+>>> statements i only select partial data,
+>>> does the metapost limit apply to the whole dataset or just the scraps
+>>> covered by the select command?
+>>>
+>>>
+>>>
+>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>
+>>>> Hello Martin,
+>>>> is the blow limit of 4096 scraps still valid in the current version?
+>>>> Or is it already fixed so we can use more scraps?
+>>>>
+>>>>
+>>>>
+>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu>
+>>>>> wrote:
+>>>>>>
+>>>>>> It looks like the solution is to issue the following metapost 
+>>>>>> command:
+>>>>>> warningcheck := 0;
+>>>>>
+>>>>>
+>>>>> Indeed. The new limit will be 32768 and could not be increased further
+>>>>> in Metapost itself.
+>>>>>
+>>>>> The solution would be modification of how therion manages metapost
+>>>>> pictures (currently they are stored in files data.1 to data.4000, with
+>>>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>>>> numbering scheme could be modified to allow more file name prefixes
+>>>>> and consequently theoretically unlimited number of scraps processed by
+>>>>> metapost.
+>>>>>
+>>>>> On the other hand there is still pdfTeX limit which would not allow
+>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>> referencing (scrap data is included only once in pdf file and can be
+>>>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>> references).
+>>>>>
+>>>>> In the longer-term future (a few years) I would like to use metapost
+>>>>> as a library instead of external metapost executable, which would
+>>>>> solve the problems with temporary files (and other problems as well).
+>>>>>
+>>>>>> However adding it in a
+>>>>>> code metapost
+>>>>>> warningcheck := 0;
+>>>>>> endcode
+>>>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>>>> scraps.
+>>>>>
+>>>>>
+>>>>> Therion currently inserts warningcheck:=1; before scraps without good
+>>>>> reason, so it will be fixed soon.
+>>>>>
+>>>>> If the new warningcheck setting would work for you, I would prefer not
+>>>>> to modify current file numbering scheme for metapost pictures and have
+>>>>> it fixed later with implementation of metapost library.
+>>>>>
+>>>>> Martin
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: masstest.tar.gz
+Type: application/octet-stream
+Size: 459513 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171227/09a9eab6/attachment.obj>
+
+From lists at group-s.sk  Fri Dec 29 10:20:14 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 29 Dec 2017 10:20:14 +0100
+Subject: [Therion] Scrap limits
+In-Reply-To: <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+Message-ID: <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+
+​Hello, I have not investigated to details a lot, but the problem with this
+huge file is search for automatic joins. All the scraps are in one giant
+file and have a lot of common points so it tries to auto-connect every
+scrap with every scrap, therefore n^2 memory usage. Situation that should
+not happen in reality.
+
+If you apply attached patch and disable automatic scrap joins - therion
+runs smoothly even with such a giant structure. But more proper solution
+would be to shift every scrap, that they will not have common points.
+
+S.
+
+diff --git a/thdb2d.cxx b/thdb2d.cxx
+index b8c9720..7d7b72e 100644
+--- a/thdb2d.cxx
++++ b/thdb2d.cxx
+@@ -2428,6 +2428,7 @@ void thdb2d::pp_process_joins(thdb2dprj * prj)
+
+   // prida na koniec automaticke joiny
+   jci = joincandlist.begin();
++  jci = joincandlist.end();
+   while (jci != joincandlist.end()) {
+     njci = jci;
+     njci++;
+
+
+​
+
+On 27 December 2017 at 13:26, Benedikt Hallinger via Therion <
+therion at speleo.sk> wrote:
+
+> Hello,
+> for further testing i wrote a small script generating a sample cave of
+> variable length.
+>
+> The bash-script generateTestCave.sh generates a th-file one main survey
+> and *n* linked subusrveys with included scrap and is called as following:
+>   ./generateTestCave.sh <number-of-surveys> test.th
+> eg "./generateTestCave.sh 1000 test.th" generates a survey "test"
+> containing 1000 linked subsurveys containing each a suitable inline-copy of
+> the scrap.th. On the main "test"-survey level also for each subsurvey a
+> "map n-Plan" is generated.
+> This is then selected in the "thconfig" file.
+>
+> With the contained thconig file one can pay a little to explore behavior.
+>
+> What i encounter is the following unexepected:
+> With raising survey count the memory needed and time to compile increases
+> very heavily. This is DESPITE i only select 3 distinct maps for output in
+> lox and pdf plan projection.
+> Why is that so? i expected, that the selection influences the scraps
+> selected and thus compile time should nearly remain constant (at least only
+> increase slightly due to more data processed and discarded)?
+> Also, in the mailing list there was an encounter of strange behavior of
+> the select/unselect command - do we have a bug here somewhere that also
+> causes the behavior i see here?
+>
+>
+>
+>
+>
+> Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+>
+>> Thank, how could i switch this?
+>> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>>
+>> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>>
+>>> Hi,
+>>>
+>>> there is no change regarding the limits in Therion. If there is a real
+>>> need, following could be done:
+>>>
+>>> - in the current version of MetaPost, it's possible to used "double"
+>>> arithmetic just by specifying a command line option, which practically
+>>> eliminates MetaPost limits
+>>>
+>>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>>> doubles the number of registers available from 32768 to 65536.
+>>> Registers are needed to reference the fragments of all
+>>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>>> would require some substantial work to support LuaTeX (there is e.g.
+>>> completely different font handling compared to PdfTeX).
+>>>
+>>> And yes, the limit applies just to the data selected for export.
+>>>
+>>> Martin
+>>>
+>>>
+>>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>>> <therion at speleo.sk> wrote:
+>>>
+>>>> Maybe another question:
+>>>> Assume a large cave with thousands of scraps.
+>>>> When i make a thconfig file sourcing all that data, but using "select"
+>>>> statements i only select partial data,
+>>>> does the metapost limit apply to the whole dataset or just the scraps
+>>>> covered by the select command?
+>>>>
+>>>>
+>>>>
+>>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>
+>>>>>
+>>>>> Hello Martin,
+>>>>> is the blow limit of 4096 scraps still valid in the current version?
+>>>>> Or is it already fixed so we can use more scraps?
+>>>>>
+>>>>>
+>>>>>
+>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu>
+>>>>>> wrote:
+>>>>>>
+>>>>>>>
+>>>>>>> It looks like the solution is to issue the following metapost
+>>>>>>> command:
+>>>>>>> warningcheck := 0;
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Indeed. The new limit will be 32768 and could not be increased further
+>>>>>> in Metapost itself.
+>>>>>>
+>>>>>> The solution would be modification of how therion manages metapost
+>>>>>> pictures (currently they are stored in files data.1 to data.4000, with
+>>>>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>>>>> numbering scheme could be modified to allow more file name prefixes
+>>>>>> and consequently theoretically unlimited number of scraps processed by
+>>>>>> metapost.
+>>>>>>
+>>>>>> On the other hand there is still pdfTeX limit which would not allow
+>>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>>> referencing (scrap data is included only once in pdf file and can be
+>>>>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>>> references).
+>>>>>>
+>>>>>> In the longer-term future (a few years) I would like to use metapost
+>>>>>> as a library instead of external metapost executable, which would
+>>>>>> solve the problems with temporary files (and other problems as well).
+>>>>>>
+>>>>>> However adding it in a
+>>>>>>> code metapost
+>>>>>>> warningcheck := 0;
+>>>>>>> endcode
+>>>>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>>>>> scraps.
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Therion currently inserts warningcheck:=1; before scraps without good
+>>>>>> reason, so it will be fixed soon.
+>>>>>>
+>>>>>> If the new warningcheck setting would work for you, I would prefer not
+>>>>>> to modify current file numbering scheme for metapost pictures and have
+>>>>>> it fixed later with implementation of metapost library.
+>>>>>>
+>>>>>> Martin
+>>>>>>
+>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>>
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/24b3efc4/attachment.htm>
+
+From beni at hallinger.org  Fri Dec 29 15:42:08 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 29 Dec 2017 16:42:08 +0200
+Subject: [Therion] Scrap limits
+In-Reply-To: <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+Message-ID: <c5e5864bfd723e211bcb0a77bb351bf3@hallinger.org>
+
+Shouldnt they be placed at the actual position according to station 
+coordinates prior joining, ie the scrap point reference coordinates be local 
+to its namespace?
+
+Am 2017-12-29 11:20, schrieb Stacho Mudrak via Therion:
+> ​Hello, I have not investigated to details a lot, but the problem with 
+> this huge file is search for automatic joins. All the scraps are in one 
+> giant file and have a lot of common points so it tries to auto-connect every 
+> scrap with every scrap, therefore n^2 memory usage. Situation that should 
+> not happen in reality.
+>
+> If you apply attached patch and disable automatic scrap joins - therion 
+> runs smoothly even with such a giant structure. But more proper solution 
+> would be to shift every scrap, that they will not have common points.
+>
+> S.
+>
+> diff --git a/thdb2d.cxx b/thdb2d.cxx
+> index b8c9720..7d7b72e 100644
+> --- a/thdb2d.cxx
+> +++ b/thdb2d.cxx
+> @@ -2428,6 +2428,7 @@ void thdb2d::pp_process_joins(thdb2dprj * prj)
+>   
+>    // prida na koniec automaticke joiny
+>    jci = joincandlist.begin();
+> +  jci = joincandlist.end();
+>    while (jci != joincandlist.end()) {
+>      njci = jci;
+>      njci++;
+>
+> ​
+>
+> On 27 December 2017 at 13:26, Benedikt Hallinger via Therion 
+> <therion at speleo.sk [14]> wrote:
+>
+>> Hello,
+>> for further testing i wrote a small script generating a sample cave of 
+>> variable length.
+>>
+>> The bash-script generateTestCave.sh generates a th-file one main survey 
+>> and *n* linked subusrveys with included scrap and is called as following:
+>>   ./generateTestCave.sh <number-of-surveys> test.th [9]
+>> eg "./generateTestCave.sh 1000 test.th [10]" generates a survey "test" 
+>> containing 1000 linked subsurveys containing each a suitable inline-copy of 
+>> the scrap.th [11]. On the main "test"-survey level also for each subsurvey 
+>> a "map n-Plan" is generated.
+>> This is then selected in the "thconfig" file.
+>>
+>> With the contained thconig file one can pay a little to explore behavior.
+>>
+>> What i encounter is the following unexepected:
+>> With raising survey count the memory needed and time to compile increases 
+>> very heavily. This is DESPITE i only select 3 distinct maps for output in 
+>> lox and pdf plan projection.
+>> Why is that so? i expected, that the selection influences the scraps 
+>> selected and thus compile time should nearly remain constant (at least only 
+>> increase slightly due to more data processed and discarded)?
+>> Also, in the mailing list there was an encounter of strange behavior of 
+>> the select/unselect command - do we have a bug here somewhere that also 
+>> causes the behavior i see here?
+>>
+>> Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+>>
+>>> Thank, how could i switch this?
+>>> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>>>
+>>> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>>>
+>>>> Hi,
+>>>>
+>>>> there is no change regarding the limits in Therion. If there is a real
+>>>> need, following could be done:
+>>>>
+>>>> - in the current version of MetaPost, its possible to used "double"
+>>>> arithmetic just by specifying a command line option, which practically
+>>>> eliminates MetaPost limits
+>>>>
+>>>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>>>> doubles the number of registers available from 32768 to 65536.
+>>>> Registers are needed to reference the fragments of all
+>>>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>>>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>>>> would require some substantial work to support LuaTeX (there is e.g.
+>>>> completely different font handling compared to PdfTeX).
+>>>>
+>>>> And yes, the limit applies just to the data selected for export.
+>>>>
+>>>> Martin
+>>>>
+>>>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>>>> <therion at speleo.sk [6]> wrote:
+>>>>
+>>>>> Maybe another question:
+>>>>> Assume a large cave with thousands of scraps.
+>>>>> When i make a thconfig file sourcing all that data, but using "select"
+>>>>> statements i only select partial data,
+>>>>> does the metapost limit apply to the whole dataset or just the scraps
+>>>>> covered by the select command?
+>>>>>
+>>>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>>
+>>>>>> Hello Martin,
+>>>>>> is the blow limit of 4096 scraps still valid in the current version?
+>>>>>> Or is it already fixed so we can use more scraps?
+>>>>>>
+>>>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu 
+>>>>>>> [1]>
+>>>>>>> wrote:
+>>>>>>>
+>>>>>>>> It looks like the solution is to issue the following metapost 
+>>>>>>>> command:
+>>>>>>>> warningcheck := 0;
+>>>>>>>
+>>>>>>> Indeed. The new limit will be 32768 and could not be increased 
+>>>>>>> further
+>>>>>>> in Metapost itself.
+>>>>>>>
+>>>>>>> The solution would be modification of how therion manages metapost
+>>>>>>> pictures (currently they are stored in files data.1 to data.4000, 
+>>>>>>> with
+>>>>>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>>>>>> numbering scheme could be modified to allow more file name prefixes
+>>>>>>> and consequently theoretically unlimited number of scraps processed 
+>>>>>>> by
+>>>>>>> metapost.
+>>>>>>>
+>>>>>>> On the other hand there is still pdfTeX limit which would not allow
+>>>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>>>> referencing (scrap data is included only once in pdf file and can be
+>>>>>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>>>> references).
+>>>>>>>
+>>>>>>> In the longer-term future (a few years) I would like to use metapost
+>>>>>>> as a library instead of external metapost executable, which would
+>>>>>>> solve the problems with temporary files (and other problems as 
+>>>>>>> well).
+>>>>>>>
+>>>>>>>> However adding it in a
+>>>>>>>> code metapost
+>>>>>>>> warningcheck := 0;
+>>>>>>>> endcode
+>>>>>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>>>>>> scraps.
+>>>>>>>
+>>>>>>> Therion currently inserts warningcheck:=1; before scraps without 
+>>>>>>> good
+>>>>>>> reason, so it will be fixed soon.
+>>>>>>>
+>>>>>>> If the new warningcheck setting would work for you, I would prefer 
+>>>>>>> not
+>>>>>>> to modify current file numbering scheme for metapost pictures and 
+>>>>>>> have
+>>>>>>> it fixed later with implementation of metapost library.
+>>>>>>>
+>>>>>>> Martin
+>>>>>>
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk [2]
+>>>>>> https://mailman.speleo.sk/listinfo/therion [3]
+>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk [4]
+>>>>> https://mailman.speleo.sk/listinfo/therion [5]
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk [7]
+>>>> https://mailman.speleo.sk/listinfo/therion [8]
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [12]
+>> https://mailman.speleo.sk/listinfo/therion [13]
+>
+>
+>
+> Links:
+> ------
+> [1] http://umn.edu
+> [2] mailto:Therion at speleo.sk
+> [3] https://mailman.speleo.sk/listinfo/therion
+> [4] mailto:Therion at speleo.sk
+> [5] https://mailman.speleo.sk/listinfo/therion
+> [6] mailto:therion at speleo.sk
+> [7] mailto:Therion at speleo.sk
+> [8] https://mailman.speleo.sk/listinfo/therion
+> [9] http://test.th
+> [10] http://test.th
+> [11] http://scrap.th
+> [12] mailto:Therion at speleo.sk
+> [13] https://mailman.speleo.sk/listinfo/therion
+> [14] mailto:therion at speleo.sk
+
+
+
+From markus.boldt at gmx.net  Fri Dec 29 19:28:30 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 29 Dec 2017 19:28:30 +0100
+Subject: [Therion] Color for area blocks?
+Message-ID: <003901d380d2$d402ff10$7c08fd30$@gmx.net>
+
+Hi, 
+
+is there a possibility to give an "area blocks" another color as the
+forground-colour? Like it is possible for area water with metapost. 
+
+Regards 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/6e445b6e/attachment.htm>
+
+From markus.boldt at gmx.net  Fri Dec 29 19:35:39 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 29 Dec 2017 19:35:39 +0100
+Subject: [Therion] once more area blocks
+Message-ID: <003e01d380d3$d3e659e0$7bb30da0$@gmx.net>
+
+Yes, I have found the possibility (symbol-color area blocks [xx xx xx]), but
+it affected only to the blocks. What I want to have is a completely other
+colored area with blocks in it. So in this area must be a change to the
+background-color, I guess. But how? 
+
+Regards 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/16c050d0/attachment.htm>
+
+From markus.boldt at gmx.net  Fri Dec 29 19:55:57 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 29 Dec 2017 19:55:57 +0100
+Subject: [Therion] Line Hauling Track
+Message-ID: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+
+I would like to have a line "hauling Track" in Therion J. Is there a
+possibility? 
+
+Regards 
+
+Markus 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/20bd3d43/attachment.htm>
+
+From martinsluka at mac.com  Fri Dec 29 20:48:34 2017
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 29 Dec 2017 20:48:34 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+Message-ID: <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+
+
+> 29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+> 
+> hauling Track
+
+SKBB symbol set:
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/fb657ad5/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2017-12-29 v?20.47.31.png
+Type: image/png
+Size: 19521 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/fb657ad5/attachment.png>
+
+From lists at group-s.sk  Fri Dec 29 21:47:28 2017
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 29 Dec 2017 21:47:28 +0100
+Subject: [Therion] Scrap limits
+In-Reply-To: <c5e5864bfd723e211bcb0a77bb351bf3@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+ <c5e5864bfd723e211bcb0a77bb351bf3@hallinger.org>
+Message-ID: <CAP35+gEFU8qYXPG4_nQKnGxJPZi4L_5Q4h-O7PuoaMOHgs7Uww@mail.gmail.com>
+
+I am sorry, I am not sure I understand.
+
+The problem is, if there are two lines in two different scraps within one
+.th2 file starting or ending from point with same coordinates, therion
+automatically creates a join between them. In your file, each of line of
+5000 scraps are the same. Therefore they start and end at same points.
+Therefore therion automatically creates 5000x5000 joins for each line end.
+And this is the problem. I have modified your script to add some randomness
+to the coordinates (just shift every scrap by random vector) and it solves
+the problem.
+
+S.
+
+
+
+On 29 December 2017 at 15:42, Benedikt Hallinger via Therion <
+therion at speleo.sk> wrote:
+
+> Shouldnt they be placed at the actual position according to station
+> coordinates prior joining, ie the scrap point reference coordinates be
+> local to its namespace?
+>
+> Am 2017-12-29 11:20, schrieb Stacho Mudrak via Therion:
+>
+>> ​Hello, I have not investigated to details a lot, but the problem with
+>> this huge file is search for automatic joins. All the scraps are in one
+>> giant file and have a lot of common points so it tries to auto-connect
+>> every scrap with every scrap, therefore n^2 memory usage. Situation that
+>> should not happen in reality.
+>>
+>> If you apply attached patch and disable automatic scrap joins - therion
+>> runs smoothly even with such a giant structure. But more proper solution
+>> would be to shift every scrap, that they will not have common points.
+>>
+>> S.
+>>
+>> diff --git a/thdb2d.cxx b/thdb2d.cxx
+>> index b8c9720..7d7b72e 100644
+>> --- a/thdb2d.cxx
+>> +++ b/thdb2d.cxx
+>> @@ -2428,6 +2428,7 @@ void thdb2d::pp_process_joins(thdb2dprj * prj)
+>>
+>>    // prida na koniec automaticke joiny
+>>    jci = joincandlist.begin();
+>> +  jci = joincandlist.end();
+>>    while (jci != joincandlist.end()) {
+>>      njci = jci;
+>>      njci++;
+>>
+>> ​
+>>
+>> On 27 December 2017 at 13:26, Benedikt Hallinger via Therion <
+>> therion at speleo.sk [14]> wrote:
+>>
+>> Hello,
+>>> for further testing i wrote a small script generating a sample cave of
+>>> variable length.
+>>>
+>>> The bash-script generateTestCave.sh generates a th-file one main survey
+>>> and *n* linked subusrveys with included scrap and is called as following:
+>>>   ./generateTestCave.sh <number-of-surveys> test.th [9]
+>>> eg "./generateTestCave.sh 1000 test.th [10]" generates a survey "test"
+>>> containing 1000 linked subsurveys containing each a suitable inline-copy of
+>>> the scrap.th [11]. On the main "test"-survey level also for each
+>>> subsurvey a "map n-Plan" is generated.
+>>> This is then selected in the "thconfig" file.
+>>>
+>>> With the contained thconig file one can pay a little to explore behavior.
+>>>
+>>> What i encounter is the following unexepected:
+>>> With raising survey count the memory needed and time to compile
+>>> increases very heavily. This is DESPITE i only select 3 distinct maps for
+>>> output in lox and pdf plan projection.
+>>> Why is that so? i expected, that the selection influences the scraps
+>>> selected and thus compile time should nearly remain constant (at least only
+>>> increase slightly due to more data processed and discarded)?
+>>> Also, in the mailing list there was an encounter of strange behavior of
+>>> the select/unselect command - do we have a bug here somewhere that also
+>>> causes the behavior i see here?
+>>>
+>>> Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+>>>
+>>> Thank, how could i switch this?
+>>>> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>>>>
+>>>> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>>>>
+>>>> Hi,
+>>>>>
+>>>>> there is no change regarding the limits in Therion. If there is a real
+>>>>> need, following could be done:
+>>>>>
+>>>>> - in the current version of MetaPost, its possible to used "double"
+>>>>> arithmetic just by specifying a command line option, which practically
+>>>>> eliminates MetaPost limits
+>>>>>
+>>>>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>>>>> doubles the number of registers available from 32768 to 65536.
+>>>>> Registers are needed to reference the fragments of all
+>>>>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>>>>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>>>>> would require some substantial work to support LuaTeX (there is e.g.
+>>>>> completely different font handling compared to PdfTeX).
+>>>>>
+>>>>> And yes, the limit applies just to the data selected for export.
+>>>>>
+>>>>> Martin
+>>>>>
+>>>>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>>>>> <therion at speleo.sk [6]> wrote:
+>>>>>
+>>>>> Maybe another question:
+>>>>>> Assume a large cave with thousands of scraps.
+>>>>>> When i make a thconfig file sourcing all that data, but using "select"
+>>>>>> statements i only select partial data,
+>>>>>> does the metapost limit apply to the whole dataset or just the scraps
+>>>>>> covered by the select command?
+>>>>>>
+>>>>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>>>
+>>>>>> Hello Martin,
+>>>>>>> is the blow limit of 4096 scraps still valid in the current version?
+>>>>>>> Or is it already fixed so we can use more scraps?
+>>>>>>>
+>>>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu
+>>>>>>>> [1]>
+>>>>>>>>
+>>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>> It looks like the solution is to issue the following metapost
+>>>>>>>>> command:
+>>>>>>>>> warningcheck := 0;
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Indeed. The new limit will be 32768 and could not be increased
+>>>>>>>> further
+>>>>>>>> in Metapost itself.
+>>>>>>>>
+>>>>>>>> The solution would be modification of how therion manages metapost
+>>>>>>>> pictures (currently they are stored in files data.1 to data.4000,
+>>>>>>>> with
+>>>>>>>> files data.4001 to data.4095 reserved for pattern definitions). This
+>>>>>>>> numbering scheme could be modified to allow more file name prefixes
+>>>>>>>> and consequently theoretically unlimited number of scraps processed
+>>>>>>>> by
+>>>>>>>> metapost.
+>>>>>>>>
+>>>>>>>> On the other hand there is still pdfTeX limit which would not allow
+>>>>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>>>>> referencing (scrap data is included only once in pdf file and can be
+>>>>>>>> referenced on multiple pages). You could avoid pdftex limit by using
+>>>>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>>>>> references).
+>>>>>>>>
+>>>>>>>> In the longer-term future (a few years) I would like to use metapost
+>>>>>>>> as a library instead of external metapost executable, which would
+>>>>>>>> solve the problems with temporary files (and other problems as
+>>>>>>>> well).
+>>>>>>>>
+>>>>>>>> However adding it in a
+>>>>>>>>> code metapost
+>>>>>>>>> warningcheck := 0;
+>>>>>>>>> endcode
+>>>>>>>>> block seems to have no effect, mpost still fails on more then 4096
+>>>>>>>>> scraps.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Therion currently inserts warningcheck:=1; before scraps without
+>>>>>>>> good
+>>>>>>>> reason, so it will be fixed soon.
+>>>>>>>>
+>>>>>>>> If the new warningcheck setting would work for you, I would prefer
+>>>>>>>> not
+>>>>>>>> to modify current file numbering scheme for metapost pictures and
+>>>>>>>> have
+>>>>>>>> it fixed later with implementation of metapost library.
+>>>>>>>>
+>>>>>>>> Martin
+>>>>>>>>
+>>>>>>>
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk [2]
+>>>>>>> https://mailman.speleo.sk/listinfo/therion [3]
+>>>>>>>
+>>>>>>
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk [4]
+>>>>>> https://mailman.speleo.sk/listinfo/therion [5]
+>>>>>>
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk [7]
+>>>>> https://mailman.speleo.sk/listinfo/therion [8]
+>>>>>
+>>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk [12]
+>>> https://mailman.speleo.sk/listinfo/therion [13]
+>>>
+>>
+>>
+>>
+>> Links:
+>> ------
+>> [1] http://umn.edu
+>> [2] mailto:Therion at speleo.sk
+>> [3] https://mailman.speleo.sk/listinfo/therion
+>> [4] mailto:Therion at speleo.sk
+>> [5] https://mailman.speleo.sk/listinfo/therion
+>> [6] mailto:therion at speleo.sk
+>> [7] mailto:Therion at speleo.sk
+>> [8] https://mailman.speleo.sk/listinfo/therion
+>> [9] http://test.th
+>> [10] http://test.th
+>> [11] http://scrap.th
+>> [12] mailto:Therion at speleo.sk
+>> [13] https://mailman.speleo.sk/listinfo/therion
+>> [14] mailto:therion at speleo.sk
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171229/5e7a0ea1/attachment.htm>
+
+From beni at hallinger.org  Sat Dec 30 09:57:13 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 30 Dec 2017 10:57:13 +0200
+Subject: [Therion] Scrap limits
+In-Reply-To: <CAP35+gEFU8qYXPG4_nQKnGxJPZi4L_5Q4h-O7PuoaMOHgs7Uww@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+ <c5e5864bfd723e211bcb0a77bb351bf3@hallinger.org>
+ <CAP35+gEFU8qYXPG4_nQKnGxJPZi4L_5Q4h-O7PuoaMOHgs7Uww@mail.gmail.com>
+Message-ID: <f1a06e6e0de6c256096ba55fd8d49c95@hallinger.org>
+
+Hello Stacho,
+thank you very much for your modification!
+I was not aware of the autojoin feature which i abused by acident here. I 
+will play a little with this!
+
+
+Am 2017-12-29 22:47, schrieb Stacho Mudrak via Therion:
+> I am sorry, I am not sure I understand.
+>
+> The problem is, if there are two lines in two different scraps within one 
+> .th2 file starting or ending from point with same coordinates, therion 
+> automatically creates a join between them. In your file, each of line of 
+> 5000 scraps are the same. Therefore they start and end at same points. 
+> Therefore therion automatically creates 5000x5000 joins for each line end. 
+> And this is the problem. I have modified your script to add some randomness 
+> to the coordinates (just shift every scrap by random vector) and it solves 
+> the problem.
+>
+> S.
+>
+> On 29 December 2017 at 15:42, Benedikt Hallinger via Therion 
+> <therion at speleo.sk [31]> wrote:
+>
+>> Shouldnt they be placed at the actual position according to station 
+>> coordinates prior joining, ie the scrap point reference coordinates be 
+>> local to its namespace?
+>>
+>> Am 2017-12-29 11:20, schrieb Stacho Mudrak via Therion:
+>>
+>>> ​Hello, I have not investigated to details a lot, but the problem with 
+>>> this huge file is search for automatic joins. All the scraps are in one 
+>>> giant file and have a lot of common points so it tries to auto-connect 
+>>> every scrap with every scrap, therefore n^2 memory usage. Situation that 
+>>> should not happen in reality.
+>>>
+>>> If you apply attached patch and disable automatic scrap joins - therion 
+>>> runs smoothly even with such a giant structure. But more proper solution 
+>>> would be to shift every scrap, that they will not have common points.
+>>>
+>>> S.
+>>>
+>>> diff --git a/thdb2d.cxx b/thdb2d.cxx
+>>> index b8c9720..7d7b72e 100644
+>>> --- a/thdb2d.cxx
+>>> +++ b/thdb2d.cxx
+>>> @@ -2428,6 +2428,7 @@ void thdb2d::pp_process_joins(thdb2dprj * prj)
+>>>   
+>>>    // prida na koniec automaticke joiny
+>>>    jci = joincandlist.begin();
+>>> +  jci = joincandlist.end();
+>>>    while (jci != joincandlist.end()) {
+>>>      njci = jci;
+>>>      njci++;
+>>>
+>>> ​
+>>>
+>>> On 27 December 2017 at 13:26, Benedikt Hallinger via Therion 
+>>> <therion at speleo.sk [14] [14]> wrote:
+>>>
+>>>> Hello,
+>>>> for further testing i wrote a small script generating a sample cave of 
+>>>> variable length.
+>>>>
+>>>> The bash-script generateTestCave.sh generates a th-file one main survey 
+>>>> and *n* linked subusrveys with included scrap and is called as following:
+>>>>   ./generateTestCave.sh <number-of-surveys> test.th [9] [9]
+>>>> eg "./generateTestCave.sh 1000 test.th [10] [10]" generates a survey 
+>>>> "test" containing 1000 linked subsurveys containing each a suitable 
+>>>> inline-copy of the scrap.th [11] [11]. On the main "test"-survey level 
+>>>> also for each subsurvey a "map n-Plan" is generated.
+>>>> This is then selected in the "thconfig" file.
+>>>>
+>>>> With the contained thconig file one can pay a little to explore 
+>>>> behavior.
+>>>>
+>>>> What i encounter is the following unexepected:
+>>>> With raising survey count the memory needed and time to compile 
+>>>> increases very heavily. This is DESPITE i only select 3 distinct maps for 
+>>>> output in lox and pdf plan projection.
+>>>> Why is that so? i expected, that the selection influences the scraps 
+>>>> selected and thus compile time should nearly remain constant (at least 
+>>>> only increase slightly due to more data processed and discarded)?
+>>>> Also, in the mailing list there was an encounter of strange behavior of 
+>>>> the select/unselect command - do we have a bug here somewhere that also 
+>>>> causes the behavior i see here?
+>>>>
+>>>> Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+>>>>
+>>>>> Thank, how could i switch this?
+>>>>> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>>>>>
+>>>>> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> there is no change regarding the limits in Therion. If there is a 
+>>>>>> real
+>>>>>> need, following could be done:
+>>>>>>
+>>>>>> - in the current version of MetaPost, its possible to used "double"
+>>>>>> arithmetic just by specifying a command line option, which 
+>>>>>> practically
+>>>>>> eliminates MetaPost limits
+>>>>>>
+>>>>>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>>>>>> doubles the number of registers available from 32768 to 65536.
+>>>>>> Registers are needed to reference the fragments of all
+>>>>>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>>>>>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>>>>>> would require some substantial work to support LuaTeX (there is e.g.
+>>>>>> completely different font handling compared to PdfTeX).
+>>>>>>
+>>>>>> And yes, the limit applies just to the data selected for export.
+>>>>>>
+>>>>>> Martin
+>>>>>>
+>>>>>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>>>>>> <therion at speleo.sk [6] [6]> wrote:
+>>>>>>
+>>>>>>> Maybe another question:
+>>>>>>> Assume a large cave with thousands of scraps.
+>>>>>>> When i make a thconfig file sourcing all that data, but using 
+>>>>>>> "select"
+>>>>>>> statements i only select partial data,
+>>>>>>> does the metapost limit apply to the whole dataset or just the 
+>>>>>>> scraps
+>>>>>>> covered by the select command?
+>>>>>>>
+>>>>>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>>>>
+>>>>>>>> Hello Martin,
+>>>>>>>> is the blow limit of 4096 scraps still valid in the current 
+>>>>>>>> version?
+>>>>>>>> Or is it already fixed so we can use more scraps?
+>>>>>>>>
+>>>>>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu 
+>>>>>>>>> [1] [1]>
+>>>>>>>>>
+>>>>>>>>> wrote:
+>>>>>>>>>
+>>>>>>>>>> It looks like the solution is to issue the following metapost 
+>>>>>>>>>> command:
+>>>>>>>>>> warningcheck := 0;
+>>>>>>>>>
+>>>>>>>>> Indeed. The new limit will be 32768 and could not be increased 
+>>>>>>>>> further
+>>>>>>>>> in Metapost itself.
+>>>>>>>>>
+>>>>>>>>> The solution would be modification of how therion manages metapost
+>>>>>>>>> pictures (currently they are stored in files data.1 to data.4000, 
+>>>>>>>>> with
+>>>>>>>>> files data.4001 to data.4095 reserved for pattern definitions). 
+>>>>>>>>> This
+>>>>>>>>> numbering scheme could be modified to allow more file name 
+>>>>>>>>> prefixes
+>>>>>>>>> and consequently theoretically unlimited number of scraps 
+>>>>>>>>> processed by
+>>>>>>>>> metapost.
+>>>>>>>>>
+>>>>>>>>> On the other hand there is still pdfTeX limit which would not 
+>>>>>>>>> allow
+>>>>>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>>>>>> referencing (scrap data is included only once in pdf file and can 
+>>>>>>>>> be
+>>>>>>>>> referenced on multiple pages). You could avoid pdftex limit by 
+>>>>>>>>> using
+>>>>>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>>>>>> references).
+>>>>>>>>>
+>>>>>>>>> In the longer-term future (a few years) I would like to use 
+>>>>>>>>> metapost
+>>>>>>>>> as a library instead of external metapost executable, which would
+>>>>>>>>> solve the problems with temporary files (and other problems as 
+>>>>>>>>> well).
+>>>>>>>>>
+>>>>>>>>>> However adding it in a
+>>>>>>>>>> code metapost
+>>>>>>>>>> warningcheck := 0;
+>>>>>>>>>> endcode
+>>>>>>>>>> block seems to have no effect, mpost still fails on more then 
+>>>>>>>>>> 4096
+>>>>>>>>>> scraps.
+>>>>>>>>>
+>>>>>>>>> Therion currently inserts warningcheck:=1; before scraps without 
+>>>>>>>>> good
+>>>>>>>>> reason, so it will be fixed soon.
+>>>>>>>>>
+>>>>>>>>> If the new warningcheck setting would work for you, I would prefer 
+>>>>>>>>> not
+>>>>>>>>> to modify current file numbering scheme for metapost pictures and 
+>>>>>>>>> have
+>>>>>>>>> it fixed later with implementation of metapost library.
+>>>>>>>>>
+>>>>>>>>> Martin
+>>>>>>>>
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk [2] [2]
+>>>>>>>> https://mailman.speleo.sk/listinfo/therion [3] [3]
+>>>>>>>
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk [4] [4]
+>>>>>>> https://mailman.speleo.sk/listinfo/therion [5] [5]
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk [7] [7]
+>>>>>> https://mailman.speleo.sk/listinfo/therion [8] [8]
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk [12] [12]
+>>>> https://mailman.speleo.sk/listinfo/therion [13] [13]
+>>>
+>>> Links:
+>>> ------
+>>> [1] http://umn.edu [15]
+>>> [2] mailto:Therion at speleo.sk [16]
+>>> [3] https://mailman.speleo.sk/listinfo/therion [17]
+>>> [4] mailto:Therion at speleo.sk [18]
+>>> [5] https://mailman.speleo.sk/listinfo/therion [19]
+>>> [6] mailto:therion at speleo.sk [20]
+>>> [7] mailto:Therion at speleo.sk [21]
+>>> [8] https://mailman.speleo.sk/listinfo/therion [22]
+>>> [9] http://test.th [23]
+>>> [10] http://test.th [24]
+>>> [11] http://scrap.th [25]
+>>> [12] mailto:Therion at speleo.sk [26]
+>>> [13] https://mailman.speleo.sk/listinfo/therion [27]
+>>> [14] mailto:therion at speleo.sk [28]
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [29]
+>> https://mailman.speleo.sk/listinfo/therion [30]
+>
+>
+>
+> Links:
+> ------
+> [1] http://umn.edu
+> [2] mailto:Therion at speleo.sk
+> [3] https://mailman.speleo.sk/listinfo/therion
+> [4] mailto:Therion at speleo.sk
+> [5] https://mailman.speleo.sk/listinfo/therion
+> [6] mailto:therion at speleo.sk
+> [7] mailto:Therion at speleo.sk
+> [8] https://mailman.speleo.sk/listinfo/therion
+> [9] http://test.th
+> [10] http://test.th
+> [11] http://scrap.th
+> [12] mailto:Therion at speleo.sk
+> [13] https://mailman.speleo.sk/listinfo/therion
+> [14] mailto:therion at speleo.sk
+> [15] http://umn.edu
+> [16] mailto:Therion at speleo.sk
+> [17] https://mailman.speleo.sk/listinfo/therion
+> [18] mailto:Therion at speleo.sk
+> [19] https://mailman.speleo.sk/listinfo/therion
+> [20] mailto:therion at speleo.sk
+> [21] mailto:Therion at speleo.sk
+> [22] https://mailman.speleo.sk/listinfo/therion
+> [23] http://test.th
+> [24] http://test.th
+> [25] http://scrap.th
+> [26] mailto:Therion at speleo.sk
+> [27] https://mailman.speleo.sk/listinfo/therion
+> [28] mailto:therion at speleo.sk
+> [29] mailto:Therion at speleo.sk
+> [30] https://mailman.speleo.sk/listinfo/therion
+> [31] mailto:therion at speleo.sk
+
+
+
+From markus.boldt at gmx.net  Sat Dec 30 12:59:23 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sat, 30 Dec 2017 12:59:23 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+Message-ID: <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+
+Hi Martin, 
+
+looks like a good Idea. But if I change Symbol set to SKBB I get:
+
+for handrail L. 
+
+I have in my config-file: 
+
+symbol-set UIS
+
+symbol-assign line handrail SKBB
+
+If I comment the second line out and do the first line to SKBB I get the
+same result. 
+
+ 
+
+And the next thing is: I get in the legend the word "Handrail" (Gelaender)
+but it is in reality a "hauling track" (Transportbahn). Where or how can I
+change the text in the legend for example? 
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+via Therion
+Gesendet: Freitag, 29. Dezember 2017 20:49
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+ 
+
+29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+
+ 
+
+hauling Track
+
+ 
+
+SKBB symbol set:
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/90ff4982/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 15051 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/90ff4982/attachment.png>
+
+From martinsluka at mac.com  Sat Dec 30 13:15:53 2017
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 30 Dec 2017 13:15:53 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+Message-ID: <1FD3F92B-0941-455C-B7BD-ACBC02C4965F@mac.com>
+
+
+> 30. 12. 2017 v 12:59, Markus Boldt via Therion <therion at speleo.sk>:
+> 
+> If I comment the second line out and do the first line to SKBB I get the same result. 
+
+The handrail symbol is part of SKBB symbol set, so, I think, it is OK.
+
+> And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example? 
+> 
+
+Copy definition of handrail and use it as your user defined symbol in layout definition. And in such case you may define your name for it.
+
+m.s.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/6e16ae93/attachment.htm>
+
+From Henry.Bennett at dell.com  Sat Dec 30 13:09:38 2017
+From: Henry.Bennett at dell.com (Henry.Bennett at dell.com)
+Date: Sat, 30 Dec 2017 12:09:38 +0000
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+Message-ID: <503a4434f7b84c40b8bb5a76b8f68693@SNNX13MDC115.EMEA.DELL.COM>
+
+Thbook page 49
+
+text’
+Description: Specifies translation of any default therion text in output.
+Syntax: text <language ID> <therion text> <my text>
+Arguments:
+* <language ID> ▷ standard ISO language identifier (e.g. en or en_GB)
+* <therion text> ▷ therion text to translate. For list of therion texts and available
+translations, see thlang/texts.txt file.
+
+For example
+
+text en "line handrail" “line hauling track”
+
+Henry
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Markus Boldt via Therion
+Sent: 30 December 2017 11:59
+To: 'List for Therion users' <therion at speleo.sk>
+Cc: Markus Boldt <markus.boldt at gmx.net>
+Subject: Re: [Therion] Line Hauling Track
+
+Hi Martin,
+looks like a good Idea. But if I change Symbol set to SKBB I get:
+for handrail :(.
+I have in my config-file:
+symbol-set UIS
+symbol-assign line handrail SKBB
+If I comment the second line out and do the first line to SKBB I get the same result.
+
+And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example?
+
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka via Therion
+Gesendet: Freitag, 29. Dezember 2017 20:49
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Line Hauling Track
+
+
+29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk<mailto:therion at speleo.sk>>:
+
+hauling Track
+
+SKBB symbol set:
+
+[cid:image001.png at 01D38167.102D3890]
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/30696c71/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 15051 bytes
+Desc: image001.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/30696c71/attachment.png>
+
+From torsten.schnitter at netcologne.de  Sat Dec 30 13:15:34 2017
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Sat, 30 Dec 2017 13:15:34 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+Message-ID: <99263818-5CD2-437C-90D0-0D4AD59E793A@netcologne.de>
+
+Hi Markus
+Changing text in legend should work with (in your config file):
+Text en „line handrail“ „text you want“
+ „En“ is depending on your choice of language. May be you are using „de“!?
+Cheers,
+Torsten
+
+> Am 30.12.2017 um 12:59 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+> 
+> Hi Martin,
+> looks like a good Idea. But if I change Symbol set to SKBB I get:
+> for handrail L.
+> I have in my config-file:
+> symbol-set UIS
+> symbol-assign line handrail SKBB
+> If I comment the second line out and do the first line to SKBB I get the same result.
+>  
+> And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example?
+>  
+>  
+> Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka via Therion
+> Gesendet: Freitag, 29. Dezember 2017 20:49
+> An: List for Therion users
+> Cc: Martin Sluka
+> Betreff: Re: [Therion] Line Hauling Track
+>  
+>  
+> 29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+>  
+> hauling Track
+>  
+> SKBB symbol set:
+>  
+> <image002.png>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/1a060714/attachment.htm>
+
+From markus.boldt at gmx.net  Sat Dec 30 14:43:52 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sat, 30 Dec 2017 14:43:52 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <99263818-5CD2-437C-90D0-0D4AD59E793A@netcologne.de>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+ <99263818-5CD2-437C-90D0-0D4AD59E793A@netcologne.de>
+Message-ID: <005001d38174$3b2d99b0$b188cd10$@gmx.net>
+
+Hi Torsten, 
+
+If I do so as you and Henry describe I get the error: unknown option -- text de "Geländer" "Transportbahn". Because of the german sign, I have tried it with all in english: 
+
+Language en
+
+Text en “handrail” “Transportbahn” or text en “line handrail” “Transportbahn” or text en “line handrail” “line Transportbahn”. Nothing works. 
+
+And I don`t find the subdir thlang in my installation. So I have renewed it but ther e is still no subdir thlang. 
+
+Sometimes Therion is exasperating L. 
+
+Regards 
+
+Markus 
+
+PS. Is it possible to send the “Cave” to you directly? Then it works probably and the conversation is in german J Then need you email. 
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Torsten Schnitter via Therion
+Gesendet: Samstag, 30. Dezember 2017 13:16
+An: List for Therion users
+Cc: Torsten Schnitter
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+Hi Markus
+
+Changing text in legend should work with (in your config file):
+
+Text en „line handrail“ „text you want“
+
+ „En“ is depending on your choice of language. May be you are using „de“!?
+
+Cheers,
+
+Torsten
+
+
+Am 30.12.2017 um 12:59 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+
+Hi Martin, 
+
+looks like a good Idea. But if I change Symbol set to SKBB I get:
+
+for handrail L. 
+
+I have in my config-file: 
+
+symbol-set UIS
+
+symbol-assign line handrail SKBB
+
+If I comment the second line out and do the first line to SKBB I get the same result. 
+
+ 
+
+And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example? 
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka via Therion
+Gesendet: Freitag, 29. Dezember 2017 20:49
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+ 
+
+29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+
+ 
+
+hauling Track
+
+ 
+
+SKBB symbol set:
+
+ 
+
+<image002.png>
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/1b0db7ab/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Sat Dec 30 15:43:38 2017
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Sat, 30 Dec 2017 15:43:38 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <005001d38174$3b2d99b0$b188cd10$@gmx.net>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+ <99263818-5CD2-437C-90D0-0D4AD59E793A@netcologne.de>
+ <005001d38174$3b2d99b0$b188cd10$@gmx.net>
+Message-ID: <38741496-3FAA-45D8-B200-B33AC096DA0E@netcologne.de>
+
+Hi Markus
+Of course you can:
+Torsten.schnitter at netcologne.de
+Concerning German words with ä, ö and ü you have to change your config file from utf to iso-... (can‘t remember the correct number) format. 
+Cheers,
+Torsten 
+
+> Am 30.12.2017 um 14:43 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+> 
+> Hi Torsten,
+> If I do so as you and Henry describe I get the error: unknown option -- text de "Geländer" "Transportbahn". Because of the german sign, I have tried it with all in english:
+> Language en
+> Text en “handrail” “Transportbahn” or text en “line handrail” “Transportbahn” or text en “line handrail” “line Transportbahn”. Nothing works.
+> And I don`t find the subdir thlang in my installation. So I have renewed it but ther e is still no subdir thlang.
+> Sometimes Therion is exasperating L.
+> Regards
+> Markus
+> PS. Is it possible to send the “Cave” to you directly? Then it works probably and the conversation is in german J Then need you email.
+>  
+>  
+> Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Torsten Schnitter via Therion
+> Gesendet: Samstag, 30. Dezember 2017 13:16
+> An: List for Therion users
+> Cc: Torsten Schnitter
+> Betreff: Re: [Therion] Line Hauling Track
+>  
+> Hi Markus
+> Changing text in legend should work with (in your config file):
+> Text en „line handrail“ „text you want“
+>  „En“ is depending on your choice of language. May be you are using „de“!?
+> Cheers,
+> Torsten
+> 
+> Am 30.12.2017 um 12:59 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+> 
+> Hi Martin,
+> looks like a good Idea. But if I change Symbol set to SKBB I get:
+> for handrail L.
+> I have in my config-file:
+> symbol-set UIS
+> symbol-assign line handrail SKBB
+> If I comment the second line out and do the first line to SKBB I get the same result.
+>  
+> And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example?
+>  
+>  
+> Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka via Therion
+> Gesendet: Freitag, 29. Dezember 2017 20:49
+> An: List for Therion users
+> Cc: Martin Sluka
+> Betreff: Re: [Therion] Line Hauling Track
+>  
+>  
+> 29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+>  
+> hauling Track
+>  
+> SKBB symbol set:
+>  
+> <image002.png>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/cc4a03a6/attachment.htm>
+
+From markus.boldt at gmx.net  Sat Dec 30 15:56:54 2017
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sat, 30 Dec 2017 15:56:54 +0100
+Subject: [Therion] Line Hauling Track
+In-Reply-To: <38741496-3FAA-45D8-B200-B33AC096DA0E@netcologne.de>
+References: <004f01d380d6$a9e39f60$fdaade20$@gmx.net>
+ <F17E7B87-B743-4E13-A06B-46A05711DC0C@mac.com>
+ <003201d38165$a2bb4be0$e831e3a0$@gmx.net>
+ <99263818-5CD2-437C-90D0-0D4AD59E793A@netcologne.de>
+ <005001d38174$3b2d99b0$b188cd10$@gmx.net>
+ <38741496-3FAA-45D8-B200-B33AC096DA0E@netcologne.de>
+Message-ID: <006701d3817e$6f16bd60$4d443820$@gmx.net>
+
+Ok, Torsten, thanks a lot! 
+
+Now I have found “the problem”. The text-command must be outside Layout-Endlayout J. 
+
+It is iso8859-1 but that is standard by my files J. 
+
+But may be I come back to your offer. 
+
+Regards 
+
+Markus
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Torsten Schnitter via Therion
+Gesendet: Samstag, 30. Dezember 2017 15:44
+An: List for Therion users
+Cc: Torsten Schnitter
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+Hi Markus
+
+Of course you can:
+
+Torsten.schnitter at netcologne.de
+
+Concerning German words with ä, ö and ü you have to change your config file from utf to iso-... (can‘t remember the correct number) format. 
+
+Cheers,
+
+Torsten 
+
+
+Am 30.12.2017 um 14:43 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+
+Hi Torsten, 
+
+If I do so as you and Henry describe I get the error: unknown option -- text de "Geländer" "Transportbahn". Because of the german sign, I have tried it with all in english: 
+
+Language en
+
+Text en “handrail” “Transportbahn” or text en “line handrail” “Transportbahn” or text en “line handrail” “line Transportbahn”. Nothing works. 
+
+And I don`t find the subdir thlang in my installation. So I have renewed it but ther e is still no subdir thlang. 
+
+Sometimes Therion is exasperating L. 
+
+Regards 
+
+Markus 
+
+PS. Is it possible to send the “Cave” to you directly? Then it works probably and the conversation is in german J Then need you email. 
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Torsten Schnitter via Therion
+Gesendet: Samstag, 30. Dezember 2017 13:16
+An: List for Therion users
+Cc: Torsten Schnitter
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+Hi Markus
+
+Changing text in legend should work with (in your config file):
+
+Text en „line handrail“ „text you want“
+
+ „En“ is depending on your choice of language. May be you are using „de“!?
+
+Cheers,
+
+Torsten
+
+
+Am 30.12.2017 um 12:59 schrieb Markus Boldt via Therion <therion at speleo.sk>:
+
+Hi Martin, 
+
+looks like a good Idea. But if I change Symbol set to SKBB I get:
+
+for handrail L. 
+
+I have in my config-file: 
+
+symbol-set UIS
+
+symbol-assign line handrail SKBB
+
+If I comment the second line out and do the first line to SKBB I get the same result. 
+
+ 
+
+And the next thing is: I get in the legend the word “Handrail” (Gelaender) but it is in reality a “hauling track” (Transportbahn). Where or how can I change the text in the legend for example? 
+
+ 
+
+ 
+
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka via Therion
+Gesendet: Freitag, 29. Dezember 2017 20:49
+An: List for Therion users
+Cc: Martin Sluka
+Betreff: Re: [Therion] Line Hauling Track
+
+ 
+
+ 
+
+29. 12. 2017 v 19:55, Markus Boldt via Therion <therion at speleo.sk>:
+
+ 
+
+hauling Track
+
+ 
+
+SKBB symbol set:
+
+ 
+
+<image002.png>
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/3f8029f5/attachment.htm>
+
+From beni at hallinger.org  Sat Dec 30 17:26:23 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 30 Dec 2017 18:26:23 +0200
+Subject: [Therion] Scrap limits
+In-Reply-To: <CAP35+gEFU8qYXPG4_nQKnGxJPZi4L_5Q4h-O7PuoaMOHgs7Uww@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <CAP35+gE_vXbxTtn99Z1kUoMqhfno1buOzR9vd-yGYhgFzPxDyw@mail.gmail.com>
+ <c5e5864bfd723e211bcb0a77bb351bf3@hallinger.org>
+ <CAP35+gEFU8qYXPG4_nQKnGxJPZi4L_5Q4h-O7PuoaMOHgs7Uww@mail.gmail.com>
+Message-ID: <8a0853c1b904ca7cdc9db71394cf1dd9@hallinger.org>
+
+Hello,
+i played a little more and it looks good.
+For the archive, here the source of the revised script.
+I changed it so each survey gets its own th2-file now. Included is now also 
+an extendet elevation and two sectionals.
+
+-----------------------------------
+tar -xzf MASSTEST.tar.gz
+cd MASSTEST
+./generateTestCave.sh 15000  #bash; produces 15k surveys (~250km) and scrap 
+data in out/
+therion    # results are in results/
+-----------------------------------
+
+
+I tested atlas on more data (see thconfig-more):
+Can i unselect the sectionals to get more room for plan-data?
+Using "symbol-hide point section" in layout seems to not conserve any 
+memory...
+The limit with this dataset seems to be somewhere between 1350 and 1380 
+selected maps (1350 still compiles successfully; each survey contains one 
+plan- and one none-scrap (section); total 2).
+
+
+With best regards and thank you!
+
+
+
+Am 2017-12-29 22:47, schrieb Stacho Mudrak via Therion:
+> I am sorry, I am not sure I understand.
+>
+> The problem is, if there are two lines in two different scraps within one 
+> .th2 file starting or ending from point with same coordinates, therion 
+> automatically creates a join between them. In your file, each of line of 
+> 5000 scraps are the same. Therefore they start and end at same points. 
+> Therefore therion automatically creates 5000x5000 joins for each line end. 
+> And this is the problem. I have modified your script to add some randomness 
+> to the coordinates (just shift every scrap by random vector) and it solves 
+> the problem.
+>
+> S.
+>
+> On 29 December 2017 at 15:42, Benedikt Hallinger via Therion 
+> <therion at speleo.sk [31]> wrote:
+>
+>> Shouldnt they be placed at the actual position according to station 
+>> coordinates prior joining, ie the scrap point reference coordinates be 
+>> local to its namespace?
+>>
+>> Am 2017-12-29 11:20, schrieb Stacho Mudrak via Therion:
+>>
+>>> ​Hello, I have not investigated to details a lot, but the problem with 
+>>> this huge file is search for automatic joins. All the scraps are in one 
+>>> giant file and have a lot of common points so it tries to auto-connect 
+>>> every scrap with every scrap, therefore n^2 memory usage. Situation that 
+>>> should not happen in reality.
+>>>
+>>> If you apply attached patch and disable automatic scrap joins - therion 
+>>> runs smoothly even with such a giant structure. But more proper solution 
+>>> would be to shift every scrap, that they will not have common points.
+>>>
+>>> S.
+>>>
+>>> diff --git a/thdb2d.cxx b/thdb2d.cxx
+>>> index b8c9720..7d7b72e 100644
+>>> --- a/thdb2d.cxx
+>>> +++ b/thdb2d.cxx
+>>> @@ -2428,6 +2428,7 @@ void thdb2d::pp_process_joins(thdb2dprj * prj)
+>>>   
+>>>    // prida na koniec automaticke joiny
+>>>    jci = joincandlist.begin();
+>>> +  jci = joincandlist.end();
+>>>    while (jci != joincandlist.end()) {
+>>>      njci = jci;
+>>>      njci++;
+>>>
+>>> ​
+>>>
+>>> On 27 December 2017 at 13:26, Benedikt Hallinger via Therion 
+>>> <therion at speleo.sk [14] [14]> wrote:
+>>>
+>>>> Hello,
+>>>> for further testing i wrote a small script generating a sample cave of 
+>>>> variable length.
+>>>>
+>>>> The bash-script generateTestCave.sh generates a th-file one main survey 
+>>>> and *n* linked subusrveys with included scrap and is called as following:
+>>>>   ./generateTestCave.sh <number-of-surveys> test.th [9] [9]
+>>>> eg "./generateTestCave.sh 1000 test.th [10] [10]" generates a survey 
+>>>> "test" containing 1000 linked subsurveys containing each a suitable 
+>>>> inline-copy of the scrap.th [11] [11]. On the main "test"-survey level 
+>>>> also for each subsurvey a "map n-Plan" is generated.
+>>>> This is then selected in the "thconfig" file.
+>>>>
+>>>> With the contained thconig file one can pay a little to explore 
+>>>> behavior.
+>>>>
+>>>> What i encounter is the following unexepected:
+>>>> With raising survey count the memory needed and time to compile 
+>>>> increases very heavily. This is DESPITE i only select 3 distinct maps for 
+>>>> output in lox and pdf plan projection.
+>>>> Why is that so? i expected, that the selection influences the scraps 
+>>>> selected and thus compile time should nearly remain constant (at least 
+>>>> only increase slightly due to more data processed and discarded)?
+>>>> Also, in the mailing list there was an encounter of strange behavior of 
+>>>> the select/unselect command - do we have a bug here somewhere that also 
+>>>> causes the behavior i see here?
+>>>>
+>>>> Am 2017-12-03 10:41, schrieb Benedikt Hallinger:
+>>>>
+>>>>> Thank, how could i switch this?
+>>>>> I also wrote a small testcase that segfaulted at about 3000 scraps.
+>>>>>
+>>>>> Am 2017-12-02 9:55, schrieb Martin Budaj via Therion:
+>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> there is no change regarding the limits in Therion. If there is a 
+>>>>>> real
+>>>>>> need, following could be done:
+>>>>>>
+>>>>>> - in the current version of MetaPost, its possible to used "double"
+>>>>>> arithmetic just by specifying a command line option, which 
+>>>>>> practically
+>>>>>> eliminates MetaPost limits
+>>>>>>
+>>>>>> - instead of pdfTeX we could use LuaTeX to produce the PDFs. This
+>>>>>> doubles the number of registers available from 32768 to 65536.
+>>>>>> Registers are needed to reference the fragments of all
+>>>>>> scraps/sections; you usually need up to 6 of them for a scrap. So you
+>>>>>> would get maybe 12000 instead of 6000 scraps in one output file. It
+>>>>>> would require some substantial work to support LuaTeX (there is e.g.
+>>>>>> completely different font handling compared to PdfTeX).
+>>>>>>
+>>>>>> And yes, the limit applies just to the data selected for export.
+>>>>>>
+>>>>>> Martin
+>>>>>>
+>>>>>> On Tue, Nov 28, 2017 at 9:44 PM, Benedikt Hallinger via Therion
+>>>>>> <therion at speleo.sk [6] [6]> wrote:
+>>>>>>
+>>>>>>> Maybe another question:
+>>>>>>> Assume a large cave with thousands of scraps.
+>>>>>>> When i make a thconfig file sourcing all that data, but using 
+>>>>>>> "select"
+>>>>>>> statements i only select partial data,
+>>>>>>> does the metapost limit apply to the whole dataset or just the 
+>>>>>>> scraps
+>>>>>>> covered by the select command?
+>>>>>>>
+>>>>>>> Am 2017-11-28 22:19, schrieb Benedikt Hallinger via Therion:
+>>>>>>>
+>>>>>>>> Hello Martin,
+>>>>>>>> is the blow limit of 4096 scraps still valid in the current 
+>>>>>>>> version?
+>>>>>>>> Or is it already fixed so we can use more scraps?
+>>>>>>>>
+>>>>>>>>> On Tue, Dec 1, 2009 at 5:26 PM, Carl Magnuson <magnu213 at umn.edu 
+>>>>>>>>> [1] [1]>
+>>>>>>>>>
+>>>>>>>>> wrote:
+>>>>>>>>>
+>>>>>>>>>> It looks like the solution is to issue the following metapost 
+>>>>>>>>>> command:
+>>>>>>>>>> warningcheck := 0;
+>>>>>>>>>
+>>>>>>>>> Indeed. The new limit will be 32768 and could not be increased 
+>>>>>>>>> further
+>>>>>>>>> in Metapost itself.
+>>>>>>>>>
+>>>>>>>>> The solution would be modification of how therion manages metapost
+>>>>>>>>> pictures (currently they are stored in files data.1 to data.4000, 
+>>>>>>>>> with
+>>>>>>>>> files data.4001 to data.4095 reserved for pattern definitions). 
+>>>>>>>>> This
+>>>>>>>>> numbering scheme could be modified to allow more file name 
+>>>>>>>>> prefixes
+>>>>>>>>> and consequently theoretically unlimited number of scraps 
+>>>>>>>>> processed by
+>>>>>>>>> metapost.
+>>>>>>>>>
+>>>>>>>>> On the other hand there is still pdfTeX limit which would not 
+>>>>>>>>> allow
+>>>>>>>>> much more scraps. PdfTeX uses internal registers for scraps
+>>>>>>>>> referencing (scrap data is included only once in pdf file and can 
+>>>>>>>>> be
+>>>>>>>>> referenced on multiple pages). You could avoid pdftex limit by 
+>>>>>>>>> using
+>>>>>>>>> SVG output (if SVG viewers would process large number of internal
+>>>>>>>>> references).
+>>>>>>>>>
+>>>>>>>>> In the longer-term future (a few years) I would like to use 
+>>>>>>>>> metapost
+>>>>>>>>> as a library instead of external metapost executable, which would
+>>>>>>>>> solve the problems with temporary files (and other problems as 
+>>>>>>>>> well).
+>>>>>>>>>
+>>>>>>>>>> However adding it in a
+>>>>>>>>>> code metapost
+>>>>>>>>>> warningcheck := 0;
+>>>>>>>>>> endcode
+>>>>>>>>>> block seems to have no effect, mpost still fails on more then 
+>>>>>>>>>> 4096
+>>>>>>>>>> scraps.
+>>>>>>>>>
+>>>>>>>>> Therion currently inserts warningcheck:=1; before scraps without 
+>>>>>>>>> good
+>>>>>>>>> reason, so it will be fixed soon.
+>>>>>>>>>
+>>>>>>>>> If the new warningcheck setting would work for you, I would prefer 
+>>>>>>>>> not
+>>>>>>>>> to modify current file numbering scheme for metapost pictures and 
+>>>>>>>>> have
+>>>>>>>>> it fixed later with implementation of metapost library.
+>>>>>>>>>
+>>>>>>>>> Martin
+>>>>>>>>
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk [2] [2]
+>>>>>>>> https://mailman.speleo.sk/listinfo/therion [3] [3]
+>>>>>>>
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk [4] [4]
+>>>>>>> https://mailman.speleo.sk/listinfo/therion [5] [5]
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk [7] [7]
+>>>>>> https://mailman.speleo.sk/listinfo/therion [8] [8]
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk [12] [12]
+>>>> https://mailman.speleo.sk/listinfo/therion [13] [13]
+>>>
+>>> Links:
+>>> ------
+>>> [1] http://umn.edu [15]
+>>> [2] mailto:Therion at speleo.sk [16]
+>>> [3] https://mailman.speleo.sk/listinfo/therion [17]
+>>> [4] mailto:Therion at speleo.sk [18]
+>>> [5] https://mailman.speleo.sk/listinfo/therion [19]
+>>> [6] mailto:therion at speleo.sk [20]
+>>> [7] mailto:Therion at speleo.sk [21]
+>>> [8] https://mailman.speleo.sk/listinfo/therion [22]
+>>> [9] http://test.th [23]
+>>> [10] http://test.th [24]
+>>> [11] http://scrap.th [25]
+>>> [12] mailto:Therion at speleo.sk [26]
+>>> [13] https://mailman.speleo.sk/listinfo/therion [27]
+>>> [14] mailto:therion at speleo.sk [28]
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk [29]
+>> https://mailman.speleo.sk/listinfo/therion [30]
+>
+>
+>
+> Links:
+> ------
+> [1] http://umn.edu
+> [2] mailto:Therion at speleo.sk
+> [3] https://mailman.speleo.sk/listinfo/therion
+> [4] mailto:Therion at speleo.sk
+> [5] https://mailman.speleo.sk/listinfo/therion
+> [6] mailto:therion at speleo.sk
+> [7] mailto:Therion at speleo.sk
+> [8] https://mailman.speleo.sk/listinfo/therion
+> [9] http://test.th
+> [10] http://test.th
+> [11] http://scrap.th
+> [12] mailto:Therion at speleo.sk
+> [13] https://mailman.speleo.sk/listinfo/therion
+> [14] mailto:therion at speleo.sk
+> [15] http://umn.edu
+> [16] mailto:Therion at speleo.sk
+> [17] https://mailman.speleo.sk/listinfo/therion
+> [18] mailto:Therion at speleo.sk
+> [19] https://mailman.speleo.sk/listinfo/therion
+> [20] mailto:therion at speleo.sk
+> [21] mailto:Therion at speleo.sk
+> [22] https://mailman.speleo.sk/listinfo/therion
+> [23] http://test.th
+> [24] http://test.th
+> [25] http://scrap.th
+> [26] mailto:Therion at speleo.sk
+> [27] https://mailman.speleo.sk/listinfo/therion
+> [28] mailto:therion at speleo.sk
+> [29] mailto:Therion at speleo.sk
+> [30] https://mailman.speleo.sk/listinfo/therion
+> [31] mailto:therion at speleo.sk
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: MASSTEST.tar.gz
+Type: application/octet-stream
+Size: 3017 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/ac0bb34a/attachment.obj>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: thconfig-more
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20171230/ac0bb34a/attachment.ksh>
+

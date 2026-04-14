@@ -1,0 +1,2901 @@
+From james.begley at gmail.com  Mon May  1 15:41:36 2017
+From: james.begley at gmail.com (James Begley)
+Date: Mon, 01 May 2017 13:41:36 +0000
+Subject: [Therion] Therion 5.4.1 on Fedora 25 - Compile fails in loch
+In-Reply-To: <2313509.ZaqphtnE7C@main2.billgee.local>
+References: <2313509.ZaqphtnE7C@main2.billgee.local>
+Message-ID: <CAGS-eH7fnJBdXedSPzy2E90FUt4KVt__cb1t2YEiTU20U_HG1A@mail.gmail.com>
+
+Hi Bill,
+
+I've managed to get therion and loch to compile on Fedora 25 - see
+https://copr.fedorainfracloud.org/coprs/jmbegley/therion/
+
+The makefile that is used for loch is attached - hope this helps :)
+
+However, whilst xtherion is happy to run, I can't actually get loch to run.
+I get an error message that states
+
+"Error: glxCreateContext failed"
+
+Which is presumably some missing graphics library on my workstation :(
+
+Cheers,
+James
+
+On Sun, 23 Apr 2017 at 15:43 Bill Gee via Therion <therion at speleo.sk> wrote:
+
+> Hello everyone -
+>
+> Once again I am wrestling with the ancient problem of getting loch to
+> compile
+> on Fedora Linux.  Below is the sequence of errors that I get.  I think I
+> can
+> modify the Therion Makefile so that it skips loch, but I would rather not
+> do
+> that.
+>
+> Some versions ago I figured out a set of changes to the loch Makefile that
+> allowed it to compile.  The listing below shows those changes.  They do not
+> work anymore, as seen by the compiler error.
+>
+> In the second set of errors it is saying that some libraries cannot be
+> found.
+> I do not find any files by these exact names.  They probably have some
+> extension, perhaps .so?  But I do not find any files with that extension
+> either.  vtkIO.so does not exist.
+>
+> Two questions for the group:
+>
+> 1) Exactly what files are missing?  I very likely have them, just not where
+> the compiler is looking.  If I can find them, maybe I can add something to
+> VTKLIBPATH.
+>
+> 2) Is there an easier way to deal with this?  Why is it that Fedora always
+> has
+> problems?  It should Just Work.
+>
+> --
+> Bill Gee
+>
+>
+>
+> =====  Using the providede Makefile for loch:
+> make -C ./loch
+> make[1]: Entering directory '/home/bgee/Installs/therion-5.4.1/loch'
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-
+> unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxR2P.o
+> lxR2P.c
+> gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-
+> unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxTR.o
+> lxTR.c
+> c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -I/usr/lib64/wx/include/gtk3-
+> unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/local/
+> include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxOGLFT.o
+> lxOGLFT.cxx
+> c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -I/usr/lib64/wx/include/gtk3-
+> unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/local/
+> include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxSetup.o
+> lxSetup.cxx
+> In file included from lxSetup.h:23:0,
+>                  from lxSetup.cxx:38:
+> lxData.h:34:25: fatal error: vtkPolyData.h: No such file or directory
+>  #include <vtkPolyData.h>
+>                          ^
+> compilation terminated.
+> Makefile:147: recipe for target '/home/bgee/Installs/therion.bin/loch/
+> lxSetup.o' failed
+> make[1]: *** [/home/bgee/Installs/therion.bin/loch/lxSetup.o] Error 1
+> make[1]: Leaving directory '/home/bgee/Installs/therion-5.4.1/loch'
+> Makefile:206: recipe for target 'loch/loch' failed
+> make: *** [loch/loch] Error 2
+>  bgee  ~  Installs  therion-5.4.1 
+>
+>
+>  ===  Modified loch makefile:
+>  #VTKVERSION = $(shell tclsh ./getvtkver.tcl version)
+> #VTKPATH = $(shell tclsh ./getvtkver.tcl incpath)
+> #VTKLIBPATH = $(shell tclsh ./getvtkver.tcl libpath)
+> VTKVERSION=6.3
+> VTKV6 = $(shell tclsh ./getvtkver.tcl version6)
+> #ifeq ($(VTKV6),1)
+> #VTKLIBS = -lvtkCommonExecutionModel-$(VTKVERSION) -lvtkCommonDataModel-$
+> (VTKVERSION) -lvtkCommonCore-$(VTKVERSION) -lvtkFiltersCore-$(VTKVERSION) -
+> lvtkFiltersHybrid-$(VTKVERSION) -lvtkIOLegacy-$(VTKVERSION) -lfreetype
+> -lpng -
+> ljpeg
+> #else
+> #VTKLIBS = -lvtkHybrid -lvtkImaging -lvtkIO -lvtkGraphics -lvtkFiltering -
+> lvtkCommon -lvtkjpeg -lvtkpng -lvtkzlib -lvtksys -lfreetype
+> #endif
+> # VTKVERSION = 5.4
+> # VTKPATH = /usr/local/include/vtk-$(VTKVERSION)
+> # VTKLIBPATH = /usr/local/lib/vtk-$(VTKVERSION)
+> VTKPATH=/usr/include/vtk
+> VTKLIBPATH=/usr/lib64/vtk
+>
+> ====  Gives this result when compiling:
+>  c++ -o ./loch -Wall ./lxR2P.o ./lxTR.o ./lxOGLFT.o ./lxSetup.o
+> ./lxRender.o
+> ./lxWX.o ./lxImgIO.o ./lxLRUD.o ./lxFile.o ./lxSTree.o ./lxData.o
+> ./lxMath.o
+> ./lxSView.o ./lxSScene.o ./lxGUI.o ./lxGLC.o ./lxOptDlg.o ./lxAboutDlg.o ./
+> lxPres.o ./img.o -lwx_gtk3u_gl-3.0 -pthread   -lwx_gtk3u_xrc-3.0 -
+> lwx_gtk3u_webview-3.0 -lwx_gtk3u_html-3.0 -lwx_gtk3u_qa-3.0
+> -lwx_gtk3u_adv-3.0
+> -lwx_gtk3u_core-3.0 -lwx_baseu_xml-3.0 -lwx_baseu_net-3.0 -lwx_baseu-3.0
+> -L/
+> usr/lib64/vtk -lvtkHybrid -lvtkImaging -lvtkIO -lvtkGraphics
+> -lvtkFiltering -
+> lvtkCommon -lfreetype -lGLU -lGL -lpthread -lX11 -lz -s
+> /usr/bin/ld: cannot find -lvtkHybrid
+> /usr/bin/ld: cannot find -lvtkImaging
+> /usr/bin/ld: cannot find -lvtkIO
+> /usr/bin/ld: cannot find -lvtkGraphics
+> /usr/bin/ld: cannot find -lvtkFiltering
+> /usr/bin/ld: cannot find -lvtkCommon
+> collect2: error: ld returned 1 exit status
+> Makefile:165: recipe for target 'loch' failed
+> make: *** [loch] Error 1
+>
+> ====  Installed vtk packages:
+>  bgee  ~  Installs  therion-5.4.1  loch  rpm -qa | grep vtk
+> vtk-python-6.3.0-11.fc25.x86_64
+> vtk-java-6.3.0-11.fc25.x86_64
+> vtk-tcl-6.3.0-11.fc25.x86_64
+> vtk-6.3.0-11.fc25.x86_64
+> vtk-qt-tcl-6.3.0-11.fc25.x86_64
+> vtk-devel-6.3.0-11.fc25.x86_64
+> vtk-qt-6.3.0-11.fc25.x86_64
+> vtk-qt-python-6.3.0-11.fc25.x86_64
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170501/51e90805/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Makefile
+Type: application/octet-stream
+Size: 8395 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170501/51e90805/attachment.obj>
+
+From bgee at campercaver.net  Mon May  1 21:29:49 2017
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 01 May 2017 14:29:49 -0500
+Subject: [Therion] Therion 5.4.1 on Fedora 25 - Compile fails in loch
+In-Reply-To: <CAGS-eH7fnJBdXedSPzy2E90FUt4KVt__cb1t2YEiTU20U_HG1A@mail.gmail.com>
+References: <2313509.ZaqphtnE7C@main2.billgee.local>
+ <CAGS-eH7fnJBdXedSPzy2E90FUt4KVt__cb1t2YEiTU20U_HG1A@mail.gmail.com>
+Message-ID: <1536011.1pXkzTVUGj@main2.billgee.local>
+
+Hi James ...
+
+I still have the old loch on my system.  When I start it, I get this:
+
+=======
+* bgee * *~ * loch  
+
+
+It used to work, so some Fedora upgrade has hosed it.  I can't tell what version it is since 
+it won't run.  xtherion is version 5.3.16, so this is whatever loch came with that.
+
+I tried your Makefile and received no errors.  Unfortunately it also did not produce any 
+executable output files.  "Make install" gave me an error saying that /usr/local/bin/therion 
+could not be written.  I traced it down to the root cause - It was trying to copy a file that 
+does not exist.
+
+So I went to try out your repository.  That is VERY useful!  I already have it set up for 
+survex, so adding therion was easy.
+
+The new version of loch gives the same error on my system as on yours.
+
+One question about the package in your repository - Does it include thbook.pdf?  And if it 
+does, where does it put that file?
+
+Thanks - Bill Gee
+
+
+
+On Monday, May 1, 2017 8:41:36 AM CDT James Begley wrote:
+> Hi Bill,
+> 
+> I've managed to get therion and loch to compile on Fedora 25 - see
+> https://copr.fedorainfracloud.org/coprs/jmbegley/therion/
+> 
+> The makefile that is used for loch is attached - hope this helps :)
+> 
+> However, whilst xtherion is happy to run, I can't actually get loch to run.
+> I get an error message that states
+> 
+> "Error: glxCreateContext failed"
+> 
+> Which is presumably some missing graphics library on my workstation :(
+> 
+> Cheers,
+> James
+> 
+> On Sun, 23 Apr 2017 at 15:43 Bill Gee via Therion <therion at speleo.sk> wrote:
+> > Hello everyone -
+> > 
+> > Once again I am wrestling with the ancient problem of getting loch to
+> > compile
+> > on Fedora Linux.  Below is the sequence of errors that I get.  I think I
+> > can
+> > modify the Therion Makefile so that it skips loch, but I would rather not
+> > do
+> > that.
+> > 
+> > Some versions ago I figured out a set of changes to the loch Makefile that
+> > allowed it to compile.  The listing below shows those changes.  They do
+> > not
+> > work anymore, as seen by the compiler error.
+> > 
+> > In the second set of errors it is saying that some libraries cannot be
+> > found.
+> > I do not find any files by these exact names.  They probably have some
+> > extension, perhaps .so?  But I do not find any files with that extension
+> > either.  vtkIO.so does not exist.
+> > 
+> > Two questions for the group:
+> > 
+> > 1) Exactly what files are missing?  I very likely have them, just not
+> > where
+> > the compiler is looking.  If I can find them, maybe I can add something to
+> > VTKLIBPATH.
+> > 
+> > 2) Is there an easier way to deal with this?  Why is it that Fedora always
+> > has
+> > problems?  It should Just Work.
+> > 
+> > --
+> > Bill Gee
+> > 
+> > 
+> > 
+> > =====  Using the providede Makefile for loch:
+> > make -C ./loch
+> > make[1]: Entering directory '/home/bgee/Installs/therion-5.4.1/loch'
+> > gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-
+> > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> > D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxR2P.o
+> > lxR2P.c
+> > gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX  -I/usr/lib64/wx/include/gtk3-
+> > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> > D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxTR.o
+> > lxTR.c
+> > c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -I/usr/lib64/wx/include/gtk3-
+> > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> > D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/local/
+> > include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxOGLFT.o
+> > lxOGLFT.cxx
+> > c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -I/usr/lib64/wx/include/gtk3-
+> > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+> > D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 -I/usr/local/
+> > include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxSetup.o
+> > lxSetup.cxx
+> > In file included from lxSetup.h:23:0,
+> > 
+> >                  from lxSetup.cxx:38:
+> > lxData.h:34:25: fatal error: vtkPolyData.h: No such file or directory
+> > 
+> >  #include <vtkPolyData.h>
+> >  
+> >                          ^
+> > 
+> > compilation terminated.
+> > Makefile:147: recipe for target '/home/bgee/Installs/therion.bin/loch/
+> > lxSetup.o' failed
+> > make[1]: *** [/home/bgee/Installs/therion.bin/loch/lxSetup.o] Error 1
+> > make[1]: Leaving directory '/home/bgee/Installs/therion-5.4.1/loch'
+> > Makefile:206: recipe for target 'loch/loch' failed
+> > make: *** [loch/loch] Error 2
+> > 
+> >  bgee  ~  Installs  therion-5.4.1 
+> >  
+> >  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170501/4042f80e/attachment.htm>
+
+From james.begley at gmail.com  Mon May  1 23:50:55 2017
+From: james.begley at gmail.com (James Begley)
+Date: Mon, 01 May 2017 21:50:55 +0000
+Subject: [Therion] Therion 5.4.1 on Fedora 25 - Compile fails in loch
+In-Reply-To: <1536011.1pXkzTVUGj@main2.billgee.local>
+References: <2313509.ZaqphtnE7C@main2.billgee.local>
+ <CAGS-eH7fnJBdXedSPzy2E90FUt4KVt__cb1t2YEiTU20U_HG1A@mail.gmail.com>
+ <1536011.1pXkzTVUGj@main2.billgee.local>
+Message-ID: <CAGS-eH6n2E-Z45JjcF2=0qQkD7HhwVM-5VgCPaaMVJxMKPF7fA@mail.gmail.com>
+
+Hi Bill
+
+The RPM file from that copr repository does include the thbook.pdf - it
+should be installed in the /usr/share/therion/ folder.
+
+I'll admit that I hadn't tried running 'make install' (I would have just
+copied the compiled files to somewhere useful manually). My reading of the
+file is that it should have been copying the file that had been generated
+from {current_folder}/loch/loch to /usr/local/bin/loch - I guess that you
+would have to have root permissions to do this?
+
+The error that we are both getting is a little puzzling - I assumed that I
+was missing (or hadn't installed correctly) a graphics library. My
+workstation has recently (well, since I last ran loch!) had a new
+nvidia graphics card installed, and I thought that the error would likely
+be related to that. However if you the same error message (and assuming
+that you havent recently changed nvidia graphics cards as well) then it may
+be related to loch itself or the libraries it has been compiled against.
+I'll try to have a look at this, but unfortunately I'm going to be busy
+with other things for the next few days.
+
+Cheers,
+James
+
+On Mon, 1 May 2017 at 20:29 Bill Gee <bgee at campercaver.net> wrote:
+
+> Hi James ...
+>
+>
+>
+> I still have the old loch on my system. When I start it, I get this:
+>
+>
+>
+> =======
+>
+>  bgee  ~  loch
+> Warning: Mismatch between the program and library build versions detected.
+> The library used 2.8 (no debug,Unicode,compiler with C++ ABI 1010,wx
+> containers,compatible with 2.4,compatibl
+> e with 2.6),
+> and your program used 2.8 (no debug,Unicode,compiler with C++ ABI 1002,wx
+> containers,compatible with 2.4,comp
+> atible with 2.6).
+> Segmentation fault (core dumped)
+>
+> ==========
+>
+>
+>
+> It used to work, so some Fedora upgrade has hosed it. I can't tell what
+> version it is since it won't run. xtherion is version 5.3.16, so this is
+> whatever loch came with that.
+>
+>
+>
+> I tried your Makefile and received no errors. Unfortunately it also did
+> not produce any executable output files. "Make install" gave me an error
+> saying that /usr/local/bin/therion could not be written. I traced it down
+> to the root cause - It was trying to copy a file that does not exist.
+>
+>
+>
+> So I went to try out your repository. That is VERY useful! I already have
+> it set up for survex, so adding therion was easy.
+>
+>
+>
+> The new version of loch gives the same error on my system as on yours.
+>
+>
+>
+> One question about the package in your repository - Does it include
+> thbook.pdf? And if it does, where does it put that file?
+>
+>
+>
+> Thanks - Bill Gee
+>
+>
+>
+>
+>
+>
+>
+> On Monday, May 1, 2017 8:41:36 AM CDT James Begley wrote:
+>
+> > Hi Bill,
+>
+> >
+>
+> > I've managed to get therion and loch to compile on Fedora 25 - see
+>
+> > https://copr.fedorainfracloud.org/coprs/jmbegley/therion/
+>
+> >
+>
+> > The makefile that is used for loch is attached - hope this helps :)
+>
+> >
+>
+> > However, whilst xtherion is happy to run, I can't actually get loch to
+> run.
+>
+> > I get an error message that states
+>
+> >
+>
+> > "Error: glxCreateContext failed"
+>
+> >
+>
+> > Which is presumably some missing graphics library on my workstation :(
+>
+> >
+>
+> > Cheers,
+>
+> > James
+>
+> >
+>
+> > On Sun, 23 Apr 2017 at 15:43 Bill Gee via Therion <therion at speleo.sk>
+> wrote:
+>
+> > > Hello everyone -
+>
+> > >
+>
+> > > Once again I am wrestling with the ancient problem of getting loch to
+>
+> > > compile
+>
+> > > on Fedora Linux. Below is the sequence of errors that I get. I think I
+>
+> > > can
+>
+> > > modify the Therion Makefile so that it skips loch, but I would rather
+> not
+>
+> > > do
+>
+> > > that.
+>
+> > >
+>
+> > > Some versions ago I figured out a set of changes to the loch Makefile
+> that
+>
+> > > allowed it to compile. The listing below shows those changes. They do
+>
+> > > not
+>
+> > > work anymore, as seen by the compiler error.
+>
+> > >
+>
+> > > In the second set of errors it is saying that some libraries cannot be
+>
+> > > found.
+>
+> > > I do not find any files by these exact names. They probably have some
+>
+> > > extension, perhaps .so? But I do not find any files with that extension
+>
+> > > either. vtkIO.so does not exist.
+>
+> > >
+>
+> > > Two questions for the group:
+>
+> > >
+>
+> > > 1) Exactly what files are missing? I very likely have them, just not
+>
+> > > where
+>
+> > > the compiler is looking. If I can find them, maybe I can add something
+> to
+>
+> > > VTKLIBPATH.
+>
+> > >
+>
+> > > 2) Is there an easier way to deal with this? Why is it that Fedora
+> always
+>
+> > > has
+>
+> > > problems? It should Just Work.
+>
+> > >
+>
+> > > --
+>
+> > > Bill Gee
+>
+> > >
+>
+> > >
+>
+> > >
+>
+> > > ===== Using the providede Makefile for loch:
+>
+> > > make -C ./loch
+>
+> > > make[1]: Entering directory '/home/bgee/Installs/therion-5.4.1/loch'
+>
+> > > gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+> -I/usr/lib64/wx/include/gtk3-
+>
+> > > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+>
+> > > D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxR2P.o
+>
+> > > lxR2P.c
+>
+> > > gcc -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+> -I/usr/lib64/wx/include/gtk3-
+>
+> > > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+>
+> > > D__WXGTK__ -pthread -O2 -o /home/bgee/Installs/therion.bin/loch/lxTR.o
+>
+> > > lxTR.c
+>
+> > > c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+> -I/usr/lib64/wx/include/gtk3-
+>
+> > > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+>
+> > > D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2
+> -I/usr/local/
+>
+> > > include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxOGLFT.o
+>
+> > > lxOGLFT.cxx
+>
+> > > c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX
+> -I/usr/lib64/wx/include/gtk3-
+>
+> > > unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -
+>
+> > > D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2
+> -I/usr/local/
+>
+> > > include/vtk-5.4 -O2 -o /home/bgee/Installs/therion.bin/loch/lxSetup.o
+>
+> > > lxSetup.cxx
+>
+> > > In file included from lxSetup.h:23:0,
+>
+> > >
+>
+> > > from lxSetup.cxx:38:
+>
+> > > lxData.h:34:25: fatal error: vtkPolyData.h: No such file or directory
+>
+> > >
+>
+> > > #include <vtkPolyData.h>
+>
+> > >
+>
+> > > ^
+>
+> > >
+>
+> > > compilation terminated.
+>
+> > > Makefile:147: recipe for target '/home/bgee/Installs/therion.bin/loch/
+>
+> > > lxSetup.o' failed
+>
+> > > make[1]: *** [/home/bgee/Installs/therion.bin/loch/lxSetup.o] Error 1
+>
+> > > make[1]: Leaving directory '/home/bgee/Installs/therion-5.4.1/loch'
+>
+> > > Makefile:206: recipe for target 'loch/loch' failed
+>
+> > > make: *** [loch/loch] Error 2
+>
+> > >
+>
+> > > bgee  ~  Installs  therion-5.4.1 
+>
+> > >
+>
+> > >
+>
+> > > === Modified loch makefile:
+>
+> > > #VTKVERSION = $(shell tclsh ./getvtkver.tcl version)
+>
+> > >
+>
+> > > #VTKPATH = $(shell tclsh ./getvtkver.tcl incpath)
+>
+> > > #VTKLIBPATH = $(shell tclsh ./getvtkver.tcl libpath)
+>
+> > > VTKVERSION=6.3
+>
+> > > VTKV6 = $(shell tclsh ./getvtkver.tcl version6)
+>
+> > > #ifeq ($(VTKV6),1)
+>
+> > > #VTKLIBS = -lvtkCommonExecutionModel-$(VTKVERSION)
+> -lvtkCommonDataModel-$
+>
+> > > (VTKVERSION) -lvtkCommonCore-$(VTKVERSION)
+> -lvtkFiltersCore-$(VTKVERSION)
+>
+> > > -
+>
+> > > lvtkFiltersHybrid-$(VTKVERSION) -lvtkIOLegacy-$(VTKVERSION) -lfreetype
+>
+> > > -lpng -
+>
+> > > ljpeg
+>
+> > > #else
+>
+> > > #VTKLIBS = -lvtkHybrid -lvtkImaging -lvtkIO -lvtkGraphics
+> -lvtkFiltering -
+>
+> > > lvtkCommon -lvtkjpeg -lvtkpng -lvtkzlib -lvtksys -lfreetype
+>
+> > > #endif
+>
+> > > # VTKVERSION = 5.4
+>
+> > > # VTKPATH = /usr/local/include/vtk-$(VTKVERSION)
+>
+> > > # VTKLIBPATH = /usr/local/lib/vtk-$(VTKVERSION)
+>
+> > > VTKPATH=/usr/include/vtk
+>
+> > > VTKLIBPATH=/usr/lib64/vtk
+>
+> > >
+>
+> > > ==== Gives this result when compiling:
+>
+> > > c++ -o ./loch -Wall ./lxR2P.o ./lxTR.o ./lxOGLFT.o ./lxSetup.o
+>
+> > >
+>
+> > > ./lxRender.o
+>
+> > > ./lxWX.o ./lxImgIO.o ./lxLRUD.o ./lxFile.o ./lxSTree.o ./lxData.o
+>
+> > > ./lxMath.o
+>
+> > > ./lxSView.o ./lxSScene.o ./lxGUI.o ./lxGLC.o ./lxOptDlg.o
+> ./lxAboutDlg.o
+>
+> > > ./
+>
+> > > lxPres.o ./img.o -lwx_gtk3u_gl-3.0 -pthread -lwx_gtk3u_xrc-3.0 -
+>
+> > > lwx_gtk3u_webview-3.0 -lwx_gtk3u_html-3.0 -lwx_gtk3u_qa-3.0
+>
+> > > -lwx_gtk3u_adv-3.0
+>
+> > > -lwx_gtk3u_core-3.0 -lwx_baseu_xml-3.0 -lwx_baseu_net-3.0
+> -lwx_baseu-3.0
+>
+> > > -L/
+>
+> > > usr/lib64/vtk -lvtkHybrid -lvtkImaging -lvtkIO -lvtkGraphics
+>
+> > > -lvtkFiltering -
+>
+> > > lvtkCommon -lfreetype -lGLU -lGL -lpthread -lX11 -lz -s
+>
+> > > /usr/bin/ld: cannot find -lvtkHybrid
+>
+> > > /usr/bin/ld: cannot find -lvtkImaging
+>
+> > > /usr/bin/ld: cannot find -lvtkIO
+>
+> > > /usr/bin/ld: cannot find -lvtkGraphics
+>
+> > > /usr/bin/ld: cannot find -lvtkFiltering
+>
+> > > /usr/bin/ld: cannot find -lvtkCommon
+>
+> > > collect2: error: ld returned 1 exit status
+>
+> > > Makefile:165: recipe for target 'loch' failed
+>
+> > > make: *** [loch] Error 1
+>
+> > >
+>
+> > > ==== Installed vtk packages:
+>
+> > > bgee  ~  Installs  therion-5.4.1  loch  rpm -qa | grep vtk
+>
+> > >
+>
+> > > vtk-python-6.3.0-11.fc25.x86_64
+>
+> > > vtk-java-6.3.0-11.fc25.x86_64
+>
+> > > vtk-tcl-6.3.0-11.fc25.x86_64
+>
+> > > vtk-6.3.0-11.fc25.x86_64
+>
+> > > vtk-qt-tcl-6.3.0-11.fc25.x86_64
+>
+> > > vtk-devel-6.3.0-11.fc25.x86_64
+>
+> > > vtk-qt-6.3.0-11.fc25.x86_64
+>
+> > > vtk-qt-python-6.3.0-11.fc25.x86_64
+>
+> > >
+>
+> > >
+>
+> > >
+>
+> > > _______________________________________________
+>
+> > > Therion mailing list
+>
+> > > Therion at speleo.sk
+>
+> > > https://mailman.speleo.sk/listinfo/therion
+>
+>
+>
+>
+> --
+>
+> Bill Gee
+>
+>
+>
+> BOINC Statistics <https://boincstats.com/signature/-1/bam/40138/sig.png>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170501/6d879ecc/attachment.htm>
+
+From bgee at campercaver.net  Tue May  2 01:15:28 2017
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 01 May 2017 18:15:28 -0500
+Subject: [Therion] Therion 5.4.1 on Fedora 25 - Compile fails in loch
+In-Reply-To: <CAGS-eH6n2E-Z45JjcF2=0qQkD7HhwVM-5VgCPaaMVJxMKPF7fA@mail.gmail.com>
+References: <2313509.ZaqphtnE7C@main2.billgee.local>
+ <1536011.1pXkzTVUGj@main2.billgee.local>
+ <CAGS-eH6n2E-Z45JjcF2=0qQkD7HhwVM-5VgCPaaMVJxMKPF7fA@mail.gmail.com>
+Message-ID: <93357505.Vun1q0vqgE@main2.billgee.local>
+
+Hi James -
+
+Confirmed - thbook.pdf is in /usr/share/therion.  Thanks!
+
+The problem with "make install" is not a permissions issue.  The files being copied do not 
+exist at their source location.  The compile ran and produced no errors - and also 
+produced no output!
+
+You may be on to something regarding nVidia display adapters.  I do use an nVidia 
+display adapter and I recently changed to a new one.  I have been using an older 
+8400GS.  Unfortunately nVidia decided to stop updating the driver for it.  Their driver 
+stopped working with kernel 4.1.6 or thereabouts.  I bought a new GT710 card which is 
+supported by nVidia's current driver.  This is the closed-source binary driver straight from 
+nVidia.
+
+I have not tried Therion 5.1.4 on any other system yet.  The obvious candidate is my 
+laptop which has an Intel display adapter.  I will try to do that soon and post results.  I 
+also have some VirtualBox systems where I can install Therion.  VirtualBox provides a 
+special display driver for guest systems.
+
+Bill Gee
+
+
+On Monday, May 1, 2017 4:50:55 PM CDT James Begley wrote:
+> Hi Bill
+> 
+> The RPM file from that copr repository does include the thbook.pdf - it
+> should be installed in the /usr/share/therion/ folder.
+> 
+> I'll admit that I hadn't tried running 'make install' (I would have just
+> copied the compiled files to somewhere useful manually). My reading of the
+> file is that it should have been copying the file that had been generated
+> from {current_folder}/loch/loch to /usr/local/bin/loch - I guess that you
+> would have to have root permissions to do this?
+> 
+> The error that we are both getting is a little puzzling - I assumed that I
+> was missing (or hadn't installed correctly) a graphics library. My
+> workstation has recently (well, since I last ran loch!) had a new
+> nvidia graphics card installed, and I thought that the error would likely
+> be related to that. However if you the same error message (and assuming
+> that you havent recently changed nvidia graphics cards as well) then it may
+> be related to loch itself or the libraries it has been compiled against.
+> I'll try to have a look at this, but unfortunately I'm going to be busy
+> with other things for the next few days.
+> 
+> Cheers,
+> James
+> 
+> On Mon, 1 May 2017 at 20:29 Bill Gee <bgee at campercaver.net> wrote:
+> > Hi James ...
+> > 
+> > 
+> > 
+> > I still have the old loch on my system. When I start it, I get this:
+> > 
+> > 
+> > 
+> > =======
+> > 
+> >  bgee  ~  loch
+> > 
+> > Warning: Mismatch between the program and library build versions detected.
+> > The library used 2.8 (no debug,Unicode,compiler with C++ ABI 1010,wx
+> > containers,compatible with 2.4,compatibl
+> > e with 2.6),
+> > and your program used 2.8 (no debug,Unicode,compiler with C++ ABI 1002,wx
+> > containers,compatible with 2.4,comp
+> > atible with 2.6).
+> > Segmentation fault (core dumped)
+> > 
+> > ==========
+> > 
+> > 
+> > 
+> > It used to work, so some Fedora upgrade has hosed it. I can't tell what
+> > version it is since it won't run. xtherion is version 5.3.16, so this is
+> > whatever loch came with that.
+> > 
+> > 
+> > 
+> > I tried your Makefile and received no errors. Unfortunately it also did
+> > not produce any executable output files. "Make install" gave me an error
+> > saying that /usr/local/bin/therion could not be written. I traced it down
+> > to the root cause - It was trying to copy a file that does not exist.
+> > 
+> > 
+> > 
+> > So I went to try out your repository. That is VERY useful! I already have
+> > it set up for survex, so adding therion was easy.
+> > 
+> > 
+> > 
+> > The new version of loch gives the same error on my system as on yours.
+> > 
+> > 
+> > 
+> > One question about the package in your repository - Does it include
+> > thbook.pdf? And if it does, where does it put that file?
+> > 
+> > 
+> > 
+> > Thanks - Bill Gee
+> > 
+> > On Monday, May 1, 2017 8:41:36 AM CDT James Begley wrote:
+> > > Hi Bill,
+> > > 
+> > > 
+> > > 
+> > > I've managed to get therion and loch to compile on Fedora 25 - see
+> > > 
+> > > https://copr.fedorainfracloud.org/coprs/jmbegley/therion/
+> > > 
+> > > 
+> > > 
+> > > The makefile that is used for loch is attached - hope this helps :)
+> > > 
+> > > 
+> > > 
+> > > However, whilst xtherion is happy to run, I can't actually get loch to
+> > 
+> > run.
+> > 
+> > > I get an error message that states
+> > > 
+> > > 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170501/133d084c/attachment.htm>
+
+From Henry.Bennett at dell.com  Mon May 15 14:48:31 2017
+From: Henry.Bennett at dell.com (Henry.Bennett at dell.com)
+Date: Mon, 15 May 2017 12:48:31 +0000
+Subject: [Therion] Question/Problem with customizing text labels
+In-Reply-To: <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+Message-ID: <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+
+Hi,  I see that more text size options didn’t make it into the 5.4.1 release.
+
+Would be great to see it in a future release.
+
+Thanks, Henry
+
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of ???????? ???????? via Therion
+Sent: 13 December 2016 15:13
+To: List for Therion users <therion at speleo.sk>
+Cc: Владимир Георгиев <vld.georgiev at gmail.com>
+Subject: Re: [Therion] Question/Problem with customizing text labels
+
+Torsten
+I can't confirm or test the issue, but if the -xl size is too small, you can check out the beta version here https://github.com/vldgeorgiev/therion/wiki
+A few weeks ago I added three more large symbol sizes. E.g. 2XL, 3XL and 4XL. They might work in your case.
+
+If I have time next week I will see about the frame size and why it is drawn smaller.
+Vladimir
+
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170515/5e62b31d/attachment.htm>
+
+From vld.georgiev at gmail.com  Mon May 15 17:33:35 2017
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Mon, 15 May 2017 18:33:35 +0300
+Subject: [Therion] Question/Problem with customizing text labels
+In-Reply-To: <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+ <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+Message-ID: <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+
+Henry
+
+After a talk with Stacho, he thought that it would be better not to
+increase the list of sizes. They are restrictive, in a sense that you have
+a limited set and can not use anything larger or smaller or in-between
+sizes.
+There was a "scale" option that already existed, but was not enabled, so he
+enabled it.
+
+For point and line items you can use this option:
+"-scale <number>", where <number> is the scale factor. The normal size
+corresponds to 1.0, but you can use any value >0.
+
+Vladimir
+
+On Mon, May 15, 2017 at 3:48 PM, <Henry.Bennett at dell.com> wrote:
+
+> Hi,  I see that more text size options didn’t make it into the 5.4.1
+> release.
+>
+>
+>
+> Would be great to see it in a future release.
+>
+>
+>
+> Thanks, Henry
+>
+>
+>
+>
+>
+> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *????????
+> ???????? via Therion
+> *Sent:* 13 December 2016 15:13
+> *To:* List for Therion users <therion at speleo.sk>
+> *Cc:* Владимир Георгиев <vld.georgiev at gmail.com>
+> *Subject:* Re: [Therion] Question/Problem with customizing text labels
+>
+>
+>
+> Torsten
+>
+> I can't confirm or test the issue, but if the -xl size is too small, you
+> can check out the beta version here https://github.com/
+> vldgeorgiev/therion/wiki
+>
+> A few weeks ago I added three more large symbol sizes. E.g. 2XL, 3XL and
+> 4XL. They might work in your case.
+>
+>
+> If I have time next week I will see about the frame size and why it is
+> drawn smaller.
+>
+> Vladimir
+>
+>
+>
+> Dell Corporation Limited is registered in England and Wales. Company
+> Registration Number: 2081369
+> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+> Berkshire, RG12 1LF, UK.
+> Company details for other Dell UK entities can be found on  www.dell.co.uk
+> .
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170515/ec795282/attachment.htm>
+
+From Henry.Bennett at dell.com  Mon May 15 18:13:35 2017
+From: Henry.Bennett at dell.com (Henry.Bennett at dell.com)
+Date: Mon, 15 May 2017 16:13:35 +0000
+Subject: [Therion] Question/Problem with customizing text labels
+In-Reply-To: <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+ <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+Message-ID: <4b6d48081d9e440ca8bdcd90daf8a181@SNNX13MDC115.EMEA.DELL.COM>
+
+Hi Vladimir,
+
+“-scale” sounds interesting.  One of the things I like about s,m,l,xl, etc was the ability in metapost to set xs to zero (0).
+
+Consider a system where you have a full size survey of a single cave.  I can draw that cave with full detail using xs set to a x font size. When that cave intercepts the cave master I can simply draw the system by suppressing some of the detail by using
+
+  code metapost
+    #change the size of the default fonts
+    #fonts_setup(<tinysize>,<smallsize>,<normalsize>,<largesize>,<hugesize>);
+    fonts_setup(0,18,40,64,80);
+  endcode
+
+I will take a look at –scale and see how that works in such a case.
+
+Regards,
+
+Henry Bennett
+Solutions Consultant
+Dell EMC | Public Sector
+henry.bennett at dell.com<mailto:henry.bennett at dell.com>  +44 7717 157 193
+http://uk.linkedin.com/in/bennetthenry/
+Planned absence: 19-23 June
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of ???????? ???????? via Therion
+Sent: 15 May 2017 16:34
+To: Bennett, Henry <Henry_Bennett at Dell.com>
+Cc: Владимир Георгиев <vld.georgiev at gmail.com>; TherionList <therion at speleo.sk>
+Subject: Re: [Therion] Question/Problem with customizing text labels
+
+Henry
+After a talk with Stacho, he thought that it would be better not to increase the list of sizes. They are restrictive, in a sense that you have a limited set and can not use anything larger or smaller or in-between sizes.
+There was a "scale" option that already existed, but was not enabled, so he enabled it.
+For point and line items you can use this option:
+"-scale <number>", where <number> is the scale factor. The normal size corresponds to 1.0, but you can use any value >0.
+Vladimir
+
+On Mon, May 15, 2017 at 3:48 PM, <Henry.Bennett at dell.com<mailto:Henry.Bennett at dell.com>> wrote:
+Hi,  I see that more text size options didn’t make it into the 5.4.1 release.
+
+Would be great to see it in a future release.
+
+Thanks, Henry
+
+
+From: Therion [mailto:therion-bounces at speleo.sk<mailto:therion-bounces at speleo.sk>] On Behalf Of ???????? ???????? via Therion
+Sent: 13 December 2016 15:13
+To: List for Therion users <therion at speleo.sk<mailto:therion at speleo.sk>>
+Cc: Владимир Георгиев <vld.georgiev at gmail.com<mailto:vld.georgiev at gmail.com>>
+Subject: Re: [Therion] Question/Problem with customizing text labels
+
+Torsten
+I can't confirm or test the issue, but if the -xl size is too small, you can check out the beta version here https://github.com/vldgeorgiev/therion/wiki
+A few weeks ago I added three more large symbol sizes. E.g. 2XL, 3XL and 4XL. They might work in your case.
+
+If I have time next week I will see about the frame size and why it is drawn smaller.
+Vladimir
+
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk<http://www.dell.co.uk>.
+
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170515/fb38ff16/attachment.htm>
+
+From vld.georgiev at gmail.com  Mon May 15 19:04:06 2017
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Mon, 15 May 2017 20:04:06 +0300
+Subject: [Therion] Question/Problem with customizing text labels
+In-Reply-To: <4b6d48081d9e440ca8bdcd90daf8a181@SNNX13MDC115.EMEA.DELL.COM>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+ <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+ <4b6d48081d9e440ca8bdcd90daf8a181@SNNX13MDC115.EMEA.DELL.COM>
+Message-ID: <CAHzQzvRQ_HEyucBQqOP5YP9p+dRDHqgATujBZnewQ1wOBJ1-eA@mail.gmail.com>
+
+There is also a "min-symbol-scale" option in layout, which hides smaller
+symbols. It might work similar to what you are doing in the font_setup
+metapost.
+You can hide the smallest items, not the largest ones, but hiding the
+larger ones is not that useful anyway.
+
+
+On Mon, May 15, 2017 at 7:13 PM, Henry.Bennett--- via Therion <
+therion at speleo.sk> wrote:
+
+> Hi Vladimir,
+>
+>
+>
+> “-scale” sounds interesting.  One of the things I like about s,m,l,xl, etc
+> was the ability in metapost to set xs to zero (0).
+>
+>
+>
+> Consider a system where you have a full size survey of a single cave.  I
+> can draw that cave with full detail using xs set to a x font size. When
+> that cave intercepts the cave master I can simply draw the system by
+> suppressing some of the detail by using
+>
+>
+>
+>   code metapost
+>
+>     #change the size of the default fonts
+>
+>     #fonts_setup(<tinysize>,<smallsize>,<normalsize>,<
+> largesize>,<hugesize>);
+>
+>     fonts_setup(0,18,40,64,80);
+>
+>   endcode
+>
+>
+>
+> I will take a look at –scale and see how that works in such a case.
+>
+>
+>
+> Regards,
+>
+>
+>
+> *Henry Bennett*
+>
+> Solutions Consultant
+>
+> *Dell* *EMC* | Public Sector
+>
+> henry.bennett at dell.com  +44 7717 157 193 <+44%207717%20157193>
+>
+> http://uk.linkedin.com/in/bennetthenry/
+>
+> Planned absence: *19-23 June*
+>
+>
+>
+> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *????????
+> ???????? via Therion
+> *Sent:* 15 May 2017 16:34
+> *To:* Bennett, Henry <Henry_Bennett at Dell.com>
+> *Cc:* Владимир Георгиев <vld.georgiev at gmail.com>; TherionList <
+> therion at speleo.sk>
+> *Subject:* Re: [Therion] Question/Problem with customizing text labels
+>
+>
+>
+> Henry
+>
+> After a talk with Stacho, he thought that it would be better not to
+> increase the list of sizes. They are restrictive, in a sense that you have
+> a limited set and can not use anything larger or smaller or in-between
+> sizes.
+>
+> There was a "scale" option that already existed, but was not enabled, so
+> he enabled it.
+>
+> For point and line items you can use this option:
+>
+> "-scale <number>", where <number> is the scale factor. The normal size
+> corresponds to 1.0, but you can use any value >0.
+>
+> Vladimir
+>
+>
+>
+> On Mon, May 15, 2017 at 3:48 PM, <Henry.Bennett at dell.com> wrote:
+>
+> Hi,  I see that more text size options didn’t make it into the 5.4.1
+> release.
+>
+>
+>
+> Would be great to see it in a future release.
+>
+>
+>
+> Thanks, Henry
+>
+>
+>
+>
+>
+> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *????????
+> ???????? via Therion
+> *Sent:* 13 December 2016 15:13
+> *To:* List for Therion users <therion at speleo.sk>
+> *Cc:* Владимир Георгиев <vld.georgiev at gmail.com>
+> *Subject:* Re: [Therion] Question/Problem with customizing text labels
+>
+>
+>
+> Torsten
+>
+> I can't confirm or test the issue, but if the -xl size is too small, you
+> can check out the beta version here https://github.com/
+> vldgeorgiev/therion/wiki
+>
+> A few weeks ago I added three more large symbol sizes. E.g. 2XL, 3XL and
+> 4XL. They might work in your case.
+>
+>
+> If I have time next week I will see about the frame size and why it is
+> drawn smaller.
+>
+> Vladimir
+>
+>
+>
+> Dell Corporation Limited is registered in England and Wales. Company
+> Registration Number: 2081369
+> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+> Berkshire, RG12 1LF, UK.
+> Company details for other Dell UK entities can be found on  www.dell.co.uk
+> .
+>
+>
+>
+> Dell Corporation Limited is registered in England and Wales. Company
+> Registration Number: 2081369
+> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+> Berkshire, RG12 1LF, UK.
+> Company details for other Dell UK entities can be found on  www.dell.co.uk
+> .
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170515/4d096276/attachment.htm>
+
+From drfootleg at gmail.com  Wed May 17 12:16:48 2017
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 17 May 2017 10:16:48 +0000
+Subject: [Therion] Question/Problem with customizing text labels
+In-Reply-To: <CAHzQzvRQ_HEyucBQqOP5YP9p+dRDHqgATujBZnewQ1wOBJ1-eA@mail.gmail.com>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+ <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+ <4b6d48081d9e440ca8bdcd90daf8a181@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvRQ_HEyucBQqOP5YP9p+dRDHqgATujBZnewQ1wOBJ1-eA@mail.gmail.com>
+Message-ID: <CAJkGg4=A+47BevwQKsVrnGXJaFp3sOOeAMw8DCj2M54V54NY+Q@mail.gmail.com>
+
+An alternative to setting smaller text size codes to 0 (to hide xs labels)
+is to put the labels in a different scrap to the drawing. I have done this
+with some success where I wanted more detailed text in large scale maps. I
+still draw it all in the editor on one th2 file, but just move the labels
+into a separate scrap. Then I can decide when I define my maps which ones
+to include the labels in. This works well where some maps use offsets too,
+as I can include labels in the white space per map depending on where the
+white space on the survey appears based on different use of offsets on each
+map.
+
+Footleg
+
+On Mon, May 15, 2017 at 6:04 PM Владимир Георгиев via Therion <
+therion at speleo.sk> wrote:
+
+> There is also a "min-symbol-scale" option in layout, which hides smaller
+> symbols. It might work similar to what you are doing in the font_setup
+> metapost.
+> You can hide the smallest items, not the largest ones, but hiding the
+> larger ones is not that useful anyway.
+>
+>
+> On Mon, May 15, 2017 at 7:13 PM, Henry.Bennett--- via Therion <
+> therion at speleo.sk> wrote:
+>
+>> Hi Vladimir,
+>>
+>>
+>>
+>> “-scale” sounds interesting.  One of the things I like about s,m,l,xl,
+>> etc was the ability in metapost to set xs to zero (0).
+>>
+>>
+>>
+>> Consider a system where you have a full size survey of a single cave.  I
+>> can draw that cave with full detail using xs set to a x font size. When
+>> that cave intercepts the cave master I can simply draw the system by
+>> suppressing some of the detail by using
+>>
+>>
+>>
+>>   code metapost
+>>
+>>     #change the size of the default fonts
+>>
+>>
+>> #fonts_setup(<tinysize>,<smallsize>,<normalsize>,<largesize>,<hugesize>);
+>>
+>>     fonts_setup(0,18,40,64,80);
+>>
+>>   endcode
+>>
+>>
+>>
+>> I will take a look at –scale and see how that works in such a case.
+>>
+>>
+>>
+>> Regards,
+>>
+>>
+>>
+>> *Henry Bennett*
+>>
+>> Solutions Consultant
+>>
+>> *Dell* *EMC* | Public Sector
+>>
+>> henry.bennett at dell.com  +44 7717 157 193 <+44%207717%20157193>
+>>
+>> http://uk.linkedin.com/in/bennetthenry/
+>>
+>> Planned absence: *19-23 June*
+>>
+>>
+>>
+>> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *????????
+>> ???????? via Therion
+>> *Sent:* 15 May 2017 16:34
+>> *To:* Bennett, Henry <Henry_Bennett at Dell.com>
+>> *Cc:* Владимир Георгиев <vld.georgiev at gmail.com>; TherionList <
+>> therion at speleo.sk>
+>> *Subject:* Re: [Therion] Question/Problem with customizing text labels
+>>
+>>
+>>
+>> Henry
+>>
+>> After a talk with Stacho, he thought that it would be better not to
+>> increase the list of sizes. They are restrictive, in a sense that you have
+>> a limited set and can not use anything larger or smaller or in-between
+>> sizes.
+>>
+>> There was a "scale" option that already existed, but was not enabled, so
+>> he enabled it.
+>>
+>> For point and line items you can use this option:
+>>
+>> "-scale <number>", where <number> is the scale factor. The normal size
+>> corresponds to 1.0, but you can use any value >0.
+>>
+>> Vladimir
+>>
+>>
+>>
+>> On Mon, May 15, 2017 at 3:48 PM, <Henry.Bennett at dell.com> wrote:
+>>
+>> Hi,  I see that more text size options didn’t make it into the 5.4.1
+>> release.
+>>
+>>
+>>
+>> Would be great to see it in a future release.
+>>
+>>
+>>
+>> Thanks, Henry
+>>
+>>
+>>
+>>
+>>
+>> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *????????
+>> ???????? via Therion
+>> *Sent:* 13 December 2016 15:13
+>> *To:* List for Therion users <therion at speleo.sk>
+>> *Cc:* Владимир Георгиев <vld.georgiev at gmail.com>
+>> *Subject:* Re: [Therion] Question/Problem with customizing text labels
+>>
+>>
+>>
+>> Torsten
+>>
+>> I can't confirm or test the issue, but if the -xl size is too small, you
+>> can check out the beta version here
+>> https://github.com/vldgeorgiev/therion/wiki
+>>
+>> A few weeks ago I added three more large symbol sizes. E.g. 2XL, 3XL and
+>> 4XL. They might work in your case.
+>>
+>>
+>> If I have time next week I will see about the frame size and why it is
+>> drawn smaller.
+>>
+>> Vladimir
+>>
+>>
+>>
+>> Dell Corporation Limited is registered in England and Wales. Company
+>> Registration Number: 2081369
+>> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+>> Berkshire, RG12 1LF, UK.
+>> Company details for other Dell UK entities can be found on
+>> www.dell.co.uk.
+>>
+>>
+>>
+>> Dell Corporation Limited is registered in England and Wales. Company
+>> Registration Number: 2081369
+>> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+>> Berkshire, RG12 1LF, UK.
+>> Company details for other Dell UK entities can be found on
+>> www.dell.co.uk.
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170517/852be93d/attachment.htm>
+
+From beni at hallinger.org  Sun May 21 12:28:27 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sun, 21 May 2017 12:28:27 +0200
+Subject: [Therion] Showing altitude lines in extended elevation
+In-Reply-To: <CAHzQzvRQ_HEyucBQqOP5YP9p+dRDHqgATujBZnewQ1wOBJ1-eA@mail.gmail.com>
+References: <1273618172.129073.1481560701395@comcenter.netcologne.de>
+ <F5B116F6-6C69-4B44-8DEF-3D917156BF2C@mac.com>
+ <1278286643.132802.1481612551680@comcenter.netcologne.de>
+ <95445583-F56B-455F-BA7B-7BC07C3202D9@mac.com>
+ <1904515830.136108.1481631181868@comcenter.netcologne.de>
+ <CAHzQzvTQWA+SVsEdr=SKT1Sq6SXyNqX=QgtL7mXTVF318PrE6g@mail.gmail.com>
+ <929884401f6d489ba46dfbae3feaaf6a@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvTZSVfq3gOnzPE2WBhDHtJBvz_jc+jnC6oEyKYWOeXmtw@mail.gmail.com>
+ <4b6d48081d9e440ca8bdcd90daf8a181@SNNX13MDC115.EMEA.DELL.COM>
+ <CAHzQzvRQ_HEyucBQqOP5YP9p+dRDHqgATujBZnewQ1wOBJ1-eA@mail.gmail.com>
+Message-ID: <5cf9d149fc6253671fed67693da7bd2b@hallinger.org>
+
+Hello,
+i wonder why i can produce altitude lines in projected elevation, but not in 
+extended elevation.
+
+How can i enable the depth lines in xelev output?
+(grid-command and friends did nothing)
+
+With best regards,
+Beni
+
+
+From bejohansen at gmail.com  Mon May 22 15:00:31 2017
+From: bejohansen at gmail.com (=?UTF-8?Q?Bj=C3=B8rn_Egil_Johansen?=)
+Date: Mon, 22 May 2017 15:00:31 +0200
+Subject: [Therion] Loch fails to start in Debian
+Message-ID: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+
+I have a fairly fresh Debian 9 Stretch 64bit install , using propietary
+NVIDIA-drivers. Therion from debian repositories 5.3.16-10+b4
+
+When trying to open Loch i encountered this error:
+
+Failed to load module "canberra-gtk-module"
+The program 'loch' received an X Window System error.
+This probably reflects a bug in the program.
+The error was 'BadValue (integer parameter out of range for operation)'.
+  (Details: serial 21 error_code 2 request_code 154 minor_code 3)
+  (Note to programmers: normally, X errors are reported asynchronously;
+   that is, you will receive the error a while after causing it.
+   To debug your program, run it with the --sync command line
+   option to change this behavior. You can then get a meaningful
+   backtrace from your debugger if you break on the gdk_x_error() function.)
+
+I had libcanberra-gtk3-module installed, but i also installed
+libcanberra-gtk-module, but still could not open Loch, giving this error:
+
+The program 'loch' received an X Window System error.
+This probably reflects a bug in the program.
+The error was 'BadValue (integer parameter out of range for operation)'.
+  (Details: serial 21 error_code 2 request_code 154 minor_code 3)
+  (Note to programmers: normally, X errors are reported asynchronously;
+   that is, you will receive the error a while after causing it.
+   To debug your program, run it with the --sync command line
+   option to change this behavior. You can then get a meaningful
+   backtrace from your debugger if you break on the gdk_x_error() function.)
+
+I thing this might be a OpenGL-related error. lshw gives:
+
+*-display
+                description: VGA compatible controller
+                product: GM204 [GeForce GTX 970]
+                vendor: NVIDIA Corporation
+                physical id: 0
+                bus info: pci at 0000:01:00.0
+                version: a1
+                width: 64 bits
+                clock: 33MHz
+                capabilities: pm msi pciexpress vga_controller bus_master
+cap_list rom
+                configuration: driver=nvidia latency=0
+                resources: irq:33 memory:f6000000-f6ffffff
+memory:e0000000-efffffff memory:f0000000-f1ffffff ioport:e000(size=128)
+memory:c0000-dffff
+
+Aven works just fine. Aven, About Aven report is at the end ot this email.
+
+I notice that this problem is very similar to a problem Andrew Atkinson
+reported back in 2011.
+
+Earlier i tried running Loch in ubuntu 16.04 on the same machine with
+propietary nvidia-drivers and failing as well, but I never attempted any
+debuging on that install.
+
+I have not tried Loch with the noveau-driver. Is there any use trying it?
+
+What would be the next step to try to debug this problem?
+
+Best Regards
+Bjørn Egil
+
+
+
+
+Aven, About Aven reports:
+Linux 4.9.0-3-amd64 x86_64
+wxWidgets 3.0.2 (GTK+ >= 2.0)
+Display Depth: 24 bpp (colour)
+OpenGL 4.5.0 NVIDIA 375.39
+NVIDIA Corporation
+GeForce GTX 970/PCIe/SSE2
+GLX 1.4
+R8G8B8
+Max Texture size: 16384x16384
+Max Viewport size: 16384x16384
+Smooth Point Size 1.000-189.875 (granularity 0.125)
+Aliased point size 1.000-2047.000
+Double buffered: true
+GL_AMD_multi_draw_indirect GL_AMD_seamless_cubemap_per_texture
+GL_AMD_vertex_shader_viewport_index GL_AMD_vertex_shader_layer
+GL_ARB_arrays_of_arrays GL_ARB_base_instance GL_ARB_bindless_texture
+GL_ARB_blend_func_extended GL_ARB_buffer_storage GL_ARB_clear_buffer_object
+GL_ARB_clear_texture GL_ARB_clip_control GL_ARB_color_buffer_float
+GL_ARB_compatibility GL_ARB_compressed_texture_pixel_storage
+GL_ARB_conservative_depth GL_ARB_compute_shader
+GL_ARB_compute_variable_group_size GL_ARB_conditional_render_inverted
+GL_ARB_copy_buffer GL_ARB_copy_image GL_ARB_cull_distance
+GL_ARB_debug_output GL_ARB_depth_buffer_float GL_ARB_depth_clamp
+GL_ARB_depth_texture GL_ARB_derivative_control GL_ARB_direct_state_access
+GL_ARB_draw_buffers GL_ARB_draw_buffers_blend GL_ARB_draw_indirect
+GL_ARB_draw_elements_base_vertex GL_ARB_draw_instanced
+GL_ARB_enhanced_layouts GL_ARB_ES2_compatibility GL_ARB_ES3_compatibility
+GL_ARB_ES3_1_compatibility GL_ARB_ES3_2_compatibility
+GL_ARB_explicit_attrib_location GL_ARB_explicit_uniform_location
+GL_ARB_fragment_coord_conventions GL_ARB_fragment_layer_viewport
+GL_ARB_fragment_program GL_ARB_fragment_program_shadow
+GL_ARB_fragment_shader GL_ARB_fragment_shader_interlock
+GL_ARB_framebuffer_no_attachments GL_ARB_framebuffer_object
+GL_ARB_framebuffer_sRGB GL_ARB_geometry_shader4 GL_ARB_get_program_binary
+GL_ARB_get_texture_sub_image GL_ARB_gl_spirv GL_ARB_gpu_shader5
+GL_ARB_gpu_shader_fp64 GL_ARB_gpu_shader_int64 GL_ARB_half_float_pixel
+GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_indirect_parameters
+GL_ARB_instanced_arrays GL_ARB_internalformat_query
+GL_ARB_internalformat_query2 GL_ARB_invalidate_subdata
+GL_ARB_map_buffer_alignment GL_ARB_map_buffer_range GL_ARB_multi_bind
+GL_ARB_multi_draw_indirect GL_ARB_multisample GL_ARB_multitexture
+GL_ARB_occlusion_query GL_ARB_occlusion_query2
+GL_ARB_parallel_shader_compile GL_ARB_pipeline_statistics_query
+GL_ARB_pixel_buffer_object GL_ARB_point_parameters GL_ARB_point_sprite
+GL_ARB_post_depth_coverage GL_ARB_program_interface_query
+GL_ARB_provoking_vertex GL_ARB_query_buffer_object
+GL_ARB_robust_buffer_access_behavior GL_ARB_robustness
+GL_ARB_sample_locations GL_ARB_sample_shading GL_ARB_sampler_objects
+GL_ARB_seamless_cube_map GL_ARB_seamless_cubemap_per_texture
+GL_ARB_separate_shader_objects GL_ARB_shader_atomic_counter_ops
+GL_ARB_shader_atomic_counters GL_ARB_shader_ballot
+GL_ARB_shader_bit_encoding GL_ARB_shader_clock
+GL_ARB_shader_draw_parameters GL_ARB_shader_group_vote
+GL_ARB_shader_image_load_store GL_ARB_shader_image_size
+GL_ARB_shader_objects GL_ARB_shader_precision
+GL_ARB_shader_storage_buffer_object GL_ARB_shader_subroutine
+GL_ARB_shader_texture_image_samples GL_ARB_shader_texture_lod
+GL_ARB_shading_language_100 GL_ARB_shader_viewport_layer_array
+GL_ARB_shading_language_420pack GL_ARB_shading_language_include
+GL_ARB_shading_language_packing GL_ARB_shadow GL_ARB_sparse_buffer
+GL_ARB_sparse_texture GL_ARB_sparse_texture2 GL_ARB_sparse_texture_clamp
+GL_ARB_stencil_texturing GL_ARB_sync GL_ARB_tessellation_shader
+GL_ARB_texture_barrier GL_ARB_texture_border_clamp
+GL_ARB_texture_buffer_object GL_ARB_texture_buffer_object_rgb32
+GL_ARB_texture_buffer_range GL_ARB_texture_compression
+GL_ARB_texture_compression_bptc GL_ARB_texture_compression_rgtc
+GL_ARB_texture_cube_map GL_ARB_texture_cube_map_array
+GL_ARB_texture_env_add GL_ARB_texture_env_combine
+GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3
+GL_ARB_texture_filter_minmax GL_ARB_texture_float GL_ARB_texture_gather
+GL_ARB_texture_mirror_clamp_to_edge GL_ARB_texture_mirrored_repeat
+GL_ARB_texture_multisample GL_ARB_texture_non_power_of_two
+GL_ARB_texture_query_levels GL_ARB_texture_query_lod
+GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_rgb10_a2ui
+GL_ARB_texture_stencil8 GL_ARB_texture_storage
+GL_ARB_texture_storage_multisample GL_ARB_texture_swizzle
+GL_ARB_texture_view GL_ARB_timer_query GL_ARB_transform_feedback2
+GL_ARB_transform_feedback3 GL_ARB_transform_feedback_instanced
+GL_ARB_transform_feedback_overflow_query GL_ARB_transpose_matrix
+GL_ARB_uniform_buffer_object GL_ARB_vertex_array_bgra
+GL_ARB_vertex_array_object GL_ARB_vertex_attrib_64bit
+GL_ARB_vertex_attrib_binding GL_ARB_vertex_buffer_object
+GL_ARB_vertex_program GL_ARB_vertex_shader
+GL_ARB_vertex_type_10f_11f_11f_rev GL_ARB_vertex_type_2_10_10_10_rev
+GL_ARB_viewport_array GL_ARB_window_pos GL_ATI_draw_buffers
+GL_ATI_texture_float GL_ATI_texture_mirror_once GL_S3_s3tc
+GL_EXT_texture_env_add GL_EXT_abgr GL_EXT_bgra GL_EXT_bindable_uniform
+GL_EXT_blend_color GL_EXT_blend_equation_separate
+GL_EXT_blend_func_separate GL_EXT_blend_minmax GL_EXT_blend_subtract
+GL_EXT_compiled_vertex_array GL_EXT_Cg_shader GL_EXT_depth_bounds_test
+GL_EXT_direct_state_access GL_EXT_draw_buffers2 GL_EXT_draw_instanced
+GL_EXT_draw_range_elements GL_EXT_fog_coord GL_EXT_framebuffer_blit
+GL_EXT_framebuffer_multisample GL_EXTX_framebuffer_mixed_formats
+GL_EXT_framebuffer_multisample_blit_scaled GL_EXT_framebuffer_object
+GL_EXT_framebuffer_sRGB GL_EXT_geometry_shader4
+GL_EXT_gpu_program_parameters GL_EXT_gpu_shader4 GL_EXT_multi_draw_arrays
+GL_EXT_packed_depth_stencil GL_EXT_packed_float GL_EXT_packed_pixels
+GL_EXT_pixel_buffer_object GL_EXT_point_parameters
+GL_EXT_polygon_offset_clamp GL_EXT_post_depth_coverage
+GL_EXT_provoking_vertex GL_EXT_raster_multisample GL_EXT_rescale_normal
+GL_EXT_secondary_color GL_EXT_separate_shader_objects
+GL_EXT_separate_specular_color GL_EXT_shader_image_load_formatted
+GL_EXT_shader_image_load_store GL_EXT_shader_integer_mix
+GL_EXT_shadow_funcs GL_EXT_sparse_texture2 GL_EXT_stencil_two_side
+GL_EXT_stencil_wrap GL_EXT_texture3D GL_EXT_texture_array
+GL_EXT_texture_buffer_object GL_EXT_texture_compression_dxt1
+GL_EXT_texture_compression_latc GL_EXT_texture_compression_rgtc
+GL_EXT_texture_compression_s3tc GL_EXT_texture_cube_map
+GL_EXT_texture_edge_clamp GL_EXT_texture_env_combine
+GL_EXT_texture_env_dot3 GL_EXT_texture_filter_anisotropic
+GL_EXT_texture_filter_minmax GL_EXT_texture_integer GL_EXT_texture_lod
+GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp GL_EXT_texture_object
+GL_EXT_texture_shared_exponent GL_EXT_texture_sRGB
+GL_EXT_texture_sRGB_decode GL_EXT_texture_storage GL_EXT_texture_swizzle
+GL_EXT_timer_query GL_EXT_transform_feedback2 GL_EXT_vertex_array
+GL_EXT_vertex_array_bgra GL_EXT_vertex_attrib_64bit
+GL_EXT_window_rectangles GL_EXT_x11_sync_object GL_EXT_import_sync_object
+GL_NV_robustness_video_memory_purge GL_IBM_rasterpos_clip
+GL_IBM_texture_mirrored_repeat GL_KHR_context_flush_control GL_KHR_debug
+GL_KHR_no_error GL_KHR_robust_buffer_access_behavior GL_KHR_robustness
+GL_KTX_buffer_region GL_NV_alpha_to_coverage_dither_control
+GL_NV_bindless_multi_draw_indirect GL_NV_bindless_multi_draw_indirect_count
+GL_NV_bindless_texture GL_NV_blend_equation_advanced
+GL_NV_blend_equation_advanced_coherent GL_NV_blend_square
+GL_NV_command_list GL_NV_compute_program5 GL_NV_conditional_render
+GL_NV_conservative_raster GL_NV_conservative_raster_dilate
+GL_NV_copy_depth_to_color GL_NV_copy_image GL_NV_depth_buffer_float
+GL_NV_depth_clamp GL_NV_draw_texture GL_NV_draw_vulkan_image
+GL_NV_ES1_1_compatibility GL_NV_ES3_1_compatibility
+GL_NV_explicit_multisample GL_NV_fence GL_NV_fill_rectangle
+GL_NV_float_buffer GL_NV_fog_distance GL_NV_fragment_coverage_to_color
+GL_NV_fragment_program GL_NV_fragment_program_option
+GL_NV_fragment_program2 GL_NV_fragment_shader_interlock
+GL_NV_framebuffer_mixed_samples GL_NV_framebuffer_multisample_coverage
+GL_NV_geometry_shader4 GL_NV_geometry_shader_passthrough GL_NV_gpu_program4
+GL_NV_internalformat_sample_query GL_NV_gpu_program4_1 GL_NV_gpu_program5
+GL_NV_gpu_program5_mem_extended GL_NV_gpu_program_fp64 GL_NV_gpu_shader5
+GL_NV_half_float GL_NV_light_max_exponent GL_NV_multisample_coverage
+GL_NV_multisample_filter_hint GL_NV_occlusion_query
+GL_NV_packed_depth_stencil GL_NV_parameter_buffer_object
+GL_NV_parameter_buffer_object2 GL_NV_path_rendering
+GL_NV_path_rendering_shared_edge GL_NV_pixel_data_range GL_NV_point_sprite
+GL_NV_primitive_restart GL_NV_register_combiners GL_NV_register_combiners2
+GL_NV_sample_locations GL_NV_sample_mask_override_coverage
+GL_NV_shader_atomic_counters GL_NV_shader_atomic_float
+GL_NV_shader_atomic_fp16_vector GL_NV_shader_atomic_int64
+GL_NV_shader_buffer_load GL_NV_shader_storage_buffer_object
+GL_NV_texgen_reflection GL_NV_texture_barrier GL_NV_texture_compression_vtc
+GL_NV_texture_env_combine4 GL_NV_texture_multisample
+GL_NV_texture_rectangle GL_NV_texture_shader GL_NV_texture_shader2
+GL_NV_texture_shader3 GL_NV_transform_feedback GL_NV_transform_feedback2
+GL_NV_uniform_buffer_unified_memory GL_NV_vdpau_interop
+GL_NV_vertex_array_range GL_NV_vertex_array_range2
+GL_NV_vertex_attrib_integer_64bit GL_NV_vertex_buffer_unified_memory
+GL_NV_vertex_program GL_NV_vertex_program1_1 GL_NV_vertex_program2
+GL_NV_vertex_program2_option GL_NV_vertex_program3 GL_NV_viewport_array2
+GL_NV_viewport_swizzle GL_NVX_conditional_render GL_NVX_gpu_memory_info
+GL_NVX_nvenc_interop GL_NV_shader_thread_group GL_NV_shader_thread_shuffle
+GL_KHR_blend_equation_advanced GL_KHR_blend_equation_advanced_coherent
+GL_SGIS_generate_mipmap GL_SGIS_texture_lod GL_SGIX_depth_texture
+GL_SGIX_shadow GL_SUN_slice_accum
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170522/2cc79697/attachment.htm>
+
+From beni at hallinger.org  Mon May 22 15:58:25 2017
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 22 May 2017 15:58:25 +0200
+Subject: [Therion] Loch fails to start in Debian
+In-Reply-To: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+References: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+Message-ID: <743dba2c0890b09226136ad99697260d@hallinger.org>
+
+Hi,
+let me add that imtoo have issues with the proprietary nvidia drivers.
+I was not able to debug this, but all info is on the mailing list.
+Probably here is something with the proprietary drivers.
+
+
+
+Am 2017-05-22 15:00, schrieb Bjørn Egil Johansen via Therion:
+> I have a fairly fresh Debian 9 Stretch 64bit install , using propietary 
+> NVIDIA-drivers. Therion from debian repositories 5.3.16-10+b4
+>
+> When trying to open Loch i encountered this error:
+>
+> Failed to load module "canberra-gtk-module"
+> The program loch received an X Window System error.
+> This probably reflects a bug in the program.
+> The error was BadValue (integer parameter out of range for operation).
+>   (Details: serial 21 error_code 2 request_code 154 minor_code 3)
+>   (Note to programmers: normally, X errors are reported asynchronously;
+>    that is, you will receive the error a while after causing it.
+>    To debug your program, run it with the --sync command line
+>    option to change this behavior. You can then get a meaningful
+>    backtrace from your debugger if you break on the gdk_x_error() 
+> function.)
+>
+> I had libcanberra-gtk3-module installed, but i also installed 
+> libcanberra-gtk-module, but still could not open Loch, giving this error:
+>
+> The program loch received an X Window System error.
+> This probably reflects a bug in the program.
+> The error was BadValue (integer parameter out of range for operation).
+>   (Details: serial 21 error_code 2 request_code 154 minor_code 3)
+>   (Note to programmers: normally, X errors are reported asynchronously;
+>    that is, you will receive the error a while after causing it.
+>    To debug your program, run it with the --sync command line
+>    option to change this behavior. You can then get a meaningful
+>    backtrace from your debugger if you break on the gdk_x_error() 
+> function.)
+>
+> I thing this might be a OpenGL-related error. lshw gives:
+>  
+> *-display
+>                 description: VGA compatible controller
+>                 product: GM204 [GeForce GTX 970]
+>                 vendor: NVIDIA Corporation
+>                 physical id: 0
+>                 bus info: pci at 0000:01:00.0
+>                 version: a1
+>                 width: 64 bits
+>                 clock: 33MHz
+>                 capabilities: pm msi pciexpress vga_controller bus_master 
+> cap_list rom
+>                 configuration: driver=nvidia latency=0
+>                 resources: irq:33 memory:f6000000-f6ffffff 
+> memory:e0000000-efffffff memory:f0000000-f1ffffff ioport:e000(size=128) 
+> memory:c0000-dffff
+>  
+>
+> Aven works just fine. Aven, About Aven report is at the end ot this email.
+>
+> I notice that this problem is very similar to a problem Andrew Atkinson 
+> reported back in 2011.
+>
+> Earlier i tried running Loch in ubuntu 16.04 on the same machine with 
+> propietary nvidia-drivers and failing as well, but I never attempted any 
+> debuging on that install.
+>
+> I have not tried Loch with the noveau-driver. Is there any use trying it?
+>
+> What would be the next step to try to debug this problem?
+>
+> Best Regards
+>
+> Bjørn Egil
+>
+> Aven, About Aven reports:
+> Linux 4.9.0-3-amd64 x86_64
+> wxWidgets 3.0.2 (GTK+ >= 2.0)
+> Display Depth: 24 bpp (colour)
+> OpenGL 4.5.0 NVIDIA 375.39
+> NVIDIA Corporation
+> GeForce GTX 970/PCIe/SSE2
+> GLX 1.4
+> R8G8B8
+> Max Texture size: 16384x16384
+> Max Viewport size: 16384x16384
+> Smooth Point Size 1.000-189.875 (granularity 0.125)
+> Aliased point size 1.000-2047.000
+> Double buffered: true
+> GL_AMD_multi_draw_indirect GL_AMD_seamless_cubemap_per_texture 
+> GL_AMD_vertex_shader_viewport_index GL_AMD_vertex_shader_layer 
+> GL_ARB_arrays_of_arrays GL_ARB_base_instance GL_ARB_bindless_texture 
+> GL_ARB_blend_func_extended GL_ARB_buffer_storage GL_ARB_clear_buffer_object 
+> GL_ARB_clear_texture GL_ARB_clip_control GL_ARB_color_buffer_float 
+> GL_ARB_compatibility GL_ARB_compressed_texture_pixel_storage 
+> GL_ARB_conservative_depth GL_ARB_compute_shader 
+> GL_ARB_compute_variable_group_size GL_ARB_conditional_render_inverted 
+> GL_ARB_copy_buffer GL_ARB_copy_image GL_ARB_cull_distance 
+> GL_ARB_debug_output GL_ARB_depth_buffer_float GL_ARB_depth_clamp 
+> GL_ARB_depth_texture GL_ARB_derivative_control GL_ARB_direct_state_access 
+> GL_ARB_draw_buffers GL_ARB_draw_buffers_blend GL_ARB_draw_indirect 
+> GL_ARB_draw_elements_base_vertex GL_ARB_draw_instanced 
+> GL_ARB_enhanced_layouts GL_ARB_ES2_compatibility GL_ARB_ES3_compatibility 
+> GL_ARB_ES3_1_compatibility GL_ARB_ES3_2_compatibility
+> GL_ARB_explicit_attrib_location GL_ARB_explicit_uniform_location 
+> GL_ARB_fragment_coord_conventions GL_ARB_fragment_layer_viewport 
+> GL_ARB_fragment_program GL_ARB_fragment_program_shadow 
+> GL_ARB_fragment_shader GL_ARB_fragment_shader_interlock 
+> GL_ARB_framebuffer_no_attachments GL_ARB_framebuffer_object 
+> GL_ARB_framebuffer_sRGB GL_ARB_geometry_shader4 GL_ARB_get_program_binary 
+> GL_ARB_get_texture_sub_image GL_ARB_gl_spirv GL_ARB_gpu_shader5 
+> GL_ARB_gpu_shader_fp64 GL_ARB_gpu_shader_int64 GL_ARB_half_float_pixel 
+> GL_ARB_half_float_vertex GL_ARB_imaging GL_ARB_indirect_parameters 
+> GL_ARB_instanced_arrays GL_ARB_internalformat_query 
+> GL_ARB_internalformat_query2 GL_ARB_invalidate_subdata 
+> GL_ARB_map_buffer_alignment GL_ARB_map_buffer_range GL_ARB_multi_bind 
+> GL_ARB_multi_draw_indirect GL_ARB_multisample GL_ARB_multitexture 
+> GL_ARB_occlusion_query GL_ARB_occlusion_query2 
+> GL_ARB_parallel_shader_compile GL_ARB_pipeline_statistics_query 
+> GL_ARB_pixel_buffer_object GL_ARB_point_parameters
+> GL_ARB_point_sprite GL_ARB_post_depth_coverage 
+> GL_ARB_program_interface_query GL_ARB_provoking_vertex 
+> GL_ARB_query_buffer_object GL_ARB_robust_buffer_access_behavior 
+> GL_ARB_robustness GL_ARB_sample_locations GL_ARB_sample_shading 
+> GL_ARB_sampler_objects GL_ARB_seamless_cube_map 
+> GL_ARB_seamless_cubemap_per_texture GL_ARB_separate_shader_objects 
+> GL_ARB_shader_atomic_counter_ops GL_ARB_shader_atomic_counters 
+> GL_ARB_shader_ballot GL_ARB_shader_bit_encoding GL_ARB_shader_clock 
+> GL_ARB_shader_draw_parameters GL_ARB_shader_group_vote 
+> GL_ARB_shader_image_load_store GL_ARB_shader_image_size 
+> GL_ARB_shader_objects GL_ARB_shader_precision 
+> GL_ARB_shader_storage_buffer_object GL_ARB_shader_subroutine 
+> GL_ARB_shader_texture_image_samples GL_ARB_shader_texture_lod 
+> GL_ARB_shading_language_100 GL_ARB_shader_viewport_layer_array 
+> GL_ARB_shading_language_420pack GL_ARB_shading_language_include 
+> GL_ARB_shading_language_packing GL_ARB_shadow GL_ARB_sparse_buffer 
+> GL_ARB_sparse_texture
+> GL_ARB_sparse_texture2 GL_ARB_sparse_texture_clamp 
+> GL_ARB_stencil_texturing GL_ARB_sync GL_ARB_tessellation_shader 
+> GL_ARB_texture_barrier GL_ARB_texture_border_clamp 
+> GL_ARB_texture_buffer_object GL_ARB_texture_buffer_object_rgb32 
+> GL_ARB_texture_buffer_range GL_ARB_texture_compression 
+> GL_ARB_texture_compression_bptc GL_ARB_texture_compression_rgtc 
+> GL_ARB_texture_cube_map GL_ARB_texture_cube_map_array GL_ARB_texture_env_add 
+> GL_ARB_texture_env_combine GL_ARB_texture_env_crossbar 
+> GL_ARB_texture_env_dot3 GL_ARB_texture_filter_minmax GL_ARB_texture_float 
+> GL_ARB_texture_gather GL_ARB_texture_mirror_clamp_to_edge 
+> GL_ARB_texture_mirrored_repeat GL_ARB_texture_multisample 
+> GL_ARB_texture_non_power_of_two GL_ARB_texture_query_levels 
+> GL_ARB_texture_query_lod GL_ARB_texture_rectangle GL_ARB_texture_rg 
+> GL_ARB_texture_rgb10_a2ui GL_ARB_texture_stencil8 GL_ARB_texture_storage 
+> GL_ARB_texture_storage_multisample GL_ARB_texture_swizzle 
+> GL_ARB_texture_view GL_ARB_timer_query
+> GL_ARB_transform_feedback2 GL_ARB_transform_feedback3 
+> GL_ARB_transform_feedback_instanced GL_ARB_transform_feedback_overflow_query 
+> GL_ARB_transpose_matrix GL_ARB_uniform_buffer_object 
+> GL_ARB_vertex_array_bgra GL_ARB_vertex_array_object 
+> GL_ARB_vertex_attrib_64bit GL_ARB_vertex_attrib_binding 
+> GL_ARB_vertex_buffer_object GL_ARB_vertex_program GL_ARB_vertex_shader 
+> GL_ARB_vertex_type_10f_11f_11f_rev GL_ARB_vertex_type_2_10_10_10_rev 
+> GL_ARB_viewport_array GL_ARB_window_pos GL_ATI_draw_buffers 
+> GL_ATI_texture_float GL_ATI_texture_mirror_once GL_S3_s3tc 
+> GL_EXT_texture_env_add GL_EXT_abgr GL_EXT_bgra GL_EXT_bindable_uniform 
+> GL_EXT_blend_color GL_EXT_blend_equation_separate GL_EXT_blend_func_separate 
+> GL_EXT_blend_minmax GL_EXT_blend_subtract GL_EXT_compiled_vertex_array 
+> GL_EXT_Cg_shader GL_EXT_depth_bounds_test GL_EXT_direct_state_access 
+> GL_EXT_draw_buffers2 GL_EXT_draw_instanced GL_EXT_draw_range_elements 
+> GL_EXT_fog_coord GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample
+> GL_EXTX_framebuffer_mixed_formats 
+> GL_EXT_framebuffer_multisample_blit_scaled GL_EXT_framebuffer_object 
+> GL_EXT_framebuffer_sRGB GL_EXT_geometry_shader4 
+> GL_EXT_gpu_program_parameters GL_EXT_gpu_shader4 GL_EXT_multi_draw_arrays 
+> GL_EXT_packed_depth_stencil GL_EXT_packed_float GL_EXT_packed_pixels 
+> GL_EXT_pixel_buffer_object GL_EXT_point_parameters 
+> GL_EXT_polygon_offset_clamp GL_EXT_post_depth_coverage 
+> GL_EXT_provoking_vertex GL_EXT_raster_multisample GL_EXT_rescale_normal 
+> GL_EXT_secondary_color GL_EXT_separate_shader_objects 
+> GL_EXT_separate_specular_color GL_EXT_shader_image_load_formatted 
+> GL_EXT_shader_image_load_store GL_EXT_shader_integer_mix GL_EXT_shadow_funcs 
+> GL_EXT_sparse_texture2 GL_EXT_stencil_two_side GL_EXT_stencil_wrap 
+> GL_EXT_texture3D GL_EXT_texture_array GL_EXT_texture_buffer_object 
+> GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_latc 
+> GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc 
+> GL_EXT_texture_cube_map GL_EXT_texture_edge_clamp
+> GL_EXT_texture_env_combine GL_EXT_texture_env_dot3 
+> GL_EXT_texture_filter_anisotropic GL_EXT_texture_filter_minmax 
+> GL_EXT_texture_integer GL_EXT_texture_lod GL_EXT_texture_lod_bias 
+> GL_EXT_texture_mirror_clamp GL_EXT_texture_object 
+> GL_EXT_texture_shared_exponent GL_EXT_texture_sRGB 
+> GL_EXT_texture_sRGB_decode GL_EXT_texture_storage GL_EXT_texture_swizzle 
+> GL_EXT_timer_query GL_EXT_transform_feedback2 GL_EXT_vertex_array 
+> GL_EXT_vertex_array_bgra GL_EXT_vertex_attrib_64bit GL_EXT_window_rectangles 
+> GL_EXT_x11_sync_object GL_EXT_import_sync_object 
+> GL_NV_robustness_video_memory_purge GL_IBM_rasterpos_clip 
+> GL_IBM_texture_mirrored_repeat GL_KHR_context_flush_control GL_KHR_debug 
+> GL_KHR_no_error GL_KHR_robust_buffer_access_behavior GL_KHR_robustness 
+> GL_KTX_buffer_region GL_NV_alpha_to_coverage_dither_control 
+> GL_NV_bindless_multi_draw_indirect GL_NV_bindless_multi_draw_indirect_count 
+> GL_NV_bindless_texture GL_NV_blend_equation_advanced 
+> GL_NV_blend_equation_advanced_coherent
+> GL_NV_blend_square GL_NV_command_list GL_NV_compute_program5 
+> GL_NV_conditional_render GL_NV_conservative_raster 
+> GL_NV_conservative_raster_dilate GL_NV_copy_depth_to_color GL_NV_copy_image 
+> GL_NV_depth_buffer_float GL_NV_depth_clamp GL_NV_draw_texture 
+> GL_NV_draw_vulkan_image GL_NV_ES1_1_compatibility GL_NV_ES3_1_compatibility 
+> GL_NV_explicit_multisample GL_NV_fence GL_NV_fill_rectangle 
+> GL_NV_float_buffer GL_NV_fog_distance GL_NV_fragment_coverage_to_color 
+> GL_NV_fragment_program GL_NV_fragment_program_option GL_NV_fragment_program2 
+> GL_NV_fragment_shader_interlock GL_NV_framebuffer_mixed_samples 
+> GL_NV_framebuffer_multisample_coverage GL_NV_geometry_shader4 
+> GL_NV_geometry_shader_passthrough GL_NV_gpu_program4 
+> GL_NV_internalformat_sample_query GL_NV_gpu_program4_1 GL_NV_gpu_program5 
+> GL_NV_gpu_program5_mem_extended GL_NV_gpu_program_fp64 GL_NV_gpu_shader5 
+> GL_NV_half_float GL_NV_light_max_exponent GL_NV_multisample_coverage 
+> GL_NV_multisample_filter_hint GL_NV_occlusion_query
+> GL_NV_packed_depth_stencil GL_NV_parameter_buffer_object 
+> GL_NV_parameter_buffer_object2 GL_NV_path_rendering 
+> GL_NV_path_rendering_shared_edge GL_NV_pixel_data_range GL_NV_point_sprite 
+> GL_NV_primitive_restart GL_NV_register_combiners GL_NV_register_combiners2 
+> GL_NV_sample_locations GL_NV_sample_mask_override_coverage 
+> GL_NV_shader_atomic_counters GL_NV_shader_atomic_float 
+> GL_NV_shader_atomic_fp16_vector GL_NV_shader_atomic_int64 
+> GL_NV_shader_buffer_load GL_NV_shader_storage_buffer_object 
+> GL_NV_texgen_reflection GL_NV_texture_barrier GL_NV_texture_compression_vtc 
+> GL_NV_texture_env_combine4 GL_NV_texture_multisample GL_NV_texture_rectangle 
+> GL_NV_texture_shader GL_NV_texture_shader2 GL_NV_texture_shader3 
+> GL_NV_transform_feedback GL_NV_transform_feedback2 
+> GL_NV_uniform_buffer_unified_memory GL_NV_vdpau_interop 
+> GL_NV_vertex_array_range GL_NV_vertex_array_range2 
+> GL_NV_vertex_attrib_integer_64bit GL_NV_vertex_buffer_unified_memory 
+> GL_NV_vertex_program GL_NV_vertex_program1_1
+> GL_NV_vertex_program2 GL_NV_vertex_program2_option GL_NV_vertex_program3 
+> GL_NV_viewport_array2 GL_NV_viewport_swizzle GL_NVX_conditional_render 
+> GL_NVX_gpu_memory_info GL_NVX_nvenc_interop GL_NV_shader_thread_group 
+> GL_NV_shader_thread_shuffle GL_KHR_blend_equation_advanced 
+> GL_KHR_blend_equation_advanced_coherent GL_SGIS_generate_mipmap 
+> GL_SGIS_texture_lod GL_SGIX_depth_texture GL_SGIX_shadow GL_SUN_slice_accum
+
+
+
+From wookey at wookware.org  Mon May 22 15:40:28 2017
+From: wookey at wookware.org (Wookey)
+Date: Mon, 22 May 2017 14:40:28 +0100
+Subject: [Therion] Loch fails to start in Debian
+In-Reply-To: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+References: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+Message-ID: <20170522134028.GG21827@mail.wookware.org>
+
+On 2017-05-22 15:00 +0200, Bjørn Egil Johansen via Therion wrote:
+> I have a fairly fresh Debian 9 Stretch 64bit install , using propietary
+> NVIDIA-drivers. Therion from debian repositories 5.3.16-10+b4
+> 
+> When trying to open Loch i encountered this error:
+> 
+> Failed to load module "canberra-gtk-module"
+> The program 'loch' received an X Window System error.
+
+Thanks for the thorough bug report. Putting this email in a debian bugreport is
+probably a good idea in case others come across the same problem.
+
+I don't actually have stretch installed yet on hardware with nvidia
+GPU - but I guess it's time that I tried it, so I'll upgrade and see
+if I can reproduce. I use the nouveau drivers so may not be able to
+reproduce if it's actually to do with the binary drivers. I would
+certainly try the noveau driver and see if it still happens to you or
+not.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 819 bytes
+Desc: Digital signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170522/8e14fed8/attachment.sig>
+
+From bejohansen at gmail.com  Tue May 23 10:22:41 2017
+From: bejohansen at gmail.com (=?UTF-8?Q?Bj=C3=B8rn_Egil_Johansen?=)
+Date: Tue, 23 May 2017 10:22:41 +0200
+Subject: [Therion] Loch fails to start in Debian
+In-Reply-To: <20170522134028.GG21827@mail.wookware.org>
+References: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+ <20170522134028.GG21827@mail.wookware.org>
+Message-ID: <CACpZB4zW5mP2Vs2huEBVmugziPEeSjy5Yn19f=WYwn=YiB2YfQ@mail.gmail.com>
+
+Thanks for replies.
+
+I have now tried the Nouveau driver, and Loch works.
+
+Unfortunately I experience quite a lot of other problems with the nouveau
+driver. When booting with the nouveau driver I end up with a black screen,
+I need to use the acpi=off linux boot parameter to not get a black screen,
+but then I am not able to choose a higher screen resolution. This was the
+reason I changed to the propietary driver in the first place. This makes
+the nouveau driver not much of an option unless I can solve this problem,
+but I guess that is outside the scope of this list.
+
+Anyway, it then seems like my loch-problem is somehow related to the
+propietary nvidia driver.
+
+Best regards
+Bjørn Egil
+
+2017-05-22 15:40 GMT+02:00 Wookey via Therion <therion at speleo.sk>:
+
+> On 2017-05-22 15:00 +0200, Bjørn Egil Johansen via Therion wrote:
+> > I have a fairly fresh Debian 9 Stretch 64bit install , using propietary
+> > NVIDIA-drivers. Therion from debian repositories 5.3.16-10+b4
+> >
+> > When trying to open Loch i encountered this error:
+> >
+> > Failed to load module "canberra-gtk-module"
+> > The program 'loch' received an X Window System error.
+>
+> Thanks for the thorough bug report. Putting this email in a debian
+> bugreport is
+> probably a good idea in case others come across the same problem.
+>
+> I don't actually have stretch installed yet on hardware with nvidia
+> GPU - but I guess it's time that I tried it, so I'll upgrade and see
+> if I can reproduce. I use the nouveau drivers so may not be able to
+> reproduce if it's actually to do with the binary drivers. I would
+> certainly try the noveau driver and see if it still happens to you or
+> not.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Debian, Wookware, ARM
+> http://wookware.org/
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170523/855ccabe/attachment.htm>
+
+From bgee at campercaver.net  Tue May 23 13:18:59 2017
+From: bgee at campercaver.net (Bill Gee)
+Date: Tue, 23 May 2017 06:18:59 -0500
+Subject: [Therion] Loch fails to start in Debian
+In-Reply-To: <CACpZB4zW5mP2Vs2huEBVmugziPEeSjy5Yn19f=WYwn=YiB2YfQ@mail.gmail.com>
+References: <CACpZB4xh9hfn4uFyeWu5XRECjM83LyXhkFfrhjtk-cz_bz9YXg@mail.gmail.com>
+ <20170522134028.GG21827@mail.wookware.org>
+ <CACpZB4zW5mP2Vs2huEBVmugziPEeSjy5Yn19f=WYwn=YiB2YfQ@mail.gmail.com>
+Message-ID: <2462214.dHlXgEtpP0@main2.billgee.local>
+
+Several weeks ago James Begley and I found pretty much this same problem in 
+Fedora 25.  When using the NVidia proprietary driver (version 375.66), loch 
+fails to start with an error 
+
+	Error: glXCreateContent failed
+
+In my testing I found that the open-source Intel display driver (part of the 
+Fedora distribution) and the VirtualBox display driver both work.  They do not 
+show this message.
+
+I do not have a Fedora 25 machine with Nouveau driver, so I have not tried 
+that.  The only machine I have with Nouveau is CentOS6 and it is dedicated to 
+running VirtualBox virtual machines.
+
+Bill Gee
+
+
+On Tuesday, May 23, 2017 3:22:41 AM CDT Bjørn Egil Johansen via Therion wrote:
+> Thanks for replies.
+> 
+> I have now tried the Nouveau driver, and Loch works.
+> 
+> Unfortunately I experience quite a lot of other problems with the nouveau
+> driver. When booting with the nouveau driver I end up with a black screen,
+> I need to use the acpi=off linux boot parameter to not get a black screen,
+> but then I am not able to choose a higher screen resolution. This was the
+> reason I changed to the propietary driver in the first place. This makes
+> the nouveau driver not much of an option unless I can solve this problem,
+> but I guess that is outside the scope of this list.
+> 
+> Anyway, it then seems like my loch-problem is somehow related to the
+> propietary nvidia driver.
+> 
+> Best regards
+> Bjørn Egil
+> 
+> 2017-05-22 15:40 GMT+02:00 Wookey via Therion <therion at speleo.sk>:
+> > On 2017-05-22 15:00 +0200, Bjørn Egil Johansen via Therion wrote:
+> > > I have a fairly fresh Debian 9 Stretch 64bit install , using propietary
+> > > NVIDIA-drivers. Therion from debian repositories 5.3.16-10+b4
+> > > 
+> > > When trying to open Loch i encountered this error:
+> > > 
+> > > Failed to load module "canberra-gtk-module"
+> > > The program 'loch' received an X Window System error.
+> > 
+> > Thanks for the thorough bug report. Putting this email in a debian
+> > bugreport is
+> > probably a good idea in case others come across the same problem.
+> > 
+> > I don't actually have stretch installed yet on hardware with nvidia
+> > GPU - but I guess it's time that I tried it, so I'll upgrade and see
+> > if I can reproduce. I use the nouveau drivers so may not be able to
+> > reproduce if it's actually to do with the binary drivers. I would
+> > certainly try the noveau driver and see if it still happens to you or
+> > not.
+> > 
+> > Wookey
+> > --
+> > Principal hats:  Linaro, Debian, Wookware, ARM
+> > http://wookware.org/
+> > 
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+
+
+-- 
+Bill Gee
+
+BOINC Statistics 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170523/37ae9326/attachment.htm>
+
+From bruce at tomo.co.nz  Sun May 28 23:43:42 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 29 May 2017 09:43:42 +1200
+Subject: [Therion] Therion 5.4.1 Windows crash if survex loop-closure
+Message-ID: <000001d2d7fb$79b2a680$6d17f380$@tomo.co.nz>
+
+I've just started catching up on a drawing project since 5.4.1 has been
+released.
+
+A while back I reported problems with beta versions of Therion related to
+'loop-closure survex'.
+
+ 
+
+They were fixed in 5.4.0
+
+ 
+
+Now using 5.4.1 those projects/thconfigs that crashed before now seem to be
+OK, but I have now found another project/thconfig that crashes with 5.4.1
+but not with 5.4.0
+
+
+
+ 
+
+5.4.1 runs OK with 'loop-closure therion' but gets killed by Windows 10 when
+I use 'loop-closure survex'.
+
+Am still using survex 1.2.27.  I have attached the log file with
+'loop-closure survex'.
+
+ 
+
+Not sure if it is related, but I notice that if I install 5.4.1 'Install
+Only for Me' it will not overwrite a previously installed 5.4.0, even though
+the installer does not report any errors or problems to the user.  Ie it
+fails even though it looks like it has worked just fine.
+
+To get 5.4.1 to overwrite 5.4.0 I need to "Install for all users".
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/33ebfd78/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 8163 bytes
+Desc: image001.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/33ebfd78/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.log
+Type: application/octet-stream
+Size: 8192 bytes
+Desc: therion.log
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/33ebfd78/attachment.obj>
+
+From Xavier.Pennec at inria.fr  Mon May 29 10:12:58 2017
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Mon, 29 May 2017 10:12:58 +0200
+Subject: [Therion] Therion 5.4.1 Windows crash if survex loop-closure
+In-Reply-To: <000001d2d7fb$79b2a680$6d17f380$@tomo.co.nz>
+References: <000001d2d7fb$79b2a680$6d17f380$@tomo.co.nz>
+Message-ID: <8553f090-3b4b-ccb3-6333-726b3fbff2d8@inria.fr>
+
+I had the same problem right from the beginning with 5.4.1 (I reverted 
+to 5.3.16). However I did not had time to investigate where it was 
+coming from, which is why I did not reported the problem. The 
+loop-closure-survex issue make sense qith the symptoms I had (ok for 
+small caves without cloops, crashing for my large project.
+
+Xavier
+
+
+Le 28-May-17 à 23:43, Bruce Mutton via Therion a écrit :
+>
+> I’ve just started catching up on a drawing project since 5.4.1 has 
+> been released.
+>
+> A while back I reported problems with beta versions of Therion related 
+> to ‘loop-closure survex’.
+>
+> They were fixed in 5.4.0
+>
+> Now using 5.4.1 those projects/thconfigs that crashed before now seem 
+> to be OK, but I have now found another project/thconfig that crashes 
+> with 5.4.1 but not with 5.4.0
+>
+> 5.4.1 runs OK with ‘loop-closure therion’ but gets killed by Windows 
+> 10 when I use ‘loop-closure survex’.
+>
+> Am still using survex 1.2.27.  I have attached the log file with 
+> ‘loop-closure survex’.
+>
+> Not sure if it is related, but I notice that if I install 5.4.1 
+> ‘Install Only for Me’ it will not overwrite a previously installed 
+> 5.4.0, even though the installer does not report any errors or 
+> problems to the user. Ie it fails even though it looks like it has 
+> worked just fine.
+>
+> To get 5.4.1 to overwrite 5.4.0 I need to “Install for all users”.
+>
+> Bruce
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/8d042c69/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: image/png
+Size: 8163 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/8d042c69/attachment.png>
+
+From bruce at tomo.co.nz  Mon May 29 12:12:54 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 29 May 2017 22:12:54 +1200
+Subject: [Therion] Therion 5.4.1 Windows Installer incomplete installs
+Message-ID: <000001d2d864$236c8750$6a4595f0$@tomo.co.nz>
+
+Things are getting weirder.
+
+Usually I have just installed one version of Therion over top of whatever
+version I have installed, but wonder if this might be contributing to issues
+I have here.
+
+After I have installed 5.4.1 over top of 5.4.0.
+
+If I open a thconfig file, with Help About I get 5.4.1 reported, as below
+
+
+
+ 
+
+If I then open a .th2 drawing file, I get 5.4.0 reported, as below
+
+
+
+ 
+
+So with two instances of XTherion open at the same time, each is reporting a
+different version.
+
+ 
+
+Same thing happens installing 5.4.1  88c8a06 over top of 5.4.1.  The drawing
+editor still reports 5.4.0
+
+ 
+
+Perhaps a harmless bug/omission or something odd with the installer?
+
+Initial drawing suggests the drawing editor is behaving like 5.4.1
+(triangular survey stations).
+
+ 
+
+Bruce
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce Mutton
+via Therion
+Sent: Monday, 29 May 2017 9:44 AM
+To: 'List for Therion users' <therion at speleo.sk>
+Cc: Bruce Mutton <bruce at tomo.co.nz>
+Subject: [Therion] Therion 5.4.1 Windows crash if survex loop-closure
+
+ 
+
+I've just started catching up on a drawing project since 5.4.1 has been
+released.
+
+A while back I reported problems with beta versions of Therion related to
+'loop-closure survex'.
+
+ 
+
+They were fixed in 5.4.0
+
+ 
+
+Now using 5.4.1 those projects/thconfigs that crashed before now seem to be
+OK, but I have now found another project/thconfig that crashes with 5.4.1
+but not with 5.4.0
+
+
+
+ 
+
+5.4.1 runs OK with 'loop-closure therion' but gets killed by Windows 10 when
+I use 'loop-closure survex'.
+
+Am still using survex 1.2.27.  I have attached the log file with
+'loop-closure survex'.
+
+ 
+
+Not sure if it is related, but I notice that if I install 5.4.1 'Install
+Only for Me' it will not overwrite a previously installed 5.4.0, even though
+the installer does not report any errors or problems to the user.  Ie it
+fails even though it looks like it has worked just fine.
+
+To get 5.4.1 to overwrite 5.4.0 I need to "Install for all users".
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/a56039f0/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 8163 bytes
+Desc: image001.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/a56039f0/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 62261 bytes
+Desc: image004.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/a56039f0/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 61315 bytes
+Desc: image006.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/a56039f0/attachment-0001.jpg>
+
+From bruce at tomo.co.nz  Mon May 29 12:58:53 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 29 May 2017 22:58:53 +1200
+Subject: [Therion] can survey id be called recursively
+Message-ID: <000701d2d86a$8fb06200$af112600$@tomo.co.nz>
+
+Ok, Now I feel like a beginner, having to ask this question.
+
+ 
+
+I have for years created my .th files like this, more or less.
+
+ 
+
+input 1-BottomUpPlan.th2
+
+ 
+
+map 1-BottomUpPlanCL -title "1-BottomUp plan centreline" -projection plan
+
+                1  # this works fine
+
+endmap 
+
+ 
+
+map 1-BottomUpPlan -title "1-BottomUp plan" -projection plan
+
+                1-BottomUpPlan-s1
+
+endmap 
+
+ 
+
+survey 1 -title "1-BottomUp"
+
+centreline
+
+etc
+
+endcentreline
+
+endsurvey
+
+ 
+
+This is contrary to the current good advice, and the way TopParser works,
+which suggests that maps should be created inside the survey, as this makes
+referencing the scraps easier and more consistent when they are part of a
+large project.
+
+So with this brand new project, I rearranged my 1-BottomUp.th file like
+this, to try to follow good practice .
+
+ 
+
+survey 1 -title "1-BottomUp"
+
+input 1-BottomUpPlan.th2
+
+ 
+
+map 1-BottomUpPlanCL -title "1-BottomUp plan centreline" -projection plan
+
+                1 # this always causes error at this location "object does
+not exist - 1"
+
+endmap 
+
+ 
+
+map 1-BottomUpPlan -title "1-BottomUp plan" -projection plan
+
+                1-BottomUpPlan-s1
+
+endmap 
+
+ 
+
+centreline
+
+etc
+
+endcentreline
+
+endsurvey
+
+ 
+
+Trouble is, the Therion Compiler always reports an error "object does not
+exist - 1" when I try to create a small map with just the centreline of
+survey 1.
+
+I have tried a number of variations of the above, with versions from 5.3.16
+to 5.4.1, and the only way I can get it to compile is with the arrangement
+at the top of this post; how I have always done it for years and years.
+
+ 
+
+So it looks like Therion is complaining about calling the survey "1" from
+within the definition of survey "1".
+
+I would not have thought this were a problem, as it seems like Therion is
+generally happy to do this sort of thing.
+
+ 
+
+Is it some kind of namespace problem?
+
+Or is there some other thing I am missing?  
+
+Is it not possible to create a map of containing only a survey centreline,
+from within that same survey?
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/70b5a90b/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 1-BottomUp-Copy.th
+Type: application/octet-stream
+Size: 2407 bytes
+Desc: 1-BottomUp-Copy.th
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/70b5a90b/attachment.obj>
+
+From vld.georgiev at gmail.com  Mon May 29 20:59:24 2017
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Mon, 29 May 2017 21:59:24 +0300
+Subject: [Therion] Therion 5.4.1 Windows Installer incomplete installs
+In-Reply-To: <000001d2d864$236c8750$6a4595f0$@tomo.co.nz>
+References: <000001d2d864$236c8750$6a4595f0$@tomo.co.nz>
+Message-ID: <CAHzQzvTKC23=J4bGmjCGFLWgV_bzTAQXHbaGH_5Oy+gC6NYd5g@mail.gmail.com>
+
+Bruce
+
+This is likely because the "Install for all users" uses a location in
+Program Files, while "Current user" uses a location in the users AppData
+folder. The former requires admin privileges, and the later can be used by
+a limited user.
+Older installer versions used Program files by default, and the new files
+would always overwrite the older ones. But if you had an older version in
+Program Files, and installed the new one for the current user in his
+AppData folder, you would end up with two sets of files. And with
+conflicting file type associations.
+
+You could try uninstalling and manually deleting the Therion install
+folder. Cleaning the registry entries requires using Registry Editor and
+deleting a set of keys, if you are comfortable doing that.
+The keys are these (after the text "Subkey". HKLM is HKEY_LOCAL_MACHINE and
+HKCU is HKEY_CURRENT_USER)
+https://github.com/therion/therion-batteries/blob/master/therion.iss#L60-L104
+
+I suppose a better solution would be if I can make the installer uninstall
+any previous version before installing. This should prevent such an issue.
+
+Vladimir
+
+On Mon, May 29, 2017 at 1:12 PM, Bruce Mutton via Therion <therion at speleo.sk
+> wrote:
+
+> Things are getting weirder.
+>
+> Usually I have just installed one version of Therion over top of whatever
+> version I have installed, but wonder if this might be contributing to
+> issues I have here.
+>
+> After I have installed 5.4.1 over top of 5.4.0…
+>
+> If I open a thconfig file, with Help About I get 5.4.1 reported, as below
+>
+>
+>
+> If I then open a .th2 drawing file, I get 5.4.0 reported, as below
+>
+>
+>
+> So with two instances of XTherion open at the same time, each is reporting
+> a different version.
+>
+>
+>
+> Same thing happens installing 5.4.1  88c8a06 over top of 5.4.1.  The
+> drawing editor still reports 5.4.0
+>
+>
+>
+> Perhaps a harmless bug/omission or something odd with the installer?
+>
+> Initial drawing suggests the drawing editor is behaving like 5.4.1
+> (triangular survey stations).
+>
+>
+>
+> Bruce
+>
+>
+>
+> *From:* Therion [mailto:therion-bounces at speleo.sk] *On Behalf Of *Bruce
+> Mutton via Therion
+> *Sent:* Monday, 29 May 2017 9:44 AM
+> *To:* 'List for Therion users' <therion at speleo.sk>
+> *Cc:* Bruce Mutton <bruce at tomo.co.nz>
+> *Subject:* [Therion] Therion 5.4.1 Windows crash if survex loop-closure
+>
+>
+>
+> I’ve just started catching up on a drawing project since 5.4.1 has been
+> released.
+>
+> A while back I reported problems with beta versions of Therion related to
+> ‘loop-closure survex’.
+>
+>
+>
+> They were fixed in 5.4.0
+>
+>
+>
+> Now using 5.4.1 those projects/thconfigs that crashed before now seem to
+> be OK, but I have now found another project/thconfig that crashes with
+> 5.4.1 but not with 5.4.0
+>
+>
+>
+> 5.4.1 runs OK with ‘loop-closure therion’ but gets killed by Windows 10
+> when I use ‘loop-closure survex’.
+>
+> Am still using survex 1.2.27.  I have attached the log file with
+> ‘loop-closure survex’.
+>
+>
+>
+> Not sure if it is related, but I notice that if I install 5.4.1 ‘Install
+> Only for Me’ it will not overwrite a previously installed 5.4.0, even
+> though the installer does not report any errors or problems to the user.
+> Ie it fails even though it looks like it has worked just fine.
+>
+> To get 5.4.1 to overwrite 5.4.0 I need to “Install for all users”.
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/adf7c727/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.jpg
+Type: image/jpeg
+Size: 62261 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/adf7c727/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 61315 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/adf7c727/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 8163 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170529/adf7c727/attachment.png>
+
+From bruce at tomo.co.nz  Tue May 30 10:48:24 2017
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 May 2017 20:48:24 +1200
+Subject: [Therion] Therion 5.4.1 Windows Installer incomplete installs
+In-Reply-To: <CAHzQzvTKC23=J4bGmjCGFLWgV_bzTAQXHbaGH_5Oy+gC6NYd5g@mail.gmail.com>
+References: <000001d2d864$236c8750$6a4595f0$@tomo.co.nz>
+ <CAHzQzvTKC23=J4bGmjCGFLWgV_bzTAQXHbaGH_5Oy+gC6NYd5g@mail.gmail.com>
+Message-ID: <000001d2d921$7ff386a0$7fda93e0$@tomo.co.nz>
+
+Thanks Vladimir
+
+I seem to have got through all that successfully.
+
+I will stick to “all users” Therion installs from now on, as that puts the files in a location where I am used to looking for them.
+
+If the installer ever handles uninstalls, then the .ini files should be preserved.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of ???????? ???????? via Therion
+Sent: Tuesday, 30 May 2017 6:59 AM
+To: List for Therion users <therion at speleo.sk>
+Cc: Владимир Георгиев <vld.georgiev at gmail.com>
+Subject: Re: [Therion] Therion 5.4.1 Windows Installer incomplete installs
+
+ 
+
+Bruce
+
+This is likely because the "Install for all users" uses a location in Program Files, while "Current user" uses a location in the users AppData folder. The former requires admin privileges, and the later can be used by a limited user.
+
+Older installer versions used Program files by default, and the new files would always overwrite the older ones. But if you had an older version in Program Files, and installed the new one for the current user in his AppData folder, you would end up with two sets of files. And with conflicting file type associations.
+
+You could try uninstalling and manually deleting the Therion install folder. Cleaning the registry entries requires using Registry Editor and deleting a set of keys, if you are comfortable doing that.
+The keys are these (after the text "Subkey". HKLM is HKEY_LOCAL_MACHINE and HKCU is HKEY_CURRENT_USER)
+https://github.com/therion/therion-batteries/blob/master/therion.iss#L60-L104
+
+I suppose a better solution would be if I can make the installer uninstall any previous version before installing. This should prevent such an issue.
+
+Vladimir
+
+ 
+
+On Mon, May 29, 2017 at 1:12 PM, Bruce Mutton via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > wrote:
+
+Things are getting weirder.
+
+Usually I have just installed one version of Therion over top of whatever version I have installed, but wonder if this might be contributing to issues I have here.
+
+After I have installed 5.4.1 over top of 5.4.0…
+
+If I open a thconfig file, with Help About I get 5.4.1 reported, as below
+
+
+
+ 
+
+If I then open a .th2 drawing file, I get 5.4.0 reported, as below
+
+
+
+ 
+
+So with two instances of XTherion open at the same time, each is reporting a different version.
+
+ 
+
+Same thing happens installing 5.4.1  88c8a06 over top of 5.4.1.  The drawing editor still reports 5.4.0
+
+ 
+
+Perhaps a harmless bug/omission or something odd with the installer?
+
+Initial drawing suggests the drawing editor is behaving like 5.4.1 (triangular survey stations).
+
+ 
+
+Bruce
+
+ 
+
+From: Therion [mailto:therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> ] On Behalf Of Bruce Mutton via Therion
+Sent: Monday, 29 May 2017 9:44 AM
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> >
+Subject: [Therion] Therion 5.4.1 Windows crash if survex loop-closure
+
+ 
+
+I’ve just started catching up on a drawing project since 5.4.1 has been released.
+
+A while back I reported problems with beta versions of Therion related to ‘loop-closure survex’.
+
+ 
+
+They were fixed in 5.4.0
+
+ 
+
+Now using 5.4.1 those projects/thconfigs that crashed before now seem to be OK, but I have now found another project/thconfig that crashes with 5.4.1 but not with 5.4.0
+
+
+
+ 
+
+5.4.1 runs OK with ‘loop-closure therion’ but gets killed by Windows 10 when I use ‘loop-closure survex’.
+
+Am still using survex 1.2.27.  I have attached the log file with ‘loop-closure survex’.
+
+ 
+
+Not sure if it is related, but I notice that if I install 5.4.1 ‘Install Only for Me’ it will not overwrite a previously installed 5.4.0, even though the installer does not report any errors or problems to the user.  Ie it fails even though it looks like it has worked just fine.
+
+To get 5.4.1 to overwrite 5.4.0 I need to “Install for all users”.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170530/ec9634ea/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 62261 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170530/ec9634ea/attachment.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.jpg
+Type: image/jpeg
+Size: 61315 bytes
+Desc: image003.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170530/ec9634ea/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 8163 bytes
+Desc: image004.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20170530/ec9634ea/attachment.png>
+

@@ -1,0 +1,1277 @@
+From ohc at vt.edu  Tue Dec 13 03:18:44 2005
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Mon, 12 Dec 2005 21:18:44 -0500
+Subject: [Therion] Weird Error
+Message-ID: <200512122118.44084.ohc@vt.edu>
+
+Maps compile fine on my 600 mhz P3 and my x86 notebook. They fail to compile 
+on my AMD64 box. 
+
+therion 0.3.9
+configuration file: thconfig
+reading ... done
+reading source files ... done
+preprocessing database ... done
+scanning centreline tree ... done
+searching for centerline loops ... done
+calculating station coordinates ... done
+calculating basic statistics ... done
+processing extended elevation ... done
+processing references ... done
+selecting export objects ... done
+processing projection plan ... done
+average distortion: 2.14%
+writing walters_fold_cave_plan.pdf ...
+therion: error -- unknown exception
+
+Using:
+xtherion 0.3.9
+Linux adrastea 2.6.13-gentoo-r3 #1 SMP Tue Nov 15 11:15:32 EST 2005 x86_64 AMD 
+Athlon(tm) 64 X2 Dual Core Processor 4400+ AuthenticAMD GNU/Linux
+
+Any ideas?
+
+Philip Schuchardt
+
+
+From ohc at vt.edu  Tue Dec 13 23:17:48 2005
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 13 Dec 2005 17:17:48 -0500
+Subject: [Therion] Weird Error
+In-Reply-To: <200512122118.44084.ohc@vt.edu>
+References: <200512122118.44084.ohc@vt.edu>
+Message-ID: <200512131717.48088.ohc@vt.edu>
+
+On Monday 12 December 2005 9:18 pm, you wrote:
+> Maps compile fine on my 600 mhz P3 and my x86 notebook. They fail to
+> compile on my AMD64 box.
+>
+> therion 0.3.9
+> configuration file: thconfig
+> reading ... done
+> reading source files ... done
+> preprocessing database ... done
+> scanning centreline tree ... done
+> searching for centerline loops ... done
+> calculating station coordinates ... done
+> calculating basic statistics ... done
+> processing extended elevation ... done
+> processing references ... done
+> selecting export objects ... done
+> processing projection plan ... done
+> average distortion: 2.14%
+> writing walters_fold_cave_plan.pdf ...
+> therion: error -- unknown exception
+>
+> Using:
+> xtherion 0.3.9
+> Linux adrastea 2.6.13-gentoo-r3 #1 SMP Tue Nov 15 11:15:32 EST 2005 x86_64
+> AMD Athlon(tm) 64 X2 Dual Core Processor 4400+ AuthenticAMD GNU/Linux
+>
+> Any ideas?
+>
+> Philip Schuchardt
+
+Does anyone know how get therion to work with a debugger?  Currently, I have
+tried changing the Makefile to:
+
+CXXPFLAGS = -O0 -g
+CCPFLAGS = -O0 -g
+
+And recompiling it. ddd(GUI gdb) still complains about (no debugging symbols
+found) and I can't look at the source or step through it.  Any ideas about
+getting a debugger to work with the source?
+
+Philip Schuchardt
+
+
+From ohc at vt.edu  Tue Dec 13 23:40:08 2005
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 13 Dec 2005 17:40:08 -0500
+Subject: [Therion] Weird Error
+In-Reply-To: <200512131717.48088.ohc@vt.edu>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+Message-ID: <200512131740.08220.ohc@vt.edu>
+
+On Tuesday 13 December 2005 5:17 pm, you wrote:
+> On Monday 12 December 2005 9:18 pm, you wrote:
+> > Maps compile fine on my 600 mhz P3 and my x86 notebook. They fail to
+> > compile on my AMD64 box.
+> >
+> > therion 0.3.9
+> > configuration file: thconfig
+> > reading ... done
+> > reading source files ... done
+> > preprocessing database ... done
+> > scanning centreline tree ... done
+> > searching for centerline loops ... done
+> > calculating station coordinates ... done
+> > calculating basic statistics ... done
+> > processing extended elevation ... done
+> > processing references ... done
+> > selecting export objects ... done
+> > processing projection plan ... done
+> > average distortion: 2.14%
+> > writing walters_fold_cave_plan.pdf ...
+> > therion: error -- unknown exception
+> >
+> > Using:
+> > xtherion 0.3.9
+> > Linux adrastea 2.6.13-gentoo-r3 #1 SMP Tue Nov 15 11:15:32 EST 2005
+> > x86_64 AMD Athlon(tm) 64 X2 Dual Core Processor 4400+ AuthenticAMD
+> > GNU/Linux
+> >
+> > Any ideas?
+> >
+> > Philip Schuchardt
+>
+> Does anyone know how get therion to work with a debugger?  Currently, I
+> have tried changing the Makefile to:
+>
+> CXXPFLAGS = -O0 -g
+> CCPFLAGS = -O0 -g
+>
+> And recompiling it. ddd(GUI gdb) still complains about (no debugging
+> symbols found) and I can't look at the source or step through it.  Any
+> ideas about getting a debugger to work with the source?
+>
+> Philip Schuchardt
+
+Sweet! I fixed it. And it is fairly simple. This fix should fix the  therion: 
+error -- unknown exception, which I was reporting earlier.
+
+In the Makefile:
+Just add -m32 option to the compiler and linker flags.  This will force gcc 
+and g++ to compile the under 32 bit.  In my case it was compiling 64bit code 
+due to my 64bit linux installation.  I guess therion doesn't run under 64bit 
+at the moment. This fix shouldn't effect x86 users (I haven't test it 
+though).  The fix works with 0.3.10 and it will probably work with 0.3.9 (I 
+havent tested it).   Hopefully, this fix will be in the next version of 
+therion. ;)
+
+My modified makefile(Part):
+# PLATFORM LINUX
+CXX = g++
+CC = gcc
+POBJECTS =
+#-DTHLINUX
+CXXPFLAGS = -m32 #Change this line
+CCPFLAGS = -m32 #Change this line
+LDPFLAGS = -s -m32  #Change this line
+THPLATFORM = LINUX
+THXTHMKCMD = ./therion
+
+Happy mapping!
+Philip Schuchardt
+
+
+From philip at balister.org  Tue Dec 13 22:53:39 2005
+From: philip at balister.org (Philip Balister)
+Date: Tue, 13 Dec 2005 16:53:39 -0500
+Subject: [Therion] Weird Error
+In-Reply-To: <200512131740.08220.ohc@vt.edu>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu>
+Message-ID: <439F42E3.6010600@balister.org>
+
+You should spend some time and figure out why it doesn't work for 64 
+bits. At least until you can go caving again :)
+
+Philip
+
+Philip Schuchardt wrote:
+> On Tuesday 13 December 2005 5:17 pm, you wrote:
+> 
+>>On Monday 12 December 2005 9:18 pm, you wrote:
+>>
+>>>Maps compile fine on my 600 mhz P3 and my x86 notebook. They fail to
+>>>compile on my AMD64 box.
+>>>
+>>>therion 0.3.9
+>>>configuration file: thconfig
+>>>reading ... done
+>>>reading source files ... done
+>>>preprocessing database ... done
+>>>scanning centreline tree ... done
+>>>searching for centerline loops ... done
+>>>calculating station coordinates ... done
+>>>calculating basic statistics ... done
+>>>processing extended elevation ... done
+>>>processing references ... done
+>>>selecting export objects ... done
+>>>processing projection plan ... done
+>>>average distortion: 2.14%
+>>>writing walters_fold_cave_plan.pdf ...
+>>>therion: error -- unknown exception
+>>>
+>>>Using:
+>>>xtherion 0.3.9
+>>>Linux adrastea 2.6.13-gentoo-r3 #1 SMP Tue Nov 15 11:15:32 EST 2005
+>>>x86_64 AMD Athlon(tm) 64 X2 Dual Core Processor 4400+ AuthenticAMD
+>>>GNU/Linux
+>>>
+>>>Any ideas?
+>>>
+>>>Philip Schuchardt
+>>
+>>Does anyone know how get therion to work with a debugger?  Currently, I
+>>have tried changing the Makefile to:
+>>
+>>CXXPFLAGS = -O0 -g
+>>CCPFLAGS = -O0 -g
+>>
+>>And recompiling it. ddd(GUI gdb) still complains about (no debugging
+>>symbols found) and I can't look at the source or step through it.  Any
+>>ideas about getting a debugger to work with the source?
+>>
+>>Philip Schuchardt
+> 
+> 
+> Sweet! I fixed it. And it is fairly simple. This fix should fix the  therion: 
+> error -- unknown exception, which I was reporting earlier.
+> 
+> In the Makefile:
+> Just add -m32 option to the compiler and linker flags.  This will force gcc 
+> and g++ to compile the under 32 bit.  In my case it was compiling 64bit code 
+> due to my 64bit linux installation.  I guess therion doesn't run under 64bit 
+> at the moment. This fix shouldn't effect x86 users (I haven't test it 
+> though).  The fix works with 0.3.10 and it will probably work with 0.3.9 (I 
+> havent tested it).   Hopefully, this fix will be in the next version of 
+> therion. ;)
+> 
+> My modified makefile(Part):
+> # PLATFORM LINUX
+> CXX = g++
+> CC = gcc
+> POBJECTS =
+> #-DTHLINUX
+> CXXPFLAGS = -m32 #Change this line
+> CCPFLAGS = -m32 #Change this line
+> LDPFLAGS = -s -m32  #Change this line
+> THPLATFORM = LINUX
+> THXTHMKCMD = ./therion
+> 
+> Happy mapping!
+> Philip Schuchardt
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: smime.p7s
+Type: application/x-pkcs7-signature
+Size: 3178 bytes
+Desc: S/MIME Cryptographic Signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20051213/ef2f746e/attachment.bin>
+
+From s.m at speleo.sk  Wed Dec 14 07:46:20 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 14 Dec 2005 07:46:20 +0100
+Subject: [Therion] Weird Error
+In-Reply-To: <200512131717.48088.ohc@vt.edu>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+Message-ID: <1134542780.439fbfbc113cb@webmailer.sk>
+
+Quoting Philip Schuchardt <ohc at vt.edu>:
+> Does anyone know how get therion to work with a debugger?  Currently, I have
+> tried changing the Makefile to:
+
+Just type:
+
+make config-debug
+
+and it should work. I replied you yesterday, no idea why the message did not
+arrieved :(
+
+S.
+
+
+From s.m at speleo.sk  Wed Dec 14 07:47:42 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 14 Dec 2005 07:47:42 +0100
+Subject: [Therion] Weird Error
+In-Reply-To: <200512131740.08220.ohc@vt.edu>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu>
+Message-ID: <1134542862.439fc00e18dd2@webmailer.sk>
+
+Quoting Philip Schuchardt <ohc at vt.edu>:
+
+> Just add -m32 option to the compiler and linker flags.
+
+Great, thanks a lot. We will add it soon.
+
+S.
+
+
+From wookey at aleph1.co.uk  Wed Dec 14 11:10:58 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 14 Dec 2005 10:10:58 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <439F42E3.6010600@balister.org>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu> <439F42E3.6010600@balister.org>
+Message-ID: <20051214101057.GE10773@xios>
+
++++ Philip Balister [05-12-13 16:53 -0500]:
+> You should spend some time and figure out why it doesn't work for 64 
+> bits. 
+
+Seconded. What we have so far is a workaround, not a fix. Few of us
+currently have access to 64bit machines, but they are rapidly becoming more
+common. Finding out what problem therion has is well worth spending
+some time on.
+
+There are 64bit binaries built for debian, and developer accessible
+machines, so I could help with debugging there if necessary (but I am really
+overloaded with things to do already so I will struggle to allocate much
+time to this, but the facility is there, and I do want to know if the 64 bit
+debian Therion [packages are actually broken).
+
+Can you (philip S) post the offending dataset, (or will any dataset do?)
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From olly at survex.com  Wed Dec 14 11:26:51 2005
+From: olly at survex.com (Olly Betts)
+Date: Wed, 14 Dec 2005 10:26:51 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <20051214101057.GE10773@xios>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu> <439F42E3.6010600@balister.org>
+	<20051214101057.GE10773@xios>
+Message-ID: <20051214102651.GR29821@survex.com>
+
+On Wed, Dec 14, 2005 at 10:10:58AM +0000, Wookey wrote:
+> +++ Philip Balister [05-12-13 16:53 -0500]:
+> > You should spend some time and figure out why it doesn't work for 64 
+> > bits. 
+> 
+> Seconded. What we have so far is a workaround, not a fix. Few of us
+> currently have access to 64bit machines, but they are rapidly becoming more
+> common. Finding out what problem therion has is well worth spending
+> some time on.
+
+A couple of hours ago I sent a patch which improves matters, and may
+even fix them.  But the list seems to have eaten it.  Perhaps it's
+set to reject attachements, or a spam filter doesn't like them or
+something.
+
+Anyway, it's here:
+
+http://www.survex.com/~olly/therion-0.3.9-64bit.patch
+
+If that doesn't fully fix it, I have an x86_64 linux machine, so can
+dig further when I have a spare moment.
+
+Cheers,
+    Olly
+
+
+From wookey at aleph1.co.uk  Wed Dec 14 11:10:58 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 14 Dec 2005 10:10:58 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <439F42E3.6010600@balister.org>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu> <439F42E3.6010600@balister.org>
+Message-ID: <20051214101057.GE10773@xios>
+
++++ Philip Balister [05-12-13 16:53 -0500]:
+> You should spend some time and figure out why it doesn't work for 64 
+> bits. 
+
+Seconded. What we have so far is a workaround, not a fix. Few of us
+currently have access to 64bit machines, but they are rapidly becoming more
+common. Finding out what problem therion has is well worth spending
+some time on.
+
+There are 64bit binaries built for debian, and developer accessible
+machines, so I could help with debugging there if necessary (but I am really
+overloaded with things to do already so I will struggle to allocate much
+time to this, but the facility is there, and I do want to know if the 64 bit
+debian Therion [packages are actually broken).
+
+Can you (philip S) post the offending dataset, (or will any dataset do?)
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From olly at survex.com  Wed Dec 14 10:08:27 2005
+From: olly at survex.com (Olly Betts)
+Date: Wed, 14 Dec 2005 09:08:27 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <1134542862.439fc00e18dd2@webmailer.sk>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu>
+	<1134542862.439fc00e18dd2@webmailer.sk>
+Message-ID: <20051214090827.GQ29821@survex.com>
+
+On Wed, Dec 14, 2005 at 07:47:42AM +0100, Stacho Mudrak wrote:
+> Quoting Philip Schuchardt <ohc at vt.edu>:
+> > Just add -m32 option to the compiler and linker flags.
+> 
+> Great, thanks a lot. We will add it soon.
+
+This is really a workaround rather than a fix - it assumes you've got a
+multilibbed compiler and all the required libraries compiled as 32 bit.
+So it won't even work for all x86_64 Linux users, let alone other 64
+bit platforms which don't have a 32 bit mode.
+
+Really, the underlying bug (presumably an assumption that sizeof(long)
+== 4 or sizeof(void*) == sizeof(int) or similar) needs fixing.
+
+Here's a patch which at least gets us some way along that road.  It may
+even be a complete fix - the therion project I had to hand goes from
+dying with the error Philip reported to complaining that it doesn't know
+about "left" which could just be because it's too old.  I don't really
+have time to dig deeper right now.
+
+Cheers,
+    Olly
+-------------- next part --------------
+diff -ru therion-0.3.9-orig/thexpmodel.cxx therion-0.3.9/thexpmodel.cxx
+--- therion-0.3.9-orig/thexpmodel.cxx	2005-05-12 21:03:46.000000000 +0100
++++ therion-0.3.9/thexpmodel.cxx	2005-12-14 08:48:58.800754176 +0000
+@@ -1362,7 +1362,7 @@
+       sptr = (thsurvey*)(*obi);
+       if (sptr->num1 > 0) {
+         sptr->num1 = survnum++;
+-        fprintf(pltf,"S %d %d %s\n", sptr->num1, (sptr->fsptr != NULL) ? sptr->fsptr->num1 : -1, sptr->name);
++        fprintf(pltf,"S %ld %ld %s\n", sptr->num1, (sptr->fsptr != NULL) ? sptr->fsptr->num1 : -1, sptr->name);
+         if (strlen(sptr->title)) {
+           fprintf(pltf,"C %s\n", sptr->title);
+         }
+@@ -1379,7 +1379,7 @@
+     if (stnum[i] > 0) {
+       stnum[i] = survnum;
+       pst = &(dbp->db1d.station_vec[i]);
+-      fprintf(pltf,"T %d %d %s %.3f %.3f %.3f G%s%s%s\n", survnum, pst->survey->num1, pst->name, pst->x, pst->y, pst->z, (pst->flags & TT_STATIONFLAG_ENTRANCE) != 0 ? "E" : "", (pst->flags & TT_STATIONFLAG_FIXED) != 0 ? "F" : "", (pst->flags & TT_STATIONFLAG_CONT) != 0 ? "C" : "");
++      fprintf(pltf,"T %ld %ld %s %.3f %.3f %.3f G%s%s%s\n", survnum, pst->survey->num1, pst->name, pst->x, pst->y, pst->z, (pst->flags & TT_STATIONFLAG_ENTRANCE) != 0 ? "E" : "", (pst->flags & TT_STATIONFLAG_FIXED) != 0 ? "F" : "", (pst->flags & TT_STATIONFLAG_CONT) != 0 ? "C" : "");
+       if (pst->comment != NULL) {
+         fprintf(pltf,"C %s\n", pst->comment);
+       }
+@@ -1392,7 +1392,7 @@
+   tlegs = dbp->db1d.get_tree_legs();
+   for(i = 0; i < nlegs; i++, tlegs++) {
+     if ((*tlegs)->survey->is_selected()) {
+-      fprintf(pltf,"H %d %d %d G%s%s\n", 
++      fprintf(pltf,"H %ld %ld %ld G%s%s\n", 
+           stnum[(*tlegs)->leg->from.id - 1],
+           stnum[(*tlegs)->leg->to.id - 1],
+           (*tlegs)->survey->num1,
+@@ -1416,7 +1416,7 @@
+         case TT_SURFACE_CMD:
+           tmp3d = ((thsurface*)(*obi))->get_3d();
+           if ((tmp3d != NULL) && (tmp3d->nfaces > 0)) {
+-            fprintf(pltf,"X 1 %d\n", ((thsurface*)(*obi))->fsptr->num1);
++            fprintf(pltf,"X 1 %ld\n", ((thsurface*)(*obi))->fsptr->num1);
+             tmp3d->exp_shift_x = 0.0;
+             tmp3d->exp_shift_y = 0.0;
+             tmp3d->exp_shift_z = 0.0;
+@@ -1447,7 +1447,7 @@
+             d3d->exp_shift_x = 0.0;
+             d3d->exp_shift_y = 0.0;
+             d3d->exp_shift_z = 0.0;
+-            fprintf(pltf,"X 0 %d\n", cs->fsptr->num1);
++            fprintf(pltf,"X 0 %ld\n", cs->fsptr->num1);
+             d3d->export_tlx(pltf);
+           }
+         }
+diff -ru therion-0.3.9-orig/thtexfonts.cxx therion-0.3.9/thtexfonts.cxx
+--- therion-0.3.9-orig/thtexfonts.cxx	2005-05-05 12:20:53.000000000 +0100
++++ therion-0.3.9/thtexfonts.cxx	2005-12-14 08:49:29.025159368 +0000
+@@ -147,7 +147,7 @@
+ }
+ 
+ string replace_all(string s, string f, string r) {
+-  unsigned int found = s.find(f);
++  size_t found = s.find(f);
+   while(found != string::npos) {
+     s.replace(found, f.length(), r);
+     found = s.find(f);
+
+From s.m at speleo.sk  Wed Dec 14 14:46:15 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 14 Dec 2005 14:46:15 +0100
+Subject: [Therion] Weird Error
+In-Reply-To: <20051214102651.GR29821@survex.com>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu> <439F42E3.6010600@balister.org>
+	<20051214101057.GE10773@xios> <20051214102651.GR29821@survex.com>
+Message-ID: <1134567975.43a022272bfd5@webmailer.sk>
+
+Quoting Olly Betts <olly at survex.com>:
+> A couple of hours ago I sent a patch which improves matters, and may
+> even fix them.  But the list seems to have eaten it.
+
+I received all the mails now - even the first one with attachement. Thanks. I
+will aply it and we will see, whether it helps.
+
+> If that doesn't fully fix it, I have an x86_64 linux machine, so can
+> dig further when I have a spare moment.
+
+Thanks again, S.
+
+
+From wookey at aleph1.co.uk  Tue Dec 20 18:28:01 2005
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 20 Dec 2005 17:28:01 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <20051214090827.GQ29821@survex.com>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu>
+	<1134542862.439fc00e18dd2@webmailer.sk>
+	<20051214090827.GQ29821@survex.com>
+Message-ID: <20051220172801.GJ10773@xios>
+
++++ Olly Betts [05-12-14 09:08 +0000]:
+> Really, the underlying bug (presumably an assumption that sizeof(long)
+> == 4 or sizeof(void*) == sizeof(int) or similar) needs fixing.
+> 
+> Here's a patch which at least gets us some way along that road.  It may
+> even be a complete fix - the therion project I had to hand goes from
+> dying with the error Philip reported to complaining that it doesn't know
+> about "left" which could just be because it's too old.  I don't really
+> have time to dig deeper right now.
+
+I've just uploaded a new version to debian with this patch included, which
+should help Debian users on 64-bit arches (although maybe we don't
+actually have any apart from Olly as no-one has complained about this yet)
+
+It will filter through to the testing distribution in about 2 weeks time.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+From olly at survex.com  Tue Dec 20 20:13:09 2005
+From: olly at survex.com (Olly Betts)
+Date: Tue, 20 Dec 2005 19:13:09 +0000
+Subject: [Therion] Weird Error
+In-Reply-To: <20051220172801.GJ10773@xios>
+References: <200512122118.44084.ohc@vt.edu> <200512131717.48088.ohc@vt.edu>
+	<200512131740.08220.ohc@vt.edu>
+	<1134542862.439fc00e18dd2@webmailer.sk>
+	<20051214090827.GQ29821@survex.com> <20051220172801.GJ10773@xios>
+Message-ID: <20051220191309.GU8621@survex.com>
+
+On Tue, Dec 20, 2005 at 05:28:01PM +0000, Wookey wrote:
+> I've just uploaded a new version to debian with this patch included, which
+> should help Debian users on 64-bit arches (although maybe we don't
+> actually have any apart from Olly as no-one has complained about this yet)
+
+I'm actually running Ubuntu on the 64-bit box, but that's mostly Debian
+underneath of course.
+
+I just tried hacking all the "-extend" stuff out of the example I found
+before and with the patch I can produce a pdf file.  So that's a good
+start, though there must be code paths I didn't exercise so it's
+possible there are other 64 bit issues.
+
+Cheers,
+    Olly
+
+
+From andrew at wotcc.org.uk  Tue Dec 20 22:32:23 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 20 Dec 2005 21:32:23 -0000
+Subject: [Therion] Weird Error
+In-Reply-To: <20051220191309.GU8621@survex.com>
+Message-ID: <ECOWS02Mh0Cpg0RnLJm00003330@smtp-out2.blueyonder.co.uk>
+
+
+
+Hello
+
+I have two scraps that are in the same th2 file and in the map editor the
+walls end at the same point, however one of the walls is -subtype invisible.
+Using the join command it seems to ignore the invisible wall and join to the
+next closest visible wall. This is very annoying. Is it deliberate?
+
+Andrew
+
+> -----Original Message-----
+> From: therion-bounces at speleo.cz [mailto:therion-bounces at speleo.cz] On
+> Behalf Of Olly Betts
+> Sent: 20 December 2005 19:13
+> To: therion at speleo.sk; Stacho Mudrak
+> Subject: Re: [Therion] Weird Error
+> 
+> On Tue, Dec 20, 2005 at 05:28:01PM +0000, Wookey wrote:
+> > I've just uploaded a new version to debian with this patch included,
+> which
+> > should help Debian users on 64-bit arches (although maybe we don't
+> > actually have any apart from Olly as no-one has complained about this
+> yet)
+> 
+> I'm actually running Ubuntu on the 64-bit box, but that's mostly Debian
+> underneath of course.
+> 
+> I just tried hacking all the "-extend" stuff out of the example I found
+> before and with the patch I can produce a pdf file.  So that's a good
+> start, though there must be code paths I didn't exercise so it's
+> possible there are other 64 bit issues.
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+> 
+> 
+> 
+> --
+> No virus found in this incoming message.
+> Checked by AVG Free Edition.
+> Version: 7.1.371 / Virus Database: 267.14.1/207 - Release Date: 19/12/2005
+> 
+> 
+> --
+> No virus found in this incoming message.
+> Checked by AVG Free Edition.
+> Version: 7.1.371 / Virus Database: 267.14.1/207 - Release Date: 19/12/2005
+> 
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.1/207 - Release Date: 19/12/2005
+ 
+
+
+
+From s.m at speleo.sk  Wed Dec 21 05:14:57 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 21 Dec 2005 05:14:57 +0100
+Subject: [Therion] Weird Error
+In-Reply-To: <ECOWS02Mh0Cpg0RnLJm00003330@smtp-out2.blueyonder.co.uk>
+References: <ECOWS02Mh0Cpg0RnLJm00003330@smtp-out2.blueyonder.co.uk>
+Message-ID: <43A8D6C1.60208@speleo.sk>
+
+> Hello
+> 
+> I have two scraps that are in the same th2 file and in the map editor the
+> walls end at the same point, however one of the walls is -subtype invisible.
+> Using the join command it seems to ignore the invisible wall and join to the
+> next closest visible wall. This is very annoying. Is it deliberate?
+
+Invisible walls are usually used to define outline of the scrap 
+correctly. If you join two scraps, invisible walls are ignored. You 
+should join at the level of line points.
+
+But if two scraps have common end wall points in one .th2 file, they 
+should be joined automatically correctly. Did you tried to comment out 
+this join command? It should help, if I understand your situation correctly.
+
+If removing this join does not help, are you able to isolate this error 
+and send the source, that we can try? Or a simple image could help too.
+
+Thanks, S.
+
+
+
+From andrew at wotcc.org.uk  Mon Dec 19 18:44:26 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 19 Dec 2005 17:44:26 -0000
+Subject: [Therion] Nesting surveys
+Message-ID: <ECOWS04MZEoKz4r02V5000028ed@smtp-out4.blueyonder.co.uk>
+
+Hello
+
+I have been working on a largish survey project (25km surveyed in month) for
+the last few months. Each section of cave is split into scraps and compiled
+with the a file like
+
+survey The_Ashes_Seriesth
+
+import The_Ashes_Series.3d -surveys use 
+input The_Ashes_Series.th2
+
+map The_Ashes_SeriesMap -title "The Ashes Series"
+  The_Ashes_SeriesScPl1
+  The_Ashes_SeriesScPl2
+  The_Ashes_SeriesScPl3
+  The_Ashes_SeriesScPl4  
+  The_Ashes_SeriesScPl5
+  The_Ashes_SeriesScPl6
+  The_Ashes_SeriesScPl7
+  The_Ashes_SeriesScPl8
+endmap
+
+join The_Ashes_SeriesScPl1 The_Ashes_SeriesScPl2 -smooth on
+join The_Ashes_SeriesScPl2 The_Ashes_SeriesScPl4 -smooth on
+join The_Ashes_SeriesScPl4 The_Ashes_SeriesScPl3 -smooth on
+join The_Ashes_SeriesScPl3 The_Ashes_SeriesScPl5 -smooth on
+join The_Ashes_SeriesScPl5 The_Ashes_SeriesScPl6 -smooth on
+join The_Ashes_SeriesScPl5 The_Ashes_SeriesScPl7 -smooth on
+#join The_Ashes_SeriesScPl7 The_Ashes_SeriesScPl8 -smooth on 
+
+Endsurvey
+
+As you can see I am using survex files direct. This works fine. However when
+I come to compile the whole cave, rather than copying the above text into
+another document I have tried to include the file. However, as it is in a
+survey the station names get prefixed. The above also imports the 3d file,
+but in the overall compilation, I need to use the compiled 3d file. 
+
+I end up having to comment out the survey, end survey and import lines,
+which becomes tedious.
+This will get worse when we try to put lots of caves on the same map. Am I
+missing something?
+
+Andrew
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.1/206 - Release Date: 16/12/2005
+ 
+
+
+
+From s.m at speleo.sk  Wed Dec 21 17:00:36 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 21 Dec 2005 17:00:36 +0100
+Subject: [Therion] Nesting surveys
+In-Reply-To: <ECOWS04MZEoKz4r02V5000028ed@smtp-out4.blueyonder.co.uk>
+References: <ECOWS04MZEoKz4r02V5000028ed@smtp-out4.blueyonder.co.uk>
+Message-ID: <1135180836.43a97c247fcc3@webmailer.sk>
+
+Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+> This will get worse when we try to put lots of caves on the same map. Am I
+> missing something?
+
+I am sorry, but I am not sure whether I understand your problem correctly. If
+not, could you please write me example with station/survey names.
+
+Import command has a -filter option, using which you should be able to remove
+additional surveys (including top prefix) that are in the .3d file compiled on
+the top level. May be this will help you.
+
+If not, what other options you would like to have in import command?
+
+S.
+
+
+From andrew at wotcc.org.uk  Wed Dec 21 17:32:04 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 21 Dec 2005 16:32:04 -0000
+Subject: [Therion] Outline and clipping problems.
+In-Reply-To: <1135180836.43a97c247fcc3@webmailer.sk>
+Message-ID: <ECOWS06M2ozm2F4mOKb00006294@smtp-out6.blueyonder.co.uk>
+
+I have tied to use wall subtype debris and outline out in the join between
+scraps The_Ashes_SeriesScPl7 and The_Ashes_SeriesScPl8 however I am still
+getting a triangle of clipping that seems to ignore the debris wall?
+
+The data is available at
+
+http://mulucaves.org/SVN/Ashes.zip
+
+I have included the pdf, incase it is something to do with the machine I am
+generating it on. I am using Win2000 with acrobat reader 7.
+
+Also scrap The_Ashes_SeriesScPl7 is under The_Ashes_SeriesScPl5, but it does
+not seem to be faded, I have changed the config, but it seems to make no
+difference. It works for other scraps in other parts of the cave
+
+Thanks
+
+Andrew
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.2/208 - Release Date: 20/12/2005
+ 
+
+
+
+From andrew at wotcc.org.uk  Wed Dec 21 17:52:41 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 21 Dec 2005 16:52:41 -0000
+Subject: [Therion] Nesting surveys
+In-Reply-To: <1135180836.43a97c247fcc3@webmailer.sk>
+Message-ID: <ECOWS06MKoxDt9JymLh000064b5@smtp-out6.blueyonder.co.uk>
+
+An example of one cave is available at
+
+http://mulucaves.org/SVN/Moon_Cave.zip
+
+The aim is so I can run each section of cave (represented by a directory)
+individually or the whole thing from the root, without editing the whole
+cave. Including them in a survey-endsurvey nest changes the name of the
+station therefore I cannot get it to work. This is why I have an extra th
+file *_WRAPPER. This works as far as it goes, but when I try to combine
+caves using the same method I get an error about nested input. I am aiming
+to have to only edit changes in one location, otherwise this large data set
+will become a real mess. Moon_Cave was only one cave surveyed on a 4 week
+trip and represents about a quarter of the total surveyed on that trip.
+Therefore a well organised system is going to be important.
+
+Hope this helps you understand what I am trying to do.
+
+For information: Everyone who surveyed drew up there own surveys and
+Therionised them, even computer phobic's became quite enthusiastic. On the
+last day of the trip the plans where printed and handed to the local park
+warden. Okay, they where not perfect. This would not have been possible
+without Therion, so thanks.
+
+Andrew
+
+> -----Original Message-----
+> From: therion-bounces at speleo.cz [mailto:therion-bounces at speleo.cz] On
+> Behalf Of Stacho Mudrak
+> Sent: 21 December 2005 16:01
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Nesting surveys
+> 
+> Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+> > This will get worse when we try to put lots of caves on the same map. Am
+> I
+> > missing something?
+> 
+> I am sorry, but I am not sure whether I understand your problem correctly.
+> If
+> not, could you please write me example with station/survey names.
+> 
+> Import command has a -filter option, using which you should be able to
+> remove
+> additional surveys (including top prefix) that are in the .3d file
+> compiled on
+> the top level. May be this will help you.
+> 
+> If not, what other options you would like to have in import command?
+> 
+> S.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+> 
+> 
+> 
+> --
+> No virus found in this incoming message.
+> Checked by AVG Free Edition.
+> Version: 7.1.371 / Virus Database: 267.14.2/208 - Release Date: 20/12/2005
+> 
+> --
+> No virus found in this incoming message.
+> Checked by AVG Free Edition.
+> Version: 7.1.371 / Virus Database: 267.14.2/208 - Release Date: 20/12/2005
+> 
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.2/208 - Release Date: 20/12/2005
+ 
+
+
+
+From s.m at speleo.sk  Wed Dec 21 18:12:19 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 21 Dec 2005 18:12:19 +0100
+Subject: [Therion] Outline and clipping problems.
+In-Reply-To: <ECOWS06M2ozm2F4mOKb00006294@smtp-out6.blueyonder.co.uk>
+References: <ECOWS06M2ozm2F4mOKb00006294@smtp-out6.blueyonder.co.uk>
+Message-ID: <1135185139.43a98cf3e51ae@webmailer.sk>
+
+This is the situation where wall invisible should be used :) The scrap outline
+generation algorithm works wrong way in this case.
+
+When the algorithm is creating scrap outline, it goes from end of one line to
+the nearest end of second line. In your case, when it comes to the end of
+debris line, it connects the second line, but on the wrong end. Than triangle
+appears.
+
+When you will connect the end of debris line with invisible wall to the correct
+wall end on the other side of the passage, your problem should be fixed (at
+least on my machine is). Matapost also complains about this - that scrap
+outline intersect it self.
+
+I know, that this algorithm can be improved, but... But at least, I will put it
+in the TODO list.
+
+Regards, S.
+
+Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> I have tied to use wall subtype debris and outline out in the join between
+> scraps The_Ashes_SeriesScPl7 and The_Ashes_SeriesScPl8 however I am still
+> getting a triangle of clipping that seems to ignore the debris wall?
+>
+> The data is available at
+>
+> http://mulucaves.org/SVN/Ashes.zip
+>
+> I have included the pdf, incase it is something to do with the machine I am
+> generating it on. I am using Win2000 with acrobat reader 7.
+>
+> Also scrap The_Ashes_SeriesScPl7 is under The_Ashes_SeriesScPl5, but it does
+> not seem to be faded, I have changed the config, but it seems to make no
+> difference. It works for other scraps in other parts of the cave
+>
+> Thanks
+>
+> Andrew
+>
+> --
+> No virus found in this outgoing message.
+> Checked by AVG Free Edition.
+> Version: 7.1.371 / Virus Database: 267.14.2/208 - Release Date: 20/12/2005
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.cz
+> http://www.speleo.cz/mailman/listinfo/therion
+>
+>
+
+
+
+
+
+From s.m at speleo.sk  Thu Dec 22 13:13:56 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 22 Dec 2005 13:13:56 +0100
+Subject: [Therion] Nesting surveys
+In-Reply-To: <ECOWS06MKoxDt9JymLh000064b5@smtp-out6.blueyonder.co.uk>
+References: <ECOWS06MKoxDt9JymLh000064b5@smtp-out6.blueyonder.co.uk>
+Message-ID: <1135253636.43aa98844253b@webmailer.sk>
+
+Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> The aim is so I can run each section of cave (represented by a directory)
+> individually or the whole thing from the root, without editing the whole
+> cave.
+>
+> Hope this helps you understand what I am trying to do.
+
+Yes. I think, now I understand your problem. I am not sure, but simple solution 
+ of this problem would be not to generate errors, if one station is imported
+twice - from global .3d and from local .3d file. And of course allways prefer
+the coordinates from the global file. This will probably work, I am just able
+to start working on it after Christmas :)
+
+> For information: Everyone who surveyed drew up there own surveys and
+> Therionised them, even computer phobic's became quite enthusiastic. On the
+> last day of the trip the plans where printed and handed to the local park
+> warden. Okay, they where not perfect. This would not have been possible
+> without Therion, so thanks.
+
+This is great!
+
+S.
+
+
+From andrew at wotcc.org.uk  Thu Dec 22 13:39:08 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 22 Dec 2005 12:39:08 -0000
+Subject: [Therion] Nesting surveys
+In-Reply-To: <1135253636.43aa98844253b@webmailer.sk>
+Message-ID: <ECOWS05M5T7j8cwwbDz000040f3@smtp-out5.blueyonder.co.uk>
+
+
+
+> -----Original Message-----
+> From: therion-bounces at speleo.cz [mailto:therion-bounces at speleo.cz] On
+> Behalf Of Stacho Mudrak
+> Sent: 22 December 2005 12:14
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Nesting surveys
+> 
+> Quoting Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> > The aim is so I can run each section of cave (represented by a
+> directory)
+> > individually or the whole thing from the root, without editing the whole
+> > cave.
+> >
+> > Hope this helps you understand what I am trying to do.
+> 
+> Yes. I think, now I understand your problem. I am not sure, but simple
+> solution
+>  of this problem would be not to generate errors, if one station is
+> imported
+> twice - from global .3d and from local .3d file. And of course allways
+> prefer
+> the coordinates from the global file. This will probably work, I am just
+> able
+> to start working on it after Christmas :)
+> 
+I think I understand that using the global dataset would work, however, this
+means that everything has to be tided into the global dataset from the
+start. For various reasons this is not going to be possible (well not in the
+near future.) I was also hoping to be able to send distinct sections out,
+without sending the whole dataset out, eg just send the folder darkside out
+and someone would be able to edit it. Also I like to try to have data as
+simple to change as possible. For example when a cave has been misnamed I
+could just change a couple of references and that would be it, I am thinking
+of situations of when a small cave is linked to a large system and then is
+just an area of that system. If the full global reference is used in the th2
+files this would not be possible.
+
+Also if I understand you correctly, I would have to edit every station name
+in all the th2 file.
+
+>From a users point of view, a possible solution is to use some sort of
+prefix name - endprefix that would use the survex naming structure ie add
+name.* to all the stations. Similar to the survey name - endsurvey, however
+using the survex naming structure. Then people nesting using survex .3d
+files would have to include files at various levels with the following
+syntax
+
+import survexfile.3d -surveys use
+
+prefix name1
+input filename1.th2
+endprefix
+
+prefix name2
+input filename2.th2
+endprefix
+
+Possibly not as neat as we would like, but might mean that the 2 programs
+are more compatible.
+
+Thanks
+
+Andrew
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.3/209 - Release Date: 21/12/2005
+ 
+
+
+
+From s.m at speleo.sk  Thu Dec 22 14:14:50 2005
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 22 Dec 2005 14:14:50 +0100
+Subject: [Therion] Nesting surveys
+In-Reply-To: <ECOWS05M5T7j8cwwbDz000040f3@smtp-out5.blueyonder.co.uk>
+References: <ECOWS05M5T7j8cwwbDz000040f3@smtp-out5.blueyonder.co.uk>
+Message-ID: <1135257290.43aaa6ca0419e@webmailer.sk>
+
+> I think I understand that using the global dataset would work, however, this
+> means that everything has to be tided into the global dataset from the
+> start. For various reasons this is not going to be possible (well not in the
+> near future.) I was also hoping to be able to send distinct sections out,
+> without sending the whole dataset out, eg just send the folder darkside out
+> and someone would be able to edit it. Also I like to try to have data as
+> simple to change as possible. For example when a cave has been misnamed I
+> could just change a couple of references and that would be it, I am thinking
+> of situations of when a small cave is linked to a large system and then is
+> just an area of that system. If the full global reference is used in the th2
+> files this would not be possible.
+
+I am not sure, whether we have understood. From my point of view, everything you
+described would work - without needs of knowing this global dataset structure.
+Assuming the most simple scenario:
+
+You have a centerline in survex. There is only one survey "entrance" and
+stations are named from 0 to 10. In therion, your dataset (entrance.th) will be
+like:
+
+import entrance.3d -surveys use
+
+survey entrance
+  input entrance.th2
+endsurvey
+
+... assuming in entrance.th2 stations are without any prefix - named just
+0,1,..,10.
+
+Now you have two such directories: "entrance" and "continuation" for example. In
+survex, you have a global file named "cave.3d" where stations from entrance
+dataset look like cave.entrance.1 and from second dataset cave.continuation.1
+and cave.3d in in the upper level directory.
+
+Now the corresponding cave.th file in this directory will be like:
+
+import cave.3d -surveys use
+
+survey cave
+  input entrance/entrance.th
+  input continuation/continuation.th
+endsurvey
+
+And that's all. You are able to work on single peace without knowing global
+datastructure. You may send only directory continuation to somebody without any
+files from top level directory and it will work. He may edit it, send it back
+to you and it will work also. If he will rename this survey, you just change
+references in cave.th and that's all. I do not see any of problems
+you have described.
+
+> Also if I understand you correctly, I would have to edit every station name
+> in all the th2 file.
+
+Certainly not. It looks I missed something. I was wondering, why you use such a
+long station names... I need to check your source files once more, may be your
+problem is different.
+
+> >From a users point of view, a possible solution is to use some sort of
+> prefix name - endprefix that would use the survex naming structure ie add
+> name.* to all the stations.
+
+Scrap already has this possibility via -station-names option. You may add
+prefixes or suffixes if you like.
+
+OK, I will check your files more in the detail, may be I will understand. But
+today, thinking is a little bit difficult for me - I drunk something last night
+and I slept only 3 hours... Probably when I will wake up tomorrow, everything
+will be clear.
+
+S.
+
+
+
+From andrew at wotcc.org.uk  Thu Dec 22 15:52:50 2005
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 22 Dec 2005 14:52:50 -0000
+Subject: [Therion] Nesting surveys
+In-Reply-To: <1135257290.43aaa6ca0419e@webmailer.sk>
+Message-ID: <20051222145312.7732525DC@outsider.texxar.cz>
+
+> 
+> > I think I understand that using the global dataset would work, however,
+> this
+> > means that everything has to be tided into the global dataset from the
+> > start. For various reasons this is not going to be possible (well not in
+> the
+> > near future.) I was also hoping to be able to send distinct sections
+> out,
+> > without sending the whole dataset out, eg just send the folder darkside
+> out
+> > and someone would be able to edit it. Also I like to try to have data as
+> > simple to change as possible. For example when a cave has been misnamed
+> I
+> > could just change a couple of references and that would be it, I am
+> thinking
+> > of situations of when a small cave is linked to a large system and then
+> is
+> > just an area of that system. If the full global reference is used in the
+> th2
+> > files this would not be possible.
+> 
+> I am not sure, whether we have understood. From my point of view,
+> everything you
+> described would work - without needs of knowing this global dataset
+> structure.
+> Assuming the most simple scenario:
+> 
+> You have a centerline in survex. There is only one survey "entrance" and
+> stations are named from 0 to 10. In therion, your dataset (entrance.th)
+> will be
+> like:
+> 
+> import entrance.3d -surveys use
+> 
+> survey entrance
+>   input entrance.th2
+> endsurvey
+> 
+> ... assuming in entrance.th2 stations are without any prefix - named just
+> 0,1,..,10.
+> 
+> Now you have two such directories: "entrance" and "continuation" for
+> example. In
+> survex, you have a global file named "cave.3d" where stations from
+> entrance
+> dataset look like cave.entrance.1 and from second dataset
+> cave.continuation.1
+> and cave.3d in in the upper level directory.
+> 
+> Now the corresponding cave.th file in this directory will be like:
+> 
+> import cave.3d -surveys use
+> 
+> survey cave
+>   input entrance/entrance.th
+>   input continuation/continuation.th
+> endsurvey
+> 
+> And that's all. You are able to work on single peace without knowing
+> global
+> datastructure. You may send only directory continuation to somebody
+> without any
+> files from top level directory and it will work. He may edit it, send it
+> back
+> to you and it will work also. If he will rename this survey, you just
+> change
+> references in cave.th and that's all. I do not see any of problems
+> you have described.
+
+This is what I have tried, however I get an error
+
+error -- Benerat_Mainline/Benerat_Mainline.th2 [371] -- invalid station
+reference -- mainline_side.52
+
+And from further up the log file
+
+14> 290 : moon_cave.mainline_side.41 at Moon_Caveth
+
+Which indicates to me that the survex.3d name is moon_cave.mainline_side.52
+but the Therion name is mainline_side.52
+
+I have solved this by adding a filter, shown below. I also could not get the
+data set to work with the import outside of the survey-endsurvey. I have
+just tried again, and I still cannot get it to work.
+ 
+ survey cave
+
+import cave.3d -surveys use -filter cave
+
+   input entrance/entrance.th
+   input continuation/continuation.th
+ endsurvey
+
+the problem with the filter is that it will only work up one level. Well I
+have not found a way around it.
+
+I have the import outside of the survey-endsurvey. I have just tried to move
+it inside but cannot get it to work.
+
+<snip>
+> 
+> Scrap already has this possibility via -station-names option. You may add
+> prefixes or suffixes if you like.
+
+This may solve the problem, but as usual I am having problems. From reading
+the therion book I understand that it is used in a scrap-endscrap or
+centreline-endcentreline. But I need to amend it for a number of scraps
+within a th2 file. This prefix will be different depending on where the th2
+file is called from??? 
+
+
+Unfortunately for now I have run out of time. I will be able to try again in
+the New Year, when I suspect that I will be asking for you help again. I
+hope your head has recovered by then!
+
+Andrew
+ 
+
+-- 
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.371 / Virus Database: 267.14.3/209 - Release Date: 21/12/2005
+ 
+
+
+

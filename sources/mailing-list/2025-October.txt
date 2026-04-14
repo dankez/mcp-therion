@@ -1,0 +1,2525 @@
+From xavier.robert at univ-grenoble-alpes.fr  Wed Oct  1 10:55:29 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Wed, 1 Oct 2025 10:55:29 +0200
+Subject: [Therion] Setting up a Therion ecosystem on Mac
+In-Reply-To: <000c01dc31df$62d55b50$288011f0$@tomo.co.nz>
+References: <000c01dc31df$62d55b50$288011f0$@tomo.co.nz>
+Message-ID: <95412214-FE5D-4307-9323-64518F3AF967@univ-grenoble-alpes.fr>
+
+Hi !
+
+> Le 30 sept. 2025 ? 09:53, bruce at tomo.co.nz a ?crit :
+> 
+> M?rena
+>  
+> So I?m looking for any tips and advice to help ease the process.  Here is what looks like software that might be equivalent to what we?re using on Windows:
+> First up Git  Git - Downloading for macOS <https://git-scm.com/downloads/mac>.  Any pointers on whether to go with Homebrew, MacPorts or XCode?  We are likely to be fans of git-gui and gitk.
+
+I am not sure, but you should be able to install Therion and all the necessary dependencies through HomeBrew : https://brew.sh/
+You will also probably need the Xcode-command lines tools (no need to install the complete XCode environment) if Homebrew do not install it. If needed you will find tons of website explaining how to install it.
+To install Therion with Homebrew, follow then this wiki : https://therion.speleo.sk/wiki/os-tips:osx
+(I am not sure that Therion is up-to-date with this method).
+
+Personally, I generally install Therion from sources that I download from Github or from the Therion website. For that ,follow this page (do not take in account the ? Preparation for old version 0.3.10!) : https://therion.speleo.sk/wiki/os-tips:osx10.8
+
+
+> I find icon overlays a necessary feature to provide general situational awareness.  Such as TortoiseGit ? Windows Shell Interface to Git <https://tortoisegit.org/>, but that is Windows only.  SnailGit: Git for Finder on the Mac?App?Store <https://apps.apple.com/us/app/snailgit-git-for-finder/id847260112?mt=12> looks like it is similar.  Anything else the comes with icon overlays? Free?
+> Text Editors that have Therion syntax stylers.  contrib:externaleditors [Therion wiki] <https://therion.speleo.sk/wiki/contrib:externaleditors?s%5b%5d=mac> suggests BBEdit and Brackets with stylers by Xavier Robert.  Which of these is best Xavier?  Other options?
+
+Now I am using VS-codium (https://vscodium.com/), I find it more convenient than the other.
+I installed the plugin for Therion : https://marketplace.visualstudio.com/items?itemName=rhystyers.therion / https://github.com/rhyst/vscode-therion-language. It works very well ! If I good remember, you will need to install it from file, you will not be able to install it directly through the marketplace (that only work with VSCode)
+
+
+> Therion.  I assume ladislavb/homebrew-therion <https://github.com/ladislavb/homebrew-therion> is the latest, superseding tbe:wiki1 [Therion wiki] <https://therion.speleo.sk/wiki/tbe:wiki1?s%5b%5d=os> and masox [Therion wiki] <https://therion.speleo.sk/wiki/masox?s%5b%5d=os>
+> Xpdf.  XpdfReader <https://www.xpdfreader.com/>
+I am also on mac, I use the native Preview app. I like the fact that I can run compilation even if the pdf export is open in Preview. See https://therion.speleo.sk/wiki/contrib:externalviewers
+
+Good luck !
+
+Xavier
+
+> Is anyone running TopoDroid in an Android emulator on mac?
+> Feedback and suggestions welcome.
+>  
+> Thanks
+> Bruce
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251001/bd84d3a5/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Wed Oct  8 15:23:53 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Wed, 8 Oct 2025 15:23:53 +0200
+Subject: [Therion] Limit in the number of scraps in a (big) project ?
+Message-ID: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+
+Hi all,
+
+I am maintaining a quite big structured Therion database with more than 700 caves (https://github.com/robertxa/Topographies-Samoens_Folly). I am using Therion 6.3.3 (2025-01-06), TeX Live 2015 (MetaPost 1.999).
+Following a new session of exploration and surveys, I added some scraps in this database. I have no problem to run any compilation of separate caves.
+
+But since my last update, when I try to run a Therion compilation for the whole database to build the 3D view of the system (https://groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html), I get an error during the ? Preloading the plain mem file ? :
+[...]
+[4090] [4091] [4092] [4093] [4094] [4095]
+! Number is too large (4096).
+l.296920 beginfig(4096
+                      );
+[4096]
+! Number is too large (4097).
+l.296923 beginfig(4097
+                      );
+[4097]
+? and so on? 
+therion: error -- metapost exit code -- 512
+
+I a m not sure, but I think that I have a total of 4102 objects (this is the last number with a similar error ; with a total of 4117 files written in thTMPDIR/). 
+If I run Therion with the -d option, I see all the data.xxxx from 1 to 4102 in thTMPDIR/. The compressed log file is in attachement.
+
+I tried to recompile my database after commenting a small part of the database that I did not change recently. The compilation run well.
+
+So, I suspect that there is a limit in the number of objects (scraps ?) Therion (or mpost ?) can handle. Am I right ?
+
+Is there a way to get rid off this limitation ?
+
+Cheers,
+
+Xavier
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251008/6eb460fa/attachment-0002.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.log.zip
+Type: application/zip
+Size: 54242 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251008/6eb460fa/attachment-0001.zip>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251008/6eb460fa/attachment-0003.htm>
+
+From beni at hallinger.org  Wed Oct  8 15:39:19 2025
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 08 Oct 2025 15:39:19 +0200
+Subject: [Therion] Limit in the number of scraps in a (big) project ?
+In-Reply-To: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+References: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+Message-ID: <e727fec7800872b6eae3ec1f7e224d3d@hallinger.org>
+
+Good questionQ
+in the hirlatz project, we "just" reach: "[3106]".
+
+
+Am 2025-10-08 15:23, schrieb Xavier Robert via Therion:
+> Hi all,
+> 
+> I am maintaining a quite big structured Therion database with more
+> than 700 caves
+> (https://github.com/robertxa/Topographies-Samoens_Folly). I am using
+> Therion 6.3.3 (2025-01-06), TeX Live 2015 (MetaPost 1.999).
+> Following a new session of exploration and surveys, I added some
+> scraps in this database. I have no problem to run any compilation of
+> separate caves.
+> 
+> But since my last update, when I try to run a Therion compilation for
+> the whole database to build the 3D view of the system
+> (https://groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html),
+> I get an error during the ? Preloading the plain mem file ? :
+> 
+> [...]
+> [4090] [4091] [4092] [4093] [4094] [4095]
+> ! Number is too large (4096).
+> l.296920 beginfig(4096
+>                       );
+> [4096]
+> ! Number is too large (4097).
+> l.296923 beginfig(4097
+>                       );
+> [4097]
+> ? and so on?
+> 
+> therion: error -- metapost exit code -- 512
+> 
+> I a m not sure, but I think that I have a total of 4102 objects (this
+> is the last number with a similar error ; with a total of 4117 files
+> written in thTMPDIR/).
+> If I run Therion with the -d option, I see all the data.xxxx from 1 to
+> 4102 in thTMPDIR/. The compressed log file is in attachement.
+> 
+> I tried to recompile my database after commenting a small part of the
+> database that I did not change recently. The compilation run well.
+> 
+> So, I suspect that there is a limit in the number of objects (scraps
+> ?) Therion (or mpost ?) can handle. Am I right ?
+> 
+> Is there a way to get rid off this limitation ?
+> 
+> Cheers,
+> 
+> Xavier
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From james.begley at gmail.com  Wed Oct  8 16:21:28 2025
+From: james.begley at gmail.com (James Begley)
+Date: Wed, 8 Oct 2025 15:21:28 +0100
+Subject: [Therion] Limit in the number of scraps in a (big) project ?
+In-Reply-To: <e727fec7800872b6eae3ec1f7e224d3d@hallinger.org>
+References: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+ <e727fec7800872b6eae3ec1f7e224d3d@hallinger.org>
+Message-ID: <CAGS-eH7-qHEC5UwDHib8VvOA4YJpRRMZR0E305=R+J2SGn3qdg@mail.gmail.com>
+
+Hiya,
+
+Line 218 of the Therion TODO.S file (see
+https://github.com/therion/therion/blob/master/TODO.S) says:
+
++ add support for multiple metapost files (more than 4096 scraps)
+
+So there was a known limit of 4,096 scraps at some point. Note that the
+TODO.S file hasn't been updated for many years, so that limitation might
+have been addressed at some point.
+
+Cheers,
+James
+
+On Wed, 8 Oct 2025 at 14:39, Benedikt Hallinger via Therion <
+therion at speleo.sk> wrote:
+
+> Good questionQ
+> in the hirlatz project, we "just" reach: "[3106]".
+>
+>
+> Am 2025-10-08 15:23, schrieb Xavier Robert via Therion:
+> > Hi all,
+> >
+> > I am maintaining a quite big structured Therion database with more
+> > than 700 caves
+> > (https://github.com/robertxa/Topographies-Samoens_Folly). I am using
+> > Therion 6.3.3 (2025-01-06), TeX Live 2015 (MetaPost 1.999).
+> > Following a new session of exploration and surveys, I added some
+> > scraps in this database. I have no problem to run any compilation of
+> > separate caves.
+> >
+> > But since my last update, when I try to run a Therion compilation for
+> > the whole database to build the 3D view of the system
+> > (
+> https://groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html
+> ),
+> > I get an error during the ? Preloading the plain mem file ? :
+> >
+> > [...]
+> > [4090] [4091] [4092] [4093] [4094] [4095]
+> > ! Number is too large (4096).
+> > l.296920 beginfig(4096
+> >                       );
+> > [4096]
+> > ! Number is too large (4097).
+> > l.296923 beginfig(4097
+> >                       );
+> > [4097]
+> > ? and so on?
+> >
+> > therion: error -- metapost exit code -- 512
+> >
+> > I a m not sure, but I think that I have a total of 4102 objects (this
+> > is the last number with a similar error ; with a total of 4117 files
+> > written in thTMPDIR/).
+> > If I run Therion with the -d option, I see all the data.xxxx from 1 to
+> > 4102 in thTMPDIR/. The compressed log file is in attachement.
+> >
+> > I tried to recompile my database after commenting a small part of the
+> > database that I did not change recently. The compilation run well.
+> >
+> > So, I suspect that there is a limit in the number of objects (scraps
+> > ?) Therion (or mpost ?) can handle. Am I right ?
+> >
+> > Is there a way to get rid off this limitation ?
+> >
+> > Cheers,
+> >
+> > Xavier
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251008/f9e758b9/attachment.htm>
+
+From m.budaj at gmail.com  Wed Oct  8 20:26:22 2025
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 8 Oct 2025 20:26:22 +0200
+Subject: [Therion] Limit in the number of scraps in a (big) project ?
+In-Reply-To: <CAGS-eH7-qHEC5UwDHib8VvOA4YJpRRMZR0E305=R+J2SGn3qdg@mail.gmail.com>
+References: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+ <e727fec7800872b6eae3ec1f7e224d3d@hallinger.org>
+ <CAGS-eH7-qHEC5UwDHib8VvOA4YJpRRMZR0E305=R+J2SGn3qdg@mail.gmail.com>
+Message-ID: <CALPsdSs4FxdrY-g8V0SVtX1FEWDTdP7=YVixBVZdqTd6G1c9Qg@mail.gmail.com>
+
+Hi,
+
+the limits are _much_ higher if you set metapost to use 'double mode' and
+tex to use 'macro mode'. No need to worry about the cave size.
+
+See thbook, Appendix, chapter Limitations -- check especially the footnotes.
+
+Martin
+
+On Wed, Oct 8, 2025 at 4:22?PM James Begley <james.begley at gmail.com> wrote:
+
+> Hiya,
+>
+> Line 218 of the Therion TODO.S file (see
+> https://github.com/therion/therion/blob/master/TODO.S) says:
+>
+> + add support for multiple metapost files (more than 4096 scraps)
+>
+> So there was a known limit of 4,096 scraps at some point. Note that the
+> TODO.S file hasn't been updated for many years, so that limitation might
+> have been addressed at some point.
+>
+> Cheers,
+> James
+>
+> On Wed, 8 Oct 2025 at 14:39, Benedikt Hallinger via Therion <
+> therion at speleo.sk> wrote:
+>
+>> Good questionQ
+>> in the hirlatz project, we "just" reach: "[3106]".
+>>
+>>
+>> Am 2025-10-08 15:23, schrieb Xavier Robert via Therion:
+>> > Hi all,
+>> >
+>> > I am maintaining a quite big structured Therion database with more
+>> > than 700 caves
+>> > (https://github.com/robertxa/Topographies-Samoens_Folly). I am using
+>> > Therion 6.3.3 (2025-01-06), TeX Live 2015 (MetaPost 1.999).
+>> > Following a new session of exploration and surveys, I added some
+>> > scraps in this database. I have no problem to run any compilation of
+>> > separate caves.
+>> >
+>> > But since my last update, when I try to run a Therion compilation for
+>> > the whole database to build the 3D view of the system
+>> > (
+>> https://groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html
+>> ),
+>> > I get an error during the ? Preloading the plain mem file ? :
+>> >
+>> > [...]
+>> > [4090] [4091] [4092] [4093] [4094] [4095]
+>> > ! Number is too large (4096).
+>> > l.296920 beginfig(4096
+>> >                       );
+>> > [4096]
+>> > ! Number is too large (4097).
+>> > l.296923 beginfig(4097
+>> >                       );
+>> > [4097]
+>> > ? and so on?
+>> >
+>> > therion: error -- metapost exit code -- 512
+>> >
+>> > I a m not sure, but I think that I have a total of 4102 objects (this
+>> > is the last number with a similar error ; with a total of 4117 files
+>> > written in thTMPDIR/).
+>> > If I run Therion with the -d option, I see all the data.xxxx from 1 to
+>> > 4102 in thTMPDIR/. The compressed log file is in attachement.
+>> >
+>> > I tried to recompile my database after commenting a small part of the
+>> > database that I did not change recently. The compilation run well.
+>> >
+>> > So, I suspect that there is a limit in the number of objects (scraps
+>> > ?) Therion (or mpost ?) can handle. Am I right ?
+>> >
+>> > Is there a way to get rid off this limitation ?
+>> >
+>> > Cheers,
+>> >
+>> > Xavier
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251008/e79ba289/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Oct  9 16:31:47 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Robert Xavier)
+Date: Thu, 9 Oct 2025 16:31:47 +0200
+Subject: [Therion] [SPAM] Limit in the number of scraps in a (big)
+ project ?
+In-Reply-To: <CALPsdSs4FxdrY-g8V0SVtX1FEWDTdP7=YVixBVZdqTd6G1c9Qg@mail.gmail.com>
+References: <BD926CF8-334E-46A6-B3DE-B1C08AD7D16F@univ-grenoble-alpes.fr>
+ <e727fec7800872b6eae3ec1f7e224d3d@hallinger.org>
+ <CAGS-eH7-qHEC5UwDHib8VvOA4YJpRRMZR0E305=R+J2SGn3qdg@mail.gmail.com>
+ <CALPsdSs4FxdrY-g8V0SVtX1FEWDTdP7=YVixBVZdqTd6G1c9Qg@mail.gmail.com>
+Message-ID: <9C3D280B-206F-41C7-84D2-FE0A4A46553D@univ-grenoble-alpes.fr>
+
+Hi !
+
+Thanks a lot ! That saved my day !
+I needed to add ? mpost-options ? -numbersystem=double ? in my /usr/local/etc/therion.ini (in my old MacBook Pro). It doesn?t work if I add this line in the therion.ini file present at my home directory.
+
+Cheers,
+
+Xavier
+
+> Le 8 oct. 2025 ? 20:26, Martin Budaj <m.budaj at gmail.com> a ?crit :
+> 
+> Hi,
+> 
+> the limits are _much_ higher if you set metapost to use 'double mode' and tex to use 'macro mode'. No need to worry about the cave size.
+> 
+> See thbook, Appendix, chapter Limitations -- check especially the footnotes.
+> 
+> Martin
+> 
+> On Wed, Oct 8, 2025 at 4:22?PM James Begley <james.begley at gmail.com <mailto:james.begley at gmail.com>> wrote:
+>> Hiya,
+>> 
+>> Line 218 of the Therion TODO.S file (see https://github.com/therion/therion/blob/master/TODO.S) says:
+>> 
+>> + add support for multiple metapost files (more than 4096 scraps)
+>> 
+>> So there was a known limit of 4,096 scraps at some point. Note that the TODO.S file hasn't been updated for many years, so that limitation might have been addressed at some point.
+>> 
+>> Cheers,
+>> James 
+>> 
+>> On Wed, 8 Oct 2025 at 14:39, Benedikt Hallinger via Therion <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+>>> Good questionQ
+>>> in the hirlatz project, we "just" reach: "[3106]".
+>>> 
+>>> 
+>>> Am 2025-10-08 15:23, schrieb Xavier Robert via Therion:
+>>> > Hi all,
+>>> > 
+>>> > I am maintaining a quite big structured Therion database with more
+>>> > than 700 caves
+>>> > (https://github.com/robertxa/Topographies-Samoens_Folly). I am using
+>>> > Therion 6.3.3 (2025-01-06), TeX Live 2015 (MetaPost 1.999).
+>>> > Following a new session of exploration and surveys, I added some
+>>> > scraps in this database. I have no problem to run any compilation of
+>>> > separate caves.
+>>> > 
+>>> > But since my last update, when I try to run a Therion compilation for
+>>> > the whole database to build the 3D view of the system
+>>> > (https://groupe-speleo-vulcain.com/wp-content/themes/custom_theme/3d/JB.html),
+>>> > I get an error during the ? Preloading the plain mem file ? :
+>>> > 
+>>> > [...]
+>>> > [4090] [4091] [4092] [4093] [4094] [4095]
+>>> > ! Number is too large (4096).
+>>> > l.296920 beginfig(4096
+>>> >                       );
+>>> > [4096]
+>>> > ! Number is too large (4097).
+>>> > l.296923 beginfig(4097
+>>> >                       );
+>>> > [4097]
+>>> > ? and so on?
+>>> > 
+>>> > therion: error -- metapost exit code -- 512
+>>> > 
+>>> > I a m not sure, but I think that I have a total of 4102 objects (this
+>>> > is the last number with a similar error ; with a total of 4117 files
+>>> > written in thTMPDIR/).
+>>> > If I run Therion with the -d option, I see all the data.xxxx from 1 to
+>>> > 4102 in thTMPDIR/. The compressed log file is in attachement.
+>>> > 
+>>> > I tried to recompile my database after commenting a small part of the
+>>> > database that I did not change recently. The compilation run well.
+>>> > 
+>>> > So, I suspect that there is a limit in the number of objects (scraps
+>>> > ?) Therion (or mpost ?) can handle. Am I right ?
+>>> > 
+>>> > Is there a way to get rid off this limitation ?
+>>> > 
+>>> > Cheers,
+>>> > 
+>>> > Xavier
+>>> > _______________________________________________
+>>> > Therion mailing list
+>>> > Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>> > https://mailman.speleo.sk/listinfo/therion
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/71938a20/attachment.htm>
+
+From gardere.yann at gmail.com  Thu Oct  9 17:31:11 2025
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Thu, 9 Oct 2025 17:31:11 +0200
+Subject: [Therion] metapost
+Message-ID: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+
+Hi community
+
+2 questions :
+
+- Is it possible to modifiy in metapost the line which is dessined into 2
+*points* map-connection ?:
+
+[image: 1.png]
+
+- Is it possible to modify the line height of a <br> Tag in draw ?
+
+for my convenient i use this code :
+
+map MP_entree -title "<size:90>Creux ...*<br>*<size:45>Entr?e" -projection
+plan
+
+The result
+
+[image: 2.png]
+
+But there is too much space for the <br> TAG, a solution for decrease space
+for the <br> tag?
+
+Thanks
+
+Yann
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/f42c7fd2/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 1.png
+Type: image/png
+Size: 117312 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/f42c7fd2/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2.png
+Type: image/png
+Size: 25885 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/f42c7fd2/attachment-0003.png>
+
+From guy.demars7 at orange.fr  Thu Oct  9 17:41:22 2025
+From: guy.demars7 at orange.fr (Guy Demars)
+Date: Thu, 9 Oct 2025 17:41:22 +0200
+Subject: [Therion] metapost
+In-Reply-To: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+Message-ID: <83609336-8fcc-4124-9784-1998abe645ba@orange.fr>
+
+try
+
+<size:90>Creux ...**<size:45>*<br>*Entr?e ?
+
+Guy
+
+Le 09/10/2025 ? 17:31, Yann Gard?re a ?crit?:
+> Hi community
+>
+> 2 questions :
+>
+> - Is it possible to modifiy in metapost the line which is dessined 
+> into 2 *points* map-connection ?:
+>
+> 1.png
+>
+> - Is it possible to modify the line height of a <br> Tag in draw ?
+>
+> for my convenient i use this code :
+>
+> map MP_entree -title "<size:90>Creux ...*<br>*<size:45>Entr?e" 
+> -projection plan
+>
+> The result
+>
+> 2.png
+>
+> But there is too much space for the <br> TAG, a solution for decrease 
+> space for the <br> tag?
+>
+> Thanks
+>
+> Yann
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/97a8a337/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 1.png
+Type: image/png
+Size: 117312 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/97a8a337/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2.png
+Type: image/png
+Size: 25885 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251009/97a8a337/attachment-0003.png>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Oct  9 17:54:12 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 9 Oct 2025 16:54:12 +0100
+Subject: [Therion] metapost
+In-Reply-To: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+Message-ID: <5084595b-0e88-492c-b65a-85552fafd547@ntlworld.com>
+
+Hi Yann,
+
+> - Is it possible to modifiy in metapost the line which is dessined into 
+> 2 *points* map-connection ?:
+
+
+Yes, absolutely. You add a point map-connection, but Therion actually 
+draws a mapconnection *line*. So you need to define:
+
+l_mapconnection_YOURNAME
+
+then in your layout, you use:
+
+symbol-assign line map-connection YOURNAME
+
+In your metapost, you will have something like this:
+def l_mapconnection_YOURNAME (expr P) =
+   ... code here...
+enddef;
+initsymbol("l_mapconnection_YOURNAME");
+
+It is quite a complicated one to draw, because you need to draw the line 
+(just like any other line in metapost) like this:
+
+thdraw P withpen PenA;
+
+*BUT* you also need to draw the arrowheads if you want them, and you 
+probably don't want the ends of the line to poke out the ends of the 
+arrowheads. So you need to shorten the path by the correct amount at 
+each end, to allow space for the arrowheads. I do that with this command:
+
+thdraw ( subpath( arctime 0.4u of P, arctime ( ( arclength P ) - 0.4u ) 
+of P ) of P ) withpen PenA;
+
+Then you need to thfill the arrowheads with whatever shape you choose.
+
+I have done this in the survey of Pwll Dwfn, using a hack that allows 
+you to choose from one of several colours, so different arrows can have 
+different colours (this allowed us to show "the red route through the 
+cave"). If you wanted to see it, it's here, but I warn you that it's a 
+bit more complex than you probably want, because of the hack:
+https://www.cavinguk.co.uk/pwlldwfn/pwlldwfn.zip
+/therion/symbols/l_mapconnection_MY.th
+/therion/configuration/layouts.th
+
+The hack needs you to create two points:
+point mapconnection etc
+point u:mapconnectiondata -attr theme 2
+
+Sorry it is not a very simple example.
+
+Tarquin
+
+From bruce at tomo.co.nz  Thu Oct  9 20:35:40 2025
+From: bruce at tomo.co.nz (bruce at tomo.co.nz)
+Date: Fri, 10 Oct 2025 07:35:40 +1300
+Subject: [Therion] metapost map-connection
+In-Reply-To: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+Message-ID: <000001dc394b$86cd1570$94674050$@tomo.co.nz>
+
+- Is it possible to modifiy in metapost the line which is dessined into 2 points map-connection ?: 
+
+ 
+
+I took what maybe a simpler approach to that Tarquin describes, minimally altering the default metapost, but adding a clear start and end point to the map-connection line.
+
+
+
+What I discovered when attempting this was that arrow heads are intimately connected, in the default metapost, to map-connection lines.
+
+The example below is complicated by a change we made to refine the alignment of arrow heads when the incoming line is curved.
+
+If you want I could dig out the code prior to the arrow head change, but you can probably extract that from your own installation.
+
+ 
+
+Bruce
+
+ 
+
+#ARROW and MAP-CONNECTION REDEFINITIONS
+
+#--------------------------
+
+#Edited Bruce Mutton Apr2018 Redefinition of map-connection line and arrow heads
+
+code metapost
+
+% Q = 0 -- none (no arrows)
+
+%     1 -- end  (default)
+
+%     2 -- begin
+
+%     3 -- both
+
+def l_arrow (expr P, Q) =
+
+% Arrow heads rotated so that line path intersects middle of back of arrowhead.  Johnny Willis 3Jun2023
+
+  T:=identity;
+
+  pickup PenC;
+
+  path Pcircle_s, Pcircle_e, ah_start, ah_end, p, P_mod, errcheck;
+
+  pair sp, ep, int_start, int_end;
+
+  numeric alength, c_diam;
+
+ 
+
+ep = point 0 of P;
+
+sp = point infinity of P;
+
+alength = 0.5u;
+
+c_diam = 2*alength;
+
+Pcircle_s = fullcircle scaled c_diam shifted sp;
+
+Pcircle_e = fullcircle scaled c_diam shifted ep;
+
+ 
+
+p := (-0.1u,-alength)--(-0,0)--(.1u,-alength)--cycle;
+
+ 
+
+errcheck = (ep) -- (sp);
+
+ 
+
+if arclength(errcheck) < alength: %if end points P shorter than arrow head, don't trim P
+
+int_end   = ep;
+
+int_start = sp;
+
+ah_end   = (sp) -- (ep);
+
+ah_start = (ep) -- (sp);
+
+ 
+
+else: %set up for trimming P at back of arrowheads
+
+ 
+
+int_end   = Pcircle_e intersectionpoint P;
+
+int_start = Pcircle_s intersectionpoint P;
+
+ah_end   = (int_end) -- (ep);
+
+ah_start = (int_start) -- (sp);
+
+ 
+
+fi;
+
+ 
+
+if Q = 0: % -head none
+
+P_mod = P;
+
+fi;
+
+ 
+
+if Q = 1: %arrow at end of line -head end
+
+draw p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+
+fill p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+
+ P_mod = P cutbefore int_end;
+
+fi;
+
+ 
+
+if Q = 2: %arrow at start of line -head begin
+
+draw p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+
+fill p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+
+ P_mod = P cutafter int_start;
+
+fi;
+
+if Q = 3: %arrow at both ends of line -head both
+
+draw p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+
+fill p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+
+draw p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+
+fill p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+
+ P_mod = (P cutbefore int_end) cutafter int_start;
+
+fi;
+
+ thdraw P_mod;
+
+enddef;
+
+ 
+
+def l_mapconnection (expr P) =
+
+  thdrawoptions(dashed dashpattern(on 1bp off 2bp on 1bp off 2bp) 
+
+                scaled (2 * optical_zoom) withpen PenA);
+
+ 
+
+  %draw map-connection line with arrowhead at end
+
+  l_arrow(P,1); %How to double or triple arrowhead size with this call?
+
+  
+
+  %draw dot at start of map-connection line
+
+  thdraw point infinity of P withpen pencircle scaled 0.3u; 
+
+  %Why infinity and not 0 for start??  
+
+  %If point before arrow head, then point does not render in legend but does on map?? 
+
+  
+
+  thdrawoptions();
+
+enddef;
+
+endcode
+
+ 
+
+# and if necessary in some other layout?
+
+symbol-colour line map-connection [54 7 60] #purple
+
+symbol-show line map-connection
+
+ 
+
+#And then in th-config but outside of a layout?
+
+text en "line map-connection"    "passage offset connection"
+
+ 
+
+#END
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/3fbfa977/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 96489 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/3fbfa977/attachment-0001.png>
+
+From gardere.yann at gmail.com  Fri Oct 10 17:13:40 2025
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Fri, 10 Oct 2025 17:13:40 +0200
+Subject: [Therion] metapost map-connection
+In-Reply-To: <000001dc394b$86cd1570$94674050$@tomo.co.nz>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+ <000001dc394b$86cd1570$94674050$@tomo.co.nz>
+Message-ID: <CAD0miv4t=WeMk14Ry2Wtw14s8CHjrHXMd_pT8Q0iUzvYCNbFWg@mail.gmail.com>
+
+Hi Tarquin and Bruce
+
+Thanks a lot for your answer, it work great
+
+Finaly i use this, for a dashed line with circle at 0 and infinity point
+(not try arrows)
+
+def l_mapconnection_REDESSINE (expr P) =
+T:=identity;
+  pickup pencircle scaled 2;
+  thdraw P dashed evenly scaled optical_zoom withcolor (0.4, 0.4, 0.4);
+  thdraw point infinity of P withpen pencircle scaled 0.4u;
+  thdraw point 0 of P withpen pencircle scaled 0.4u;
+enddef;
+initsymbol("l_mapconnection_REDESSINE");
+symbol-assign line map-connection REDESSINE
+
+[image: 3.png]
+
+Le jeu. 9 oct. 2025 ? 20:36, <bruce at tomo.co.nz> a ?crit :
+
+> - Is it possible to modifiy in metapost the line which is dessined into 2
+> *points* map-connection ?:
+>
+>
+>
+> I took what maybe a simpler approach to that Tarquin describes, minimally
+> altering the default metapost, but adding a clear start and end point to
+> the map-connection line.
+>
+> What I discovered when attempting this was that arrow heads are intimately
+> connected, in the default metapost, to map-connection lines.
+>
+> The example below is complicated by a change we made to refine the
+> alignment of arrow heads when the incoming line is curved.
+>
+> If you want I could dig out the code prior to the arrow head change, but
+> you can probably extract that from your own installation.
+>
+>
+>
+> Bruce
+>
+>
+>
+> #ARROW and MAP-CONNECTION REDEFINITIONS
+>
+> #--------------------------
+>
+> #Edited Bruce Mutton Apr2018 Redefinition of map-connection line and arrow
+> heads
+>
+> code metapost
+>
+> % Q = 0 -- none (no arrows)
+>
+> %     1 -- end  (default)
+>
+> %     2 -- begin
+>
+> %     3 -- both
+>
+> def l_arrow (expr P, Q) =
+>
+> % Arrow heads rotated so that line path intersects middle of back of
+> arrowhead.  Johnny Willis 3Jun2023
+>
+>   T:=identity;
+>
+>   pickup PenC;
+>
+>   path Pcircle_s, Pcircle_e, ah_start, ah_end, p, P_mod, errcheck;
+>
+>   pair sp, ep, int_start, int_end;
+>
+>   numeric alength, c_diam;
+>
+>
+>
+> ep = point 0 of P;
+>
+> sp = point infinity of P;
+>
+> alength = 0.5u;
+>
+> c_diam = 2*alength;
+>
+> Pcircle_s = fullcircle scaled c_diam shifted sp;
+>
+> Pcircle_e = fullcircle scaled c_diam shifted ep;
+>
+>
+>
+> p := (-0.1u,-alength)--(-0,0)--(.1u,-alength)--cycle;
+>
+>
+>
+> errcheck = (ep) -- (sp);
+>
+>
+>
+> if arclength(errcheck) < alength: %if end points P shorter than arrow
+> head, don't trim P
+>
+> int_end   = ep;
+>
+> int_start = sp;
+>
+> ah_end   = (sp) -- (ep);
+>
+> ah_start = (ep) -- (sp);
+>
+>
+>
+> else: %set up for trimming P at back of arrowheads
+>
+>
+>
+> int_end   = Pcircle_e intersectionpoint P;
+>
+> int_start = Pcircle_s intersectionpoint P;
+>
+> ah_end   = (int_end) -- (ep);
+>
+> ah_start = (int_start) -- (sp);
+>
+>
+>
+> fi;
+>
+>
+>
+> if Q = 0: % -head none
+>
+> P_mod = P;
+>
+> fi;
+>
+>
+>
+> if Q = 1: %arrow at end of line -head end
+>
+> draw p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+>
+> fill p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+>
+>  P_mod = P cutbefore int_end;
+>
+> fi;
+>
+>
+>
+> if Q = 2: %arrow at start of line -head begin
+>
+> draw p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+>
+> fill p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+>
+>  P_mod = P cutafter int_start;
+>
+> fi;
+>
+> if Q = 3: %arrow at both ends of line -head both
+>
+> draw p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+>
+> fill p rotated (angle(thdir(ah_start,0))-90) shifted (point infinity of P);
+>
+> draw p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+>
+> fill p rotated (angle(thdir(ah_end,0))-90) shifted (point 0 of P);
+>
+>  P_mod = (P cutbefore int_end) cutafter int_start;
+>
+> fi;
+>
+>  thdraw P_mod;
+>
+> enddef;
+>
+>
+>
+> def l_mapconnection (expr P) =
+>
+>   thdrawoptions(dashed dashpattern(on 1bp off 2bp on 1bp off 2bp)
+>
+>                 scaled (2 * optical_zoom) withpen PenA);
+>
+>
+>
+>   %draw map-connection line with arrowhead at end
+>
+>   l_arrow(P,1); %How to double or triple arrowhead size with this call?
+>
+>
+>
+>   %draw dot at start of map-connection line
+>
+>   thdraw point infinity of P withpen pencircle scaled 0.3u;
+>
+>   %Why infinity and not 0 for start??
+>
+>   %If point before arrow head, then point does not render in legend but
+> does on map??
+>
+>
+>
+>   thdrawoptions();
+>
+> enddef;
+>
+> endcode
+>
+>
+>
+> # and if necessary in some other layout?
+>
+> symbol-colour line map-connection [54 7 60] #purple
+>
+> symbol-show line map-connection
+>
+>
+>
+> #And then in th-config but outside of a layout?
+>
+> text en "line map-connection"    "passage offset connection"
+>
+>
+>
+> #END
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/730c433f/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 96489 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/730c433f/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 3.png
+Type: image/png
+Size: 56615 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/730c433f/attachment-0003.png>
+
+From gardere.yann at gmail.com  Fri Oct 10 17:15:11 2025
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Fri, 10 Oct 2025 17:15:11 +0200
+Subject: [Therion] metapost
+In-Reply-To: <83609336-8fcc-4124-9784-1998abe645ba@orange.fr>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+ <83609336-8fcc-4124-9784-1998abe645ba@orange.fr>
+Message-ID: <CAD0miv4h5QM_2=nw-KawJRj95ZQTSjFVur9X=bk_oAMM3wdARg@mail.gmail.com>
+
+Thank you Guy, but it don't work ;(
+
+Does anyone have any idea how to solve this?
+
+
+Le jeu. 9 oct. 2025 ? 17:50, Guy Demars via Therion <therion at speleo.sk> a
+?crit :
+
+> try
+>
+> <size:90>Creux ...<size:45>*<br>*Entr?e ?
+>
+> Guy
+> Le 09/10/2025 ? 17:31, Yann Gard?re a ?crit :
+>
+> Hi community
+>
+> 2 questions :
+>
+> - Is it possible to modifiy in metapost the line which is dessined into 2
+> *points* map-connection ?:
+>
+> [image: 1.png]
+>
+> - Is it possible to modify the line height of a <br> Tag in draw ?
+>
+> for my convenient i use this code :
+>
+> map MP_entree -title "<size:90>Creux ...*<br>*<size:45>Entr?e"
+> -projection plan
+>
+> The result
+>
+> [image: 2.png]
+>
+> But there is too much space for the <br> TAG, a solution for decrease
+> space for the <br> tag?
+>
+> Thanks
+>
+> Yann
+>
+> _______________________________________________
+> Therion mailing listTherion at speleo.skhttps://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/4f7c19d7/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 1.png
+Type: image/png
+Size: 117312 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/4f7c19d7/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2.png
+Type: image/png
+Size: 25885 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251010/4f7c19d7/attachment-0003.png>
+
+From tarquin.wilton-jones at ntlworld.com  Fri Oct 10 17:24:06 2025
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 Oct 2025 16:24:06 +0100
+Subject: [Therion] metapost map-connection
+In-Reply-To: <CAD0miv4t=WeMk14Ry2Wtw14s8CHjrHXMd_pT8Q0iUzvYCNbFWg@mail.gmail.com>
+References: <CAD0miv4PyfkEMvTjKVF6eVWmgY4WQJ6Z8miEK_HSFK-ewViLXg@mail.gmail.com>
+ <000001dc394b$86cd1570$94674050$@tomo.co.nz>
+ <CAD0miv4t=WeMk14Ry2Wtw14s8CHjrHXMd_pT8Q0iUzvYCNbFWg@mail.gmail.com>
+Message-ID: <e469e466-f96f-465c-b335-ba5ba93acc7c@ntlworld.com>
+
+>  ? thdraw P dashed evenly scaled optical_zoom withcolor (0.4, 0.4, 0.4);
+
+
+Nice :)
+You avoided having to shorten the line by having the end circles bigger 
+than the line itself, so you can't see where it overlaps the line. That 
+makes it a lot easier.
+
+>  ? thdraw point infinity of P withpen pencircle scaled 0.4u;
+>  ? thdraw point 0 of P withpen pencircle scaled 0.4u;
+
+
+I would use thfill there, since you are drawing a circle outline with a 
+pen that is fatter than the circle, in order to get the same effect as a 
+thfill. It is more readable to use an actual thfill.
+
+But it works so I can't argue.
+
+From bruce at tomo.co.nz  Fri Oct 10 20:30:49 2025
+From: bruce at tomo.co.nz (bruce at tomo.co.nz)
+Date: Sat, 11 Oct 2025 07:30:49 +1300
+Subject: [Therion] metapost map title line spacing
+Message-ID: <000001dc3a14$029ddf90$07d99eb0$@tomo.co.nz>
+
+> size:90>Creux ...<size:45><br>Entr?e ?
+
+
+
+ 
+
+I have had this problem with point label, and discovered that the line
+spacing resulting from <br> is set by the -scale parameter, and not any
+formatting defined within the string.
+
+Probably -scale won?t work for a map title.
+
+Try using <thsp> (thin space) instead of <br>.  If it works it is easiest.
+
+ 
+
+Some more information on
+<https://therion.speleo.sk/wiki/drawingchecklist#points> drawingchecklist
+[Therion wiki] - points
+
+ 
+
+Another way is to use these inside a code tex block.  Perhaps has the same
+effect as -scale, but for various elements of the default header.
+
+ 
+
+#Legend Text size.  Uncomment to customise default header text sizes
+
+     \legendtextsize={\size[12]}                  % legend text default 12
+
+     \legendtextsectionsize ={\size[14]} % subheading default 14
+
+     \legendtextheadersize={\size[26]} % heading text default 26
+
+ 
+
+You could make the heading text default size smaller, thereby reducing the
+size of the linefeed due to <br>, and use <size:45> to make the lettering
+larger or smaller.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251011/a169d379/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 16368 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251011/a169d379/attachment-0001.png>
+
+From rsev at pm.me  Tue Oct 14 23:09:13 2025
+From: rsev at pm.me (Rodrigo Severo)
+Date: Tue, 14 Oct 2025 21:09:13 +0000
+Subject: [Therion] New Mapiah release v0.2.19 - The polish refactoring -
+ Part 1
+Message-ID: <aMAP0B6N8B5_YJ-mAGwHOAAi516wFX22wtgQ9t0wnQmxfc7EX1_9iXUJyGDSdZQ7FVgUzacD3k5p5TEUMTn2uMatcf4P0z1k1oPPq1ujFhw=@pm.me>
+
+Hi,
+
+With some delay, here is a new Mapiah release: v0.2.19 - The polish refactoring - Part 1.
+
+Now the releases will have names also. Because I believe it might will interesting to register something less technical about the releases.
+
+Another change is that from now on the changelogs will be available at the release page. In this case https://github.com/rsevero/mapiah/releases/tag/v0.2.19
+
+There are no new features in this release, just a ton of new tests and of bug fixes. That's what will probably happen also on the next release. Until I finish the "the polish refactoring", which, by the way, is just a refactoring that I decided to do while in Poland and that was the starter to all these new tests and subsequent bug fixes I will refrain on implementing new features.
+
+Web release available, as usual, at https://mapiah.org/webapp.
+
+Please report,
+
+Rodrigo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251014/b5fe6dce/attachment.htm>
+
+From torstein.finnesand at gmail.com  Sat Oct 25 19:03:08 2025
+From: torstein.finnesand at gmail.com (torstein finnesand)
+Date: Sat, 25 Oct 2025 19:03:08 +0200
+Subject: [Therion] kml color
+In-Reply-To: <CE14B80D-B442-4FAF-9098-1BCD282ADF48@gmail.com>
+References: <B5BDA52E-6EEF-4079-A23B-6E668DFE64C3@gmail.com>
+ <VE1P194MB0735318240C826F2167C6777A20A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+ <CE14B80D-B442-4FAF-9098-1BCD282ADF48@gmail.com>
+Message-ID: <20e65c96-8434-49a1-9e41-bb4b956cea03@gmail.com>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251025/070eac23/attachment.htm>
+
+From anze.abram at gmail.com  Thu Oct 30 08:52:57 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Thu, 30 Oct 2025 07:52:57 +0000
+Subject: [Therion] macOS installation
+Message-ID: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+
+Greetings.
+
+I've been trying to reinstall Therion on a new M-series macbook on the
+newest OS (Tahoe) but have run into several 'dead ends'.
+
+(1) First I tried the homebrew method, but I ran into the same issue as
+several others. The whole homebrew route seems to be broken currently.
+
+https://github.com/ladislavb/homebrew-therion/issues/15
+
+(2) I tried to compile it from source, but it gets stuck while trying to
+compile Loch with the following error:
+
+In file included from lxSetup.cxx:39:
+
+*./lxData.h:35:10: **fatal error: **'vtkPolyData.h' file not found*
+
+   35 | #include <vtkPolyData.h>
+
+      | *         ^~~~~~~~~~~~~~~*
+
+1 error generated.
+
+make[1]: *** [lxSetup.o] Error 1
+make: *** [loch/loch] Error 2
+
+Does anyone know of a solution, how to tackle any of these problems by
+chance? Thanks in advance,
+Anze
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251030/e080f9ec/attachment.htm>
+
+From enrico.fratnik at gmail.com  Thu Oct 30 10:29:18 2025
+From: enrico.fratnik at gmail.com (Enrico Fratnik)
+Date: Thu, 30 Oct 2025 10:29:18 +0100
+Subject: [Therion] macOS installation
+In-Reply-To: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+Message-ID: <CADihaCGNfD6p0AtWAAS--2fP1F+wA6AcD0ObDvkCzBPe8Gwq7Q@mail.gmail.com>
+
+Hello,
+   if you have transferred the installation from a MAC X86, you must first
+reinstall brew by removing the folder from /usr/local/opt and creating one
+in /opt/homebrew.
+You can find instructions on the homebrew website.
+Then, installing therion via brew also works in --head mode.
+enrico
+
+On Thu, Oct 30, 2025 at 9:00?AM An?e Abram <anze.abram at gmail.com> wrote:
+
+> Greetings.
+>
+> I've been trying to reinstall Therion on a new M-series macbook on the
+> newest OS (Tahoe) but have run into several 'dead ends'.
+>
+> (1) First I tried the homebrew method, but I ran into the same issue as
+> several others. The whole homebrew route seems to be broken currently.
+>
+> https://github.com/ladislavb/homebrew-therion/issues/15
+>
+> (2) I tried to compile it from source, but it gets stuck while trying to
+> compile Loch with the following error:
+>
+> In file included from lxSetup.cxx:39:
+>
+> *./lxData.h:35:10: **fatal error: **'vtkPolyData.h' file not found*
+>
+>    35 | #include <vtkPolyData.h>
+>
+>       | *         ^~~~~~~~~~~~~~~*
+>
+> 1 error generated.
+>
+> make[1]: *** [lxSetup.o] Error 1
+> make: *** [loch/loch] Error 2
+>
+> Does anyone know of a solution, how to tackle any of these problems by
+> chance? Thanks in advance,
+> Anze
+>
+> *An?e Abram*
+> Ulica bratov U?akar 84, 1000 Ljubljana
+> SI - Slovenia
+>
+> *M* +386 41 480 906
+> *@* anze.abram at gmail.com
+>
+> *Na?e o?i je zalila*
+> *lava gore?a*.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+Enrico Fratnik
+
+e. enrico.fratnik at gmail.com
+PEC enrico at pec.fratnik.it
+skype: fratnike
+t. +39.335.6573879
+
+
+Questo messaggio e riservato;
+Qualsiasi pubblicazione, utilizzo o diffusione, anche parziale di
+questo messaggio, deve essere preventivamente autorizzata. Nel
+caso in cui non foste destinatari del presente messaggio,vogliate
+cortesemente avvertire immediatamente il mittente.
+
+
+Ce message est confidentiel;
+Toute publication, utilisation ou diffusion, meme partielle, doit
+etre autorisee prealablement. Si vous n' etes pas destinataire de
+ce message, merci d'en avertir immediatement l'expediteur.
+
+
+This message is confidential;
+Any unauthorised disclosure, use or dissemination, either whole
+or partial, is prohibited. If you are not the intended recipient
+of the message, please notify the sender immediately
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251030/b248419b/attachment.htm>
+
+From anze.abram at gmail.com  Thu Oct 30 11:11:15 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Thu, 30 Oct 2025 10:11:15 +0000
+Subject: [Therion] macOS installation
+In-Reply-To: <CADihaCGNfD6p0AtWAAS--2fP1F+wA6AcD0ObDvkCzBPe8Gwq7Q@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <CADihaCGNfD6p0AtWAAS--2fP1F+wA6AcD0ObDvkCzBPe8Gwq7Q@mail.gmail.com>
+Message-ID: <CAAqtp-nxtFdfvxjz6+BJ-Tw=rbsxot_gV1bNAE1LnqfSnaAOMw@mail.gmail.com>
+
+Thanks for the reply. This is sadly not my case as I never moved from x86
+mac. My previous installation was on the same M4 machine, just on a
+previous macOS version (Sequoia). For example, my survex installation rests
+in '/opt/homebrew/Cellar/survex/1.4.17'.
+
+A.
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+
+
+On Thu, 30 Oct 2025 at 09:29, Enrico Fratnik <enrico.fratnik at gmail.com>
+wrote:
+
+> Hello,
+>    if you have transferred the installation from a MAC X86, you must first
+> reinstall brew by removing the folder from /usr/local/opt and creating one
+> in /opt/homebrew.
+> You can find instructions on the homebrew website.
+> Then, installing therion via brew also works in --head mode.
+> enrico
+>
+> On Thu, Oct 30, 2025 at 9:00?AM An?e Abram <anze.abram at gmail.com> wrote:
+>
+>> Greetings.
+>>
+>> I've been trying to reinstall Therion on a new M-series macbook on the
+>> newest OS (Tahoe) but have run into several 'dead ends'.
+>>
+>> (1) First I tried the homebrew method, but I ran into the same issue as
+>> several others. The whole homebrew route seems to be broken currently.
+>>
+>> https://github.com/ladislavb/homebrew-therion/issues/15
+>>
+>> (2) I tried to compile it from source, but it gets stuck while trying to
+>> compile Loch with the following error:
+>>
+>> In file included from lxSetup.cxx:39:
+>>
+>> *./lxData.h:35:10: **fatal error: **'vtkPolyData.h' file not found*
+>>
+>>    35 | #include <vtkPolyData.h>
+>>
+>>       | *         ^~~~~~~~~~~~~~~*
+>>
+>> 1 error generated.
+>>
+>> make[1]: *** [lxSetup.o] Error 1
+>> make: *** [loch/loch] Error 2
+>>
+>> Does anyone know of a solution, how to tackle any of these problems by
+>> chance? Thanks in advance,
+>> Anze
+>>
+>> *An?e Abram*
+>> Ulica bratov U?akar 84, 1000 Ljubljana
+>> SI - Slovenia
+>>
+>> *M* +386 41 480 906
+>> *@* anze.abram at gmail.com
+>>
+>> *Na?e o?i je zalila*
+>> *lava gore?a*.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+>
+> --
+> Enrico Fratnik
+>
+> e. enrico.fratnik at gmail.com
+> PEC enrico at pec.fratnik.it
+> skype: fratnike
+> t. +39.335.6573879
+>
+>
+> Questo messaggio e riservato;
+> Qualsiasi pubblicazione, utilizzo o diffusione, anche parziale di
+> questo messaggio, deve essere preventivamente autorizzata. Nel
+> caso in cui non foste destinatari del presente messaggio,vogliate
+> cortesemente avvertire immediatamente il mittente.
+>
+>
+> Ce message est confidentiel;
+> Toute publication, utilisation ou diffusion, meme partielle, doit
+> etre autorisee prealablement. Si vous n' etes pas destinataire de
+> ce message, merci d'en avertir immediatement l'expediteur.
+>
+>
+> This message is confidential;
+> Any unauthorised disclosure, use or dissemination, either whole
+> or partial, is prohibited. If you are not the intended recipient
+> of the message, please notify the sender immediately
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251030/02c77520/attachment-0001.htm>
+
+From ollylegg at gmail.com  Thu Oct 30 13:19:38 2025
+From: ollylegg at gmail.com (Oliver Legg)
+Date: Thu, 30 Oct 2025 12:19:38 +0000
+Subject: [Therion] macOS installation
+In-Reply-To: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+Message-ID: <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+
+An?e,
+
+I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+
+I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+
+Are you using the CMake build method?
+
+I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+
+    brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+    brew install --cask xquartz
+
+Olly
+
+> On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+> 
+> Greetings.
+> 
+> I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+> 
+> (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+> 
+> https://github.com/ladislavb/homebrew-therion/issues/15
+> 
+> (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+> 
+> In file included from lxSetup.cxx:39:
+> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>    35 | #include <vtkPolyData.h>
+>       |          ^~~~~~~~~~~~~~~
+> 1 error generated.
+> make[1]: *** [lxSetup.o] Error 1
+> make: *** [loch/loch] Error 2
+> 
+> Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+> Anze 
+> 
+> An?e Abram
+> Ulica bratov U?akar 84, 1000 Ljubljana
+> SI - Slovenia
+> 
+> M +386 41 480 906
+> @ anze.abram at gmail.com
+> 
+> Na?e o?i je zalila
+> lava gore?a.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From anze.abram at gmail.com  Thu Oct 30 14:36:16 2025
+From: anze.abram at gmail.com (=?UTF-8?Q?An=C5=BEe_Abram?=)
+Date: Thu, 30 Oct 2025 13:36:16 +0000
+Subject: [Therion] macOS installation
+In-Reply-To: <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+Message-ID: <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+
+Hi.
+
+- I am also using the 6.3.4 version I got from
+https://github.com/therion/therion/releases/tag/v6.3.4
+- For compiling from source, I am using this page:
+https://therion.speleo.sk/wiki/os-tips:osx10.8
+
+I produce the error when I run the bolded command.
+
+cd ~/Downloads/therion
+make config-macosx
+*make <----*
+cd loch
+make
+cd ..
+make install
+
+- I installed all the dependencies before via homebrew. Most were
+installed, but I run into two problems:
+
+'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+'pkg' package is also non-existant, but I didn't know which package to
+install instead. Suggestions?
+
+Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine,
+it's the Loch part that the compiler gets stuck at.
+
+Anze
+
+*An?e Abram*
+Ulica bratov U?akar 84, 1000 Ljubljana
+SI - Slovenia
+
+*M* +386 41 480 906
+*@* anze.abram at gmail.com
+
+*Na?e o?i je zalila*
+*lava gore?a*.
+
+
+On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+
+> An?e,
+>
+> I managed to compile therion from source yesterday, on an Apple Silicon
+> Mac, but with the previous version of macOS Sequoia 15.6.1.
+>
+> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>
+> Are you using the CMake build method?
+>
+> I did install the dependencies via Homebrew (taken from the
+> `ladislavb/homebrew-therion` repository):
+>
+>     brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick
+> lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>     brew install --cask xquartz
+>
+> Olly
+>
+> > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+> >
+> > Greetings.
+> >
+> > I've been trying to reinstall Therion on a new M-series macbook on the
+> newest OS (Tahoe) but have run into several 'dead ends'.
+> >
+> > (1) First I tried the homebrew method, but I ran into the same issue as
+> several others. The whole homebrew route seems to be broken currently.
+> >
+> > https://github.com/ladislavb/homebrew-therion/issues/15
+> >
+> > (2) I tried to compile it from source, but it gets stuck while trying to
+> compile Loch with the following error:
+> >
+> > In file included from lxSetup.cxx:39:
+> > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+> >    35 | #include <vtkPolyData.h>
+> >       |          ^~~~~~~~~~~~~~~
+> > 1 error generated.
+> > make[1]: *** [lxSetup.o] Error 1
+> > make: *** [loch/loch] Error 2
+> >
+> > Does anyone know of a solution, how to tackle any of these problems by
+> chance? Thanks in advance,
+> > Anze
+> >
+> > An?e Abram
+> > Ulica bratov U?akar 84, 1000 Ljubljana
+> > SI - Slovenia
+> >
+> > M +386 41 480 906
+> > @ anze.abram at gmail.com
+> >
+> > Na?e o?i je zalila
+> > lava gore?a.
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20251030/b129e679/attachment.htm>
+
+From ollylegg at gmail.com  Thu Oct 30 14:49:36 2025
+From: ollylegg at gmail.com (Oliver Legg)
+Date: Thu, 30 Oct 2025 13:49:36 +0000
+Subject: [Therion] macOS installation
+In-Reply-To: <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+Message-ID: <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+
+Trying using cmake, I find it does a better job at finding dependencies:
+
+    cd therion
+    cmake -S . -B build
+    cd build
+    make
+    
+> On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+> 
+> Hi.
+> 
+> - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+> - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+> 
+> I produce the error when I run the bolded command.
+> 
+> cd ~/Downloads/therion
+> make config-macosx
+> make <----
+> cd loch
+> make
+> cd ..
+> make install
+> 
+> - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+> 
+> 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+> 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+> 
+> Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+> 
+> Anze
+> 
+> An?e Abram
+> Ulica bratov U?akar 84, 1000 Ljubljana
+> SI - Slovenia
+> 
+> M +386 41 480 906
+> @ anze.abram at gmail.com
+> 
+> Na?e o?i je zalila
+> lava gore?a.
+> 
+> 
+> On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+> An?e,
+> 
+> I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+> 
+> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+> 
+> Are you using the CMake build method?
+> 
+> I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+> 
+>     brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>     brew install --cask xquartz
+> 
+> Olly
+> 
+> > On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+> > 
+> > Greetings.
+> > 
+> > I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+> > 
+> > (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+> > 
+> > https://github.com/ladislavb/homebrew-therion/issues/15
+> > 
+> > (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+> > 
+> > In file included from lxSetup.cxx:39:
+> > ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+> >    35 | #include <vtkPolyData.h>
+> >       |          ^~~~~~~~~~~~~~~
+> > 1 error generated.
+> > make[1]: *** [lxSetup.o] Error 1
+> > make: *** [loch/loch] Error 2
+> > 
+> > Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+> > Anze 
+> > 
+> > An?e Abram
+> > Ulica bratov U?akar 84, 1000 Ljubljana
+> > SI - Slovenia
+> > 
+> > M +386 41 480 906
+> > @ anze.abram at gmail.com
+> > 
+> > Na?e o?i je zalila
+> > lava gore?a.
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From phil.vernant at gmail.com  Fri Oct 31 12:19:29 2025
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 31 Oct 2025 13:19:29 +0200
+Subject: [Therion] macOS installation
+In-Reply-To: <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+References: <CAAqtp-=-wfQw505dJkBEfySO7QUxyf5U8wmBwZC0-siZsN3O_A@mail.gmail.com>
+ <5DD39932-B8E6-404D-B121-B79E41A944CC@gmail.com>
+ <CAAqtp-kvrt-GwkURsHoJ5Uji9nsRegjrQPfeToo98bi__X0O6g@mail.gmail.com>
+ <7B4A0366-EECC-48DD-9547-C925E9347333@gmail.com>
+Message-ID: <8DDE7AA9-B08F-4E82-8857-F91721FAB8A1@gmail.com>
+
+Hi guys, 
+
+I?m stuck also with the installation. Either ways I have the following message : 
+Error in startup script: version conflict for package "Tk": have 9.0.2, need 8.1.1
+    while executing
+"package require Tk 8.1.1"
+
+Did one of you find a way to work around that problem?
+
+Thanks,
+Phil
+
+> On 30 Oct 2025, at 15:49, Oliver Legg <ollylegg at gmail.com> wrote:
+> 
+> Trying using cmake, I find it does a better job at finding dependencies:
+> 
+>    cd therion
+>    cmake -S . -B build
+>    cd build
+>    make
+> 
+>> On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>> 
+>> Hi.
+>> 
+>> - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+>> - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+>> 
+>> I produce the error when I run the bolded command.
+>> 
+>> cd ~/Downloads/therion
+>> make config-macosx
+>> make <----
+>> cd loch
+>> make
+>> cd ..
+>> make install
+>> 
+>> - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+>> 
+>> 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>> 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+>> 
+>> Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+>> 
+>> Anze
+>> 
+>> An?e Abram
+>> Ulica bratov U?akar 84, 1000 Ljubljana
+>> SI - Slovenia
+>> 
+>> M +386 41 480 906
+>> @ anze.abram at gmail.com
+>> 
+>> Na?e o?i je zalila
+>> lava gore?a.
+>> 
+>> 
+>> On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>> An?e,
+>> 
+>> I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+>> 
+>> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>> 
+>> Are you using the CMake build method?
+>> 
+>> I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+>> 
+>>    brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>>    brew install --cask xquartz
+>> 
+>> Olly
+>> 
+>>> On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>>> 
+>>> Greetings.
+>>> 
+>>> I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+>>> 
+>>> (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+>>> 
+>>> https://github.com/ladislavb/homebrew-therion/issues/15
+>>> 
+>>> (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+>>> 
+>>> In file included from lxSetup.cxx:39:
+>>> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>>>   35 | #include <vtkPolyData.h>
+>>>      |          ^~~~~~~~~~~~~~~
+>>> 1 error generated.
+>>> make[1]: *** [lxSetup.o] Error 1
+>>> make: *** [loch/loch] Error 2
+>>> 
+>>> Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+>>> Anze 
+>>> 
+>>> An?e Abram
+>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>> SI - Slovenia
+>>> 
+>>> M +386 41 480 906
+>>> @ anze.abram at gmail.com
+>>> 
+>>> Na?e o?i je zalila
+>>> lava gore?a.
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From phil.vernant at gmail.com  Fri Oct 31 13:40:12 2025
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 31 Oct 2025 14:40:12 +0200
+Subject: [Therion] macOS installation
+In-Reply-To: <8DDE7AA9-B08F-4E82-8857-F91721FAB8A1@gmail.com>
+References: <8DDE7AA9-B08F-4E82-8857-F91721FAB8A1@gmail.com>
+Message-ID: <D9A6D268-52AA-4F8A-AB62-9950E7118B1A@gmail.com>
+
+Forgot to add that therion run in command line and loch is ok. This only a problem for xtherion. 
+Phil
+
+> Le 31 oct. 2025 ? 13:19, Philippe Vernant <phil.vernant at gmail.com> a ?crit :
+> 
+> ?Hi guys,
+> 
+> I?m stuck also with the installation. Either ways I have the following message :
+> Error in startup script: version conflict for package "Tk": have 9.0.2, need 8.1.1
+>    while executing
+> "package require Tk 8.1.1"
+> 
+> Did one of you find a way to work around that problem?
+> 
+> Thanks,
+> Phil
+> 
+>> On 30 Oct 2025, at 15:49, Oliver Legg <ollylegg at gmail.com> wrote:
+>> 
+>> Trying using cmake, I find it does a better job at finding dependencies:
+>> 
+>>   cd therion
+>>   cmake -S . -B build
+>>   cd build
+>>   make
+>> 
+>>>> On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>>> 
+>>> Hi.
+>>> 
+>>> - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+>>> - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+>>> 
+>>> I produce the error when I run the bolded command.
+>>> 
+>>> cd ~/Downloads/therion
+>>> make config-macosx
+>>> make <----
+>>> cd loch
+>>> make
+>>> cd ..
+>>> make install
+>>> 
+>>> - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+>>> 
+>>> 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>>> 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+>>> 
+>>> Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+>>> 
+>>> Anze
+>>> 
+>>> An?e Abram
+>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>> SI - Slovenia
+>>> 
+>>> M +386 41 480 906
+>>> @ anze.abram at gmail.com
+>>> 
+>>> Na?e o?i je zalila
+>>> lava gore?a.
+>>> 
+>>> 
+>>>> On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>>> An?e,
+>>> 
+>>> I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+>>> 
+>>> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>>> 
+>>> Are you using the CMake build method?
+>>> 
+>>> I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+>>> 
+>>>   brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>>>   brew install --cask xquartz
+>>> 
+>>> Olly
+>>> 
+>>>> On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>>>> 
+>>>> Greetings.
+>>>> 
+>>>> I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+>>>> 
+>>>> (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+>>>> 
+>>>> https://github.com/ladislavb/homebrew-therion/issues/15
+>>>> 
+>>>> (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+>>>> 
+>>>> In file included from lxSetup.cxx:39:
+>>>> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>>>>  35 | #include <vtkPolyData.h>
+>>>>     |          ^~~~~~~~~~~~~~~
+>>>> 1 error generated.
+>>>> make[1]: *** [lxSetup.o] Error 1
+>>>> make: *** [loch/loch] Error 2
+>>>> 
+>>>> Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+>>>> Anze
+>>>> 
+>>>> An?e Abram
+>>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>>> SI - Slovenia
+>>>> 
+>>>> M +386 41 480 906
+>>>> @ anze.abram at gmail.com
+>>>> 
+>>>> Na?e o?i je zalila
+>>>> lava gore?a.
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+
+From xavier.robert at univ-grenoble-alpes.fr  Fri Oct 31 15:01:59 2025
+From: xavier.robert at univ-grenoble-alpes.fr (Robert Xavier)
+Date: Fri, 31 Oct 2025 15:01:59 +0100
+Subject: [Therion] [SPAM]  macOS installation
+In-Reply-To: <D9A6D268-52AA-4F8A-AB62-9950E7118B1A@gmail.com>
+References: <8DDE7AA9-B08F-4E82-8857-F91721FAB8A1@gmail.com>
+ <D9A6D268-52AA-4F8A-AB62-9950E7118B1A@gmail.com>
+Message-ID: <4D9E376E-5D49-4046-9708-6EF6E799C655@univ-grenoble-alpes.fr>
+
+Hi Philippe,
+
+I installed Tk 8.1.1. I did did something like that :
+brew unlink tcl-tk
+brew install tcl-tk at 8
+
+It worked for me.
+
+Xavier
+
+> Le 31 oct. 2025 ? 13:40, Philippe Vernant <phil.vernant at gmail.com> a ?crit :
+> 
+> Forgot to add that therion run in command line and loch is ok. This only a problem for xtherion. 
+> Phil
+> 
+>> Le 31 oct. 2025 ? 13:19, Philippe Vernant <phil.vernant at gmail.com> a ?crit :
+>> 
+>> ?Hi guys,
+>> 
+>> I?m stuck also with the installation. Either ways I have the following message :
+>> Error in startup script: version conflict for package "Tk": have 9.0.2, need 8.1.1
+>>   while executing
+>> "package require Tk 8.1.1"
+>> 
+>> Did one of you find a way to work around that problem?
+>> 
+>> Thanks,
+>> Phil
+>> 
+>>> On 30 Oct 2025, at 15:49, Oliver Legg <ollylegg at gmail.com> wrote:
+>>> 
+>>> Trying using cmake, I find it does a better job at finding dependencies:
+>>> 
+>>>  cd therion
+>>>  cmake -S . -B build
+>>>  cd build
+>>>  make
+>>> 
+>>>>> On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>>>> 
+>>>> Hi.
+>>>> 
+>>>> - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+>>>> - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+>>>> 
+>>>> I produce the error when I run the bolded command.
+>>>> 
+>>>> cd ~/Downloads/therion
+>>>> make config-macosx
+>>>> make <----
+>>>> cd loch
+>>>> make
+>>>> cd ..
+>>>> make install
+>>>> 
+>>>> - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+>>>> 
+>>>> 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>>>> 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+>>>> 
+>>>> Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+>>>> 
+>>>> Anze
+>>>> 
+>>>> An?e Abram
+>>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>>> SI - Slovenia
+>>>> 
+>>>> M +386 41 480 906
+>>>> @ anze.abram at gmail.com
+>>>> 
+>>>> Na?e o?i je zalila
+>>>> lava gore?a.
+>>>> 
+>>>> 
+>>>>> On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>>>> An?e,
+>>>> 
+>>>> I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+>>>> 
+>>>> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>>>> 
+>>>> Are you using the CMake build method?
+>>>> 
+>>>> I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+>>>> 
+>>>>  brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>>>>  brew install --cask xquartz
+>>>> 
+>>>> Olly
+>>>> 
+>>>>> On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>>>>> 
+>>>>> Greetings.
+>>>>> 
+>>>>> I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+>>>>> 
+>>>>> (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+>>>>> 
+>>>>> https://github.com/ladislavb/homebrew-therion/issues/15
+>>>>> 
+>>>>> (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+>>>>> 
+>>>>> In file included from lxSetup.cxx:39:
+>>>>> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>>>>> 35 | #include <vtkPolyData.h>
+>>>>>    |          ^~~~~~~~~~~~~~~
+>>>>> 1 error generated.
+>>>>> make[1]: *** [lxSetup.o] Error 1
+>>>>> make: *** [loch/loch] Error 2
+>>>>> 
+>>>>> Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+>>>>> Anze
+>>>>> 
+>>>>> An?e Abram
+>>>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>>>> SI - Slovenia
+>>>>> 
+>>>>> M +386 41 480 906
+>>>>> @ anze.abram at gmail.com
+>>>>> 
+>>>>> Na?e o?i je zalila
+>>>>> lava gore?a.
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> 
+> 
+
+
+From phil.vernant at gmail.com  Fri Oct 31 18:49:59 2025
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 31 Oct 2025 19:49:59 +0200
+Subject: [Therion] [SPAM]  macOS installation
+In-Reply-To: <4D9E376E-5D49-4046-9708-6EF6E799C655@univ-grenoble-alpes.fr>
+References: <8DDE7AA9-B08F-4E82-8857-F91721FAB8A1@gmail.com>
+ <D9A6D268-52AA-4F8A-AB62-9950E7118B1A@gmail.com>
+ <4D9E376E-5D49-4046-9708-6EF6E799C655@univ-grenoble-alpes.fr>
+Message-ID: <170880F6-2C31-4C77-A73A-CCCCB9FEF4A5@gmail.com>
+
+Many thanks Xavier, it worked. I had to remove bwidget, remove tcl-tk, then install tcl-tk at 8 and reinstall bwidget which installed tcl-tk9 but it works !
+
+Phil
+
+> On 31 Oct 2025, at 16:01, Robert Xavier via Therion <therion at speleo.sk> wrote:
+> 
+> Hi Philippe,
+> 
+> I installed Tk 8.1.1. I did did something like that :
+> brew unlink tcl-tk
+> brew install tcl-tk at 8
+> 
+> It worked for me.
+> 
+> Xavier
+> 
+>> Le 31 oct. 2025 ? 13:40, Philippe Vernant <phil.vernant at gmail.com> a ?crit :
+>> 
+>> Forgot to add that therion run in command line and loch is ok. This only a problem for xtherion. 
+>> Phil
+>> 
+>>> Le 31 oct. 2025 ? 13:19, Philippe Vernant <phil.vernant at gmail.com> a ?crit :
+>>> 
+>>> ?Hi guys,
+>>> 
+>>> I?m stuck also with the installation. Either ways I have the following message :
+>>> Error in startup script: version conflict for package "Tk": have 9.0.2, need 8.1.1
+>>>  while executing
+>>> "package require Tk 8.1.1"
+>>> 
+>>> Did one of you find a way to work around that problem?
+>>> 
+>>> Thanks,
+>>> Phil
+>>> 
+>>>> On 30 Oct 2025, at 15:49, Oliver Legg <ollylegg at gmail.com> wrote:
+>>>> 
+>>>> Trying using cmake, I find it does a better job at finding dependencies:
+>>>> 
+>>>> cd therion
+>>>> cmake -S . -B build
+>>>> cd build
+>>>> make
+>>>> 
+>>>>>> On 30 Oct 2025, at 13:36, An?e Abram <anze.abram at gmail.com> wrote:
+>>>>> 
+>>>>> Hi.
+>>>>> 
+>>>>> - I am also using the 6.3.4 version I got from https://github.com/therion/therion/releases/tag/v6.3.4
+>>>>> - For compiling from source, I am using this page: https://therion.speleo.sk/wiki/os-tips:osx10.8
+>>>>> 
+>>>>> I produce the error when I run the bolded command.
+>>>>> 
+>>>>> cd ~/Downloads/therion
+>>>>> make config-macosx
+>>>>> make <----
+>>>>> cd loch
+>>>>> make
+>>>>> cd ..
+>>>>> make install
+>>>>> 
+>>>>> - I installed all the dependencies before via homebrew. Most were installed, but I run into two problems:
+>>>>> 
+>>>>> 'lcdf' package is non-existent, so I installed 'lcdf-typetools' instead.
+>>>>> 'pkg' package is also non-existant, but I didn't know which package to install instead. Suggestions?
+>>>>> 
+>>>>> Maybe it's worth pointing out that 'therion' and 'xtherion' compile fine, it's the Loch part that the compiler gets stuck at.
+>>>>> 
+>>>>> Anze
+>>>>> 
+>>>>> An?e Abram
+>>>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>>>> SI - Slovenia
+>>>>> 
+>>>>> M +386 41 480 906
+>>>>> @ anze.abram at gmail.com
+>>>>> 
+>>>>> Na?e o?i je zalila
+>>>>> lava gore?a.
+>>>>> 
+>>>>> 
+>>>>>> On Thu, 30 Oct 2025 at 12:20, Oliver Legg <ollylegg at gmail.com> wrote:
+>>>>> An?e,
+>>>>> 
+>>>>> I managed to compile therion from source yesterday, on an Apple Silicon Mac, but with the previous version of macOS Sequoia 15.6.1.
+>>>>> 
+>>>>> I used the v6.3.4 tag (17059ab27ce491f1edac150da2b7e2011f79b800).
+>>>>> 
+>>>>> Are you using the CMake build method?
+>>>>> 
+>>>>> I did install the dependencies via Homebrew (taken from the `ladislavb/homebrew-therion` repository):
+>>>>> 
+>>>>> brew install BWidget cmake catch2 fmt freetype ghostscript imagemagick lcdf libjpeg libpng pkg proj tcl vtk wxwidgets zlib
+>>>>> brew install --cask xquartz
+>>>>> 
+>>>>> Olly
+>>>>> 
+>>>>>> On 30 Oct 2025, at 07:52, An?e Abram <anze.abram at gmail.com> wrote:
+>>>>>> 
+>>>>>> Greetings.
+>>>>>> 
+>>>>>> I've been trying to reinstall Therion on a new M-series macbook on the newest OS (Tahoe) but have run into several 'dead ends'.
+>>>>>> 
+>>>>>> (1) First I tried the homebrew method, but I ran into the same issue as several others. The whole homebrew route seems to be broken currently.
+>>>>>> 
+>>>>>> https://github.com/ladislavb/homebrew-therion/issues/15
+>>>>>> 
+>>>>>> (2) I tried to compile it from source, but it gets stuck while trying to compile Loch with the following error:
+>>>>>> 
+>>>>>> In file included from lxSetup.cxx:39:
+>>>>>> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+>>>>>> 35 | #include <vtkPolyData.h>
+>>>>>>   |          ^~~~~~~~~~~~~~~
+>>>>>> 1 error generated.
+>>>>>> make[1]: *** [lxSetup.o] Error 1
+>>>>>> make: *** [loch/loch] Error 2
+>>>>>> 
+>>>>>> Does anyone know of a solution, how to tackle any of these problems by chance? Thanks in advance,
+>>>>>> Anze
+>>>>>> 
+>>>>>> An?e Abram
+>>>>>> Ulica bratov U?akar 84, 1000 Ljubljana
+>>>>>> SI - Slovenia
+>>>>>> 
+>>>>>> M +386 41 480 906
+>>>>>> @ anze.abram at gmail.com
+>>>>>> 
+>>>>>> Na?e o?i je zalila
+>>>>>> lava gore?a.
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>> 
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> https://mailman.speleo.sk/listinfo/therion
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> 
+>> 
+>> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+

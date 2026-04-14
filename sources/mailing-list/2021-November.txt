@@ -1,0 +1,3989 @@
+From bgee at campercaver.net  Thu Nov  4 13:41:28 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 04 Nov 2021 07:41:28 -0500
+Subject: [Therion] Fedora 35 vs. Survex package
+In-Reply-To: <CAGS-eH5andOiNSaYj+svvP87aHQK-nTj0JSYk1EoUmhSErwG0w@mail.gmail.com>
+References: <3567534.4QnflXoHfv@main2.billgee.local>
+ <20211104115702.GN28830@mail.wookware.org>
+ <CAGS-eH5andOiNSaYj+svvP87aHQK-nTj0JSYk1EoUmhSErwG0w@mail.gmail.com>
+Message-ID: <3336220.QoF8kIE69z@main2.billgee.local>
+
+Hi James -
+
+Thanks for the update.   I do not have any active cave mapping projects right now, so for my test machine I am removing Survex and proceeding with Fedora 35.  When a new Survex package is available, I will give it a try.  There are other reasons for me to hold off Fedora 35 upgrades on my production systems for a week or two.
+
+========
+Bill Gee
+
+
+On Thursday, November 4, 2021 7:07:51 AM CDT James Begley wrote:
+> Hiya,
+> 
+> This is a known issue that Olly is working on - see
+> https://trac.survex.com/ticket/102.
+> 
+> Fedora 35 has moved to proj version 8.2.0, which no longer contains the
+> proj_api stuff that previous versiopns of survex relied on (deprecated
+> since version 5 or 6, actually removed from version 8.0.0). Previous
+> versions of fedora had proj v7, which worked with survex 1.2.44 fine, but
+> moving to proj v8 has had some challenges (v8.0.0 and v8.1.0 both had bugs
+> that blocked survex). A new release of survex that will build with proj
+> v8.2.0 is going to be tested this evening, and hopefully will be released
+> shortly after that.
+> 
+> For the time being, if you want to upgrade to fedora 35 you will need to
+> uninstall survex first and then reinstall survex once a new build has been
+> released.
+> 
+> Cheers,
+> James
+> 
+> On Thu, 4 Nov 2021 at 11:57, Wookey <wookey at wookware.org> wrote:
+> 
+> > On 2021-11-04 06:36 -0500, Bill Gee wrote:
+> > > For JM Begley ...  I tried to upgrade one of my test machines to Fedora
+> > 35 this morning.  It balked with the Survex package.  The message is:
+> > >
+> > > Error:
+> > > Problem: package survex-1.2.44-1.fc34.x86_64 requires
+> > libproj.so.19()(64bit), but none of the providers can be installed
+> > >  - proj-7.2.1-2.fc34.x86_64 does not belong to a distupgrade repository
+> > >  - problem with installed package survex-1.2.44-1.fc34.x86_64
+> > >
+> > > I know it is early in the Fedora 35 cycle - just two days after
+> > release!  Have you had a chance to look at this yet?
+> >
+> > Not that many Fedora survex users SFAIK, so probably not yet.
+> > I just had a look and it seems that F35 is on proj 8.2.
+> > https://src.fedoraproject.org/rpms/proj/commits/f35
+> > Althogh my 'all ditrso overview' shows 8.0 in fc35:
+> > http://sandpiper.linaro.org/upstreamproject/details/proj
+> > (libproj19
+> > <http://sandpiper.linaro.org/upstreamproject/details/proj(libproj19>
+> > comes from proj v7, libproj22 comes from proj v8)
+> >
+> > So I'm not sure if that means they removed proj7 (I'm failing to find
+> > fedora's 'our package list' pages).
+> >
+> > Survex works with proj8 now (and is in debian), so if you just rebuild
+> > it in fedora it should pick up the new proj and work. It looks like the
+> > one in the archive is built against proj 7 but proj7 is no longer
+> > available? I'm not sure how the fedora machinery works here.
+> >
+> > Wookey
+> > --
+> > Principal hats:  Linaro, Debian, Wookware, ARM
+> > http://wookware.org/
+> > --
+> > Survex https://lists.survex.com/mailman/listinfo/survex
+> >
+> 
+
+
+
+
+
+From m.budaj at gmail.com  Thu Nov  4 18:45:14 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 4 Nov 2021 18:45:14 +0100
+Subject: [Therion] Colour map-fg altitude quick shading breaks object
+ colour fills
+In-Reply-To: <000001d7c970$5b363bc0$11a2b340$@tomo.co.nz>
+References: <000001d7c970$5b363bc0$11a2b340$@tomo.co.nz>
+Message-ID: <CALPsdSscy1_mb9a=wp38cOQmeNtToSN8U-iJdqDZYs-=ni80BQ@mail.gmail.com>
+
+Hi,
+
+the expected colouring in both modes is like in the first picture (smooth
+shading = quick). Although some PDF viewers display rocks etc. in a colour
+slightly different from the scrap background, that's caused by their
+incomplete implementation of the transparency knockout groups.
+
+Try opening the second map in the Adobe Reader to check the colour of
+rocks, it should be similar to the first screenshot.
+
+Cheers,
+Martin
+
+On Mon, Oct 25, 2021 at 9:17 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Hello Forum
+>
+> Just noticed something missing on a few of my maps.
+>
+> Looks like:
+>
+>
+>
+>    colour map-fg altitude
+>
+>    smooth-shading quick # or default
+>
+>
+>
+> disables the colour filling of objects like rocks and area flowstone.
+>
+> Eg
+>
+>
+>
+> If I turn off smooth-shading OR use a fixed colour or scrap or topo-date
+> shading regime, then the objects are correctly filled.
+>
+> Eg
+>
+> So it looks like a bug with smooth-shading = quick.
+>
+> Perhaps.
+>
+>
+>
+> Bruce
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211104/852e947c/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 55633 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211104/852e947c/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.jpg
+Type: image/jpeg
+Size: 16658 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211104/852e947c/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 64413 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211104/852e947c/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 69915 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211104/852e947c/attachment-0005.png>
+
+From tarquin.wilton-jones at ntlworld.com  Fri Nov  5 01:14:08 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 5 Nov 2021 00:14:08 +0000
+Subject: [Therion] Depth adds on surface if it is in a different sub-survey
+Message-ID: <e7d07f98-9b60-c9da-e14b-ae8486f84af3@ntlworld.com>
+
+Hi folks,
+
+Ages ago, I filed https://github.com/therion/therion/issues/165 and
+Stacho fixed it (thanks!).
+
+We have just stumbled on another variant of it in a survey where both
+surface and the cave are rendered in a map (a few slopes on the
+surface), but the surface comes from a different sub-survey. This causes
+Therion to add on the depth of the surface legs too, so the cave gets
+far deeper than it should be.
+
+https://github.com/therion/therion/issues/392
+
+I wonder how many cave surveys there are out there with the wrong depth
+because of this, since I would think that the vast majority of big
+surveys are done this way...
+
+o_O
+
+Tarquin
+
+From bruce at tomo.co.nz  Sun Nov 14 06:10:45 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 14 Nov 2021 18:10:45 +1300
+Subject: [Therion] Is survey -namespace off and sometimes on possible in
+ same survey project?
+Message-ID: <000201d7d915$fd031fe0$f7095fa0$@tomo.co.nz>
+
+Just a quick question before contemplating the migration of a large (more
+than 70 km and many caves) dataset to Therion.
+
+ 
+
+The dataset has unique station names, so in Therion speak, every survey
+would have -namespace off set.
+
+I have never used this setting, but do not anticipate any problem so long as
+every survey has -namespace off set.
+
+ 
+
+The trick is that there are two caves that have been processed from the very
+start with Therion (using the default -namespace on, of course) and one of
+the large caves has a currently 'not-incorporated' section of Therion
+namespaced data.  None of this Therion data is currently incorporated in the
+large dataset.  There will probably be more namespaced data in future.  
+
+ 
+
+So my question is:  Can we have an integrated Therion project where some
+surveys have -namespace on and some with -namespace off?
+
+ 
+
+I imagine this will work, but having never tried it I am cautious about
+diving into such a large undertaking, in case it is doomed to failure
+because of a requirement for significant manual intervention (I did that for
+30 km of the system, but I have lost enthusiasm for that).
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211114/2c81d337/attachment.htm>
+
+From rsev at protonmail.com  Sun Nov 14 16:12:02 2021
+From: rsev at protonmail.com (rsev at protonmail.com)
+Date: Sun, 14 Nov 2021 15:12:02 +0000
+Subject: [Therion] Is survey -namespace off and sometimes on possible in
+ same survey project?
+In-Reply-To: <000201d7d915$fd031fe0$f7095fa0$@tomo.co.nz>
+References: <000201d7d915$fd031fe0$f7095fa0$@tomo.co.nz>
+Message-ID: <35vZjPQ1Q1Xa4gLycXwpHN11iW2qsNFWg1yKEfzfv_E-q7BSXKiV3LL0F30-saToq1DkpkIt7OgJbNE-aboSLtK-M6iXbDDXlgKPB_Hq1r4=@protonmail.com>
+
+??????? Original Message ???????
+Em domingo, 14 de novembro de 2021 ?s 2:10 AM, Bruce Mutton <bruce at tomo.co.nz> escreveu:
+
+> Just a quick question before contemplating the migration of a large (more than 70 km and many caves) dataset to Therion.
+>
+> ?
+>
+> The dataset has unique station names, so in Therion speak, every survey would have -namespace off set.
+
+Sorry for the slightly off topic reply but AFAIU your dataset having station unique names allows you to set -namespace off which could save some work but you don't have to and as you already know that some other parts of your dataset needs -namespace on, why bother with -namespace off?
+
+
+Regards,
+
+Rodrigo
+
+From bruce at tomo.co.nz  Sun Nov 14 20:09:14 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 15 Nov 2021 08:09:14 +1300
+Subject: [Therion] Is survey -namespace off and sometimes on possible in
+ same survey project?
+In-Reply-To: <35vZjPQ1Q1Xa4gLycXwpHN11iW2qsNFWg1yKEfzfv_E-q7BSXKiV3LL0F30-saToq1DkpkIt7OgJbNE-aboSLtK-M6iXbDDXlgKPB_Hq1r4=@protonmail.com>
+References: <000201d7d915$fd031fe0$f7095fa0$@tomo.co.nz>
+ <35vZjPQ1Q1Xa4gLycXwpHN11iW2qsNFWg1yKEfzfv_E-q7BSXKiV3LL0F30-saToq1DkpkIt7OgJbNE-aboSLtK-M6iXbDDXlgKPB_Hq1r4=@protonmail.com>
+Message-ID: <000401d7d98b$1fe23940$5fa6abc0$@tomo.co.nz>
+
+>>Em domingo, 14 de novembro de 2021 ?s 2:10 AM, Bruce Mutton <bruce at tomo.co.nz> escreveu:
+
+>> Just a quick question before contemplating the migration of a large (more than 70 km and many caves) dataset to Therion.
+>>
+>> The dataset has unique station names, so in Therion speak, every survey would have -namespace off set.
+
+>Sorry for the slightly off topic reply but AFAIU your dataset having station unique names allows you to set -namespace off which could save some work but you don't have to and as you already know that some other parts of your dataset needs -namespace on, why bother with -namespace off?
+
+Because the existing dataset that it is proposed to migrate (using a custom script):
+- is large with many surveys and sub-surveys
+- Therion implicitly defaults to -namespace on for every single survey
+- with that setting, survey stations, although unique across surveys, cannot be seen unless a namespace is specified
+- therefore it will not compile until -namespace off is set in each relevant survey and sub-survey.
+
+A decade ago, before I was particularly aware of 'survey -namespace', I migrated this same dataset, and not being aware I could turn it off, had to manually equate stations to join all the surveys, and equate loops where they involved more than one survey.  I only did half of it before I got fed up.  I realise now that -namespace off is the solution, and that it can be put in the custom script.
+But in the meantime I have some native Therion sub-projects that I want to merge into the migrated project, that, of course, use and rely on the implicit default of -namespace on because the stations are not unique (each survey has the station sequence 1 2 3 4 ...).  I do not have an appetite to manually make these stations unique, even using -station-names to modify them it will be too painful.
+
+Hence I am testing the idea of projects where some surveys have -namespace on and some -namespace off.
+I could modify one of my existing projects to see what happens, but before doing that I am interested to find out if others have experience with this scenario.
+
+Regards
+Bruce
+
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun Nov 14 21:18:42 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 14 Nov 2021 20:18:42 +0000
+Subject: [Therion] Rock border not creating boulders with smooth altitude
+ shading
+Message-ID: <5a27f618-5fee-9816-9cd7-d7eb592a102e@ntlworld.com>
+
+Hi folks,
+
+I feel like I must have missed some email about this; surely someone
+will have noticed before...
+
+Boulders. They are made from line rock-border, which will create a
+shaded boulder when closed.
+
+Make an area of water. Create a line rock-border half-way into the
+water, and half out of the water, but still in the passage. The boulder
+is the same colour as the background. Translucent, sitting on top of the
+water.
+
+Set this:
+color map-fg scrap
+
+Still works the same.
+
+Now set this:
+color map-fg altitude
+
+The boulder loses its colour, and is nothing more than a thick line, so
+it stops looking like a boulder.
+
+Set this, and the boulder returns to being a boulder:
+smooth-shading off
+
+Is this an intentional change, a known limitation, or a bug?
+
+Cheers,
+
+Tarquin
+
+From bruce at tomo.co.nz  Sun Nov 14 21:48:15 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 15 Nov 2021 09:48:15 +1300
+Subject: [Therion] Colour map-fg altitude quick shading breaks object colour
+ fills
+Message-ID: <000001d7d998$f41c49f0$dc54ddd0$@tomo.co.nz>
+
+[Found this sitting in my drafts folder from early November]
+
+ 
+
+Interesting.
+
+All these years I?ve been thinking at cross-purposes, and assumed that the Foxit and Sumatra rendering (See Viewers for Therion Outputs <https://therion.speleo.sk/wiki/contrib:externalviewers#examples_of_rendering_differences_between_pdf_viewers>  ) was closest to the intended rendering, and that Adobe Reader was doing it wrong.  I had thought the poor implementation referred to was this:
+
+or this 
+
+?whereby the water and underlying rocks show through the large rock, such as with Foxit. 
+
+I had thought the more intense (or doubled?) colour within the likes of rocks and flowstone areas was the intended effect. For me the Adobe rendering appears flat and boring.
+
+ 
+
+Rereading the wiki and linked pages, I now see that I was wrong.
+
+Personally I much prefer the look of maps with the more intense colour within rocks etc as rendered by Foxit, the only downside being that underlying objects within the same passage/scrap are not completely hidden.
+
+For me, the Adobe rendering would be ideal if the colours were doubled up in the rocks, ie similar to the image on the left (from the wiki) but with ?double-white? rocks.  In the case of colour-fg white the rocks would obscure the passage below slightly more than the surrounding open passage.
+
+
+
+ 
+
+What do other people prefer?
+
+ 
+
+Bruce
+
+ 
+
+From: Therion < <mailto:therion-bounces at speleo.sk> therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+Sent: Friday, 5 November 2021 06:45
+To: List for Therion users < <mailto:therion at speleo.sk> therion at speleo.sk>
+Subject: Re: [Therion] Colour map-fg altitude quick shading breaks object colour fills
+
+ 
+
+Hi,
+
+ 
+
+the expected colouring in both modes is like in the first picture (smooth shading = quick). Although some PDF viewers display rocks etc. in a colour slightly different from the scrap background, that's caused by their incomplete implementation of the transparency knockout groups.
+
+ 
+
+Try opening the second map in the Adobe Reader to check the colour of rocks, it should be similar to the first screenshot.
+
+ 
+
+Cheers,
+
+Martin
+
+ 
+
+On Mon, Oct 25, 2021 at 9:17 AM Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+Hello Forum
+
+Just noticed something missing on a few of my maps.
+
+Looks like:
+
+ 
+
+   colour map-fg altitude
+
+   smooth-shading quick # or default
+
+ 
+
+disables the colour filling of objects like rocks and area flowstone.
+
+Eg 
+
+
+
+
+
+ 
+
+If I turn off smooth-shading OR use a fixed colour or scrap or topo-date shading regime, then the objects are correctly filled.
+
+Eg
+
+
+
+
+
+So it looks like a bug with smooth-shading = quick.
+
+Perhaps.
+
+ 
+
+Bruce
+
+ 
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 11027 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 9224 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 196770 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.png
+Type: image/png
+Size: 55633 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0009.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image016.jpg
+Type: image/jpeg
+Size: 16606 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image017.png
+Type: image/png
+Size: 71754 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0010.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image018.png
+Type: image/png
+Size: 69915 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/ea7f0a0c/attachment-0011.png>
+
+From bruce at tomo.co.nz  Sun Nov 14 21:50:35 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 15 Nov 2021 09:50:35 +1300
+Subject: [Therion] Rock border not creating boulders with smooth
+ altitude shading
+In-Reply-To: <5a27f618-5fee-9816-9cd7-d7eb592a102e@ntlworld.com>
+References: <5a27f618-5fee-9816-9cd7-d7eb592a102e@ntlworld.com>
+Message-ID: <000b01d7d999$476f9e40$d64edac0$@tomo.co.nz>
+
+I'm with you Tarquin.
+See my other message (some reason it has not turned up in
+https://www.mail-archive.com/therion at speleo.sk/)
+Seems like it is intentional, but it is more complicated than that.
+This page describes
+https://therion.speleo.sk/wiki/contrib:externalviewers#examples_of_rendering
+_differences_between_pdf_viewers
+
+I had always thought double rendered translucent objects where the
+intention, but seems they are not.
+I would vote for making it an option (not withstanding what you actually see
+will depend on the viewer used).
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones
+via Therion
+Sent: Monday, 15 November 2021 09:19
+To: Therion <therion at speleo.sk>
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Rock border not creating boulders with smooth altitude
+shading
+
+Hi folks,
+
+I feel like I must have missed some email about this; surely someone will
+have noticed before...
+
+Boulders. They are made from line rock-border, which will create a shaded
+boulder when closed.
+
+Make an area of water. Create a line rock-border half-way into the water,
+and half out of the water, but still in the passage. The boulder is the same
+colour as the background. Translucent, sitting on top of the water.
+
+Set this:
+color map-fg scrap
+
+Still works the same.
+
+Now set this:
+color map-fg altitude
+
+The boulder loses its colour, and is nothing more than a thick line, so it
+stops looking like a boulder.
+
+Set this, and the boulder returns to being a boulder:
+smooth-shading off
+
+Is this an intentional change, a known limitation, or a bug?
+
+Cheers,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun Nov 14 22:04:04 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 14 Nov 2021 21:04:04 +0000
+Subject: [Therion] Rock border not creating boulders with smooth
+ altitude shading
+In-Reply-To: <000b01d7d999$476f9e40$d64edac0$@tomo.co.nz>
+References: <5a27f618-5fee-9816-9cd7-d7eb592a102e@ntlworld.com>
+ <000b01d7d999$476f9e40$d64edac0$@tomo.co.nz>
+Message-ID: <60742e0e-4855-89d7-9436-76fcdf080a26@ntlworld.com>
+
+> I'm with you Tarquin.
+> See my other message (some reason it has not turned up in
+> https://www.mail-archive.com/therion at speleo.sk/)
+> Seems like it is intentional, but it is more complicated than that.
+> This page describes
+> https://therion.speleo.sk/wiki/contrib:externalviewers#examples_of_rendering
+> _differences_between_pdf_viewers
+
+I had not realised that this would cause me issues!
+
+FWIW, I would prefer that rocks do not obscure a passage stacked below
+their scrap completely. I do not mind seeing water as translucent below
+a rock when the rock sits in the water.
+
+I very much like the look of boulders as a translucent overlay on top of
+water, since we have situations where boulders sit in water, and that
+was a great way to represent them as a boulder with water underneath.
+You could then use "placement bottom" to put a boulder underwater, such
+as a shallow area within a lake. Either way, you could see a second
+passage hidden underneath the first.
+
+I do not care much for Adobe Reader and its inability to draw layered
+opacity (which has caused issues for other applications that create PDFs
+such as PrinceXML). It's an awful PDF reader.
+
+Foxit, Sumatra, Evince; these look great to me, and the others the who
+were discussing the output with me today.
+
+> I had always thought double rendered translucent objects where the
+> intention, but seems they are not.
+> I would vote for making it an option (not withstanding what you actually see
+> will depend on the viewer used).
+
++9
+If someone uses Adobe, they get junk. So be it. Let good PDF viewers
+display it nicely please. :)
+
+From martinsluka at me.com  Sun Nov 14 22:26:32 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Sun, 14 Nov 2021 22:26:32 +0100
+Subject: [Therion] Rock border not creating boulders with smooth
+ altitude shading
+In-Reply-To: <60742e0e-4855-89d7-9436-76fcdf080a26@ntlworld.com>
+References: <5a27f618-5fee-9816-9cd7-d7eb592a102e@ntlworld.com>
+ <000b01d7d999$476f9e40$d64edac0$@tomo.co.nz>
+ <60742e0e-4855-89d7-9436-76fcdf080a26@ntlworld.com>
+Message-ID: <D169AB3B-97D2-419D-B657-6F3A125AE0D7@me.com>
+
+
+
+> 14. 11. 2021 v 22:04, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> I do not care much for Adobe Reader and its inability to draw layered
+> opacity (which has caused issues for other applications that create PDFs
+> such as PrinceXML). It's an awful PDF reader.
+
+But only PDF viewer which is able to interprete transparency knockout correctly
+
+> Foxit, Sumatra, Evince; these look great to me, and the others the who
+> were discussing the output with me today.
+
+These viewers just ignore transparency knockout 
+
+Martin S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211114/49062ad6/attachment.htm>
+
+From rsev at protonmail.com  Mon Nov 15 00:42:34 2021
+From: rsev at protonmail.com (rsev at protonmail.com)
+Date: Sun, 14 Nov 2021 23:42:34 +0000
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+Message-ID: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+
+Presenting Mapiah.
+
+Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+
+This is the "proof-of-concept" release.
+
+It's source code and it's releases files can be found at the projects home at SourceForge: https://sourceforge.net/projects/mapiah/
+
+Please let me know what you think about it, if it has any future, if you want to help.
+
+
+*The name*
+
+Mapiah is a international friendly version of the portuguese word "mapear" on the sentence "vamos mapear?" - "let's go surveying?" or "let's go mapping?" - which is usually pronounced [v?mu mapi'a].
+
+
+*Multi-platform*
+
+Right now we have both Linux and Windows releases as these are the OSs I have access and minimal experience with. Until some Mac user steps up, that's the way it's gonna be.
+
+Having said that, the idea is to follow best practices during Mapiah's development to ease the release process on all target platforms: Linux, Windows and Mac.
+
+
+*The C++/Qt choices*
+
+Going backwards, the Qt framework was chosen as it has an open source compatible version. It's mature, powerful and seems to take multi-platform support seriously.
+
+The first idea was to use Qt Python as the "friendly" requirement could also be applied to the language chosen but in the end I decided to go with C++ because I believe that a C++ application might be more easily distributable across all platforms.
+
+
+*The "proof-of-concept" release*
+
+The basic reading and writing functionality supposely is th concept being proved in this release. Supposely because the actual concept I am trying to prove myself with this release is that I can write functional and decent C++/Qt code which, for the time being, is kinda proved.
+
+
+*Functionality*
+
+This 0.0.1 release can read a TH2 file, present it on the screen and save it.
+
+With an open file you can change the zoom level and write the file again.
+
+You should be able to see your TH2 file on screen correctly and the saved file should be functionally identical to the original one.
+
+All point, line, area, scrap and XTHERION options should be properly read and saved even if most aren't actually understood/acted upon.
+
+
+*License*
+
+This software is licensed under GPL 3 or later.
+
+
+*WARNINGS*
+
+PLEASE TEST!
+
+DON'T OVERRIDE YOUR ORIGINAL FILE WITH THE ONE WRITTEN BY MAPIAH!!
+
+THIS IS A PRE-ALPHA VERSION!!!
+
+
+Regards,
+
+Rodrigo Severo
+
+From bruce at tomo.co.nz  Mon Nov 15 04:55:00 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 15 Nov 2021 16:55:00 +1300
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+Message-ID: <000001d7d9d4$91c35230$b549f690$@tomo.co.nz>
+
+Interesting idea.
+
+1.	I can confirm it installs OK in Windows.  
+2.	It does install by default in my data folder, which seems undesirable.
+3.	It opened a th2 file, but did not show the background image (PocketTopo xvi)
+4.	?Save th2 As? wanted to save in the install folder, and not in the folder of the opened file.
+5.	There is no ?Save? button.
+6.	Comparing the saved file with the original file results in significant change, although mostly just chopping decimal places (probably to something more reasonable). 
+
+7.	Object ids are dropped (see red mark above)
+8.	The th2 file when opened with XTherion has the background image offset form the scrap that were drawn over it.
+
+ 
+
+Apart from point 1 above, my other points are not so relevant at this stage.
+
+I am quite happy with XTherion, but acknowledge that a better interface and functionality could become compelling quite easily.
+
+I will watch with interest.
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Rodrigo Severo via Therion
+Sent: Monday, 15 November 2021 12:43
+To: therion <therion at speleo.sk>
+Cc: rsev at protonmail.com
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly, modern and performant graphical interface for Therion
+
+ 
+
+Presenting Mapiah.
+
+ 
+
+Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+
+ 
+
+This is the "proof-of-concept" release.
+
+ 
+
+It's source code and it's releases files can be found at the projects home at SourceForge:  <https://sourceforge.net/projects/mapiah/> https://sourceforge.net/projects/mapiah/
+
+ 
+
+Please let me know what you think about it, if it has any future, if you want to help.
+
+<snipped>
+
+Regards,
+
+ 
+
+Rodrigo Severo
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/8ae87ed7/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 868442 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/8ae87ed7/attachment-0001.png>
+
+From andrew at wotcc.org.uk  Mon Nov 15 09:05:20 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 15 Nov 2021 08:05:20 +0000
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <000001d7d9d4$91c35230$b549f690$@tomo.co.nz>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+ <000001d7d9d4$91c35230$b549f690$@tomo.co.nz>
+Message-ID: <c8c0f55e-c4a7-5fab-0a2a-f3bc2b262a17@wotcc.org.uk>
+
+XTherion has gone a long way since I started using it many years ago, 
+but it does still have lot that could be improved, I'll watch with interest.
+
+On Ubuntu 20.04.3 LTS the appimage gives the following error
+
+/tmp/.mount_MapiahDdZUik/AppRun.wrapped: error while loading shared 
+libraries: libOpenGL.so.0: cannot open shared object file: No such file 
+or directory
+
+
+I was only having a quick look, this makes it a bigging job, so have not 
+looked further into this
+
+thanks
+
+Andrew
+
+On 15/11/2021 03:55, Bruce Mutton wrote:
+> Interesting idea.
+> 
+> 1.	I can confirm it installs OK in Windows.
+> 2.	It does install by default in my data folder, which seems undesirable.
+> 3.	It opened a th2 file, but did not show the background image (PocketTopo xvi)
+> 4.	?Save th2 As? wanted to save in the install folder, and not in the folder of the opened file.
+> 5.	There is no ?Save? button.
+> 6.	Comparing the saved file with the original file results in significant change, although mostly just chopping decimal places (probably to something more reasonable).
+> 
+> 7.	Object ids are dropped (see red mark above)
+> 8.	The th2 file when opened with XTherion has the background image offset form the scrap that were drawn over it.
+> 
+>   
+> 
+> Apart from point 1 above, my other points are not so relevant at this stage.
+> 
+> I am quite happy with XTherion, but acknowledge that a better interface and functionality could become compelling quite easily.
+> 
+> I will watch with interest.
+> 
+>   
+> 
+> Bruce
+> 
+>   
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Rodrigo Severo via Therion
+> Sent: Monday, 15 November 2021 12:43
+> To: therion <therion at speleo.sk>
+> Cc: rsev at protonmail.com
+> Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly, modern and performant graphical interface for Therion
+> 
+>   
+> 
+> Presenting Mapiah.
+> 
+>   
+> 
+> Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+> 
+>   
+> 
+> This is the "proof-of-concept" release.
+> 
+>   
+> 
+> It's source code and it's releases files can be found at the projects home at SourceForge:  <https://sourceforge.net/projects/mapiah/> https://sourceforge.net/projects/mapiah/
+> 
+>   
+> 
+> Please let me know what you think about it, if it has any future, if you want to help.
+> 
+> <snipped>
+> 
+> Regards,
+> 
+>   
+> 
+> Rodrigo Severo
+> 
+> _______________________________________________
+> 
+> Therion mailing list
+> 
+>   <mailto:Therion at speleo.sk> Therion at speleo.sk
+> 
+>   <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+From xavier.robert at univ-grenoble-alpes.fr  Mon Nov 15 11:28:12 2021
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Mon, 15 Nov 2021 11:28:12 +0100
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <c8c0f55e-c4a7-5fab-0a2a-f3bc2b262a17@wotcc.org.uk>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+ <000001d7d9d4$91c35230$b549f690$@tomo.co.nz>
+ <c8c0f55e-c4a7-5fab-0a2a-f3bc2b262a17@wotcc.org.uk>
+Message-ID: <7CEFF6B0-4A52-45F9-8E18-C65DE76D76DB@univ-grenoble-alpes.fr>
+
+Hi,
+
+Just for information :
+
+I downloaded the .AppImage to install it on my MacOs 10.14. But I get this error :
+? 09:02:31 [robertxa1 at ist-158.home ~/Downloads]$ ./Mapiah-x86_64.AppImage 
+-bash: ./Mapiah-x86_64.AppImage: cannot execute binary file ?
+
+I made it executable, so this is not the problem.
+
+a ? uname -a ? give me  ? Darwin ist-158.home 18.7.0 Darwin Kernel Version 18.7.0: Tue Jun 22 19:37:08 PDT 2021; root:xnu-4903.278.70~1/RELEASE_X86_64 x86_64 ?.
+
+If you need further info, do not hesitate to ask !
+
+Cheers,
+
+Xavier
+
+
+
+> Le 15 nov. 2021 ? 09:05, Andrew Atkinson <andrew at wotcc.org.uk> a ?crit :
+> 
+> XTherion has gone a long way since I started using it many years ago, but it does still have lot that could be improved, I'll watch with interest.
+> 
+> On Ubuntu 20.04.3 LTS the appimage gives the following error
+> 
+> /tmp/.mount_MapiahDdZUik/AppRun.wrapped: error while loading shared libraries: libOpenGL.so.0: cannot open shared object file: No such file or directory
+> 
+> 
+> I was only having a quick look, this makes it a bigging job, so have not looked further into this
+> 
+> thanks
+> 
+> Andrew
+> 
+> On 15/11/2021 03:55, Bruce Mutton wrote:
+>> Interesting idea.
+>> 1.	I can confirm it installs OK in Windows.
+>> 2.	It does install by default in my data folder, which seems undesirable.
+>> 3.	It opened a th2 file, but did not show the background image (PocketTopo xvi)
+>> 4.	?Save th2 As? wanted to save in the install folder, and not in the folder of the opened file.
+>> 5.	There is no ?Save? button.
+>> 6.	Comparing the saved file with the original file results in significant change, although mostly just chopping decimal places (probably to something more reasonable).
+>> 7.	Object ids are dropped (see red mark above)
+>> 8.	The th2 file when opened with XTherion has the background image offset form the scrap that were drawn over it.
+>>  Apart from point 1 above, my other points are not so relevant at this stage.
+>> I am quite happy with XTherion, but acknowledge that a better interface and functionality could become compelling quite easily.
+>> I will watch with interest.
+>>  Bruce
+>>  -----Original Message-----
+>> From: Therion <therion-bounces at speleo.sk> On Behalf Of Rodrigo Severo via Therion
+>> Sent: Monday, 15 November 2021 12:43
+>> To: therion <therion at speleo.sk>
+>> Cc: rsev at protonmail.com
+>> Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly, modern and performant graphical interface for Therion
+>>  Presenting Mapiah.
+>>  Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+>>  This is the "proof-of-concept" release.
+>>  It's source code and it's releases files can be found at the projects home at SourceForge:  <https://sourceforge.net/projects/mapiah/> https://sourceforge.net/projects/mapiah/
+>>  Please let me know what you think about it, if it has any future, if you want to help.
+>> <snipped>
+>> Regards,
+>>  Rodrigo Severo
+>> _______________________________________________
+>> Therion mailing list
+>>  <mailto:Therion at speleo.sk> Therion at speleo.sk
+>>  <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211115/50f719d6/attachment.htm>
+
+From rsev at pm.me  Mon Nov 15 15:02:03 2021
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 15 Nov 2021 14:02:03 +0000
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <7CEFF6B0-4A52-45F9-8E18-C65DE76D76DB@univ-grenoble-alpes.fr>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+ <000001d7d9d4$91c35230$b549f690$@tomo.co.nz>
+ <c8c0f55e-c4a7-5fab-0a2a-f3bc2b262a17@wotcc.org.uk>
+ <7CEFF6B0-4A52-45F9-8E18-C65DE76D76DB@univ-grenoble-alpes.fr>
+Message-ID: <s5WCp5a4oI-2oNo0RAwC4D8lKhJ5NUfkhnrej17uwYwAQ4UHqvnS8uFjGXQVq6kNQ0c-fvYkNVIEiCoeFzw053STz8xCnjWPIlXS7SJUAd8=@pm.me>
+
+??????? Original Message ???????
+
+Em segunda-feira, 15 de novembro de 2021 ?s 7:28 AM, Xavier Robert <xavier.robert at univ-grenoble-alpes.fr> escreveu:
+
+> Hi,
+>
+> Just for information :
+>
+> I downloaded the .AppImage to install it on my MacOs 10.14. But I get this error :??09:02:31 [robertxa1 at ist-158.home ~/Downloads]$ ./Mapiah-x86_64.AppImage?-bash: ./Mapiah-x86_64.AppImage: cannot execute binary file??
+
+I am quite new to most of this (including AppImages) but I believe that AppImages aren't supposed to work on MacOS.
+
+As I said, I need some Mac user that works with me so we can created Mac versions of Mapiah. Let's do it?
+
+
+Regards,
+
+Rodrigo
+
+From rsev at pm.me  Mon Nov 15 15:02:04 2021
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 15 Nov 2021 14:02:04 +0000
+Subject: [Therion] Mapiah new release: 0.0.2 - first stroll
+Message-ID: <MyeC3QcVDzH2KqFyIB_K5_ruqBkTCz5903fv6XvjjFvucHXAyTneyt096Bf48Q_MpavQDPxE9TG8izTQFNiz_RncZS1eYoADG-DbeV2GR1Y=@pm.me>
+
+Here is a new version of Mapiah following the first comments by Bruce, Andrew and Xavier (thanks guys for the help and attention!!).
+
+It can be found at the same location: https://sourceforge.net/projects/mapiah
+
+Here is the changelog:
+
+0.0.2 - first-stroll - 2021-11-15
+- Initializing all class variables at constructors (Rodrigo Severo <rsev at pm.me>) - 5ae61f7
+- Including libOpenGL.so.0 in Linux AppImage (reported by Andrew Atkinson <andrew at wotcc.org.uk>) - e354911
+- Adding TODO list (Rodrigo Severo <rsev at pm.me>) - 728665c
+- Trying to be smart about 'Save As' default path (reported by Bruce Mutton <bruce at tomo.co.nz>) - abd5ece
+- Writing point, line and area IDs (reported by Bruce Mutton <bruce at tomo.co.nz>) - 4cac70e
+- Improving floats output to file (reported by Bruce Mutton <bruce at tomo.co.nz>) - 74c3996
+- Changing Windows install directory to "C:\Program File (x86)" (Rodrigo Severo <rsev at pm.me>)
+
+
+Regards,
+
+Rodrigo
+
+From rsev at pm.me  Mon Nov 15 15:02:37 2021
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 15 Nov 2021 14:02:37 +0000
+Subject: [Therion] Therion/XTherion mailing list hijacking by Mapiah
+Message-ID: <R_cy89JCOEWDouq3-k8fldg-YeRaii0HPgQEM8DRQ5hDF8qOm7QUAUSDZMG5rEnjwdTwgkX7H5vwajR3EKKWg-fvDlmA63iD1hdy8-e-mw4=@pm.me>
+
+Dear list and specially Stacho and Martin,
+
+
+With this last messages I believe it's fair to say that I might be hijacking Therion/XTherion list to talk about Mapiah.
+
+If/when you believe this is a problem, please let me know and I will implement some alternative infrasctructure. I am not doing it already just because it might be beneficial to involved with Therion to follow Mapiah development but your take on this is authoritative. Please let me know if it's a problem.
+
+
+Best regards,
+
+Rodrigo
+
+From lists at group-s.sk  Tue Nov 16 09:20:11 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 16 Nov 2021 09:20:11 +0100
+Subject: [Therion] Therion/XTherion mailing list hijacking by Mapiah
+In-Reply-To: <R_cy89JCOEWDouq3-k8fldg-YeRaii0HPgQEM8DRQ5hDF8qOm7QUAUSDZMG5rEnjwdTwgkX7H5vwajR3EKKWg-fvDlmA63iD1hdy8-e-mw4=@pm.me>
+References: <R_cy89JCOEWDouq3-k8fldg-YeRaii0HPgQEM8DRQ5hDF8qOm7QUAUSDZMG5rEnjwdTwgkX7H5vwajR3EKKWg-fvDlmA63iD1hdy8-e-mw4=@pm.me>
+Message-ID: <CAP35+gEyqBHUEJSdh+LnfaHdv9AC34R5undOvRBKPDb27znc+A@mail.gmail.com>
+
+Hi Rodrigo,
+
+sorry for the late reply, I and Martin, we are on a caving trip. Your
+contribution is very welcome, we are looking forward to test it when we get
+back.
+
+And of course, this list is a perfect place for any therion editor.
+
+Thanks, S.
+
+On Mon, Nov 15, 2021, 15:10 Rodrigo Severo via Therion <therion at speleo.sk>
+wrote:
+
+> Dear list and specially Stacho and Martin,
+>
+>
+> With this last messages I believe it's fair to say that I might be
+> hijacking Therion/XTherion list to talk about Mapiah.
+>
+> If/when you believe this is a problem, please let me know and I will
+> implement some alternative infrasctructure. I am not doing it already just
+> because it might be beneficial to involved with Therion to follow Mapiah
+> development but your take on this is authoritative. Please let me know if
+> it's a problem.
+>
+>
+> Best regards,
+>
+> Rodrigo
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211116/297324b8/attachment.htm>
+
+From tumna.nosht at gmail.com  Wed Nov 17 09:05:43 2021
+From: tumna.nosht at gmail.com (Elfi Hristova)
+Date: Wed, 17 Nov 2021 08:05:43 +0000
+Subject: [Therion] Can't install latest version on MAC
+Message-ID: <VE1P194MB07355D086FABCC07C09FE902A29A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+
+Hi, I have problem to install latest release of Therion on macOS BIG SUR 11.6.
+When I run ?make config-macosx && make && make install?
+I get the following error:
+?c++ -c -Wall -D_GNU_SOURCE -DLOCH -W -Wall -std=c++14 -DLXMACOSX -I/usr/local/lib/wx/include/osx_cocoa-unicode-3.1 -I/usr/local/include/wx-3.1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__  -I/usr/local/opt/freetype/include/freetype2 -I/usr/local/include/vtk-5.4 -Wno-deprecated -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -O2 -DNDEBUG -DIMG_API_VERSION=1 -o lxSetup.o lxSetup.cxx
+In file included from lxSetup.cxx:38:
+In file included from ./lxSetup.h:23:
+./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+#include <vtkPolyData.h>
+         ^~~~~~~~~~~~~~~
+1 error generated.
+make[1]: *** [lxSetup.o] Error 1
+make: *** [loch/loch] Error 2
+?
+
+Then when running ?therion -v? I see
+?dyld: Library not loaded: /usr/local/opt/proj/lib/libproj.19.dylib
+  Referenced from: /usr/local/bin/therion
+  Reason: image not found
+Abort trap: 6
+?
+In ?lib? I have higher version of libproj - libproj.22.dylib
+
+Can anyone help with how to fix this?
+
+Thanks,
+Efrosina
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211117/87d15eb0/attachment.htm>
+
+From uzueka at aol.com  Wed Nov 17 15:22:54 2021
+From: uzueka at aol.com (Juan Corrin)
+Date: Wed, 17 Nov 2021 14:22:54 +0000 (UTC)
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+Message-ID: <18912611.1475751.1637158974949@mail.yahoo.com>
+
+Excellent - and about time too! This will encourage many more users of Therion.
+
+Cheers
+Juan_______________________________________Juan CorrinUK : 015242 62809Mobile: 0044 7815 745072
+
+-----Original Message-----
+From: Rodrigo Severo via Therion <therion at speleo.sk>
+To: therion <therion at speleo.sk>
+Cc: rsev at protonmail.com
+Sent: Sun, Nov 14, 2021 11:42 pm
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly, modern and performant graphical interface for Therion
+
+Presenting Mapiah.
+
+Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+
+This is the "proof-of-concept" release.
+
+It's source code and it's releases files can be found at the projects home at SourceForge: https://sourceforge.net/projects/mapiah/
+
+Please let me know what you think about it, if it has any future, if you want to help.
+
+
+*The name*
+
+Mapiah is a international friendly version of the portuguese word "mapear" on the sentence "vamos mapear?" - "let's go surveying?" or "let's go mapping?" - which is usually pronounced [v?mu mapi'a].
+
+
+*Multi-platform*
+
+Right now we have both Linux and Windows releases as these are the OSs I have access and minimal experience with. Until some Mac user steps up, that's the way it's gonna be.
+
+Having said that, the idea is to follow best practices during Mapiah's development to ease the release process on all target platforms: Linux, Windows and Mac.
+
+
+*The C++/Qt choices*
+
+Going backwards, the Qt framework was chosen as it has an open source compatible version. It's mature, powerful and seems to take multi-platform support seriously.
+
+The first idea was to use Qt Python as the "friendly" requirement could also be applied to the language chosen but in the end I decided to go with C++ because I believe that a C++ application might be more easily distributable across all platforms.
+
+
+*The "proof-of-concept" release*
+
+The basic reading and writing functionality supposely is th concept being proved in this release. Supposely because the actual concept I am trying to prove myself with this release is that I can write functional and decent C++/Qt code which, for the time being, is kinda proved.
+
+
+*Functionality*
+
+This 0.0.1 release can read a TH2 file, present it on the screen and save it.
+
+With an open file you can change the zoom level and write the file again.
+
+You should be able to see your TH2 file on screen correctly and the saved file should be functionally identical to the original one.
+
+All point, line, area, scrap and XTHERION options should be properly read and saved even if most aren't actually understood/acted upon.
+
+
+*License*
+
+This software is licensed under GPL 3 or later.
+
+
+*WARNINGS*
+
+PLEASE TEST!
+
+DON'T OVERRIDE YOUR ORIGINAL FILE WITH THE ONE WRITTEN BY MAPIAH!!
+
+THIS IS A PRE-ALPHA VERSION!!!
+
+
+Regards,
+
+Rodrigo Severo
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211117/37c79c9c/attachment.htm>
+
+From martinsluka at me.com  Wed Nov 17 19:54:05 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Wed, 17 Nov 2021 19:54:05 +0100
+Subject: [Therion] Can't install latest version on MAC
+In-Reply-To: <VE1P194MB07355D086FABCC07C09FE902A29A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+References: <VE1P194MB07355D086FABCC07C09FE902A29A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+Message-ID: <EA01CEDF-26BB-4619-A8CE-251C7CDA96BC@me.com>
+
+Try cmake installation!
+
+Martin S.
+
+> 17. 11. 2021 v 9:05, Elfi Hristova <tumna.nosht at gmail.com>:
+> 
+> Hi, I have problem to install latest release of Therion on macOS BIG SUR 11.6. 
+> 
+> When I run ?make config-macosx && make && make install?
+> 
+> I get the following error:
+> ?c++ -c -Wall -D_GNU_SOURCE -DLOCH -W -Wall -std=c++14 -DLXMACOSX -I/usr/local/lib/wx/include/osx_cocoa-unicode-3.1 -I/usr/local/include/wx-3.1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__  -I/usr/local/opt/freetype/include/freetype2 -I/usr/local/include/vtk-5.4 -Wno-deprecated -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -O2 -DNDEBUG -DIMG_API_VERSION=1 -o lxSetup.o lxSetup.cxx
+> In file included from lxSetup.cxx:38:
+> In file included from ./lxSetup.h:23:
+> ./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+> #include <vtkPolyData.h>
+>          ^~~~~~~~~~~~~~~
+> 1 error generated.
+> make[1]: *** [lxSetup.o] Error 1
+> make: *** [loch/loch] Error 2
+> ?
+>  
+> Then when running ?therion -v? I see 
+> ?dyld: Library not loaded: /usr/local/opt/proj/lib/libproj.19.dylib
+>   Referenced from: /usr/local/bin/therion
+>   Reason: image not found
+> Abort trap: 6
+> ?
+> In ?lib? I have higher version of libproj - libproj.22.dylib
+>  
+> Can anyone help with how to fix this?
+>  
+> Thanks,
+> Efrosina
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211117/f457ea97/attachment-0001.htm>
+
+From rsev at pm.me  Wed Nov 17 21:23:45 2021
+From: rsev at pm.me (Rodrigo Severo)
+Date: Wed, 17 Nov 2021 20:23:45 +0000
+Subject: [Therion] XVI format specification
+Message-ID: <zS2bVFw7-KQItwnOr7LxgGbW0FPwYnbKV8g99MaVvdhjwgxsH6PTE1GbuVs-wMuM87BZqYnP5n4tIUdZstdLYx1s8-ixOcv2leuFX2Skwy4=@pm.me>
+
+Hi,
+
+
+I would like to implement XVI image format visualization support in Mapiah but couldn't find XVI image format specification (in my rather quick search, I confess).
+
+Can someone please give me some pointers? Specification, supporting library or else?
+
+
+Regards,
+
+Rodrigo
+
+
+
+From andrew at wotcc.org.uk  Wed Nov 17 23:12:32 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 17 Nov 2021 22:12:32 +0000
+Subject: [Therion] XVI format specification
+In-Reply-To: <zS2bVFw7-KQItwnOr7LxgGbW0FPwYnbKV8g99MaVvdhjwgxsH6PTE1GbuVs-wMuM87BZqYnP5n4tIUdZstdLYx1s8-ixOcv2leuFX2Skwy4=@pm.me>
+References: <zS2bVFw7-KQItwnOr7LxgGbW0FPwYnbKV8g99MaVvdhjwgxsH6PTE1GbuVs-wMuM87BZqYnP5n4tIUdZstdLYx1s8-ixOcv2leuFX2Skwy4=@pm.me>
+Message-ID: <bdba75cd-d3a8-cc6b-d1cf-ccac15c43b42@wotcc.org.uk>
+
+XVI is reasonably simple, I have a python scrip as part of topParsesr 
+that writes one if that would help. These are the notes I wrote for 
+writing it. Guess I did work out what the XXVIgrid numbers where but 
+didn't write them down, sorry. Some of them had something to do with the 
+dpi.
+
+set XVIgrids {dist units} #only ever used m
+set XVIstations {
+	{x y stn}
+	...
+}
+set XVIshots {
+	{x1 y1 x2 y2}
+	...
+}
+set XVIsketchlines {
+	{colour x1 y1 x2 y2 .... xn yn} {colour can be brown, black, blue, 
+green, red, orange, grey
+	....
+}
+set XVIgrid {a b c d e f g h}
+
+I also have a memory that the last line cannot be blank, but that might 
+not have been xvi!
+
+
+Andrew
+On 17/11/2021 20:23, Rodrigo Severo via Therion wrote:
+> Hi,
+> 
+> 
+> I would like to implement XVI image format visualization support in Mapiah but couldn't find XVI image format specification (in my rather quick search, I confess).
+> 
+> Can someone please give me some pointers? Specification, supporting library or else?
+> 
+> 
+> Regards,
+> 
+> Rodrigo
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+From tumna.nosht at gmail.com  Thu Nov 18 08:30:41 2021
+From: tumna.nosht at gmail.com (Elfi Hristova)
+Date: Thu, 18 Nov 2021 07:30:41 +0000
+Subject: [Therion] Can't install latest version on MAC
+In-Reply-To: <EA01CEDF-26BB-4619-A8CE-251C7CDA96BC@me.com>
+References: <VE1P194MB07355D086FABCC07C09FE902A29A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+ <EA01CEDF-26BB-4619-A8CE-251C7CDA96BC@me.com>
+Message-ID: <VE1P194MB07357ED068FF3C683847AE26A29B9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+
+Hi Martin, restarted my MAC and it works now with the original command (latest MAC approach).
+
+Thanks for your help,
+Efi
+
+
+From: Therion <therion-bounces at speleo.sk> on behalf of Martin Sluka via Therion <therion at speleo.sk>
+Reply to: List for Therion users <therion at speleo.sk>
+Date: Wednesday, 17 November 2021, 20:54
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at me.com>
+Subject: Re: [Therion] Can't install latest version on MAC
+
+Try cmake installation!
+
+Martin S.
+
+
+17. 11. 2021 v 9:05, Elfi Hristova <tumna.nosht at gmail.com<mailto:tumna.nosht at gmail.com>>:
+
+Hi, I have problem to install latest release of Therion on macOS BIG SUR 11.6.
+When I run ?make config-macosx && make && make install?
+I get the following error:
+?c++ -c -Wall -D_GNU_SOURCE -DLOCH -W -Wall -std=c++14 -DLXMACOSX -I/usr/local/lib/wx/include/osx_cocoa-unicode-3.1 -I/usr/local/include/wx-3.1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__  -I/usr/local/opt/freetype/include/freetype2 -I/usr/local/include/vtk-5.4 -Wno-deprecated -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -O2 -DNDEBUG -DIMG_API_VERSION=1 -o lxSetup.o lxSetup.cxx
+In file included from lxSetup.cxx:38:
+In file included from ./lxSetup.h:23:
+./lxData.h:35:10: fatal error: 'vtkPolyData.h' file not found
+#include <vtkPolyData.h>
+         ^~~~~~~~~~~~~~~
+1 error generated.
+make[1]: *** [lxSetup.o] Error 1
+make: *** [loch/loch] Error 2
+?
+
+Then when running ?therion -v? I see
+?dyld: Library not loaded: /usr/local/opt/proj/lib/libproj.19.dylib
+  Referenced from: /usr/local/bin/therion
+  Reason: image not found
+Abort trap: 6
+?
+In ?lib? I have higher version of libproj - libproj.22.dylib
+
+Can anyone help with how to fix this?
+
+Thanks,
+Efrosina
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk<mailto:Therion at speleo.sk>
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/be2a1eb1/attachment.htm>
+
+From martinsluka at mac.com  Thu Nov 18 09:31:30 2021
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 18 Nov 2021 09:31:30 +0100
+Subject: [Therion] Can't install latest version on MAC
+In-Reply-To: <VE1P194MB07357ED068FF3C683847AE26A29B9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+References: <VE1P194MB07355D086FABCC07C09FE902A29A9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+ <EA01CEDF-26BB-4619-A8CE-251C7CDA96BC@me.com>
+ <VE1P194MB07357ED068FF3C683847AE26A29B9@VE1P194MB0735.EURP194.PROD.OUTLOOK.COM>
+Message-ID: <2D462380-B2B1-45A9-9714-0AACFEC3F932@mac.com>
+
+Any way cmake installation is much faster. 
+
+Martin
+
+Odesl?no z iPhonu
+
+18. 11. 2021 v 8:30, Elfi Hristova <tumna.nosht at gmail.com>:
+
+> Hi Martin, restarted my MAC and it works now with the original command (latest MAC approach).
+>  
+> Thanks for your help,
+> Efi
+>  
+>  
+> From: Therion <therion-bounces at speleo.sk> on behalf of Martin Sluka via Therion <therion at speleo.sk>
+> Reply to: List for Therion users <therion at speleo.sk>
+> Date: Wednesday, 17 November 2021, 20:54
+> To: List for Therion users <therion at speleo.sk>
+> Cc: Martin Sluka <martinsluka at me.com>
+> Subject: Re: [Therion] Can't install latest version on MAC
+>  
+> Try cmake installation!
+>  
+> Martin S.
+> 
+> 
+> 17. 11. 2021 v 9:05, Elfi Hristova <tumna.nosht at gmail.com>:
+>  
+> Hi, I have problem to install latest release of Therion on macOS BIG SUR 11.6. 
+> 
+> When I run ?make config-macosx && make && make install?
+> 
+> I get the following error:
+> ?c++ -c -Wall -D_GNU_SOURCE -DLOCH -W -Wall -std=c++14 -DLXMACOSX -I/usr/local/lib/wx/include/osx_cocoa-unicode-3.1 -I/usr/local/include/wx-3.1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__  -I/usr/local/opt/freetype/include/freetype2 -I/usr/local/include/vtk-5.4 -Wno-deprecated -I/usr/X11R6/include -I/usr/X11R6/include/freetype2 -O2 -DNDEBUG -DIMG_API_VERSION=1 -o lxSetup.o lxSetup.cxx
+> In file included from lxSetup.cxx:38:
+> In file included from ./lxSetup.h:23:
+> ./lxData.h:35:10: fatal error: 'vtkPolyData.h'  file not found
+> #include <vtkPolyData.h>
+>          ^~~~~~~~~~~~~~~
+> 1 error generated.
+> make[1]: *** [lxSetup.o] Error 1
+> make: *** [loch/loch] Error 2
+> ?
+>  
+> Then when running ?therion -v? I see 
+> ?dyld: Library not loaded: /usr/local/opt/proj/lib/libproj.19.dylib
+>   Referenced from: /usr/local/bin/therion
+>   Reason: image not found
+> Abort trap: 6
+> ?
+> In ?lib? I have higher version of libproj - libproj.22.dylib
+>  
+> Can anyone help with how to fix this?
+>  
+> Thanks,
+> Efrosina
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/af63449c/attachment-0001.htm>
+
+From omrigas at gmail.com  Thu Nov 18 12:08:40 2021
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Thu, 18 Nov 2021 13:08:40 +0200
+Subject: [Therion] Export centerline and/or stations to SHP without th2 files
+Message-ID: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+
+Hi everyone,
+I have a survey with coordinates at the first station but I don't use th2
+files.
+When I export to loch file, It works perfect, I can see the model in the
+correct place together with the DEM and surface image.
+When I try to export to SHP or kml I get empty layers because I don't use
+th2 files.
+What I don't understand is why the centerline / splayes / stations layers
+are empty as well.
+
+Is there a way to export to SHP / kml only the data from the th file?
+
+
+
+
+-- 
+Omri
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/6d4c9ffc/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Nov 18 13:31:18 2021
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 18 Nov 2021 13:31:18 +0100
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+Message-ID: <ECFABA4F-6A0B-457D-A6C3-8ECC2842E72F@univ-grenoble-alpes.fr>
+
+Hi,
+
+For shp, I never tried.
+
+For kml, I export the centerline + splays by exporting the model, not the map. For instance :
+export model -fmt kml -o Outputs/MyCave.kml
+
+Hope it helps,
+
+Xav
+
+> Le 18 nov. 2021 ? 12:08, ????? ????? <?omrigas at gmail.com?> a ?crit :
+> 
+> 
+> Hi everyone,
+> I have a survey with coordinates at the first station but I don't use th2 files.
+> When I export to loch file, It works perfect, I can see the model in the correct place together with the DEM and surface image.
+> When I try to export to SHP or kml I get empty layers because I don't use th2 files.
+> What I don't understand is why the centerline / splayes / stations layers are empty as well.
+> 
+> Is there a way to export to SHP / kml only the data from the th file?
+> 
+> 
+> 
+>  
+> -- 
+> Omri
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From omrigas at gmail.com  Thu Nov 18 15:11:29 2021
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Thu, 18 Nov 2021 16:11:29 +0200
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <ECFABA4F-6A0B-457D-A6C3-8ECC2842E72F@univ-grenoble-alpes.fr>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+ <ECFABA4F-6A0B-457D-A6C3-8ECC2842E72F@univ-grenoble-alpes.fr>
+Message-ID: <CAOjFj0=27TL48nTrBph2UTMsvgMDCnYzWdD9s020PPxK2QEPkA@mail.gmail.com>
+
+Thanks Xavier,
+it worked!
+
+So , after converting the KML to SHP I have a polyline of the cave
+centerline & spalyes.
+What I'm aiming for, are the stations with the absolute altitude.
+If I manage to get that, then I can calculate the relative depth of each
+station from the surface.
+
+
+
+On Thu, Nov 18, 2021 at 2:31 PM Xavier Robert <
+xavier.robert at univ-grenoble-alpes.fr> wrote:
+
+> Hi,
+>
+> For shp, I never tried.
+>
+> For kml, I export the centerline + splays by exporting the model, not the
+> map. For instance :
+> export model -fmt kml -o Outputs/MyCave.kml
+>
+> Hope it helps,
+>
+> Xav
+>
+> > Le 18 nov. 2021 ? 12:08, ????? ????? <?omrigas at gmail.com?> a ?crit :
+> >
+> >
+> > Hi everyone,
+> > I have a survey with coordinates at the first station but I don't use
+> th2 files.
+> > When I export to loch file, It works perfect, I can see the model in the
+> correct place together with the DEM and surface image.
+> > When I try to export to SHP or kml I get empty layers because I don't
+> use th2 files.
+> > What I don't understand is why the centerline / splayes / stations
+> layers are empty as well.
+> >
+> > Is there a way to export to SHP / kml only the data from the th file?
+> >
+> >
+> >
+> >
+> > --
+> > Omri
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+?????,
+???? ????
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/23c21035/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Thu Nov 18 15:26:05 2021
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Thu, 18 Nov 2021 15:26:05 +0100
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <CAOjFj0=27TL48nTrBph2UTMsvgMDCnYzWdD9s020PPxK2QEPkA@mail.gmail.com>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+ <ECFABA4F-6A0B-457D-A6C3-8ECC2842E72F@univ-grenoble-alpes.fr>
+ <CAOjFj0=27TL48nTrBph2UTMsvgMDCnYzWdD9s020PPxK2QEPkA@mail.gmail.com>
+Message-ID: <C541ED47-97B6-4581-831F-90872FC9C1F4@univ-grenoble-alpes.fr>
+
+Hi,
+
+I never focussed on that but :
+If i do not mistake, you have the info of the altitude of each station in the sql database of the cave/system you may export. You may need to use some sql and/python queries to extract what you want.
+I am sure this is quite easy to compute, the last version of CaveView (https://aardgoose.github.io/CaveView.js/) is indicating that nicely. If your aim is to get the depth from the surface for only few points, you may tried tu use CaveView (Juste open a web page that is also using a CaveView Viewer, and then drag and grad your .lox file in the 3D viewer panel).
+
+Cheers
+
+Xavier
+
+> Le 18 nov. 2021 ? 15:11, ????? ????? <?omrigas at gmail.com?> a ?crit :
+> 
+> Thanks Xavier,
+> it worked!
+> 
+> So , after converting the KML to SHP I have a polyline of the cave centerline & spalyes. 
+> What I'm aiming for, are the stations with the absolute altitude.
+> If I manage to get that, then I can calculate the relative depth of each station from the surface.
+> 
+>  
+> 
+> On Thu, Nov 18, 2021 at 2:31 PM Xavier Robert <xavier.robert at univ-grenoble-alpes.fr <mailto:xavier.robert at univ-grenoble-alpes.fr>> wrote:
+> Hi,
+> 
+> For shp, I never tried.
+> 
+> For kml, I export the centerline + splays by exporting the model, not the map. For instance :
+> export model -fmt kml -o Outputs/MyCave.kml
+> 
+> Hope it helps,
+> 
+> Xav
+> 
+> > Le 18 nov. 2021 ? 12:08, ????? ????? <?omrigas at gmail.com <mailto:omrigas at gmail.com>?> a ?crit :
+> > 
+> > 
+> > Hi everyone,
+> > I have a survey with coordinates at the first station but I don't use th2 files.
+> > When I export to loch file, It works perfect, I can see the model in the correct place together with the DEM and surface image.
+> > When I try to export to SHP or kml I get empty layers because I don't use th2 files.
+> > What I don't understand is why the centerline / splayes / stations layers are empty as well.
+> > 
+> > Is there a way to export to SHP / kml only the data from the th file?
+> > 
+> > 
+> > 
+> >  
+> > -- 
+> > Omri
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk <mailto:Therion at speleo.sk>
+> > https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> ?????,
+> ???? ????
+> 052-6124995
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/c9f25017/attachment-0001.htm>
+
+From omrigas at gmail.com  Thu Nov 18 16:20:06 2021
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Thu, 18 Nov 2021 17:20:06 +0200
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <C541ED47-97B6-4581-831F-90872FC9C1F4@univ-grenoble-alpes.fr>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+ <ECFABA4F-6A0B-457D-A6C3-8ECC2842E72F@univ-grenoble-alpes.fr>
+ <CAOjFj0=27TL48nTrBph2UTMsvgMDCnYzWdD9s020PPxK2QEPkA@mail.gmail.com>
+ <C541ED47-97B6-4581-831F-90872FC9C1F4@univ-grenoble-alpes.fr>
+Message-ID: <CAOjFj0mOL_TsWU=Jh66ZyGfK+n3BWKOYkdangpgk0ihbYhBeFQ@mail.gmail.com>
+
+Thanks,
+I know cave view, it is very useful.
+I noticed that if you press with the mouse on any location it gives you the
+hight from surface.
+There is a shading called  depth below surface, but it stops at 23m (by the
+way is this a bug?), I know that there there are places with far greater
+depth then 23m.
+I'm attaching a screenshot with the problem.
+
+[image: image.png]
+
+On Thu, Nov 18, 2021 at 4:26 PM Xavier Robert <
+xavier.robert at univ-grenoble-alpes.fr> wrote:
+
+> Hi,
+>
+> I never focussed on that but :
+>
+>    - If i do not mistake, you have the info of the altitude of each
+>    station in the sql database of the cave/system you may export. You may need
+>    to use some sql and/python queries to extract what you want.
+>    - I am sure this is quite easy to compute, the last version of
+>    CaveView (https://aardgoose.github.io/CaveView.js/) is indicating that
+>    nicely. If your aim is to get the depth from the surface for only few
+>    points, you may tried tu use CaveView (Juste open a web page that is also
+>    using a CaveView Viewer, and then drag and grad your .lox file in the 3D
+>    viewer panel).
+>
+>
+> Cheers
+>
+> Xavier
+>
+> Le 18 nov. 2021 ? 15:11, ????? ????? <?omrigas at gmail.com?> a ?crit :
+>
+> Thanks Xavier,
+> it worked!
+>
+> So , after converting the KML to SHP I have a polyline of the cave
+> centerline & spalyes.
+> What I'm aiming for, are the stations with the absolute altitude.
+> If I manage to get that, then I can calculate the relative depth of each
+> station from the surface.
+>
+>
+>
+> On Thu, Nov 18, 2021 at 2:31 PM Xavier Robert <
+> xavier.robert at univ-grenoble-alpes.fr> wrote:
+>
+>> Hi,
+>>
+>> For shp, I never tried.
+>>
+>> For kml, I export the centerline + splays by exporting the model, not the
+>> map. For instance :
+>> export model -fmt kml -o Outputs/MyCave.kml
+>>
+>> Hope it helps,
+>>
+>> Xav
+>>
+>> > Le 18 nov. 2021 ? 12:08, ????? ????? <?omrigas at gmail.com?> a ?crit :
+>> >
+>> >
+>> > Hi everyone,
+>> > I have a survey with coordinates at the first station but I don't use
+>> th2 files.
+>> > When I export to loch file, It works perfect, I can see the model in
+>> the correct place together with the DEM and surface image.
+>> > When I try to export to SHP or kml I get empty layers because I don't
+>> use th2 files.
+>> > What I don't understand is why the centerline / splayes / stations
+>> layers are empty as well.
+>> >
+>> > Is there a way to export to SHP / kml only the data from the th file?
+>> >
+>> >
+>> >
+>> >
+>> > --
+>> > Omri
+>> > _______________________________________________
+>> > Therion mailing list
+>> > Therion at speleo.sk
+>> > https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+>
+> --
+> ?????,
+> ???? ????
+> 052-6124995
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+?????,
+???? ????
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/de84faf6/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 127642 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211118/de84faf6/attachment-0001.png>
+
+From lists at group-s.sk  Mon Nov 22 20:10:54 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 22 Nov 2021 20:10:54 +0100
+Subject: [Therion] Is survey -namespace off and sometimes on possible in
+ same survey project?
+In-Reply-To: <000401d7d98b$1fe23940$5fa6abc0$@tomo.co.nz>
+References: <000201d7d915$fd031fe0$f7095fa0$@tomo.co.nz>
+ <35vZjPQ1Q1Xa4gLycXwpHN11iW2qsNFWg1yKEfzfv_E-q7BSXKiV3LL0F30-saToq1DkpkIt7OgJbNE-aboSLtK-M6iXbDDXlgKPB_Hq1r4=@protonmail.com>
+ <000401d7d98b$1fe23940$5fa6abc0$@tomo.co.nz>
+Message-ID: <CAP35+gHDSDF+=jieriPJXt4u23LqLGNxC+iE__umQm03DpVcdg@mail.gmail.com>
+
+Hi Bruce,
+
+as far as I know, namespace could be specified for individual surveys. I am
+just afraid, this feature has not been tested a lot, so please let me know
+if some unexpected behavior occurs.
+
+Thanks, S.
+
+On Sun, 14 Nov 2021 at 20:09, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> >>Em domingo, 14 de novembro de 2021 ?s 2:10 AM, Bruce Mutton <
+> bruce at tomo.co.nz> escreveu:
+>
+> >> Just a quick question before contemplating the migration of a large
+> (more than 70 km and many caves) dataset to Therion.
+> >>
+> >> The dataset has unique station names, so in Therion speak, every survey
+> would have -namespace off set.
+>
+> >Sorry for the slightly off topic reply but AFAIU your dataset having
+> station unique names allows you to set -namespace off which could save some
+> work but you don't have to and as you already know that some other parts of
+> your dataset needs -namespace on, why bother with -namespace off?
+>
+> Because the existing dataset that it is proposed to migrate (using a
+> custom script):
+> - is large with many surveys and sub-surveys
+> - Therion implicitly defaults to -namespace on for every single survey
+> - with that setting, survey stations, although unique across surveys,
+> cannot be seen unless a namespace is specified
+> - therefore it will not compile until -namespace off is set in each
+> relevant survey and sub-survey.
+>
+> A decade ago, before I was particularly aware of 'survey -namespace', I
+> migrated this same dataset, and not being aware I could turn it off, had to
+> manually equate stations to join all the surveys, and equate loops where
+> they involved more than one survey.  I only did half of it before I got fed
+> up.  I realise now that -namespace off is the solution, and that it can be
+> put in the custom script.
+> But in the meantime I have some native Therion sub-projects that I want to
+> merge into the migrated project, that, of course, use and rely on the
+> implicit default of -namespace on because the stations are not unique (each
+> survey has the station sequence 1 2 3 4 ...).  I do not have an appetite to
+> manually make these stations unique, even using -station-names to modify
+> them it will be too painful.
+>
+> Hence I am testing the idea of projects where some surveys have -namespace
+> on and some -namespace off.
+> I could modify one of my existing projects to see what happens, but before
+> doing that I am interested to find out if others have experience with this
+> scenario.
+>
+> Regards
+> Bruce
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211122/d17d302f/attachment.htm>
+
+From lists at group-s.sk  Mon Nov 22 20:23:02 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 22 Nov 2021 20:23:02 +0100
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+Message-ID: <CAP35+gGpq5FbCnF05-9yg86MCVsG9+PqYu5or4HKnBv0tqQ-Cw@mail.gmail.com>
+
+Hi Omri,
+
+have you tried exporting model to .SHP files?
+
+export model -o cave.shp
+
+If you export map, I am not sure about altitude information in it. It is a
+long time ago we were working on it, but there were some differences when
+exporting map (2D) and model (3D) data. If you export model to .SHP files,
+it creates 3 layers - stations3d, shots3d and walls3d with proper 3D
+geometry and metadata of these features.
+
+S.
+
+?On Thu, 18 Nov 2021 at 12:09, ????? ?????? <omrigas at gmail.com> wrote:?
+
+>
+> Hi everyone,
+> I have a survey with coordinates at the first station but I don't use th2
+> files.
+> When I export to loch file, It works perfect, I can see the model in the
+> correct place together with the DEM and surface image.
+> When I try to export to SHP or kml I get empty layers because I don't use
+> th2 files.
+> What I don't understand is why the centerline / splayes / stations layers
+> are empty as well.
+>
+> Is there a way to export to SHP / kml only the data from the th file?
+>
+>
+>
+>
+> --
+> Omri
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211122/1d7e6842/attachment.htm>
+
+From beni at hallinger.org  Tue Nov 23 16:08:05 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 23 Nov 2021 16:08:05 +0100
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+Message-ID: <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+
+Hello,
+I currently play around with the layer feature.
+
+Currently it is so, that each "select"ed map goes in its own layer, 
+which is fine.
+In my data there are nested maps however. They get collated into one big 
+layer.
+
+I don't know PDF specifics, but it would be very handy to have "nested" 
+layers, i.e. submaps as separate layers in the main layer. If sublayersa 
+re not possible, it would be cool to have an optional option at the 
+export config command to instruct therion to not collate submaps into a 
+bigger layer, but add each map as independent layer.
+
+
+Something like this:
+
+---- therion source ----
+map A
+  A1
+  A2
+endmap
+map B
+  B1
+endmap
+
+
+map A1
+   scrap1
+endmap
+map A2
+   scrap2
+endmap
+map B1
+   scrap3
+endmap
+------------------------
+
+----- PDF layer list -----
+- A
+   + A1
+   + A2
+- B
+   + B1
+---------------------------
+
+From beni at hallinger.org  Tue Nov 23 16:07:32 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 23 Nov 2021 16:07:32 +0100
+Subject: [Therion] thfill with page background colour?
+In-Reply-To: <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+Message-ID: <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+
+Hi metapost wizards,
+
+I try to fill a label with the page background.
+   thfill ((bbox lab)) scaled (sc * basescale * 1.5) withcolor 
+<insertColorHere>;
+
+For <insertColorHere> i tried "label_fill_color", which however may be a 
+different background.
+I also tried "background", but that yields the cave passage background 
+colour.
+
+In which variable do i access the page's background color (the one set 
+wit the layout option "map-bg")?
+
+
+Thanks!
+Beni
+
+From tarquin.wilton-jones at ntlworld.com  Tue Nov 23 16:33:50 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 23 Nov 2021 15:33:50 +0000
+Subject: [Therion] thfill with page background colour?
+In-Reply-To: <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+ <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+Message-ID: <72c4f013-bbc6-3342-6b88-1385a71d89f0@ntlworld.com>
+
+> In which variable do i access the page's background color (the one set
+> wit the layout option "map-bg")?
+
+Fun fact ... you can't access that. Or at least, it didn't seem to be
+available back when I was trying to do that in version 5. And I still
+can't see any useful variable in version 6.
+
+"background" is the default background (white) in v5, but even that is
+absent in v6.
+
+I tested like this with identical input using the -d switch to get the
+data.mp:
+
+1. color map-bg [100 100 0] # yellow
+2. color map-bg [100 0 0] # red
+
+The data.mp debugging output was identical in both cases, so it is not
+putting the colour into a variable in that file.
+
+In places where I have needed this, my layout included a "code metapost"
+which set a global variable where I specified the background colour
+(written in metapost notation this time). The symbol code could then
+read my global variable. Messy solution.
+
+From andrew at wotcc.org.uk  Tue Nov 23 16:41:52 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 23 Nov 2021 15:41:52 +0000
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+Message-ID: <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+
+
+
+On 23/11/2021 15:08, Benedikt Hallinger wrote:
+
+> I don't know PDF specifics, but it would be very handy to have "nested" layers, i.e. submaps as separate layers in the main layer.
+
+That would be very useful, don't know if it is possible
+
+
+> If sublayersa re not possible, it would be cool to have an optional 
+> option at the export config command to instruct therion to not collate 
+> submaps into a bigger layer, but add each map as independent layer.
+
+
+If I understand correctly what you are after I think what you maybe 
+looking for are the options used with select. I used -map-level 2 to get 
+what you describe.
+
+
+Other options are
+
+recursive <on/off> and  chapter-level <number>
+
+I cannot say I really understand these fully, however trial and error 
+got me there
+
+Andrew
+
+From beni at hallinger.org  Tue Nov 23 16:49:33 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 23 Nov 2021 16:49:33 +0100
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+ <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+Message-ID: <0802cba3ffc24b5b57c0d35f2cd827cd@hallinger.org>
+
+Yes, exactly, when i use "select" and fetch the maps that way, it 
+generates layers as expected.
+However, in this instance i just have one big "map" element, but it 
+would be nice if i could have the submaps also as distinct layers.
+
+Am 2021-11-23 16:41, schrieb Andrew Atkinson:
+> On 23/11/2021 15:08, Benedikt Hallinger wrote:
+> 
+>> I don't know PDF specifics, but it would be very handy to have 
+>> "nested" layers, i.e. submaps as separate layers in the main layer.
+> 
+> That would be very useful, don't know if it is possible
+> 
+> 
+>> If sublayersa re not possible, it would be cool to have an optional 
+>> option at the export config command to instruct therion to not collate 
+>> submaps into a bigger layer, but add each map as independent layer.
+> 
+> 
+> If I understand correctly what you are after I think what you maybe
+> looking for are the options used with select. I used -map-level 2 to
+> get what you describe.
+> 
+> 
+> Other options are
+> 
+> recursive <on/off> and  chapter-level <number>
+> 
+> I cannot say I really understand these fully, however trial and error
+> got me there
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From andrew at wotcc.org.uk  Tue Nov 23 17:01:37 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 23 Nov 2021 16:01:37 +0000
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <0802cba3ffc24b5b57c0d35f2cd827cd@hallinger.org>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+ <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+ <0802cba3ffc24b5b57c0d35f2cd827cd@hallinger.org>
+Message-ID: <af6e578e-9a0a-c451-144f-a8776e70ed80@wotcc.org.uk>
+
+
+
+
+
+On 23/11/2021 15:49, Benedikt Hallinger wrote:
+> es, exactly, when i use "select" and fetch the maps that way, it 
+> generates layers as expected.
+> However, in this instance i just have one big "map" element, but it 
+> would be nice if i could have the submaps also as distinct layers.
+
+With a map definition in th file
+
+map mymap
+  map1
+  map2
+  map3
+endmap
+
+then in thconfig
+
+select mymap
+
+should give you map1, map2.. as leyers in pdf
+
+if you also have in a th file
+
+map map1
+  mapA
+  mapB
+  mapC
+endmap
+
+select mymap -maplevel 2
+
+should give you layers of mapA, mapB...
+
+In your example you had scraps, I don't think the map-level works on 
+scraps. If I have a survey with a single survey I always make it into a 
+map, I find this makes things easier in the end. I also do this if In 
+have many scraps that I want on several layers
+
+map SingleScrap
+  SingleScrapA
+endmap
+
+(I have no idea why scraps cannot just be treated as maps, it's probably 
+something to do with the coding, however it is easy to just turn them 
+into maps, I've not found any downside, well apart from a little more 
+typing and a larger map tree)
+
+Andrew
+
+From beni at hallinger.org  Tue Nov 23 17:51:16 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 23 Nov 2021 17:51:16 +0100
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <af6e578e-9a0a-c451-144f-a8776e70ed80@wotcc.org.uk>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+ <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+ <0802cba3ffc24b5b57c0d35f2cd827cd@hallinger.org>
+ <af6e578e-9a0a-c451-144f-a8776e70ed80@wotcc.org.uk>
+Message-ID: <dec5ea359b0f363a3644afaf96c2fee5@hallinger.org>
+
+Hi,
+no, i really have submaps in my example.
+mymap in my case is defined in my thconfig file, and it references a 
+mainmap as submap.
+That submap again is a collection of other submaps, that finally contain 
+scraps:
+
+
+-------------
+source
+   map 164-Grundriss -title "Mappe 164: Wandaugenlabyrinth Ost"
+
+     #preview above 172-Hauptplan at 172.Wandaugenlabyrinth.Hirlatzhoehle
+     preview above 162-Hauptplan at 162.Wandaugenlabyrinth.Hirlatzhoehle
+     preview above 180-Hauptplan at 180.Wandaugenlabyrinth.Hirlatzhoehle
+     preview above 170-Hauptplan at 170.Wandaugenlabyrinth.Hirlatzhoehle
+     preview above 171-Hauptplan at 171.Wandaugenlabyrinth.Hirlatzhoehle
+
+     164-Hauptplan at 164.Wandaugenlabyrinth.Hirlatzhoehle     #<-- this 
+contains several other maps, which finally contain scraps
+
+   endmap
+endsource
+----------------
+
+
+> select 164-Grundriss -map-level 2
+This works, but removes the previews (from 164-Grundriss) and also the 
+offsets defined in 164-Hauptplan.
+I also tried "select 164-Grundriss -map-level basic" with the same 
+result.
+
+
+
+
+Am 2021-11-23 17:01, schrieb Andrew Atkinson:
+> On 23/11/2021 15:49, Benedikt Hallinger wrote:
+>> es, exactly, when i use "select" and fetch the maps that way, it 
+>> generates layers as expected.
+>> However, in this instance i just have one big "map" element, but it 
+>> would be nice if i could have the submaps also as distinct layers.
+> 
+> With a map definition in th file
+> 
+> map mymap
+>  map1
+>  map2
+>  map3
+> endmap
+> 
+> then in thconfig
+> 
+> select mymap
+> 
+> should give you map1, map2.. as leyers in pdf
+> 
+> if you also have in a th file
+> 
+> map map1
+>  mapA
+>  mapB
+>  mapC
+> endmap
+> 
+> select mymap -maplevel 2
+> 
+> should give you layers of mapA, mapB...
+> 
+> In your example you had scraps, I don't think the map-level works on
+> scraps. If I have a survey with a single survey I always make it into
+> a map, I find this makes things easier in the end. I also do this if
+> In have many scraps that I want on several layers
+> 
+> map SingleScrap
+>  SingleScrapA
+> endmap
+> 
+> (I have no idea why scraps cannot just be treated as maps, it's
+> probably something to do with the coding, however it is easy to just
+> turn them into maps, I've not found any downside, well apart from a
+> little more typing and a larger map tree)
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From m.budaj at gmail.com  Tue Nov 23 21:35:33 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 23 Nov 2021 21:35:33 +0100
+Subject: [Therion] thfill with page background colour?
+In-Reply-To: <72c4f013-bbc6-3342-6b88-1385a71d89f0@ntlworld.com>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+ <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+ <72c4f013-bbc6-3342-6b88-1385a71d89f0@ntlworld.com>
+Message-ID: <CALPsdStFNw0bd8OeLD2UQoggx9SOUjJ6uFiZ=ijwPmqdOS9wZQ@mail.gmail.com>
+
+On Tue, Nov 23, 2021 at 4:34 PM Tarquin Wilton-Jones via Therion
+<therion at speleo.sk> wrote:
+>
+> > In which variable do i access the page's background color (the one set
+> > wit the layout option "map-bg")?
+>
+> Fun fact ... you can't access that. Or at least, it didn't seem to be
+> available back when I was trying to do that in version 5. And I still
+> can't see any useful variable in version 6.
+
+Hi,
+
+it's now set as MapBackground in the latest commit.
+
+M.
+
+From tarquin.wilton-jones at ntlworld.com  Tue Nov 23 21:45:30 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 23 Nov 2021 20:45:30 +0000
+Subject: [Therion] thfill with page background colour?
+In-Reply-To: <CALPsdStFNw0bd8OeLD2UQoggx9SOUjJ6uFiZ=ijwPmqdOS9wZQ@mail.gmail.com>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+ <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+ <72c4f013-bbc6-3342-6b88-1385a71d89f0@ntlworld.com>
+ <CALPsdStFNw0bd8OeLD2UQoggx9SOUjJ6uFiZ=ijwPmqdOS9wZQ@mail.gmail.com>
+Message-ID: <673d6717-6a3d-c1ab-0a26-e1f62cd82038@ntlworld.com>
+
+On 23/11/2021 20:35, Martin Budaj wrote:
+> On Tue, Nov 23, 2021 at 4:34 PM Tarquin Wilton-Jones via Therion
+> <therion at speleo.sk> wrote:
+>>
+>>> In which variable do i access the page's background color (the one set
+>>> wit the layout option "map-bg")?
+>>
+>> Fun fact ... you can't access that. Or at least, it didn't seem to be
+>> available back when I was trying to do that in version 5. And I still
+>> can't see any useful variable in version 6.
+> 
+> Hi,
+> 
+> it's now set as MapBackground in the latest commit.
+
+Woohoo! What service :)
+Thank you kind sir.
+
+
+From beni at hallinger.org  Wed Nov 24 08:29:00 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Wed, 24 Nov 2021 08:29:00 +0100
+Subject: [Therion] thfill with page background colour?
+In-Reply-To: <CALPsdStFNw0bd8OeLD2UQoggx9SOUjJ6uFiZ=ijwPmqdOS9wZQ@mail.gmail.com>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <7c68467df20a0eaa08c78e4976e81621@hallinger.org>
+ <1fa2ca2041ca93aa456d6db5b07d5696@hallinger.org>
+ <72c4f013-bbc6-3342-6b88-1385a71d89f0@ntlworld.com>
+ <CALPsdStFNw0bd8OeLD2UQoggx9SOUjJ6uFiZ=ijwPmqdOS9wZQ@mail.gmail.com>
+Message-ID: <df5f9a3e222def4153ca9ec7dd6d44a8@hallinger.org>
+
+Great, that works as intended!
+Thank you very much!
+
+Am 2021-11-23 21:35, schrieb Martin Budaj:
+> On Tue, Nov 23, 2021 at 4:34 PM Tarquin Wilton-Jones via Therion
+> <therion at speleo.sk> wrote:
+>> 
+>> > In which variable do i access the page's background color (the one set
+>> > wit the layout option "map-bg")?
+>> 
+>> Fun fact ... you can't access that. Or at least, it didn't seem to be
+>> available back when I was trying to do that in version 5. And I still
+>> can't see any useful variable in version 6.
+> 
+> Hi,
+> 
+> it's now set as MapBackground in the latest commit.
+> 
+> M.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Wed Nov 24 11:49:09 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 24 Nov 2021 10:49:09 +0000
+Subject: [Therion] Cutting off a grid
+Message-ID: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+
+Hi,
+
+We have a vertical cave that is just over 100 metres deep, with its
+entrance just below a 100 metre contour.
+
+We want to show a grid on the elevation view, like this:
+
+#show an altitude grid every 25 metres
+#("50 50" affects only plan view, so is ignored here)
+grid bottom               #behind the cave
+grid-size 50 50 10 meters #one line every 25 metres of depth
+grid-coords border        #show numbers at the edge of the survey
+
+This leaves a 20+ metre gap at the bottom, since the cave only just made
+it past the last 25 metre grid line.
+
+1. Is there a way to cut off the grid after a certain amount, so that it
+doesn't show the blank gap at the bottom? Or alternatively, cut off the
+grid after the cave ends? Or "show the next grid line if the cave is
+within 5 metres of it"?
+
+2. Is there a way to start the grid at "0" at the entrance to the cave,
+in order to show depth below the entrance instead of the altitude above
+sea level?
+
+I tried this:
+grid-origin 0 0 400 meters
+But Therion just threw an error with no error message, so I am obviously
+doing something wrong. Does that only work in plan view perhaps?
+
+From martinsluka at me.com  Wed Nov 24 12:12:07 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Wed, 24 Nov 2021 12:12:07 +0100
+Subject: [Therion] Cutting off a grid
+In-Reply-To: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+References: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+Message-ID: <82489CB4-6886-4D5A-8687-9F02DB09C4B2@me.com>
+
+
+
+> 24. 11. 2021 v 11:49, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> 1. Is there a way to cut off the grid after a certain amount, so that it
+> doesn't show the blank gap at the bottom? Or alternatively, cut off the
+> grid after the cave ends? Or "show the next grid line if the cave is
+> within 5 metres of it??
+
+Anyway you may add blank PDF or png to your map to cover part of grid:
+
+map-image <x> <y> <n/s/e/w/ne/nw/se/sw/center> <filename>
+Martin 
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211124/9715762e/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Nov 24 16:13:39 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 24 Nov 2021 15:13:39 +0000
+Subject: [Therion] Cutting off a grid
+In-Reply-To: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+References: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+Message-ID: <8f4fba29-d65d-c91e-0945-8eb80083d0ab@ntlworld.com>
+
+On 24/11/2021 10:49, Tarquin Wilton-Jones via Therion wrote:
+> Hi,
+> 
+> We have a vertical cave that is just over 100 metres deep, with its
+> entrance just below a 100 metre contour.
+> 
+> We want to show a grid on the elevation view, like this:
+> 
+> #show an altitude grid every 25 metres
+> #("50 50" affects only plan view, so is ignored here)
+> grid bottom               #behind the cave
+> grid-size 50 50 10 meters #one line every 25 metres of depth
+
+Umm, yeah. That should have been "50 50 25"
+
+> grid-coords border        #show numbers at the edge of the survey
+> 
+> This leaves a 20+ metre gap at the bottom, since the cave only just made
+> it past the last 25 metre grid line.
+> 
+> 1. Is there a way to cut off the grid after a certain amount, so that it
+> doesn't show the blank gap at the bottom? Or alternatively, cut off the
+> grid after the cave ends? Or "show the next grid line if the cave is
+> within 5 metres of it"?
+> 
+> 2. Is there a way to start the grid at "0" at the entrance to the cave,
+> in order to show depth below the entrance instead of the altitude above
+> sea level?
+> 
+> I tried this:
+> grid-origin 0 0 400 meters
+> But Therion just threw an error with no error message, so I am obviously
+> doing something wrong. Does that only work in plan view perhaps?
+
+Cheers,
+
+Tarquin
+
+From m.budaj at gmail.com  Wed Nov 24 20:23:05 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 24 Nov 2021 20:23:05 +0100
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+Message-ID: <CALPsdStji3H73KtpyVmLS8nwrm3Z0chj7o65yUZ07Y5-G-dg7g@mail.gmail.com>
+
+?On Thu, Nov 18, 2021 at 12:09 PM ????? ?????? <omrigas at gmail.com> wrote:?
+> When I try to export to SHP or kml I get empty layers because I don't use th2 files.
+> What I don't understand is why the centerline / splayes / stations layers are empty as well.
+
+Hi,
+
+there is a bug in the embedded shapefile library if it's used under
+Windows. The latest commit contains a local fix, so it should work
+well now.
+
+Martin
+
+From dropstone at gmx.de  Thu Nov 25 08:45:21 2021
+From: dropstone at gmx.de (Axel)
+Date: Thu, 25 Nov 2021 08:45:21 +0100
+Subject: [Therion] Cutting off a grid
+In-Reply-To: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+References: <ce186858-c856-187f-0b52-baf15c05aea1@ntlworld.com>
+Message-ID: <trinity-a4e97a59-47dc-4333-8d15-1ba270fd53e8-1637826321936@3c-app-gmx-bap47>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211125/d4075cf5/attachment.htm>
+
+From beni at hallinger.org  Fri Nov 26 17:10:18 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 26 Nov 2021 17:10:18 +0100
+Subject: [Therion] Get shortest route
+Message-ID: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+
+Hi there,
+i would want to get some advanced statistics regarding lengths in a very big cave (130km/Hirlatz).
+
+Basicly i want to supply two stations and get the following data for the shortest path:
+- length of shots
+- cumulated height for shots going upwards
+- cumulative depth for shots going downwards
+- optionally it would be cool to be able to somehow visualize the route in aven/loch, or in a therion map output
+
+Is this possible already?
+
+From bgee at campercaver.net  Sat Nov 27 14:22:47 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 27 Nov 2021 07:22:47 -0600
+Subject: [Therion] Duplicate pdftex fonts
+Message-ID: <1893970.1toDxpfAEF@main2.billgee.local>
+
+Hello everyone -
+
+This is not really a Therion question, but it happens only when I am compiling Therion maps.  I figured I would start here and see if anyone has any ideas where to go for more help.
+
+Every time I compile a map to a PDF file in Therion, pdftex issues some warnings.  They look like this:
+
+pdfTeX warning: pdftex (file /usr/share/texlive/texmf-var/fonts/map/pdftex/updmap/pdftex.map): fontmap entry for `rtxphvb' already exists, duplicates ignored
+
+
+There are ten of these, each for a different font.  The maps that are produced are sane with no visible problems.  
+
+I looked at the pdftex.map file and, as noted in the warning, the fonts named are in there twice.  In fact, dang near EVERY font is in there twice!
+
+This warning started appearing after I upgraded from Fedora 34 to 35.  It appears on two different computers.
+
+So far this is merely annoying.  The maps that Therion produces look great, and I have not seen the warnings anywhere else.  Even so, it would be nice to figure out what is going on and get it fixed.  
+
+Has anyone else seen this?  Does anyone have suggestions on where to go for help on fixing it?
+
+Thanks!
+========
+Bill Gee
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211127/0073e450/attachment.htm>
+
+From bgee at campercaver.net  Sat Nov 27 17:33:54 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 27 Nov 2021 10:33:54 -0600
+Subject: [Therion] Hiding cross-section symbols
+Message-ID: <1909397.jEADstKbiI@main2.billgee.local>
+
+In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+
+layout NoCrossSections
+  symbol-hide point section
+  symbol-hide line cross-section
+  symbol-hide section section
+  symbol-hide section cross-section
+  symbol-hide group section
+  symbol-hide group cross-section
+endlayout
+
+For all of these Therion says "Unknown symbol specification".  
+
+Thanks!
+========
+Bill Gee
+
+
+
+
+
+From andrew at wotcc.org.uk  Sat Nov 27 18:29:00 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 27 Nov 2021 17:29:00 +0000
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <1909397.jEADstKbiI@main2.billgee.local>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+Message-ID: <10EFBCA5-CF79-408C-87FD-66108179C216@wotcc.org.uk>
+
+symbol-hide group sections
+
+All you needed was an s :)
+
+Andrew
+-- 
+Sent with K-9 Mail
+
+On 27 November 2021 16:33:54 GMT, Bill Gee <bgee at campercaver.net> wrote:
+>In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+>
+>layout NoCrossSections
+>  symbol-hide point section
+>  symbol-hide line cross-section
+>  symbol-hide section section
+>  symbol-hide section cross-section
+>  symbol-hide group section
+>  symbol-hide group cross-section
+>endlayout
+>
+>For all of these Therion says "Unknown symbol specification".  
+>
+>Thanks!
+>========
+>Bill Gee
+>
+>
+>
+>
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Sat Nov 27 19:13:08 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 27 Nov 2021 12:13:08 -0600
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <10EFBCA5-CF79-408C-87FD-66108179C216@wotcc.org.uk>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <10EFBCA5-CF79-408C-87FD-66108179C216@wotcc.org.uk>
+Message-ID: <1916087.L5eaSpR8rY@main2.billgee.local>
+
+Yep, that did it.  Thanks!
+
+Now that I know what to look for, I see on page 52 of the Therion Book that "sections" is listed as a possible group under symbol-assign.  It is not in either symbol-hide or symbol-show, which is why I missed it.
+
+========
+Bill Gee
+
+
+On Saturday, November 27, 2021 11:29:00 AM CST Andrew Atkinson wrote:
+> symbol-hide group sections
+> 
+> All you needed was an s :)
+> 
+> Andrew
+> >In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+> >
+> >layout NoCrossSections
+> >  symbol-hide point section
+> >  symbol-hide line cross-section
+> >  symbol-hide section section
+> >  symbol-hide section cross-section
+> >  symbol-hide group section
+> >  symbol-hide group cross-section
+> >endlayout
+> >
+> >For all of these Therion says "Unknown symbol specification".  
+> >
+> >Thanks!
+> >========
+> >Bill Gee
+> >
+> >
+> >
+> >
+> >_______________________________________________
+> >Therion mailing list
+> >Therion at speleo.sk
+> >https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+
+
+
+From bgee at campercaver.net  Sat Nov 27 19:37:19 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 27 Nov 2021 12:37:19 -0600
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <1916087.L5eaSpR8rY@main2.billgee.local>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <10EFBCA5-CF79-408C-87FD-66108179C216@wotcc.org.uk>
+ <1916087.L5eaSpR8rY@main2.billgee.local>
+Message-ID: <4047031.AaWjsssbxF@main2.billgee.local>
+
+And a followup question!  More secret incantations ...
+
+Although the cross-section lines and scraps are now gone, the arrows that I used to connect them are still there.  I tried adding an option to the arrow line, like this:
+
+	-context sections
+
+but that only produces an error "not enough option arguments -- -context -- must be 2".  I changed it to read
+
+	-context line sections
+
+and got "invalid object context -- line sections".
+
+Page 29 of the Therion Book implies that something like this should be possible.  I don't want to hide ALL arrows - just the ones that are used in association with cross-sections.
+
+Maybe I need to use some other context besides "sections"?  Perhaps define those arrows as context of "section_arrow", then use "symbol-hide group section_arrow"?
+
+========
+Bill Gee
+
+
+On Saturday, November 27, 2021 12:13:08 PM CST Bill Gee wrote:
+> Yep, that did it.  Thanks!
+> 
+> Now that I know what to look for, I see on page 52 of the Therion Book that "sections" is listed as a possible group under symbol-assign.  It is not in either symbol-hide or symbol-show, which is why I missed it.
+> 
+> ========
+> Bill Gee
+> 
+> 
+> On Saturday, November 27, 2021 11:29:00 AM CST Andrew Atkinson wrote:
+> > symbol-hide group sections
+> > 
+> > All you needed was an s :)
+> > 
+> > Andrew
+> > >In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+> > >
+> > >layout NoCrossSections
+> > >  symbol-hide point section
+> > >  symbol-hide line cross-section
+> > >  symbol-hide section section
+> > >  symbol-hide section cross-section
+> > >  symbol-hide group section
+> > >  symbol-hide group cross-section
+> > >endlayout
+> > >
+> > >For all of these Therion says "Unknown symbol specification".  
+> > >
+> > >Thanks!
+> > >========
+> > >Bill Gee
+> > >
+> > >
+> > >
+> > >
+> > >_______________________________________________
+> > >Therion mailing list
+> > >Therion at speleo.sk
+> > >https://mailman.speleo.sk/listinfo/therion
+> > 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+
+
+
+From olly at survex.com  Sat Nov 27 19:56:52 2021
+From: olly at survex.com (Olly Betts)
+Date: Sat, 27 Nov 2021 18:56:52 +0000
+Subject: [Therion] Get shortest route
+In-Reply-To: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+Message-ID: <20211127185652.GP2728@survex.com>
+
+On Fri, Nov 26, 2021 at 05:10:18PM +0100, Benedikt Hallinger wrote:
+> i would want to get some advanced statistics regarding lengths in a very big cave (130km/Hirlatz).
+> 
+> Basicly i want to supply two stations and get the following data for the shortest path:
+> - length of shots
+> - cumulated height for shots going upwards
+> - cumulative depth for shots going downwards
+> - optionally it would be cool to be able to somehow visualize the route in aven/loch, or in a therion map output
+> 
+> Is this possible already?
+
+I don't think so.
+
+Someone was working on it, but I guess it didn't come to anything as
+that was 2016:
+
+https://lists.survex.com/pipermail/survex/2016-October/002082.html
+
+Cheers,
+    Olly
+
+From andrew at wotcc.org.uk  Sat Nov 27 20:31:34 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 27 Nov 2021 19:31:34 +0000
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <4047031.AaWjsssbxF@main2.billgee.local>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <10EFBCA5-CF79-408C-87FD-66108179C216@wotcc.org.uk>
+ <1916087.L5eaSpR8rY@main2.billgee.local>
+ <4047031.AaWjsssbxF@main2.billgee.local>
+Message-ID: <4C5ADB70-4606-49EF-B390-D4BF60AD00F1@wotcc.org.uk>
+
+-context point section
+
+Or
+
+-context line section
+
+Annoyingly on xtherion one of these is called something like cross section, I cannot check as I'm on a phone.
+
+Have you tried the built in function for showing cross sections? It gets a bit of getting use to but works well. Page 27 of thboolk.
+
+You might be able to use, but I've never tried.
+
+-context group sections
+
+
+Be warned context doesn't always work, I imagine  as they are very untested by end users, but a bug report has ended up with a rapid fix in the past ?
+One of the first two definatly work as I've used it on labels for cross section, well it worked for labels.
+
+Andrew
+-- 
+Sent with K-9 Mail
+
+On 27 November 2021 18:37:19 GMT, Bill Gee <bgee at campercaver.net> wrote:
+>And a followup question!  More secret incantations ...
+>
+>Although the cross-section lines and scraps are now gone, the arrows that I used to connect them are still there.  I tried adding an option to the arrow line, like this:
+>
+>	-context sections
+>
+>but that only produces an error "not enough option arguments -- -context -- must be 2".  I changed it to read
+>
+>	-context line sections
+>
+>and got "invalid object context -- line sections".
+>
+>Page 29 of the Therion Book implies that something like this should be possible.  I don't want to hide ALL arrows - just the ones that are used in association with cross-sections.
+>
+>Maybe I need to use some other context besides "sections"?  Perhaps define those arrows as context of "section_arrow", then use "symbol-hide group section_arrow"?
+>
+>========
+>Bill Gee
+>
+>
+>On Saturday, November 27, 2021 12:13:08 PM CST Bill Gee wrote:
+>> Yep, that did it.  Thanks!
+>> 
+>> Now that I know what to look for, I see on page 52 of the Therion Book that "sections" is listed as a possible group under symbol-assign.  It is not in either symbol-hide or symbol-show, which is why I missed it.
+>> 
+>> ========
+>> Bill Gee
+>> 
+>> 
+>> On Saturday, November 27, 2021 11:29:00 AM CST Andrew Atkinson wrote:
+>> > symbol-hide group sections
+>> > 
+>> > All you needed was an s :)
+>> > 
+>> > Andrew
+>> > >In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+>> > >
+>> > >layout NoCrossSections
+>> > >  symbol-hide point section
+>> > >  symbol-hide line cross-section
+>> > >  symbol-hide section section
+>> > >  symbol-hide section cross-section
+>> > >  symbol-hide group section
+>> > >  symbol-hide group cross-section
+>> > >endlayout
+>> > >
+>> > >For all of these Therion says "Unknown symbol specification".  
+>> > >
+>> > >Thanks!
+>> > >========
+>> > >Bill Gee
+>> > >
+>> > >
+>> > >
+>> > >
+>> > >_______________________________________________
+>> > >Therion mailing list
+>> > >Therion at speleo.sk
+>> > >https://mailman.speleo.sk/listinfo/therion
+>> > 
+>> 
+>> 
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>
+>
+>
+>
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Sat Nov 27 23:58:23 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 27 Nov 2021 16:58:23 -0600
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <4C5ADB70-4606-49EF-B390-D4BF60AD00F1@wotcc.org.uk>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <4047031.AaWjsssbxF@main2.billgee.local>
+ <4C5ADB70-4606-49EF-B390-D4BF60AD00F1@wotcc.org.uk>
+Message-ID: <4202631.itPUkWRp2N@main2.billgee.local>
+
+"-context line section" did the trick.  Once again - Thank you!
+
+It seems odd ...  The first question I had was solved by adding an 's'.  This time it was solved by removing an 's'.
+
+The function described on page 27 of the Therion book seems to be related to a line of type section.  I use those all the time.  That kind of line indicates where in the cave the cross section goes.  I then add a point of type cross-section which places the scrap on the map.  An option for the point tells which scrap goes with it.
+
+The thing about this map is that it has a LOT of cross sections crowded into a small area.  Placing a scrap near its section line is not always possible, so I use an arrow line to indicate which scrap belongs to which line.  Doing a symbol-hide on the sections takes out both the scraps and the section lines, but leaves the arrows.  The map is much less busy, but those arrows are just hanging out there with no obvious purpose.
+
+Now I know how to take them out too.  
+
+========
+Bill Gee
+
+
+On Saturday, November 27, 2021 1:31:34 PM CST Andrew Atkinson wrote:
+> -context point section
+> 
+> Or
+> 
+> -context line section
+> 
+> Annoyingly on xtherion one of these is called something like cross section, I cannot check as I'm on a phone.
+> 
+> Have you tried the built in function for showing cross sections? It gets a bit of getting use to but works well. Page 27 of thboolk.
+> 
+> You might be able to use, but I've never tried.
+> 
+> -context group sections
+> 
+> 
+> Be warned context doesn't always work, I imagine  as they are very untested by end users, but a bug report has ended up with a rapid fix in the past ?
+> One of the first two definatly work as I've used it on labels for cross section, well it worked for labels.
+> 
+> Andrew
+> >And a followup question!  More secret incantations ...
+> >
+> >Although the cross-section lines and scraps are now gone, the arrows that I used to connect them are still there.  I tried adding an option to the arrow line, like this:
+> >
+> >	-context sections
+> >
+> >but that only produces an error "not enough option arguments -- -context -- must be 2".  I changed it to read
+> >
+> >	-context line sections
+> >
+> >and got "invalid object context -- line sections".
+> >
+> >Page 29 of the Therion Book implies that something like this should be possible.  I don't want to hide ALL arrows - just the ones that are used in association with cross-sections.
+> >
+> >Maybe I need to use some other context besides "sections"?  Perhaps define those arrows as context of "section_arrow", then use "symbol-hide group section_arrow"?
+> >
+> >========
+> >Bill Gee
+> >
+> >
+> >On Saturday, November 27, 2021 12:13:08 PM CST Bill Gee wrote:
+> >> Yep, that did it.  Thanks!
+> >> 
+> >> Now that I know what to look for, I see on page 52 of the Therion Book that "sections" is listed as a possible group under symbol-assign.  It is not in either symbol-hide or symbol-show, which is why I missed it.
+> >> 
+> >> ========
+> >> Bill Gee
+> >> 
+> >> 
+> >> On Saturday, November 27, 2021 11:29:00 AM CST Andrew Atkinson wrote:
+> >> > symbol-hide group sections
+> >> > 
+> >> > All you needed was an s :)
+> >> > 
+> >> > Andrew
+> >> > >In a map layout, what is the symbol-hide command to not produce cross-sections?  I have tried these without success:
+> >> > >
+> >> > >layout NoCrossSections
+> >> > >  symbol-hide point section
+> >> > >  symbol-hide line cross-section
+> >> > >  symbol-hide section section
+> >> > >  symbol-hide section cross-section
+> >> > >  symbol-hide group section
+> >> > >  symbol-hide group cross-section
+> >> > >endlayout
+> >> > >
+> >> > >For all of these Therion says "Unknown symbol specification".  
+> >> > >
+> >> > >Thanks!
+> >> > >========
+> >> > >Bill Gee
+> >> > >
+> >> > >
+> >> > >
+> >> > >
+> >> > >_______________________________________________
+> >> > >Therion mailing list
+> >> > >Therion at speleo.sk
+> >> > >https://mailman.speleo.sk/listinfo/therion
+> >> > 
+> >> 
+> >> 
+> >> 
+> >> 
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> >> 
+> >
+> >
+> >
+> >
+> >_______________________________________________
+> >Therion mailing list
+> >Therion at speleo.sk
+> >https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+
+
+
+
+From martinsluka at me.com  Sun Nov 28 11:04:58 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Sun, 28 Nov 2021 11:04:58 +0100
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <4202631.itPUkWRp2N@main2.billgee.local>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <4047031.AaWjsssbxF@main2.billgee.local>
+ <4C5ADB70-4606-49EF-B390-D4BF60AD00F1@wotcc.org.uk>
+ <4202631.itPUkWRp2N@main2.billgee.local>
+Message-ID: <F2F3D6B7-397F-43EA-AC8A-B66EE20E7529@me.com>
+
+line section could have more than one segment. Second (third, ?) section you may use instead of arrows.
+
+Martin
+
+> 27. 11. 2021 v 23:58, Bill Gee <bgee at campercaver.net>:
+> 
+> Placing a scrap near its section line is not always possible, so I use an arrow line to indicate which scrap belongs to which line.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211128/9253927c/attachment.htm>
+
+From therion at speleo.sk  Sun Nov 28 13:20:02 2021
+From: therion at speleo.sk (Therion)
+Date: Sun, 28 Nov 2021 13:20:02 +0100 (CET)
+Subject: [Therion] new Therion 6.0.4
+Message-ID: <20211128122002.C33BB5FE2E@mail.speleo.sk>
+
+Hi, there is a new release 6.0.4 of Therion.
+Check https://github.com/therion/therion/releases/tag/v6.0.4 for more details.
+
+Best regards,
+Therion team
+
+From bgee at campercaver.net  Sun Nov 28 13:47:22 2021
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 28 Nov 2021 06:47:22 -0600
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <F2F3D6B7-397F-43EA-AC8A-B66EE20E7529@me.com>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <4202631.itPUkWRp2N@main2.billgee.local>
+ <F2F3D6B7-397F-43EA-AC8A-B66EE20E7529@me.com>
+Message-ID: <7414726.E46n4Xy2Hs@main2.billgee.local>
+
+A good idea that I had not thought of!  But it won't work for me.  I like to use "-direction both" on my section lines.  Yes, I could put the direction arrow on one end only, but that is not my work habit.
+
+For others - an excellent idea.
+
+========
+Bill Gee
+
+
+On Sunday, November 28, 2021 4:04:58 AM CST Martin Sluka via Therion wrote:
+> line section could have more than one segment. Second (third, ?) section you may use instead of arrows.
+> 
+> Martin
+> 
+> > 27. 11. 2021 v 23:58, Bill Gee <bgee at campercaver.net>:
+> > 
+> > Placing a scrap near its section line is not always possible, so I use an arrow line to indicate which scrap belongs to which line.
+> 
+> 
+
+
+
+
+
+From martinsluka at me.com  Sun Nov 28 18:01:21 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Sun, 28 Nov 2021 18:01:21 +0100
+Subject: [Therion] Hiding cross-section symbols
+In-Reply-To: <7414726.E46n4Xy2Hs@main2.billgee.local>
+References: <1909397.jEADstKbiI@main2.billgee.local>
+ <4202631.itPUkWRp2N@main2.billgee.local>
+ <F2F3D6B7-397F-43EA-AC8A-B66EE20E7529@me.com>
+ <7414726.E46n4Xy2Hs@main2.billgee.local>
+Message-ID: <76B9BBCA-9C57-4B9A-8A54-A4E8C2E7228B@me.com>
+
+
+
+> 28. 11. 2021 v 13:47, Bill Gee <bgee at campercaver.net>:
+> 
+> I like to use "-direction both" on my section lines.  Yes, I could put the direction arrow on one end only, but that is not my work habit.
+
+Anyway you may use this trick:
+
+
+
+Both lines are group sections.
+
+M.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211128/847b0838/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: otisk_ 2021-11-28 v?17.58.14.png
+Type: image/png
+Size: 84576 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211128/847b0838/attachment-0001.png>
+
+From thomas at thomas-holder.de  Sun Nov 28 18:49:27 2021
+From: thomas at thomas-holder.de (Thomas Holder)
+Date: Sun, 28 Nov 2021 18:49:27 +0100
+Subject: [Therion] Get shortest route
+In-Reply-To: <20211127185652.GP2728@survex.com>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+Message-ID: <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+
+Hi Benedikt and Olly,
+
+I implemented such functionality (not the visualization) a while ago
+as a little exercise in Python. If you know how to run a Python
+script, then you might find this useful.
+
+First download this file:
+https://raw.githubusercontent.com/speleo3/inkscape-speleo/master/extensions/survex.py
+
+Then run this code (replace the file name and station names):
+
+filename = "smk-arge.3d"
+station_from = "p87"
+station_to = "115.commando.105"
+
+from survex import Survex3D
+survey = Survex3D(filename)
+length, p = survey.shortestpath(station_from, station_to)
+upwards = sum(max(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+downwards = sum(min(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+print("Shortest route length:", length / 100, "m")
+print("Cumulated height going upwards:", upwards / 100, "m")
+print("Cumulated depth going downwards:", downwards / 100, "m")
+
+
+Cheers,
+  Thomas
+
+On Sat, Nov 27, 2021 at 8:25 PM Olly Betts <olly at survex.com> wrote:
+>
+> On Fri, Nov 26, 2021 at 05:10:18PM +0100, Benedikt Hallinger wrote:
+> > i would want to get some advanced statistics regarding lengths in a very big cave (130km/Hirlatz).
+> >
+> > Basicly i want to supply two stations and get the following data for the shortest path:
+> > - length of shots
+> > - cumulated height for shots going upwards
+> > - cumulative depth for shots going downwards
+> > - optionally it would be cool to be able to somehow visualize the route in aven/loch, or in a therion map output
+> >
+> > Is this possible already?
+>
+> I don't think so.
+>
+> Someone was working on it, but I guess it didn't come to anything as
+> that was 2016:
+>
+> https://lists.survex.com/pipermail/survex/2016-October/002082.html
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From omrigas at gmail.com  Sun Nov 28 21:40:08 2021
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 28 Nov 2021 22:40:08 +0200
+Subject: [Therion] Export centerline and/or stations to SHP without th2
+ files
+In-Reply-To: <CALPsdStji3H73KtpyVmLS8nwrm3Z0chj7o65yUZ07Y5-G-dg7g@mail.gmail.com>
+References: <CAOjFj0nK_P0y-kC+8sKMph1OTC=Z=tHxuE7cRDOONhR299Xs9w@mail.gmail.com>
+ <CALPsdStji3H73KtpyVmLS8nwrm3Z0chj7o65yUZ07Y5-G-dg7g@mail.gmail.com>
+Message-ID: <CAOjFj0nEdooSdyXS7iKODFem7oLcw4RAh0QD1SxF-+RphRhT9w@mail.gmail.com>
+
+Hi Stacho & Martin
+I ran it with the new release, it world good now.
+Thanks!
+
+On Wed, Nov 24, 2021, 9:23 PM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> ?On Thu, Nov 18, 2021 at 12:09 PM ????? ?????? <omrigas at gmail.com> wrote:?
+> > When I try to export to SHP or kml I get empty layers because I don't
+> use th2 files.
+> > What I don't understand is why the centerline / splayes / stations
+> layers are empty as well.
+>
+> Hi,
+>
+> there is a bug in the embedded shapefile library if it's used under
+> Windows. The latest commit contains a local fix, so it should work
+> well now.
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211128/69550d52/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Nov 28 22:33:14 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 28 Nov 2021 21:33:14 +0000
+Subject: [Therion] Get shortest route
+In-Reply-To: <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+ <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+Message-ID: <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+
+> I implemented such functionality (not the visualization) a while ago
+> as a little exercise in Python. If you know how to run a Python
+> script, then you might find this useful.
+
+Awesome!
+
+I would love for that to be built in to Aven, so it could actually
+highlight the route too (you know the problem, you give someone an inch
+they ask for a mile).
+
+It's something I have wanted when showing someone a survey in Aven;
+"Show me the route I took". That is not always the shortest route, but
+much like with Google Maps, it would use the shortest route between
+control points.
+
+Instead, I end up manually copying it into an image editor, and adding a
+background along the route.
+
+(This is kind of off topic for Therion of course, but actually, I would
+love for Loch to have a lot of the features that I still rely on Aven
+for, such as selecting stations and splays and measuring between them.
+So I guess that would be needed first!)
+
+From beni at hallinger.org  Mon Nov 29 08:34:29 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 29 Nov 2021 08:34:29 +0100
+Subject: [Therion] Get shortest route
+In-Reply-To: <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+ <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+ <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+Message-ID: <f5df662cc849d151e36fa590995c665d@hallinger.org>
+
+Havin that native in some related software would be awesome.
+I think aven would be a good candidate for that, as well as loch.
+
+
+Am 2021-11-28 22:33, schrieb Tarquin Wilton-Jones via Therion:
+>> I implemented such functionality (not the visualization) a while ago
+>> as a little exercise in Python. If you know how to run a Python
+>> script, then you might find this useful.
+> 
+> Awesome!
+> 
+> I would love for that to be built in to Aven, so it could actually
+> highlight the route too (you know the problem, you give someone an inch
+> they ask for a mile).
+> 
+> It's something I have wanted when showing someone a survey in Aven;
+> "Show me the route I took". That is not always the shortest route, but
+> much like with Google Maps, it would use the shortest route between
+> control points.
+> 
+> Instead, I end up manually copying it into an image editor, and adding 
+> a
+> background along the route.
+> 
+> (This is kind of off topic for Therion of course, but actually, I would
+> love for Loch to have a lot of the features that I still rely on Aven
+> for, such as selecting stations and splays and measuring between them.
+> So I guess that would be needed first!)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bruce at tomo.co.nz  Mon Nov 29 09:21:45 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 29 Nov 2021 21:21:45 +1300
+Subject: [Therion] Therion] Get shortest route
+Message-ID: <000001d7e4fa$27267e30$75737a90$@tomo.co.nz>
+
+This was discussed in 2008 in Therion circles.
+https://www.mail-archive.com/therion at speleo.sk/msg02037.html
+To be really useful, the user should be able to specify multiple stations,
+with the algorithm finding the shortest centreline distance along the
+centreline network that passes through all of the specified points.
+
+Outputs to list as noted by Benedikt below, pdf and aven/Loch models.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Olly Betts
+Sent: Sunday, 28 November 2021 07:57
+To: Benedikt Hallinger <beni at hallinger.org>
+Cc: therion at speleo.sk
+Subject: Re: [Therion] Get shortest route
+
+On Fri, Nov 26, 2021 at 05:10:18PM +0100, Benedikt Hallinger wrote:
+> i would want to get some advanced statistics regarding lengths in a very
+big cave (130km/Hirlatz).
+> 
+> Basicly i want to supply two stations and get the following data for the
+shortest path:
+> - length of shots
+> - cumulated height for shots going upwards
+> - cumulative depth for shots going downwards
+> - optionally it would be cool to be able to somehow visualize the 
+> route in aven/loch, or in a therion map output
+> 
+> Is this possible already?
+
+I don't think so.
+
+Someone was working on it, but I guess it didn't come to anything as that
+was 2016:
+
+https://lists.survex.com/pipermail/survex/2016-October/002082.html
+
+Cheers,
+    Olly
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Mon Nov 29 09:29:28 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 29 Nov 2021 09:29:28 +0100
+Subject: [Therion] Therion] Get shortest route
+In-Reply-To: <000001d7e4fa$27267e30$75737a90$@tomo.co.nz>
+References: <000001d7e4fa$27267e30$75737a90$@tomo.co.nz>
+Message-ID: <208c4499d9afdfbf78f4b70eecb96d52@hallinger.org>
+
+I think, when we would have some option to compile the shortest path 
+between two statoins, this could easily leveraged to the multi-station 
+approach (I would even do that manually if its not easily to be 
+automated).
+
+Further wishes could be to be able to specify constraints as options, so 
+for example to assign more path-cost to steep inclinations (shafts/pits) 
+or sumps.
+
+The big question is, how this needs to be coded up, and more important, 
+who can code it?
+
+
+Am 2021-11-29 9:21, schrieb Bruce Mutton:
+> This was discussed in 2008 in Therion circles.
+> https://www.mail-archive.com/therion at speleo.sk/msg02037.html
+> To be really useful, the user should be able to specify multiple 
+> stations,
+> with the algorithm finding the shortest centreline distance along the
+> centreline network that passes through all of the specified points.
+> 
+> Outputs to list as noted by Benedikt below, pdf and aven/Loch models.
+> 
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Olly Betts
+> Sent: Sunday, 28 November 2021 07:57
+> To: Benedikt Hallinger <beni at hallinger.org>
+> Cc: therion at speleo.sk
+> Subject: Re: [Therion] Get shortest route
+> 
+> On Fri, Nov 26, 2021 at 05:10:18PM +0100, Benedikt Hallinger wrote:
+>> i would want to get some advanced statistics regarding lengths in a 
+>> very
+> big cave (130km/Hirlatz).
+>> 
+>> Basicly i want to supply two stations and get the following data for 
+>> the
+> shortest path:
+>> - length of shots
+>> - cumulated height for shots going upwards
+>> - cumulative depth for shots going downwards
+>> - optionally it would be cool to be able to somehow visualize the
+>> route in aven/loch, or in a therion map output
+>> 
+>> Is this possible already?
+> 
+> I don't think so.
+> 
+> Someone was working on it, but I guess it didn't come to anything as 
+> that
+> was 2016:
+> 
+> https://lists.survex.com/pipermail/survex/2016-October/002082.html
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From beni at hallinger.org  Mon Nov 29 12:01:28 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 29 Nov 2021 12:01:28 +0100
+Subject: [Therion] Get shortest route
+In-Reply-To: <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+ <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+Message-ID: <04ded6c40621945c7c77217ce0fa86f1@hallinger.org>
+
+Hi Thomas,
+thank you for the snippet, I succesfully tried it :)
+
+For my convinience, I wrote a small wrapper to ease the call:
+- It references my fixed aven file
+- It has parameters 1 and 2 reference the respective stations
+
+------snip shortestPath.py------
+#!/usr/bin/python
+#
+#  Wrapperskript fuer survex.py um den kuerzesten Pfad zwischen zwei 
+Stations zu errechnen.
+#
+#  Bsp: Eingang -> Brueckenhalle:  $ ./shortestPath.py 
+Hirlatzhoehle.Zubringer.1.1.0 Hirlatzhoehle.Alter_Teil.2.1.55
+
+import sys
+
+filename     = "../Hirlatzhoehle/Hirlatz.th.3d"
+station_from = sys.argv[1]
+station_to   = sys.argv[2]
+
+from survex import Survex3D
+survey = Survex3D(filename)
+length, p = survey.shortestpath(station_from, station_to)
+upwards = sum(max(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+downwards = sum(min(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+print("Shortest route length:", length / 100, "m")
+print("Cumulated height going upwards:", upwards / 100, "m")
+print("Cumulated depth going downwards:", downwards / 100, "m")
+
+------snip------
+
+
+Example call (Entrance to the Fragezeichenbiwak):
+$ ./shortestPath.py Hirlatzhoehle.Zubringer.1.1.0 
+Hirlatzhoehle.Donnerbach.70.1.19
+('Shortest route length:', 6773.091436823018, 'm')
+('Cumulated height going upwards:', 781, 'm')
+('Cumulated depth going downwards:', -770, 'm')
+
+
+Thank you!
+(nonetheless it would be awesome to get some more feature rich 
+integrated function in therion and/or aven)
+
+
+Am 2021-11-28 18:49, schrieb Thomas Holder:
+> Hi Benedikt and Olly,
+> 
+> I implemented such functionality (not the visualization) a while ago
+> as a little exercise in Python. If you know how to run a Python
+> script, then you might find this useful.
+> 
+> First download this file:
+> https://raw.githubusercontent.com/speleo3/inkscape-speleo/master/extensions/survex.py
+> 
+> Then run this code (replace the file name and station names):
+> 
+> filename = "smk-arge.3d"
+> station_from = "p87"
+> station_to = "115.commando.105"
+> 
+> from survex import Survex3D
+> survey = Survex3D(filename)
+> length, p = survey.shortestpath(station_from, station_to)
+> upwards = sum(max(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+> downwards = sum(min(0, t.z - f.z) for (f, t) in zip(p[:-1], p[1:]))
+> print("Shortest route length:", length / 100, "m")
+> print("Cumulated height going upwards:", upwards / 100, "m")
+> print("Cumulated depth going downwards:", downwards / 100, "m")
+> 
+> 
+> Cheers,
+>   Thomas
+> 
+> On Sat, Nov 27, 2021 at 8:25 PM Olly Betts <olly at survex.com> wrote:
+>> 
+>> On Fri, Nov 26, 2021 at 05:10:18PM +0100, Benedikt Hallinger wrote:
+>> > i would want to get some advanced statistics regarding lengths in a very big cave (130km/Hirlatz).
+>> >
+>> > Basicly i want to supply two stations and get the following data for the shortest path:
+>> > - length of shots
+>> > - cumulated height for shots going upwards
+>> > - cumulative depth for shots going downwards
+>> > - optionally it would be cool to be able to somehow visualize the route in aven/loch, or in a therion map output
+>> >
+>> > Is this possible already?
+>> 
+>> I don't think so.
+>> 
+>> Someone was working on it, but I guess it didn't come to anything as
+>> that was 2016:
+>> 
+>> https://lists.survex.com/pipermail/survex/2016-October/002082.html
+>> 
+>> Cheers,
+>>     Olly
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+From wookey at wookware.org  Mon Nov 29 12:53:00 2021
+From: wookey at wookware.org (Wookey)
+Date: Mon, 29 Nov 2021 11:53:00 +0000
+Subject: [Therion] Get shortest route
+In-Reply-To: <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+ <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+ <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+Message-ID: <20211129115300.GF28830@mail.wookware.org>
+
+On 2021-11-28 21:33 +0000, Tarquin Wilton-Jones via Therion wrote:
+> > I implemented such functionality (not the visualization) a while ago
+> > as a little exercise in Python. If you know how to run a Python
+> > script, then you might find this useful.
+> 
+> Awesome!
+
+That is nifty. I've wanted this functionality quite often too.
+
+> I would love for that to be built in to Aven, so it could actually
+> highlight the route too (you know the problem, you give someone an inch
+> they ask for a mile).
+
+It's probably not that hard to do. The UI will be more work than the
+routing.  Of course what we really want is to apply normal routing
+algorithms to the cave network (the graphhopper library is my
+favourite as it's fast enough to make routing dragable), and include
+weighting metadata so we could do somthing slightly more sophisticated
+than 'shortest'. ('quickest', and 'least gear' are probably
+useful). Being able to have dragable routing with timings (and maybe
+tackle lists one day!) would be very nice, but relies on a lot of
+metadata being available sonehow that currently isn't.
+
+https://wiki.openstreetmap.org/wiki/GraphHopper
+Annoyingly it seems not to be packaged yet. That can be fixed.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211129/f1874a86/attachment.sig>
+
+From beni at hallinger.org  Mon Nov 29 13:23:12 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 29 Nov 2021 13:23:12 +0100
+Subject: [Therion] Get shortest route
+In-Reply-To: <20211129115300.GF28830@mail.wookware.org>
+References: <C01096EF-B165-4781-8FAF-401FC413D320@hallinger.org>
+ <20211127185652.GP2728@survex.com>
+ <CAH+rX49WWLNZWnsW01+KzSNJ0G+DiD4wh2-T8xMQqAmuFe-qOg@mail.gmail.com>
+ <364621fa-a32b-46f1-22d3-a27aca29a297@ntlworld.com>
+ <20211129115300.GF28830@mail.wookware.org>
+Message-ID: <1c9a924286ba8de9e76c766d61ffeb25@hallinger.org>
+
+Some Metadata could be derived from the scraps we have in therion.
+That will not be 100% accurate, of course, but for ecample if a 
+centerline shot crosses some pit, this could provide useful routing 
+information (because we can infer that we need rope and climbing gear 
+for this leg). Or from the passage dimensions we can deduce if that is 
+easily walkable or we need to crouch.
+
+We could make a "routing map" as we know which stations we crossed, and 
+put together a map containing all scraps with the stations...
+
+
+
+Am 2021-11-29 12:53, schrieb Wookey:
+> On 2021-11-28 21:33 +0000, Tarquin Wilton-Jones via Therion wrote:
+>> > I implemented such functionality (not the visualization) a while ago
+>> > as a little exercise in Python. If you know how to run a Python
+>> > script, then you might find this useful.
+>> 
+>> Awesome!
+> 
+> That is nifty. I've wanted this functionality quite often too.
+> 
+>> I would love for that to be built in to Aven, so it could actually
+>> highlight the route too (you know the problem, you give someone an 
+>> inch
+>> they ask for a mile).
+> 
+> It's probably not that hard to do. The UI will be more work than the
+> routing.  Of course what we really want is to apply normal routing
+> algorithms to the cave network (the graphhopper library is my
+> favourite as it's fast enough to make routing dragable), and include
+> weighting metadata so we could do somthing slightly more sophisticated
+> than 'shortest'. ('quickest', and 'least gear' are probably
+> useful). Being able to have dragable routing with timings (and maybe
+> tackle lists one day!) would be very nice, but relies on a lot of
+> metadata being available sonehow that currently isn't.
+> 
+> https://wiki.openstreetmap.org/wiki/GraphHopper
+> Annoyingly it seems not to be packaged yet. That can be fixed.
+> 
+> Wookey
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From m.budaj at gmail.com  Tue Nov 30 20:44:33 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 30 Nov 2021 20:44:33 +0100
+Subject: [Therion] Presenting Mapiah, a multi-platform, more friendly,
+ modern and performant graphical interface for Therion
+In-Reply-To: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+References: <z3Pnv-mGmRQVK5hwG3uxMKDjmtC7R7SptwTeehGoO2SURDmQeW8tY7FFvjcYmeEq2ML2PsOkarEDt8AHdnvISP9Q-WFykQBZHWKALPGcUPg=@protonmail.com>
+Message-ID: <CALPsdSurYUxqRnoRDGu_1uormnT6Ny0hws7Y=kXamDNOms95iw@mail.gmail.com>
+
+Hi, Rodrigo.
+
+Your PoC app looks very promising and we are happy that you've made
+this first step. C++/Qt seems to be a good choice as well.
+
+What might be a bit surprising for most of the users hoping for a
+better UI, there is also one other project to create a Qt replacement
+for XTherion (started by Michal Plch and available in the qtherion
+branch of our git repo ;)
+
+There are some differences in the scope and technology, though:
+* the idea was to provide a UI which would be simple enough for new
+users, not necessarily mimicking XTherion's approach
+* as a result, it doesn't expect user to know internals of *.th or
+*.th2 files (and even doesn't support them directly ? in this branch
+therion was extended to use a JSON-based data package to communicate
+with qtherion UI)
+* it's based on C++/Qt, too, but heavily using QML to define the UI
+
+It's also a PoC in a very early stage and as such hasn't been
+advertised on the list yet. But it's clear that time is ripe for a new
+UI.
+
+How about some brainstorming with Rodrigo, Michal and perhaps some
+others on possible synergies and the best way forward?
+
+Cheers
+Martin
+
+
+On Mon, Nov 15, 2021 at 12:42 AM Rodrigo Severo via Therion
+<therion at speleo.sk> wrote:
+>
+> Presenting Mapiah.
+>
+> Mapiah is my take on a multi-platform, more friendly, modern and performant graphical interface for Therion. It's written in C++/Qt. It aims to be as compatible as practical and possible with XTherion.
+>
+> This is the "proof-of-concept" release.
+>
+> It's source code and it's releases files can be found at the projects home at SourceForge: https://sourceforge.net/projects/mapiah/
+>
+> Please let me know what you think about it, if it has any future, if you want to help.
+>
+>
+> *The name*
+>
+> Mapiah is a international friendly version of the portuguese word "mapear" on the sentence "vamos mapear?" - "let's go surveying?" or "let's go mapping?" - which is usually pronounced [v?mu mapi'a].
+>
+>
+> *Multi-platform*
+>
+> Right now we have both Linux and Windows releases as these are the OSs I have access and minimal experience with. Until some Mac user steps up, that's the way it's gonna be.
+>
+> Having said that, the idea is to follow best practices during Mapiah's development to ease the release process on all target platforms: Linux, Windows and Mac.
+>
+>
+> *The C++/Qt choices*
+>
+> Going backwards, the Qt framework was chosen as it has an open source compatible version. It's mature, powerful and seems to take multi-platform support seriously.
+>
+> The first idea was to use Qt Python as the "friendly" requirement could also be applied to the language chosen but in the end I decided to go with C++ because I believe that a C++ application might be more easily distributable across all platforms.
+>
+>
+> *The "proof-of-concept" release*
+>
+> The basic reading and writing functionality supposely is th concept being proved in this release. Supposely because the actual concept I am trying to prove myself with this release is that I can write functional and decent C++/Qt code which, for the time being, is kinda proved.
+>
+>
+> *Functionality*
+>
+> This 0.0.1 release can read a TH2 file, present it on the screen and save it.
+>
+> With an open file you can change the zoom level and write the file again.
+>
+> You should be able to see your TH2 file on screen correctly and the saved file should be functionally identical to the original one.
+>
+> All point, line, area, scrap and XTHERION options should be properly read and saved even if most aren't actually understood/acted upon.
+>
+>
+> *License*
+>
+> This software is licensed under GPL 3 or later.
+>
+>
+> *WARNINGS*
+>
+> PLEASE TEST!
+>
+> DON'T OVERRIDE YOUR ORIGINAL FILE WITH THE ONE WRITTEN BY MAPIAH!!
+>
+> THIS IS A PRE-ALPHA VERSION!!!
+>
+>
+> Regards,
+>
+> Rodrigo Severo
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From m.budaj at gmail.com  Tue Nov 30 20:48:16 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 30 Nov 2021 20:48:16 +0100
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+References: <19fd758c9afcfc9e9ac1748f6a160e8e@hallinger.org>
+ <fe475a237bb6935c8a2f9bed87c1446f@hallinger.org>
+ <a22baa2e-64e4-8fbe-3e92-c5c6f1341da0@wotcc.org.uk>
+Message-ID: <CALPsdStYbN+3utGhQRmfybdiLuoSQ94PLQUaexM7Z8jHTq0isw@mail.gmail.com>
+
+On Tue, Nov 23, 2021 at 4:42 PM Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> On 23/11/2021 15:08, Benedikt Hallinger wrote:
+>
+> > I don't know PDF specifics, but it would be very handy to have "nested" layers, i.e. submaps as separate layers in the main layer.
+>
+> That would be very useful, don't know if it is possible
+
+There is some support for a tree-like hierarchy of the optional
+content layers in the PDF specification, but you can't select/unselect
+a group of sublayers at once. See the attached picture for an
+illustration: you can change the visibility of the lowest-level maps
+(the "leafs") only, not the higher-level maps or groups (the
+"branches"). So it's not very helpful in this case except for having
+some labels indicating the hierarchical structure of maps.
+If all the tree was interactive, we could simply expand it to all
+sub-maps to have complete and easy control of the displayed content.
+
+Martin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: pdf-ocg.png
+Type: image/png
+Size: 63755 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211130/83f9a049/attachment-0001.png>
+
+From beni at hallinger.org  Tue Nov 30 22:58:52 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 30 Nov 2021 22:58:52 +0100
+Subject: [Therion] Fwd: PDF output: layers nested?
+In-Reply-To: <CALPsdStYbN+3utGhQRmfybdiLuoSQ94PLQUaexM7Z8jHTq0isw@mail.gmail.com>
+References: <CALPsdStYbN+3utGhQRmfybdiLuoSQ94PLQUaexM7Z8jHTq0isw@mail.gmail.com>
+Message-ID: <2F54291C-3A1B-4646-887C-33ADC416463A@hallinger.org>
+
+Thank you Martin, for clarification!
+
+> Am 30.11.2021 um 20:49 schrieb Martin Budaj <m.budaj at gmail.com>:
+> 
+> ?On Tue, Nov 23, 2021 at 4:42 PM Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+>>> On 23/11/2021 15:08, Benedikt Hallinger wrote:
+>>> 
+>>> I don't know PDF specifics, but it would be very handy to have "nested" layers, i.e. submaps as separate layers in the main layer.
+>> 
+>> That would be very useful, don't know if it is possible
+> 
+> There is some support for a tree-like hierarchy of the optional
+> content layers in the PDF specification, but you can't select/unselect
+> a group of sublayers at once. See the attached picture for an
+> illustration: you can change the visibility of the lowest-level maps
+> (the "leafs") only, not the higher-level maps or groups (the
+> "branches"). So it's not very helpful in this case except for having
+> some labels indicating the hierarchical structure of maps.
+> If all the tree was interactive, we could simply expand it to all
+> sub-maps to have complete and easy control of the displayed content.
+> 
+> Martin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: pdf-ocg.png
+Type: image/png
+Size: 63755 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211130/438a565e/attachment-0001.png>
+-------------- next part --------------
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+

@@ -1,0 +1,2451 @@
+From rhystyers1 at gmail.com  Tue Apr 12 17:57:36 2022
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Tue, 12 Apr 2022 16:57:36 +0100
+Subject: [Therion] Revising a map definition with offsets
+Message-ID: <CAEg=DQFwwOFuze-joUcrpsW-Hntcw9ou0-=46LTEeEdFduoufQ@mail.gmail.com>
+
+Hello,
+
+I want to be able to revise a map definition to add offsets to some
+submaps. I'd like to know if this is possible.
+
+Assuming a map definition like this (where the submaps are defined in the
+same file):
+
+map m-all-p -projection plan -title "Primadona"
+    m-entrance-p
+    m-galerija_branch-p
+    m-ttt_branch-p
+    m-hammerhead_branch-p
+    m-upside_down_area-p
+    m-hallelujah_branch-p
+    m-klic_globin_branch-p
+    m-old_slov_route-p
+    m-deep-p
+endmap
+
+Is it possible to use the revise command (or anything else) to modify this
+from a config file?
+
+source
+    map with-offsets -projection plan
+        m-all-p at primadonna
+    endmap
+
+    revise m-all-p at primadonna
+        m-deep-p at primadonna [-300 0 m] below
+    endrevise
+endsource
+
+select with-offsets
+
+language en
+export map -projection plan -o out.pdf
+
+I found that it is possible to _add_ offsets to a map using the revise
+command, but so far haven't seen a way to modify a submap (the effect of
+which is that you see both the offset and the non-offset and the non-offset
+is not a preview).
+
+I guess the proper way to do this is just to define many maps with
+different offsets for all situations but for reasons I'd really like it if
+this method was possible somehow.
+
+Thanks,
+Rhys
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220412/92d868b4/attachment.htm>
+
+From rhystyers1 at gmail.com  Wed Apr 13 22:18:17 2022
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Wed, 13 Apr 2022 21:18:17 +0100
+Subject: [Therion] Custom Metapost label can't display newlines or accents
+Message-ID: <CAEg=DQHKnKSZFLTuDvNpPpqaQnWKeaLjTuUVXZ-=ZDzG+h8Jkw@mail.gmail.com>
+
+Hello again,
+
+I?m hoping someone can help me work out a metapost problem. The code is
+available here
+<https://github.com/iccaving/migovec-survey-data/blob/master/layouts/metapost/user_label.thl>
+and pasted below.
+
+None of us know anything about metapost so this is a copy/paste job of this
+<https://www.mail-archive.com/therion at speleo.sk/msg07234.html> code with
+some extensions. We want a label that can be turned displayed or hidden
+depending on a level variable. In a system survey I turn off lots of labels
+because there is lots of overlapping passage, but on more detailed ones I
+turn them back on. This level thing works well.
+
+What does not work is new lines or any non-ascii character. I have played
+around with this for a while and can?t work out how to make it work.
+
+I.e. this point:
+
+point 174.2178 755.6161 u:label_MY -attr lvl 1 -attr text
+"Hoover<br>Dam" -align tr -scale l
+
+The <br> is not replaced by a new line and in fact the < and > are rendered
+as question marks.
+[image: image.png]
+
+
+I think Therion does a substitution of <br> and it?s not real html or tex
+but if I try to use tex in there like Hoover \\ Dam then it just errors
+during compilation:
+
+[495] (./mptextmp.mp) [496] [497] [498] (./mptextmp.mpfatal: Command
+failed: etex --parse-first-line --interaction=nonstopmode
+mpTXLjoJ.tex; see mpxerr.log
+>> mptextmp.mp
+>> mptextmp.mpx
+! ! Unable to read mpx file.
+l.2 btex
+         \mainfont \thframed {\thnormalsize Hoover \\ Dam} etex
+
+I think this is because we are somehow not rendering with tex, and only
+rendering with metapost which has a limited character set, but I really
+have no idea.
+
+Any help would be greatly appreciated!
+
+The metapost code:
+
+layout user_label
+
+    code metapost
+
+        def p_LABEL(expr pos)=
+            T:=identity shifted pos;
+            pickup PenD;
+            p:=fullcircle scaled .1u;
+            thclean p; thdraw p;
+
+            if known ATTR_text:
+                text := scantokens(ATTR_text);
+                thdrawoptions(withcolor .8red + .4blue);
+                txtm:=image(
+                draw txt;
+                interim labeloffset:=0;
+                label.urt(btex text etex);
+                );
+                % draw label
+                lab:=thelabel@#(txtm, pos);
+                draw lab _thop_; % use color
+                thdrawoptions();
+                bboxmargin:=0.8bp;
+                write_circ_bbox((bbox lab) smoothed 2);
+
+            enddef;
+
+            def p_altitude(expr pos)=
+                T:=identity shifted pos;
+                pickup PenD;
+                p:=(-.3u,0)--(.3u,0);
+                thdraw p; thdraw p rotated 90;
+                p:=fullcircle scaled .2u;
+                thclean p; thdraw p;
+            enddef;
+
+
+            vardef p_label@#(expr txt,pos,rot,mode) =
+                if mode=1:
+                    thdrawoptions(withcolor .8red + .4blue);
+                    p_altitude(pos);
+                    % append "m" to label
+                    picture txtm;
+                    txtm:=image(
+                    draw txt;
+                    interim labeloffset:=0;
+                    label.urt(btex \thaltitude m etex, lrcorner txt);
+                    );
+                    % give extra offset in case of l/r/t/b alignment
+                    pair ctmp;
+                    ctmp:=center thelabel@#("x", (0,0));
+                    if (xpart ctmp * ypart ctmp)=0:
+                        interim labeloffset:=(.4u);
+                    else: % diagonal alignment
+                        interim labeloffset:=(.2u);
+                    fi;
+                    % draw label
+                    lab:=thelabel@#(txtm, pos);
+                    draw lab _thop_; % use color
+                    thdrawoptions();
+                    bboxmargin:=0.8bp;
+                    write_circ_bbox((bbox lab) smoothed 2);
+                else:
+                    if mode=7:
+                        interim labeloffset:=(u/8);
+                    fi;
+                    lab:=thelabel@#(txt, pos);
+                    if mode>1:
+                        pickup PenD
+                    fi;
+                    if mode=2:
+                        process_uplabel;
+                    elseif mode=3:
+                        process_downlabel;
+                    elseif mode=4:
+                        process_updownlabel;
+                    elseif mode=5:
+                        process_circledlabel;
+                    elseif mode=6:
+                        process_boxedlabel;
+                    elseif mode=7:
+                        process_label(pos,rot);  % station name
+                    elseif mode=8:
+                        process_filledlabel(pos, rot);
+                    else:
+                        process_label(pos,rot);
+                    fi;
+                fi;
+            enddef;
+
+            vardef set_label_level (expr mylevel)=
+                maxl := scantokens(mylevel);
+            enddef;
+
+
+            def p_u_label_MY (expr P,R,S,A)=
+                T:=identity shifted P;
+                U:=(0,0);
+                save lvl;
+                save style;
+                if known ATTR_style:
+                    style:= scantokens(ATTR_style);
+                else:
+                    style :=0;
+                fi;
+                if known ATTR_text:
+                    if known ATTR_lvl:
+                        lvl := scantokens(ATTR_lvl);
+                    else: lvl :=0;
+                    fi;
+                    if lvl < maxl+1:
+                        U:=(S*u*(length ATTR_text)/4,S*u*(length ATTR_text)/4);
+                        create_styled_label(ATTR_text,P,R,S,A,style);
+                    else:;
+                    fi;
+                fi;
+            enddef;
+            initsymbol("p_u_label_MY");
+
+
+            % https://www.mail-archive.com/therion at speleo.sk/msg07234.html
+            % define a custom attribute called label_mode
+
+            vardef create_styled_label (expr plaintext,P,R,S,A,defaultstyle)=
+                save textsize, style, thetext;
+                string textsize;
+                if S = 0.5:
+                    textsize:="\thtinysize";
+                elseif S = 0.7:
+                    textsize:="\thsmallsize";
+                elseif S = 1.4:
+                    textsize:="\thlargesize";
+                elseif S = 2:
+                    textsize:="\thhugesize";
+                else: % normal is 1
+                    textsize:="\thnormalsize";
+                fi;
+                if known ATTR_labelstyle:
+                    style:=scantokens(ATTR_labelstyle);
+                else:
+                    style:=defaultstyle;
+                fi;
+                picture thetext;
+                thetext:=thTEX("\thframed {" & textsize & " " &
+plaintext & "}");
+                if A = (-1,1):
+                    p_label.ulft(thetext,P,R,style);
+
+                elseif A = (0,1):
+                    p_label.top(thetext,P,R,style);
+
+                elseif A = (1,1):
+                    p_label.urt(thetext,P,R,style);
+
+                elseif A = (-1,0):
+                    p_label.lft(thetext,P,R,style);
+
+                elseif A = (1,0):
+                    p_label.rt(thetext,P,R,style);
+
+                elseif A = (-1,-1):
+                    p_label.llft(thetext,P,R,style);
+
+                elseif A = (0,-1):
+                    p_label.bot(thetext,P,R,style);
+
+                elseif A = (1,-1):
+                    p_label.lrt(thetext,P,R,style);
+
+                else:
+                    p_label(thetext,P,R,style);
+
+                fi;
+            enddef;
+
+        endcode
+    endlayout
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220413/4d24b215/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 27396 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220413/4d24b215/attachment-0001.png>
+
+From rhystyers1 at gmail.com  Sun Apr 17 23:00:09 2022
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Sun, 17 Apr 2022 22:00:09 +0100
+Subject: [Therion] Custom Metapost label can't display newlines or
+ accents
+In-Reply-To: <CAEg=DQHKnKSZFLTuDvNpPpqaQnWKeaLjTuUVXZ-=ZDzG+h8Jkw@mail.gmail.com>
+References: <CAEg=DQHKnKSZFLTuDvNpPpqaQnWKeaLjTuUVXZ-=ZDzG+h8Jkw@mail.gmail.com>
+Message-ID: <CAEg=DQF+M3LusQ0asrzp0_QrWhV16D8Gto_PisRw22vqUK07_g@mail.gmail.com>
+
+Just in case a simplification makes the question/answer clearer, I'll retry
+my question from above:
+
+I define a user label:
+
+def p_u_label (expr P,R,S,A)=
+    lab:=thelabel(ATTR_text, P)
+    process_label(P, R)
+enddef;
+initsymbol("p_u_label");
+
+This for example will not print a ? character, but the standard Therion
+label will.
+
+How do I make this display text the same way that a normal Therion label
+does?
+
+I?ve read through a lot of the Therion source trying to find out where this
+happens but in the relevant bit
+<https://github.com/therion/therion/blob/master/mpost/thText.mp> there
+seems to be no extra magic happening.
+
+Thanks,
+Rhys
+
+On Wed, 13 Apr 2022 at 21:18, Rhys Tyers <rhystyers1 at gmail.com> wrote:
+
+> Hello again,
+>
+> I?m hoping someone can help me work out a metapost problem. The code is
+> available here
+> <https://github.com/iccaving/migovec-survey-data/blob/master/layouts/metapost/user_label.thl>
+> and pasted below.
+>
+> None of us know anything about metapost so this is a copy/paste job of
+> this <https://www.mail-archive.com/therion at speleo.sk/msg07234.html> code
+> with some extensions. We want a label that can be turned displayed or
+> hidden depending on a level variable. In a system survey I turn off lots of
+> labels because there is lots of overlapping passage, but on more detailed
+> ones I turn them back on. This level thing works well.
+>
+> What does not work is new lines or any non-ascii character. I have played
+> around with this for a while and can?t work out how to make it work.
+>
+> I.e. this point:
+>
+> point 174.2178 755.6161 u:label_MY -attr lvl 1 -attr text "Hoover<br>Dam" -align tr -scale l
+>
+> The <br> is not replaced by a new line and in fact the < and > are
+> rendered as question marks.
+> [image: image.png]
+>
+>
+> I think Therion does a substitution of <br> and it?s not real html or tex
+> but if I try to use tex in there like Hoover \\ Dam then it just errors
+> during compilation:
+>
+> [495] (./mptextmp.mp) [496] [497] [498] (./mptextmp.mpfatal: Command failed: etex --parse-first-line --interaction=nonstopmode mpTXLjoJ.tex; see mpxerr.log
+> >> mptextmp.mp
+> >> mptextmp.mpx
+> ! ! Unable to read mpx file.
+> l.2 btex
+>          \mainfont \thframed {\thnormalsize Hoover \\ Dam} etex
+>
+> I think this is because we are somehow not rendering with tex, and only
+> rendering with metapost which has a limited character set, but I really
+> have no idea.
+>
+> Any help would be greatly appreciated!
+>
+> The metapost code:
+>
+> layout user_label
+>
+>     code metapost
+>
+>         def p_LABEL(expr pos)=
+>             T:=identity shifted pos;
+>             pickup PenD;
+>             p:=fullcircle scaled .1u;
+>             thclean p; thdraw p;
+>
+>             if known ATTR_text:
+>                 text := scantokens(ATTR_text);
+>                 thdrawoptions(withcolor .8red + .4blue);
+>                 txtm:=image(
+>                 draw txt;
+>                 interim labeloffset:=0;
+>                 label.urt(btex text etex);
+>                 );
+>                 % draw label
+>                 lab:=thelabel@#(txtm, pos);
+>                 draw lab _thop_; % use color
+>                 thdrawoptions();
+>                 bboxmargin:=0.8bp;
+>                 write_circ_bbox((bbox lab) smoothed 2);
+>
+>             enddef;
+>
+>             def p_altitude(expr pos)=
+>                 T:=identity shifted pos;
+>                 pickup PenD;
+>                 p:=(-.3u,0)--(.3u,0);
+>                 thdraw p; thdraw p rotated 90;
+>                 p:=fullcircle scaled .2u;
+>                 thclean p; thdraw p;
+>             enddef;
+>
+>
+>             vardef p_label@#(expr txt,pos,rot,mode) =
+>                 if mode=1:
+>                     thdrawoptions(withcolor .8red + .4blue);
+>                     p_altitude(pos);
+>                     % append "m" to label
+>                     picture txtm;
+>                     txtm:=image(
+>                     draw txt;
+>                     interim labeloffset:=0;
+>                     label.urt(btex \thaltitude m etex, lrcorner txt);
+>                     );
+>                     % give extra offset in case of l/r/t/b alignment
+>                     pair ctmp;
+>                     ctmp:=center thelabel@#("x", (0,0));
+>                     if (xpart ctmp * ypart ctmp)=0:
+>                         interim labeloffset:=(.4u);
+>                     else: % diagonal alignment
+>                         interim labeloffset:=(.2u);
+>                     fi;
+>                     % draw label
+>                     lab:=thelabel@#(txtm, pos);
+>                     draw lab _thop_; % use color
+>                     thdrawoptions();
+>                     bboxmargin:=0.8bp;
+>                     write_circ_bbox((bbox lab) smoothed 2);
+>                 else:
+>                     if mode=7:
+>                         interim labeloffset:=(u/8);
+>                     fi;
+>                     lab:=thelabel@#(txt, pos);
+>                     if mode>1:
+>                         pickup PenD
+>                     fi;
+>                     if mode=2:
+>                         process_uplabel;
+>                     elseif mode=3:
+>                         process_downlabel;
+>                     elseif mode=4:
+>                         process_updownlabel;
+>                     elseif mode=5:
+>                         process_circledlabel;
+>                     elseif mode=6:
+>                         process_boxedlabel;
+>                     elseif mode=7:
+>                         process_label(pos,rot);  % station name
+>                     elseif mode=8:
+>                         process_filledlabel(pos, rot);
+>                     else:
+>                         process_label(pos,rot);
+>                     fi;
+>                 fi;
+>             enddef;
+>
+>             vardef set_label_level (expr mylevel)=
+>                 maxl := scantokens(mylevel);
+>             enddef;
+>
+>
+>             def p_u_label_MY (expr P,R,S,A)=
+>                 T:=identity shifted P;
+>                 U:=(0,0);
+>                 save lvl;
+>                 save style;
+>                 if known ATTR_style:
+>                     style:= scantokens(ATTR_style);
+>                 else:
+>                     style :=0;
+>                 fi;
+>                 if known ATTR_text:
+>                     if known ATTR_lvl:
+>                         lvl := scantokens(ATTR_lvl);
+>                     else: lvl :=0;
+>                     fi;
+>                     if lvl < maxl+1:
+>                         U:=(S*u*(length ATTR_text)/4,S*u*(length ATTR_text)/4);
+>                         create_styled_label(ATTR_text,P,R,S,A,style);
+>                     else:;
+>                     fi;
+>                 fi;
+>             enddef;
+>             initsymbol("p_u_label_MY");
+>
+>
+>             % https://www.mail-archive.com/therion at speleo.sk/msg07234.html
+>             % define a custom attribute called label_mode
+>
+>             vardef create_styled_label (expr plaintext,P,R,S,A,defaultstyle)=
+>                 save textsize, style, thetext;
+>                 string textsize;
+>                 if S = 0.5:
+>                     textsize:="\thtinysize";
+>                 elseif S = 0.7:
+>                     textsize:="\thsmallsize";
+>                 elseif S = 1.4:
+>                     textsize:="\thlargesize";
+>                 elseif S = 2:
+>                     textsize:="\thhugesize";
+>                 else: % normal is 1
+>                     textsize:="\thnormalsize";
+>                 fi;
+>                 if known ATTR_labelstyle:
+>                     style:=scantokens(ATTR_labelstyle);
+>                 else:
+>                     style:=defaultstyle;
+>                 fi;
+>                 picture thetext;
+>                 thetext:=thTEX("\thframed {" & textsize & " " & plaintext & "}");
+>                 if A = (-1,1):
+>                     p_label.ulft(thetext,P,R,style);
+>
+>                 elseif A = (0,1):
+>                     p_label.top(thetext,P,R,style);
+>
+>                 elseif A = (1,1):
+>                     p_label.urt(thetext,P,R,style);
+>
+>                 elseif A = (-1,0):
+>                     p_label.lft(thetext,P,R,style);
+>
+>                 elseif A = (1,0):
+>                     p_label.rt(thetext,P,R,style);
+>
+>                 elseif A = (-1,-1):
+>                     p_label.llft(thetext,P,R,style);
+>
+>                 elseif A = (0,-1):
+>                     p_label.bot(thetext,P,R,style);
+>
+>                 elseif A = (1,-1):
+>                     p_label.lrt(thetext,P,R,style);
+>
+>                 else:
+>                     p_label(thetext,P,R,style);
+>
+>                 fi;
+>             enddef;
+>
+>         endcode
+>     endlayout
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220417/7bb9e3ac/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 27396 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220417/7bb9e3ac/attachment-0001.png>
+
+From rhystyers1 at gmail.com  Tue Apr 19 14:13:41 2022
+From: rhystyers1 at gmail.com (Rhys Tyers)
+Date: Tue, 19 Apr 2022 13:13:41 +0100
+Subject: [Therion] Custom Metapost label can't display newlines or
+ accents
+In-Reply-To: <CAEg=DQF+M3LusQ0asrzp0_QrWhV16D8Gto_PisRw22vqUK07_g@mail.gmail.com>
+References: <CAEg=DQHKnKSZFLTuDvNpPpqaQnWKeaLjTuUVXZ-=ZDzG+h8Jkw@mail.gmail.com>
+ <CAEg=DQF+M3LusQ0asrzp0_QrWhV16D8Gto_PisRw22vqUK07_g@mail.gmail.com>
+Message-ID: <CAEg=DQEY-KKOv2tRLvE6yDYv-qXeAN+gjWNbY0-CXB5bkVr=BA@mail.gmail.com>
+
+In the interest of archiving the answer I ended up simply redefining the
+p_label function:
+
+# Overwrite the point label function to allow specifying
+# style and label level
+layout custom_label
+        code metapost
+                # Set the maximum label level that will appear
+                max_level := 100;
+                vardef set_label_level (expr mylevel)=
+                        max_level := scantokens(mylevel);
+                enddef;
+
+                vardef p_label@#(expr txt,pos,rot,mode_)=
+
+                        # Allow specifiying the style on a single label
+                        if known ATTR_style:
+                                mode := scantokens(ATTR_style);
+                        else:
+                                mode := mode_;
+                        fi;
+
+                        # Specify the level at which this label should appear
+                        if known ATTR_level:
+                                level := scantokens(ATTR_level);
+                        else:
+                                level := 0;
+                        fi;
+
+                        if (level <= max_level):
+                                if (mode=1) or (mode=7):
+                                        interim labeloffset:=(u/8);
+                                fi;
+                                lab:=thelabel@#(txt, pos);
+                                if mode>1:
+                                        pickup PenD
+                                fi;
+                                if mode=1:
+                                        pickup pencircle scaled (u/6);
+                                        drawdot(pos);
+                                        process_label(pos,0);
+                                elseif mode=2:
+                                        process_uplabel;
+                                elseif mode=3:
+                                        process_downlabel;
+                                elseif mode=4:
+                                        process_updownlabel;
+                                elseif mode=5:
+                                        process_circledlabel;
+                                elseif mode=6:
+                                        process_boxedlabel;
+                                elseif mode=7:
+                                        process_label(pos,rot);  % station name
+                                elseif mode=8:
+                                        process_filledlabel(pos, rot);
+                                else:
+                                        process_label(pos,rot);
+                                fi;
+                        else:
+                                # Metapost is expecting some sort of drawing so
+                                # we just draw an empty string
+                                lab:=thelabel@#("", pos);
+                                process_label(pos,rot);
+                        fi;
+                enddef;
+        endcode
+endlayout
+
+This has the levels functionality as well as displaying all text using the
+correct fonts and characters.
+
+On Sun, 17 Apr 2022 at 22:00, Rhys Tyers <rhystyers1 at gmail.com> wrote:
+
+> Just in case a simplification makes the question/answer clearer, I'll
+> retry my question from above:
+>
+> I define a user label:
+>
+> def p_u_label (expr P,R,S,A)=
+>     lab:=thelabel(ATTR_text, P)
+>     process_label(P, R)
+> enddef;
+> initsymbol("p_u_label");
+>
+> This for example will not print a ? character, but the standard Therion
+> label will.
+>
+> How do I make this display text the same way that a normal Therion label
+> does?
+>
+> I?ve read through a lot of the Therion source trying to find out where
+> this happens but in the relevant bit
+> <https://github.com/therion/therion/blob/master/mpost/thText.mp> there
+> seems to be no extra magic happening.
+>
+> Thanks,
+> Rhys
+>
+> On Wed, 13 Apr 2022 at 21:18, Rhys Tyers <rhystyers1 at gmail.com> wrote:
+>
+>> Hello again,
+>>
+>> I?m hoping someone can help me work out a metapost problem. The code is
+>> available here
+>> <https://github.com/iccaving/migovec-survey-data/blob/master/layouts/metapost/user_label.thl>
+>> and pasted below.
+>>
+>> None of us know anything about metapost so this is a copy/paste job of
+>> this <https://www.mail-archive.com/therion at speleo.sk/msg07234.html> code
+>> with some extensions. We want a label that can be turned displayed or
+>> hidden depending on a level variable. In a system survey I turn off lots of
+>> labels because there is lots of overlapping passage, but on more detailed
+>> ones I turn them back on. This level thing works well.
+>>
+>> What does not work is new lines or any non-ascii character. I have played
+>> around with this for a while and can?t work out how to make it work.
+>>
+>> I.e. this point:
+>>
+>> point 174.2178 755.6161 u:label_MY -attr lvl 1 -attr text "Hoover<br>Dam" -align tr -scale l
+>>
+>> The <br> is not replaced by a new line and in fact the < and > are
+>> rendered as question marks.
+>> [image: image.png]
+>>
+>>
+>> I think Therion does a substitution of <br> and it?s not real html or
+>> tex but if I try to use tex in there like Hoover \\ Dam then it just errors
+>> during compilation:
+>>
+>> [495] (./mptextmp.mp) [496] [497] [498] (./mptextmp.mpfatal: Command failed: etex --parse-first-line --interaction=nonstopmode mpTXLjoJ.tex; see mpxerr.log
+>> >> mptextmp.mp
+>> >> mptextmp.mpx
+>> ! ! Unable to read mpx file.
+>> l.2 btex
+>>          \mainfont \thframed {\thnormalsize Hoover \\ Dam} etex
+>>
+>> I think this is because we are somehow not rendering with tex, and only
+>> rendering with metapost which has a limited character set, but I really
+>> have no idea.
+>>
+>> Any help would be greatly appreciated!
+>>
+>> The metapost code:
+>>
+>> layout user_label
+>>
+>>     code metapost
+>>
+>>         def p_LABEL(expr pos)=
+>>             T:=identity shifted pos;
+>>             pickup PenD;
+>>             p:=fullcircle scaled .1u;
+>>             thclean p; thdraw p;
+>>
+>>             if known ATTR_text:
+>>                 text := scantokens(ATTR_text);
+>>                 thdrawoptions(withcolor .8red + .4blue);
+>>                 txtm:=image(
+>>                 draw txt;
+>>                 interim labeloffset:=0;
+>>                 label.urt(btex text etex);
+>>                 );
+>>                 % draw label
+>>                 lab:=thelabel@#(txtm, pos);
+>>                 draw lab _thop_; % use color
+>>                 thdrawoptions();
+>>                 bboxmargin:=0.8bp;
+>>                 write_circ_bbox((bbox lab) smoothed 2);
+>>
+>>             enddef;
+>>
+>>             def p_altitude(expr pos)=
+>>                 T:=identity shifted pos;
+>>                 pickup PenD;
+>>                 p:=(-.3u,0)--(.3u,0);
+>>                 thdraw p; thdraw p rotated 90;
+>>                 p:=fullcircle scaled .2u;
+>>                 thclean p; thdraw p;
+>>             enddef;
+>>
+>>
+>>             vardef p_label@#(expr txt,pos,rot,mode) =
+>>                 if mode=1:
+>>                     thdrawoptions(withcolor .8red + .4blue);
+>>                     p_altitude(pos);
+>>                     % append "m" to label
+>>                     picture txtm;
+>>                     txtm:=image(
+>>                     draw txt;
+>>                     interim labeloffset:=0;
+>>                     label.urt(btex \thaltitude m etex, lrcorner txt);
+>>                     );
+>>                     % give extra offset in case of l/r/t/b alignment
+>>                     pair ctmp;
+>>                     ctmp:=center thelabel@#("x", (0,0));
+>>                     if (xpart ctmp * ypart ctmp)=0:
+>>                         interim labeloffset:=(.4u);
+>>                     else: % diagonal alignment
+>>                         interim labeloffset:=(.2u);
+>>                     fi;
+>>                     % draw label
+>>                     lab:=thelabel@#(txtm, pos);
+>>                     draw lab _thop_; % use color
+>>                     thdrawoptions();
+>>                     bboxmargin:=0.8bp;
+>>                     write_circ_bbox((bbox lab) smoothed 2);
+>>                 else:
+>>                     if mode=7:
+>>                         interim labeloffset:=(u/8);
+>>                     fi;
+>>                     lab:=thelabel@#(txt, pos);
+>>                     if mode>1:
+>>                         pickup PenD
+>>                     fi;
+>>                     if mode=2:
+>>                         process_uplabel;
+>>                     elseif mode=3:
+>>                         process_downlabel;
+>>                     elseif mode=4:
+>>                         process_updownlabel;
+>>                     elseif mode=5:
+>>                         process_circledlabel;
+>>                     elseif mode=6:
+>>                         process_boxedlabel;
+>>                     elseif mode=7:
+>>                         process_label(pos,rot);  % station name
+>>                     elseif mode=8:
+>>                         process_filledlabel(pos, rot);
+>>                     else:
+>>                         process_label(pos,rot);
+>>                     fi;
+>>                 fi;
+>>             enddef;
+>>
+>>             vardef set_label_level (expr mylevel)=
+>>                 maxl := scantokens(mylevel);
+>>             enddef;
+>>
+>>
+>>             def p_u_label_MY (expr P,R,S,A)=
+>>                 T:=identity shifted P;
+>>                 U:=(0,0);
+>>                 save lvl;
+>>                 save style;
+>>                 if known ATTR_style:
+>>                     style:= scantokens(ATTR_style);
+>>                 else:
+>>                     style :=0;
+>>                 fi;
+>>                 if known ATTR_text:
+>>                     if known ATTR_lvl:
+>>                         lvl := scantokens(ATTR_lvl);
+>>                     else: lvl :=0;
+>>                     fi;
+>>                     if lvl < maxl+1:
+>>                         U:=(S*u*(length ATTR_text)/4,S*u*(length ATTR_text)/4);
+>>                         create_styled_label(ATTR_text,P,R,S,A,style);
+>>                     else:;
+>>                     fi;
+>>                 fi;
+>>             enddef;
+>>             initsymbol("p_u_label_MY");
+>>
+>>
+>>             % https://www.mail-archive.com/therion at speleo.sk/msg07234.html
+>>             % define a custom attribute called label_mode
+>>
+>>             vardef create_styled_label (expr plaintext,P,R,S,A,defaultstyle)=
+>>                 save textsize, style, thetext;
+>>                 string textsize;
+>>                 if S = 0.5:
+>>                     textsize:="\thtinysize";
+>>                 elseif S = 0.7:
+>>                     textsize:="\thsmallsize";
+>>                 elseif S = 1.4:
+>>                     textsize:="\thlargesize";
+>>                 elseif S = 2:
+>>                     textsize:="\thhugesize";
+>>                 else: % normal is 1
+>>                     textsize:="\thnormalsize";
+>>                 fi;
+>>                 if known ATTR_labelstyle:
+>>                     style:=scantokens(ATTR_labelstyle);
+>>                 else:
+>>                     style:=defaultstyle;
+>>                 fi;
+>>                 picture thetext;
+>>                 thetext:=thTEX("\thframed {" & textsize & " " & plaintext & "}");
+>>                 if A = (-1,1):
+>>                     p_label.ulft(thetext,P,R,style);
+>>
+>>                 elseif A = (0,1):
+>>                     p_label.top(thetext,P,R,style);
+>>
+>>                 elseif A = (1,1):
+>>                     p_label.urt(thetext,P,R,style);
+>>
+>>                 elseif A = (-1,0):
+>>                     p_label.lft(thetext,P,R,style);
+>>
+>>                 elseif A = (1,0):
+>>                     p_label.rt(thetext,P,R,style);
+>>
+>>                 elseif A = (-1,-1):
+>>                     p_label.llft(thetext,P,R,style);
+>>
+>>                 elseif A = (0,-1):
+>>                     p_label.bot(thetext,P,R,style);
+>>
+>>                 elseif A = (1,-1):
+>>                     p_label.lrt(thetext,P,R,style);
+>>
+>>                 else:
+>>                     p_label(thetext,P,R,style);
+>>
+>>                 fi;
+>>             enddef;
+>>
+>>         endcode
+>>     endlayout
+>>
+>>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220419/19ee4b50/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 27396 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220419/19ee4b50/attachment-0001.png>
+
+From m.budaj at gmail.com  Thu Apr 21 21:31:46 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 21 Apr 2022 21:31:46 +0200
+Subject: [Therion] new default settings
+Message-ID: <CALPsdSvmkGjnAGUryCKNFXXYXFZMWkCTAD73QoiY6HzEg-1Edg@mail.gmail.com>
+
+Hi all,
+
+Therion has been supporting the advanced features of the Proj library
+for some time now. (Proj's purpose is to do transformations between
+coordinate systems.) This functionality was disabled by default and
+you could enable it using 'proj-auto' and 'proj-missing-grid' options
+in the initialization file.
+
+'proj-auto' lets Proj choose the best transformation and you can set
+'proj-missing-grid' to download a grid file (see
+https://proj.org/usage/transformation.html#grid-based-datum-adjustments)
+if the transformation needs it; see the therion book for details. The
+log file lists all the transformations chosen and used at the end.
+
+The latest commit (3bc6556) enables this "use the best transformation
+and download the grids if needed" functionality. We know that
+automatic downloads are a sensitive issue, but in this case we can
+trust the Proj library not to do any harm
+(https://proj.org/usage/network.html) and the user experience is much
+better.
+
+Could you check if this version works well with your data sets? The
+windows installer is available here:
+https://github.com/therion/therion/actions/runs/2203811478 (use the
+msys2 version which uses up-to-date Proj library; you need to be
+logged in to github to download it).
+
+M.
+
+From bruce at tomo.co.nz  Mon Apr 25 11:11:51 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 25 Apr 2022 21:11:51 +1200
+Subject: [Therion] Problem with new default settings and recent proj changes
+Message-ID: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+
+Martin
+
+Something bad happened between 6.0.0 and 6.0.5 that we only just noticed
+today (because for day to day work we only compile small sections of the
+cave).
+
+Therion 6.05 has moved some of our fixed stations about 100 m north (those
+specified with cs lat-long and cs EPSG:2193 NZTM) and others (specified with
+cs EPSG:27200 NZMG) stayed in their correct locations, severely distorting
+our cave.  No errors reported, just outputs with large loop errors and
+distorted cave.
+
+Interestingly, it is the old archaic format NZMG that performs correctly and
+the modern and lat-long are relocated.
+
+The image below is located with NZMG, as is the cave entrance in the centre.
+The cave entrances left and right are located with either lat-long or NZTM.
+
+
+
+ 
+
+Before reporting this I thought I'd better at least try 6.0.6+3bc6556
+
+I get a crash right away as the therion.log transcript below indicates.
+
+ 
+
+therion 6.0.6+3bc6556 (2022-04-21)
+
+  - using Proj 9.0.0, compiled against 9.0.0
+
+initialization file: C:\Program Files (x86)\Therion/therion.ini
+
+reading ... done
+
+configuration file: thconfig-GLMESM_System5000Map.thc
+
+reading ... done
+
+reading source files ... downloading the grid
+https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... 
+
+C:\Program Files (x86)\Therion\therion.exe: error -- couldn't download the
+grid
+
+writing xtherion file ... done
+
+ 
+
+Should I be using one of the new cs-trans or proj-* commands or is there
+something else?
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+Sent: Friday, 22 April 2022 07:32
+To: List for Therion users <therion at speleo.sk>
+Subject: [Therion] new default settings
+
+ 
+
+Hi all,
+
+ 
+
+Therion has been supporting the advanced features of the Proj library for
+some time now. (Proj's purpose is to do transformations between coordinate
+systems.) This functionality was disabled by default and you could enable it
+using 'proj-auto' and 'proj-missing-grid' options in the initialization
+file.
+
+ 
+
+'proj-auto' lets Proj choose the best transformation and you can set
+'proj-missing-grid' to download a grid file (see
+
+ <https://proj.org/usage/transformation.html#grid-based-datum-adjustments>
+https://proj.org/usage/transformation.html#grid-based-datum-adjustments)
+
+if the transformation needs it; see the therion book for details. The log
+file lists all the transformations chosen and used at the end.
+
+ 
+
+The latest commit (3bc6556) enables this "use the best transformation and
+download the grids if needed" functionality. We know that automatic
+downloads are a sensitive issue, but in this case we can trust the Proj
+library not to do any harm
+
+( <https://proj.org/usage/network.html> https://proj.org/usage/network.html)
+and the user experience is much better.
+
+ 
+
+Could you check if this version works well with your data sets? The windows
+installer is available here:
+
+ <https://github.com/therion/therion/actions/runs/2203811478>
+https://github.com/therion/therion/actions/runs/2203811478 (use the
+
+msys2 version which uses up-to-date Proj library; you need to be logged in
+to github to download it).
+
+ 
+
+M.
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion>
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220425/b8bd3a5e/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 903688 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220425/b8bd3a5e/attachment-0001.png>
+
+From m.budaj at gmail.com  Mon Apr 25 21:31:17 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 25 Apr 2022 21:31:17 +0200
+Subject: [Therion] Custom Metapost label can't display newlines or
+ accents
+In-Reply-To: <CAEg=DQF+M3LusQ0asrzp0_QrWhV16D8Gto_PisRw22vqUK07_g@mail.gmail.com>
+References: <CAEg=DQHKnKSZFLTuDvNpPpqaQnWKeaLjTuUVXZ-=ZDzG+h8Jkw@mail.gmail.com>
+ <CAEg=DQF+M3LusQ0asrzp0_QrWhV16D8Gto_PisRw22vqUK07_g@mail.gmail.com>
+Message-ID: <CALPsdSvKGMnacs1rUmOi93w4-WS7bBRNivzF4htS03RYCgfR0A@mail.gmail.com>
+
+On Sat, Apr 23, 2022 at 9:56 PM Rhys Tyers <rhystyers1 at gmail.com> wrote:
+
+> Just in case a simplification makes the question/answer clearer, I'll
+> retry my question from above:
+>
+> I define a user label:
+>
+> def p_u_label (expr P,R,S,A)=
+>     lab:=thelabel(ATTR_text, P)
+>     process_label(P, R)
+> enddef;
+> initsymbol("p_u_label");
+>
+> This for example will not print a ? character, but the standard Therion
+> label will.
+>
+> How do I make this display text the same way that a normal Therion label
+> does?
+>
+> I?ve read through a lot of the Therion source trying to find out where
+> this happens but in the relevant bit
+> <https://github.com/therion/therion/blob/master/mpost/thText.mp> there
+> seems to be no extra magic happening.
+>
+Hi, sorry for a late answer -- there was some issue with our mailing list
+and the posts from the last few weeks were sent in a batch last Saturday.
+
+Regarding ATTR_text, therion doesn't do any special processing of special
+sequences like <br> or accented characters. Maybe it should (the same way
+as it does for standard -text attributes), I'll think about it.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220425/53a61c93/attachment.htm>
+
+From m.budaj at gmail.com  Mon Apr 25 21:38:53 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 25 Apr 2022 21:38:53 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+Message-ID: <CALPsdSvbWf-eVABcg1f36w3D3i0RfPTmwqALHkRmX7E9jnkh-w@mail.gmail.com>
+
+On Mon, Apr 25, 2022 at 11:27 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+> Something bad happened between 6.0.0 and 6.0.5 that we only just noticed today (because for day to day work we only compile small sections of the cave).
+
+We started to use Proj 9 in 6.0.5 (msys2 build). In mxe builds Proj 5
+is still used. There were probably no other (internal) changes in
+Therion between 6.0.0 and 6.0.5 which should cause the displacement.
+
+> Therion 6.05 has moved some of our fixed stations about 100 m north (those specified with cs lat-long and cs EPSG:2193 NZTM) and others (specified with cs EPSG:27200 NZMG) stayed in their correct locations, severely distorting our cave.  No errors reported, just outputs with large loop errors and distorted cave.
+>
+> Interestingly, it is the old archaic format NZMG that performs correctly and the modern and lat-long are relocated.
+
+Could you send me some examples of correct and incorrect transformations?
+
+> Before reporting this I thought I'd better at least try 6.0.6+3bc6556
+>
+> I get a crash right away as the therion.log transcript below indicates.
+
+OK, I could reproduce it and will fix it soon.
+
+Martin
+
+From m.budaj at gmail.com  Tue Apr 26 07:42:46 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 26 Apr 2022 07:42:46 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <CALPsdSvbWf-eVABcg1f36w3D3i0RfPTmwqALHkRmX7E9jnkh-w@mail.gmail.com>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+ <CALPsdSvbWf-eVABcg1f36w3D3i0RfPTmwqALHkRmX7E9jnkh-w@mail.gmail.com>
+Message-ID: <CALPsdSteEvYubN+fFBEq3J2bkeuT9nm33Y3Kya82BGi2w_K5ww@mail.gmail.com>
+
+On Mon, Apr 25, 2022 at 9:38 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>
+> On Mon, Apr 25, 2022 at 11:27 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+> > Before reporting this I thought I'd better at least try 6.0.6+3bc6556
+> >
+> > I get a crash right away as the therion.log transcript below indicates.
+>
+> OK, I could reproduce it and will fix it soon.
+
+Should be fixed in 14fac78.
+Martin
+
+From bruce at tomo.co.nz  Tue Apr 26 11:45:10 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 26 Apr 2022 21:45:10 +1200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+Message-ID: <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+
+Thanks Martin
+
+14fac78 solved both the proj download related crash and the ~100 m
+positional error for lat-long and NZTM fixed points.  I have attached a cut
+down version of the therion.log file that was produced.
+
+ 
+
+I am a little confused, as Therion automatically downloaded the grid and yet
+my therion.ini does not have any of the proj-auto or proj-missing-grid
+settings mentioned in the 14fac78 Therion Book pg 86-87, which raises for me
+many questions.  I assume the functionality of those ini statements is now
+superseded by the proj.ini that is now present in the install folders (as
+you described as "use the best transformation and download the grids if
+needed") and that the Therion Book is yet to be updated?
+
+Or maybe I am not looking I the correct place for the ini files that Therion
+is actually using?
+
+ 
+
+Can Therion be run without having internet access (or without first having
+had internet access for a particular survey dataset at some previous time)?
+
+ 
+
+In the attached file, do the transformations marked [no] and [yes] relate to
+whether they are used or not?
+
+And presumably the accuracies listed are the estimated accuracies?
+
+ 
+
+Can I use proj-missing-grid to improve the accuracy of my example further or
+is 4m accuracy the best I am likely to get for this particular dataset?
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Monday, 25 April 2022 21:12
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Problem with new default settings and recent proj changes
+
+ 
+
+Martin
+
+Something bad happened between 6.0.0 and 6.0.5 that we only just noticed
+today (because for day to day work we only compile small sections of the
+cave).
+
+Therion 6.05 has moved some of our fixed stations about 100 m north (those
+specified with cs lat-long and cs EPSG:2193 NZTM) and others (specified with
+cs EPSG:27200 NZMG) stayed in their correct locations, severely distorting
+our cave.  No errors reported, just outputs with large loop errors and
+distorted cave.
+
+Interestingly, it is the old archaic format NZMG that performs correctly and
+the modern and lat-long are relocated.
+
+The image below is located with NZMG, as is the cave entrance in the centre.
+The cave entrances left and right are located with either lat-long or NZTM.
+
+
+
+ 
+
+Before reporting this I thought I'd better at least try 6.0.6+3bc6556
+
+I get a crash right away as the therion.log transcript below indicates.
+
+ 
+
+therion 6.0.6+3bc6556 (2022-04-21)
+
+  - using Proj 9.0.0, compiled against 9.0.0
+
+initialization file: C:\Program Files (x86)\Therion/therion.ini
+
+reading ... done
+
+configuration file: thconfig-GLMESM_System5000Map.thc
+
+reading ... done
+
+reading source files ... downloading the grid
+https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... 
+
+C:\Program Files (x86)\Therion\therion.exe: error -- couldn't download the
+grid
+
+writing xtherion file ... done
+
+ 
+
+Should I be using one of the new cs-trans or proj-* commands or is there
+something else?
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>
+> On Behalf Of Martin Budaj
+Sent: Friday, 22 April 2022 07:32
+To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: [Therion] new default settings
+
+ 
+
+Hi all,
+
+ 
+
+Therion has been supporting the advanced features of the Proj library for
+some time now. (Proj's purpose is to do transformations between coordinate
+systems.) This functionality was disabled by default and you could enable it
+using 'proj-auto' and 'proj-missing-grid' options in the initialization
+file.
+
+ 
+
+'proj-auto' lets Proj choose the best transformation and you can set
+'proj-missing-grid' to download a grid file (see
+
+https://proj.org/usage/transformation.html#grid-based-datum-adjustments)
+
+if the transformation needs it; see the therion book for details. The log
+file lists all the transformations chosen and used at the end.
+
+ 
+
+The latest commit (3bc6556) enables this "use the best transformation and
+download the grids if needed" functionality. We know that automatic
+downloads are a sensitive issue, but in this case we can trust the Proj
+library not to do any harm
+
+( https://proj.org/usage/network.html ) and the user experience is much
+better.
+
+ 
+
+Could you check if this version works well with your data sets? The windows
+installer is available here:
+
+https://github.com/therion/therion/actions/runs/2203811478  (use the
+
+msys2 version which uses up-to-date Proj library; you need to be logged in
+to github to download it).
+
+ 
+
+M.
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion>
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/92c832df/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 903688 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/92c832df/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therionlog-14fac78 - with default ini settings.log
+Type: application/octet-stream
+Size: 9091 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/92c832df/attachment-0001.obj>
+
+From beni at hallinger.org  Tue Apr 26 12:40:00 2022
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 26 Apr 2022 12:40:00 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+ <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+Message-ID: <e15f0018071b8b710db7d97692cd7ff0@hallinger.org>
+
+Besides that, I cant compile due to missing deps.
+Does someone already have info on what debian packages i need to 
+install?
+
+g++ -DIMG_API_VERSION=1 -Wall -DTHLINUX -O2 -DPROJ_VER=9 -I/usr/include 
+-Iextern -Iextern/shapelib -Iextern/fmt/include -std=c++14 -o ./therion 
+therion-main.cxx  ./thdate.o ./extern/shapelib/shpopen.o 
+./extern/shapelib/dbfopen.o ./extern/shapelib/safileio.o ./thbuffer.o 
+./thmbuffer.o ./thlogfile.o ./thtmpdir.o ./thlocale.o ./thparse.o 
+./thcmdline.o ./thconfig.o ./thinput.o ./thchenc.o ./thdatabase.o 
+./thdataobject.o ./thdatareader.o ./thsurvey.o ./thendsurvey.o 
+./thdata.o ./thperson.o ./thtf.o ./thtfangle.o ./thtflength.o 
+./thtfpwf.o ./thdataleg.o ./thobjectname.o ./thinfnan.o ./thlayout.o 
+./thlookup.o ./thcomment.o ./thinit.o ./thdb1d.o ./thsvxctrl.o 
+./thdatastation.o ./thobjectid.o ./thobjectsrc.o ./thgrade.o 
+./thlibrary.o ./thgeomag.o ./thbezier.o ./thexport.o ./thexporter.o 
+./thselector.o ./extern/img.o ./thexpmodel.o ./thdb2d00.o ./thscrapis.o 
+./thcs.o ./thcsdata.o ./thexptable.o ./thdb2d.o ./thscrap.o 
+./thendscrap.o ./th2ddataobject.o ./thdb2dprj.o ./thdb2dpt.o 
+./thdb2dlp.o ./thdb2dab.o ./thdb2dji.o ./thdb2dmi.o ./thdb2dcp.o 
+./thdb2dxm.o ./thdb2dxs.o ./thscraplo.o ./thscraplp.o ./thscrapen.o 
+./thpoint.o ./thline.o ./tharea.o ./thlegenddata.o ./thmpost.o 
+./thsymbolsets.o ./thjoin.o ./thmap.o ./thexpmap.o ./thlayoutln.o 
+./thlayoutclr.o ./thexpsys.o ./thexpuni.o ./thconvert.o ./thpdf.o 
+./thpdfdbg.o ./thpdfdata.o ./thtexfonts.o ./thsymbolset.o ./thlang.o 
+./thmapstat.o ./thexpdb.o ./thpic.o ./thsketch.o ./thproj.o 
+./extern/lxMath.o ./extern/lxFile.o ./thdb3d.o ./thsurface.o 
+./thimport.o ./thsvg.o ./thepsparse.o ./thtrans.o ./thwarpp.o 
+./thwarppt.o ./thwarppme.o ./thwarp.o ./thexpshp.o ./thattr.o ./thtex.o 
+./extern/poly2tri/common/shapes.o 
+./extern/poly2tri/sweep/advancing_front.o 
+./extern/poly2tri/sweep/sweep.o ./extern/poly2tri/sweep/cdt.o 
+./extern/poly2tri/sweep/sweep_context.o ./extern/fmt/src/format.o 
+./extern/fmt/src/os.o ./extern/quickhull/QuickHull.o ./therion.o -s 
+-L/usr/lib/x86_64-linux-gnu/mit-krb5 -lproj -lpthread -lstdc++ -lm 
+-lsqlite3 -lm -ldl -lz -lpthread -ltiff -lwebp -lzstd -llzma -ljbig 
+-ljpeg -ldeflate -lz -lm -lcurl -lnghttp2 -lidn2 -lrtmp -lssh2 -lpsl 
+-lssl -lcrypto -lssl -lcrypto -lgssapi_krb5 -llber -lldap -llber -lzstd 
+-lbrotlidec -lz -pthread
+/usr/bin/ld: cannot find -lnghttp2: Datei oder Verzeichnis nicht 
+gefunden
+/usr/bin/ld: cannot find -lidn2: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -lrtmp: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -lssh2: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -lpsl: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -lgssapi_krb5: Datei oder Verzeichnis nicht 
+gefunden
+/usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -lldap: Datei oder Verzeichnis nicht gefunden
+/usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:186: therion] Fehler 1
+
+
+Am 2022-04-26 11:45, schrieb Bruce Mutton:
+> Thanks Martin
+> 
+> 14fac78 solved both the proj download related crash and the ~100 m
+> positional error for lat-long and NZTM fixed points.  I have attached
+> a cut down version of the therion.log file that was produced.
+> 
+> I am a little confused, as Therion automatically downloaded the grid
+> and yet my therion.ini does not have any of the proj-auto or
+> proj-missing-grid settings mentioned in the 14fac78 Therion Book pg
+> 86-87, which raises for me many questions.  I assume the functionality
+> of those ini statements is now superseded by the proj.ini that is now
+> present in the install folders (as you described as "use the best
+> transformation and download the grids if needed") and that the Therion
+> Book is yet to be updated?
+> 
+> Or maybe I am not looking I the correct place for the ini files that
+> Therion is actually using?
+> 
+> Can Therion be run without having internet access (or without first
+> having had internet access for a particular survey dataset at some
+> previous time)?
+> 
+> In the attached file, do the transformations marked [no] and [yes]
+> relate to whether they are used or not?
+> 
+> And presumably the accuracies listed are the estimated accuracies?
+> 
+> Can I use proj-missing-grid to improve the accuracy of my example
+> further or is 4m accuracy the best I am likely to get for this
+> particular dataset?
+> 
+> Regards
+> 
+> Bruce
+> 
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+> Sent: Monday, 25 April 2022 21:12
+> To: 'List for Therion users' <therion at speleo.sk>
+> Subject: [Therion] Problem with new default settings and recent proj
+> changes
+> 
+> Martin
+> 
+> Something bad happened between 6.0.0 and 6.0.5 that we only just
+> noticed today (because for day to day work we only compile small
+> sections of the cave).
+> 
+> Therion 6.05 has moved some of our fixed stations about 100 m north
+> (those specified with cs lat-long and cs EPSG:2193 NZTM) and others
+> (specified with cs EPSG:27200 NZMG) stayed in their correct locations,
+> severely distorting our cave.  No errors reported, just outputs with
+> large loop errors and distorted cave.
+> 
+> Interestingly, it is the old archaic format NZMG that performs
+> correctly and the modern and lat-long are relocated.
+> 
+> The image below is located with NZMG, as is the cave entrance in the
+> centre.  The cave entrances left and right are located with either
+> lat-long or NZTM.
+> 
+> Before reporting this I thought I'd better at least try 6.0.6+3bc6556
+> 
+> I get a crash right away as the therion.log transcript below
+> indicates.
+> 
+> therion 6.0.6+3bc6556 (2022-04-21)
+> 
+>   - using Proj 9.0.0, compiled against 9.0.0
+> 
+> initialization file: C:\Program Files (x86)\Therion/therion.ini
+> 
+> reading ... done
+> 
+> configuration file: thconfig-GLMESM_System5000Map.thc
+> 
+> reading ... done
+> 
+> reading source files ... downloading the grid
+> https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif...
+> 
+> C:\Program Files (x86)\Therion\therion.exe: error -- couldn't download
+> the grid
+> 
+> writing xtherion file ... done
+> 
+> Should I be using one of the new cs-trans or proj-* commands or is
+> there something else?
+> 
+> Regards
+> 
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+> Sent: Friday, 22 April 2022 07:32
+> To: List for Therion users <therion at speleo.sk>
+> Subject: [Therion] new default settings
+> 
+> Hi all,
+> 
+> Therion has been supporting the advanced features of the Proj library
+> for some time now. (Proj's purpose is to do transformations between
+> coordinate systems.) This functionality was disabled by default and
+> you could enable it using 'proj-auto' and 'proj-missing-grid' options
+> in the initialization file.
+> 
+> 'proj-auto' lets Proj choose the best transformation and you can set
+> 'proj-missing-grid' to download a grid file (see
+> 
+>  
+> https://proj.org/usage/transformation.html#grid-based-datum-adjustments)
+> 
+> if the transformation needs it; see the therion book for details. The
+> log file lists all the transformations chosen and used at the end.
+> 
+> The latest commit (3bc6556) enables this "use the best transformation
+> and download the grids if needed" functionality. We know that
+> automatic downloads are a sensitive issue, but in this case we can
+> trust the Proj library not to do any harm
+> 
+> ( https://proj.org/usage/network.html ) and the user experience is
+> much better.
+> 
+> Could you check if this version works well with your data sets? The
+> windows installer is available here:
+> 
+>  https://github.com/therion/therion/actions/runs/2203811478  (use the
+> 
+> msys2 version which uses up-to-date Proj library; you need to be
+> logged in to github to download it).
+> 
+> M.
+> 
+> _______________________________________________
+> 
+> Therion mailing list
+> 
+> Therion at speleo.sk
+> 
+> https://mailman.speleo.sk/listinfo/therion [1]
+> 
+> Links:
+> ------
+> [1] https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From wookey at wookware.org  Tue Apr 26 14:24:34 2022
+From: wookey at wookware.org (Wookey)
+Date: Tue, 26 Apr 2022 13:24:34 +0100
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <e15f0018071b8b710db7d97692cd7ff0@hallinger.org>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+ <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+ <e15f0018071b8b710db7d97692cd7ff0@hallinger.org>
+Message-ID: <20220426122434.GU7443@mail.wookware.org>
+
+On 2022-04-26 12:40 +0200, Benedikt Hallinger wrote:
+> Besides that, I cant compile due to missing deps.
+> Does someone already have info on what debian packages i need to install?
+
+The list in
+https://sources.debian.org/src/therion/6.0.6-1/debian/control/ should
+be sufficient, unless some new dependency has been introduced by 6.06
+
+Build-Depends: dpkg (>=1.16.2), debhelper, debhelper-compat (=13), perl (>= 5.5), tcl,
+  libvtk9-dev, libwxgtk3.0-gtk3-dev, libfreetype6-dev, libjpeg-dev, libpng-dev,
+  pkg-config, texlive-base, libproj-dev, libsqlite3-tcl, python3,
+  libshp-dev, catch2, cmake, ninja-build, libfmt-dev
+Build-Depends-Indep: texlive-metapost, imagemagick, ghostscript
+
+
+> -L/usr/lib/x86_64-linux-gnu/mit-krb5 -lproj -lpthread -lstdc++ -lm -lsqlite3
+> -lm -ldl -lz -lpthread -ltiff -lwebp -lzstd -llzma -ljbig -ljpeg -ldeflate
+> -lz -lm -lcurl -lnghttp2 -lidn2 -lrtmp -lssh2 -lpsl -lssl -lcrypto -lssl
+> -lcrypto -lgssapi_krb5 -llber -lldap -llber -lzstd -lbrotlidec -lz -pthread
+> /usr/bin/ld: cannot find -lnghttp2: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lidn2: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lrtmp: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lssh2: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lpsl: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lgssapi_krb5: Datei oder Verzeichnis nicht
+> gefunden
+> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -lldap: Datei oder Verzeichnis nicht gefunden
+> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+
+This does seem to be a pile of new dependencies:
+libnghttp2-dev, libidn2-dev, librtmp-dev, libssh2-1-dev, libpsl-dev, libkrb5-dev, libldb-dev, lidldap-dev.
+
+Put that lot in and it should build.
+
+Is that all from libproj's online download facility? ssh, kerberos,
+ldap, real-time streaming? Seems excessive.
+
+Wookey
+-- 
+Principal hats:  Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/c61918d4/attachment.sig>
+
+From beni at hallinger.org  Tue Apr 26 15:10:01 2022
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 26 Apr 2022 15:10:01 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <20220426122434.GU7443@mail.wookware.org>
+References: <20220426122434.GU7443@mail.wookware.org>
+Message-ID: <E586A4E4-E290-4FA7-BE93-933CCF1E598D@hallinger.org>
+
+Yes, seems excessive. Why ldap?
+
+> Am 26.04.2022 um 14:40 schrieb Wookey <wookey at wookware.org>:
+> 
+> ?On 2022-04-26 12:40 +0200, Benedikt Hallinger wrote:
+>> Besides that, I cant compile due to missing deps.
+>> Does someone already have info on what debian packages i need to install?
+> 
+> The list in
+> https://sources.debian.org/src/therion/6.0.6-1/debian/control/ should
+> be sufficient, unless some new dependency has been introduced by 6.06
+> 
+> Build-Depends: dpkg (>=1.16.2), debhelper, debhelper-compat (=13), perl (>= 5.5), tcl,
+>  libvtk9-dev, libwxgtk3.0-gtk3-dev, libfreetype6-dev, libjpeg-dev, libpng-dev,
+>  pkg-config, texlive-base, libproj-dev, libsqlite3-tcl, python3,
+>  libshp-dev, catch2, cmake, ninja-build, libfmt-dev
+> Build-Depends-Indep: texlive-metapost, imagemagick, ghostscript
+> 
+> 
+>> -L/usr/lib/x86_64-linux-gnu/mit-krb5 -lproj -lpthread -lstdc++ -lm -lsqlite3
+>> -lm -ldl -lz -lpthread -ltiff -lwebp -lzstd -llzma -ljbig -ljpeg -ldeflate
+>> -lz -lm -lcurl -lnghttp2 -lidn2 -lrtmp -lssh2 -lpsl -lssl -lcrypto -lssl
+>> -lcrypto -lgssapi_krb5 -llber -lldap -llber -lzstd -lbrotlidec -lz -pthread
+>> /usr/bin/ld: cannot find -lnghttp2: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lidn2: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lrtmp: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lssh2: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lpsl: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lgssapi_krb5: Datei oder Verzeichnis nicht
+>> gefunden
+>> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -lldap: Datei oder Verzeichnis nicht gefunden
+>> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+> 
+> This does seem to be a pile of new dependencies:
+> libnghttp2-dev, libidn2-dev, librtmp-dev, libssh2-1-dev, libpsl-dev, libkrb5-dev, libldb-dev, lidldap-dev.
+> 
+> Put that lot in and it should build.
+> 
+> Is that all from libproj's online download facility? ssh, kerberos,
+> ldap, real-time streaming? Seems excessive.
+> 
+> Wookey
+> -- 
+> Principal hats:  Debian, Wookware, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/octet-stream
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/48e06f0c/attachment.obj>
+
+From m.budaj at gmail.com  Tue Apr 26 18:35:51 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 26 Apr 2022 18:35:51 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <E586A4E4-E290-4FA7-BE93-933CCF1E598D@hallinger.org>
+References: <20220426122434.GU7443@mail.wookware.org>
+ <E586A4E4-E290-4FA7-BE93-933CCF1E598D@hallinger.org>
+Message-ID: <CALPsdStbqba5igHStv+7bZ3A7zg4-RysL9_e24NeSmic=odbNw@mail.gmail.com>
+
+They all come from 'pkg-config proj --libs --static' (which takes them
+from 'pkg-config libcurl --libs --static'). I agree it's excessive.
+For historical reasons, make uses static linking, you can use cmake
+which links dynamically.
+
+Martin
+
+On Tue, Apr 26, 2022 at 3:10 PM Benedikt Hallinger <beni at hallinger.org> wrote:
+>
+> Yes, seems excessive. Why ldap?
+>
+> > Am 26.04.2022 um 14:40 schrieb Wookey <wookey at wookware.org>:
+> >
+> > ?On 2022-04-26 12:40 +0200, Benedikt Hallinger wrote:
+> >> Besides that, I cant compile due to missing deps.
+> >> Does someone already have info on what debian packages i need to install?
+> >
+> > The list in
+> > https://sources.debian.org/src/therion/6.0.6-1/debian/control/ should
+> > be sufficient, unless some new dependency has been introduced by 6.06
+> >
+> > Build-Depends: dpkg (>=1.16.2), debhelper, debhelper-compat (=13), perl (>= 5.5), tcl,
+> >  libvtk9-dev, libwxgtk3.0-gtk3-dev, libfreetype6-dev, libjpeg-dev, libpng-dev,
+> >  pkg-config, texlive-base, libproj-dev, libsqlite3-tcl, python3,
+> >  libshp-dev, catch2, cmake, ninja-build, libfmt-dev
+> > Build-Depends-Indep: texlive-metapost, imagemagick, ghostscript
+> >
+> >
+> >> -L/usr/lib/x86_64-linux-gnu/mit-krb5 -lproj -lpthread -lstdc++ -lm -lsqlite3
+> >> -lm -ldl -lz -lpthread -ltiff -lwebp -lzstd -llzma -ljbig -ljpeg -ldeflate
+> >> -lz -lm -lcurl -lnghttp2 -lidn2 -lrtmp -lssh2 -lpsl -lssl -lcrypto -lssl
+> >> -lcrypto -lgssapi_krb5 -llber -lldap -llber -lzstd -lbrotlidec -lz -pthread
+> >> /usr/bin/ld: cannot find -lnghttp2: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lidn2: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lrtmp: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lssh2: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lpsl: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lgssapi_krb5: Datei oder Verzeichnis nicht
+> >> gefunden
+> >> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -lldap: Datei oder Verzeichnis nicht gefunden
+> >> /usr/bin/ld: cannot find -llber: Datei oder Verzeichnis nicht gefunden
+> >
+> > This does seem to be a pile of new dependencies:
+> > libnghttp2-dev, libidn2-dev, librtmp-dev, libssh2-1-dev, libpsl-dev, libkrb5-dev, libldb-dev, lidldap-dev.
+> >
+> > Put that lot in and it should build.
+> >
+> > Is that all from libproj's online download facility? ssh, kerberos,
+> > ldap, real-time streaming? Seems excessive.
+> >
+> > Wookey
+> > --
+> > Principal hats:  Debian, Wookware, ARM
+> > http://wookware.org/
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From m.budaj at gmail.com  Tue Apr 26 19:24:28 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 26 Apr 2022 19:24:28 +0200
+Subject: [Therion] Problem with new default settings and recent proj
+ changes
+In-Reply-To: <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+References: <000601d85884$81c3f4a0$854bdde0$@tomo.co.nz>
+ <000b01d85952$52dc28a0$f89479e0$@tomo.co.nz>
+Message-ID: <CALPsdSuHhThmTyY4gFSJAq4TFaag4JrPK1jeo47u71dh9vHK7g@mail.gmail.com>
+
+On Tue, Apr 26, 2022 at 11:45 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> I am a little confused, as Therion automatically downloaded the grid and
+> yet my therion.ini does not have any of the proj-auto or proj-missing-grid
+> settings mentioned in the 14fac78 Therion Book pg 86-87, which raises for
+> me many questions.  I assume the functionality of those ini statements is
+> now superseded by the proj.ini that is now present in the install folders
+> (as you described as "use the best transformation and download the grids if
+> needed") and that the Therion Book is yet to be updated?
+>
+
+Indeed, thbook needs an update. Now, proj-auto is 'on' by default and
+proj-missing-grid is 'download'.
+
+
+> Or maybe I am not looking I the correct place for the ini files that
+> Therion is actually using?
+>
+
+If the setting is missing in therion.ini, therion just uses the defaults.
+You can always override them in the therion.ini file.
+
+
+> Can Therion be run without having internet access (or without first having
+> had internet access for a particular survey dataset at some previous time)?
+>
+
+Definitely. With the new defaults, it would attempt to download the grid
+(only if proj can't find it locally) and end with an error message if there
+is no internet connection.
+
+You can do either of these:
+
+* change the proj-missing-grid setting to warn, e.g. (this prints a warning
+stating which grid you need to download manually, then download it and put
+somewhere where proj finds it)
+* set proj-auto off (this is the old behaviour where proj doesn't look for
+the optimal transformation)
+* get online, run therion once, and the grids would be reused in the
+subsequent runs without internet connection
+
+
+>  In the attached file, do the transformations marked [no] and [yes] relate
+> to whether they are used or not?
+>
+
+All listed transformations are used. AoU: [no] or [yes] indicates, whether
+proj optimised a transformation for your particular area (defined by the
+fixed stations in your data set) [yes] or not [no].
+
+
+> And presumably the accuracies listed are the estimated accuracies?
+>
+
+Yes, estimated by proj.
+
+
+> Can I use proj-missing-grid to improve the accuracy of my example further
+> or is 4m accuracy the best I am likely to get for this particular dataset?
+>
+
+Sure, the accuracy when using grids should be in centimeters. It's
+interesting that in your log file the grid is downloaded (twice!) but not
+actually used by proj, it would be worth investigating why.
+
+Anyway, for cases when you think you can do better than proj (including
+using a grid file), you can use 'cs-trans' to define a custom
+transformation between two coordinate systems; see an example in thbook.
+Probably your local GIS community has already defined such transformations;
+in the case of Slovakia, our cartographic office published such a list for
+QGIS users, which can be easily adopted for therion.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220426/545865e4/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Apr 26 21:42:20 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 27 Apr 2022 07:42:20 +1200
+Subject: [Therion] New default settings and recent proj changes
+Message-ID: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+
+Thanks Martin
+
+That helps a lot.  I wonder if therion.log could echo the destination folder for downloaded files?
+
+(I could not find it on my machine)
+
+A suggestion below.
+
+ 
+
+therion 6.0.6+14fac78 (2022-04-26)
+
+  - using Proj 9.0.0, compiled against 9.0.0
+
+initialization file: C:\Program Files (x86)\Therion/therion.ini
+
+reading ... done
+
+configuration file: thconfig-GLMESM_System5000Map.thc
+
+reading ... done
+
+reading source files ... downloading the grid https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... done
+
+saved/cached grid file: C:\path\ nz_linz_nzgd2kgrid0005.tif
+
+done
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+Sent: Wednesday, 27 April 2022 05:24
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Problem with new default settings and recent proj changes
+
+ 
+
+On Tue, Apr 26, 2022 at 11:45 AM Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+I am a little confused, as Therion automatically downloaded the grid and yet my therion.ini does not have any of the proj-auto or proj-missing-grid settings mentioned in the 14fac78 Therion Book pg 86-87, which raises for me many questions.  I assume the functionality of those ini statements is now superseded by the proj.ini that is now present in the install folders (as you described as "use the best transformation and download the grids if needed") and that the Therion Book is yet to be updated?
+
+ 
+
+Indeed, thbook needs an update. Now, proj-auto is 'on' by default and proj-missing-grid is 'download'.
+
+ 
+
+Or maybe I am not looking I the correct place for the ini files that Therion is actually using?
+
+ 
+
+If the setting is missing in therion.ini, therion just uses the defaults. You can always override them in the therion.ini file.
+
+  
+
+Can Therion be run without having internet access (or without first having had internet access for a particular survey dataset at some previous time)?
+
+ 
+
+Definitely. With the new defaults, it would attempt to download the grid (only if proj can't find it locally) and end with an error message if there is no internet connection.
+
+ 
+
+You can do either of these:
+
+ 
+
+* change the proj-missing-grid setting to warn, e.g. (this prints a warning stating which grid you need to download manually, then download it and put somewhere where proj finds it)
+
+* set proj-auto off (this is the old behaviour where proj doesn't look for the optimal transformation)
+
+* get online, run therion once, and the grids would be reused in the subsequent runs without internet connection
+
+ 
+
+ In the attached file, do the transformations marked [no] and [yes] relate to whether they are used or not?
+
+ 
+
+All listed transformations are used. AoU: [no] or [yes] indicates, whether proj optimised a transformation for your particular area (defined by the fixed stations in your data set) [yes] or not [no].
+
+ 
+
+And presumably the accuracies listed are the estimated accuracies?
+
+ 
+
+Yes, estimated by proj.
+
+  
+
+Can I use proj-missing-grid to improve the accuracy of my example further or is 4m accuracy the best I am likely to get for this particular dataset?
+
+ 
+
+Sure, the accuracy when using grids should be in centimeters. It's interesting that in your log file the grid is downloaded (twice!) but not actually used by proj, it would be worth investigating why.
+
+ 
+
+Anyway, for cases when you think you can do better than proj (including using a grid file), you can use 'cs-trans' to define a custom transformation between two coordinate systems; see an example in thbook. Probably your local GIS community has already defined such transformations; in the case of Slovakia, our cartographic office published such a list for QGIS users, which can be easily adopted for therion.
+
+ 
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220427/796d06d2/attachment.htm>
+
+From m.budaj at gmail.com  Wed Apr 27 08:22:38 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 27 Apr 2022 08:22:38 +0200
+Subject: [Therion] New default settings and recent proj changes
+In-Reply-To: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+References: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+Message-ID: <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+
+Good idea! The latest commit provides additional information about
+downloads now. Caching is more tricky: we just enable it and Proj then
+downloads just small parts of grids relevant to your area and stores
+them in its database without letting you know what exactly got
+downloaded.
+
+Martin
+
+On Tue, Apr 26, 2022 at 9:43 PM Bruce Mutton <bruce at tomo.co.nz> wrote:
+>
+> Thanks Martin
+>
+> That helps a lot.  I wonder if therion.log could echo the destination folder for downloaded files?
+>
+> (I could not find it on my machine)
+>
+> A suggestion below.
+>
+>
+>
+> therion 6.0.6+14fac78 (2022-04-26)
+>
+>   - using Proj 9.0.0, compiled against 9.0.0
+>
+> initialization file: C:\Program Files (x86)\Therion/therion.ini
+>
+> reading ... done
+>
+> configuration file: thconfig-GLMESM_System5000Map.thc
+>
+> reading ... done
+>
+> reading source files ... downloading the grid https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... done
+>
+> saved/cached grid file: C:\path\ nz_linz_nzgd2kgrid0005.tif
+>
+> done
+>
+>
+>
+> Bruce
+>
+>
+>
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+> Sent: Wednesday, 27 April 2022 05:24
+> To: List for Therion users <therion at speleo.sk>
+> Subject: Re: [Therion] Problem with new default settings and recent proj changes
+>
+>
+>
+> On Tue, Apr 26, 2022 at 11:45 AM Bruce Mutton <bruce at tomo.co.nz> wrote:
+>
+> I am a little confused, as Therion automatically downloaded the grid and yet my therion.ini does not have any of the proj-auto or proj-missing-grid settings mentioned in the 14fac78 Therion Book pg 86-87, which raises for me many questions.  I assume the functionality of those ini statements is now superseded by the proj.ini that is now present in the install folders (as you described as "use the best transformation and download the grids if needed") and that the Therion Book is yet to be updated?
+>
+>
+>
+> Indeed, thbook needs an update. Now, proj-auto is 'on' by default and proj-missing-grid is 'download'.
+>
+>
+>
+> Or maybe I am not looking I the correct place for the ini files that Therion is actually using?
+>
+>
+>
+> If the setting is missing in therion.ini, therion just uses the defaults. You can always override them in the therion.ini file.
+>
+>
+>
+> Can Therion be run without having internet access (or without first having had internet access for a particular survey dataset at some previous time)?
+>
+>
+>
+> Definitely. With the new defaults, it would attempt to download the grid (only if proj can't find it locally) and end with an error message if there is no internet connection.
+>
+>
+>
+> You can do either of these:
+>
+>
+>
+> * change the proj-missing-grid setting to warn, e.g. (this prints a warning stating which grid you need to download manually, then download it and put somewhere where proj finds it)
+>
+> * set proj-auto off (this is the old behaviour where proj doesn't look for the optimal transformation)
+>
+> * get online, run therion once, and the grids would be reused in the subsequent runs without internet connection
+>
+>
+>
+>  In the attached file, do the transformations marked [no] and [yes] relate to whether they are used or not?
+>
+>
+>
+> All listed transformations are used. AoU: [no] or [yes] indicates, whether proj optimised a transformation for your particular area (defined by the fixed stations in your data set) [yes] or not [no].
+>
+>
+>
+> And presumably the accuracies listed are the estimated accuracies?
+>
+>
+>
+> Yes, estimated by proj.
+>
+>
+>
+> Can I use proj-missing-grid to improve the accuracy of my example further or is 4m accuracy the best I am likely to get for this particular dataset?
+>
+>
+>
+> Sure, the accuracy when using grids should be in centimeters. It's interesting that in your log file the grid is downloaded (twice!) but not actually used by proj, it would be worth investigating why.
+>
+>
+>
+> Anyway, for cases when you think you can do better than proj (including using a grid file), you can use 'cs-trans' to define a custom transformation between two coordinate systems; see an example in thbook. Probably your local GIS community has already defined such transformations; in the case of Slovakia, our cartographic office published such a list for QGIS users, which can be easily adopted for therion.
+>
+>
+>
+> Martin
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From lists at group-s.sk  Wed Apr 27 20:18:00 2022
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 27 Apr 2022 20:18:00 +0200
+Subject: [Therion] Colour leakage from point station-names
+In-Reply-To: <000e01d832c1$a045de40$e0d19ac0$@tomo.co.nz>
+References: <000e01d832c1$a045de40$e0d19ac0$@tomo.co.nz>
+Message-ID: <CAP35+gFYvQgHZYcjNk0xcA5o6AE8HTE3gjXqsy-c1U1iUkaD0g@mail.gmail.com>
+
+Thanks for finding out Bruce, it should be fixed in 9164ecd.
+
+S.
+
+On Tue, 8 Mar 2022 at 08:54, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> If I change the colours like this:
+>
+> symbol-colour point station-name [00 100 100]
+>
+> then the colour leaks into some of the debug scrap-names, but not all of
+> them.
+>
+> So I deduce there is a problem with the coding for point station-names
+> (not clearing the colour properly) or with the debug scrap-names (not
+> setting it?s colour properly).
+>
+>
+>
+> There was a similar conversation and subsequent fix in relation to line
+> rock-border or rock-edge some years back (metapost code I think).  I cannot
+> find the thread now.  I have also had apparently similar issues (about 3
+> years back) with point station colouring when plotting surface surveys.
+>
+>
+>
+> It is not too important as (in the case pictured) it only affects debug
+> outputs, but might point to something inconsistently applied when coding.
+>
+> (Hoping it is not related to customisations I have made).
+>
+>
+>
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220427/11312473/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 182043 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220427/11312473/attachment-0001.png>
+
+From bruce at tomo.co.nz  Wed Apr 27 21:32:27 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 28 Apr 2022 07:32:27 +1200
+Subject: [Therion] New default settings and recent proj changes
+In-Reply-To: <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+References: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+ <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+Message-ID: <000001d85a6d$88d78370$9a868a50$@tomo.co.nz>
+
+Hi Martin
+eaec752 looks like it should provide clarity.
+I would like to be able to compile a dataset that activates this code (for
+curiosity and maybe user testing), but it seems now that 'my therion' has
+downloaded the transformation grid once, it resides somewhere on my machine
+(I cannot manually find it though).  It seems like it has downloaded the
+entire NZTM grid (as the documentation says it would) and so any locally
+compiled cave dataset no longer needs to download the grid (which in the
+normal course of events is good).  I have compiled therion datasets for
+caves in other parts of the world, but none have triggered this code.  I
+presume the grids they use are already built-in by default.
+
+So for the sake of curiosity, is it possible to get Therion to delete an
+existing (previously downloaded) grid and so subsequently trigger the need
+to download it and test the eaec752 change?  Will using cs-def to set a null
+string for NZTM force it to be downloaded again? Or will it cause
+proj-missing-grid to behave as though it is set to ignore (even if download
+is specified)?  Asking before trying it in case I end up breaking something
+that is hard to fix!
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+Sent: Wednesday, 27 April 2022 18:23
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] New default settings and recent proj changes
+
+Good idea! The latest commit provides additional information about downloads
+now. Caching is more tricky: we just enable it and Proj then downloads just
+small parts of grids relevant to your area and stores them in its database
+without letting you know what exactly got downloaded.
+
+Martin
+
+On Tue, Apr 26, 2022 at 9:43 PM Bruce Mutton <bruce at tomo.co.nz> wrote:
+>
+> Thanks Martin
+...
+> A suggestion below.
+>
+> therion 6.0.6+14fac78 (2022-04-26)
+>
+>   - using Proj 9.0.0, compiled against 9.0.0
+> initialization file: C:\Program Files (x86)\Therion/therion.ini
+> reading ... done
+> configuration file: thconfig-GLMESM_System5000Map.thc
+> reading ... done
+> reading source files ... downloading the grid 
+> https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... done
+> saved/cached grid file: C:\path\ nz_linz_nzgd2kgrid0005.tif
+> done
+>
+> Bruce
+ 
+
+
+
+From m.budaj at gmail.com  Wed Apr 27 22:31:58 2022
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 27 Apr 2022 22:31:58 +0200
+Subject: [Therion] New default settings and recent proj changes
+In-Reply-To: <000001d85a6d$88d78370$9a868a50$@tomo.co.nz>
+References: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+ <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+ <000001d85a6d$88d78370$9a868a50$@tomo.co.nz>
+Message-ID: <CALPsdStCbV_xGOJ=7nK_YceZa5tQgpcX_hiWAQSNLCGhEJgN+A@mail.gmail.com>
+
+Hi, it should be in C:\Users\<username>\AppData\Local\proj
+
+See also https://proj.org/resource_files.html#user-writable-directory
+
+Implementing delete/redownload would be problematic (but proj is smart
+enough to download again if the remote grid file gets updated;)
+
+M.
+
+
+On Wed, Apr 27, 2022, 21:33 Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Hi Martin
+> eaec752 looks like it should provide clarity.
+> I would like to be able to compile a dataset that activates this code (for
+> curiosity and maybe user testing), but it seems now that 'my therion' has
+> downloaded the transformation grid once, it resides somewhere on my machine
+> (I cannot manually find it though).  It seems like it has downloaded the
+> entire NZTM grid (as the documentation says it would) and so any locally
+> compiled cave dataset no longer needs to download the grid (which in the
+> normal course of events is good).  I have compiled therion datasets for
+> caves in other parts of the world, but none have triggered this code.  I
+> presume the grids they use are already built-in by default.
+>
+> So for the sake of curiosity, is it possible to get Therion to delete an
+> existing (previously downloaded) grid and so subsequently trigger the need
+> to download it and test the eaec752 change?  Will using cs-def to set a
+> null
+> string for NZTM force it to be downloaded again? Or will it cause
+> proj-missing-grid to behave as though it is set to ignore (even if download
+> is specified)?  Asking before trying it in case I end up breaking something
+> that is hard to fix!
+>
+> Bruce
+>
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+> Sent: Wednesday, 27 April 2022 18:23
+> To: List for Therion users <therion at speleo.sk>
+> Subject: Re: [Therion] New default settings and recent proj changes
+>
+> Good idea! The latest commit provides additional information about
+> downloads
+> now. Caching is more tricky: we just enable it and Proj then downloads just
+> small parts of grids relevant to your area and stores them in its database
+> without letting you know what exactly got downloaded.
+>
+> Martin
+>
+> On Tue, Apr 26, 2022 at 9:43 PM Bruce Mutton <bruce at tomo.co.nz> wrote:
+> >
+> > Thanks Martin
+> ...
+> > A suggestion below.
+> >
+> > therion 6.0.6+14fac78 (2022-04-26)
+> >
+> >   - using Proj 9.0.0, compiled against 9.0.0
+> > initialization file: C:\Program Files (x86)\Therion/therion.ini
+> > reading ... done
+> > configuration file: thconfig-GLMESM_System5000Map.thc
+> > reading ... done
+> > reading source files ... downloading the grid
+> > https://cdn.proj.org/nz_linz_nzgd2kgrid0005.tif... done
+> > saved/cached grid file: C:\path\ nz_linz_nzgd2kgrid0005.tif
+> > done
+> >
+> > Bruce
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220427/c6ce154f/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Apr 28 11:03:12 2022
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 28 Apr 2022 21:03:12 +1200
+Subject: [Therion] New default settings and recent proj changes
+In-Reply-To: <CALPsdStCbV_xGOJ=7nK_YceZa5tQgpcX_hiWAQSNLCGhEJgN+A@mail.gmail.com>
+References: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+ <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+ <000001d85a6d$88d78370$9a868a50$@tomo.co.nz>
+ <CALPsdStCbV_xGOJ=7nK_YceZa5tQgpcX_hiWAQSNLCGhEJgN+A@mail.gmail.com>
+Message-ID: <000201d85ade$cb2d68e0$61883aa0$@tomo.co.nz>
+
+Thanks Martin
+
+That all makes sense now.  Strange how my Windows search could not find the folder even though I was explicitly searching for it.
+
+All sorted out now.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Budaj
+Sent: Thursday, 28 April 2022 08:32
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] New default settings and recent proj changes
+
+ 
+
+Hi, it should be in C:\Users\<username>\AppData\Local\proj
+
+ 
+
+See also https://proj.org/resource_files.html#user-writable-directory
+
+ 
+
+Implementing delete/redownload would be problematic (but proj is smart enough to download again if the remote grid file gets updated;)
+
+ 
+
+M.
+
+ 
+
+On Wed, Apr 27, 2022, 21:33 Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+Hi Martin
+eaec752 looks like it should provide clarity.
+I would like to be able to compile a dataset that activates this code (for
+curiosity and maybe user testing), but it seems now that 'my therion' has
+downloaded the transformation grid once, it resides somewhere on my machine
+(I cannot manually find it though).  It seems like it has downloaded the
+entire NZTM grid (as the documentation says it would) and so any locally
+compiled cave dataset no longer needs to download the grid (which in the
+normal course of events is good).  I have compiled therion datasets for
+caves in other parts of the world, but none have triggered this code.  I
+presume the grids they use are already built-in by default.
+
+So for the sake of curiosity, is it possible to get Therion to delete an
+existing (previously downloaded) grid and so subsequently trigger the need
+to download it and test the eaec752 change?  Will using cs-def to set a null
+string for NZTM force it to be downloaded again? Or will it cause
+proj-missing-grid to behave as though it is set to ignore (even if download
+is specified)?  Asking before trying it in case I end up breaking something
+that is hard to fix!
+
+Bruce
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20220428/d0745ade/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Apr 28 11:06:33 2022
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 28 Apr 2022 10:06:33 +0100
+Subject: [Therion] New default settings and recent proj changes
+In-Reply-To: <000201d85ade$cb2d68e0$61883aa0$@tomo.co.nz>
+References: <002101d859a5$c013ab20$403b0160$@tomo.co.nz>
+ <CALPsdSusu4zasV_VDYmXWfEHNW2rea9NRqKLxjUPbMKhGpCbrQ@mail.gmail.com>
+ <000001d85a6d$88d78370$9a868a50$@tomo.co.nz>
+ <CALPsdStCbV_xGOJ=7nK_YceZa5tQgpcX_hiWAQSNLCGhEJgN+A@mail.gmail.com>
+ <000201d85ade$cb2d68e0$61883aa0$@tomo.co.nz>
+Message-ID: <05901d93-4535-b988-b7bc-ea966e5a746e@ntlworld.com>
+
+> That all makes sense now.? Strange how my Windows search could not find
+> the folder even though I was explicitly searching for it.
+
+It normally ignores AppData and other hidden folders unless you are
+already within that folder. It knows better than you, mkay.
+

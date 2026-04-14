@@ -1,0 +1,1448 @@
+From ben at caver.plus.com  Thu Dec  1 20:55:52 2011
+From: ben at caver.plus.com (Ben Cooper)
+Date: Thu, 1 Dec 2011 19:55:52 -0000
+Subject: [Therion] symbol-show fixed points / point text
+In-Reply-To: <20111130214314.5040A668C5F@outsider2.texxar.cz>
+Message-ID: <20111201190434.6E8C7668C67@outsider2.texxar.cz>
+
+Hi Bruce,
+I've solved the problem - obvious really - I need to use p_station, not
+p_station_SKBB.  I'll send the example through later - I need to copy it off
+another computer.
+Regards,
+- Ben
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Ben Cooper
+Sent: 30 November 2011 22:35
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+
+Hi Bruce,
+You beat me to it!  I've spent the last few days learning metapost and
+rummaging around the bowels of the Therion's source code and have more or
+less got to what you have summarised below.  I also spotted the smartlabel,
+though haven't yet tried it in the re-definition of p_continuation.  
+ 
+I surmise that stations with fixed co-ordinates are not exported by Therion
+in any detectable way; while the th2 mark "fixed" is exported as "mark", and
+the th2 flags are exported as "flags".  The items that are exported are
+accessible in metapost.  In the debug output data.mp file, I saw that "attr
+code" is exported by Therion as ATTR_code, where "code" is whatever attr has
+been declated in the th2 file.  Note that it only has one "_" whereas
+ATTR__text has two "_".   So one thing I tried that did work is to print the
+value of my user define attr statements instead of the text, which is
+potentially quite useful, as I can display a short code, and use
+continuation.html for the longer description.  However, this still relies on
+having the "continuation" flag set.  
+ 
+I used the following re-definition of p_continuation using ATTR_code instead
+of the example's ATTR__text, as follows
+ 
+**THE FOLLOWING WORKS**
+ code metapost
+  def p_continuation(expr pos,theta,sc,al) =
+   % draw default continuation symbol
+   p_continuation_UIS(pos,theta,sc,al);
+ 
+   % if attr code is set
+   if known(ATTR_code):
+ 
+    % set labeling color to light orange
+    push_label_fill_color(1.0, 0.9, 0.8);
+    
+    % draw filled label with text next to ?
+    p_label.urt(ATTR_code,(.5u,-.25u) transformed T,0.0,8);
+    
+    % restore original labeling color
+    pop_label_fill_color;
+   fi;
+  enddef;
+ endcode  
+
+Looking at p_station_SKBB, the problem you and I are facing is that it's
+only for the "continuation" flags that ATTR__text has been set.  It occurred
+to me that if it was possible to refedine p_station_SKBB in the thconfig
+file, then it would be possible to output ATTR__text if an "attr code" has
+been declared in the th2 file.  
+ 
+For example, th2 file:-
+station 1 "Some text to output" entrance attr print "true"
+ 
+My example p_station_SKBB is below.  Unfortunately, I've so far not managed
+to see it being executed.  I can see it appear in the data.mp debug file,
+but the changes I've made to it don't appear to work - the text is not yet
+being output to my pdf file. Also, I don't understand yet the purpose of the
+metapost "save" command, and the manual doesn't really shed much light on
+it!  So it's possible that I've just not yet properly understood metapost
+syntax.  
+ 
+This is the sort of thing I've got in mind 
+ 
+** WARNING, THE FOLLOWING IS NOT YET WORKING **
+def p_station_SKBB(expr pos,mark,txt)(text flags) =
+  T:=identity shifted pos;
+ 
+  if mark=4: p_station_fixed(pos)
+  elseif mark=3: p_station_natural(pos)
+  elseif mark=2: p_station_painted(pos)
+  elseif mark=1: p_station_temporary(pos)
+  fi;
+  
+  path path_cave;
+  path_cave = (-.3u,-.25u) -- (-.2u,-.25u){dir 135} .. (0, .25u) .. {dir
+225}(.2u,-.25u) -- (.3u,-.25u);
+  for i=flags:
+      % ... etc.  No change to contents of for-loop
+  endfor;
+
+   % if the "print" attribute is set to true, display the text
+   if known (ATTR_print) and ATTR_print="true":
+      if picture(txt):
+        picture ATTR__text;
+        ATTR__text := txt;
+        % set labeling color to light orange
+        push_label_fill_color(1.0, 0.9, 0.8);
+    
+        % draw filled label with text next to ?
+        p_label.urt(ATTR__text,(.5u,-.25u) transformed T,0.0,8);
+    
+        % restore original labeling color
+        pop_label_fill_color;
+        save ATTR__text;
+      fi;
+%  thdraw (0,0) withpen PenX withcolor red;
+enddef;
+
+You're welcome to try it to see if you can get it to work!
+Regards,
+- Ben
+ 
+ 
+
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bruce
+Sent: 29 November 2011 18:20
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+
+
+Ben
+
+I think the following (dumped below) from the therion sources
+mpost\thPoint.mp holds the solution to what we are looking for.  And I think
+the smartlabel is the wonderous self organising label routine.  I have not
+had time to verify all this however.
+
+Stacho tried to point me to it
+http://article.gmane.org/gmane.comp.gis.therion/2468/match=symbol+show+fixed
++points+text but I did not follow up on it.
+
+ 
+
+The first definition below is the code for drawing the ? symbol of a
+continuation point. You just need to replace the thdraw statements with the
+symbol you would like.  Don't ask me how - my approach is to trawl the rest
+of the therion code for a symbol I like and perhaps tweak it a little.
+
+ 
+
+The second shows how mark is used to decide what station 'x' mark to use,
+and then how the flags control how the secondary symbols are added. The %%
+comments are mine, so may not be correct.  It shows that station comment
+text is only added if the station is flagged entrance.
+
+ 
+
+I think moving the smartlabel into all but the station_temporary conditional
+statements might be what we are after.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+def p_continuation_UIS(expr pos,theta,sc,al) =
+
+  U:=(.15u,.3u);
+
+  T:=identity aligned al shifted pos;
+
+  %% draw ? symbol
+
+  pickup PenC;
+
+  thdraw (-.1u,.2u){up}..{down}(.1u,.2u)..{down}(0,-.05u);
+
+  pickup PenX;
+
+  thdraw (0,-.2u);
+
+enddef;
+
+ 
+
+def p_station_SKBB(expr pos,mark,txt)(text flags) =
+
+  T:=identity shifted pos;
+
+ 
+
+  if mark=4: p_station_fixed(pos)
+
+  elseif mark=3: p_station_natural(pos)
+
+  elseif mark=2: p_station_painted(pos)
+
+  elseif mark=1: p_station_temporary(pos)
+
+  fi;
+
+  
+
+  path path_cave;  %% = omega symbol
+
+  path_cave = (-.3u,-.25u) -- (-.2u,-.25u){dir 135} .. (0, .25u) .. {dir
+225}(.2u,-.25u) -- (.3u,-.25u);
+
+  for i=flags:
+
+    pickup PenX;
+
+    if i="entrance":
+
+%      thfill fullcircle scaled 1 cm withtransparentcolor tr_blue;
+
+      thdraw path_cave;
+
+%      p_label.urt(txt,pos+(0.4u,0),0,0);
+
+      %% move this if block outside of for loop to label all stations, not
+just flagged entrance
+
+        if not numeric txt:  
+
+        p_smartlabel(txt,pos);  %% This is the wonderous self organising
+label i think
+
+      fi;
+
+        %%
+
+    elseif i="sink":
+
+      thdraw path_cave cutbefore ((-u,0)--(u,0)) cutafter ((-u,0)--(u,0));
+
+      pickup PenA;
+
+      thdraw (0,-.45u) -- (0,.05u) withcolor blue;
+
+      thdraw (-.15u,-.02u) -- (0,.05u) -- (.15u,-.02u) withcolor blue;
+
+    elseif i="spring":
+
+      thdraw path_cave cutbefore ((-u,0)--(u,0)) cutafter ((-u,0)--(u,0));
+
+      pickup PenA;
+
+      thdraw (0,-.45u) -- (0,.05u) withcolor blue;
+
+      thdraw (-.15u,-.38u) -- (0,-.45u) -- (.15u,-.38u) withcolor blue;
+
+    elseif i="doline":
+
+      thdraw (-.5u,.05u){down}..(0,-0.6u)..{up}(.5u,.05u);
+
+    elseif i="dig":
+
+      thdraw (-.5u,.25u) --
+(-.35u,.25u)--(-.23u,-.25u)--(.23u,-.25u)--(.35u,.25u)--(.5u,.25u);
+
+    elseif substring(0,11) of i = "air-draught":
+
+      pickup PenB;
+
+      thdraw ((0,.11u){dir-120} ..{dir-70}(0,0) .. {dir-120}(0,-.11u));
+
+      thdraw ((0,.11u){dir-120} ..{dir-70}(0,0) .. {dir-120}(0,-.11u))
+shifted (.11u,0);
+
+      thdraw ((0,.11u){dir-120} ..{dir-70}(0,0) .. {dir-120}(0,-.11u))
+shifted (-.11u,0);
+
+    elseif i="continuation":
+
+      if picture(txt):
+
+        picture ATTR__text;
+
+        ATTR__text := txt;
+
+      fi;
+
+      begingroup;
+
+        save T; transform T;
+
+        p_continuation(pos+(0,.25u),0,1,(0,1));
+
+      endgroup;
+
+      if picture(txt):
+
+        save ATTR__text;
+
+      fi;
+
+    elseif i="arch":
+
+      thdraw
+(-.5u,-.25u)--(-.5u,.25u)--(.5u,.25u)--(.5u,-.25u)..(0,.2u)..cycle;
+
+      thfill
+(-.5u,-.25u)--(-.5u,.25u)--(.5u,.25u)--(.5u,-.25u)..(0,.2u)..cycle;
+
+    elseif i="overhang":
+
+      thdraw (.2u,-.25u)--(-.2u,-.25u){up}..{right}(.2u,.25u);
+
+    fi;
+
+  endfor;
+
+%  thdraw (0,0) withpen PenX withcolor red;
+
+enddef;
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111201/c84c0c92/attachment.htm>
+
+From ben at caver.plus.com  Thu Dec  1 21:59:02 2011
+From: ben at caver.plus.com (Ben Cooper)
+Date: Thu, 1 Dec 2011 20:59:02 -0000
+Subject: [Therion] symbol-show fixed points / point text
+In-Reply-To: <20111201190434.6E8C7668C67@outsider2.texxar.cz>
+Message-ID: <20111201201513.3A876668BF0@outsider2.texxar.cz>
+
+Hi Bruce,
+Here is my re-defined p_station code that now works.  For each station that
+you want to print the text for, set attr print "true" in the th2 file as I
+illustrated in my earlier email.  If you want to turn off printing you can
+set the text to "false".  This works for any station, no matter what its
+subtype or flags that are set.  The code is as follows:
+
+layout l_p_station_text
+ code metapost
+  def p_station(expr pos,mark,txt)(text flags) =
+      
+   % draw default station
+   p_station_SKBB(pos, mark, txt, flags);
+   
+   % now print the text
+   if picture(txt):
+      picture ATTR__text;
+      ATTR__text := txt;
+    
+      if known(ATTR_print):
+        if (ATTR_print="true"):
+            if not numeric txt:
+                 p_smartlabel(txt,pos);
+            else:
+                 % draw filled label with text next
+                 p_label.urt(ATTR__text,(.5u,-.25u) transformed T,0.0,8);
+            fi;
+        fi;
+      fi;
+      save ATTR__text;
+    fi;
+  enddef;
+ endcode   
+endlayout
+ 
+ 
+ 
+
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Ben Cooper
+Sent: 01 December 2011 19:56
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+
+Hi Bruce,
+I've solved the problem - obvious really - I need to use p_station, not
+p_station_SKBB.  I'll send the example through later - I need to copy it off
+another computer.
+Regards,
+- Ben
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Ben Cooper
+Sent: 30 November 2011 22:35
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+
+Hi Bruce,
+You beat me to it!  I've spent the last few days learning metapost and
+rummaging around the bowels of the Therion's source code and have more or
+less got to what you have summarised below.  I also spotted the smartlabel,
+though haven't yet tried it in the re-definition of p_continuation.  
+ 
+I surmise that stations with fixed co-ordinates are not exported by Therion
+in any detectable way; while the th2 mark "fixed" is exported as "mark", and
+the th2 flags are exported as "flags".  The items that are exported are
+accessible in metapost.  In the debug output data.mp file, I saw that "attr
+code" is exported by Therion as ATTR_code, where "code" is whatever attr has
+been declated in the th2 file.  Note that it only has one "_" whereas
+ATTR__text has two "_".   So one thing I tried that did work is to print the
+value of my user define attr statements instead of the text, which is
+potentially quite useful, as I can display a short code, and use
+continuation.html for the longer description.  However, this still relies on
+having the "continuation" flag set.  
+ 
+I used the following re-definition of p_continuation using ATTR_code instead
+of the example's ATTR__text, as follows
+ 
+**THE FOLLOWING WORKS**
+ code metapost
+  def p_continuation(expr pos,theta,sc,al) =
+   % draw default continuation symbol
+   p_continuation_UIS(pos,theta,sc,al);
+ 
+   % if attr code is set
+   if known(ATTR_code):
+ 
+    % set labeling color to light orange
+    push_label_fill_color(1.0, 0.9, 0.8);
+    
+    % draw filled label with text next to ?
+    p_label.urt(ATTR_code,(.5u,-.25u) transformed T,0.0,8);
+    
+    % restore original labeling color
+    pop_label_fill_color;
+   fi;
+  enddef;
+ endcode  
+
+Looking at p_station_SKBB, the problem you and I are facing is that it's
+only for the "continuation" flags that ATTR__text has been set.  It occurred
+to me that if it was possible to refedine p_station_SKBB in the thconfig
+file, then it would be possible to output ATTR__text if an "attr code" has
+been declared in the th2 file.  
+ 
+For example, th2 file:-
+station 1 "Some text to output" entrance attr print "true"
+ 
+My example p_station_SKBB is below.  Unfortunately, I've so far not managed
+to see it being executed.  I can see it appear in the data.mp debug file,
+but the changes I've made to it don't appear to work - the text is not yet
+being output to my pdf file. Also, I don't understand yet the purpose of the
+metapost "save" command, and the manual doesn't really shed much light on
+it!  So it's possible that I've just not yet properly understood metapost
+syntax.  
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111201/eb154185/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Dec  2 10:43:17 2011
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 2 Dec 2011 22:43:17 +1300
+Subject: [Therion] symbol-show fixed points / point text
+In-Reply-To: <20111201201513.3A876668BF0@outsider2.texxar.cz>
+References: <20111201190434.6E8C7668C67@outsider2.texxar.cz>
+	<20111201201513.3A876668BF0@outsider2.texxar.cz>
+Message-ID: <9D18B0B538FD4A8D9BAA44D1D4A53535@JUICEBRAIN>
+
+That looks good Ben
+
+Seems like 'we' have full control now.
+
+ 
+
+Although ultimately it would be good to move away from having to modify each
+station with text in the th2 files each time we wanted to toggle the output
+of text for individual point types (mark or flag), and move towards putting
+this type of control back into the layout files.
+
+ 
+
+A symbol-show, symbol-hide that pertained to the text comment for stations
+with specific mark and flag combinations would perhaps be ideal.
+
+ 
+
+So we could have control of printing each of the three components of station
+individually (mark, flag symbol, text) dependant on the mark and flag status
+of each point.
+
+ 
+
+Of course having a fourth controlling factor or override, ATTR_print, as you
+have come up with is useful as well.
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Ben Cooper
+Sent: Friday, 2 December 2011 9:59 a.m.
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+ 
+
+Hi Bruce,
+
+Here is my re-defined p_station code that now works.  For each station that
+you want to print the text for, set attr print "true" in the th2 file as I
+illustrated in my earlier email.  If you want to turn off printing you can
+set the text to "false".  This works for any station, no matter what its
+subtype or flags that are set.  The code is as follows:
+
+layout l_p_station_text
+ code metapost
+  def p_station(expr pos,mark,txt)(text flags) =
+      
+   % draw default station
+   p_station_SKBB(pos, mark, txt, flags);
+   
+   % now print the text
+   if picture(txt):
+      picture ATTR__text;
+      ATTR__text := txt;
+    
+      if known(ATTR_print):
+        if (ATTR_print="true"):
+            if not numeric txt:
+                 p_smartlabel(txt,pos);
+            else:
+                 % draw filled label with text next
+                 p_label.urt(ATTR__text,(.5u,-.25u) transformed T,0.0,8);
+            fi;
+        fi;
+      fi;
+      save ATTR__text;
+    fi;
+
+  enddef;
+ endcode   
+endlayout
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111202/ccb57d81/attachment.htm>
+
+From lists at group-s.sk  Fri Dec  2 16:31:23 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 2 Dec 2011 16:31:23 +0100
+Subject: [Therion] extended+xvi+sketches error
+In-Reply-To: <46AB7C83-E31C-4D59-89FE-A60478174903@mac.com>
+References: <4ECFB60B.8040607@inbox.ru> <4ECFBAD3.804@inria.fr>
+	<C9515F4E-7238-46AD-9A1F-C50110E4A1AE@mac.com>
+	<4ECFD1F1.7020800@inria.fr>
+	<46F9092A-2256-4B55-9A7C-63C1B473FD07@mac.com>
+	<4ED1310D.1050202@inria.fr>
+	<46AB7C83-E31C-4D59-89FE-A60478174903@mac.com>
+Message-ID: <CAP35+gGov_4vLMyf8u0NsPyOG5a4-awS3dGMc-fnQF_d1LNnZw@mail.gmail.com>
+
+It is probably a bug. I will try to fix it.
+
+Thanks, S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111202/ec10f3d7/attachment.htm>
+
+From lists at group-s.sk  Fri Dec  2 16:23:25 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 2 Dec 2011 16:23:25 +0100
+Subject: [Therion] selection of stations/shots for xvi export?
+In-Reply-To: <4ECE9164.6020706@inria.fr>
+References: <4ECE9164.6020706@inria.fr>
+Message-ID: <CAP35+gGNMybBiRGXwFuS08nt4tzMT=9R4X69BHbO1UphTo9RUQ@mail.gmail.com>
+
+I would probably just delete unnecessary shots and stations directly from
+XVI file. It is a simple text file.
+There are station names, you can use.
+
+Regards, S.
+
+On 24 November 2011 19:48, Xavier Pennec <Xavier.Pennec at inria.fr> wrote:
+
+>
+> I have a cave which is quite complex and I would like to make elevations
+> with different projection angles.
+> My problem is that I cannot group all the shots for each elevation in
+> separate surveys, so that when I export the xvi sketch to draw my
+> elevations, I got all the stations and shots. I put below an example of the
+> big cloud of points that it makes in the xvi: this superimposition of all
+> the shots which will not be drawn in the elevation prevent from seeing the
+> stations and shots which should be drawn. Does anyone see a solution to
+> select only the stations/shots that I need?
+> So far, I  duplicated the whole survey to keep only the points that I
+> needed, but this has to be done for each connected component independently,
+> which is not very easy.
+>
+> Xavier
+>
+>
+>
+> --
+> > -------------------------
+> > Xavier Pennec
+> > Senior Research Scientist / Directeur de recherche
+> > Asclepios project-team, INRIA Sophia-Antipolis
+> > 2004 Route des Lucioles, BP93
+> > F-06902 Sophia-Antipolis Cedex, France
+> > +33 4 92 38 76 64
+> > +33 6 78 35 16 90
+> > http://www-sop.inria.fr/asclepios/
+> > -------------------------------
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111202/edec3187/attachment.htm>
+
+From ben at caver.plus.com  Fri Dec  2 21:27:47 2011
+From: ben at caver.plus.com (Ben Cooper)
+Date: Fri, 2 Dec 2011 20:27:47 -0000
+Subject: [Therion] symbol-show fixed points / point text
+In-Reply-To: <9D18B0B538FD4A8D9BAA44D1D4A53535@JUICEBRAIN>
+Message-ID: <20111202193548.44AF4668C58@outsider2.texxar.cz>
+
+Of course you can define as many attr xyz as you need, and create different
+layout definitions to select them at will.
+- Ben
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bruce
+Sent: 02 December 2011 09:43
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+
+
+That looks good Ben
+
+Seems like 'we' have full control now.
+
+ 
+
+Although ultimately it would be good to move away from having to modify each
+station with text in the th2 files each time we wanted to toggle the output
+of text for individual point types (mark or flag), and move towards putting
+this type of control back into the layout files.
+
+ 
+
+A symbol-show, symbol-hide that pertained to the text comment for stations
+with specific mark and flag combinations would perhaps be ideal.
+
+ 
+
+So we could have control of printing each of the three components of station
+individually (mark, flag symbol, text) dependant on the mark and flag status
+of each point.
+
+ 
+
+Of course having a fourth controlling factor or override, ATTR_print, as you
+have come up with is useful as well.
+
+ 
+
+Bruce
+
+ 
+
+
+  _____  
+
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Ben Cooper
+Sent: Friday, 2 December 2011 9:59 a.m.
+To: 'List for Therion users'
+Subject: Re: [Therion] symbol-show fixed points / point text
+
+ 
+
+Hi Bruce,
+
+Here is my re-defined p_station code that now works.  For each station that
+you want to print the text for, set attr print "true" in the th2 file as I
+illustrated in my earlier email.  If you want to turn off printing you can
+set the text to "false".  This works for any station, no matter what its
+subtype or flags that are set.  The code is as follows:
+
+layout l_p_station_text
+ code metapost
+  def p_station(expr pos,mark,txt)(text flags) =
+      
+   % draw default station
+   p_station_SKBB(pos, mark, txt, flags);
+   
+   % now print the text
+   if picture(txt):
+      picture ATTR__text;
+      ATTR__text := txt;
+    
+      if known(ATTR_print):
+        if (ATTR_print="true"):
+            if not numeric txt:
+                 p_smartlabel(txt,pos);
+            else:
+                 % draw filled label with text next
+                 p_label.urt(ATTR__text,(.5u,-.25u) transformed T,0.0,8);
+            fi;
+        fi;
+      fi;
+      save ATTR__text;
+    fi;
+
+  enddef;
+ endcode   
+endlayout
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111202/c81191b0/attachment.htm>
+
+From v_su at inbox.ru  Sat Dec 10 14:47:00 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Sat, 10 Dec 2011 21:47:00 +0800
+Subject: [Therion] flags
+Message-ID: <4EE362D4.2010303@inbox.ru>
+
+Hello
+
+What are you think about second behaviour of "flags" command like second 
+behaviour of "extend"?
+
+Example:
+
+flags duplicate 1 at survey
+flags not duplicate 2 at survey
+
+flags splay 1 at survey 2 at survey
+
+It is make possible to keep such commands in one place.
+
+-- 
+  WBR, Vasily
+
+
+From bruce at tomo.co.nz  Sat Dec 10 21:51:37 2011
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 11 Dec 2011 09:51:37 +1300
+Subject: [Therion] flags
+In-Reply-To: <4EE362D4.2010303@inbox.ru>
+References: <4EE362D4.2010303@inbox.ru>
+Message-ID: <724F7812FCCE45F3ACDDF9E457CD5888@JUICEBRAIN>
+
+> What are you think about second behaviour of "flags" command like second 
+behaviour of "extend"?
+
+Vasily
+The examples you give are for shot flags (duplicate, splay) so they always
+apply to pairs of stations.  
+Therefore examples like;
+
+flags duplicate 1 at survey
+flags not duplicate 2 at survey
+
+are confusing.
+I don't think I would find that approach useful as in many (most?) cases you
+would need to specify dozens of station pairs.  Generally the existing
+syntax is much more compact.
+
+On the other hand it would be a useful addition to the "station flag"
+syntax.
+
+In addition to the station command, it would be convenient to be able to set
+station flags like we do with the mark command, ie write;
+
+flag [<station list>] <station flag>
+flag 42 46 57 doline
+flag 27 46 52 60 dig
+
+The existing syntax allows us to specify all the meta data and flags that
+apply on a station by station basis.
+The syntax above would allow us to specify the stations on a flag by flag
+basis, but without the ability to add comments etc.  Notice I have used
+'flag' and not 'flags' to distinguish it from the shot flag syntax.
+
+A second thought, why not allow comments and multiple shot flags...
+
+flag [<station list>] [<comment>] <station flag list > 
+flag 42 57 "these are all dolines" doline 
+flag 27 52 60 "these are all digs" dig
+flag 46 "this is a dig in a doline" doline dig
+
+Could be nice?
+Would not be high on my personal priority list, but it is something that
+from time to time I have wished I could do.
+
+Bruce
+
+
+
+From v_su at inbox.ru  Sun Dec 11 12:22:30 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Sun, 11 Dec 2011 19:22:30 +0800
+Subject: [Therion] flags
+In-Reply-To: <724F7812FCCE45F3ACDDF9E457CD5888@JUICEBRAIN>
+References: <4EE362D4.2010303@inbox.ru>
+	<724F7812FCCE45F3ACDDF9E457CD5888@JUICEBRAIN>
+Message-ID: <4EE49276.7070908@inbox.ru>
+
+11.12.2011 4:51, Bruce:
+> I don't think I would find that approach useful as in many (most?) cases you
+> would need to specify dozens of station pairs.  Generally the existing
+> syntax is much more compact.
+
+Yes, the existing syntax is good for human, but create difficulties when 
+I process survey data with scripts. It is a main reason for my request.
+
+-- 
+  WBR, Vasily
+
+
+From martinsluka at mac.com  Tue Dec 13 09:21:53 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 13 Dec 2011 09:21:53 +0100
+Subject: [Therion] Your vote, please
+Message-ID: <6BAF20F0-5717-47EA-9AC6-00AB5FAA4BF5@mac.com>
+
+http://forums.caves.org/viewtopic.php?f=26&t=13233
+
+:)
+
+m.
+
+
+From martinsluka at mac.com  Tue Dec 13 09:48:57 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 13 Dec 2011 09:48:57 +0100
+Subject: [Therion] wikipedia
+Message-ID: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+
+There is a request from one wikipedia editor:
+
+xxxxxxxxxxxxx
+Are there any reliable, third party sources which can speak to the  
+notability of this software? I see that people are using it as  
+witnessed by the articles in newsletters; but, I don't see any  
+reliable sources. WTucker (talk) 06:02, 13 December 2011 (UTC)
+xxxxxxxxxxxxx
+
+So may you add the links to your project pages or send me a link I'll  
+do it.
+
+Martin S.
+
+
+From xavier.robert01 at gmail.com  Tue Dec 13 10:04:04 2011
+From: xavier.robert01 at gmail.com (Xavier Robert)
+Date: Tue, 13 Dec 2011 10:04:04 +0100
+Subject: [Therion] wikipedia
+In-Reply-To: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+References: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+Message-ID: <EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+
+Hi Martin,
+
+If this is what you want, you can find mapping project on my caving club web site :
+
+* for the Gouffre Jean-Bernard System : http://www.groupe-speleo-vulcain.com/01_04_topographie_jean_bernard.html?lang=en
+* For our last Expedition in Borneo : http://www.groupe-speleo-vulcain.com/expeditions-borneo.html?lang=en (with sources)
+
+Cheers,
+Xavier
+
+
+
+Le 13 déc. 2011 à 09:48, Martin Sluka a écrit :
+
+> There is a request from one wikipedia editor:
+> 
+> xxxxxxxxxxxxx
+> Are there any reliable, third party sources which can speak to the notability of this software? I see that people are using it as witnessed by the articles in newsletters; but, I don't see any reliable sources. WTucker (talk) 06:02, 13 December 2011 (UTC)
+> xxxxxxxxxxxxx
+> 
+> So may you add the links to your project pages or send me a link I'll do it.
+> 
+> Martin S.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+--
+Xavier Robert
+Chercheur CR2 - IRD
+ISTerre - Maison des Géosciences
+1381 rue de la Piscine - BP 53
+38041 Grenoble Cedex 09
+France
+
+mail 1: xavier.robert at ird.fr
+mail 2: xavier.robert at ujf-grenoble.fr
+mail 3: xavier.robert01 at gmail.com
+
+Phone :
+Fax : 33 (0)4 76 51 40 58
+
+
+xavier.robert01 at gmail.com
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111213/9dc05174/attachment.htm>
+
+From martinsluka at mac.com  Tue Dec 13 13:43:53 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 13 Dec 2011 13:43:53 +0100
+Subject: [Therion] wikipedia
+In-Reply-To: <EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+References: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+	<EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+Message-ID: <60D33F1E-784F-4551-9E44-9CE09A9CC395@mac.com>
+
+
+On 13.12.2011, at 10:04, Xavier Robert wrote:
+
+>
+> * for the Gouffre Jean-Bernard System : http://www.groupe-speleo-vulcain.com/01_04_topographie_jean_bernard.html?lang=en
+> * For our last Expedition in Borneo : http://www.groupe-speleo-vulcain.com/expeditions-borneo.html?lang=en 
+>  (with sources)
+>
+
+Thanks
+
+Martin S.
+
+
+From julian at goatchurch.org.uk  Tue Dec 13 15:17:27 2011
+From: julian at goatchurch.org.uk (Julian Todd)
+Date: Tue, 13 Dec 2011 14:17:27 +0000
+Subject: [Therion] wikipedia
+In-Reply-To: <EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+References: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+	<EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+Message-ID: <CABPnL=WDR9kOorWisktJiTxeg=96cRo248iuWShFoUVM8ONZ=Q@mail.gmail.com>
+
+Try some references to compass points articles.
+
+http://www.chaos.org.uk/survex/cp/index.htm
+
+JT
+
+
+On 13 December 2011 09:04, Xavier Robert <xavier.robert01 at gmail.com> wrote:
+
+> Hi Martin,
+>
+> If this is what you want, you can find mapping project on my caving club
+> web site :
+>
+> * for the Gouffre Jean-Bernard System :
+> http://www.groupe-speleo-vulcain.com/01_04_topographie_jean_bernard.html?lang=en
+> * For our last Expedition in Borneo :
+> http://www.groupe-speleo-vulcain.com/expeditions-borneo.html?lang=en(with sources)
+>
+> Cheers,
+> Xavier
+>
+>
+>
+> Le 13 déc. 2011 à 09:48, Martin Sluka a écrit :
+>
+> There is a request from one wikipedia editor:
+>
+> xxxxxxxxxxxxx
+> Are there any reliable, third party sources which can speak to the
+> notability of this software? I see that people are using it as witnessed by
+> the articles in newsletters; but, I don't see any reliable sources. WTucker
+> (talk) 06:02, 13 December 2011 (UTC)
+> xxxxxxxxxxxxx
+>
+> So may you add the links to your project pages or send me a link I'll do
+> it.
+>
+> Martin S.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+>
+> --
+> Xavier Robert
+> Chercheur CR2 - IRD
+> ISTerre - Maison des Géosciences
+> 1381 rue de la Piscine - BP 53
+> 38041 Grenoble Cedex 09
+> France
+>
+> mail 1: xavier.robert at ird.fr
+> mail 2: xavier.robert at ujf-grenoble.fr
+> mail 3: xavier.robert01 at gmail.com
+>
+> Phone :
+> Fax : 33 (0)4 76 51 40 58
+>
+>
+> xavier.robert01 at gmail.com
+>
+>
+>
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111213/46a71472/attachment.htm>
+
+From andrew at wotcc.org.uk  Tue Dec 13 10:15:59 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 13 Dec 2011 09:15:59 +0000
+Subject: [Therion] wikipedia
+In-Reply-To: <EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+References: <16BFC2B3-5434-4F30-82EB-4E2018742162@mac.com>
+	<EB5AE350-2941-4536-87DC-DE2032C271A5@gmail.com>
+Message-ID: <4EE717CF.7060900@wotcc.org.uk>
+
+
+The main one I am working on is
+
+http://www.ubss.org.uk/cave_survey_archive.php
+
+which includes mcg (Ben Coopers) work
+
+http://www.mendipcavinggroup.org.uk/sections/upperflood/surveys.html
+
+Also might be worth
+
+http://www.mulucaves.org/wordpress/surveying/the-therion-survey
+
+Andrew
+
+
+
+On 13/12/11 09:04, Xavier Robert wrote:
+> Hi Martin,
+>
+> If this is what you want, you can find mapping project on my caving club web site :
+>
+> * for the Gouffre Jean-Bernard System : http://www.groupe-speleo-vulcain.com/01_04_topographie_jean_bernard.html?lang=en
+> * For our last Expedition in Borneo : http://www.groupe-speleo-vulcain.com/expeditions-borneo.html?lang=en (with sources)
+>
+> Cheers,
+> Xavier
+>
+>
+>
+> Le 13 déc. 2011 à 09:48, Martin Sluka a écrit :
+>
+>> There is a request from one wikipedia editor:
+>>
+>> xxxxxxxxxxxxx
+>> Are there any reliable, third party sources which can speak to the notability of this software? I see that people are using it as witnessed by the articles in newsletters; but, I don't see any reliable sources. WTucker (talk) 06:02, 13 December 2011 (UTC)
+>> xxxxxxxxxxxxx
+>>
+>> So may you add the links to your project pages or send me a link I'll do it.
+>>
+>> Martin S.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> --
+> Xavier Robert
+> Chercheur CR2 - IRD
+> ISTerre - Maison des Géosciences
+> 1381 rue de la Piscine - BP 53
+> 38041 Grenoble Cedex 09
+> France
+>
+> mail 1: xavier.robert at ird.fr
+> mail 2: xavier.robert at ujf-grenoble.fr
+> mail 3: xavier.robert01 at gmail.com
+>
+> Phone :
+> Fax : 33 (0)4 76 51 40 58
+>
+>
+> xavier.robert01 at gmail.com
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From v_su at inbox.ru  Sun Dec 18 10:27:58 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Sun, 18 Dec 2011 17:27:58 +0800
+Subject: [Therion] Ubuntu and russian fonts
+Message-ID: <4EEDB21E.8010401@inbox.ru>
+
+Hello
+
+Therion on Ubuntu created PDF with dots instead of cyrillic texts. How 
+to fix this problem?
+
+-- 
+  WBR, Vasily
+
+
+From m.budaj at gmail.com  Thu Dec 22 10:33:45 2011
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 22 Dec 2011 10:33:45 +0100
+Subject: [Therion] Ubuntu and russian fonts
+In-Reply-To: <4EEDB21E.8010401@inbox.ru>
+References: <4EEDB21E.8010401@inbox.ru>
+Message-ID: <CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+
+Hello,
+
+therion packaged for Debian/Ubuntu behaves differently to the
+source/windows distribution in this respect (see
+http://mailman.speleo.sk/pipermail/therion/2009-May/002466.html and
+following).
+
+It should be enough to uncomment the line starting with "tex-fonts
+cmcyr" in therion.ini to enable cyrillic fonts in therion.
+
+Martin
+
+
+On Sun, Dec 18, 2011 at 10:27 AM, Vasily Vl. Suhachev <v_su at inbox.ru> wrote:
+> Hello
+>
+> Therion on Ubuntu created PDF with dots instead of cyrillic texts. How to
+> fix this problem?
+>
+> --
+>  WBR, Vasily
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From v_su at inbox.ru  Thu Dec 29 02:48:48 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Thu, 29 Dec 2011 09:48:48 +0800
+Subject: [Therion] Ubuntu and russian fonts
+In-Reply-To: <CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+References: <4EEDB21E.8010401@inbox.ru>
+	<CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+Message-ID: <4EFBC700.9080304@inbox.ru>
+
+22.12.2011 17:33, Martin Budaj пишет:
+> It should be enough to uncomment the line starting with "tex-fonts
+> cmcyr" in therion.ini to enable cyrillic fonts in therion.
+
+Error after uncomment:
+
+####################### metapost log file ########################
+This is MetaPost, version 1.208 (kpathsea version 5.0.0) (mem=mpost 
+2011.12.17)  29 DEC 2011 09:27
+**data.mp
+(./data.mp [4001] [4002] [4003] [4004] [4005] [4006] [4007] [4008] 
+[4009] [4010
+] [4011] [4012]
+[Warning: undefined symbol `p_station_fixed_SKBB']
+[Warning: undefined symbol `p_station_natural_SKBB'] [1] [2] [3]
+ >> data.mp
+ >> data.mpx
+! Unable to make mpx file.
+l.5414 p_label(btex
+                     \thlabel\thtinysize ......\mainfont{} 
+etex,(8.00,-47.56)...
+The two files given above are one of your source files
+and an auxiliary file I need to read to find out what your
+btex..etex blocks mean. If you don't know why I had trouble,
+try running it manually through MPtoTeX, TeX, and DVItoMP
+
+
+
+Here is how much of MetaPost's memory you used:
+  1180 strings out of 1638
+  13760 string characters out of 26823
+  58591 words of memory out of 3000000
+  1376 symbolic tokens out of 16384
+  8i,75n,13p,153b,2f stack positions out of 300i,84n,10000p,200b,15f
+  63 string compactions (moved 631452 characters, 53375 strings)15 
+output files written: data.1 .. data.4012
+
+#################### end of metapost log file ####################
+therion: error -- metapost exit code -- 768
+writing xtherion file ... done
+therion: warning -- error deleting temporary directory -- /tmp/th11877
+
+
+
+
+
+-- 
+  WBR, Vasily
+
+
+From v_su at inbox.ru  Thu Dec 29 04:33:52 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Thu, 29 Dec 2011 11:33:52 +0800
+Subject: [Therion] Ubuntu and russian fonts
+In-Reply-To: <4EFBC700.9080304@inbox.ru>
+References: <4EEDB21E.8010401@inbox.ru>
+	<CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+	<4EFBC700.9080304@inbox.ru>
+Message-ID: <4EFBDFA0.7010107@inbox.ru>
+
+29.12.2011 9:48, Vasily Vl. Suhachev пишет:
+> 22.12.2011 17:33, Martin Budaj пишет:
+>> It should be enough to uncomment the line starting with "tex-fonts
+>> cmcyr" in therion.ini to enable cyrillic fonts in therion.
+>
+> Error after uncomment:
+
+I am missing texlive-lang-cyrillic package.
+
+Now cyrillic text appear but digits and punctuation marks disappear.
+
+-- 
+  WBR, Vasily
+
+
+From martinsluka at mac.com  Thu Dec 29 13:03:57 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 29 Dec 2011 13:03:57 +0100
+Subject: [Therion] Inkscape as map (pre)editor for Therion
+Message-ID: <893D6690-67A2-423E-868C-69C3A9E0E046@mac.com>
+
+Thanks to Thomas Holder we may use Inkscape drawing package to draw or  
+edit or convert .th2 files. Not with all the features of xtherion  
+(missing object area, changing subtype of line point, ...) but with  
+several features long time requested. Moving objects, selecting more  
+objects, ...
+
+See: http://therion.speleo.sk/wiki/doku.php?do=show&id=inkscape
+
+I tried the Inkscape importing to therion some svg maps and the  
+possibilities of Inkscape/Therion package are very promising. Anybody  
+else?
+
+Only be careful not to make too large scraps and use beziers and not  
+automatic lines with zillions of points!
+
+Happy New Year 2012
+
+Martin s.
+
+
+From lists at group-s.sk  Fri Dec 30 19:20:06 2011
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 30 Dec 2011 19:20:06 +0100
+Subject: [Therion] Ubuntu and russian fonts
+In-Reply-To: <4EFBDFA0.7010107@inbox.ru>
+References: <4EEDB21E.8010401@inbox.ru>
+	<CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+	<4EFBC700.9080304@inbox.ru> <4EFBDFA0.7010107@inbox.ru>
+Message-ID: <CAP35+gFWDG-WA5jdqmQb=QdyyogbUQ7baP1AQAYuOr9z-6xc8g@mail.gmail.com>
+
+You probably need to uncomment/add also this line to therion.ini:
+
+tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+
+S.
+
+On 29 December 2011 04:33, Vasily Vl. Suhachev <v_su at inbox.ru> wrote:
+
+> 29.12.2011 9:48, Vasily Vl. Suhachev пишет:
+>
+>  22.12.2011 17:33, Martin Budaj пишет:
+>>
+>>> It should be enough to uncomment the line starting with "tex-fonts
+>>> cmcyr" in therion.ini to enable cyrillic fonts in therion.
+>>>
+>>
+>> Error after uncomment:
+>>
+>
+> I am missing texlive-lang-cyrillic package.
+>
+> Now cyrillic text appear but digits and punctuation marks disappear.
+>
+>
+> --
+>  WBR, Vasily
+> ______________________________**_________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/**mailman/listinfo/therion<http://mailman.speleo.sk/mailman/listinfo/therion>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111230/262d7bb7/attachment.htm>
+
+From v_su at inbox.ru  Sat Dec 31 03:08:38 2011
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Sat, 31 Dec 2011 10:08:38 +0800
+Subject: [Therion] Ubuntu and russian fonts
+In-Reply-To: <CAP35+gFWDG-WA5jdqmQb=QdyyogbUQ7baP1AQAYuOr9z-6xc8g@mail.gmail.com>
+References: <4EEDB21E.8010401@inbox.ru>
+	<CALPsdSvtgp+hXHxcdbEFsXnaWZhq3J79Xbi_DCKbkyBZYgWwOA@mail.gmail.com>
+	<4EFBC700.9080304@inbox.ru> <4EFBDFA0.7010107@inbox.ru>
+	<CAP35+gFWDG-WA5jdqmQb=QdyyogbUQ7baP1AQAYuOr9z-6xc8g@mail.gmail.com>
+Message-ID: <4EFE6EA6.1060204@inbox.ru>
+
+31.12.2011 2:20, Stacho Mudrak пишет:
+> You probably need to uncomment/add also this line to therion.ini:
+>
+> tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+>
+
+Thanks, it help
+
+Also, time ago I reported an error with "XTherion control" window. Now I 
+see it is no problem on Linux, but on Windows it confused local users 
+with wrong encoding.
+
+See screenshot, the bottom window(Ubuntu) is right, top(Win7) is not
+
+-- 
+  WBR, Vasily
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: control.png
+Type: image/png
+Size: 64536 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20111231/17b800e1/attachment.png>
+
+From thomas at thomas-holder.de  Sat Dec 31 15:33:58 2011
+From: thomas at thomas-holder.de (Thomas Holder)
+Date: Sat, 31 Dec 2011 15:33:58 +0100
+Subject: [Therion] Inkscape as map (pre)editor for Therion
+In-Reply-To: <893D6690-67A2-423E-868C-69C3A9E0E046@mac.com>
+References: <893D6690-67A2-423E-868C-69C3A9E0E046@mac.com>
+Message-ID: <4EFF1D56.6070507@thomas-holder.de>
+
+Hi Martin,
+
+Martin Sluka wrote, On 12/29/11 13:03:
+> Thanks to Thomas Holder we may use Inkscape drawing package to draw or 
+> edit or convert .th2 files. Not with all the features of xtherion 
+> (missing object area, changing subtype of line point, ...) but with 
+> several features long time requested. Moving objects, selecting more 
+> objects, ...
+> 
+> See: http://therion.speleo.sk/wiki/doku.php?do=show&id=inkscape
+
+This page is quite old and only describes an early version of the output 
+plugin. The newer version, including import of th2 files, is described here:
+
+http://therion.speleo.sk/wiki/doku.php?id=inkscapeplugins
+
+What's linked as "th2-latest.zip" there is currenlty version 1.6 (about 
+1 year old). There is also version 1.7 (uploaded today), it has of 
+course more features but has to be considered as experimental. Feel free 
+to test:
+
+http://thomas-holder.de/projects/inkscape-speleo/extensions/th2-1.7.zip
+
+> I tried the Inkscape importing to therion some svg maps and the 
+> possibilities of Inkscape/Therion package are very promising. Anybody else?
+> 
+> Only be careful not to make too large scraps and use beziers and not 
+> automatic lines with zillions of points!
+> 
+> Happy New Year 2012
+> 
+> Martin s.
+
+Cheers,
+   Thomas
+
+

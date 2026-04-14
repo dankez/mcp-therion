@@ -1,0 +1,1086 @@
+From wookey at aleph1.co.uk  Mon Mar 24 19:50:31 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 24 Mar 2003 18:50:31 +0000 (GMT)
+Subject: [therion-users] Packaging patches for 0.2.9-1
+Message-ID: <Marcel-1.50-0324185031-064h+Ty@chewy.aleph1.co.uk>
+
+I'm getting a few errors during the Therion build which I think merit
+changes to the Therion source. (I've run out of time today - maybe tomorrow
+for these)
+
+There are also a number of patches I've made which should probably go in
+the original. I'll present them here for you to say if you don't like some
+of them.
+
+Updated doc/HISTORY
+Add -g -Wall for c and c++ compiles and -O2 for final build
+
+Manpages for Therion, xtherion, thconvert, thpdf, eps2pdf (done in SGML) -
+do you want to add these to the main tarball?
+
+A diff for all this is attached if you want to apply it. The manpages need
+to be run through docbook2man to generate final man pages. 
+
+
+Files with no newline at the end (this produces warnings from various tools):
+
+doc/HISTORY
+    AUTHORS
+    INSTALL
+And all the thbook .TeX files.
+
+There is a spurious src/index.html file that I don't think is supposed to
+be there.
+
+Hope this is useful.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+-------------- next part --------------
+--- therion-0.2.9.orig/doc/HISTORY
++++ therion-0.2.9/doc/HISTORY
+@@ -22,4 +22,6 @@
+   Aug: xtherion extended to 2D map editor (as a replacement of ThEdit)
+   Sep: Therion compiles first real and complex map of a cave. xtherion
+        extended to compiler.
+-  Oct 5: 
+\ No newline at end of file
++  Dec: Packaged for Debian, Therion book started
++2003:
++  Mar: Installed in Debian
+--- therion-0.2.9.orig/src/Makefile
++++ therion-0.2.9/src/Makefile
+@@ -45,8 +45,16 @@
+ # BUILD CONFIG
+ 
+ # BUILD RELEASE
+-CCBFLAGS =
+-CXXBFLAGS = 
++CCBFLAGS = -g -Wall
++CXXBFLAGS = -g -Wall
++
++ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
++CCBFLAGS += -O0
++CXXBFLAGS += -O0
++else
++CCBFLASG += -O2
++CXXBFLAGS += -O2
++endif 
+ 
+ # BUILD DEBUG
+ ##CCBFLAGS =
+
+--- therion-0.2.9.orig/debian/mantherion.sgml
++++ therion-0.2.9/debian/mantherion.sgml
+@@ -0,0 +1,264 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++
++    
++	The docbook-to-man binary is found in the docbook-to-man package.
++	Please remember that if you create the nroff version in one of the
++	debian/rules file targets (such as build), you will need to include
++	docbook-to-man in your Build-Depends control field.
++
++  -->
++
++  <!ENTITY dhsurname   "<surname>Wookey</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>December  3, 2002</date>">
++  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
++  <!ENTITY dhemail     "<email>wookey at debian.org</email>">
++  <!ENTITY dhusername  "Wookey">
++  <!ENTITY dhucpackage "<refentrytitle>THERION</refentrytitle>">
++  <!ENTITY dhpackage   "therion">
++
++  <!ENTITY debian      "<productname>Debian</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2002</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhpackage;</refname>
++
++    <refpurpose>program to draw cave surveys</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhpackage;</command> <arg>config-file</arg>
++
++      <arg><option>-q</option></arg>
++
++      <arg><option>-L </option></arg>
++      <arg><option>-g </option></arg>
++      <arg><option>-h</option> <option>--help</option></arg>
++      <arg><option>-i</option></arg>
++      <arg><option>-L</option></arg>
++      <arg><option>-l <replaceable>log-file</replaceable></option></arg>
++      <arg><option>-p <replaceable>search-path</replaceable></option></arg>
++      <arg><option>-q</option></arg>
++      <arg><option>--print-encodings</option></arg>
++      <arg><option>--print-init-file</option></arg>
++      <arg><option>-s</option></arg>
++      <arg><option>-u</option></arg>
++      <arg><option>-v</option>, <option>--version</option></arg>     
++      <arg><option>-d</option></arg>
++  
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page briefly documents 
++      <command>&dhpackage;</command> and provides an overview of the package.</para>
++
++    <para>This manual page was written for the &debian; distribution
++      because the original program does not have a manual page.</para>
++
++    <para><command>&dhpackage;</command> is a program that processes therion data
++    files to produce cave surveys. The data files are .th files which contain survey 
++    data, largely equivalent to survex .svx files, .th2 files which contain drawing 
++    data and thconfig files which control the data files to be used and the maps to
++    be output. </para>
++    
++    <para><command>&dhpackage;</command> uses a number of helper programs to do its 
++    job. <command>Survex</command> is used to process the centreline data, 
++    <command>metapost</command> is used to draw cave symbols, and 
++    <command>pdftex</command> generates the final maps. There are also a couple of 
++    internal helper programs - <command>theps2pdf</command> and 
++    <command>thpdf</command> which do conversions to glue the various pieces of 
++    software together.</para>
++    
++    <para>In order to make the entering of drawing data practical, and to make the 
++    editing of survey files easier, a graphical editor <command>xtherion</command> 
++    is included. This also includes a 'compiler' function which runs therion on the 
++    data to produce output. This is implemented using tcl/tk.</para>
++    
++    <para>The therion data files describe the cave as text in terms of objects so 
++    the corresponding graphical representations are only inserted at output generation
++    time. This means that a survey can be produced using whichever symbol set you 
++    require by specifying the relevant set of metapost macros. Currently the UIS symbol 
++    set is supported.</para>
++    
++    <para>Multiple languages and character sets are supported - currently ISO-8859-1, 
++    ISO-8859-2, UTF-8, ISO-8859-15.</para>
++    
++
++
++  </refsect1>
++  <refsect1>
++    <title>OPTIONS</title>
++
++    <para>These programs follow the usual GNU command line syntax,
++      with long options starting with two dashes (&quot;--&quot;).  A summary of
++      options is included below.  For a complete description, see the
++      <application>Info</application> files.</para>
++
++    <variablelist>
++      <varlistentry>
++        <term><option>-h</option>, <option>--help</option>
++        </term>
++        <listitem>
++          <para>Show summary of options.</para>
++        </listitem>
++      </varlistentry>
++      <varlistentry>
++        <term><option>-v</option>, <option>--version</option>
++        </term>
++        <listitem>
++          <para>Show version information.</para>
++        </listitem>
++      </varlistentry>
++      <varlistentry>
++      <term><option>-q</option></term>
++        <listitem>
++	  <para>Quiet mode - minimise output.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++      <term><option>-g</option></term>
++        <listitem>
++	  <para>Using this option, you can generate the new configuration file.
++          If cfg-file will not be specified, program will use thconfig
++          file. If destination file exists, it'll be overwritten.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-i</option></term>
++        <listitem>
++	  <para>Ignore comments when writing (-g|-u) configuration file.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-L</option></term>
++        <listitem>
++	  <para>Do not create log-file. Normally it writes all the messages
++          into <filename>therion.log</filename> file.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-l log-file</option></term>
++        <listitem>
++	  <para>Change the name of the log file.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-p search-path</option></term>
++        <listitem>
++	  <para>This option is used to set the search path (or list of paths, 
++          separated by colon), which therion will use to find its source
++          files (if it doesn't find them in the working directory).</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-q</option></term>
++        <listitem>
++	  <para>Run program in quiet mode. Program will print only warning
++          and error messages to STDERR.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>--print-encodings</option></term>
++        <listitem>
++	  <para>Print a list of all supported encodings.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>--print-init-file</option></term>
++        <listitem>
++	  <para>Print a default initialization file. For more details
++          see the INITIALIZATION section of this document.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-s</option></term>
++        <listitem>
++	  <para>Set the name of the source file.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-u</option></term>
++        <listitem>
++	  <para>Upgrade the configuration file.</para>
++	</listitem>  
++      </varlistentry>
++      <varlistentry>
++	<term><option>-d</option></term>
++        <listitem>
++	  <para>Turn on debugging mode. The current implementation creates a 
++	temporary directory named thTMPDIR (in your system temporary 
++	directory) and does not delete any temporary files.</para>
++	</listitem>  
++      </varlistentry>
++    </variablelist>
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>xtherion (1), theps2pdf (1), thpdf (1), thconvert (1).</para>
++
++    <para>For full information see the Therion Manual in /usr/doc/therion/thbook 
++    which describes &dhpackage; and its use in detail.</para>
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++
++    <para>This manual page was written by &dhusername; &dhemail; for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
++
++
+--- therion-0.2.9.orig/debian/manxtherion.sgml
++++ therion-0.2.9/debian/manxtherion.sgml
+@@ -0,0 +1,127 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++
++    
++	The docbook-to-man binary is found in the docbook-to-man package.
++	Please remember that if you create the nroff version in one of the
++	debian/rules file targets (such as build), you will need to include
++	docbook-to-man in your Build-Depends control field.
++
++  -->
++
++  <!ENTITY dhsurname   "<surname>Wookey</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>December  25, 2002</date>">
++  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
++  <!ENTITY dhemail     "<email>wookey at debian.org</email>">
++  <!ENTITY dhusername  "Wookey">
++  <!ENTITY dhucpackage "<refentrytitle>THERION</refentrytitle>">
++  <!ENTITY dhpackage   "therion">
++  <!ENTITY dhcommand   "xtherion">
++
++  <!ENTITY debian      "<productname>Debian</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2002</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhcommand;</refname>
++
++    <refpurpose>Graphical drawing editor for therion</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhcommand;</command>
++
++      
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page documents
++      <command>&dhcommand;</command>, which is part of the &dhpackage; package.</para>
++
++    <para>This manual page was written for the &debian; distribution
++      because the original program does not have a manual page.</para>
++
++    <para><command>&dhcommand;</command> is an application that serves as a graphical
++    front end for therion. Therion itself works entirely with text-based files, but 
++    much of the data needs to be generated graphically, so xtherion is one example of 
++    how it might be done.  It is written in Tcl/Tk.</para>
++    
++    <para><command>&dhpackage;</command> lets you load a background GIF, JPEG or PNM 
++    (a scan of the cave segment or to-scale notes), scale it, then draw therion 'scraps' over 
++    the image, and relate it to survey stations and save the resulting data.</para>
++     
++    <para>For full information see the Therion Manual in /usr/doc/therion/thbook 
++    which describes the application and its use in detail.</para>
++  </refsect1>
++  <refsect1>
++    <title>OPTIONS</title>
++
++    <para>xtherion takes no options.</para>
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>therion (1), thpdf (1), theps2pdf (1), thconvert (1).</para>
++
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++
++    <para>This manual page was written by &dhusername; &dhemail; for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
++
++
+--- therion-0.2.9.orig/debian/manthpdf.sgml
++++ therion-0.2.9/debian/manthpdf.sgml
+@@ -0,0 +1,271 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++
++    
++	The docbook-to-man binary is found in the docbook-to-man package.
++	Please remember that if you create the nroff version in one of the
++	debian/rules file targets (such as build), you will need to include
++	docbook-to-man in your Build-Depends control field.
++
++  -->
++
++  <!ENTITY dhsurname   "<surname>Wookey</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>December  25, 2002</date>">
++  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
++  <!ENTITY dhemail     "<email>wookey at debian.org</email>">
++  <!ENTITY dhusername  "Wookey">
++  <!ENTITY dhucpackage "<refentrytitle>THERION</refentrytitle>">
++  <!ENTITY dhpackage   "therion">
++  <!ENTITY dhcommand   "thpdf">
++
++  <!ENTITY debian      "<productname>Debian</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2002</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhcommand;</refname>
++
++    <refpurpose>makes a survey/atlas in PDF format</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhcommand;</command> <arg>options</arg> <replaceable>input-file</replaceable>
++<arg><option>-q</option></arg>
++<arg><option>-m</option></arg>
++
++      
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page documents 
++      <command>&dhcommand;</command>, which is part of the &dhpackage; package.</para>
++
++    <para>It was created for the &debian; distribution from 
++    Martin Budaj's man-page-like HTML docs.</para>
++
++    <para><command>&dhcommand;</command> is a program that processes the output of
++    the therion command to generate the final PDF cave survey/map/atlas. It is a perl script.</para>
++    
++    <para><command>&dhpackage;</command> converts output files from Metapost 
++    (in EPS format) to PDF XObjects and writes PdfTeX objects.</para>
++     
++    <para>Four files are created:</para>
++    
++    <para><filename>th_fontdef.tex</filename>, <filename>th_formdef.tex</filename>, <filename>th_pagedef.tex</filename>
++    and <filename>th_pages.tex</filename>. To make an atlas, create a TeX file (e.g. 
++    <filename>main.tex</filename>, see EXAMPLES) in which you define appropriate
++    page dimensions and include the four files list above (in order), then process 
++    this file with PdfTeX (or PdfeTeX if you have a lot of scraps). </para>
++    
++    <para>A config file can specify additional options for thpdf. 
++    This file is looked for in the current directory and is called <filename>Config</filename>.
++    Details of the options are given in the CONFIG FILE section, below.</para>
++
++  </refsect1>
++  <refsect1>
++    <title>OPTIONS</title>
++
++    <para>Long-format options are not suppported.</para>
++
++
++    <variablelist>
++      <varlistentry>
++        <term><option>-q</option>
++        </term>
++        <listitem>
++          <para>Quick mode - thpdf uses the previously converted data (files 
++	<filename>th_fontdef.tex</filename> and <filename>th_formdef.tex</filename>).
++	The file <filename>th_hashdef</filename> from the previous run must be present 
++	too. This option cannot be used when Therion produces new Metapost files.</para>
++        </listitem>
++      </varlistentry>
++      <varlistentry>
++        <term><option>-m</option>
++        </term>
++        <listitem>
++          <para>Draws one (possibly large) map page instead of a multi-page atlas.</para>
++        </listitem>
++      </varlistentry>
++    </variablelist>
++  </refsect1>
++  <refsect1>
++    <title>EXAMPLES</title>
++    
++    <para>Here is an example <filename>main.tex</filename> file:
++      <literallayout>
++        \pdfpagewidth=21cm
++        \pdfpageheight=20cm
++        \hsize=20cm
++        \vsize=19.5cm
++        \hoffset=-2.04cm
++        \voffset=-2.04cm
++    
++        \pdfinfo {%
++            /Title (Closani Cave)
++            /Author (Fred Flinstone)
++        }
++    
++        \input th_fontdef
++        \input th_formdef
++        \input th_pagedef
++        \input th_pages
++
++        \end
++      </literallayout>
++    </para>
++  </refsect1>
++  <refsect1>
++    <title>CONFIG FILE</title>
++  
++  <para>The <filename>Config</filename> file specifies additional options for 
++  <command>thpdf</command>.</para>
++  
++  <para>Options for dimensions (dimension can be in points (pt), postscript 
++  points (bp), milimeters (mm), centimeters (cm), picas (pc), inches (in),
++   Didot's points (dd) and ciceros (cc)):</para>
++  <variablelist>
++    <varlistentry>
++     <term>Hsize:, Vsize:</term><listitem><para>horizontal and vertical size of the map sheet</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>Hoffset:, Voffset:</term><listitem><para>amount for shifting paper</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>Overlap:</term><listitem><para>width of an overlap to adjoining sheets</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>Hgrid:, Vgrid:</term><listitem><para>distances between grid lines</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>HgridOffset:, VgridOffset:</term><listitem><para>shifts the whole grid</para></listitem> 
++    </varlistentry>
++  </variablelist>
++  <para>Boolean options (true is 1, false 0 or empty string):</para>
++  <variablelist>
++    <varlistentry>
++     <term>Background:</term><listitem><para>if true, background of each page is filled gray</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>ExclPages:</term><listitem><para>if true, pages defined in <option>ExclList</option>
++         are excluded from atlas</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>TitlePages:</term><listitem><para>if true, title pages are printed before
++         new layer in atlas</para></listitem> 
++    </varlistentry>
++    <varlistentry>
++     <term>PageNumbering:</term><listitem><para>if true, page number of the page
++         and page numbers of adjoining pages are printed</para></listitem> 
++    </varlistentry>
++  </variablelist>
++  <para>Integer options:</para>
++  <variablelist>
++    <varlistentry>
++      <term>NavRight:</term><listitem><para>number of pages to right and left
++         shown in the Navigator window</para></listitem>
++    </varlistentry>
++    <varlistentry>
++      <term>NavUp:</term><listitem><para>the same for up and down directions</para></listitem>
++    </varlistentry>
++    <varlistentry>
++      <term>NavFactor:</term><listitem><para>scale factor main window : one navigator
++         window</para></listitem>
++    </varlistentry>	 
++    <varlistentry>
++      <term>OwnPages:</term><listitem><para>number of your own pages added to main tex file
++         before the first page of automatically generated maps 
++         (necessary for correct page numbering)</para></listitem>
++    </varlistentry>
++  </variablelist>
++  <para>Integer or string options:</para>
++  <variablelist>
++    <varlistentry>
++     <term>StartX:, StartY</term><listitem><para>name of the most upper-left sheet</para></listitem>
++    </varlistentry>
++  </variablelist>
++  <para>List options:</para>
++  <variablelist>
++    <varlistentry>
++     <term>ExclList:</term>
++     <listitem><para>pages which are omited; string may contain
++         numbers separated by comma or dash (for intervals) -- e.g.
++         2,4-7,9,23 means, that pages 2, 4, 5, 6, 7, 9 and 23 are omited.
++         Please don't change <option>TitlePages</option> and <option>OwnPages</option>
++         options without redefining <option>ExclList</option>. Hint: to find
++         correct numbers for pages that should be ommited,
++         set <option>ExclPages</option> false and specify correct <option>OwnPages</option>
++         and process your file with thpdf and pdftex. Correct page
++         numbers can be read in Acrobat Reader status line.</para>
++        </listitem>
++     </varlistentry>	
++  </variablelist>
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>therion (1), xtherion (1), theps2pdf (1), thconvert (1).</para>
++
++    <para>For full information see the Therion Manual in /usr/doc/therion/thbook 
++    which describes &dhpackage; and its use in detail.</para>
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++
++    <para>This manual page was written by &dhusername; &dhemail; for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
++
++
+--- therion-0.2.9.orig/debian/mantheps2pdf.sgml
++++ therion-0.2.9/debian/mantheps2pdf.sgml
+@@ -0,0 +1,166 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++
++    
++	The docbook-to-man binary is found in the docbook-to-man package.
++	Please remember that if you create the nroff version in one of the
++	debian/rules file targets (such as build), you will need to include
++	docbook-to-man in your Build-Depends control field.
++
++  -->
++
++  <!ENTITY dhsurname   "<surname>Wookey</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>December  25, 2002</date>">
++  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
++  <!ENTITY dhemail     "<email>wookey at debian.org</email>">
++  <!ENTITY dhusername  "Wookey">
++  <!ENTITY dhucpackage "<refentrytitle>THERION</refentrytitle>">
++  <!ENTITY dhpackage   "therion">
++  <!ENTITY dhcommand   "theps2pdf">
++
++  <!ENTITY debian      "<productname>Debian</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2002</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhcommand;</refname>
++
++    <refpurpose>converts therion PostScript to PDF commands</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhcommand;</command> <arg>dx</arg> <arg>dy</arg> <arg>mode</arg>
++      
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page documents
++      <command>&dhcommand;</command>, which is part of the &dhpackage; package.</para>
++
++    <para>It was created for the &debian; distribution from 
++    Martin Budaj's man-page-like HTML docs.</para>
++
++    <para><command>&dhcommand;</command> is a program that converts PostScript commands 
++    produced by MetaPost and preprocessed by thpdf to PDF. It is not intended to be called 
++    by the user - only by thpdf.</para>
++    
++    <para>Input is on stdin. Output is added to <filename>th_formdef.tex</filename> when 
++    processing forms (mode = 0), otherwise <filename>pat.tmp</filename> is (re)written.</para>
++    
++    
++  </refsect1>
++  <refsect1>
++    <title>ARGUMENTS</title>
++
++
++    <variablelist>
++      <varlistentry>
++        <term><option>dx</option></term>
++        <listitem>
++          <para>shift in x-axis for all co-ordinates.</para>
++        </listitem>
++      </varlistentry>
++      <varlistentry>
++        <term><option>dy</option></term>
++        <listitem>
++          <para>shift in y-axis for all co-ordinates.</para>
++        </listitem>
++      </varlistentry>
++      <varlistentry>
++        <term><option>mode</option></term>
++        <listitem>
++          <para>0 for forms, 1 for patterns.</para>
++        </listitem>
++      </varlistentry>
++    </variablelist>
++  </refsect1>
++
++  <refsect1>
++    <title>RESTRICTIONS</title>
++  
++  <para>&dhcommand; doesn't convert arbitrary Postscript files, only MetaPost
++   output (optionally postprocessed by the <command>mpattern</command> program for 
++   pattern addition).</para> 
++
++  <para>The conversion of two special cases is not yet supported:</para>
++   <itemizedlist>
++     <listitem><para>postscript <command>concat</command> operator when applied to other 
++         objects than texts</para></listitem>
++     <listitem><para>long postscript strings splitted in more lines</para></listitem>
++   </itemizedlist>
++   
++   <para>For long labels Therion uses the <command>btex...etex</command> construction,
++   so the second case never happens. Occurence of the first case
++   depends on the definitions of map symbols; if you don't transform
++   picture variables, it should never happen.</para>
++
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>therion (1), xtherion (1), thpdf (1), thconvert (1).</para>
++
++    <para>For full information see the Therion Manual in /usr/doc/therion/thbook 
++    which describes &dhpackage; and its use in detail.</para>
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++
++    <para>This manual page was written by &dhusername; &dhemail; for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
++
++
+--- therion-0.2.9.orig/debian/manthconvert.sgml
++++ therion-0.2.9/debian/manthconvert.sgml
+@@ -0,0 +1,132 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++
++    
++	The docbook-to-man binary is found in the docbook-to-man package.
++	Please remember that if you create the nroff version in one of the
++	debian/rules file targets (such as build), you will need to include
++	docbook-to-man in your Build-Depends control field.
++
++  -->
++
++  <!ENTITY dhsurname   "<surname>Wookey</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>March 9, 2003</date>">
++  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
++  <!ENTITY dhemail     "<email>wookey at debian.org</email>">
++  <!ENTITY dhusername  "Wookey">
++  <!ENTITY dhucpackage "<refentrytitle>THERION</refentrytitle>">
++  <!ENTITY dhpackage   "therion">
++  <!ENTITY dhcommand   "thconvert">
++
++  <!ENTITY debian      "<productname>Debian</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2003</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhcommand;</refname>
++
++    <refpurpose>Therion data update conversion script</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhcommand;</command>
++
++      
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page documents 
++      <command>&dhcommand;</command>, which is part of the &dhpackage; package.</para>
++
++    <para>This manual page was written for the &debian; distribution
++      because the original program does not have a manual page.</para>
++
++    <para><command>&dhcommand;</command> is a script that attempts to convert
++    from the data format used prior to &dhpackage; v0.2.6 to the data
++    format used from then on. It is written in perl.</para>
++    
++    <para>To use the script change directory to the directory containing your
++    &dhpackage; data. Then run &dhcommand;. It will recurse down the tree looking for 
++    \.th and \.th2 files and updating them. The files changed are listed followed by 
++    the number of lines changed in each file.</para>
++    
++    <para>The change was to the -station, -name and -id attributes. -name is replaced 
++    by -id, and -station is replaced by -name. This change is, unfortunately,  not compatible between
++    &dhpackage; versions so data must be converted. This is expected to be the last 
++    incompatible data format change in &dhpackage;.</para>
++     
++  </refsect1>
++  <refsect1>
++    <title>OPTIONS</title>
++
++    <para>&dhcommand; takes no options.</para>
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>therion (1), thpdf (1), theps2pdf (1), xtherion (1).</para>
++
++    <para>For full information see the Therion Manual in /usr/doc/therion/thbook 
++    which describes &dhpackage; and its use in detail.</para>
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++
++    <para>This manual page was written by &dhusername; &dhemail; for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
++
++
+
+From s.m at group-s.sk  Tue Mar 25 08:32:39 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 25 Mar 2003 08:32:39 +0100
+Subject: [therion-users] Packaging patches for 0.2.9-1
+References: <Marcel-1.50-0324185031-064h+Ty@chewy.aleph1.co.uk>
+Message-ID: <006301c2f2a1$80675fb0$2101a8c0@sm>
+
+> Hope this is useful.
+
+Thanx a lot. Currently we're preparing V0.2.10, where a lot of serious bugs
+are fixed. It's a very good idea to add there a man pages, I'll also check
+compiler switches and other things you mentioned.
+
+Putting therion on CVS server (and also applying more standards like
+automake etc...) would be good, but currently we see no need for it, until a
+serious amount of people will be intensively using and developing the
+therion (OK, serious amount is 10 people ;-).
+
+Otherwise we would rather focus on developement of functionality - because
+even if the current code is not the standard, it's portable and functional.
+The compilation warnings appears also in the standardized codes very often.
+
+And the second thing, even more important - we must focus on making therion
+accessible and usable for standard computer users! And those people again do
+not care of GNU standards... This implies writing a cook-book where a map
+creation will be described a very simple way and making Windows/MAC
+installation CD with all batteries included (TeX, Perl, Tcl/Tk and Survex).
+
+Thanks a lot for your support,
+
+S.
+
+
+
+
+

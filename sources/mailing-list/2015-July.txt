@@ -1,0 +1,1615 @@
+From andrew at wotcc.org.uk  Sat Jul 11 21:25:57 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 11 Jul 2015 20:25:57 +0100
+Subject: [Therion] Previews clipped by page boundarys
+Message-ID: <55A16DC5.1060205@wotcc.org.uk>
+
+Hi all
+
+In a map when using
+
+preview above/below MAP_Ref
+
+Is there a way to make sure that the preview part does not fall off
+(clipped) the page. I can fiddle it by adding extra stuff, legends etc,
+to make the page bigger, but it would be better if there was an option
+for this to be done automatically?
+
+thanks
+
+Andrew
+
+
+From andrew at wotcc.org.uk  Sat Jul 11 21:42:52 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 11 Jul 2015 20:42:52 +0100
+Subject: [Therion] Survey of a levelled maze
+Message-ID: <55A171BC.3090301@wotcc.org.uk>
+
+Hi all
+
+In sort of a follow up to my previous mail, I am trying to draw a plan
+(and elevation, soon) of a cave that is on many overlapping levels that
+are at about 40 degrees and obscure each other.
+
+One idea was to be able to draw each of the 4 levels with the other
+levels shown as previews, then have all 4 displaced from each other, so
+that the viewer could see how it fit together in context for this I tried
+
+map ReadsM
+  Reads1M
+  Reads2M [0 25 m] none
+  Reads3M [0 50 m] none
+  Reads4M [0 75 m] none
+endmap
+
+map Reads1M
+  Level1M #[0 25 m] none
+  preview below Level2M
+  preview above Level3M
+  preview above Level4M
+endmap
+
+map Reads2M
+  preview below Level1M
+  Level2M
+  preview above Level3M
+  preview above Level4M
+endmap
+
+map Reads3M
+  preview below Level1M
+  preview below Level2M
+  Level3M
+  preview above Level4M
+endmap
+
+map Reads4M
+  preview below Level1M
+  preview below Level2M
+  preview below Level3M
+  Level4M
+endmap
+
+But when the Reads2M, Reads3M and Reads4M maps are offset the previews
+are not shown
+
+The above is my preferred option, so getting that working would be best,
+but another option is just to offset all the maps  leaving only the previews
+
+map ReadsM
+  Level1M [0 25 m] below
+  Level2M [0 50 m] below
+  Level3M [0 75 m] below
+  Level4M [0 100 m] below
+endmap
+
+Which sort of works, but the previews fall off the page, and to get
+colour by map to work I need to select ReadsM -map-level 1 but then the
+previews are not shown, what am I doing wrong, how do I get the colours
+and the previews, help! Even better would be to get the previews the
+same colour as the maps, but that is probably not a function at the moment
+
+colour preview-below map
+
+would be a good option, that
+
+As a note; it turns out that [0 25 m] is in North/south and East/West
+direction not X Y of the page, which I can overcome with a bit of maths,
+but as this seems to be more of a page laying tool I would expect the
+latter.
+
+thanks
+
+Andrew
+
+
+From bruce at tomo.co.nz  Sat Jul 11 22:37:59 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 12 Jul 2015 08:37:59 +1200
+Subject: [Therion] Survey of a levelled maze
+In-Reply-To: <55A171BC.3090301@wotcc.org.uk>
+References: <55A171BC.3090301@wotcc.org.uk>
+Message-ID: <B91CD705789347AB98C1E07A2D4AED83@JUICEBRAIN>
+
+Me too!  I am very interested in resolving these issues.
+
+> But when the Reads2M, Reads3M and Reads4M maps are offset the previews
+are not shown.
+Is this something to do with 'map level' as described in Therion Book? - I
+have never been able to decipher or resolve however.
+
+
+> ...and to get colour by map to work I need to select ReadsM -map-level 1
+but then the previews are not shown ... how do I get the colours and the
+previews, help! Even better would be to get the previews the
+same colour as the maps...
+
+Both of these would be nice to resolve.
+Similarly perhaps, I have never ever managed to get;
+
+colour preview-above <colour> 
+
+to work.  I have a statement to make my preview above's magenta in my
+standard layout since 2010 so I will notice if it starts working with a new
+release. (colour preview-below works fine!)  If anyone has made colour
+preview-above work, please let me know - maybe I have a silly mistake :)
+
+
+> As a note; it turns out that [0 25 m] is in North/south and East/West
+direction not X Y of the page, which I can overcome with a bit of maths,
+but as this seems to be more of a page laying tool I would expect the
+latter.
+
+
+I sometimes use a variety (OK, two) map rotations for the same map
+definitions, and so have noticed this as well.  However as my offsets are
+often positioned to avoid neighbouring passages, it makes more sense for me
+to offset using cs coordinates rather than page coordinates (notwithstanding
+issues with label orientations and clashes).  This way the same map
+definition and offset can be used regardless of the rotate specification
+used for a particular export.
+The maths can be frustrating though, so ability to specify page or cs
+coordinates would be a nice touch.
+
+Bruce
+
+
+
+From andrew at wotcc.org.uk  Sat Jul 11 23:42:40 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 11 Jul 2015 22:42:40 +0100
+Subject: [Therion] Revise command for previews
+Message-ID: <55A18DD0.7010000@wotcc.org.uk>
+
+On page 31 of the thbook there is the very innocent line
+
+Use the revise command if you want to add maps from higher levels to the
+preview. This probably helps with one of my problems BUT
+
+Further reading of revise on pp33
+
+
+revise’
+Description: This command is used to set or change properties of an
+already existing
+object.
+Syntax: The syntax of this command for object created with “single line”
+command is
+revise id [-option1 value1 -option2 value2 ...]
+For objects created with “multi line” commands is syntax following
+revise id [-option1 value1 -option2 value2 ...]
+...
+optionX valueX
+data
+...
+endrevise
+Context: all
+Arguments:
+The id stands for object identifier (the id of an object you want to
+revise must always
+be specified).
+
+Sorry that is not getting me anywhere, could someone please give an
+example, preferably relating to the level of maps
+
+thanks
+
+Andrew
+
+PS I cannot get preview/offsets to work for projected elevations, should
+they, the thbooks seems to say any map!!
+
+
+From bruce at tomo.co.nz  Sun Jul 12 00:51:32 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 12 Jul 2015 10:51:32 +1200
+Subject: [Therion] Revise command for previews
+In-Reply-To: <55A18DD0.7010000@wotcc.org.uk>
+References: <55A18DD0.7010000@wotcc.org.uk>
+Message-ID: <FC4E838AF57C4B6589B61452A36941E6@JUICEBRAIN>
+
+Andrew 
+> I cannot get preview/offsets to work for projected elevations, should
+they, the thbooks seems to say any map!!
+
+See this earlier discussion thread
+http://article.gmane.org/gmane.comp.gis.therion/4203/match=level+preview+off
+set
+
+Elevation offsets should work fine, as the link above suggests and elevation
+previews have been problematic - I think I have had them working, but cannot
+remember for sure, sorry, too many tasks stacked up to want to go looking
+for examples at present.
+
+As for using revise to add maps of higher level.
+Since 2008 I have been searching for enlightenment!
+This search might be helpful in starting out on your quest...
+http://search.gmane.org/?query=revise+level+preview&author=&group=gmane.comp
+.gis.therion&sort=date&DEFAULTOP=and&xP=Zrevis%09Zpreview&xFILTERS=Gcomp.gis
+.therion---A 
+
+May the force be with you
+Bruce
+
+
+
+From bruce at tomo.co.nz  Sun Jul 12 07:44:08 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 12 Jul 2015 17:44:08 +1200
+Subject: [Therion] Revise command for previews
+In-Reply-To: <55A18DD0.7010000@wotcc.org.uk>
+References: <55A18DD0.7010000@wotcc.org.uk>
+Message-ID: <FCF657A81DFE4AA480800C1E1A2999C1@JUICEBRAIN>
+
+> I cannot get preview/offsets to work for projected elevations, should
+
+they, the thbooks seems to say any map!!
+
+ 
+
+So yes, I checked a projected elevation.
+
+Both offset and preview work OK, just like plan projections.
+
+The difficulty I recalled may have been associated with 'map-level'.
+
+ 
+
+ 
+
+In the diagram below, the shaded passage is 'preview below', and the outline
+is 'offset 100m above'.
+
+ 
+
+
+
+ 
+
+The definition is like this.
+
+map AblutionInceptionElev020Map \
+
+  -title "Greenlink System Elevation looking 020 deg" \
+
+  -projection [elevation 020 deg]
+
+   
+
+   #in front
+
+   JM-DigiPlusElev020 at MiddleEarth [000 100 m] above
+
+   IK-LuckyCowboyElev020 at MiddleEarth [000 100 m] above 
+
+   break
+
+   JG-TrainElev020 at MiddleEarth
+
+   .
+
+   break 
+
+   preview below IJ-CarpeDiemElev020 at MiddleEarth  
+
+   .
+
+endmap
+
+ 
+
+and in the th-config the map is invoked directly with 
+
+ 
+
+   select AblutionInceptionElev020Map
+
+ 
+
+Hope that helps
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150712/be65a850/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 30082 bytes
+Desc: image002.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150712/be65a850/attachment.jpg>
+
+From andrew at wotcc.org.uk  Sun Jul 12 11:51:29 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 12 Jul 2015 10:51:29 +0100
+Subject: [Therion] Previews in Projected elevations WAS:Revise command for
+	previews
+In-Reply-To: <FCF657A81DFE4AA480800C1E1A2999C1@JUICEBRAIN>
+References: <55A18DD0.7010000@wotcc.org.uk>
+	<FCF657A81DFE4AA480800C1E1A2999C1@JUICEBRAIN>
+Message-ID: <55A238A1.7040102@wotcc.org.uk>
+
+
+
+On 12/07/15 06:44, Bruce wrote:
+> The definition is like this…
+> 
+> map AblutionInceptionElev020Map \
+> 
+>   -title "Greenlink System Elevation looking 020 deg" \
+> 
+>   -projection [elevation 020 deg]
+> 
+>   
+> 
+>    #in front
+> 
+>    JM-DigiPlusElev020 at MiddleEarth [000 100 m] above
+> 
+>    IK-LuckyCowboyElev020 at MiddleEarth [000 100 m] above
+> 
+>    break
+> 
+>    JG-TrainElev020 at MiddleEarth
+> 
+>    …
+> 
+>    break
+> 
+>    preview below IJ-CarpeDiemElev020 at MiddleEarth 
+> 
+>    …
+> 
+> endmap
+> 
+>  
+> 
+> and in the th-config the map is invoked directly with
+> 
+>  
+> 
+>    select AblutionInceptionElev020Map
+> 
+>  
+> 
+> Hope that helps
+> 
+
+Yes I have got it to work with projections, with similar problems to
+solve to plan now, I had missed out the -proj [] on the map which seemed
+to break the previews, and using your example to check what I had done,
+along with knowing it worked, got me through, now to the other problems
+
+thanks
+
+Andrew
+
+
+From Nick at pff.uk.com  Tue Jul 14 20:42:00 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Tue, 14 Jul 2015 19:42:00 +0100
+Subject: [Therion] Additions To Pocket Topo Data
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+
+Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and draw up the survey and then go back to the cave and add more stuff to the original topo file using say the continue here option is it possible to somehow easily get/replace the amended topo data into the original .th2 file and retain the scrap work already done or do I have to create a new survey. Obviously I can amend the .th with a text editor.
+I sometimes find myself waiting to draw things up whilst I get time to go back to get the last bits of the survey done so everything is in one file and I don't have to join it all together.
+Sorry if this is a bit of a stupid question but if you don't ask you never find out.
+
+Nick Bairstow
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150714/acb30ba8/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Jul 14 22:05:26 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 15 Jul 2015 08:05:26 +1200
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+Message-ID: <365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+
+Nick
+
+I don't know the answer to your question.  I have always created a new .top
+file for a new day or new survey segment (separated from previous survey
+legs that day).  Hence I am careful not to leave any small or isolated bits
+of passage unsurveyed, to avoid future tiny surveys!
+
+Joining together is easy, and so it is a strength of the method that there
+is no need to wait until you have finished surveying.  Complete your Therion
+centerline and drawing at the end of each day!
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Nick Bairstow
+Sent: Wednesday, 15 July 2015 6:42 a.m.
+To: 'List for Therion users'
+Subject: [Therion] Additions To Pocket Topo Data
+
+ 
+
+Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and draw
+up the survey and then go back to the cave and add more stuff to the
+original topo file using say the continue here option is it possible to
+somehow easily get/replace the amended topo data into the original .th2 file
+and retain the scrap work already done or do I have to create a new survey.
+Obviously I can amend the .th with a text editor.
+
+I sometimes find myself waiting to draw things up whilst I get time to go
+back to get the last bits of the survey done so everything is in one file
+and I don't have to join it all together.
+
+Sorry if this is a bit of a stupid question but if you don't ask you never
+find out.
+
+ 
+
+Nick Bairstow
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150715/8c15e3c0/attachment.htm>
+
+From andrew at wotcc.org.uk  Wed Jul 15 10:13:38 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 15 Jul 2015 09:13:38 +0100
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+Message-ID: <55A61632.7010404@wotcc.org.uk>
+
+Nick
+
+I have written topParser, following what I do, with a little adaptation
+for other methods that I know about when people ask me.
+
+I try to strctly follow the one survey trip, one file methodology, so
+what you are trying to do is not implemented, and to be truthful it
+would be very hard to do, I think.
+
+I would suggest that organising files by surveys trip (A caving trip to
+survey 2 parts of a cave counts as 2 trips, as starting a survey and
+going back to the same spot) The reason that I do this is although it
+looks very verbose at the start, as projects become large it actually
+makes data organisation easier. Mixing data can lead to difficulties
+latter, the obvious problem is that if the instrument is in different
+calibration, or worse out of calibration, this might not be discovered
+until later, say when a look is closed, it is easier to find and remove
+these sort of things if they are grouped together. There are probably
+many ways to do this sort of thing, I find this works for me.
+As Bruce said joining is easy, so long as the sketches are not joined on
+a junction and when you get further into the power of therion, you will
+probably find that more smaller sections with joins is what you want, I
+have certainly found myself having to go back and split scraps up to get
+to some final outputs.
+
+However, if you really want to amend a drawing, for things like going
+back and adding more detail to an existing top file, the th2 can be
+generated, this also generates an xvi file which is the underlying
+drawing. This can then be imported into your th2 file, either through
+the front end or in a text editor. Guess I could add an option only to
+generate the xvi files, which should help and is reasonably easy. I will
+add it to the todo list.
+Amending an existing th file automatically is the sort of thing that
+could lead to all sorts of trouble and is way beyond the simplicity of
+topParser. I would say that manually doing it is the best option, best
+method is probably to generate the new th file and as you say paste over
+the relevant bits manually
+
+Andrew
+
+On 14/07/15 21:05, Bruce wrote:
+> Nick
+> 
+> I don’t know the answer to your question.  I have always created a new
+> .top file for a new day or new survey segment (separated from previous
+> survey legs that day).  Hence I am careful not to leave any small or
+> isolated bits of passage unsurveyed, to avoid future tiny surveys!
+> 
+> Joining together is easy, and so it is a strength of the method that
+> there is no need to wait until you have finished surveying.  Complete
+> your Therion centerline and drawing at the end of each day!
+> 
+>  
+> 
+> Bruce
+> 
+>  
+> 
+> ------------------------------------------------------------------------
+> 
+> *From:*therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Nick Bairstow
+> *Sent:* Wednesday, 15 July 2015 6:42 a.m.
+> *To:* 'List for Therion users'
+> *Subject:* [Therion] Additions To Pocket Topo Data
+> 
+>  
+> 
+> Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and
+> draw up the survey and then go back to the cave and add more stuff to
+> the original topo file using say the continue here option is it possible
+> to somehow easily get/replace the amended topo data into the original
+> .th2 file and retain the scrap work already done or do I have to create
+> a new survey. Obviously I can amend the .th with a text editor.
+> 
+> I sometimes find myself waiting to draw things up whilst I get time to
+> go back to get the last bits of the survey done so everything is in one
+> file and I don’t have to join it all together.
+> 
+> Sorry if this is a bit of a stupid question but if you don’t ask you
+> never find out.
+> 
+>  
+> 
+> Nick Bairstow
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From martinsluka at mac.com  Wed Jul 15 10:14:51 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 15 Jul 2015 10:14:51 +0200
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+Message-ID: <55932E8D-3DAB-4169-894A-2BB53D086EB0@mac.com>
+
+Hi,
+
+Therion’s idea is that a survey on base level is something as documentation of one survey trip. Including log, etc.
+
+PocketTopo will connect automatically all .top files in one folder. Than file you actually survey should be editable, another ones not.
+
+m.s.
+
+> 14. 7. 2015 v 20:42, Nick Bairstow <Nick at pff.uk.com>:
+> 
+> Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and draw up the survey and then go back to the cave and add more stuff to the original topo file using say the continue here option is it possible to somehow easily get/replace the amended topo data into the original .th2 file and retain the scrap work already done or do I have to create a new survey. Obviously I can amend the .th with a text editor.
+> I sometimes find myself waiting to draw things up whilst I get time to go back to get the last bits of the survey done so everything is in one file and I don’t have to join it all together.
+> Sorry if this is a bit of a stupid question but if you don’t ask you never find out.
+>  
+> Nick Bairstow
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150715/fa14c07d/attachment.htm>
+
+From martinsluka at mac.com  Wed Jul 15 10:31:00 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 15 Jul 2015 10:31:00 +0200
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <55A61632.7010404@wotcc.org.uk>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+	<55A61632.7010404@wotcc.org.uk>
+Message-ID: <BCBD136F-EC2B-46C0-9EB8-744FC0AB4004@mac.com>
+
+Thanks for explanation.
+
+Nick,
+
+in there are structures of survey and maps absolutely independent. So there is not necessary to have all survey data in one .th file. You may connect them in survey in upper level.
+
+For me the idea structure is:
+
+survey trip_1 #survey on base level
+input trip_1_plan.th2
+data
+…
+enddata
+
+map trip_1.map
+   trip_1_scrap_1
+endmap
+endsurvey
+
+survey small_cave #survey defining of all cave
+input trip_1
+input trip_2
+…
+map small_cave.map
+   trip_1.map at trip_1
+   trip_2.map at trip_2
+   …
+endmap
+
+map small_cave_connection_only #definition of another map
+   trip_1_scrap_1 at trip_1
+   trip_3_scrap_2 at trip_3
+endmap
+endsurvey
+
+Advantage of this structure is you may named stations a1, a2, a3, …. and never renamed them in upper levels of survey. Much better than on level 1 renamed them to a1 at trip_1. You may check your export PDF for one scrap and use the same data if you check the plan of overall cave.
+
+I hope it is clear for you
+
+Martin
+
+
+> 15. 7. 2015 v 10:13, Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> Nick
+> 
+> I have written topParser, following what I do, with a little adaptation
+> for other methods that I know about when people ask me.
+> 
+> I try to strctly follow the one survey trip, one file methodology, so
+> what you are trying to do is not implemented, and to be truthful it
+> would be very hard to do, I think.
+> 
+> I would suggest that organising files by surveys trip (A caving trip to
+> survey 2 parts of a cave counts as 2 trips, as starting a survey and
+> going back to the same spot) The reason that I do this is although it
+> looks very verbose at the start, as projects become large it actually
+> makes data organisation easier. Mixing data can lead to difficulties
+> latter, the obvious problem is that if the instrument is in different
+> calibration, or worse out of calibration, this might not be discovered
+> until later, say when a look is closed, it is easier to find and remove
+> these sort of things if they are grouped together. There are probably
+> many ways to do this sort of thing, I find this works for me.
+> As Bruce said joining is easy, so long as the sketches are not joined on
+> a junction and when you get further into the power of therion, you will
+> probably find that more smaller sections with joins is what you want, I
+> have certainly found myself having to go back and split scraps up to get
+> to some final outputs.
+> 
+> However, if you really want to amend a drawing, for things like going
+> back and adding more detail to an existing top file, the th2 can be
+> generated, this also generates an xvi file which is the underlying
+> drawing. This can then be imported into your th2 file, either through
+> the front end or in a text editor. Guess I could add an option only to
+> generate the xvi files, which should help and is reasonably easy. I will
+> add it to the todo list.
+> Amending an existing th file automatically is the sort of thing that
+> could lead to all sorts of trouble and is way beyond the simplicity of
+> topParser. I would say that manually doing it is the best option, best
+> method is probably to generate the new th file and as you say paste over
+> the relevant bits manually
+> 
+> Andrew
+> 
+> On 14/07/15 21:05, Bruce wrote:
+>> Nick
+>> 
+>> I don’t know the answer to your question.  I have always created a new
+>> .top file for a new day or new survey segment (separated from previous
+>> survey legs that day).  Hence I am careful not to leave any small or
+>> isolated bits of passage unsurveyed, to avoid future tiny surveys!
+>> 
+>> Joining together is easy, and so it is a strength of the method that
+>> there is no need to wait until you have finished surveying.  Complete
+>> your Therion centerline and drawing at the end of each day!
+>> 
+>> 
+>> 
+>> Bruce
+>> 
+>> 
+>> 
+>> ------------------------------------------------------------------------
+>> 
+>> *From:*therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+>> Behalf Of *Nick Bairstow
+>> *Sent:* Wednesday, 15 July 2015 6:42 a.m.
+>> *To:* 'List for Therion users'
+>> *Subject:* [Therion] Additions To Pocket Topo Data
+>> 
+>> 
+>> 
+>> Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and
+>> draw up the survey and then go back to the cave and add more stuff to
+>> the original topo file using say the continue here option is it possible
+>> to somehow easily get/replace the amended topo data into the original
+>> .th2 file and retain the scrap work already done or do I have to create
+>> a new survey. Obviously I can amend the .th with a text editor.
+>> 
+>> I sometimes find myself waiting to draw things up whilst I get time to
+>> go back to get the last bits of the survey done so everything is in one
+>> file and I don’t have to join it all together.
+>> 
+>> Sorry if this is a bit of a stupid question but if you don’t ask you
+>> never find out.
+>> 
+>> 
+>> 
+>> Nick Bairstow
+>> 
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From Nick at pff.uk.com  Thu Jul 16 12:35:49 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Thu, 16 Jul 2015 11:35:49 +0100
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <55A61632.7010404@wotcc.org.uk>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+	<55A61632.7010404@wotcc.org.uk>
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9E@PFFSERVER.pff.local>
+
+Ok, thanks for all the advice. It makes perfect sense to keep surveys separate rather than just adding to an older one. I do find that on some of my first surveys I missed detail I needed which is one of the reasons I asked this question but as you correctly said Andrew I can import a new xvi file. I didn't realise you could do this so once I work out how to position it correctly this should work OK. The .th I can do in a text editor. 
+So the lesson learnt here is improve my technique/workflow, get a system going and stick to it this then should avoid having to do the above.  
+
+Thanks again everybody,
+
+Nick.
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Andrew Atkinson
+Sent: 15 July 2015 09:14
+To: therion at speleo.sk
+Subject: Re: [Therion] Additions To Pocket Topo Data
+
+Nick
+
+I have written topParser, following what I do, with a little adaptation
+for other methods that I know about when people ask me.
+
+I try to strctly follow the one survey trip, one file methodology, so
+what you are trying to do is not implemented, and to be truthful it
+would be very hard to do, I think.
+
+I would suggest that organising files by surveys trip (A caving trip to
+survey 2 parts of a cave counts as 2 trips, as starting a survey and
+going back to the same spot) The reason that I do this is although it
+looks very verbose at the start, as projects become large it actually
+makes data organisation easier. Mixing data can lead to difficulties
+latter, the obvious problem is that if the instrument is in different
+calibration, or worse out of calibration, this might not be discovered
+until later, say when a look is closed, it is easier to find and remove
+these sort of things if they are grouped together. There are probably
+many ways to do this sort of thing, I find this works for me.
+As Bruce said joining is easy, so long as the sketches are not joined on
+a junction and when you get further into the power of therion, you will
+probably find that more smaller sections with joins is what you want, I
+have certainly found myself having to go back and split scraps up to get
+to some final outputs.
+
+However, if you really want to amend a drawing, for things like going
+back and adding more detail to an existing top file, the th2 can be
+generated, this also generates an xvi file which is the underlying
+drawing. This can then be imported into your th2 file, either through
+the front end or in a text editor. Guess I could add an option only to
+generate the xvi files, which should help and is reasonably easy. I will
+add it to the todo list.
+Amending an existing th file automatically is the sort of thing that
+could lead to all sorts of trouble and is way beyond the simplicity of
+topParser. I would say that manually doing it is the best option, best
+method is probably to generate the new th file and as you say paste over
+the relevant bits manually
+
+Andrew
+
+On 14/07/15 21:05, Bruce wrote:
+> Nick
+> 
+> I don't know the answer to your question.  I have always created a new
+> .top file for a new day or new survey segment (separated from previous
+> survey legs that day).  Hence I am careful not to leave any small or
+> isolated bits of passage unsurveyed, to avoid future tiny surveys!
+> 
+> Joining together is easy, and so it is a strength of the method that
+> there is no need to wait until you have finished surveying.  Complete
+> your Therion centerline and drawing at the end of each day!
+> 
+>  
+> 
+> Bruce
+> 
+>  
+> 
+> ------------------------------------------------------------------------
+> 
+> *From:*therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Nick Bairstow
+> *Sent:* Wednesday, 15 July 2015 6:42 a.m.
+> *To:* 'List for Therion users'
+> *Subject:* [Therion] Additions To Pocket Topo Data
+> 
+>  
+> 
+> Hi, If I bring Pocket Topo data/sketch into Therion with Top Parser and
+> draw up the survey and then go back to the cave and add more stuff to
+> the original topo file using say the continue here option is it possible
+> to somehow easily get/replace the amended topo data into the original
+> .th2 file and retain the scrap work already done or do I have to create
+> a new survey. Obviously I can amend the .th with a text editor.
+> 
+> I sometimes find myself waiting to draw things up whilst I get time to
+> go back to get the last bits of the survey done so everything is in one
+> file and I don't have to join it all together.
+> 
+> Sorry if this is a bit of a stupid question but if you don't ask you
+> never find out.
+> 
+>  
+> 
+> Nick Bairstow
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From andrew at wotcc.org.uk  Thu Jul 16 19:33:41 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 16 Jul 2015 18:33:41 +0100
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9E@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>	<55A61632.7010404@wotcc.org.uk>
+	<23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9E@PFFSERVER.pff.local>
+Message-ID: <55A7EAF5.5090701@wotcc.org.uk>
+
+
+
+On 16/07/15 11:35, Nick Bairstow wrote:
+> Ok, thanks for all the advice. It makes perfect sense to keep surveys separate rather than just adding to an older one. I do find that on some of my first surveys I missed detail I needed which is one of the reasons I asked this question but as you correctly said Andrew I can import a new xvi file. I didn't realise you could do this so once I work out how to position it correctly this should work OK.
+
+I think that just replacing the original xvi with the new xvi
+(overwriting) you will find that it is in the same position, if it has
+been generated by topParser, it picks the first station as 0, 0 and that
+should not change if you are just adding more detail. Not actually tried
+it, don't forget backups :-)
+
+Andrew
+
+
+
+From martinsluka at mac.com  Fri Jul 17 07:19:03 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 17 Jul 2015 07:19:03 +0200
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <55A7EAF5.5090701@wotcc.org.uk>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+	<55A61632.7010404@wotcc.org.uk>
+	<23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9E@PFFSERVER.pff.local>
+	<55A7EAF5.5090701@wotcc.org.uk>
+Message-ID: <D2154B8A-CF6C-448A-95BA-187AA19621F7@mac.com>
+
+
+> 16. 7. 2015 v 19:33, Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> I think that just replacing the original xvi with the new xvi
+> (overwriting) you will find that it is in the same position, if it has
+> been generated by topParser, it picks the first station as 0, 0 and that
+> should not change if you are just adding more detail. Not actually tried
+> it, don't forget backups :-)
+
+Anyway, in right side menu of xterion map editor are fields with coordinates of left-bottom corner of particular image. You may edit these coordinates manually to place any background image to correct position. 
+
+BTW, there are several such fields in map editor. Check them, they could be useful.
+
+m.s.
+
+From Nick at pff.uk.com  Fri Jul 17 12:19:44 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Fri, 17 Jul 2015 11:19:44 +0100
+Subject: [Therion] Additions To Pocket Topo Data
+In-Reply-To: <D2154B8A-CF6C-448A-95BA-187AA19621F7@mac.com>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF97@PFFSERVER.pff.local>
+	<365B2EAD832E42C89C003D68D0CB1EF3@JUICEBRAIN>
+	<55A61632.7010404@wotcc.org.uk>
+	<23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9E@PFFSERVER.pff.local>
+	<55A7EAF5.5090701@wotcc.org.uk>
+	<D2154B8A-CF6C-448A-95BA-187AA19621F7@mac.com>
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79CEF9F@PFFSERVER.pff.local>
+
+Yes, I found the field in the map editor where you can import xvi files. The one I tried did not come in at 0,0 though maybe because I still had the original file in the editor as well but as Martin says it's easy to change the coordinates here. A bit more experimentation this weekend should sort this. 
+
+Nick.
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Sluka
+Sent: 17 July 2015 06:19
+To: List for Therion users
+Subject: Re: [Therion] Additions To Pocket Topo Data
+
+
+> 16. 7. 2015 v 19:33, Andrew Atkinson <andrew at wotcc.org.uk>:
+> 
+> I think that just replacing the original xvi with the new xvi
+> (overwriting) you will find that it is in the same position, if it has
+> been generated by topParser, it picks the first station as 0, 0 and that
+> should not change if you are just adding more detail. Not actually tried
+> it, don't forget backups :-)
+
+Anyway, in right side menu of xterion map editor are fields with coordinates of left-bottom corner of particular image. You may edit these coordinates manually to place any background image to correct position. 
+
+BTW, there are several such fields in map editor. Check them, they could be useful.
+
+m.s.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From Nick at pff.uk.com  Sat Jul 18 16:58:28 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Sat, 18 Jul 2015 15:58:28 +0100
+Subject: [Therion] Projected Elevation Output
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79E9816@PFFSERVER.pff.local>
+
+I am trying to draw a 90 degree elevation. All seems well but the PDF output shows the topo survey as shown in the .th2 file background and not the walls etc that I have drawn.
+I can't find any reference to this problem in the available information or archives and after 2 hours have decided to go for beer. I'm obviously missing something anyone got any ideas.
+The extended elevation works perfectly.
+
+Nick.
+
+From Xavier.Pennec at inria.fr  Sat Jul 18 17:50:37 2015
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Sat, 18 Jul 2015 17:50:37 +0200
+Subject: [Therion] Projected Elevation Output
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79E9816@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79E9816@PFFSERVER.pff.local>
+Message-ID: <55AA75CD.2090604@inria.fr>
+
+It seems that therion does not recognize your scrap as an "[elevation 
+90]" that it can draw.
+Did you took care of specifying "-projection [elevation 90]" in the scrap?
+
+Xavier
+
+Le 18/07/2015 16:58, Nick Bairstow a écrit :
+> I am trying to draw a 90 degree elevation. All seems well but the PDF output shows the topo survey as shown in the .th2 file background and not the walls etc that I have drawn.
+> I can't find any reference to this problem in the available information or archives and after 2 hours have decided to go for beer. I'm obviously missing something anyone got any ideas.
+> The extended elevation works perfectly.
+>
+> Nick.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+
+
+From bruce at tomo.co.nz  Sun Jul 19 06:13:21 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 19 Jul 2015 16:13:21 +1200
+Subject: [Therion] Projected Elevation Output
+Message-ID: <A0562C822BDB4E30B1D051078B9E75EF@JUICEBRAIN>
+
+Further to Xavier's comment...
+
+ 
+
+All the (relevant) elevation scraps, maps and exports will need to have 
+
+-projection [elevation 90]
+
+as part of their definition.
+
+(If you just specify "-projection elevation" then Therion will default to an
+elevation looking 0 deg, or north for that object)
+
+ 
+
+Many versions back I discovered that the direction must be specified exactly
+the same way in each scrap, map and export definition, I presume it is still
+the case.
+
+ 
+
+ie -projection [elevation 90] is not recognised by Therion as the same as 
+
+-projection [elevation 090], and so this can be a reason why some scraps or
+maps are dropped from an export.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150719/127c12cb/attachment.htm>
+
+From Nick at pff.uk.com  Sun Jul 19 12:52:19 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Sun, 19 Jul 2015 11:52:19 +0100
+Subject: [Therion] Projected Elevation Output
+In-Reply-To: <A0562C822BDB4E30B1D051078B9E75EF@JUICEBRAIN>
+References: <A0562C822BDB4E30B1D051078B9E75EF@JUICEBRAIN>
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FA79E9817@PFFSERVER.pff.local>
+
+That fixed it thank you. I changed the export line of the config file to -proj [elevation 90]. Fairly obvious when you look at it.
+
+Nick.
+________________________________________
+From: therion-bounces at speleo.sk [therion-bounces at speleo.sk] On Behalf Of Bruce [bruce at tomo.co.nz]
+Sent: Sunday, July 19, 2015 5:13 AM
+To: 'List for Therion users'
+Subject: Re: [Therion] Projected Elevation Output
+
+Further to Xavier's comment...
+
+All the (relevant) elevation scraps, maps and exports will need to have
+-projection [elevation 90]
+as part of their definition.
+(If you just specify "-projection elevation" then Therion will default to an elevation looking 0 deg, or north for that object)
+
+Many versions back I discovered that the direction must be specified exactly the same way in each scrap, map and export definition, I presume it is still the case.
+
+ie -projection [elevation 90] is not recognised by Therion as the same as
+-projection [elevation 090], and so this can be a reason why some scraps or maps are dropped from an export.
+
+Bruce
+
+
+From Nick at pff.uk.com  Mon Jul 27 18:34:00 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Mon, 27 Jul 2015 17:34:00 +0100
+Subject: [Therion] KML Issues
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+
+My "export model -o ##NAME##.kml" exports work fine but "export map -o ##NAME##.kml" sometimes works perfectly but other times I get small pieces/part of a cave missing.
+I have checked for walls/pillars with the tick mark the wrong way round and all look OK. I notice that other people have had issues with this a while back and even noticed that Andrew stopped using kml output. In all cases the compile runs with no warnings and the pdf output is fine.
+Am I wasting my time, is there a better way to get similar results.
+Also on the "model" outputs is there a way to show just centreline and not the splays, I see this question has been asked before but I could not see an answer.
+I really quite like the kml outputs as you can get the evenings survey into Google earth before the first pints half way down whist sat in the pub afterwards -not always 100% positioned at this point but it still looks good -
+
+Nick.
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150727/c91fe9f0/attachment.htm>
+
+From andrew at wotcc.org.uk  Mon Jul 27 18:45:47 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 27 Jul 2015 17:45:47 +0100
+Subject: [Therion] KML Issues
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+Message-ID: <CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com>
+
+On 27 Jul 2015 5:34 pm, "Nick Bairstow" <Nick at pff.uk.com> wrote:
+>
+
+>
+> I have checked for walls/pillars with the tick mark the wrong way round
+and all look OK. I notice that other people have had issues with this a
+while back and even noticed that Andrew stopped using kml output. In all
+cases the compile runs with no warnings and the pdf output is fine.
+>
+I have not stopped, just googlemaps got rid of the easy way to put kml on,
+by embedding the links. They are more fussy than pdf, bug looks like you
+have checked for the right things. Sometimes you need to close the end of a
+scrap with an invisible wall for the algorithm to work, this was a solution
+to a previous email thread I started on loc models, but it seems to apply
+to kml as well. Currently I am away with limited tech so cannot find the
+thread, hopefully someone else  will help you with the rest, otherwise I
+will in 10days or so
+
+Andrew
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150727/4a0b4dbe/attachment.htm>
+
+From marco.corvi at gmail.com  Mon Jul 27 20:50:12 2015
+From: marco.corvi at gmail.com (Marco Corvi)
+Date: Mon, 27 Jul 2015 20:50:12 +0200
+Subject: [Therion] KML Issues
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+Message-ID: <CAJiQYo2KKaf+0JchYJDUQCXvK_Dtcdzm2HypMqCwF72xLohqdg@mail.gmail.com>
+
+hi nick,
+there is the option"-disable splay-shots":
+seems to work for kml exports.
+
+marco
+
+On 7/27/15, Nick Bairstow <Nick at pff.uk.com> wrote:
+> My "export model -o ##NAME##.kml" exports work fine but "export map -o
+> ##NAME##.kml" sometimes works perfectly but other times I get small
+> pieces/part of a cave missing.
+> I have checked for walls/pillars with the tick mark the wrong way round and
+> all look OK. I notice that other people have had issues with this a while
+> back and even noticed that Andrew stopped using kml output. In all cases the
+> compile runs with no warnings and the pdf output is fine.
+> Am I wasting my time, is there a better way to get similar results.
+> Also on the "model" outputs is there a way to show just centreline and not
+> the splays, I see this question has been asked before but I could not see an
+> answer.
+> I really quite like the kml outputs as you can get the evenings survey into
+> Google earth before the first pints half way down whist sat in the pub
+> afterwards -not always 100% positioned at this point but it still looks good
+> -
+>
+> Nick.
+>
+>
+>
+>
+
+
+From bruce at tomo.co.nz  Mon Jul 27 21:38:31 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 28 Jul 2015 07:38:31 +1200
+Subject: [Therion] KML Issues
+In-Reply-To: <CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+	<CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com>
+Message-ID: <F13F09931BF64A45B90CA3CAEE396AE9@JUICEBRAIN>
+
+Nick
+
+Check this wiki entry
+http://therion.speleo.sk/wiki/doku.php/tips#avoiding_invisible_or_misshapen_
+scraps_in_loch_and_google_earth
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Andrew Atkinson
+Sent: Tuesday, 28 July 2015 4:46 a.m.
+To: Therion
+Subject: Re: [Therion] KML Issues
+
+ 
+
+
+On 27 Jul 2015 5:34 pm, "Nick Bairstow" <Nick at pff.uk.com> wrote:
+>
+
+>
+> I have checked for walls/pillars with the tick mark the wrong way round
+and all look OK. I notice that other people have had issues with this a
+while back and even noticed that Andrew stopped using kml output. In all
+cases the compile runs with no warnings and the pdf output is fine.
+>
+I have not stopped, just googlemaps got rid of the easy way to put kml on,
+by embedding the links. They are more fussy than pdf, bug looks like you
+have checked for the right things. Sometimes you need to close the end of a
+scrap with an invisible wall for the algorithm to work, this was a solution
+to a previous email thread I started on loc models, but it seems to apply to
+kml as well. Currently I am away with limited tech so cannot find the
+thread, hopefully someone else  will help you with the rest, otherwise I
+will in 10days or so
+
+Andrew
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150728/a4e34cc8/attachment.htm>
+
+From Nick at pff.uk.com  Tue Jul 28 12:18:19 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Tue, 28 Jul 2015 11:18:19 +0100
+Subject: [Therion] KML Issues
+In-Reply-To: <F13F09931BF64A45B90CA3CAEE396AE9@JUICEBRAIN>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+	<CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com>
+	<F13F09931BF64A45B90CA3CAEE396AE9@JUICEBRAIN>
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F7@PFFSERVER.pff.local>
+
+I will use my worst kml map export and trim it back to just walls to simplify it. I will experiment with closing passage ends etc as there are several on this map and see what happens. I shall report back.
+
+Nick.
+
+
+________________________________
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce
+Sent: 27 July 2015 20:39
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+Nick
+Check this wiki entry http://therion.speleo.sk/wiki/doku.php/tips#avoiding_invisible_or_misshapen_scraps_in_loch_and_google_earth
+
+Bruce
+
+________________________________
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Andrew Atkinson
+Sent: Tuesday, 28 July 2015 4:46 a.m.
+To: Therion
+Subject: Re: [Therion] KML Issues
+
+
+On 27 Jul 2015 5:34 pm, "Nick Bairstow" <Nick at pff.uk.com<mailto:Nick at pff.uk.com>> wrote:
+>
+
+>
+> I have checked for walls/pillars with the tick mark the wrong way round and all look OK. I notice that other people have had issues with this a while back and even noticed that Andrew stopped using kml output. In all cases the compile runs with no warnings and the pdf output is fine.
+>
+I have not stopped, just googlemaps got rid of the easy way to put kml on, by embedding the links. They are more fussy than pdf, bug looks like you have checked for the right things. Sometimes you need to close the end of a scrap with an invisible wall for the algorithm to work, this was a solution to a previous email thread I started on loc models, but it seems to apply to kml as well. Currently I am away with limited tech so cannot find the thread, hopefully someone else  will help you with the rest, otherwise I will in 10days or so
+
+Andrew
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150728/ca086e93/attachment.htm>
+
+From Nick at pff.uk.com  Tue Jul 28 13:25:58 2015
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Tue, 28 Jul 2015 12:25:58 +0100
+Subject: [Therion] KML Issues
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F7@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local>
+	<CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com>
+	<F13F09931BF64A45B90CA3CAEE396AE9@JUICEBRAIN>
+	<23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F7@PFFSERVER.pff.local>
+Message-ID: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F9@PFFSERVER.pff.local>
+
+Right, things I found.
+Firstly I found a sneaky boulder which had been drawn with a wall line. I now know about the search and select function in the map editor this is clearly very useful for checking feature types and it will be in regular use from now on.
+I found a pillar without the -outside in option on.
+With these two things corrected the kml output was nearly there I just had a few strange shapes to certain bits of the map so next I looked at the open passages. I put extra wall lines across the open ends one at a time and this sorted the strange shapes but doing this showed that not all open passage ends caused a problem some rendered fine with a straight edge between the two wall ends. It was obvious which open ends caused problems as these were the origin points of the strange additional shapes.
+Feeling quite pleased with myself now, just the other 4/5 th2's to sort out to get a nice Google earth image of the system so far.
+
+Thanks
+
+Nick.
+
+________________________________
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Nick Bairstow
+Sent: 28 July 2015 11:18
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+I will use my worst kml map export and trim it back to just walls to simplify it. I will experiment with closing passage ends etc as there are several on this map and see what happens. I shall report back.
+
+Nick.
+
+
+________________________________
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce
+Sent: 27 July 2015 20:39
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+Nick
+Check this wiki entry http://therion.speleo.sk/wiki/doku.php/tips#avoiding_invisible_or_misshapen_scraps_in_loch_and_google_earth
+
+Bruce
+
+________________________________
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Andrew Atkinson
+Sent: Tuesday, 28 July 2015 4:46 a.m.
+To: Therion
+Subject: Re: [Therion] KML Issues
+
+
+On 27 Jul 2015 5:34 pm, "Nick Bairstow" <Nick at pff.uk.com<mailto:Nick at pff.uk.com>> wrote:
+>
+
+>
+> I have checked for walls/pillars with the tick mark the wrong way round and all look OK. I notice that other people have had issues with this a while back and even noticed that Andrew stopped using kml output. In all cases the compile runs with no warnings and the pdf output is fine.
+>
+I have not stopped, just googlemaps got rid of the easy way to put kml on, by embedding the links. They are more fussy than pdf, bug looks like you have checked for the right things. Sometimes you need to close the end of a scrap with an invisible wall for the algorithm to work, this was a solution to a previous email thread I started on loc models, but it seems to apply to kml as well. Currently I am away with limited tech so cannot find the thread, hopefully someone else  will help you with the rest, otherwise I will in 10days or so
+
+Andrew
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150728/9a028ce4/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Jul 28 21:40:48 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 29 Jul 2015 07:40:48 +1200
+Subject: [Therion] KML Issues
+In-Reply-To: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F9@PFFSERVER.pff.local>
+References: <23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F6@PFFSERVER.pff.local><CAN+2M_E4ODovMzvPEQf0ONGzsXAZPgU7KVAdSP3HL7vU9RwscQ@mail.gmail.com><F13F09931BF64A45B90CA3CAEE396AE9@JUICEBRAIN><23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F7@PFFSERVER.pff.local>
+	<23B2DA63A5065448ABDA3AEB9EC7ADFB4FAB14D8F9@PFFSERVER.pff.local>
+Message-ID: <3BE0F9EDC18A499190EF5CF4B90FB3EE@JUICEBRAIN>
+
+Thanks for the feedback Nick.
+
+I'll endeavor to update the wiki kml entry, as your comments would make it
+clearer.
+
+Remind me in a few weeks if I haven't got around to it.
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Nick Bairstow
+Sent: Tuesday, 28 July 2015 11:26 p.m.
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+ 
+
+Right, things I found.
+
+Firstly I found a sneaky boulder which had been drawn with a wall line. I
+now know about the search and select function in the map editor this is
+clearly very useful for checking feature types and it will be in regular use
+from now on.
+
+I found a pillar without the -outside in option on.
+
+With these two things corrected the kml output was nearly there I just had a
+few strange shapes to certain bits of the map so next I looked at the open
+passages. I put extra wall lines across the open ends one at a time and this
+sorted the strange shapes but doing this showed that not all open passage
+ends caused a problem some rendered fine with a straight edge between the
+two wall ends. It was obvious which open ends caused problems as these were
+the origin points of the strange additional shapes.
+
+Feeling quite pleased with myself now, just the other 4/5 th2's to sort out
+to get a nice Google earth image of the system so far.
+
+ 
+
+Thanks
+
+ 
+
+Nick.
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Nick Bairstow
+Sent: 28 July 2015 11:18
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+ 
+
+I will use my worst kml map export and trim it back to just walls to
+simplify it. I will experiment with closing passage ends etc as there are
+several on this map and see what happens. I shall report back.
+
+ 
+
+Nick.
+
+ 
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bruce
+Sent: 27 July 2015 20:39
+To: 'List for Therion users'
+Subject: Re: [Therion] KML Issues
+
+ 
+
+Nick
+
+Check this wiki entry
+http://therion.speleo.sk/wiki/doku.php/tips#avoiding_invisible_or_misshapen_
+scraps_in_loch_and_google_earth
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Andrew Atkinson
+Sent: Tuesday, 28 July 2015 4:46 a.m.
+To: Therion
+Subject: Re: [Therion] KML Issues
+
+ 
+
+
+On 27 Jul 2015 5:34 pm, "Nick Bairstow" <Nick at pff.uk.com> wrote:
+>
+
+>
+> I have checked for walls/pillars with the tick mark the wrong way round
+and all look OK. I notice that other people have had issues with this a
+while back and even noticed that Andrew stopped using kml output. In all
+cases the compile runs with no warnings and the pdf output is fine.
+>
+I have not stopped, just googlemaps got rid of the easy way to put kml on,
+by embedding the links. They are more fussy than pdf, bug looks like you
+have checked for the right things. Sometimes you need to close the end of a
+scrap with an invisible wall for the algorithm to work, this was a solution
+to a previous email thread I started on loc models, but it seems to apply to
+kml as well. Currently I am away with limited tech so cannot find the
+thread, hopefully someone else  will help you with the rest, otherwise I
+will in 10days or so
+
+Andrew
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150729/61fd77bd/attachment.htm>
+
+From andrew at wotcc.org.uk  Wed Jul 29 15:22:04 2015
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 29 Jul 2015 14:22:04 +0100
+Subject: [Therion] Finding undated surveys
+Message-ID: <CAN+2M_EsiwSuycpVm9xR1C7MzSm2A0imeLwyT+jBc_1T3V54zA@mail.gmail.com>
+
+Hello
+
+I am getting the message
+
+warning -- unable to determine magnetic declination for undated surveys
+
+Now I am reasonable sure that all the surveys are dated, as I use
+topParser and it puts it in automatically. however I would like to
+check, I cannot find a way of finding which surveys Therion finds to
+be undated, Is there an easy/built in way, Maybe it would be good if
+Therion listed them in the output log
+
+thanks
+
+Andrew
+
+
+From bruce at tomo.co.nz  Wed Jul 29 22:07:44 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 30 Jul 2015 08:07:44 +1200
+Subject: [Therion] Finding undated surveys
+In-Reply-To: <CAN+2M_EsiwSuycpVm9xR1C7MzSm2A0imeLwyT+jBc_1T3V54zA@mail.gmail.com>
+References: <CAN+2M_EsiwSuycpVm9xR1C7MzSm2A0imeLwyT+jBc_1T3V54zA@mail.gmail.com>
+Message-ID: <FAE1C58D6C3248538DD11CFB4F96DF18@JUICEBRAIN>
+
+Andrew
+Despite the message wording, I am pretty sure 'date' is a centreline
+property, rather than an 'survey' property.  The surveys just inherit the
+range of dates from their centrelines.
+>From memory, which is often faulty, any centreline with survey shots ('data'
+statements) will trip this warning if there is a cs defined (globally) but
+there is no date in that centreline.
+
+One that caught me out once was adding 
+data  nosurvey etc
+in a centreline of it's own - I had to add a date that the shot was not
+surveyed!  (Also that nosurvey shots actually add their lengths to the
+surveyed length) 
+
+So to answer your question, I cannot think of an easy way, unless creating a
+sql output and then querying that will work for you.
+
+Not sure if Dave Clucas' project http://sarawak-caves.com/php/websearch.php
+could be made to seek out undated surveys as it stands?
+The 'Lengths' query has a field for dates, but I don't think 'undated' will
+work.  I guess if the output had 'approx', 'date' and 'explo-date' columns,
+you could scan down the table for blanks.
+
+Bruce
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Andrew Atkinson
+Sent: Thursday, 30 July 2015 1:22 a.m.
+To: List for Therion users
+Subject: [Therion] Finding undated surveys
+
+Hello
+
+I am getting the message
+
+warning -- unable to determine magnetic declination for undated surveys
+
+Now I am reasonable sure that all the surveys are dated, as I use
+topParser and it puts it in automatically. however I would like to
+check, I cannot find a way of finding which surveys Therion finds to
+be undated, Is there an easy/built in way, Maybe it would be good if
+Therion listed them in the output log
+
+thanks
+
+Andrew
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Thu Jul 30 19:34:04 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 30 Jul 2015 19:34:04 +0200
+Subject: [Therion] Finding undated surveys
+In-Reply-To: <CAN+2M_EsiwSuycpVm9xR1C7MzSm2A0imeLwyT+jBc_1T3V54zA@mail.gmail.com>
+References: <CAN+2M_EsiwSuycpVm9xR1C7MzSm2A0imeLwyT+jBc_1T3V54zA@mail.gmail.com>
+Message-ID: <FA4DF046-B4F9-4041-836C-32C9473ACBB9@mac.com>
+
+What about the debug log if you run therion with -d parameter?
+
+M. S. 
+
+Odesláno z iPhonu
+
+29. 7. 2015 v 15:22, Andrew Atkinson <andrew at wotcc.org.uk>:
+
+> Hello
+> 
+> I am getting the message
+> 
+> warning -- unable to determine magnetic declination for undated surveys
+> 
+> Now I am reasonable sure that all the surveys are dated, as I use
+> topParser and it puts it in automatically. however I would like to
+> check, I cannot find a way of finding which surveys Therion finds to
+> be undated, Is there an easy/built in way, Maybe it would be good if
+> Therion listed them in the output log
+> 
+> thanks
+> 
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+

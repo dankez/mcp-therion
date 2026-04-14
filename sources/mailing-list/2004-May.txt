@@ -1,0 +1,155 @@
+From wookey at aleph1.co.uk  Tue May 25 18:49:54 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 25 May 2004 17:49:54 +0100
+Subject: problem with 0.3.1
+Message-ID: <122@reconstruction>
+
+I've upgraded to 0.3.0/0.3.1 and it does indeed fix the 'extra newline
+problem' which is great but it won't compile my dataset that was working OK
+with 0.2.19.
+
+I get:
+"Invalid command context" at line 6 in this file:
+
+1 encoding  utf-8
+2 survey soundriver
+3
+4  map elevator -title "Terikan: Elevator Entrance"
+5    farside at river
+6    farside2 at river
+7  endmap
+8
+ ....<lots more data>....
+
+Why might that happen?
+
+0.3.0 is now current in Debian. I'd like to fix this problem before
+uploading 0.3.1.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Wed May 26 09:22:10 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 26 May 2004 09:22:10 +0200
+Subject: problem with 0.3.1
+In-Reply-To: <122@reconstruction>
+Message-ID: <123@reconstruction>
+
+At 18:49 25. 5. 2004, you wrote:
+
+> I've upgraded to 0.3.0/0.3.1 and it does indeed fix the 'extra newline
+> problem' which is great but it won't compile my dataset that was working OK
+> with 0.2.19.
+
+
+I've checked this (running 0.3.1 with your dataset), and on my machine (Mandrake 9.2, and WinXP) it did not generated this error. In any case, there is no error in the input data, so we have to search for error somewhere else. I can imagine following errors:
+
+1. Something is still not OK with end-of-line (I do not believe, but it may be the case). My be, you should run threpair-files in your data directory. Also the binary screenshot of the begining of this file would help a lot. Something like
+
+00000  65 6E 63 6F ¦ 64 69 6E 67 ¦ 20 20 75 74 ¦ 66 2D 38 0A   encoding  utf-8.
+00010  73 75 72 76 ¦ 65 79 20 73 ¦ 6F 75 6E 64 ¦ 72 69 76 65   survey soundrive
+00020  72 0A 20 0A ¦ 20 20 6D 61 ¦ 70 20 65 6C ¦ 65 76 61 74   r. .  map elevat
+00030  6F 72 20 2D ¦ 74 69 74 6C ¦ 65 20 22 54 ¦ 65 72 69 6B   or -title "Terik
+00040  61 6E 3A 20 ¦ 45 6C 65 76 ¦ 61 74 6F 72 ¦ 20 45 6E 74   an: Elevator Ent
+00050  72 61 6E 63 ¦ 65 22 0A 20 ¦ 20 20 20 66 ¦ 61 72 73 69   rance".    farsi
+00060  64 65 40 72 ¦ 69 76 65 72 ¦ 0A 20 20 20 ¦ 20 66 61 72   de at river.    far
+00070  73 69 64 65 ¦ 32 40 72 69 ¦ 76 65 72 0A ¦ 20 20 65 6E   side2 at river.  en
+00080  64 6D 61 70 ¦ 20 20 0A 0A ¦ 20 0A 20 20 ¦ 23 63 6F 6E   dmap  .. .  #con
+00090  6E 65 63 74 ¦ 69 6F 6E 73 ¦ 0A 20 20 0A ¦ 20 20 6A 6F   nections.  .  jo
+000A0  69 6E 20 66 ¦ 61 72 73 69 ¦ 64 65 77 65 ¦ 73 74 31 40   in farsidewest1@
+
+2. It is more serious error - but then it would be great, if you can compile debug version of therion (make config-debug; make). Then run this debug version with your data and send us the exact error message (there will be source position also included). Because there is no error in your input file => error must be in therion.
+
+Thanks, S.
+
+
+
+
+From wookey at aleph1.co.uk  Wed May 26 20:03:13 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 26 May 2004 19:03:13 +0100
+Subject: problem with 0.3.1
+In-Reply-To: <122@reconstruction>
+Message-ID: <124@reconstruction>
+
++++ Stacho Mudrak [04-05-26 09:22 +0200]:
+
+>> At 18:49 25. 5. 2004, you wrote:
+>
+>>> >I've upgraded to 0.3.0/0.3.1 and it does indeed fix the 'extra newline
+>>> >problem' which is great but it won't compile my dataset that was working OK
+>>> >with 0.2.19.
+>
+>>
+>> I've checked this (running 0.3.1 with your dataset), and on my machine
+>> (Mandrake 9.2, and WinXP) it did not generated this error. In any case,
+>> there is no error in the input data, so we have to search for error
+>> somewhere else. I can imagine following errors:
+>>
+>> 1. Something is still not OK with end-of-line (I do not believe, but it may
+>> be the case). My be, you should run threpair-files in your data directory.
+>> Also the binary screenshot of the begining of this file would help a lot.
+>> Something like
+>>
+>> 00000  65 6E 63 6F ? 64 69 6E 67 ? 20 20 75 74 ? 66 2D 38 0A   encoding
+>> utf-8.
+>> 00010  73 75 72 76 ? 65 79 20 73 ? 6F 75 6E 64 ? 72 69 76 65   survey
+>> soundrive
+>> 00020  72 0A 20 0A ? 20 20 6D 61 ? 70 20 65 6C ? 65 76 61 74   r. .  map
+>> elevat
+>> 00030  6F 72 20 2D ? 74 69 74 6C ? 65 20 22 54 ? 65 72 69 6B   or -title
+>> "Terik
+>> 00040  61 6E 3A 20 ? 45 6C 65 76 ? 61 74 6F 72 ? 20 45 6E 74   an: Elevator
+>> Ent
+>> 00050  72 61 6E 63 ? 65 22 0A 20 ? 20 20 20 66 ? 61 72 73 69   rance".
+>> farsi
+>> 00060  64 65 40 72 ? 69 76 65 72 ? 0A 20 20 20 ? 20 66 61 72   de at river.
+>> far
+>> 00070  73 69 64 65 ? 32 40 72 69 ? 76 65 72 0A ? 20 20 65 6E   side2 at river.
+>> en
+>> 00080  64 6D 61 70 ? 20 20 0A 0A ? 20 0A 20 20 ? 23 63 6F 6E   dmap  .. .
+>> #con
+>> 00090  6E 65 63 74 ? 69 6F 6E 73 ? 0A 20 20 0A ? 20 20 6A 6F   nections.  .
+>> jo
+>> 000A0  69 6E 20 66 ? 61 72 73 69 ? 64 65 77 65 ? 73 74 31 40   in
+>> farsidewest1@
+
+
+Not in quite such a helpful format but:
+wookey at knossos:~$ hexdump soundriver.th | more
+0000000 6e65 6f63 6964 676e 2020 7475 2d66 0a38
+0000010 7573 7672 7965 7320 756f 646e 6972 6576
+0000020 0a72 0a20 2020 616d 2070 6c65 7665 7461
+0000030 726f 2d20 6974 6c74 2065 5422 7265 6b69
+0000040 6e61 203a 6c45 7665 7461 726f 4520 746e
+0000050 6172 636e 2265 200a 2020 6620 7261 6973
+0000060 6564 7240 7669 7265 200a 2020 6620 7261
+0000070 6973 6564 4032 6972 6576 0a72 2020 6e65
+0000080 6d64 7061 2020 200a 2020 0a20 0a20 2020
+0000090 6323 6e6f 656e 7463 6f69 736e 200a 0a20
+00000a0 2023 6a20 696f 206e 6166 7372 6469 4065
+
+
+>> 2. It is more serious error - but then it would be great, if you can
+>> compile debug version of therion (make config-debug; make). Then run this
+>> debug version with your data and send us the exact error message (there
+>> will be source position also included). Because there is no error in your
+>> input file => error must be in therion.
+
+
+OK, I'll give that a go.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+

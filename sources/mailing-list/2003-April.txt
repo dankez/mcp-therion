@@ -1,0 +1,847 @@
+From wookey at aleph1.co.uk  Mon Apr  7 18:41:56 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 7 Apr 2003 17:41:56 +0100 (BST)
+Subject: [therion-users] TeX paths
+Message-ID: <Marcel-1.50-0407164156-064h+Ty@chewy.aleph1.co.uk>
+
+Debian does not really like to use environment variables to make
+applications run so the little script that does:
+#!/bin/sh
+THERION=${THERION:-/usr/share/therion}
+MPINPUTS=${MPINPUTS:-.:$THERION/mpost:}
+TEXINPUTS=${TEXINPUTS:-.:$THERION/tex:}
+export THERION MPINPUTS TEXINPUTS
+exec /usr/bin/therion.bin "$@"
+
+before running therion is something of a bodge. A better solution was to
+set the compiled defaults correctly (they are already in fact) for finding
+things in /etc and /usr/share/therion and to install the metapost and TeX
+macros in the right places for TeX and Metapost to find them.
+
+So, I asked on a list and was told that I should put them in subdirs in
+/usr/share/texmf and then run texhash to update the index.
+
+So I have installed the metapost macros in
+/usr/lib/texmf/metapost/therion/* and the TeX macros in
+/usr/lib/texmf/therion/* and run texhash, which has indeed updated
+/usr/lib/texmf/ls-R
+
+
+However this seems to work fine for the metapost stuff but not the TeX
+stuff. When I run therion on the example jsv dataset I get the output below.
+I'm hoping one of you teX experts can tell me what's wrong. I assume that
+whichever bit of TeX is involved isn't using the ls-R file to find
+therion.tex, but something else. I tried reading the kpathsea docs and the
+kpsewhich debug options to understand what goes on but it's all too
+complicated! I need to know which bits of TeX config I should be dealing
+with and where the config is stored. This is on a plain TeTeX installation,
+which so far as I can tell is the only option you get on Debian (I have
+jadeTex and PDFtex installed too). Does the bit of info at the end mean
+that I have to tell pdftex somehow how to find the therion.tex file?
+
+Is there any more info you need to diagnose this (such as config files?)
+
+therion 0.2.9
+reading initialization file ... done.
+reading configuration file ... done.
+reading source files ... done.
+processing survey data ... 
+####################### cavern log file ########################
+ 1> Survex 1.0.20
+ 2> Copyright (C) 1990-2002 Olly Betts
+ 3> 
+ 4> Survey contains 281 survey stations, joined by 283 legs.
+ 5> There are 3 loops.
+ 6> Total length of survey legs = 1706.95m (1706.87m adjusted)
+ 7> Total plan length of survey legs = 1434.82m
+ 8> Total vertical length of survey legs =  735.85m
+ 9> Vertical range = 127.56m (from 275 at 1761.45m to 34 at 1633.89m)
+10> North-South range = 194.96m (from 1 at 5420144.07m to 245 at 5419949.11m)
+11> East-West range = 203.22m (from 81 at 401613.48m to 234 at 401410.26m)
+12>   40 1-nodes.
+13>  202 2-nodes.
+14>   34 3-nodes.
+15>    5 4-nodes.
+16> 
+######################### transcription ########################
+ 4> 281 : 1velka at dur_dom.jsv
+ 5> 3 : 2 at vchod.stara_jsv.jsv
+ 9> 275 : 2 at monum.dur_dom.jsv -- 34 : 3 at odb.stara_jsv.jsv
+10> 1 : 0 at vchod.stara_jsv.jsv -- 245 : 0 at za_zlomom.dur_dom.jsv
+11> 81 : 14 at zabch.stara_jsv.jsv -- 234 : 7 at 13kom.dur_dom.jsv
+12> 40 : jsv9 at odb.stara_jsv.jsv
+13> 202 : 4 at dur.dur_dom.jsv
+14> 34 : 3 at odb.stara_jsv.jsv
+15> 5 : 24 at vchod.stara_jsv.jsv
+#################### end of cavern log file ####################
+done.
+processing references ... done.
+selecting export objects ... done.
+scanning data tree ... done.
+processing projection plan ... done.
+writing cave_m.pdf ...
+processing projection none ... done.
+####################### metapost log file ########################
+This is MetaPost, Version 0.641 (Web2C 7.3.7) (mem=mpost 2002.11.21)  21 NOV 2002 19:30
+**data.mp
+(data.mp (/usr/share/texmf/metapost/therion/therion.mp
+(/usr/share/texmf/metapost/therion/thPoint.mp)
+(/usr/share/texmf/metapost/therion/thLine.mp)
+(/usr/share/texmf/metapost/therion/thText.mp)
+(/usr/share/texmf/metapost/therion/thRandom.mp)
+(/usr/share/texmf/metapost/therion/thPatterns.mp [4001]
+write0 = `patterns.dat'.
+
+ [4002] [4003] [4004])
+(/usr/share/texmf/metapost/therion/thArea.mp
+write1 = `rgbcolors.dat'.
+
+)
+(/usr/share/texmf/metapost/therion/thTrans.mp)
+(/usr/share/texmf/metapost/therion/thTmp.mp)) [1]
+write2 = `data.2bg'.
+
+write3 = `data.2clip'.
+
+ [2] [3]
+write2 = `data.4bbox'.
+
+ [4] [6]
+write2 = `data.7bg'.
+
+write3 = `data.7clip'.
+
+ [7] [8]
+write2 = `data.9bbox'.
+
+ [9]
+[11]
+write2 = `data.12bg'.
+
+write3 = `data.12clip'.
+
+ [12] [13]
+write2 = `data.17bg'.
+
+write3 = `data.17clip'.
+
+ [17] [18]
+write2 = `data.19bbox'.
+
+ [19]
+write2 = `data.22bg'.
+
+write3 = `data.22clip'.
+
+ [22] [23] [26]
+write2 = `data.27bg'.
+
+write3 = `data.27clip'.
+
+ [27] [28]
+write2 = `data.29bbox'.
+
+ [29]
+write2 = `data.32bg'.
+
+write3 = `data.32clip'.
+
+ [32] [33]
+write2 = `data.37bg'.
+
+write3 = `data.37clip'.
+
+ [37]
+[38]
+write2 = `data.39bbox'.
+
+ [39] [41]
+write2 = `data.42bg'.
+
+write3 = `data.42clip'.
+
+ [42] [43]
+write2 = `data.44bbox'.
+
+ [44] [46]
+write2 = `data.47bg'.
+
+write3 = `data.47clip'.
+
+ [47] [48] [51]
+write2 = `data.52bg'.
+
+write3 = `data.52clip'.
+
+ [52] [53]
+write2 = `data.54bbox'.
+
+ [54]
+write2 = `data.57bg'.
+
+write3 = `data.57clip'.
+
+ [57] [58]
+[61]
+write2 = `data.62bg'.
+
+write3 = `data.62clip'.
+
+ [62] [63]
+write2 = `data.67bg'.
+
+write3 = `data.67clip'.
+
+ [67] [68]
+write2 = `data.72bg'.
+
+write3 = `data.72clip'.
+
+ [72] [73]
+write2 = `data.77bg'.
+
+write3 = `data.77clip'.
+
+ [77] [78] [81]
+write2 = `data.82bg'.
+
+write3 = `data.82clip'.
+
+ [82] [83] [86]
+write2 = `data.87bg'.
+
+write3 = `data.87clip'.
+
+ [87] [88]
+write2 = `data.89bbox'.
+
+
+[89] [91]
+write2 = `data.92bg'.
+
+write3 = `data.92clip'.
+
+ [92] [93]
+write2 = `data.94bbox'.
+
+ [94] [96]
+write2 = `data.97bg'.
+
+write3 = `data.97clip'.
+
+ [97] [98] [101]
+write2 = `data.102bg'.
+
+write3 = `data.102clip'.
+
+ [102] [103]
+write2 = `data.104bbox'.
+
+ [104]
+write2 = `data.107bg'.
+
+write3 = `data.107clip'.
+
+ [107] [108]
+write2 = `data.112bg'.
+
+write3 = `data.112clip'.
+
+
+[112] [113] [116]
+write2 = `data.117bg'.
+
+write3 = `data.117clip'.
+
+ [117] [118]
+write2 = `data.119bbox'.
+
+ [119] [121]
+write2 = `data.122bg'.
+
+write3 = `data.122clip'.
+
+ [122] [123]
+write2 = `data.124bbox'.
+
+ [124]
+write2 = `data.127bg'.
+
+write3 = `data.127clip'.
+
+ [127] [128]
+write2 = `data.132bg'.
+
+write3 = `data.132clip'.
+
+ [132]
+[133] [136]
+write2 = `data.137bg'.
+
+write3 = `data.137clip'.
+
+ [137] [138]
+write2 = `data.139bbox'.
+
+ [139] [141]
+write2 = `data.142bg'.
+
+write3 = `data.142clip'.
+
+ [142] [143]
+write2 = `data.144bbox'.
+
+ [144] [146]
+write2 = `data.147bg'.
+
+write3 = `data.147clip'.
+
+ [147] [148]
+write2 = `data.149bbox'.
+
+ [149]
+[151]
+write2 = `data.152bg'.
+
+write3 = `data.152clip'.
+
+ [152] [153] [156]
+write2 = `data.157bg'.
+
+write3 = `data.157clip'.
+
+ [157] [158]
+write2 = `data.162bg'.
+
+write3 = `data.162clip'.
+
+ [162] [163] [166]
+write2 = `data.167bg'.
+
+write3 = `data.167clip'.
+
+ [167] [168]
+write2 = `data.169bbox'.
+
+ [169]
+write2 = `data.172bg'.
+
+write3 = `data.172clip'.
+
+ [172]
+[173]
+write2 = `data.177bg'.
+
+write3 = `data.177clip'.
+
+ [177] [178] [181]
+write2 = `data.182bg'.
+
+write3 = `data.182clip'.
+
+ [182] [183] [186]
+write2 = `data.187bg'.
+
+write3 = `data.187clip'.
+
+ [187] [188]
+write2 = `data.189bbox'.
+
+ [189] [191]
+write2 = `data.192bg'.
+
+write3 = `data.192clip'.
+
+ [192] [193]
+[196]
+write2 = `data.197bg'.
+
+write3 = `data.197clip'.
+
+ [197] [198]
+write2 = `data.199bbox'.
+
+ [199] [201]
+write2 = `data.202bg'.
+
+write3 = `data.202clip'.
+
+ [202] [203]
+write2 = `data.204bbox'.
+
+ [204]
+write2 = `data.207bg'.
+
+write3 = `data.207clip'.
+
+ [207] [208] [211]
+write2 = `data.212bg'.
+
+write3 = `data.212clip'.
+
+ [212] [213]
+write2 = `data.214bbox'.
+
+
+[214]
+write2 = `data.217bg'.
+
+write3 = `data.217clip'.
+
+ [217] [218]
+write2 = `data.222bg'.
+
+write3 = `data.222clip'.
+
+ [222] [223] [226]
+write2 = `data.227bg'.
+
+write3 = `data.227clip'.
+
+ [227] [228]
+write2 = `data.229bbox'.
+
+ [229] [231]
+write2 = `data.232bg'.
+
+write3 = `data.232clip'.
+
+ [232] [233]
+write2 = `data.234bbox'.
+
+ [234]
+write2 = `data.237bg'.
+
+write3 = `data.237clip'.
+
+
+[237] [238] )
+151 output files written: data.1 .. data.4004
+
+#################### end of metapost log file ####################
+######################## pdftex log file #########################
+This is pdfeTeX, Version 3.14159-1.00a-pretest-20011114-ojmw-2.1 (Web2C 7.3.7) (format=pdfetex 2002.11.21)  1 APR 2003 01:34
+entering extended mode
+**data.tex
+(./data.tex{/usr/share/texmf/pdftex/config/pdftex.cfg}
+! I can't find file `therion.tex'.
+l.1 \input therion.tex
+                      
+Please type another input file name
+! Emergency stop.
+l.1 \input therion.tex
+                      
+*** (job aborted, file error in nonstop mode)
+
+No pages of output.
+
+##################### end of pdftex log file #####################
+therion: error -- pdftex exit code -- 256
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Apr  7 18:53:59 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 7 Apr 2003 17:53:59 +0100 (BST)
+Subject: [therion-users] TeX paths
+In-Reply-To: <Marcel-1.50-0407164156-064h+Ty@chewy.aleph1.co.uk>
+Message-ID: <Marcel-1.50-0407165359-339h+Ty@chewy.aleph1.co.uk>
+
+On Mon 07 Apr, Wookey wrote:
+> Debian does not really like to use environment variables to make
+> applications run so the little script that does:
+> #!/bin/sh
+> THERION=${THERION:-/usr/share/therion}
+> MPINPUTS=${MPINPUTS:-.:$THERION/mpost:}
+> TEXINPUTS=${TEXINPUTS:-.:$THERION/tex:}
+> export THERION MPINPUTS TEXINPUTS
+> exec /usr/bin/therion.bin "$@"
+> 
+> before running therion is something of a bodge. A better solution was to
+> set the compiled defaults correctly (they are already in fact) for finding
+> things in /etc and /usr/share/therion and to install the metapost and TeX
+> macros in the right places for TeX and Metapost to find them.
+> 
+> So, I asked on a list and was told that I should put them in subdirs in
+> /usr/share/texmf and then run texhash to update the index.
+> 
+> So I have installed the metapost macros in
+> /usr/lib/texmf/metapost/therion/* and the TeX macros in
+> /usr/lib/texmf/therion/* and run texhash, which has indeed updated
+> /usr/lib/texmf/ls-R
+
+sorry - that should have been written
+/usr/share/texmf/ throughout - brain failure.
+Please answer on that basis
+
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From budaj at host.sk  Mon Apr  7 19:36:56 2003
+From: budaj at host.sk (Martin Budaj)
+Date: Mon, 7 Apr 2003 18:36:56 +0100
+Subject: [therion-users] TeX paths
+In-Reply-To: <Marcel-1.50-0407164156-064h+Ty@chewy.aleph1.co.uk>
+References: <Marcel-1.50-0407164156-064h+Ty@chewy.aleph1.co.uk>
+Message-ID: <20030407173656.M8197@host.sk>
+
+> So I have installed the metapost macros in
+> /usr/lib/texmf/metapost/therion/* and the TeX macros in
+> /usr/lib/texmf/therion/* and run texhash, which has indeed updated
+> /usr/lib/texmf/ls-R
+> 
+> However this seems to work fine for the metapost stuff but not the TeX
+> stuff.
+
+Web2C based TeX distributions (you have one such according to pdfTeX banner) 
+use configuratin file texmf/web2c/texmf.cnf (or vartexmf/web2c/texmf.cnf -- 
+various TeX distributions may differ in this point). All searching paths are 
+set here. For tex is it usually 
+
+TEXINPUTS.pdftex   = .;$TEXMF/{pdftex,tex}/{plain,generic,}//
+TEXINPUTS = .;$TEXMF/tex/{generic,}//
+
+It means that pdftex searches only in 'pdftex' and 'tex' subdirectories of the 
+texmf tree. So one solution would be to move therion tex to texmf/tex/. 
+(You had good luck to copy metapost files to texmf/metapost/)
+
+It's also possible to modify TEXINPUTS to point to directory outside of texmf, 
+so there would be no necessity to copy therion files in texmf directory. Try
+
+TEXINPUTS = .;$TEXMF/tex/{generic,}//;/cave/therion/lib/tex//
+
+or similar. 
+
+Run texhash after changing texmf.cnf file. 
+
+Best regards
+
+Martin
+
+
+
+
+From s.m at group-s.sk  Tue Apr  8 11:29:25 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 8 Apr 2003 11:29:25 +0200
+Subject: [therion-users] TeX paths
+References: <Marcel-1.50-0407164156-064h+Ty@chewy.aleph1.co.uk>
+Message-ID: <005e01c2fdb1$5e8c58d0$2401a8c0@sm>
+
+After reinstalling therion on several computers several times, I agree, that
+installation process should be easier (without setting environment
+variables). It means doing following things:
+
+1. Therion should automatically search for other executable files it is
+using, if it can not find them with default settings. This is not very
+difficult task, and would work on 90% of all computers, because we can
+assume, that thpdf and theps2pdf are located where therion.exe is. Perl and
+TeX usually works from command line on UNIX, on Win32, there are may be five
+common installations . . .
+
+2. The THERION environment variable could be ignored, if we will assume some
+default location for therion library (e.g. /usr/share/therion or C:\Program
+files\therion\lib). As far as I know, on Linux is standard /usr/share or
+/usr/local/share. Which would be better?
+
+3. The TeX's (MPINPUTS and TEXINPUTS) could be probably written somehow to
+tex and mp file. I can write instead "input therion.tex" filename with the
+path "input /usr/local/share/therion/lib/tex/therion.tex". Than no TEXINPUTS
+is needed. Probably the same can be somehow done with MPOST.
+
+Do you have any other ideas?
+
+S.
+
+
+
+
+
+From s.m at group-s.sk  Wed Apr  9 11:09:57 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 9 Apr 2003 11:09:57 +0200
+Subject: [therion-users] 0.2.10
+Message-ID: <000d01c2fe77$d0208270$2401a8c0@sm>
+
+Hello everybody,
+
+yesterday I've finally finished version 0.2.10. You can download it from the
+web site. There is a huge amount of bugs fixed, some nice improvements in
+xtherion. If your previous data will not work with 0.2.9, you can try
+running "perl makeconvert2.pl" in your data root directory. (data command
+was renamed to centerline).
+
+Configuration file syntax has changed a bit (projection has to be specified
+via -proj option).
+
+Documentation is included in source code (can be compiled using "make doc").
+
+Now you also do not need to do make in three steps, just "make" will compile
+also xtherion and thpdf (also on Win32).
+
+Best regards, S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Wed Apr  9 19:17:16 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 9 Apr 2003 18:17:16 +0100 (BST)
+Subject: [therion-users] TeX paths
+In-Reply-To: <005e01c2fdb1$5e8c58d0$2401a8c0@sm>
+Message-ID: <Marcel-1.50-0409171716-6e8h+Ty@chewy.aleph1.co.uk>
+
+On Tue 08 Apr, Stacho Mudrak wrote:
+> After reinstalling therion on several computers several times, I agree, that
+> installation process should be easier (without setting environment
+> variables). It means doing following things:
+> 
+> 1. Therion should automatically search for other executable files it is
+> using, if it can not find them with default settings. This is not very
+> difficult task, and would work on 90% of all computers, because we can
+> assume, that thpdf and theps2pdf are located where therion.exe is. Perl and
+> TeX usually works from command line on UNIX, on Win32, there are may be five
+> common installations . . .
+> 
+> 2. The THERION environment variable could be ignored, if we will assume some
+> default location for therion library (e.g. /usr/share/therion or C:\Program
+> files\therion\lib). 
+
+This already works on Debian Linux - The therion.ini file is not needed for
+a normal installation of survex and therion. 
+
+> As far as I know, on Linux is standard /usr/share or /usr/local/share.
+> Which would be better?
+
+Check the LSB for details but on Debian /usr/share is the default place and
+local system overrides go in /usr/local/share, so check /usr/local/share
+first then /usr/share. I think that should be pretty standard everywhere
+now.
+
+> 
+> 3. The TeX's (MPINPUTS and TEXINPUTS) could be probably written somehow to
+> tex and mp file. I can write instead "input therion.tex" filename with the
+> path "input /usr/local/share/therion/lib/tex/therion.tex". Than no TEXINPUTS
+> is needed. Probably the same can be somehow done with MPOST.
+
+This would work, but it seems 'better' to use the built-in config
+mechanisms unless it is difficult to make it work (in case you needed
+somehow to use the therion macros from an external TeX program - is that
+possible or likely?). The default non-packaged version of therion could
+keep it's /usr/{local}/share/therion/lib/ directory and use an explicit
+path but packaged versions (deb and maybe rpm) should probably just put the
+files in the right place.
+
+> Do you have any other ideas?
+
+Putting the therion TeX macros into /usr/share/texmf/tex/therion works fine
+on Debian TeTeX so I will use that for the Debian version as it seems
+'right'.
+
+This probably works on nearly all Linux systems. We may need to use
+explicit paths on some other unix systems?
+ 
+I've just uploaded the first official Debian Therion package (0.2.9-1) to
+the servers.  It should go into the unstable distribution in the next few days.
+
+I'll do a 0.2.10 in a week or two.
+ 
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From s.m at group-s.sk  Thu Apr 10 09:13:59 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 10 Apr 2003 09:13:59 +0200
+Subject: [therion-users] TeX paths
+References: <Marcel-1.50-0409171716-6e8h+Ty@chewy.aleph1.co.uk>
+Message-ID: <003901c2ff32$1a677270$2101a8c0@sm>
+
+> This probably works on nearly all Linux systems. We may need to use
+> explicit paths on some other unix systems?
+
+I've just installed TexLive distribution on my Linux, and it installed it
+self to /usr/TeX/ directory ;-) Also on Win32 and MacOSX there are a lot of
+different TeX distributions...
+
+> I've just uploaded the first official Debian Therion package (0.2.9-1) to
+> the servers.  It should go into the unstable distribution in the next few
+days.
+>
+> I'll do a 0.2.10 in a week or two.
+
+Thanks a lot. We will discuss installation this weekend, I hope we will find
+some reasonable solutions...
+
+S.
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Apr 10 11:24:53 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 10 Apr 2003 10:24:53 +0100 (BST)
+Subject: [therion-users] TeX paths
+In-Reply-To: <003901c2ff32$1a677270$2101a8c0@sm>
+Message-ID: <Marcel-1.50-0410092453-566h+Ty@chewy.aleph1.co.uk>
+
+On Thu 10 Apr, Stacho Mudrak wrote:
+> > This probably works on nearly all Linux systems. We may need to use
+> > explicit paths on some other unix systems?
+> 
+> I've just installed TexLive distribution on my Linux, and it installed it
+> self to /usr/TeX/ directory ;-) Also on Win32 and MacOSX there are a lot of
+> different TeX distributions...
+
+Hmm, that does make it sound like keeping the files in */share/lib/therion
+and using an explicit path makes sense.
+
+An alternative approach is to use configure and the autotools - they set
+out to solve exactly this sort of problem (which paths things are installed
+on) for packages distributed as source.
+
+And as a bonus the Debian stuff will automagically work as well.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Apr 21 20:07:52 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 21 Apr 2003 19:07:52 +0100 (BST)
+Subject: [therion-users] Therion 0.2.9 installed in Debian
+Message-ID: <Marcel-1.50-0421180752-ab5h+Ty@chewy.aleph1.co.uk>
+
+OK guys, 
+
+After resolving a could of build problems there is now versions 0.2.9-3 in
+Debian unstable so anyone should be able to apt-get it.
+
+However looking at the build daemon logs it seems we have problems on some
+architectures:
+
+http://buildd.debian.org/build.php?pkg=therion
+s390 and powerpc failed to compile a working therion (fails at the
+../bin/therion --print-xtherion-src) command.
+
+I'm not sure why this should be, but you can see the various build
+complaints which it would be a good start to fix - some of those are likely
+to be causing trouble on other architectures.
+
+Do we think 0.2.10 is going to be noticeably better in this respect? I'll
+start vuilding packages anyway, as I said I would.
+
+There are various Debian test machines we can use to try and track down the
+problems.
+
+Once we get a version that compiles on all 10 architectures then therion
+should move to the 'testing' distribution after 10 days. You can check out
+the current status here:
+http://qa.debian.org/developer.php?login=wookey
+and here:
+http://packages.qa.debian.org/t/therion.html
+
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+
+From s.m at group-s.sk  Tue Apr 22 14:46:06 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 22 Apr 2003 14:46:06 +0200
+Subject: [therion-users] Therion 0.2.9 installed in Debian
+References: <Marcel-1.50-0421180752-ab5h+Ty@chewy.aleph1.co.uk>
+Message-ID: <00b201c308cf$ebb954f0$2101a8c0@sm>
+
+I've just returned from holiday, so very briefly:
+
+> However looking at the build daemon logs it seems we have problems on some
+> architectures:
+>
+> http://buildd.debian.org/build.php?pkg=therion
+> s390 and powerpc failed to compile a working therion (fails at the
+> ../bin/therion --print-xtherion-src) command.
+>
+> I'm not sure why this should be, but you can see the various build
+> complaints which it would be a good start to fix - some of those are
+likely
+> to be causing trouble on other architectures.
+>
+> Do we think 0.2.10 is going to be noticeably better in this respect? I'll
+> start vuilding packages anyway, as I said I would.
+
+We didn't noticed this problem on powerpc (MacOSX), but I believe it can be
+the problem. We're considering not to support MacOSX officially, because the
+therion behaviour differs from one system version to another (now we had
+problems with macintosh end of line characters) . We didn't fixed it in
+0.2.10, but I will remove this stuff from standard make procedure in 0.2.11-
+it's not necessary there.
+
+> Once we get a version that compiles on all 10 architectures then therion
+> should move to the 'testing' distribution after 10 days. You can check out
+> the current status here:
+> http://qa.debian.org/developer.php?login=wookey
+> and here:
+> http://packages.qa.debian.org/t/therion.html
+
+
+Thanx a lot, I'll have look at it...
+
+Best regards, S.
+
+
+
+
+
+From s.m at group-s.sk  Tue Apr 22 15:14:55 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 22 Apr 2003 15:14:55 +0200
+Subject: [therion-users] Web page
+Message-ID: <010c01c308d1$8e865060$2101a8c0@sm>
+
+Hi everybody,
+
+it looks, that our free domain exists no more ;-( (the service provider
+bankruptcy) We will try to solve the problem ASAP. Use
+www.ther.host.sk/therion instead please...
+
+S.
+
+
+
+
+

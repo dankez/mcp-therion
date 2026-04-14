@@ -1,0 +1,4900 @@
+From tarquin.wilton-jones at ntlworld.com  Wed May  1 01:14:24 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 1 May 2019 01:14:24 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+Message-ID: <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+
+>> And what is the problem define another maps from segments and colour them?
+> 
+> 
+> Having to split my overall map up into yet another series of submaps,
+> each of which covers an arbitrary group of maps from several unrelated
+> subsections, is getting really close to spaghetti code.
+
+
+I withdraw my request.
+
+You were right, using maps I can make this very logical and "clean" (for
+some value of "clean"). Each survey exports one map for each "plane" of
+the elevation view. (Optionally, it can also export a combined map, in
+case I want to render it separately from the other caves/surveys, such
+as in an atlas.) Each parent survey exports a map for each plane used by
+any of its children, containing the relevant maps from the children. At
+the top level, I have the overall map which combines the plane maps. The
+lookup then only needs to match those. Or they can have the colours
+hardcoded.
+
+Thanks for the hints :)
+
+Tarquin
+
+
+From martinsluka at mac.com  Wed May  1 06:33:42 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 1 May 2019 06:33:42 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+Message-ID: <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+
+
+> 1. 5. 2019 v 1:14, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+>>  is getting really close to spaghetti code.
+
+Tarquin,
+
+you may use input index file with map or maps definition to survey in th file, something as this
+
+input map_plan_lookup.thc
+input map_plan_default.thc
+
+The same with all joins and all equates, …
+
+So the code in one file could be quite simple at the end.
+
+Just another hint
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190501/eec6e7c5/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed May  1 10:46:38 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 1 May 2019 10:46:38 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+Message-ID: <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+
+Fun fact;
+You don't even have to select the map for map lookups to find the scraps
+inside it.
+
+mycave.th:
+survey mycave
+  map foo
+    myscrap
+  endmap
+  map bar
+    myscrap
+  endmap
+  ...
+endsurvey
+
+thconfig:
+source "mycave.th"
+select bar at mycave
+lookup map
+  foo at mycave [100 0 0]
+endlookup
+layout elevation265
+  color map-fg map
+endlayout
+export map -proj plan -layout local -o "mycave.pdf"
+
+myscrap will be red, because it is in foo, even though bar is selected.
+Needless to say, this is a little unpredictable (is it a feature or a
+bug?), and means things get coloured even when you didn't expect them to be.
+
+
+From bruce at tomo.co.nz  Wed May  1 12:04:03 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 1 May 2019 22:04:03 +1200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+ <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+Message-ID: <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+
+Tarquin
+Chances are you are forging new ground here.  It is a new feature, so bugs might be expected.  I have not really used 'lookup map', I just played a little so that I could write the wiki page :)  Of the variants, I probably used 'lookup altitude' the most.
+It could be that red is the first colour in the default map colour list, so it may be coincidental that it matches the colour you chose, and not at all responding to your foo colour definition.
+It could be that if the map exported does not have an explicitly defined colour when others do, Therion gets buggy (or helpful) as you suggest.
+What if you add to the below sequence a lookup colour specification for bar at mycave that differs from foo's colour?
+ Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Wednesday, 1 May 2019 20:47
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Best approach for colouring elevations
+
+Fun fact;
+You don't even have to select the map for map lookups to find the scraps inside it.
+
+mycave.th:
+survey mycave
+  map foo
+    myscrap
+  endmap
+  map bar
+    myscrap
+  endmap
+  ...
+endsurvey
+
+thconfig:
+source "mycave.th"
+select bar at mycave
+lookup map
+  foo at mycave [100 0 0]
+endlookup
+layout elevation265
+  color map-fg map
+endlayout
+export map -proj plan -layout local -o "mycave.pdf"
+
+myscrap will be red, because it is in foo, even though bar is selected.
+Needless to say, this is a little unpredictable (is it a feature or a bug?), and means things get coloured even when you didn't expect them to be.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed May  1 12:14:09 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 1 May 2019 12:14:09 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+ <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+ <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+Message-ID: <6693a384-57d8-1e75-79ad-629a33a4c88e@ntlworld.com>
+
+> It could be that red is the first colour in the default map colour list
+
+
+Nope, tested that. Software tester (and pseudo-developer) by trade ;)
+It did a full paint of the entire cave using a map that I had not
+selected. Made me think I had got my map structures wrong or selected
+the wrong map.
+
+> What if you add to the below sequence a lookup colour specification for bar at mycave that differs from foo's colour?
+
+It takes the last one - whichever is specified last - that contains the
+scrap. It does not take the one you select, unless that one happens to
+be specified last.
+
+Definitely feels like I have stepped off the edge of stable features
+here. I will file a bug report.
+
+
+From bgee at campercaver.net  Wed May  1 17:54:12 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 01 May 2019 10:54:12 -0500
+Subject: [Therion] JMBegley need repackaged survex and therion
+Message-ID: <1803958.UvUGTa2VpP@main2.billgee.local>
+
+For JMBegley who very kindly maintains Fedora packages for both Therion and Survex ...
+
+When I start the dnf process to upgrade from Fedora 29 to Fedora 30, I get errors related to both Therion and Survex.  The messages are:
+
+Problem 1: package survex-1.2.38-1.fc29.i686 requires libproj.so.12, but none of the providers can be installed 
+ - proj-4.9.3-6.fc29.i686 does not belong to a distupgrade repository 
+ - problem with installed package survex-1.2.38-1.fc29.i686
+
+Problem 8: package libgeotiff-1.4.3-3.fc30.i686 requires libproj.so.13, but none of the providers can be installed 
+ - cannot install both proj-5.2.0-2.fc30.i686 and proj-4.9.3-6.fc29.i686 
+ - cannot install both proj-5.2.0-1.fc30.i686 and proj-4.9.3-6.fc29.i686 
+ - problem with installed package libgeotiff-1.4.0-14.fc29.i686 
+ - package therion-5.4.3-1.fc29.i686 requires libproj.so.12, but none of the providers can be installed 
+ - libgeotiff-1.4.0-14.fc29.i686 does not belong to a distupgrade repository 
+ - problem with installed package therion-5.4.3-1.fc29.i686
+
+There are other problem packages, but these two at least can be addressed through this list.
+
+-- 
+Bill Gee
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190501/8aa2b6a2/attachment.htm>
+
+From therion at speleo.sk  Wed May  1 19:09:08 2019
+From: therion at speleo.sk (Therion)
+Date: Wed,  1 May 2019 19:09:08 +0200 (CEST)
+Subject: [Therion] new Therion 5.4.4
+Message-ID: <20190501170908.E51B15FD28@mail.speleo.sk>
+
+Hi, there is a new release 5.4.4 of Therion.
+Release notes:
+
+v5.4.4          Therion 5.4.4 (2019-05-01):
+    
+    therion:
+     * support for Proj 5.0 and newer API (proj.h)
+     * bugs fixed:
+       - segfault while generating SVG when compiled by newer g++
+       - incorrect EPSG projections handling if more than one EPSG codes are used
+       - custom projection name missing
+       - missing Proj4 human readable projection names
+
+Best regards,
+Therion team
+
+
+From m.budaj at gmail.com  Wed May  1 19:15:31 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 1 May 2019 19:15:31 +0200
+Subject: [Therion] JMBegley need repackaged survex and therion
+In-Reply-To: <1803958.UvUGTa2VpP@main2.billgee.local>
+References: <1803958.UvUGTa2VpP@main2.billgee.local>
+Message-ID: <CALPsdSsNtznKLYHKGzy+c=UUcLN8xofM4nbkwaWqRRLReWynXQ@mail.gmail.com>
+
+Hi,
+
+Therion 5.4.4 (released today) should be compatible with proj-5.2.0 used in
+Fedora 30 (and proj-6.0.0 as well). Let us know if there is any problem
+packaging this new version.
+
+Martin
+
+On Wed, May 1, 2019 at 6:04 PM Bill Gee <bgee at campercaver.net> wrote:
+
+> For JMBegley who very kindly maintains Fedora packages for both Therion
+> and Survex ...
+>
+>
+>
+> When I start the dnf process to upgrade from Fedora 29 to Fedora 30, I get
+> errors related to both Therion and Survex. The messages are:
+>
+>
+>
+> Problem 1: package survex-1.2.38-1.fc29.i686 requires libproj.so.12, but
+> none of the providers can be installed
+>  - proj-4.9.3-6.fc29.i686 does not belong to a distupgrade repository
+>  - problem with installed package survex-1.2.38-1.fc29.i686
+>
+> Problem 8: package libgeotiff-1.4.3-3.fc30.i686 requires libproj.so.13,
+> but none of the providers can be installed
+>  - cannot install both proj-5.2.0-2.fc30.i686 and proj-4.9.3-6.fc29.i686
+>  - cannot install both proj-5.2.0-1.fc30.i686 and proj-4.9.3-6.fc29.i686
+>  - problem with installed package libgeotiff-1.4.0-14.fc29.i686
+>  - package therion-5.4.3-1.fc29.i686 requires libproj.so.12, but none of
+> the providers can be installed
+>  - libgeotiff-1.4.0-14.fc29.i686 does not belong to a distupgrade
+> repository
+>  - problem with installed package therion-5.4.3-1.fc29.i686
+>
+> There are other problem packages, but these two at least can be addressed
+> through this list.
+>
+> --
+>
+> Bill Gee
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190501/736e6bd3/attachment.htm>
+
+From bruce at tomo.co.nz  Wed May  1 21:29:31 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 2 May 2019 07:29:31 +1200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <6693a384-57d8-1e75-79ad-629a33a4c88e@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+ <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+ <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+ <6693a384-57d8-1e75-79ad-629a33a4c88e@ntlworld.com>
+Message-ID: <000001d50054$34ee8f40$9ecbadc0$@tomo.co.nz>
+
+>Definitely feels like I have stepped off the edge of stable features here. I will file a bug report.
+_______________________________________________
+Looking at the example in your bug report... https://github.com/therion/therion/issues/133 
+You have created two lookups for the same parameter (map), but no index has been specified.  i would guess that is why the last lookup overwrites.
+Try using an index as described in https://therion.speleo.sk/wiki/examples#colour_scales_-_lookups
+
+
+ie, similar to...
+You may specify multiple lookup tables for same criterion using an index, ie “:” separator in label
+
+lookup altitude:scale1
+ 600
+ 800
+endlookup
+and
+
+lookup altitude:scale2
+ 800
+ 750
+ 700
+endlookup
+and use then
+
+color map-fg altitude:scale1
+or
+color map-fg altitude:scale2
+
+Bruce
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed May  1 21:33:21 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 1 May 2019 21:33:21 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <000001d50054$34ee8f40$9ecbadc0$@tomo.co.nz>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+ <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+ <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+ <6693a384-57d8-1e75-79ad-629a33a4c88e@ntlworld.com>
+ <000001d50054$34ee8f40$9ecbadc0$@tomo.co.nz>
+Message-ID: <3a01389f-1f44-90c9-64bd-5df87c5d2273@ntlworld.com>
+
+> You have created two lookups for the same parameter (map), but no index has been specified.  i would guess that is why the last lookup overwrites.
+
+
+Agreed. Ideally, it should warn me that I have overridden my lookup, and
+that it is only using the last one. Right now, it silently tramples over
+it, which is not a desirable response.
+
+
+From bruce at tomo.co.nz  Wed May  1 21:39:06 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 2 May 2019 07:39:06 +1200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <3a01389f-1f44-90c9-64bd-5df87c5d2273@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+ <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+ <ffc935e4-8ca3-d8f2-782a-2ebf566b9e27@ntlworld.com>
+ <DC37CAF9-8A8F-41CB-8920-6F42EA14835D@mac.com>
+ <9abd0005-ff21-28de-1c4d-e37e859f3377@ntlworld.com>
+ <001301d50005$36ce3da0$a46ab8e0$@tomo.co.nz>
+ <6693a384-57d8-1e75-79ad-629a33a4c88e@ntlworld.com>
+ <000001d50054$34ee8f40$9ecbadc0$@tomo.co.nz>
+ <3a01389f-1f44-90c9-64bd-5df87c5d2273@ntlworld.com>
+Message-ID: <000001d50055$8b3f4fa0$a1bdeee0$@tomo.co.nz>
+
+:) A software tester is a valuable addition to the team.
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Thursday, 2 May 2019 07:33
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Best approach for colouring elevations
+
+> You have created two lookups for the same parameter (map), but no index has been specified.  i would guess that is why the last lookup overwrites.
+
+
+Agreed. Ideally, it should warn me that I have overridden my lookup, and that it is only using the last one. Right now, it silently tramples over it, which is not a desirable response.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From markus.boldt at gmx.net  Thu May  2 18:29:00 2019
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Thu, 2 May 2019 18:29:00 +0200
+Subject: [Therion] Excuse this question...
+Message-ID: <006701d50104$264d6140$72e823c0$@gmx.net>
+
+. because it was a theme once before. And I know there is a way.
+
+How was the way to get a top-File for pockettopo from a th-file and a
+th2-file from Therion?
+
+Greetings
+
+Markus
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190502/55b10c6e/attachment.htm>
+
+From james.begley at gmail.com  Thu May  2 19:31:36 2019
+From: james.begley at gmail.com (James Begley)
+Date: Thu, 2 May 2019 18:31:36 +0100
+Subject: [Therion] JMBegley need repackaged survex and therion
+In-Reply-To: <1803958.UvUGTa2VpP@main2.billgee.local>
+References: <1803958.UvUGTa2VpP@main2.billgee.local>
+Message-ID: <CAGS-eH5yM2Fwyv2AnDg=CFdMptHzPvqzrhBHV2YfJ5xyrHW7Vw@mail.gmail.com>
+
+Hiya,
+
+These packages (survex and the latest therion 5.4.4) have now been
+generated for Fedora 30, so the upgrade process should be a bit smoother
+for anyone else who wants to try.
+
+Cheers,
+James.
+
+On Wed, 1 May 2019 at 17:04, Bill Gee <bgee at campercaver.net> wrote:
+
+> For JMBegley who very kindly maintains Fedora packages for both Therion
+> and Survex ...
+>
+>
+>
+> When I start the dnf process to upgrade from Fedora 29 to Fedora 30, I get
+> errors related to both Therion and Survex. The messages are:
+>
+>
+>
+> Problem 1: package survex-1.2.38-1.fc29.i686 requires libproj.so.12, but
+> none of the providers can be installed
+>  - proj-4.9.3-6.fc29.i686 does not belong to a distupgrade repository
+>  - problem with installed package survex-1.2.38-1.fc29.i686
+>
+> Problem 8: package libgeotiff-1.4.3-3.fc30.i686 requires libproj.so.13,
+> but none of the providers can be installed
+>  - cannot install both proj-5.2.0-2.fc30.i686 and proj-4.9.3-6.fc29.i686
+>  - cannot install both proj-5.2.0-1.fc30.i686 and proj-4.9.3-6.fc29.i686
+>  - problem with installed package libgeotiff-1.4.0-14.fc29.i686
+>  - package therion-5.4.3-1.fc29.i686 requires libproj.so.12, but none of
+> the providers can be installed
+>  - libgeotiff-1.4.0-14.fc29.i686 does not belong to a distupgrade
+> repository
+>  - problem with installed package therion-5.4.3-1.fc29.i686
+>
+> There are other problem packages, but these two at least can be addressed
+> through this list.
+>
+> --
+>
+> Bill Gee
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190502/cd590c33/attachment.htm>
+
+From bgee at campercaver.net  Thu May  2 22:04:43 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 02 May 2019 15:04:43 -0500
+Subject: [Therion] JMBegley need repackaged survex and therion
+In-Reply-To: <CAGS-eH5yM2Fwyv2AnDg=CFdMptHzPvqzrhBHV2YfJ5xyrHW7Vw@mail.gmail.com>
+References: <1803958.UvUGTa2VpP@main2.billgee.local>
+ <CAGS-eH5yM2Fwyv2AnDg=CFdMptHzPvqzrhBHV2YfJ5xyrHW7Vw@mail.gmail.com>
+Message-ID: <129744050.gpXiplpfmT@main2.billgee.local>
+
+Thanks, James!  I can confirm that the updated Therion package installs correctly on Fedora 29.  My attempt to upgrade to Fedora 30 is still blocking, but no longer complains about either Therion or Survex.  Now it is Ekiga and MuseScore...
+
+-- 
+Bill Gee
+
+
+
+On Thursday, May 2, 2019 12:31:36 PM CDT James Begley wrote:
+> Hiya,
+> 
+> These packages (survex and the latest therion 5.4.4) have now been
+> generated for Fedora 30, so the upgrade process should be a bit smoother
+> for anyone else who wants to try.
+> 
+> Cheers,
+> James.
+> 
+> On Wed, 1 May 2019 at 17:04, Bill Gee <bgee at campercaver.net> wrote:
+> 
+> > For JMBegley who very kindly maintains Fedora packages for both Therion
+> > and Survex ...
+> >
+> >
+> >
+> > When I start the dnf process to upgrade from Fedora 29 to Fedora 30, I get
+> > errors related to both Therion and Survex. The messages are:
+> >
+> >
+> >
+> > Problem 1: package survex-1.2.38-1.fc29.i686 requires libproj.so.12, but
+> > none of the providers can be installed
+> >  - proj-4.9.3-6.fc29.i686 does not belong to a distupgrade repository
+> >  - problem with installed package survex-1.2.38-1.fc29.i686
+> >
+> > Problem 8: package libgeotiff-1.4.3-3.fc30.i686 requires libproj.so.13,
+> > but none of the providers can be installed
+> >  - cannot install both proj-5.2.0-2.fc30.i686 and proj-4.9.3-6.fc29.i686
+> >  - cannot install both proj-5.2.0-1.fc30.i686 and proj-4.9.3-6.fc29.i686
+> >  - problem with installed package libgeotiff-1.4.0-14.fc29.i686
+> >  - package therion-5.4.3-1.fc29.i686 requires libproj.so.12, but none of
+> > the providers can be installed
+> >  - libgeotiff-1.4.0-14.fc29.i686 does not belong to a distupgrade
+> > repository
+> >  - problem with installed package therion-5.4.3-1.fc29.i686
+> >
+> > There are other problem packages, but these two at least can be addressed
+> > through this list.
+> >
+> > --
+> >
+> > Bill Gee
+> >
+> >
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> >
+> 
+
+
+
+
+
+
+From alastairgott at hotmail.com  Mon May  6 23:48:47 2019
+From: alastairgott at hotmail.com (alastair gott)
+Date: Mon, 6 May 2019 21:48:47 +0000
+Subject: [Therion] Maps of maps at lower level in survey tree
+Message-ID: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Hi Therion Mailing list,
+
+I'm struggling with something after a surveying trip on Saturday (I've drawn everything up) but now want to strip the survey into lower and upper sections.
+
+At present I can run the top level .th file and stripped down config file to get the survey tree out (so I could select surveys individually at a lower level).
+
+However when I'm trying to use the code used in the Therion samples [installed on download].
+therion/samples/map-offset/thconfig.4 it doesn't work.
+
+Please find below my error message, .th and config files, does anyone know where i'm going wrong?
+
+Error message
+calculating basic statistics ... done
+processing extended elevation ... done​
+processing references ... ​
+C:\Program Files (x86)\Therion\therion.exe: error -- Fingernailviatpvtovortex2.th [9] -- object does not exist -- TotalperspectivevortM​
+writing xtherion file ... done​
+C:\Program Files (x86)\Therion\therion.exe: warning -- error deleting temporary directory -- C:\Users\alastair\AppData\Local\Temp\th27304​
+​
+.th
+survey Fingernailviatpvtovortex2
+​
+input Totalperspectivevort/Totalperspectivevort.th​
+input Totpersfromfinger/Totpersfromfinger.th​
+input Vortex2/Vortex2.th​
+​
+map tpv
+TotalperspectivevortM​
+break​
+Vortex2M​
+endmap​
+​
+map lower​
+TotpersfromfingerM​
+endmap​
+​
+centreline​
+equate 1.7 at Vortex2 1.2 at Totalperspectivevort​
+equate 1.0 at Totalperspectivevort 1.6 at Totpersfromfinger​
+endcentreline​
+​
+endsurvey
+
+
+Config file
+source Fingernailviatpvtovortex2.th
+
+source
+#!CODE​
+map Fingernailtovortex2​
+  tpv​
+  break​
+  lower [-0 30 m] below​
+endmap​
+#!ENDCODE​
+​
+endsource
+
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190506/78777c75/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue May  7 07:43:25 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 May 2019 06:43:25 +0100
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <16926bd3-b079-963c-257b-43187f607f21@ntlworld.com>
+
+Hi Alastair,
+
+> Fingernailviatpvtovortex2.th [9] -- object does not exist --
+> TotalperspectivevortM​
+
+
+>From what you posted below, I would have to agree with Therion; I also
+do not see any map (or scrap) called "TotalperspectivevortM​" being
+defined anywhere in Fingernailviatpvtovortex2.th
+
+> input Totalperspectivevort/Totalperspectivevort.th​
+> input Totpersfromfinger/Totpersfromfinger.th​
+> input Vortex2/Vortex2.th​
+
+
+Is it defined in the first one of these, perhaps? If so, is it defined
+within a new (sub-)survey or directly in the file? Think I'd need to see
+the contents of these files to make a proper diagnosis.
+
+> map tpv
+> TotalperspectivevortM​
+
+
+If it is in a subsurvey, then you need to write it like this:
+
+map foo
+  TotalperspectivevortM at subsurveyname
+  ...
+endmap
+
+eg. TotalperspectivevortM at Totalperspectivevort
+
+Feel free to send the rest of your files (directly to me) if you'd like
+me to take a better look. I am relatively new to Therion myself, but
+this is something I have used quite a lot in my own project, so I should
+be able to work it out. Or you could just wait for someone else like
+Bruce to point out some other fault.
+
+Hope this helps.
+
+Tarquin
+
+
+From martinsluka at mac.com  Tue May  7 08:26:18 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 7 May 2019 08:26:18 +0200
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <36309B26-B8D2-4F68-98CF-F4D29EE42F84@mac.com>
+
+
+> 6. 5. 2019 v 23:48, alastair gott <alastairgott at hotmail.com>:
+> 
+> map tpv
+> TotalperspectivevortM​
+> break​
+> Vortex2M​
+> endmap​
+> ​
+> map lower​
+> TotpersfromfingerM​
+> endmap​
+> 
+
+TotalperspectivevortM is scrap, isn’t it. But that scrap is part of namespace Totalperspectivevort of survey Totalperspectivevort defined in file Totalperspectivevort.th
+
+Therion must know the way to all objects to work with. If not, it sends message as in your case "Fingernailviatpvtovortex2.th [9] -- object does not exist -- TotalperspectivevortM​„. It means on 9th line of file Fingernailviatpvtovortex2.th is object TotalperspectivevortM but Therion doesn’t know the way to it.
+
+You defined the station in equate command correct - 1.2 at Totalperspectivevort  (station_name at name_space)
+
+Use the same way in your map definition
+
+map tpv
+TotalperspectivevortM​@Totalperspectivevort
+break​
+Vortex2M​@Totalperspectivevort
+endmap​
+
+Note: I after years started to name maps as xxxxxxxxx.map and scraps as nnnnnnnnnnnn.scrap just to see what is the object listed in definitions.
+
+Martin Sluka
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190507/1b917911/attachment.htm>
+
+From alastairgott at hotmail.com  Tue May  7 08:42:42 2019
+From: alastairgott at hotmail.com (alastair gott)
+Date: Tue, 7 May 2019 06:42:42 +0000
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <36309B26-B8D2-4F68-98CF-F4D29EE42F84@mac.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>,
+ <36309B26-B8D2-4F68-98CF-F4D29EE42F84@mac.com>
+Message-ID: <AM0PR03MB48679B447DECCF97B441F353D6310@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Hi Martin and Tarquin,
+
+I have now redefined the subsurveys correctly, however it's now got an error on the thconfig file.
+
+Error
+C:\Program Files (x86)\Therion\therion.exe: error -- thconfig [16] -- object does not exist -- tpv
+writing xtherion file ... done
+
+But as far as I know I defined the map tpv on the .th file. I've been round in a circle before commenting out parts. If I comment out tpv from both .th and config file, then I get the same message with just "lower".
+
+Error
+error -- thconfig [18] -- object does not exist -- lower
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+________________________________
+From: Therion <therion-bounces at speleo.sk> on behalf of Martin Sluka via Therion <therion at speleo.sk>
+Sent: 07 May 2019 07:26
+To: List for Therion users
+Cc: Martin Sluka
+Subject: Re: [Therion] Maps of maps at lower level in survey tree
+
+
+6. 5. 2019 v 23:48, alastair gott <alastairgott at hotmail.com<mailto:alastairgott at hotmail.com>>:
+
+map tpv
+TotalperspectivevortM​
+break​
+Vortex2M​
+endmap​
+​
+map lower​
+TotpersfromfingerM​
+endmap​
+
+
+TotalperspectivevortM is scrap, isn’t it. But that scrap is part of namespace Totalperspectivevort of survey Totalperspectivevort defined in file Totalperspectivevort.th<https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Ftotalperspectivevort.th&data=02%7C01%7C%7Cb1b950e4fdca48063d3b08d6d2b4f6bb%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928072002282895&sdata=WKj8RhBKVT9%2BzUu6%2Ftcmo1To5XPTGHNHAF%2Btb0LTXl0%3D&reserved=0>
+
+Therion must know the way to all objects to work with. If not, it sends message as in your case "Fingernailviatpvtovortex2.th<https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Ffingernailviatpvtovortex2.th&data=02%7C01%7C%7Cb1b950e4fdca48063d3b08d6d2b4f6bb%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928072002292906&sdata=RTsEnuz4TK9M0Mt%2FpNFD63smyaU2EzH7QMtCKgLewNk%3D&reserved=0> [9] -- object does not exist -- TotalperspectivevortM​„. It means on 9th line of file Fingernailviatpvtovortex2.th<https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Ffingernailviatpvtovortex2.th&data=02%7C01%7C%7Cb1b950e4fdca48063d3b08d6d2b4f6bb%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928072002302911&sdata=eYCLCWDNIULi4v%2BlbEhDe6PGw7GmSKIz%2BV%2BhjIDi6GU%3D&reserved=0> is object TotalperspectivevortM but Therion doesn’t know the way to it.
+
+You defined the station in equate command correct - 1.2 at Totalperspectivevort  (station_name at name_space)
+
+Use the same way in your map definition
+
+map tpv
+TotalperspectivevortM​@Totalperspectivevort
+break​
+Vortex2M​@Totalperspectivevort
+endmap​
+
+Note: I after years started to name maps as xxxxxxxxx.map and scraps as nnnnnnnnnnnn.scrap just to see what is the object listed in definitions.
+
+Martin Sluka
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190507/9131ce84/attachment.htm>
+
+From martinsluka at mac.com  Tue May  7 09:28:35 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 7 May 2019 09:28:35 +0200
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+Message-ID: <B03AB707-3795-4CA0-98FB-E5AB0A9F8EE4@mac.com>
+
+
+> 6. 5. 2019 v 23:48, alastair gott <alastairgott at hotmail.com>:
+> 
+> source Fingernailviatpvtovortex2.th <http://fingernailviatpvtovortex2.th/>
+> 
+> source
+> #!CODE​
+> map Fingernailtovortex2​
+>   tpv​
+>   break​
+>   lower [-0 30 m] below​
+> endmap​
+> #!ENDCODE​
+> ​
+> endsource
+> 
+
+Sorry, I didn't read your first mail to the end.
+
+You use definition of overall map inside of thconfig, what is possible, but not used.
+
+Better way should be to define it in Fingernailviatpvtovortex2.th in survey Fingernailviatpvtovortex2 as third map definition
+
+map Fingernailtovortex2​
+  tpv​
+  break​
+  lower [-0 30 m] below​
+endmap​
+
+tvp and lower are maps defined from scraps and map Fingernailtovortex2 is map defined from two others maps. 
+
+And use only simple thconfig:
+
+source Fingernailviatpvtovortex2.th
+
+export …..
+
+Martin 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190507/f7798368/attachment.htm>
+
+From martinsluka at mac.com  Tue May  7 18:41:39 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 7 May 2019 18:41:39 +0200
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <B03AB707-3795-4CA0-98FB-E5AB0A9F8EE4@mac.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <B03AB707-3795-4CA0-98FB-E5AB0A9F8EE4@mac.com>
+Message-ID: <E43582B4-7D87-4708-8479-86BCC7AADDB9@mac.com>
+
+> 
+> And use only simple thconfig:
+> 
+> source Fingernailviatpvtovortex2.th <http://fingernailviatpvtovortex2.th/>
+> 
+> export …..
+> 
+
+Sorry:
+
+source Fingernailviatpvtovortex2.th <http://fingernailviatpvtovortex2.th/>
+select Fingernailtovortex2 at Fingernailviatpvtovortex2 #map at survey
+
+export …..
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190507/9ce4c214/attachment.htm>
+
+From alastairgott at hotmail.com  Tue May  7 23:16:33 2019
+From: alastairgott at hotmail.com (alastair gott)
+Date: Tue, 7 May 2019 21:16:33 +0000
+Subject: [Therion] Maps of maps at lower level in survey tree
+In-Reply-To: <E43582B4-7D87-4708-8479-86BCC7AADDB9@mac.com>
+References: <AM0PR03MB48677A0102943DB3C5300432D6300@AM0PR03MB4867.eurprd03.prod.outlook.com>
+ <B03AB707-3795-4CA0-98FB-E5AB0A9F8EE4@mac.com>,
+ <E43582B4-7D87-4708-8479-86BCC7AADDB9@mac.com>
+Message-ID: <AM0PR03MB4867A75E124375CA2E27539DD6310@AM0PR03MB4867.eurprd03.prod.outlook.com>
+
+Thank you Martin and Tarquin,
+
+It’s all working perfectly, such a useful thing to know. Got a few things to try out later too.
+
+Many thanks for sorting me out.
+
+Al.
+
+Sent from my iPhone
+
+On 7 May 2019, at 17:42, Martin Sluka via Therion <therion at speleo.sk<mailto:therion at speleo.sk>> wrote:
+
+
+And use only simple thconfig:
+
+source Fingernailviatpvtovortex2.th<https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Ffingernailviatpvtovortex2.th%2F&data=02%7C01%7C%7Cc325ff0291ce45a1e24b08d6d30af32d%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928441317751325&sdata=Oh9ZqUDm%2FDeiTWPu42w4JkDtWQRbgfz2JZPUGwnqQN0%3D&reserved=0>
+
+export …..
+
+
+Sorry:
+
+source Fingernailviatpvtovortex2.th<https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Ffingernailviatpvtovortex2.th%2F&data=02%7C01%7C%7Cc325ff0291ce45a1e24b08d6d30af32d%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928441317761336&sdata=qj6z9aiyB7NEhf0gHkHHh6IvYNoxjsJPuUURxSmWzC8%3D&reserved=0>
+select Fingernailtovortex2 at Fingernailviatpvtovortex2 #map at survey
+
+export …..
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk<mailto:Therion at speleo.sk>
+https://apc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=02%7C01%7C%7Cc325ff0291ce45a1e24b08d6d30af32d%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636928441317791356&amp;sdata=5NkIV1N8kzncZBVzKwasLK891yedW%2Bfik6to9bB%2B1qw%3D&amp;reserved=0
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190507/c60b9824/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 13:08:16 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 12:08:16 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+Message-ID: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+
+Hi all,
+
+I have an awkward situation in my survey. One of our caves was surveyed
+in 2 surveys. The 2 surveys join at a sloping pitch with a secondary
+hole dropping into it.
+
+I have managed to draw it all in a way that makes logical sense, but I
+can't work out how to join the two surveys in the right manner. See
+attached. Green = upper passage survey. Blue & purple = lower passage
+and pitch survey. The part I want to fix is the green-blue boundary,
+where the blue should ideally follow the "pit" lines
+
+Ideally, pitches/pits should have their lower colour taken from the
+lower passage, and their upper colour taken from the upper passage. This
+is easy when they are in the same survey; you just draw your "pit" line
+in the upper scrap, and then follow that exact same line with a
+"-visibility off" wall in the lower scrap.
+
+When joining surveys, they are joined in a straight line at the scrap
+boundaries. This makes it very hard to draw the curved pitch heads,
+since curves are not straight lines, and you cannot follow the exact
+same line as the other scrap, because the other scrap sits in another
+survey, in another .th2 file.
+
+I can make additional "lower" scraps in the "upper survey" to follow the
+pit outlines, but how can I make those scraps take on the colour of a
+scrap using survey stations in another survey file?
+
+Does anyone have any methods to work with this situation? (Preferably
+not something that becomes just a bunch of trial and error, and then
+joining every single curve point in the two surveys. I could do that,
+but it is really painful.)
+
+Thanks for any advice,
+
+Tarquin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: surveyjoin.png
+Type: image/png
+Size: 174806 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/57af051e/attachment.png>
+
+From Xavier.Pennec at inria.fr  Fri May 10 13:24:59 2019
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 10 May 2019 13:24:59 +0200
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+Message-ID: <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+
+Hi Tarquin,
+
+Adding the option -outline out to the (closed) line of  your pit on the 
+top scrap should create the whole that you want in the blue color so 
+that you will see the green color of the bottom scrap. Personally, I 
+would not use a line pit in the bottom scrap (this is not a pit on the 
+floor of that level) but rather a line of type ceiling-step  to indicate 
+the arrival of the top pit on the ceiling.
+
+Hope this helps
+
+Xavier
+
+Le 10-May-19 à 13:08, Tarquin Wilton-Jones via Therion a écrit :
+> Hi all,
+>
+> I have an awkward situation in my survey. One of our caves was surveyed
+> in 2 surveys. The 2 surveys join at a sloping pitch with a secondary
+> hole dropping into it.
+>
+> I have managed to draw it all in a way that makes logical sense, but I
+> can't work out how to join the two surveys in the right manner. See
+> attached. Green = upper passage survey. Blue & purple = lower passage
+> and pitch survey. The part I want to fix is the green-blue boundary,
+> where the blue should ideally follow the "pit" lines
+>
+> Ideally, pitches/pits should have their lower colour taken from the
+> lower passage, and their upper colour taken from the upper passage. This
+> is easy when they are in the same survey; you just draw your "pit" line
+> in the upper scrap, and then follow that exact same line with a
+> "-visibility off" wall in the lower scrap.
+>
+> When joining surveys, they are joined in a straight line at the scrap
+> boundaries. This makes it very hard to draw the curved pitch heads,
+> since curves are not straight lines, and you cannot follow the exact
+> same line as the other scrap, because the other scrap sits in another
+> survey, in another .th2 file.
+>
+> I can make additional "lower" scraps in the "upper survey" to follow the
+> pit outlines, but how can I make those scraps take on the colour of a
+> scrap using survey stations in another survey file?
+>
+> Does anyone have any methods to work with this situation? (Preferably
+> not something that becomes just a bunch of trial and error, and then
+> joining every single curve point in the two surveys. I could do that,
+> but it is really painful.)
+>
+> Thanks for any advice,
+>
+> Tarquin
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/047836c4/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 13:41:56 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 12:41:56 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+Message-ID: <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+
+Thanks for the reply.
+
+> Adding the option -outline out to the (closed) line of  your pit on the
+> top scrap should create the whole that you want in the blue color so
+> that you will see the green color of the bottom scrap.
+
+See attached for what happens when you do that. I need the blue to fill
+the blank area. Blue and green belong to different surveys, so getting
+them to perfectly match the curve of each other manually is ... hard.
+
+Is there a way to create a scrap within the green survey (where it is
+easy to perfectly follow the same line), but tell it to take it's
+altitude colour from the blue scrap instead?
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: unpainted.png
+Type: image/png
+Size: 19597 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/f37add28/attachment.png>
+
+From drfootleg at gmail.com  Fri May 10 14:31:30 2019
+From: drfootleg at gmail.com (Footleg)
+Date: Fri, 10 May 2019 13:31:30 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+Message-ID: <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+
+I do this sort of thing a lot. You just need an equivalent line in the
+lower (blue) survey with -outline out to extend the blue scrap border to
+cover the white hole in your plan. I generally use an invisible wall line
+(so does not need '-outline out' option specifying) and make it slightly
+larger than the curved pit line so the overlap of the scraps is maintained
+even if a bit of distortion is applied due to loop closure corrections. As
+long as the scraps are in the same map level (i.e. not separated by a
+break) then the upper scrap will hide the overlapping area of the lower
+one. You cannot 'join' the scraps automatically now as neither will have an
+opening in the outline at the pit now. So if you need to join them to keep
+them aligned you have to specify the exact line points to join to pin the
+points at either end of the curved lines to each other in the pair of
+scraps.
+
+Footleg
+
+On Fri, 10 May 2019 at 12:42, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> Thanks for the reply.
+>
+> > Adding the option -outline out to the (closed) line of  your pit on the
+> > top scrap should create the whole that you want in the blue color so
+> > that you will see the green color of the bottom scrap.
+>
+> See attached for what happens when you do that. I need the blue to fill
+> the blank area. Blue and green belong to different surveys, so getting
+> them to perfectly match the curve of each other manually is ... hard.
+>
+> Is there a way to create a scrap within the green survey (where it is
+> easy to perfectly follow the same line), but tell it to take it's
+> altitude colour from the blue scrap instead?
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/4d509ab9/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Fri May 10 14:36:56 2019
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Fri, 10 May 2019 14:36:56 +0200
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+Message-ID: <2373370a-782b-ad38-117b-bc55804fe025@inria.fr>
+
+Indeed, if the two scraps are joined, then using -outline out creates  a 
+hole which is not colored.
+
+The main problem in this configuration is that the bottom scrap should 
+close its outline contour using the pit line rather than using an 
+implicit line connecting the two shortest points where the contour is 
+open. However, connecting the wall of the bottom scrap to the pit line 
+does not solve the problem since the pit line should have outline out on 
+the top scrap and outline in on the bottom scrap. The solution I used to 
+patch that was to duplicate the geometry of the pit line of the top 
+scrap into a "wall:invisible" line (inversely oriented to have the 
+correct orientation) on the bottom scrap. When the two scarps are not 
+deformed too differently, this works. But if the scraps are deformed 
+differently, then the top and bottom lines are deformed independently 
+and differently and this can create a small hole.
+
+This is basically the same solution as the one Footleg just proposed. I 
+wish there would be a more principled way of joining two scraps along a 
+shared line.
+
+Xavier
+
+
+Le 10-May-19 à 14:31, Footleg a écrit :
+> I do this sort of thing a lot. You just need an equivalent line in the 
+> lower (blue) survey with -outline out to extend the blue scrap border 
+> to cover the white hole in your plan. I generally use an invisible 
+> wall line (so does not need '-outline out' option specifying) and make 
+> it slightly larger than the curved pit line so the overlap of the 
+> scraps is maintained even if a bit of distortion is applied due to 
+> loop closure corrections. As long as the scraps are in the same map 
+> level (i.e. not separated by a break) then the upper scrap will hide 
+> the overlapping area of the lower one. You cannot 'join' the scraps 
+> automatically now as neither will have an opening in the outline at 
+> the pit now. So if you need to join them to keep them aligned you have 
+> to specify the exact line points to join to pin the points at either 
+> end of the curved lines to each other in the pair of scraps.
+>
+> Footleg
+>
+> On Fri, 10 May 2019 at 12:42, Tarquin Wilton-Jones via Therion 
+> <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+>
+>     Thanks for the reply.
+>
+>     > Adding the option -outline out to the (closed) line of your pit
+>     on the
+>     > top scrap should create the whole that you want in the blue color so
+>     > that you will see the green color of the bottom scrap.
+>
+>     See attached for what happens when you do that. I need the blue to
+>     fill
+>     the blank area. Blue and green belong to different surveys, so getting
+>     them to perfectly match the curve of each other manually is ... hard.
+>
+>     Is there a way to create a scrap within the green survey (where it is
+>     easy to perfectly follow the same line), but tell it to take it's
+>     altitude colour from the blue scrap instead?
+>     _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>     https://mailman.speleo.sk/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/00a7f39b/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 14:50:57 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 13:50:57 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+Message-ID: <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+
+> So if you
+> need to join them to keep them aligned you have to specify the exact
+> line points to join to pin the points at either end of the curved lines
+> to each other in the pair of scraps.
+
+
+Many thanks for that.
+
+I was afraid you would answer something like that though. Laborious
+manual editing it is.
+
+I was wondering if maybe I could manually add the pit line into the
+lower scrap's .th2 file using a text editor. Make it invisible, outline
+out, then use XTherion to move it into position so that it touches the
+lower scrap properly, and then manually join all the linepoints in the
+.th file. That way, the shape of the curve should be perfect, with
+minimal distortion, and not relying on line thickness to hide the
+approximations.
+
+It's a real shame to have to do it like that though. Imagine instead
+that I could create a scrap filling only the gap, in the *upper*
+survey's .th2 file (fairly easy to do). Then imagine I could say:
+fillerscrap at uppersurvey -color lowerscrap at lowersurvey.
+
+(Whether this is done as a lookup, or as a direct command or property
+doesn't really matter, just as long as it is possible.)
+
+This would solve the problem without needing all the manual
+approximations and attempting to copy vectors between surveys.
+
+Feature request?
+
+
+From drfootleg at gmail.com  Fri May 10 15:28:30 2019
+From: drfootleg at gmail.com (Footleg)
+Date: Fri, 10 May 2019 14:28:30 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+Message-ID: <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+
+If the two scraps are in the same map layer (i.e. not separated by a break
+line in the map definition) then the upper scrap will completely hide any
+part of the lower scrap which passes under it. So the lower scrap curved
+outline of the pit bottom can be quickly drawn a bit larger than the curved
+line of the pit in the upper scrap, as any overlap will be hidden.
+
+Footleg
+
+On Fri, 10 May 2019 at 13:51, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> > So if you
+> > need to join them to keep them aligned you have to specify the exact
+> > line points to join to pin the points at either end of the curved lines
+> > to each other in the pair of scraps.
+>
+>
+> Many thanks for that.
+>
+> I was afraid you would answer something like that though. Laborious
+> manual editing it is.
+>
+> I was wondering if maybe I could manually add the pit line into the
+> lower scrap's .th2 file using a text editor. Make it invisible, outline
+> out, then use XTherion to move it into position so that it touches the
+> lower scrap properly, and then manually join all the linepoints in the
+> .th file. That way, the shape of the curve should be perfect, with
+> minimal distortion, and not relying on line thickness to hide the
+> approximations.
+>
+> It's a real shame to have to do it like that though. Imagine instead
+> that I could create a scrap filling only the gap, in the *upper*
+> survey's .th2 file (fairly easy to do). Then imagine I could say:
+> fillerscrap at uppersurvey -color lowerscrap at lowersurvey.
+>
+> (Whether this is done as a lookup, or as a direct command or property
+> doesn't really matter, just as long as it is possible.)
+>
+> This would solve the problem without needing all the manual
+> approximations and attempting to copy vectors between surveys.
+>
+> Feature request?
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/f25f374f/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 15:39:38 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 14:39:38 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+Message-ID: <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+
+On 10/05/2019 14:28, Footleg wrote:
+> If the two scraps are in the same map layer (i.e. not separated by a
+> break line in the map definition) then the upper scrap will completely
+> hide any part of the lower scrap which passes under it. So the lower
+> scrap curved outline of the pit bottom can be quickly drawn a bit larger
+> than the curved line of the pit in the upper scrap, as any overlap will
+> be hidden.
+
+
+
+Sounds convenient, but sadly not possible in my case, as there is a
+break. But my manual process does work. Tested it out. Wish it were more
+convenient, but it works.
+
+1. text editor, copy pit line from upper scrap in upper survey
+2. text editor, paste pit line into lower scrap in lower survey
+3. set -outline out, -visibility off
+4. in XTherion, open lower survey
+5. select first line point on the new line (it will be positioned
+somewhere weird), press "shift from"
+6. select the line point on the wall line where it needs to end up,
+press "shift to"
+7. select the new line, press "shift object"
+8. connect walls to it as needed
+9. in overall .th file, add joins for each line point, and the scrap as
+needed:
+
+  join pitchbottomSP at topsurvey pitchtopSP at bottomsurvey -smooth on
+  join pitchedge at topsurvey:0 pitchlip at bottomsurvey:0
+  join pitchedge at topsurvey:1 pitchlip at bottomsurvey:1
+  join pitchedge at topsurvey:2 pitchlip at bottomsurvey:2
+  join pitchedge at topsurvey:3 pitchlip at bottomsurvey:3
+  join pitchedge at topsurvey:4 pitchlip at bottomsurvey:4
+
+
+From drfootleg at gmail.com  Fri May 10 15:48:16 2019
+From: drfootleg at gmail.com (Footleg)
+Date: Fri, 10 May 2019 14:48:16 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+Message-ID: <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+
+Nice. I had not thought to join all the line points like that. I'll bear
+that in mind next time I have a particularly tricky join.
+
+Footleg
+
+On Fri, 10 May 2019 at 14:39, Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> On 10/05/2019 14:28, Footleg wrote:
+> > If the two scraps are in the same map layer (i.e. not separated by a
+> > break line in the map definition) then the upper scrap will completely
+> > hide any part of the lower scrap which passes under it. So the lower
+> > scrap curved outline of the pit bottom can be quickly drawn a bit larger
+> > than the curved line of the pit in the upper scrap, as any overlap will
+> > be hidden.
+>
+>
+>
+> Sounds convenient, but sadly not possible in my case, as there is a
+> break. But my manual process does work. Tested it out. Wish it were more
+> convenient, but it works.
+>
+> 1. text editor, copy pit line from upper scrap in upper survey
+> 2. text editor, paste pit line into lower scrap in lower survey
+> 3. set -outline out, -visibility off
+> 4. in XTherion, open lower survey
+> 5. select first line point on the new line (it will be positioned
+> somewhere weird), press "shift from"
+> 6. select the line point on the wall line where it needs to end up,
+> press "shift to"
+> 7. select the new line, press "shift object"
+> 8. connect walls to it as needed
+> 9. in overall .th file, add joins for each line point, and the scrap as
+> needed:
+>
+>   join pitchbottomSP at topsurvey pitchtopSP at bottomsurvey -smooth on
+>   join pitchedge at topsurvey:0 pitchlip at bottomsurvey:0
+>   join pitchedge at topsurvey:1 pitchlip at bottomsurvey:1
+>   join pitchedge at topsurvey:2 pitchlip at bottomsurvey:2
+>   join pitchedge at topsurvey:3 pitchlip at bottomsurvey:3
+>   join pitchedge at topsurvey:4 pitchlip at bottomsurvey:4
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190510/d8ce92cb/attachment.htm>
+
+From bruce at tomo.co.nz  Fri May 10 22:51:47 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 11 May 2019 08:51:47 +1200
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+ <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+Message-ID: <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+
+Solutions of the type proposed (holes in upper scraps so that scrap below is visible) have their place, and I have done similar myself, using the sorts strategies discussed.
+
+Nowadays I am reluctant to do such things, as I place a high value on scraps that are as versatile as possible.  The danger of ‘holey’ scraps is that if they are later (or simultaneously) used in maps that do not have the lower level passage displayed, they end up with an inappropriate white (non-passage) space in a location where there clearly should be passage (ie the pit).
+
+Similarly, scraps with holes cut-out wreak havoc with the loch models. 
+
+ 
+
+So you can apply trickery to achieve a perfect particular output, often to the significant detriment to other outputs.
+
+ 
+
+Perhaps a way forward would be a feature whereby a passage fill area be defined that is completely transparent to show any scraps that happen to pass below it.  And if it is presented in an output that has no scrap shown below it, it takes on the specified map-fg colour that otherwise applies.  This kind of a passage fill would avoid the workarounds discussed upsetting model outputs, and avoid the need for complicated workarounds.
+
+So, is an ‘area open’, referring to a ‘window’ in a scrap through which a scrap behind or below is visible unobstructed, desirable?
+
+Is it possible? 
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190511/acee52ef/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 23:00:17 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 22:00:17 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+ <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+ <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+Message-ID: <ea1f5853-796c-39cd-06eb-56c77d9645c4@ntlworld.com>
+
+>     if they are later (or simultaneously) used in maps
+>     that do not have the lower level passage displayed, they end up with
+>     an inappropriate white (non-passage) space in a location where there
+>     clearly should be passage (ie the pit).
+
+
+Indeed, though I did come up with a solution for that, in the form of a
+filler scrap at that location which is used when offsetting maps. It's a
+messy solution though, and it would be better not to need it.
+
+>     Similarly, scraps with holes cut-out wreak havoc with the loch models.
+
+
+Interesting! Thanks for sharing that one, I hadn't noticed until you said.
+
+>     Perhaps a way forward would be a feature whereby a passage fill area
+>     be defined that is completely transparent to show any scraps that
+>     happen to pass below it.
+
+
+Genius! I really want this feature. Don't know if it is possible, but I
+want it anyway.
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 10 23:32:43 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 10 May 2019 22:32:43 +0100
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <ea1f5853-796c-39cd-06eb-56c77d9645c4@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+ <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+ <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+ <ea1f5853-796c-39cd-06eb-56c77d9645c4@ntlworld.com>
+Message-ID: <894a53af-6a74-fbfb-dbb0-1f0dcda128fd@ntlworld.com>
+
+>>     Perhaps a way forward would be a feature whereby a passage fill area
+>>     be defined that is completely transparent to show any scraps that
+>>     happen to pass below it.
+> 
+> 
+> Genius! I really want this feature. Don't know if it is possible, but I
+> want it anyway.
+
+
+-outline hollow -fillstation 23
+
+meaning that wherever there is nothing behind it, it should take its
+colour from station 23. but that would mean it is impossible to colour
+unless there is a relevant station in the same survey (no idea of how to
+mix stations). And if there are three passages stacked under each other
+at the pitch (which is the case for one of mine), then it might think it
+doesn't need to render the fill colour because there is a passage there,
+even though the pitch doesn't actually connect to that passage. So there
+would be some kinks to work out.
+
+
+From bruce at tomo.co.nz  Sat May 11 06:36:28 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 11 May 2019 16:36:28 +1200
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <894a53af-6a74-fbfb-dbb0-1f0dcda128fd@ntlworld.com>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+ <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+ <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+ <ea1f5853-796c-39cd-06eb-56c77d9645c4@ntlworld.com>
+ <894a53af-6a74-fbfb-dbb0-1f0dcda128fd@ntlworld.com>
+Message-ID: <000001d507b3$1b659440$5230bcc0$@tomo.co.nz>
+
+> If the two scraps are in the same map layer (i.e. not separated by a break line in the map definition) then the upper scrap will completely hide any part of the lower scrap which passes under it. 
+
+> So the lower scrap curved outline of the pit bottom can be quickly drawn a bit larger than the curved line of the pit in the upper scrap, as any overlap will be hidden.
+
+ 
+
+Not sure I've experienced that behaviour, but then I always have - transparency on with a midrange opacity set.  Scraps on the same layer that overlap tend to render poorly with those settings.
+
+ 
+
+>>     Perhaps a way forward would be a feature whereby a passage fill area
+
+>>     be defined that is completely transparent to show any scraps that
+
+>>     happen to pass below it.
+
+ 
+
+I imagine that at the time a scrap is rendered, the code  cannot know whether there will be a scrap below/behind.   But I don't know.
+
+But still, maybe...
+
+ 
+
+area open(ing) 
+
+                -place bottom #always
+
+                -clip on #always
+
+                -visibility [on|off] #off effectively disables the 'opening' effect, as though the area was not specified at all
+
+                -fill-* # background colour in the ‘opening’ as below
+
+               ... border line references ...
+
+endarea
+
+ 
+
+I imagine the opacity of the 'area open' could be set to some fraction of the opacity set for the current layout.  That would give the relative impression of transparency, and would let the colour of the passage below bleed through.  It could be a default setting, or user definable.
+
+To account for scenarios where there is no passage surveyed or drawing immediately below, or if Therion indeed cannot know whether there will be a scrap rendered below the current scrap, there could be -fill-* options to set the underlying colour.  
+
+It would need to accommodate the -lookup -map-fg options <https://therion.speleo.sk/wiki/examples?s%5b%5d=lookup#colour_scales_-_lookups>  that apply to the layout, and respond appropriately to a user input.
+
+ie
+
+colour map-fg altitude would need area open to accept say -fill-station 23 at survey02, or
+
+                                                                                                                -fill-altitude 850 m, or
+
+                                                                                                                -fill-colour [r g b]
+
+colour map-fg explo-date or topo-date would need area open to accept say -fill-survey survey02 *, or
+
+                                                                                                                                                -fill-date <date>, or
+
+                                                                                                                                                -fill-colour [r g b]
+
+* each centreline or subsurvey could have a different date, so I guess it would just average the date of all centrelines in the survey.
+
+colour map-fg map or scrap would need area open to accept say -fill-map or fill-scrap <map or scrap name>, or
+
+                                                                                                                                                -fill-colour [r g b]
+
+I guess multiple fill colour options could be set in any one area, and options inappropriate to the current lookup would be silently ignored, and the last valid fill-option defined would be the one implemented for a particular area at compile time.
+
+ 
+
+This arrangement would allow the user to easily specify outputs that would be consistent across a number of different selection, map, lookup and export scenarios.
+
+ 
+
+Its getting complicated now.  Sorry coders…
+
+Bruce
+
+ 
+
+-----Original Message-----
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+
+Sent: Saturday, 11 May 2019 09:33
+
+To: therion at speleo.sk
+
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+
+Subject: Re: [Therion] Joining surveys at a curved/sloping pitch
+
+ 
+
+>>     Perhaps a way forward would be a feature whereby a passage fill area
+
+>>     be defined that is completely transparent to show any scraps that
+
+>>     happen to pass below it.
+
+> 
+
+> 
+
+> Genius! I really want this feature. Don't know if it is possible, but 
+
+> I want it anyway.
+
+ 
+
+ 
+
+-outline hollow -fillstation 23
+
+ 
+
+meaning that wherever there is nothing behind it, it should take its colour from station 23. but that would mean it is impossible to colour unless there is a relevant station in the same survey (no idea of how to mix stations). And if there are three passages stacked under each other at the pitch (which is the case for one of mine), then it might think it doesn't need to render the fill colour because there is a passage there, even though the pitch doesn't actually connect to that passage. So there would be some kinks to work out.
+
+_______________________________________________
+
+Therion mailing list
+
+Therion at speleo.sk
+
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190511/49b6d21a/attachment.htm>
+
+From duncan.collis at gmail.com  Sat May 11 07:20:01 2019
+From: duncan.collis at gmail.com (Duncan Collis)
+Date: Sat, 11 May 2019 13:20:01 +0800
+Subject: [Therion] Joining surveys at a curved/sloping pitch
+In-Reply-To: <000001d507b3$1b659440$5230bcc0$@tomo.co.nz>
+References: <c2eba3c7-672f-65a2-17a9-5bbc457380bf@ntlworld.com>
+ <86a9f3c7-7790-bc5f-62be-c9bb5c136cfb@inria.fr>
+ <57f83400-6df3-a014-4511-55710c1a6b76@ntlworld.com>
+ <CAJkGg4=FgRB=MR3TMDPHVN70k+Gh0U=g=t26Fi19gzoBUo2jmQ@mail.gmail.com>
+ <1d227497-f208-62fc-a7aa-d17056689b13@ntlworld.com>
+ <CAJkGg4nE+5_qWyFL3SE9KZOqx+6sBuyGo014-e95chChwEVHvw@mail.gmail.com>
+ <e790849c-83a9-e06c-4e02-b4eca637aca4@ntlworld.com>
+ <CAJkGg4n5M0vUUV4-uQUP=3qMAgKuA3gE7jVH4P_bMhRtkhdJMQ@mail.gmail.com>
+ <000e01d50772$30dd18c0$92974a40$@tomo.co.nz>
+ <ea1f5853-796c-39cd-06eb-56c77d9645c4@ntlworld.com>
+ <894a53af-6a74-fbfb-dbb0-1f0dcda128fd@ntlworld.com>
+ <000001d507b3$1b659440$5230bcc0$@tomo.co.nz>
+Message-ID: <CA+u30UBpc_+a3NK2eNFwJLZh2oSKCxCyXpyPSSMBKk_-T40RDA@mail.gmail.com>
+
+I've been running into the problem of how to join scraps at curved
+lines as well and had come up with essentially the same solution as
+Tarquin. However I sometimes find that the two lines that are joined
+at every point still don't follow each other closely enough, leaving
+either a gap or an overlap. Also, it becomes much more difficult when
+the two scraps are in different th2 files - I've used an Excel
+spreadsheet to transform coordinates from one file to another with
+moderate success, but again sometimes find that the lines don't quite
+follow each other.
+
+My dream is to have a syntax like:
+
+# in one scrap...
+line wall -id wall1
+  [points]
+endline
+
+# in another scrap
+line wall -conform wall1
+
+with the -conform wall1 telling Therion to make the line's path
+exactly follow the specified line (in this case wall1) in the final
+output.
+
+A different approach would be able to specify the background colour of
+an area within one scrap by referring to the name of another scrap,
+with Therion applying whatever that scrap's background colour is to
+the area in question.
+
+Best regards,
+
+Duncan
+
+On 11/05/2019, Bruce Mutton <bruce at tomo.co.nz> wrote:
+>> If the two scraps are in the same map layer (i.e. not separated by a break
+>> line in the map definition) then the upper scrap will completely hide any
+>> part of the lower scrap which passes under it.
+>
+>> So the lower scrap curved outline of the pit bottom can be quickly drawn a
+>> bit larger than the curved line of the pit in the upper scrap, as any
+>> overlap will be hidden.
+>
+>
+>
+> Not sure I've experienced that behaviour, but then I always have -
+> transparency on with a midrange opacity set.  Scraps on the same layer that
+> overlap tend to render poorly with those settings.
+>
+>
+>
+>>>     Perhaps a way forward would be a feature whereby a passage fill area
+>
+>>>     be defined that is completely transparent to show any scraps that
+>
+>>>     happen to pass below it.
+>
+>
+>
+> I imagine that at the time a scrap is rendered, the code  cannot know
+> whether there will be a scrap below/behind.   But I don't know.
+>
+> But still, maybe...
+>
+>
+>
+> area open(ing)
+>
+>                 -place bottom #always
+>
+>                 -clip on #always
+>
+>                 -visibility [on|off] #off effectively disables the 'opening'
+> effect, as though the area was not specified at all
+>
+>                 -fill-* # background colour in the ‘opening’ as below
+>
+>                ... border line references ...
+>
+> endarea
+>
+>
+>
+> I imagine the opacity of the 'area open' could be set to some fraction of
+> the opacity set for the current layout.  That would give the relative
+> impression of transparency, and would let the colour of the passage below
+> bleed through.  It could be a default setting, or user definable.
+>
+> To account for scenarios where there is no passage surveyed or drawing
+> immediately below, or if Therion indeed cannot know whether there will be a
+> scrap rendered below the current scrap, there could be -fill-* options to
+> set the underlying colour.
+>
+> It would need to accommodate the -lookup -map-fg options
+> <https://therion.speleo.sk/wiki/examples?s%5b%5d=lookup#colour_scales_-_lookups>
+>  that apply to the layout, and respond appropriately to a user input.
+>
+> ie
+>
+> colour map-fg altitude would need area open to accept say -fill-station
+> 23 at survey02, or
+>
+>
+>                                    -fill-altitude 850 m, or
+>
+>
+>                                    -fill-colour [r g b]
+>
+> colour map-fg explo-date or topo-date would need area open to accept say
+> -fill-survey survey02 *, or
+>
+>
+>
+> -fill-date <date>, or
+>
+>
+>
+> -fill-colour [r g b]
+>
+> * each centreline or subsurvey could have a different date, so I guess it
+> would just average the date of all centrelines in the survey.
+>
+> colour map-fg map or scrap would need area open to accept say -fill-map or
+> fill-scrap <map or scrap name>, or
+>
+>
+>
+> -fill-colour [r g b]
+>
+> I guess multiple fill colour options could be set in any one area, and
+> options inappropriate to the current lookup would be silently ignored, and
+> the last valid fill-option defined would be the one implemented for a
+> particular area at compile time.
+>
+>
+>
+> This arrangement would allow the user to easily specify outputs that would
+> be consistent across a number of different selection, map, lookup and export
+> scenarios.
+>
+>
+>
+> Its getting complicated now.  Sorry coders…
+>
+> Bruce
+>
+>
+>
+> -----Original Message-----
+>
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones
+> via Therion
+>
+> Sent: Saturday, 11 May 2019 09:33
+>
+> To: therion at speleo.sk
+>
+> Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+>
+> Subject: Re: [Therion] Joining surveys at a curved/sloping pitch
+>
+>
+>
+>>>     Perhaps a way forward would be a feature whereby a passage fill area
+>
+>>>     be defined that is completely transparent to show any scraps that
+>
+>>>     happen to pass below it.
+>
+>>
+>
+>>
+>
+>> Genius! I really want this feature. Don't know if it is possible, but
+>
+>> I want it anyway.
+>
+>
+>
+>
+>
+> -outline hollow -fillstation 23
+>
+>
+>
+> meaning that wherever there is nothing behind it, it should take its colour
+> from station 23. but that would mean it is impossible to colour unless there
+> is a relevant station in the same survey (no idea of how to mix stations).
+> And if there are three passages stacked under each other at the pitch (which
+> is the case for one of mine), then it might think it doesn't need to render
+> the fill colour because there is a passage there, even though the pitch
+> doesn't actually connect to that passage. So there would be some kinks to
+> work out.
+>
+> _______________________________________________
+>
+> Therion mailing list
+>
+> Therion at speleo.sk
+>
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+
+
+From bgee at campercaver.net  Sun May 12 20:14:27 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 12 May 2019 13:14:27 -0500
+Subject: [Therion] Setting scale on custom symbol
+Message-ID: <18770252.mDgSicInhO@main2.billgee.local>
+
+Hello everyone - 
+
+I have defined a custom symbol for electric light fixtures.  The MetaPost code is below.  Now that I have used it, I find that it draws the symbol too large.  I tried using "-scale small" and "-scale tiny", and that helps.  Rather than go through and add that to every point, I would like to change the MetaPost so it draws the symbol a bit smaller.
+
+And I am lazy!  I could replot all the points for each of the lines.  It seems to me there should be a simpler way.  I tried messing with the U:= parameters, but they seem to make no difference whatever.
+
+Is there a way I can declare a multiplier in the MetaPost code?  Perhaps declaring u = 0.6u?
+
+Thanks!
+-- 
+Bill Gee
+
+# This code defines an artificial electric light.  Used in tourist sections of a cave.
+    def p_u_electriclight (expr pos,theta,sc,al) =
+      U:=(0.3u, 0.3u);
+      T:=identity aligned al rotated theta scaled sc shifted pos;
+      pickup PenC;
+      
+      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+      
+    enddef;
+    
+
+
+
+
+From martinsluka at mac.com  Tue May 14 12:03:21 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 14 May 2019 12:03:21 +0200
+Subject: [Therion] request for help
+Message-ID: <E20506F1-9FF1-496F-9657-CB35690BBB27@mac.com>
+
+Dear friends, I forward you mail of Therion user from Cuba. I have no any experiences with Linux. May you send him your advice, please?
+
+Thnx
+
+Martin
+
+Odesláno z iPhonu
+
+Začátek přeposílané zprávy:
+
+> Od: vlado6208 <vlado6208 at nauta.cu <mailto:vlado6208 at nauta.cu>>
+> Datum: 13. května 2019 17:18:56 SELČ
+> Komu: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Předmět: Consejo
+> 
+> I thinking change the operating system from the PC of project.
+> I think in Linux but I do not what version.
+> I do not know if Ubuntu, Debian or other.
+> What do you think?
+> 
+> 
+> 
+> Sent from my MetroPCS 4G LTE Android Device
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190514/e57786dc/attachment.htm>
+
+From beni at hallinger.org  Tue May 14 12:18:54 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 14 May 2019 12:18:54 +0200
+Subject: [Therion] request for help
+In-Reply-To: <E20506F1-9FF1-496F-9657-CB35690BBB27@mac.com>
+References: <E20506F1-9FF1-496F-9657-CB35690BBB27@mac.com>
+Message-ID: <8405AC0F-B519-41B7-ABF1-76F4C2DB8F3B@hallinger.org>
+
+I successfully use debian for years with therion.
+
+> Am 14.05.2019 um 12:03 schrieb Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> Dear friends, I forward you mail of Therion user from Cuba. I have no any experiences with Linux. May you send him your advice, please?
+> 
+> Thnx
+> 
+> Martin
+> 
+> Odesláno z iPhonu
+> 
+> Začátek přeposílané zprávy:
+> 
+>> Od: vlado6208 <vlado6208 at nauta.cu>
+>> Datum: 13. května 2019 17:18:56 SELČ
+>> Komu: Martin Sluka <martinsluka at mac.com>
+>> Předmět: Consejo
+>> 
+>> I thinking change the operating system from the PC of project.
+>> I think in Linux but I do not what version.
+>> I do not know if Ubuntu, Debian or other.
+>> What do you think?
+>> 
+>> 
+>> 
+>> Sent from my MetroPCS 4G LTE Android Device
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190514/5d257c82/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue May 14 12:39:35 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 14 May 2019 11:39:35 +0100
+Subject: [Therion] request for help
+In-Reply-To: <8405AC0F-B519-41B7-ABF1-76F4C2DB8F3B@hallinger.org>
+References: <E20506F1-9FF1-496F-9657-CB35690BBB27@mac.com>
+ <8405AC0F-B519-41B7-ABF1-76F4C2DB8F3B@hallinger.org>
+Message-ID: <0575d15c-2f4d-89c3-287f-ac77e85216be@ntlworld.com>
+
+On 14/05/2019 11:18, Benedikt Hallinger wrote:
+> I successfully use debian for years with therion.
+
+
+Ubuntu (or related ones like Kubuntu) is generally the easiest system to
+use for someone who is used to Windows or Mac. The system handles most
+of the updates and package management for you - keeps things simple.
+Based on Debian, but with added simplicity. If you want to keep it
+simple, so that it doesn't require a big learning curve, this is
+normally the one that gets recommended. If Therion works on Debian, it
+should work just as well on Ubuntu.
+
+(Not that I have tested Therion it, but I have used many Linux distros
+over the years, with personal preference for KDE based ones like Kubuntu.)
+
+A lot of these allow you to run it from a live CD or USB drive first, to
+get a taste for the system without needing to install it fully. Makes it
+easy to try a few and see what is preferred. A lot of them let you
+switch between Gnome or KDE environments (and sometimes others too). It
+really is a case of "suck it and see", but if you want something that
+"just works", usually the Ubuntu family ends up being the right choice.
+
+
+From bruce at tomo.co.nz  Wed May 15 09:23:33 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Wed, 15 May 2019 19:23:33 +1200
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <18770252.mDgSicInhO@main2.billgee.local>
+References: <18770252.mDgSicInhO@main2.billgee.local>
+Message-ID: <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+
+Hi Bill
+I think that merging what you have with an interim defaultscale:=0.6; variable as demonstrated by Thomas Holder here https://therion.speleo.sk/wiki/metapost#special_symbol_examples will do the trick.
+You probably want to keep the sc in def p_u_electriclight (expr pos,theta,sc,al), and multiply it by defaultscale before calling T:=identity...
+Probably some trial and error involved.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Monday, 13 May 2019 06:14
+To: Therion Mail List <therion at speleo.sk>
+Subject: [Therion] Setting scale on custom symbol
+
+Hello everyone - 
+
+I have defined a custom symbol for electric light fixtures.  The MetaPost code is below.  Now that I have used it, I find that it draws the symbol too large.  I tried using "-scale small" and "-scale tiny", and that helps.  Rather than go through and add that to every point, I would like to change the MetaPost so it draws the symbol a bit smaller.
+
+And I am lazy!  I could replot all the points for each of the lines.  It seems to me there should be a simpler way.  I tried messing with the U:= parameters, but they seem to make no difference whatever.
+
+Is there a way I can declare a multiplier in the MetaPost code?  Perhaps declaring u = 0.6u?
+
+Thanks!
+-- 
+Bill Gee
+
+# This code defines an artificial electric light.  Used in tourist sections of a cave.
+    def p_u_electriclight (expr pos,theta,sc,al) =
+      U:=(0.3u, 0.3u);
+      T:=identity aligned al rotated theta scaled sc shifted pos;
+      pickup PenC;
+      
+      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+      
+    enddef;
+    
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Wed May 15 09:47:09 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 15 May 2019 09:47:09 +0200
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+References: <18770252.mDgSicInhO@main2.billgee.local>
+ <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+Message-ID: <AB31A178-890F-49A4-AC25-0BF73CB19336@mac.com>
+
+From: https://www.researchgate.net/publication/265062623_Tutorial_in_MetaPost
+
+interim - Make a local change to an internal variable
+
+Martin Sluka
+
+
+> 15. 5. 2019 v 9:23, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Hi Bill
+> I think that merging what you have with an interim defaultscale:=0.6; variable as demonstrated by Thomas Holder here https://therion.speleo.sk/wiki/metapost#special_symbol_examples will do the trick.
+> You probably want to keep the sc in def p_u_electriclight (expr pos,theta,sc,al), and multiply it by defaultscale before calling T:=identity...
+> Probably some trial and error involved.
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> Sent: Monday, 13 May 2019 06:14
+> To: Therion Mail List <therion at speleo.sk>
+> Subject: [Therion] Setting scale on custom symbol
+> 
+> Hello everyone - 
+> 
+> I have defined a custom symbol for electric light fixtures.  The MetaPost code is below.  Now that I have used it, I find that it draws the symbol too large.  I tried using "-scale small" and "-scale tiny", and that helps.  Rather than go through and add that to every point, I would like to change the MetaPost so it draws the symbol a bit smaller.
+> 
+> And I am lazy!  I could replot all the points for each of the lines.  It seems to me there should be a simpler way.  I tried messing with the U:= parameters, but they seem to make no difference whatever.
+> 
+> Is there a way I can declare a multiplier in the MetaPost code?  Perhaps declaring u = 0.6u?
+> 
+> Thanks!
+> -- 
+> Bill Gee
+> 
+> # This code defines an artificial electric light.  Used in tourist sections of a cave.
+>    def p_u_electriclight (expr pos,theta,sc,al) =
+>      U:=(0.3u, 0.3u);
+>      T:=identity aligned al rotated theta scaled sc shifted pos;
+>      pickup PenC;
+> 
+>      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+>      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+>      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+>      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+>      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+>      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+> 
+>    enddef;
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190515/790fd19d/attachment.htm>
+
+From bgee at campercaver.net  Thu May 16 20:51:03 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 16 May 2019 13:51:03 -0500
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <AB31A178-890F-49A4-AC25-0BF73CB19336@mac.com>
+References: <18770252.mDgSicInhO@main2.billgee.local>
+ <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+ <AB31A178-890F-49A4-AC25-0BF73CB19336@mac.com>
+Message-ID: <25544484.G2f1Ey84uE@main2.billgee.local>
+
+Hi Bruce and Martin -
+
+Thanks for the tips.  I have figured out how to make it work.  The new code looks like this:
+
+# This code defines an artificial electric light.  Used in tourist sections of a cave.
+    def p_u_electriclight (expr pos,theta,sc,al) =
+      U:=(0.3u, 0.3u);
+      % Reduce size of the symbol.  The default size is too big.
+      interim defaultscale:=0.4sc;
+      T:=identity aligned al rotated theta scaled defaultscale shifted pos;
+      pickup PenC;
+      
+      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+      
+    enddef;
+
+
+I fiddled with the constant 0.4 to find a value that produces symbols about the size I wanted.  A nice thing about this code is that it still respects the "-size xxx" parameters.  
+
+What does the line "U:=(0.3u, 0.3u);" do?  As far as I can tell, it has no effect at all.
+
+MetaPost is rather puzzling by having no explicit multiplication operator.  The expression "0.4sc" does multiplication, but without any visible operator.  The same happens for all the expressions involving "u".  Back when I was studying computer science, that would have produced much vituperation from the professors!
+
+I think this code is now suitable for posting on the Wiki.  I have several other custom symbols that might be useful to others:
+
+Pavement
+Boardwalk
+Tiled floor
+  (all as area fills)
+
+Display case
+Boxwork
+Bear bed
+Pendant
+Stromatolite
+  (These are points)
+
+Who should I send the code to for review and posting?
+
+-- 
+Bill Gee
+
+
+
+On Wednesday, May 15, 2019 2:47:09 AM CDT Martin Sluka via Therion wrote:
+> From: https://www.researchgate.net/publication/265062623_Tutorial_in_MetaPost
+> 
+> interim - Make a local change to an internal variable
+> 
+> Martin Sluka
+> 
+> 
+> > 15. 5. 2019 v 9:23, Bruce Mutton <bruce at tomo.co.nz>:
+> > 
+> > Hi Bill
+> > I think that merging what you have with an interim defaultscale:=0.6; variable as demonstrated by Thomas Holder here https://therion.speleo.sk/wiki/metapost#special_symbol_examples will do the trick.
+> > You probably want to keep the sc in def p_u_electriclight (expr pos,theta,sc,al), and multiply it by defaultscale before calling T:=identity...
+> > Probably some trial and error involved.
+> > Bruce
+> > 
+> > -----Original Message-----
+> > From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> > Sent: Monday, 13 May 2019 06:14
+> > To: Therion Mail List <therion at speleo.sk>
+> > Subject: [Therion] Setting scale on custom symbol
+> > 
+> > Hello everyone - 
+> > 
+> > I have defined a custom symbol for electric light fixtures.  The MetaPost code is below.  Now that I have used it, I find that it draws the symbol too large.  I tried using "-scale small" and "-scale tiny", and that helps.  Rather than go through and add that to every point, I would like to change the MetaPost so it draws the symbol a bit smaller.
+> > 
+> > And I am lazy!  I could replot all the points for each of the lines.  It seems to me there should be a simpler way.  I tried messing with the U:= parameters, but they seem to make no difference whatever.
+> > 
+> > Is there a way I can declare a multiplier in the MetaPost code?  Perhaps declaring u = 0.6u?
+> > 
+> > Thanks!
+> 
+> 
+
+
+
+
+
+
+From bruce at tomo.co.nz  Sun May 19 06:15:55 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 19 May 2019 16:15:55 +1200
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <25544484.G2f1Ey84uE@main2.billgee.local>
+References: <18770252.mDgSicInhO@main2.billgee.local>
+ <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+ <AB31A178-890F-49A4-AC25-0BF73CB19336@mac.com>
+ <25544484.G2f1Ey84uE@main2.billgee.local>
+Message-ID: <000d01d50df9$8f2a0090$ad7e01b0$@tomo.co.nz>
+
+Hi Bill
+Thanks for sharing that code.  I've added it to the wiki here https://therion.speleo.sk/wiki/metapost#point_-_artificial_electric_light 
+Can you supply a screen grab of the symbol (with a white background), that I can include in the wiki page?  (I should try it out myself, but I am taking a very minimal input approach here).
+
+There is a partial explanation of u: here https://therion.speleo.sk/wiki/metapost#symbol_sizing but I will admit to not knowing if it relates directly to U:  Are u: and U: the same? I suspect not.
+Feel free any metapost knowledgeables who knows better...
+
+If you supply your symbols, either direct to me, or via the forum, I'll add them in due course.  The https://therion.speleo.sk/wiki/metapos page really needs some rational structure imposed on it and its table of contents, so I might work on that as well.  Posting direct to the forum will ensure people get the benefit of your work sooner!
+
+Bruce
+
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Friday, 17 May 2019 06:51
+To: therion at speleo.sk
+Subject: Re: [Therion] Setting scale on custom symbol
+
+Hi Bruce and Martin -
+
+Thanks for the tips.  I have figured out how to make it work.  The new code looks like this:
+
+# This code defines an artificial electric light.  Used in tourist sections of a cave.
+    def p_u_electriclight (expr pos,theta,sc,al) =
+      U:=(0.3u, 0.3u);
+      % Reduce size of the symbol.  The default size is too big.
+      interim defaultscale:=0.4sc;
+      T:=identity aligned al rotated theta scaled defaultscale shifted pos;
+      pickup PenC;
+      
+      thdraw fullcircle scaled 0.5u shifted (0.0u, 0.7u);
+      thdraw (-0.5u, -0.6u) -- (-0.5u, 0.0u);
+      thdraw (-0.5u, 0.0u) .. (-0.35u, 0.55u) .. (0.0u, 0.7u);
+      thdraw (0.0u, 0.7u) .. (0.35u, 0.55u) .. (0.5u, 0.0u);
+      thdraw (0.5u,0.0u) -- (0.5u, -0.6u);
+      thdraw (-0.7u, -0.6u) -- (0.7u, -0.6u);
+      
+    enddef;
+
+
+I fiddled with the constant 0.4 to find a value that produces symbols about the size I wanted.  A nice thing about this code is that it still respects the "-size xxx" parameters.  
+
+What does the line "U:=(0.3u, 0.3u);" do?  As far as I can tell, it has no effect at all.
+
+MetaPost is rather puzzling by having no explicit multiplication operator.  The expression "0.4sc" does multiplication, but without any visible operator.  The same happens for all the expressions involving "u".  Back when I was studying computer science, that would have produced much vituperation from the professors!
+
+I think this code is now suitable for posting on the Wiki.  I have several other custom symbols that might be useful to others:
+
+Pavement
+Boardwalk
+Tiled floor
+  (all as area fills)
+
+Display case
+Boxwork
+Bear bed
+Pendant
+Stromatolite
+  (These are points)
+
+Who should I send the code to for review and posting?
+
+-- 
+Bill Gee
+
+
+
+
+
+From m.budaj at gmail.com  Wed May 22 18:46:04 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 22 May 2019 18:46:04 +0200
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <000d01d50df9$8f2a0090$ad7e01b0$@tomo.co.nz>
+References: <18770252.mDgSicInhO@main2.billgee.local>
+ <000601d50aef$1c0a5b80$541f1280$@tomo.co.nz>
+ <AB31A178-890F-49A4-AC25-0BF73CB19336@mac.com>
+ <25544484.G2f1Ey84uE@main2.billgee.local>
+ <000d01d50df9$8f2a0090$ad7e01b0$@tomo.co.nz>
+Message-ID: <CALPsdSuRG+p1d68RsNj5ty46bQ6hLiCnRFpXXHcMR1+_jrYnTQ@mail.gmail.com>
+
+>
+> There is a partial explanation of u: here
+> https://therion.speleo.sk/wiki/metapost#symbol_sizing but I will admit to
+> not knowing if it relates directly to U:  Are u: and U: the same? I suspect
+> not.
+>
+
+Hi,
+check also the chapter New map symbols / Point symbols in the Therion book
+(page 73) for an explanation of "u" and "U" variables.
+M.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190522/5a4dd0c3/attachment.htm>
+
+From bgee at campercaver.net  Wed May 22 20:43:08 2019
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 22 May 2019 13:43:08 -0500
+Subject: [Therion] How to change alignment of "steps"
+Message-ID: <10262365.JQtzZnHlWY@main2.billgee.local>
+
+Hello everyone - 
+
+See the attached screenshot.  Notice the area under survey station OC2a.  This is supposed to be some steps going up to the concrete block wall.  
+
+Problem - The lines that show each step are not aligned the right way.  They should be perpendicular to the survey line.  How can I make a line of type "steps" change its alignment?  I used "-attr c 8" to tell it how many steps.  Is there another parameter to attr that tells which way to align the steps?  And is there any parameter that indicates which way is up?
+
+The area is drawn using a line of type "steps".  I started in the right-hand corner and drew in an anti-clockwise direction, making sure the line rejoins itself.  The first segment of the line follows the steps in their up direction.
+
+Related question:  The box under survey station OC2 is also steps.  However, it is red.  I cannot figure out why.  Also, it does not show any steps.  There should be 4 steps in it.
+
+And for those who pay attention - The empty box just north of OC5 should show two steps.
+
+Thanks!
+
+-- 
+Bill Gee
+
+
+
+
+
+
+From vlado6208 at nauta.cu  Wed May 22 21:05:00 2019
+From: vlado6208 at nauta.cu (vlado6208)
+Date: Wed, 22 May 2019 15:05:00 -0400
+Subject: [Therion] Setting scale on custom symbol
+In-Reply-To: <CALPsdSuRG+p1d68RsNj5ty46bQ6hLiCnRFpXXHcMR1+_jrYnTQ@mail.gmail.com>
+Message-ID: <201905221905.x4MJ5Iqa021733-x4MJ5Iqb021733@amavis.etecsa.net>
+
+Ok Master, I look for this. ThanksSent from my MetroPCS 4G LTE Android Device
+-------- Mensaje original --------De: Martin Budaj <m.budaj at gmail.com> Fecha: 22/5/19  12:46 PM  (GMT-05:00) A: List for Therion users <therion at speleo.sk> Asunto: Re: [Therion] Setting scale on custom symbol There is a partial explanation of u: here https://therion.speleo.sk/wiki/metapost#symbol_sizing but I will admit to not knowing if it relates directly to U:  Are u: and U: the same? I suspect not.Hi, check also the chapter New map symbols / Point symbols in the Therion book (page 73) for an explanation of "u" and "U" variables.M. 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190522/107409a9/attachment.htm>
+
+From bruce at tomo.co.nz  Wed May 22 21:45:23 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 23 May 2019 07:45:23 +1200
+Subject: [Therion] help line to propose all the options of an object (#137)
+Message-ID: <002201d510d6$e6c45550$b44cfff0$@tomo.co.nz>
+
+Bergil
+
+I had, and still have, this problem.
+
+My solution was to write this https://therion.speleo.sk/wiki/drawingchecklist
+
+Now I mostly have it memorised, but quite often I need to refer to it, and have it open on my second monitor.
+
+ 
+
+And in addition, XTherion more recently has a right click context menu.
+
+
+
+ 
+
+Bruce
+
+ 
+
+From: Bergil06 <notifications at github.com <mailto:notifications at github.com> > 
+Sent: Wednesday, 22 May 2019 18:58
+To: therion/therion <therion at noreply.github.com <mailto:therion at noreply.github.com> >
+Cc: Subscribed <subscribed at noreply.github.com <mailto:subscribed at noreply.github.com> >
+Subject: [therion/therion] help line to propose all the options of an object (#137)
+
+ 
+
+Hello,
+will it be possible to have a tool, or a message box, to remember all the parameters and options for the object currently edited (line, point, area) we can put on the option field ?
+when you don't use every day therion, and only remember "lightly" the syntax, this one-line help will be useful to have the good syntax and find the good option names, without checking the pdf documentation.
+The options, and theire parameters could be shown like a unix command line syntax :
+[-scale xs/s/m/l ] [-text "mytexte"] ...
+Thanks
+
+—
+You are receiving this because you are subscribed to this thread.
+Reply to this email directly, view it on GitHub <https://github.com/therion/therion/issues/137?email_source=notifications&email_token=AEXIJTCTNSVAYH54X7Q7LVLPWTVHZA5CNFSM4HORHPHKYY3PNVWWK3TUL52HS4DFUVEXG43VMWVGG33NNVSW45C7NFSM4GVEEFBQ> , or mute the thread <https://github.com/notifications/unsubscribe-auth/AEXIJTBY4I3GBABPINU6H23PWTVHZANCNFSM4HORHPHA> .  <https://github.com/notifications/beacon/AEXIJTBFF3TOMHOUTCSOYNLPWTVHZA5CNFSM4HORHPHKYY3PNVWWK3TUL52HS4DFUVEXG43VMWVGG33NNVSW45C7NFSM4GVEEFBQ.gif> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190523/6853f316/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 19599 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190523/6853f316/attachment.png>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 24 10:59:51 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 24 May 2019 09:59:51 +0100
+Subject: [Therion] Automatic scaling of PDF output
+Message-ID: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+
+Hi,
+
+I am sure this must have been asked before, but was not able to find
+anything in the mailing list archives or wiki...
+
+Our survey is going to be published in a magazine. The magazine has very
+strict limits on the survey size; 28 cm x 18 cm max, with limits on line
+thickness as well. Making the final PDF survey the right size is done
+with the layout "scale" definition, but this means I need to very
+carefully (painfully) recalculate it whenever an extension changes the
+size of the survey.
+
+Main question; Is there a way to make Therion automatically calculate
+the correct scale to fit certain dimensions?
+
+(I do understand that this might be impossible, since the output can
+change based on the scale, so it would become an iterative process. I am
+just hoping there might be some magic.)
+
+<aside>
+
+For those interested, I have used code metapost to set the line
+thicknesses so that they work according to the minimum line thickness:
+
+def minimumpen = 0.18pt enddef;
+def PenA = pencircle scaled (minimumpen*1/0.35) enddef;
+def PenB = pencircle scaled (minimumpen*0.7/0.35) enddef;
+def PenC = pencircle scaled (minimumpen*0.5/0.35) enddef;
+def PenD = pencircle scaled (minimumpen) enddef;
+def PenX = pencircle scaled (minimumpen*1.2/0.35) enddef;
+
+</aside>
+
+Thanks for any assistance.
+
+Tarquin
+
+
+From martinsluka at mac.com  Fri May 24 12:38:18 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 24 May 2019 12:38:18 +0200
+Subject: [Therion] Automatic scaling of   itm xxtPDF output
+In-Reply-To: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+References: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+Message-ID: <B99817EC-D877-40FE-9F9F-83A99F49F6EF@mac.com>
+
+Take care that softwares used for preparation of data for printing (RIP) may have problems with rasterisation of vector data - from there is limit for line width. More secure way is to rasterize pdf to bitmap with high resolution, let’s say 600 dpi, and send such file to magazine. 
+
+Martin Sluka
+
+Odesláno z iPhonu
+
+24. 5. 2019 v 10:59, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+> Hi,
+> 
+> I am sure this must have been asked before, but was not able to find
+> anything in the mailing list archives or wiki...
+> 
+> Our survey is going to be published in a magazine. The magazine has very
+> strict limits on the survey size; 28 cm x 18 cm max, with limits on line
+> thickness as well. Making the final PDF survey the right size is done
+> with the layout "scale" definition, but this means I need to very
+> carefully (painfully) recalculate it whenever an extension changes the
+> size of the survey.
+> 
+> Main question; Is there a way to make Therion automatically calculate
+> the correct scale to fit certain dimensions?
+> 
+> (I do understand that this might be impossible, since the output can
+> change based on the scale, so it would become an iterative process. I am
+> just hoping there might be some magic.)
+> 
+> <aside>
+> 
+> For those interested, I have used code metapost to set the line
+> thicknesses so that they work according to the minimum line thickness:
+> 
+> def minimumpen = 0.18pt enddef;
+> def PenA = pencircle scaled (minimumpen*1/0.35) enddef;
+> def PenB = pencircle scaled (minimumpen*0.7/0.35) enddef;
+> def PenC = pencircle scaled (minimumpen*0.5/0.35) enddef;
+> def PenD = pencircle scaled (minimumpen) enddef;
+> def PenX = pencircle scaled (minimumpen*1.2/0.35) enddef;
+> 
+> </aside>
+> 
+> Thanks for any assistance.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 24 12:49:31 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 24 May 2019 11:49:31 +0100
+Subject: [Therion] Automatic scaling of itm xxtPDF output
+In-Reply-To: <B99817EC-D877-40FE-9F9F-83A99F49F6EF@mac.com>
+References: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+ <B99817EC-D877-40FE-9F9F-83A99F49F6EF@mac.com>
+Message-ID: <89cbab02-4771-e3ee-14c3-7cc1b5e18154@ntlworld.com>
+
+> Take care that softwares used for preparation of data for printing (RIP) may have problems with rasterisation of vector data - from there is limit for line width. More secure way is to rasterize pdf to bitmap with high resolution, let’s say 600 dpi, and send such file to magazine. 
+
+
+Thanks very much for the advice :)
+
+In this case, I know the publisher personally, and I know he uses vector
+graphics for preparation. He has specifically asked for the PDF output,
+so we're all good. But yes, it was worth checking, for the reason you
+stated :)
+
+
+From martinsluka at mac.com  Fri May 24 13:03:39 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 24 May 2019 13:03:39 +0200
+Subject: [Therion] Automatic scaling of itm xxtPDF output
+In-Reply-To: <89cbab02-4771-e3ee-14c3-7cc1b5e18154@ntlworld.com>
+References: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+ <B99817EC-D877-40FE-9F9F-83A99F49F6EF@mac.com>
+ <89cbab02-4771-e3ee-14c3-7cc1b5e18154@ntlworld.com>
+Message-ID: <3008C930-9EC1-4A0C-A728-3C5AC871B22E@mac.com>
+
+I apologize myself, I forgot to add: Don’t use loss compresion format as JPEG!
+
+Martin
+
+Odesláno z iPhonu
+
+24. 5. 2019 v 12:49, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+>> Take care that softwares used for preparation of data for printing (RIP) may have problems with rasterisation of vector data - from there is limit for line width. More secure way is to rasterize pdf to bitmap with high resolution, let’s say 600 dpi, and send such file to magazine. 
+> 
+> 
+> Thanks very much for the advice :)
+> 
+> In this case, I know the publisher personally, and I know he uses vector
+> graphics for preparation. He has specifically asked for the PDF output,
+> so we're all good. But yes, it was worth checking, for the reason you
+> stated :)
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From m.budaj at gmail.com  Fri May 24 21:23:49 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Fri, 24 May 2019 21:23:49 +0200
+Subject: [Therion] Automatic scaling of PDF output
+In-Reply-To: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+References: <c71b9092-edb7-a5db-6c5a-1ef05c504693@ntlworld.com>
+Message-ID: <CALPsdStsn_GsARJq+j0nPvvCEE9FwWQ470aBHFzGWk_2JQS-xQ@mail.gmail.com>
+
+Hi
+
+unfortunately Therion doesn't support this. It would be actually quite
+complicated to implement it, as map symbols are scale-dependent so to know
+the exact size of the output drawing (not just the centreline), you have to
+draw it first in the selected scale.
+
+Martin
+
+On Fri, May 24, 2019 at 11:00 AM Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> Hi,
+>
+> I am sure this must have been asked before, but was not able to find
+> anything in the mailing list archives or wiki...
+>
+> Our survey is going to be published in a magazine. The magazine has very
+> strict limits on the survey size; 28 cm x 18 cm max, with limits on line
+> thickness as well. Making the final PDF survey the right size is done
+> with the layout "scale" definition, but this means I need to very
+> carefully (painfully) recalculate it whenever an extension changes the
+> size of the survey.
+>
+> Main question; Is there a way to make Therion automatically calculate
+> the correct scale to fit certain dimensions?
+>
+> (I do understand that this might be impossible, since the output can
+> change based on the scale, so it would become an iterative process. I am
+> just hoping there might be some magic.)
+>
+> <aside>
+>
+> For those interested, I have used code metapost to set the line
+> thicknesses so that they work according to the minimum line thickness:
+>
+> def minimumpen = 0.18pt enddef;
+> def PenA = pencircle scaled (minimumpen*1/0.35) enddef;
+> def PenB = pencircle scaled (minimumpen*0.7/0.35) enddef;
+> def PenC = pencircle scaled (minimumpen*0.5/0.35) enddef;
+> def PenD = pencircle scaled (minimumpen) enddef;
+> def PenX = pencircle scaled (minimumpen*1.2/0.35) enddef;
+>
+> </aside>
+>
+> Thanks for any assistance.
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190524/f563207f/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri May 24 22:18:35 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 24 May 2019 21:18:35 +0100
+Subject: [Therion] Automatic scaling of PDF output
+Message-ID: <20190524201838.977F35FFEF@mail.speleo.sk>
+
+Unfortunately, this is what I had suspected. An iterative process could do it but it would end up slower and more complex. But thanks for the reply anyway :)
+-------- Original message --------From: Martin Budaj <m.budaj at gmail.com> Date: 24/05/2019  20:23  (GMT+00:00) To: List for Therion users <therion at speleo.sk> Subject: Re: [Therion] Automatic scaling of PDF output Hiunfortunately Therion doesn't support this. It would be actually quite complicated to implement it, as map symbols are scale-dependent so to know the exact size of the output drawing (not just the centreline), you have to draw it first in the selected scale.MartinOn Fri, May 24, 2019 at 11:00 AM Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:Hi,
+
+I am sure this must have been asked before, but was not able to find
+anything in the mailing list archives or wiki...
+
+Our survey is going to be published in a magazine. The magazine has very
+strict limits on the survey size; 28 cm x 18 cm max, with limits on line
+thickness as well. Making the final PDF survey the right size is done
+with the layout "scale" definition, but this means I need to very
+carefully (painfully) recalculate it whenever an extension changes the
+size of the survey.
+
+Main question; Is there a way to make Therion automatically calculate
+the correct scale to fit certain dimensions?
+
+(I do understand that this might be impossible, since the output can
+change based on the scale, so it would become an iterative process. I am
+just hoping there might be some magic.)
+
+<aside>
+
+For those interested, I have used code metapost to set the line
+thicknesses so that they work according to the minimum line thickness:
+
+def minimumpen = 0.18pt enddef;
+def PenA = pencircle scaled (minimumpen*1/0.35) enddef;
+def PenB = pencircle scaled (minimumpen*0.7/0.35) enddef;
+def PenC = pencircle scaled (minimumpen*0.5/0.35) enddef;
+def PenD = pencircle scaled (minimumpen) enddef;
+def PenX = pencircle scaled (minimumpen*1.2/0.35) enddef;
+
+</aside>
+
+Thanks for any assistance.
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190524/440b120d/attachment.htm>
+
+From omrigas at gmail.com  Sat May 25 13:18:17 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sat, 25 May 2019 14:18:17 +0300
+Subject: [Therion] changing wall line symbol
+Message-ID: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+
+Hello everyone,
+
+this is my first mail, I just started to use Therion and I'm very excited
+about it.
+
+my question is about changing wall line symbology in the map.
+
+the wall line in all the map we made so far looks like this:
+
+[image: image.png]
+
+I was wandering if any one has done anything like this or similar symbol in
+Therion?
+
+
+-- 
+Regards,
+Omri Gaster
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190525/8abb6007/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image.png
+Type: image/png
+Size: 23529 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190525/8abb6007/attachment.png>
+
+From tarquin.wilton-jones at ntlworld.com  Sat May 25 19:33:45 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 25 May 2019 18:33:45 +0100
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+Message-ID: <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+
+Hi Omri,
+
+The usual way that passages are drawn with a background is simply to set
+the "color map-bg (93,82,62)" option in your "layout". But that does not
+colour an outline of the passage like you have shown.
+
+> the wall line in all the map we made so far looks like this:
+
+
+What would you want to happen when two passages cross each other? Should
+the beige outline go over the lower passage or not?
+
+If it does go over the lower passage, you can probably do it with a new
+wall subtype (or redefine the existing ones), using metapost to define
+the custom wall line to have a black pen with a coloured pen outline
+beside it.
+
+If you want to have the upper passage's beige outline clipped by the
+lower passage ... I don't know if that is possible, but I have not seen
+a way to do it.
+
+Cheers,
+
+Tarquin
+
+
+From tarquin.wilton-jones at ntlworld.com  Sat May 25 19:42:47 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 25 May 2019 18:42:47 +0100
+Subject: [Therion] Aligned cross sections for multiple passages
+Message-ID: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+
+Hi folks,
+
+Next crazy question;
+
+I would like to do cross sections of multiple passages that are aligned
+according to each other. I can see how to do multiple cross sections,
+and presumably I can manually shift them into positions and hope I get
+it right. But is there a way to get Therion to place them all relative
+to each other?
+
+As an example, I have used the effect here with a bitmap-rendered
+survey, done manually:
+http://www.cavinguk.co.uk/info/cresSurv/CrescentFinalOverlap.gif
+
+Thanks for any suggestions.
+
+Tarquin
+
+
+From omrigas at gmail.com  Sun May 26 07:29:38 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 26 May 2019 08:29:38 +0300
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+Message-ID: <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+
+I know the option of "color map-bg", I'm looking for something more similar
+to the image I sent.
+
+I think it can work for most of the cave's (that the wall doesn't cross
+each other).
+
+In our maps all the levels are shifted so there is no cross between the
+wall lines in the final map.
+what I can do is generate a map for each level and then finish the
+cartography in illustrator.
+
+Cheers,,
+Omri
+
+
+
+On Sat, 25 May 2019, 20:34 Tarquin Wilton-Jones via Therion, <
+therion at speleo.sk> wrote:
+
+> Hi Omri,
+>
+> The usual way that passages are drawn with a background is simply to set
+> the "color map-bg (93,82,62)" option in your "layout". But that does not
+> colour an outline of the passage like you have shown.
+>
+> > the wall line in all the map we made so far looks like this:
+>
+>
+> What would you want to happen when two passages cross each other? Should
+> the beige outline go over the lower passage or not?
+>
+> If it does go over the lower passage, you can probably do it with a new
+> wall subtype (or redefine the existing ones), using metapost to define
+> the custom wall line to have a black pen with a coloured pen outline
+> beside it.
+>
+> If you want to have the upper passage's beige outline clipped by the
+> lower passage ... I don't know if that is possible, but I have not seen
+> a way to do it.
+>
+> Cheers,
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/65f39171/attachment.htm>
+
+From martinsluka at mac.com  Sun May 26 09:43:48 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 26 May 2019 09:43:48 +0200
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+Message-ID: <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+
+Check line pit_AUT - it use two parallel lines, so there should by way to generate line as you want.
+
+Martin
+
+> 26. 5. 2019 v 7:29, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com⁩>:
+> 
+> I know the option of "color map-bg", I'm looking for something more similar to the image I sent.
+> 
+> I think it can work for most of the cave's (that the wall doesn't cross each other). 
+>  
+> In our maps all the levels are shifted so there is no cross between the wall lines in the final map.
+> what I can do is generate a map for each level and then finish the cartography in illustrator.
+> 
+> Cheers,,
+> Omri
+> 
+> 
+> 
+> On Sat, 25 May 2019, 20:34 Tarquin Wilton-Jones via Therion, <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+> Hi Omri,
+> 
+> The usual way that passages are drawn with a background is simply to set
+> the "color map-bg (93,82,62)" option in your "layout". But that does not
+> colour an outline of the passage like you have shown.
+> 
+> > the wall line in all the map we made so far looks like this:
+> 
+> 
+> What would you want to happen when two passages cross each other? Should
+> the beige outline go over the lower passage or not?
+> 
+> If it does go over the lower passage, you can probably do it with a new
+> wall subtype (or redefine the existing ones), using metapost to define
+> the custom wall line to have a black pen with a coloured pen outline
+> beside it.
+> 
+> If you want to have the upper passage's beige outline clipped by the
+> lower passage ... I don't know if that is possible, but I have not seen
+> a way to do it.
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/a6011f1b/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun May 26 09:56:29 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 26 May 2019 08:56:29 +0100
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+Message-ID: <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+
+> Check line pit_AUT - it use two parallel lines, so there should by way
+> to generate line as you want.
+
+
+Note (to others who may be reading) that this relies on the passages not
+crossing over each other. Once they cross over each other, you might
+have hoped for the outer line to be clipped by the lower passage - it
+won't be.
+
+>> what I can do is generate a map for each level and then finish the
+>> cartography in illustrator.
+
+
+It may be possible to do this with CSS and SVG too. Export your cave
+survey as SVG, and use CSS box-shadow to add an outline.
+
+Or SVG's <feOffset> filter.
+https://www.w3schools.com/graphics/svg_feoffset.asp
+
+
+Tarquin
+
+
+From martinsluka at mac.com  Sun May 26 10:09:08 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 26 May 2019 10:09:08 +0200
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+Message-ID: <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+
+
+
+> 26. 5. 2019 v 9:56, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> It may be possible to do this with CSS and SVG too. Export your cave
+> survey as SVG, and use CSS box-shadow to add an outline.
+
+You may do it directly in Metapost.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/4b9e76cb/attachment.htm>
+
+From omrigas at gmail.com  Sun May 26 12:53:36 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 26 May 2019 13:53:36 +0300
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+ <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+Message-ID: <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+
+thanks for the answers
+
+I don't know what Metapost or CSS box-shadow are (yet...)
+
+I'll do a bit of reading about it and try to make it work
+
+On Sun, May 26, 2019 at 11:09 AM Martin Sluka via Therion <therion at speleo.sk>
+wrote:
+
+>
+>
+> 26. 5. 2019 v 9:56, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+>
+> It may be possible to do this with CSS and SVG too. Export your cave
+> survey as SVG, and use CSS box-shadow to add an outline.
+>
+>
+> You may do it directly in Metapost.
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/c74dc31c/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun May 26 17:58:21 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 26 May 2019 16:58:21 +0100
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+ <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+ <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+Message-ID: <15e5ca06-d288-acff-9d2c-c09b85c94636@ntlworld.com>
+
+> thanks for the answers
+> 
+> I don't know what Metapost or CSS box-shadow are (yet...)
+
+MetaPost is the programming language used to describe every symbol and
+line that Therion draws. In your "layout"-"endlayout" section of your
+configuration, you add a "code metapost" and "endcode" section, then you
+add the code needed to redefine the cave walls that you are using. It's
+complicated, since it is a programming language. Takes some practice.
+
+https://therion.speleo.sk/downloads/thbook.pdf - look for the "New map
+symbols" section, which shows some examples.
+
+Loads more examples:
+https://therion.speleo.sk/wiki/metapost
+
+And if you want to see all the MetaPost code that Therion uses by
+default, see:
+https://therion.speleo.sk/wiki/metapost#how_to_get_therions_metapost_code_and_tex_code
+This is where Martin was suggesting you look for the line that looks
+like this:
+def l_wall_pit_AUT (expr P) =
+
+I'm still in the process of learning the language myself, and am not yet
+good enough to write what you need.
+
+
+From tarquin.wilton-jones at ntlworld.com  Sun May 26 18:36:57 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 26 May 2019 17:36:57 +0100
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+Message-ID: <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+
+> I would like to do cross sections of multiple passages that are aligned
+> according to each other. I can see how to do multiple cross sections,
+> and presumably I can manually shift them into positions and hope I get
+> it right. But is there a way to get Therion to place them all relative
+> to each other?
+> 
+> As an example, I have used the effect here with a bitmap-rendered
+> survey, done manually:
+> http://www.cavinguk.co.uk/info/cresSurv/CrescentFinalOverlap.gif
+
+
+I have an idea that might just be crazy enough to work. If only I could
+get Therion to output an XVI file containing the stations and splays I
+am interested in.
+
+Imagine there are three parallel passages, running over the top of each
+other. I know I want a cross section of all three passages at once; at
+station 12 in the top passage, station 78 in the middle passage, and
+station 5 in the bottom passage.
+
+source "cystanog.th"
+select 12 at toppassage.mycave
+select 78 at middlepassage.mycave
+select 5 at bottompassage.mycave
+export map -projection [elevation 355] -fmt xvi -output "test.xvi"
+
+If only this worked (it doesn't - you can only select a map or survey,
+not a single station), I would have the positions of all three passages
+relative to each other. I could then use those positions to place the
+cross section scraps for each passage, and include that as a scrap in
+the overall cave map.
+
+So ... can I get Therion to output just those 3 stations - and
+optionally their splays, projected on a bearing?
+
+(I am thinking that yes, I could make a subsurvey for each of these
+stations, equated to the parent survey's station with the same number.
+Then use "select" with the subsurvey's name. But this is so very messy,
+and I was hoping for a cleaner solution, that didn't require
+modification of my source data.)
+
+
+From martinsluka at mac.com  Sun May 26 20:55:59 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 26 May 2019 20:55:59 +0200
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+Message-ID: <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+
+
+
+> 26. 5. 2019 v 18:36, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> I have an idea that might just be crazy enough to work. If only I could
+> get Therion to output an XVI file containing the stations and splays I
+> am interested in.
+
+Do you have stations in all the sections?
+
+What to generate xvi file as in your example but without selections
+
+source “cystanog.th <http://cystanog.th/>"
+export map -projection [elevation 355] -fmt xvi -output “centerline.xvi"
+
+In that case you receive xvi of all survey in cystanog.th <http://cystanog.th/>
+
+If you use it as background image and create a scrap in which only those three stations and profiles will be defined and exported map with that scrap, you receive what you need. Not use point station in that scrap, and set its projection as none. I’m not sure what it will do with scale option in layout.
+
+Then input the .th2 file with that scrap to .th file and use in plan scraps for section the name of that scrap as reference.
+
+It should work.
+
+My .th file, r means sections, s means scraps:
+
+survey xxxxxx -title “xxxxxxxx"
+
+input xxxxxx_s1_500.th2
+input xxxxxx_s2_500.th2
+input xxxxxx_s3_500.th2
+input xxxxxx_s4_500.th2
+input xxxxxx_s5_500.th2
+input xxxxxx_podklad.th2
+input xxxxxx_r1.th2
+input xxxxxx_r2.th2
+input xxxxxx_r3.th2
+input xxxxxx_r4.th2
+input xxxxxx_r5.th2
+input xxxxxx_r6.th2
+input xxxxxx_r7.th2
+input xxxxxx_r8.th2
+input xxxxxx_r9.th2
+input xxxxxx_r10.th2
+input scalebar.th2
+
+
+centreline
+…
+
+endsurvey
+
+And in plan .th2 is reference to section:
+
+point 752.0 3128.0 section -scrap r8
+
+because all the scraps are part of one namespace - survey xxxxxx.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/1f3beadb/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun May 26 21:18:53 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 26 May 2019 20:18:53 +0100
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+ <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+Message-ID: <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+
+> Do you have stations in all the sections?
+
+
+I do not need this, but I could - I have tested and it would work with
+multiple stations in the cross section.
+
+I was planning to create the sections after exporting an XVI, rather
+than using any existing cross sections (though it would of course be
+nice to know if an existing cross section could be used - I am sure
+other people wanting to do this will want to use existing cross
+sections). I can in fact think of a way to use existing cross sections
+like that, by copying and moving them into position with the exported
+points, so it is not impossible. It would of course be nice if it were
+easier, but I can work with it as it is.
+
+> source “cystanog.th"
+> export map -projection [elevation 355] -fmt xvi -output “centerline.xvi"
+
+
+The biggest issue with this is that there will be 2500 stations in that
+exported centreline. The cave is extremely linear, and when projected on
+a bearing of 355 (which is what I need for the cross sections), they are
+almost all in the same 3 locations. So many that it is almost impossible
+to find the 3 stations I am interested in, and even harder to find the
+splays that relate to them. See the attached images.
+
+This is why I wanted to export only the 3 stations and related splays,
+so I can actually see what to work with.
+
+> If you use it as background image and create a scrap in which only those
+> three stations and profiles will be defined and exported map with that
+> scrap, you receive what you need. Not use point station in that scrap,
+> and set its projection as none. I’m not sure what it will do with scale
+> option in layout.
+> 
+> Then input the .th2 file with that scrap to .th file and use in plan
+> scraps for section the name of that scrap as reference.
+> 
+> It should work.
+
+
+Exactly what I was planning to do, yes. Good, so I am not insane :)
+Thanks for confirming this technique.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: toomanystations.png
+Type: image/png
+Size: 98288 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/ad132576/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: toomanystations2.png
+Type: image/png
+Size: 107595 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190526/ad132576/attachment-0001.png>
+
+From omrigas at gmail.com  Mon May 27 06:47:38 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Mon, 27 May 2019 07:47:38 +0300
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <15e5ca06-d288-acff-9d2c-c09b85c94636@ntlworld.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+ <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+ <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+ <15e5ca06-d288-acff-9d2c-c09b85c94636@ntlworld.com>
+Message-ID: <CAOjFj0kDhnDeKzYt22niWZX_GKQ5ziQXMQ_Zm0pyfXhZJ0VB+A@mail.gmail.com>
+
+Thanks!
+
+
+On Sun, May 26, 2019 at 6:58 PM Tarquin Wilton-Jones via Therion <
+therion at speleo.sk> wrote:
+
+> > thanks for the answers
+> >
+> > I don't know what Metapost or CSS box-shadow are (yet...)
+>
+> MetaPost is the programming language used to describe every symbol and
+> line that Therion draws. In your "layout"-"endlayout" section of your
+> configuration, you add a "code metapost" and "endcode" section, then you
+> add the code needed to redefine the cave walls that you are using. It's
+> complicated, since it is a programming language. Takes some practice.
+>
+> https://therion.speleo.sk/downloads/thbook.pdf - look for the "New map
+> symbols" section, which shows some examples.
+>
+> Loads more examples:
+> https://therion.speleo.sk/wiki/metapost
+>
+> And if you want to see all the MetaPost code that Therion uses by
+> default, see:
+>
+> https://therion.speleo.sk/wiki/metapost#how_to_get_therions_metapost_code_and_tex_code
+> This is where Martin was suggesting you look for the line that looks
+> like this:
+> def l_wall_pit_AUT (expr P) =
+>
+> I'm still in the process of learning the language myself, and am not yet
+> good enough to write what you need.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/1cba99dd/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon May 27 09:15:42 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 27 May 2019 08:15:42 +0100
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+ <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+ <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+Message-ID: <b6dc204c-eea5-838f-237c-e4cc11a48e20@ntlworld.com>
+
+For anyone interested, I have documented my approach here:
+
+https://therion.speleo.sk/wiki/multiplesections
+
+Not that I have tested it extensively yet, so I may have to refine the
+"including it in your survey" part. I do plan to add some screenshots
+later, once I actually have used it for real.
+
+If anyone has any suggestions for how to simplify or improve the
+process, please let me know :)
+
+
+From martinsluka at mac.com  Mon May 27 11:11:01 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 27 May 2019 11:11:01 +0200
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+ <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+ <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+Message-ID: <0248E403-9A95-4FCD-8D0D-37E10091F451@mac.com>
+
+I did similar thing in one map transferred to Therion from Illustrator. See attached image. 
+
+The principle is I made an underlaying dummy scrap filled with area with pink colour bounded by wall type invisible. The profile is filled by colour by color map-fg command. So in final map the pink area is overlaid by map of cave.
+
+But it was made by hand drawing not generated as special kind of line wall.
+
+Martin
+
+ 
+
+> 26. 5. 2019 v 12:53, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com <mailto:omrigas at gmail.com>⁩>:
+> 
+> thanks for the answers
+> 
+> I don't know what Metapost or CSS box-shadow are (yet...)
+> 
+> I'll do a bit of reading about it and try to make it work
+> 
+> On Sun, May 26, 2019 at 11:09 AM Martin Sluka via Therion <therion at speleo.sk <mailto:therion at speleo.sk>> wrote:
+> 
+> 
+>> 26. 5. 2019 v 9:56, Tarquin Wilton-Jones via Therion <therion at speleo.sk <mailto:therion at speleo.sk>>:
+>> 
+>> It may be possible to do this with CSS and SVG too. Export your cave
+>> survey as SVG, and use CSS box-shadow to add an outline.
+> 
+> You may do it directly in Metapost.
+> 
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+> 
+> 
+> -- 
+> בברכה,
+> עמרי גסטר
+> 052-6124995
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/b81607ce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: otisk_ 2019-05-26 v?20.02.25.png
+Type: image/png
+Size: 12709 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/b81607ce/attachment.png>
+
+From bruce at tomo.co.nz  Mon May 27 11:44:32 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 27 May 2019 21:44:32 +1200
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <b6dc204c-eea5-838f-237c-e4cc11a48e20@ntlworld.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+ <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+ <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+ <b6dc204c-eea5-838f-237c-e4cc11a48e20@ntlworld.com>
+Message-ID: <000b01d51470$cb935220$62b9f660$@tomo.co.nz>
+
+Interesting...
+
+When I finished my initial Therion learning phase I thought about aligned cross sections through stacked passages, and decided I had bigger problems to solve (ie it was too hard).  So glad you are exploring this!
+
+ 
+
+Not sure I am keen on duplicating data, but can see it might be tolerable as a means to an end.
+
+Wondering why you think that colour by altitude won't work with the method you describe?  I would think it would - although you might need to draw several scraps for a tall piece of passage to colour it nicely.
+
+ 
+
+Seems to me there might be a number of approaches to the general problem, depending on one's pragmatic-perfection quotient, and on the information you already have.
+
+I also have not tested these approaches – just brainstorming.
+
+1.	If you have individual sections already drawn, you can position them individually the usual way, and attempt to lay them out manually in more or less the right position by trial and error.  This will give a poor result, but if you are not fussy, it will be easy.
+2.	If you have individual sections drawn, and can get them aligned properly in the same image, then just scan that image and use it as a background in your th2 file, trace it, and reference a station in each passage (it will need to be at the top level of your survey to be able to reference different sub-survey branches) or just one station if you are closer to the pragmatic end of the scale.  You can probably then treat this as a single section and scrap of -projection ‘none’.
+3.	Or as with approach 2 but treat it as -projection [elevation 355 deg] similar to what Tarquin has suggested.  So long as you have a station in each passage, Therion should now morph the individual passages into the correct locations.  There may well be some undesirable distortions if your sketched relative locations are too far out. 
+4.	Or duplicate some data and draw the aligned cross section of stacked passages from scratch as Tarquin suggests in the wiki page.  Probably close to a perfect result.
+
+ 
+
+The fundamental relationships between scrap and map definitions in your particular dataset may have an impact on the behaviour of each of these approaches (ie works or not, easy or hard). (Remember this <https://www.mail-archive.com/therion at speleo.sk/msg06555.html>  a couple of years ago?)
+
+I wonder if an approach similar to what I have used for separating control of extended elevations from the main survey centreline <https://therion.speleo.sk/wiki/extend>  can be used?  ie, alias the information you want in the section without duplicating it.
+
+At this stage concepts I can envisage either result in station and splay overload as previously described, or stations without any splays, neither of which is that useful.  Centrelines can have their own -id, so maybe there is something cunning that could be done by putting each of the ORIGINAL section stations and splays in their own centrelines within their parent trip surveys.  If these centrelines were in their own th files, they could be input into both  their parent survey file and a section th file. Hmm, sounds messy in practise with all that metadata duplication.  Probably Tarquin’s way better!(?)
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Monday, 27 May 2019 19:16
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Aligned cross sections for multiple passages
+
+ 
+
+For anyone interested, I have documented my approach here:
+
+ 
+
+ <https://therion.speleo.sk/wiki/multiplesections> https://therion.speleo.sk/wiki/multiplesections
+
+ 
+
+Not that I have tested it extensively yet, so I may have to refine the "including it in your survey" part. I do plan to add some screenshots later, once I actually have used it for real.
+
+ 
+
+If anyone has any suggestions for how to simplify or improve the process, please let me know :) _______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/efcfd86e/attachment.htm>
+
+From martinsluka at mac.com  Mon May 27 15:38:11 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 27 May 2019 15:38:11 +0200
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <000b01d51470$cb935220$62b9f660$@tomo.co.nz>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+ <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+ <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+ <b6dc204c-eea5-838f-237c-e4cc11a48e20@ntlworld.com>
+ <000b01d51470$cb935220$62b9f660$@tomo.co.nz>
+Message-ID: <EF954966-824C-4A19-998D-9F40D609B691@mac.com>
+
+Tip how to draw rectangle around multiple sections:
+
+I used line border -clip off -subtype temporary
+
+The exact position of corners is possible to set in Line point control of side menu of xTherion Map editor window.
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/4837c47d/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2019-05-27 v?15.29.42.png
+Type: image/png
+Size: 55116 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/4837c47d/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2019-05-27 v?15.27.49.png
+Type: image/png
+Size: 161347 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/4837c47d/attachment-0001.png>
+
+From andrew at wotcc.org.uk  Mon May 27 16:15:48 2019
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 27 May 2019 15:15:48 +0100
+Subject: [Therion] Aligned cross sections for multiple passages
+In-Reply-To: <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+References: <c549f426-0fc9-89f9-3c52-28de5ca64b3f@ntlworld.com>
+ <e596ab80-0e81-60d5-170f-7f67ad55b2b2@ntlworld.com>
+ <582E68E6-6D35-4F89-8EAB-B0CA9DEFA56E@mac.com>
+ <75fc56f8-37c0-dc32-21d6-8a1faebd90b8@ntlworld.com>
+Message-ID: <CAN+2M_EWRmL9-JLTDRCH3Ys_WVKvw+3u2pvkTJtJ5OB_PGgj_A@mail.gmail.com>
+
+I have a quick and dirty script that sort of already does this. I'm
+currently not at home but will post what I have on my return in a few days.
+Documenting and improving it has been on my list of things to do for a
+while now
+
+Andrew
+
+On Sun, 26 May 2019, 20:18 Tarquin Wilton-Jones via Therion, <
+therion at speleo.sk> wrote:
+
+> > Do you have stations in all the sections?
+>
+>
+> I do not need this, but I could - I have tested and it would work with
+> multiple stations in the cross section.
+>
+> I was planning to create the sections after exporting an XVI, rather
+> than using any existing cross sections (though it would of course be
+> nice to know if an existing cross section could be used - I am sure
+> other people wanting to do this will want to use existing cross
+> sections). I can in fact think of a way to use existing cross sections
+> like that, by copying and moving them into position with the exported
+> points, so it is not impossible. It would of course be nice if it were
+> easier, but I can work with it as it is.
+>
+> > source “cystanog.th"
+> > export map -projection [elevation 355] -fmt xvi -output “centerline.xvi"
+>
+>
+> The biggest issue with this is that there will be 2500 stations in that
+> exported centreline. The cave is extremely linear, and when projected on
+> a bearing of 355 (which is what I need for the cross sections), they are
+> almost all in the same 3 locations. So many that it is almost impossible
+> to find the 3 stations I am interested in, and even harder to find the
+> splays that relate to them. See the attached images.
+>
+> This is why I wanted to export only the 3 stations and related splays,
+> so I can actually see what to work with.
+>
+> > If you use it as background image and create a scrap in which only those
+> > three stations and profiles will be defined and exported map with that
+> > scrap, you receive what you need. Not use point station in that scrap,
+> > and set its projection as none. I’m not sure what it will do with scale
+> > option in layout.
+> >
+> > Then input the .th2 file with that scrap to .th file and use in plan
+> > scraps for section the name of that scrap as reference.
+> >
+> > It should work.
+>
+>
+> Exactly what I was planning to do, yes. Good, so I am not insane :)
+> Thanks for confirming this technique.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190527/952552ff/attachment.htm>
+
+From omrigas at gmail.com  Tue May 28 07:56:20 2019
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Tue, 28 May 2019 08:56:20 +0300
+Subject: [Therion] changing wall line symbol
+In-Reply-To: <0248E403-9A95-4FCD-8D0D-37E10091F451@mac.com>
+References: <CAOjFj0mYK2m-uOdFHSrC=g_=S8UVJaYEoeKJ2D7-Nz=ACVVeYQ@mail.gmail.com>
+ <dd93ba73-e2b2-eeef-2326-9e7361bac89f@ntlworld.com>
+ <CAOjFj0kPLYbjQBLOa2zPfyZUmv=Jp0PM1POk0ane285kirAv8w@mail.gmail.com>
+ <EE1FE1DB-87D4-4764-A8E5-E1910A53BD0B@mac.com>
+ <08e736b4-18ee-cdc5-cd3f-754d450c8d75@ntlworld.com>
+ <896A9FDC-57B8-40B5-8A41-CB79330118ED@mac.com>
+ <CAOjFj0kjVJQFGY=05r4i9gXJpWnwfrkPRqAyUv_hAhPnexY49w@mail.gmail.com>
+ <0248E403-9A95-4FCD-8D0D-37E10091F451@mac.com>
+Message-ID: <CAOjFj0mU-_8eJNY5hS8q0oR5yaY5sUCLP90AXXbLD_zMc_3BCg@mail.gmail.com>
+
+It is possible to tell therion to extend map fg command beyond the wall
+line?
+
+On Mon, 27 May 2019, 12:11 Martin Sluka via Therion, <therion at speleo.sk>
+wrote:
+
+> I did similar thing in one map transferred to Therion from Illustrator.
+> See attached image.
+>
+> The principle is I made an underlaying dummy scrap filled with area with
+> pink colour bounded by wall type invisible. The profile is filled by colour
+> by color map-fg command. So in final map the pink area is overlaid by map
+> of cave.
+>
+> But it was made by hand drawing not generated as special kind of line wall.
+>
+> Martin
+>
+>
+>
+> 26. 5. 2019 v 12:53, ⁨עמרי גסטר⁩ <⁨omrigas at gmail.com⁩>:
+>
+> thanks for the answers
+>
+> I don't know what Metapost or CSS box-shadow are (yet...)
+>
+> I'll do a bit of reading about it and try to make it work
+>
+> On Sun, May 26, 2019 at 11:09 AM Martin Sluka via Therion <
+> therion at speleo.sk> wrote:
+>
+>>
+>>
+>> 26. 5. 2019 v 9:56, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+>>
+>> It may be possible to do this with CSS and SVG too. Export your cave
+>> survey as SVG, and use CSS box-shadow to add an outline.
+>>
+>>
+>> You may do it directly in Metapost.
+>>
+>> Martin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>
+>
+> --
+> בברכה,
+> עמרי גסטר
+> 052-6124995
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190528/5943b4ce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: otisk_ 2019-05-26 v 20.02.25.png
+Type: image/png
+Size: 12709 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190528/5943b4ce/attachment.png>
+
+From beni at hallinger.org  Thu May 30 15:54:28 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 30 May 2019 15:54:28 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+Message-ID: <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+
+Hello there,
+i have a very large dataset here. It is organised by regions like this 
+(but much more leaf objects and regions):
+
+=====snip=====
+- survey TheCave
+   - survey RegionWest
+     - survey 1
+     - survey 3
+     - survey 5
+   - survey RegionEast
+     - survey 2
+     - survey 4
+     - survey 6
+=====snap=====
+
+I currently work from bottom to up, that is i draw the individual 
+surveys as scraps, based on original material (sometimes they are really 
+large and cosnsist of several many scraps).
+
+In each of they leaf surveys (the numbered ones) i make by convention a 
+map called "<n>-Hauptplan". The main idea is that every leaf survey can 
+be treaten modular and that i can compile varoius maps at upper levels 
+(i.e regions).
+
+Currently, the regions have no "<region>-Hautplan". When i use "select 
+RegionWest.TheCave", therion is instructed to select all scraps below 
+it. For the most part, this works like intendet and the overlappings are 
+calculated correctly. There are some places however, where the upper 
+part of the passage is rendered below the lower part, which is wrong. 
+This is with about 10-15% of the passages (so most is already ok).
+
+I know from the manuals that therion does this "randomly" so there is no 
+real way to adjust this from my perspective (placing the "input 2.th" 
+command in the region.th file, wich then inputs the scraps etc, lower in 
+the list does not help - it seems random where it is).
+I think, however, that it would be a very great addition, if there would 
+be some code in the renderer, that sorts the vertical presentation of 
+the scraps/maps by average altitude of said scrap/map, and that this 
+behavior is controllable by some configuration (cmdline option, or even 
+better, thconfig parameter).
+=> Is there maybe already something hidden like this i don't know so 
+far?
+That would be very great, because when i look at the dataset, i face 
+about 30-50 hours producing correctly manually sorted handcrafted maps 
+at the region level...
+
+
+Sincerely, Beni
+
+
+From lists at group-s.sk  Thu May 30 22:27:22 2019
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 30 May 2019 22:27:22 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+Message-ID: <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+
+Hello,
+
+if you select just survey, then all maps consisting of scraps in this and
+sub-surveys should be ordered by average altitude. But this may easily
+cause that some overlapping is not done correctly. But it is also possible,
+there is some bug and it is not done correctly. Are you able to post some
+minimalistic sample, where depth sort fails?
+
+The only way how to manually order maps in the output is to create
+upper-level maps (in your case probably what you mean by <region>-Hautplan)
+consisting of lower level maps in the correct order.
+
+HTH, S.
+
+On Thu, 30 May 2019 at 15:55, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> Hello there,
+> i have a very large dataset here. It is organised by regions like this
+> (but much more leaf objects and regions):
+>
+> =====snip=====
+> - survey TheCave
+>    - survey RegionWest
+>      - survey 1
+>      - survey 3
+>      - survey 5
+>    - survey RegionEast
+>      - survey 2
+>      - survey 4
+>      - survey 6
+> =====snap=====
+>
+> I currently work from bottom to up, that is i draw the individual
+> surveys as scraps, based on original material (sometimes they are really
+> large and cosnsist of several many scraps).
+>
+> In each of they leaf surveys (the numbered ones) i make by convention a
+> map called "<n>-Hauptplan". The main idea is that every leaf survey can
+> be treaten modular and that i can compile varoius maps at upper levels
+> (i.e regions).
+>
+> Currently, the regions have no "<region>-Hautplan". When i use "select
+> RegionWest.TheCave", therion is instructed to select all scraps below
+> it. For the most part, this works like intendet and the overlappings are
+> calculated correctly. There are some places however, where the upper
+> part of the passage is rendered below the lower part, which is wrong.
+> This is with about 10-15% of the passages (so most is already ok).
+>
+> I know from the manuals that therion does this "randomly" so there is no
+> real way to adjust this from my perspective (placing the "input 2.th"
+> command in the region.th file, wich then inputs the scraps etc, lower in
+> the list does not help - it seems random where it is).
+> I think, however, that it would be a very great addition, if there would
+> be some code in the renderer, that sorts the vertical presentation of
+> the scraps/maps by average altitude of said scrap/map, and that this
+> behavior is controllable by some configuration (cmdline option, or even
+> better, thconfig parameter).
+> => Is there maybe already something hidden like this i don't know so
+> far?
+> That would be very great, because when i look at the dataset, i face
+> about 30-50 hours producing correctly manually sorted handcrafted maps
+> at the region level...
+>
+>
+> Sincerely, Beni
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190530/d86efbc9/attachment.htm>
+
+From bruce at tomo.co.nz  Thu May 30 22:37:13 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 31 May 2019 08:37:13 +1200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+Message-ID: <E5.CE.06881.BFE30FC5@sparkbusinessmail.co.nz>
+
+BeniI think that I tend to arrange my projects as you have described. Are you using the 'break' statement in map definitions to enforce the separation of different levels within the cave?If you are, you should not experience random rendering, and it will solve your problem most of the time. The situation where it fails is when one of your regions is generaly lower than another, but there is for example one piece that is higher than and overlaps that other region. In this situation I think that we have to rearrange the map structure (just locally), which is, I admit, philosophically painful. Have I understood your original correctly? BruceSent from my Samsung Galaxy smartphone.
+-------- Original message --------From: Benedikt Hallinger <beni at hallinger.org> Date: 31/05/19  01:54  (GMT+12:00) To: List for Therion users <therion at speleo.sk> Subject: [Therion] Sorting scraps/maps by height in default mode Hello there,i have a very large dataset here. It is organised by regions like this (but much more leaf objects and regions):=====snip=====- survey TheCave   - survey RegionWest     - survey 1     - survey 3     - survey 5   - survey RegionEast     - survey 2     - survey 4     - survey 6=====snap=====I currently work from bottom to up, that is i draw the individual surveys as scraps, based on original material (sometimes they are really large and cosnsist of several many scraps).In each of they leaf surveys (the numbered ones) i make by convention a map called "<n>-Hauptplan". The main idea is that every leaf survey can be treaten modular and that i can compile varoius maps at upper levels (i.e regions).Currently, the regions have no "<region>-Hautplan". When i use "select RegionWest.TheCave", therion is instructed to select all scraps below it. For the most part, this works like intendet and the overlappings are calculated correctly. There are some places however, where the upper part of the passage is rendered below the lower part, which is wrong. This is with about 10-15% of the passages (so most is already ok).I know from the manuals that therion does this "randomly" so there is no real way to adjust this from my perspective (placing the "input 2.th" command in the region.th file, wich then inputs the scraps etc, lower in the list does not help - it seems random where it is).I think, however, that it would be a very great addition, if there would be some code in the renderer, that sorts the vertical presentation of the scraps/maps by average altitude of said scrap/map, and that this behavior is controllable by some configuration (cmdline option, or even better, thconfig parameter).=> Is there maybe already something hidden like this i don't know so far?That would be very great, because when i look at the dataset, i face about 30-50 hours producing correctly manually sorted handcrafted maps at the region level...Sincerely, Beni_______________________________________________Therion mailing listTherion at speleo.skhttps://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190531/85890a1e/attachment.htm>
+
+From beni at hallinger.org  Thu May 30 22:40:41 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Thu, 30 May 2019 22:40:41 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+Message-ID: <77c10bbc4049e503d83d144867213c54@hallinger.org>
+
+Hi Stacho, hello Bruce,
+you understood correctly.
+
+The problem here is, we are talking about uncorrelated maps and scraps. 
+They are from several subsurveys.
+
+is there any kind of debug output i can activate to get the average 
+scrap height?
+
+And is the sorting done scrap-wise, or are the maps averaged?
+
+
+Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+> Hello,
+> 
+> if you select just survey, then all maps consisting of scraps in this
+> and sub-surveys should be ordered by average altitude. But this may
+> easily cause that some overlapping is not done correctly. But it is
+> also possible, there is some bug and it is not done correctly. Are you
+> able to post some minimalistic sample, where depth sort fails?
+> 
+> The only way how to manually order maps in the output is to create
+> upper-level maps (in your case probably what you mean by
+> <region>-Hautplan) consisting of lower level maps in the correct
+> order.
+> 
+> HTH, S.
+> 
+> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger <beni at hallinger.org>
+> wrote:
+> 
+>> Hello there,
+>> i have a very large dataset here. It is organised by regions like
+>> this
+>> (but much more leaf objects and regions):
+>> 
+>> =====snip=====
+>> - survey TheCave
+>> - survey RegionWest
+>> - survey 1
+>> - survey 3
+>> - survey 5
+>> - survey RegionEast
+>> - survey 2
+>> - survey 4
+>> - survey 6
+>> =====snap=====
+>> 
+>> I currently work from bottom to up, that is i draw the individual
+>> surveys as scraps, based on original material (sometimes they are
+>> really
+>> large and cosnsist of several many scraps).
+>> 
+>> In each of they leaf surveys (the numbered ones) i make by
+>> convention a
+>> map called "<n>-Hauptplan". The main idea is that every leaf survey
+>> can
+>> be treaten modular and that i can compile varoius maps at upper
+>> levels
+>> (i.e regions).
+>> 
+>> Currently, the regions have no "<region>-Hautplan". When i use
+>> "select
+>> RegionWest.TheCave", therion is instructed to select all scraps
+>> below
+>> it. For the most part, this works like intendet and the overlappings
+>> are
+>> calculated correctly. There are some places however, where the upper
+>> 
+>> part of the passage is rendered below the lower part, which is
+>> wrong.
+>> This is with about 10-15% of the passages (so most is already ok).
+>> 
+>> I know from the manuals that therion does this "randomly" so there
+>> is no
+>> real way to adjust this from my perspective (placing the "input 2.th
+>> [1]"
+>> command in the region.th [2] file, wich then inputs the scraps etc,
+>> lower in
+>> the list does not help - it seems random where it is).
+>> I think, however, that it would be a very great addition, if there
+>> would
+>> be some code in the renderer, that sorts the vertical presentation
+>> of
+>> the scraps/maps by average altitude of said scrap/map, and that this
+>> 
+>> behavior is controllable by some configuration (cmdline option, or
+>> even
+>> better, thconfig parameter).
+>> => Is there maybe already something hidden like this i don't know so
+>> 
+>> far?
+>> That would be very great, because when i look at the dataset, i face
+>> 
+>> about 30-50 hours producing correctly manually sorted handcrafted
+>> maps
+>> at the region level...
+>> 
+>> Sincerely, Beni
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> Links:
+> ------
+> [1] http://2.th
+> [2] http://region.th
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From herich at speleodd.sk  Fri May 31 08:12:04 2019
+From: herich at speleodd.sk (Pavel Herich)
+Date: Fri, 31 May 2019 08:12:04 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <77c10bbc4049e503d83d144867213c54@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <77c10bbc4049e503d83d144867213c54@hallinger.org>
+Message-ID: <c908a07751f6cedadf1191ad6422dbc4@speleodd.sk>
+
+Hello,
+I´ve solved this with "select" from "Map structure" in config:
+
+#BENIKOVA okolie
+select j_c17m at j_c17.indexDJ
+select j_c18m at j_c18.indexDJ
+select benik at benikova.indexDJ
+select portal_pod_benikovouo at portal_pod_benikovou.indexDJ
+select mala_j_pod_benikovoum at mala_j_pod_benikovou.indexDJ
+select j_jelenich_stopm at j_jelenich_stop.indexDJ
+select tunelova_j_pri_benikovejm at tunelova_j_pri_benikovej.indexDJ
+select j_s_plesnoum at j_s_plesnou.indexDJ
+select otvor_naprotim at otvor_naproti.indexDJ
+
+#DVERE okolie
+select miesto_na_balkone1m at miesto_na_balkone1.indexDJ
+select miesto_na_balkone2m at miesto_na_balkone2.indexDJ
+select previs_na_balkonem at previs_na_balkone.indexDJ
+select j_s_bazoum at j_s_bazou.indexDJ
+...
+
+There is 200 caves in my dataset, I have decided to select them for 
+eachone (at highiest level), so it´s bit painful, but you can do it by 
+groups. There is just one limitation, that one group or cave cannot be 
+below and above of another at once - then must be divided in two parts.
+Hope I´ve unerstood your problem well.
+Pavel
+
+
+
+
+Dňa 2019-05-30 22:40 Benedikt Hallinger napísal(a):
+> Hi Stacho, hello Bruce,
+> you understood correctly.
+> 
+> The problem here is, we are talking about uncorrelated maps and
+> scraps. They are from several subsurveys.
+> 
+> is there any kind of debug output i can activate to get the average
+> scrap height?
+> 
+> And is the sorting done scrap-wise, or are the maps averaged?
+> 
+> 
+> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+>> Hello,
+>> 
+>> if you select just survey, then all maps consisting of scraps in this
+>> and sub-surveys should be ordered by average altitude. But this may
+>> easily cause that some overlapping is not done correctly. But it is
+>> also possible, there is some bug and it is not done correctly. Are you
+>> able to post some minimalistic sample, where depth sort fails?
+>> 
+>> The only way how to manually order maps in the output is to create
+>> upper-level maps (in your case probably what you mean by
+>> <region>-Hautplan) consisting of lower level maps in the correct
+>> order.
+>> 
+>> HTH, S.
+>> 
+>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger <beni at hallinger.org>
+>> wrote:
+>> 
+>>> Hello there,
+>>> i have a very large dataset here. It is organised by regions like
+>>> this
+>>> (but much more leaf objects and regions):
+>>> 
+>>> =====snip=====
+>>> - survey TheCave
+>>> - survey RegionWest
+>>> - survey 1
+>>> - survey 3
+>>> - survey 5
+>>> - survey RegionEast
+>>> - survey 2
+>>> - survey 4
+>>> - survey 6
+>>> =====snap=====
+>>> 
+>>> I currently work from bottom to up, that is i draw the individual
+>>> surveys as scraps, based on original material (sometimes they are
+>>> really
+>>> large and cosnsist of several many scraps).
+>>> 
+>>> In each of they leaf surveys (the numbered ones) i make by
+>>> convention a
+>>> map called "<n>-Hauptplan". The main idea is that every leaf survey
+>>> can
+>>> be treaten modular and that i can compile varoius maps at upper
+>>> levels
+>>> (i.e regions).
+>>> 
+>>> Currently, the regions have no "<region>-Hautplan". When i use
+>>> "select
+>>> RegionWest.TheCave", therion is instructed to select all scraps
+>>> below
+>>> it. For the most part, this works like intendet and the overlappings
+>>> are
+>>> calculated correctly. There are some places however, where the upper
+>>> 
+>>> part of the passage is rendered below the lower part, which is
+>>> wrong.
+>>> This is with about 10-15% of the passages (so most is already ok).
+>>> 
+>>> I know from the manuals that therion does this "randomly" so there
+>>> is no
+>>> real way to adjust this from my perspective (placing the "input 2.th
+>>> [1]"
+>>> command in the region.th [2] file, wich then inputs the scraps etc,
+>>> lower in
+>>> the list does not help - it seems random where it is).
+>>> I think, however, that it would be a very great addition, if there
+>>> would
+>>> be some code in the renderer, that sorts the vertical presentation
+>>> of
+>>> the scraps/maps by average altitude of said scrap/map, and that this
+>>> 
+>>> behavior is controllable by some configuration (cmdline option, or
+>>> even
+>>> better, thconfig parameter).
+>>> => Is there maybe already something hidden like this i don't know so
+>>> 
+>>> far?
+>>> That would be very great, because when i look at the dataset, i face
+>>> 
+>>> about 30-50 hours producing correctly manually sorted handcrafted
+>>> maps
+>>> at the region level...
+>>> 
+>>> Sincerely, Beni
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> 
+>> 
+>> Links:
+>> ------
+>> [1] http://2.th
+>> [2] http://region.th
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Fri May 31 15:37:49 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 31 May 2019 15:37:49 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+Message-ID: <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+
+Hi Stacho,
+your infos did the trick.
+indeed the data showed at closer examination, that the parts where 
+averaged lower than the part in question. The wrongly-lower part 
+contains a steep slope but the average height was still some few meters 
+below the average of the offending part.
+
+What puzzled me was that even splitting the scraps was not enough!
+I now have a scrap containing only the sloped part of the tunnel, and 
+that is surely averaged above the lower part.
+
+What solved it was to also rearrange the map definitions that contain 
+the sloped part: i put the low part prior the slope in question in 
+another map like this:
+-------snip----------
+# This works instead:
+map working-priortunnel
+   scrap-low-tunnel-before-slope
+endmap
+map working-slope
+   scrap-slope-itself-with-followig-high-part
+endmap
+
+
+# this does NOT work lie intendet:
+#map notWorking-combined
+#  scrap-low-tunnel-before-slope
+#  scrap-slope-itself-with-followig-high-part
+#endmap
+-------snap----------
+
+It looks like therion currently uses the average height of the MAP, not 
+the contained scraps, to calculate which part is above or below. In this 
+example, it looks like it is getting the average height of the 
+"notWorking-combined" combined map and comparing this to the 
+uncorrelated below-tunnel.
+If i put the "scrap-low-tunnel-before-slope" in its own MAP definition, 
+the average calculation can only take the 
+"scrap-slope-itself-with-followig-high-part" and thus resulting in a 
+much higher average height.
+
+Can you confirm this from therions sourcecode, and is this really the 
+intendet behaviour, since i think each scrap shopuld be averaged for 
+itself, regardless of its map allocation...?
+
+
+Wih best regards,
+Beni
+
+
+Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+> Hello,
+> 
+> if you select just survey, then all maps consisting of scraps in this
+> and sub-surveys should be ordered by average altitude. But this may
+> easily cause that some overlapping is not done correctly. But it is
+> also possible, there is some bug and it is not done correctly. Are you
+> able to post some minimalistic sample, where depth sort fails?
+> 
+> The only way how to manually order maps in the output is to create
+> upper-level maps (in your case probably what you mean by
+> <region>-Hautplan) consisting of lower level maps in the correct
+> order.
+> 
+> HTH, S.
+> 
+> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger <beni at hallinger.org>
+> wrote:
+> 
+>> Hello there,
+>> i have a very large dataset here. It is organised by regions like
+>> this
+>> (but much more leaf objects and regions):
+>> 
+>> =====snip=====
+>> - survey TheCave
+>> - survey RegionWest
+>> - survey 1
+>> - survey 3
+>> - survey 5
+>> - survey RegionEast
+>> - survey 2
+>> - survey 4
+>> - survey 6
+>> =====snap=====
+>> 
+>> I currently work from bottom to up, that is i draw the individual
+>> surveys as scraps, based on original material (sometimes they are
+>> really
+>> large and cosnsist of several many scraps).
+>> 
+>> In each of they leaf surveys (the numbered ones) i make by
+>> convention a
+>> map called "<n>-Hauptplan". The main idea is that every leaf survey
+>> can
+>> be treaten modular and that i can compile varoius maps at upper
+>> levels
+>> (i.e regions).
+>> 
+>> Currently, the regions have no "<region>-Hautplan". When i use
+>> "select
+>> RegionWest.TheCave", therion is instructed to select all scraps
+>> below
+>> it. For the most part, this works like intendet and the overlappings
+>> are
+>> calculated correctly. There are some places however, where the upper
+>> 
+>> part of the passage is rendered below the lower part, which is
+>> wrong.
+>> This is with about 10-15% of the passages (so most is already ok).
+>> 
+>> I know from the manuals that therion does this "randomly" so there
+>> is no
+>> real way to adjust this from my perspective (placing the "input 2.th
+>> [1]"
+>> command in the region.th [2] file, wich then inputs the scraps etc,
+>> lower in
+>> the list does not help - it seems random where it is).
+>> I think, however, that it would be a very great addition, if there
+>> would
+>> be some code in the renderer, that sorts the vertical presentation
+>> of
+>> the scraps/maps by average altitude of said scrap/map, and that this
+>> 
+>> behavior is controllable by some configuration (cmdline option, or
+>> even
+>> better, thconfig parameter).
+>> => Is there maybe already something hidden like this i don't know so
+>> 
+>> far?
+>> That would be very great, because when i look at the dataset, i face
+>> 
+>> about 30-50 hours producing correctly manually sorted handcrafted
+>> maps
+>> at the region level...
+>> 
+>> Sincerely, Beni
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> Links:
+> ------
+> [1] http://2.th
+> [2] http://region.th
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From lists at group-s.sk  Fri May 31 21:22:05 2019
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 31 May 2019 21:22:05 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+Message-ID: <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+
+Hello Beni,
+
+I am not 100% sure if I understand your problem correctly, but this is how
+therion does average altitude calculations:
+
+the altitude of a scrap = arithmetic average of altitudes of its stations
+the altitude of a map = arithmetic average of altitudes of scraps
+
+And your observation is correct. If you have some maps defined in your
+dataset, then maps of selected surveys are exported and sorted according to
+their altitudes. If you have no maps defined, then scraps in selected
+surveys are taken and altitude sorted.
+
+So if you are working on a large dataset and you do not want to define
+upper-level maps, it is probably better not to define any maps at all -
+then only scraps will be taken into consideration.
+
+Best regards, S.
+
+On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org> wrote:
+
+> Hi Stacho,
+> your infos did the trick.
+> indeed the data showed at closer examination, that the parts where
+> averaged lower than the part in question. The wrongly-lower part
+> contains a steep slope but the average height was still some few meters
+> below the average of the offending part.
+>
+> What puzzled me was that even splitting the scraps was not enough!
+> I now have a scrap containing only the sloped part of the tunnel, and
+> that is surely averaged above the lower part.
+>
+> What solved it was to also rearrange the map definitions that contain
+> the sloped part: i put the low part prior the slope in question in
+> another map like this:
+> -------snip----------
+> # This works instead:
+> map working-priortunnel
+>    scrap-low-tunnel-before-slope
+> endmap
+> map working-slope
+>    scrap-slope-itself-with-followig-high-part
+> endmap
+>
+>
+> # this does NOT work lie intendet:
+> #map notWorking-combined
+> #  scrap-low-tunnel-before-slope
+> #  scrap-slope-itself-with-followig-high-part
+> #endmap
+> -------snap----------
+>
+> It looks like therion currently uses the average height of the MAP, not
+> the contained scraps, to calculate which part is above or below. In this
+> example, it looks like it is getting the average height of the
+> "notWorking-combined" combined map and comparing this to the
+> uncorrelated below-tunnel.
+> If i put the "scrap-low-tunnel-before-slope" in its own MAP definition,
+> the average calculation can only take the
+> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+> much higher average height.
+>
+> Can you confirm this from therions sourcecode, and is this really the
+> intendet behaviour, since i think each scrap shopuld be averaged for
+> itself, regardless of its map allocation...?
+>
+>
+> Wih best regards,
+> Beni
+>
+>
+> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+> > Hello,
+> >
+> > if you select just survey, then all maps consisting of scraps in this
+> > and sub-surveys should be ordered by average altitude. But this may
+> > easily cause that some overlapping is not done correctly. But it is
+> > also possible, there is some bug and it is not done correctly. Are you
+> > able to post some minimalistic sample, where depth sort fails?
+> >
+> > The only way how to manually order maps in the output is to create
+> > upper-level maps (in your case probably what you mean by
+> > <region>-Hautplan) consisting of lower level maps in the correct
+> > order.
+> >
+> > HTH, S.
+> >
+> > On Thu, 30 May 2019 at 15:55, Benedikt Hallinger <beni at hallinger.org>
+> > wrote:
+> >
+> >> Hello there,
+> >> i have a very large dataset here. It is organised by regions like
+> >> this
+> >> (but much more leaf objects and regions):
+> >>
+> >> =====snip=====
+> >> - survey TheCave
+> >> - survey RegionWest
+> >> - survey 1
+> >> - survey 3
+> >> - survey 5
+> >> - survey RegionEast
+> >> - survey 2
+> >> - survey 4
+> >> - survey 6
+> >> =====snap=====
+> >>
+> >> I currently work from bottom to up, that is i draw the individual
+> >> surveys as scraps, based on original material (sometimes they are
+> >> really
+> >> large and cosnsist of several many scraps).
+> >>
+> >> In each of they leaf surveys (the numbered ones) i make by
+> >> convention a
+> >> map called "<n>-Hauptplan". The main idea is that every leaf survey
+> >> can
+> >> be treaten modular and that i can compile varoius maps at upper
+> >> levels
+> >> (i.e regions).
+> >>
+> >> Currently, the regions have no "<region>-Hautplan". When i use
+> >> "select
+> >> RegionWest.TheCave", therion is instructed to select all scraps
+> >> below
+> >> it. For the most part, this works like intendet and the overlappings
+> >> are
+> >> calculated correctly. There are some places however, where the upper
+> >>
+> >> part of the passage is rendered below the lower part, which is
+> >> wrong.
+> >> This is with about 10-15% of the passages (so most is already ok).
+> >>
+> >> I know from the manuals that therion does this "randomly" so there
+> >> is no
+> >> real way to adjust this from my perspective (placing the "input 2.th
+> >> [1]"
+> >> command in the region.th [2] file, wich then inputs the scraps etc,
+> >> lower in
+> >> the list does not help - it seems random where it is).
+> >> I think, however, that it would be a very great addition, if there
+> >> would
+> >> be some code in the renderer, that sorts the vertical presentation
+> >> of
+> >> the scraps/maps by average altitude of said scrap/map, and that this
+> >>
+> >> behavior is controllable by some configuration (cmdline option, or
+> >> even
+> >> better, thconfig parameter).
+> >> => Is there maybe already something hidden like this i don't know so
+> >>
+> >> far?
+> >> That would be very great, because when i look at the dataset, i face
+> >>
+> >> about 30-50 hours producing correctly manually sorted handcrafted
+> >> maps
+> >> at the region level...
+> >>
+> >> Sincerely, Beni
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> https://mailman.speleo.sk/listinfo/therion
+> >
+> >
+> > Links:
+> > ------
+> > [1] http://2.th
+> > [2] http://region.th
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190531/2b2de538/attachment.htm>
+
+From beni at hallinger.org  Fri May 31 22:14:40 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 31 May 2019 22:14:40 +0200
+Subject: [Therion] Sorting scraps/maps by height in default mode
+In-Reply-To: <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+References: <004401d3679e$c12a60b0$437f2210$@coly.org.uk>
+ <720d2093bb0533c533d79f0bb20b54d7@hallinger.org>
+ <3d4fc8bcb0a35ddcf11eafef5cc5e2da@hallinger.org>
+ <CALPsdSt3zxyRWz-WjrQx1wyAF85ongZ8nMp22TaAm=SiHiQm8g@mail.gmail.com>
+ <8d9622c494b592fabb4bbe9d17902a7b@hallinger.org>
+ <643f480ecae2b6e2629bbf9226cac9e5@hallinger.org>
+ <16a5a7af9eb84632ac9157039e1b4698@hallinger.org>
+ <CAP35+gEcx3hXrwxuJq+HNq4p3j2jk0Q9Cy2EfjXbp43rVc-bqA@mail.gmail.com>
+ <e55e89fd2b387380cecfe07aaff52d17@hallinger.org>
+ <CAP35+gEsZOwV6WG87Jw=QGZ7-G5GbtZtxGk7hGz+YyNb3im3kA@mail.gmail.com>
+Message-ID: <1bc674c26f9fd2f774a52895737efd5e@hallinger.org>
+
+Thank you for your message, this helps alot.
+There is a way out tough, a middle ground: one can define custom maps in 
+the thconfig file using source.
+
+I need to think about how this affects the projects structure.
+
+Besides that, is there a option to disable map-averaging and tell 
+therion to use the scrap average for each scrap?
+That would solve this imho.
+
+Thanks, i understand i better now, how this works currently.
+
+
+Am 2019-05-31 21:22, schrieb Stacho Mudrak:
+> Hello Beni,
+> 
+> I am not 100% sure if I understand your problem correctly, but this is
+> how therion does average altitude calculations:
+> 
+> the altitude of a scrap = arithmetic average of altitudes of its
+> stations
+> the altitude of a map = arithmetic average of altitudes of scraps
+> 
+> And your observation is correct. If you have some maps defined in your
+> dataset, then maps of selected surveys are exported and sorted
+> according to their altitudes. If you have no maps defined, then scraps
+> in selected surveys are taken and altitude sorted.
+> 
+> So if you are working on a large dataset and you do not want to define
+> upper-level maps, it is probably better not to define any maps at all
+> - then only scraps will be taken into consideration.
+> 
+> Best regards, S.
+> 
+> On Fri, 31 May 2019 at 15:38, Benedikt Hallinger <beni at hallinger.org>
+> wrote:
+> 
+>> Hi Stacho,
+>> your infos did the trick.
+>> indeed the data showed at closer examination, that the parts where
+>> averaged lower than the part in question. The wrongly-lower part
+>> contains a steep slope but the average height was still some few
+>> meters
+>> below the average of the offending part.
+>> 
+>> What puzzled me was that even splitting the scraps was not enough!
+>> I now have a scrap containing only the sloped part of the tunnel,
+>> and
+>> that is surely averaged above the lower part.
+>> 
+>> What solved it was to also rearrange the map definitions that
+>> contain
+>> the sloped part: i put the low part prior the slope in question in
+>> another map like this:
+>> -------snip----------
+>> # This works instead:
+>> map working-priortunnel
+>> scrap-low-tunnel-before-slope
+>> endmap
+>> map working-slope
+>> scrap-slope-itself-with-followig-high-part
+>> endmap
+>> 
+>> # this does NOT work lie intendet:
+>> #map notWorking-combined
+>> #  scrap-low-tunnel-before-slope
+>> #  scrap-slope-itself-with-followig-high-part
+>> #endmap
+>> -------snap----------
+>> 
+>> It looks like therion currently uses the average height of the MAP,
+>> not
+>> the contained scraps, to calculate which part is above or below. In
+>> this
+>> example, it looks like it is getting the average height of the
+>> "notWorking-combined" combined map and comparing this to the
+>> uncorrelated below-tunnel.
+>> If i put the "scrap-low-tunnel-before-slope" in its own MAP
+>> definition,
+>> the average calculation can only take the
+>> "scrap-slope-itself-with-followig-high-part" and thus resulting in a
+>> 
+>> much higher average height.
+>> 
+>> Can you confirm this from therions sourcecode, and is this really
+>> the
+>> intendet behaviour, since i think each scrap shopuld be averaged for
+>> 
+>> itself, regardless of its map allocation...?
+>> 
+>> Wih best regards,
+>> Beni
+>> 
+>> Am 2019-05-30 22:27, schrieb Stacho Mudrak:
+>>> Hello,
+>>> 
+>>> if you select just survey, then all maps consisting of scraps in
+>> this
+>>> and sub-surveys should be ordered by average altitude. But this
+>> may
+>>> easily cause that some overlapping is not done correctly. But it
+>> is
+>>> also possible, there is some bug and it is not done correctly. Are
+>> you
+>>> able to post some minimalistic sample, where depth sort fails?
+>>> 
+>>> The only way how to manually order maps in the output is to create
+>>> upper-level maps (in your case probably what you mean by
+>>> <region>-Hautplan) consisting of lower level maps in the correct
+>>> order.
+>>> 
+>>> HTH, S.
+>>> 
+>>> On Thu, 30 May 2019 at 15:55, Benedikt Hallinger
+>> <beni at hallinger.org>
+>>> wrote:
+>>> 
+>>>> Hello there,
+>>>> i have a very large dataset here. It is organised by regions like
+>>>> this
+>>>> (but much more leaf objects and regions):
+>>>> 
+>>>> =====snip=====
+>>>> - survey TheCave
+>>>> - survey RegionWest
+>>>> - survey 1
+>>>> - survey 3
+>>>> - survey 5
+>>>> - survey RegionEast
+>>>> - survey 2
+>>>> - survey 4
+>>>> - survey 6
+>>>> =====snap=====
+>>>> 
+>>>> I currently work from bottom to up, that is i draw the individual
+>>>> surveys as scraps, based on original material (sometimes they are
+>>>> really
+>>>> large and cosnsist of several many scraps).
+>>>> 
+>>>> In each of they leaf surveys (the numbered ones) i make by
+>>>> convention a
+>>>> map called "<n>-Hauptplan". The main idea is that every leaf
+>> survey
+>>>> can
+>>>> be treaten modular and that i can compile varoius maps at upper
+>>>> levels
+>>>> (i.e regions).
+>>>> 
+>>>> Currently, the regions have no "<region>-Hautplan". When i use
+>>>> "select
+>>>> RegionWest.TheCave", therion is instructed to select all scraps
+>>>> below
+>>>> it. For the most part, this works like intendet and the
+>> overlappings
+>>>> are
+>>>> calculated correctly. There are some places however, where the
+>> upper
+>>>> 
+>>>> part of the passage is rendered below the lower part, which is
+>>>> wrong.
+>>>> This is with about 10-15% of the passages (so most is already
+>> ok).
+>>>> 
+>>>> I know from the manuals that therion does this "randomly" so
+>> there
+>>>> is no
+>>>> real way to adjust this from my perspective (placing the "input
+>> 2.th [1]
+>>>> [1]"
+>>>> command in the region.th [2] [2] file, wich then inputs the
+>> scraps etc,
+>>>> lower in
+>>>> the list does not help - it seems random where it is).
+>>>> I think, however, that it would be a very great addition, if
+>> there
+>>>> would
+>>>> be some code in the renderer, that sorts the vertical
+>> presentation
+>>>> of
+>>>> the scraps/maps by average altitude of said scrap/map, and that
+>> this
+>>>> 
+>>>> behavior is controllable by some configuration (cmdline option,
+>> or
+>>>> even
+>>>> better, thconfig parameter).
+>>>> => Is there maybe already something hidden like this i don't know
+>> so
+>>>> 
+>>>> far?
+>>>> That would be very great, because when i look at the dataset, i
+>> face
+>>>> 
+>>>> about 30-50 hours producing correctly manually sorted handcrafted
+>>>> maps
+>>>> at the region level...
+>>>> 
+>>>> Sincerely, Beni
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> https://mailman.speleo.sk/listinfo/therion
+>>> 
+>>> 
+>>> Links:
+>>> ------
+>>> [1] http://2.th
+>>> [2] http://region.th
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+> 
+> 
+> Links:
+> ------
+> [1] http://2.th
+> [2] http://region.th
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+

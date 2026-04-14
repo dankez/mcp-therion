@@ -1,0 +1,1324 @@
+From guidonts at hotmail.com  Wed Apr  1 20:34:03 2009
+From: guidonts at hotmail.com (Guido Verhoeven)
+Date: Wed, 1 Apr 2009 20:34:03 +0200
+Subject: [Therion] symbol?
+Message-ID: <COL107-W8E3FEB78536344E0C2921D68B0@phx.gbl>
+
+
+Hallo
+
+ 
+
+Is there a method to represent an area of water that is temporary? I mean: in winter (or when it is very wet) there is water in a part of the cave, in summer there is no water. The water is not streaming.
+
+ 
+
+Thank you
+
+ 
+
+Verhoeven Guido
+
+_________________________________________________________________
+Lentekriebels? Speel samen met je vrienden de spelletjes die Windows Live je aanbiedt!
+http://www.messengerbillboard.be/nl/play
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090401/b14e02be/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Thu Apr  2 09:36:02 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 02 Apr 2009 20:36:02 +1300
+Subject: [Therion] Area water symbol temporary
+In-Reply-To: <COL107-W8E3FEB78536344E0C2921D68B0@phx.gbl>
+References: <COL107-W8E3FEB78536344E0C2921D68B0@phx.gbl>
+Message-ID: <EA3D1B3B8AAB47B2BDFDF8489489B2EF@JUICEBRAIN>
+
+>Is there a method to represent an area of water that is temporary?
+
+ 
+
+For water flow points and lines there are subtypes like
+
+permanent (default), conjectural, intermittent, paleo;  (these don't all
+apply to each entity - see the therion book)
+
+ 
+
+There are summer, winter subtypes for air draught points.
+
+ 
+
+ I don't think this was quite what you are asking, however.
+
+ 
+
+I would tend to draw the passage dry and label it "floods regularly" or draw
+it wet and label it "often dry"
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090402/b97b40d0/attachment.htm>
+
+From gfe_list at aliceadsl.fr  Thu Apr  2 19:19:55 2009
+From: gfe_list at aliceadsl.fr (Gilbert Fernandes (mailinglist))
+Date: Thu, 02 Apr 2009 19:19:55 +0200
+Subject: [Therion] Area water symbol temporary
+In-Reply-To: <EA3D1B3B8AAB47B2BDFDF8489489B2EF@JUICEBRAIN>
+References: <COL107-W8E3FEB78536344E0C2921D68B0@phx.gbl>
+	<EA3D1B3B8AAB47B2BDFDF8489489B2EF@JUICEBRAIN>
+Message-ID: <49D4F3BB.5000401@aliceadsl.fr>
+
+You can also redefine the area symbol for water to match what you want 
+to draw in your area, but it's a bit tricky : you'll have to write  a 
+metapost function.
+
+
+
+Bruce Mutton a écrit :
+>>Is there a method to represent an area of water that is temporary?
+> 
+>  
+> 
+> For water flow points and lines there are subtypes like
+> 
+> permanent (default), conjectural, intermittent, paleo;  (these don’t all 
+> apply to each entity – see the therion book)
+> 
+>  
+> 
+> There are summer, winter subtypes for air draught points.
+> 
+>  
+> 
+>  I don’t think this was quite what you are asking, however.
+> 
+>  
+> 
+> I would tend to draw the passage dry and label it “floods regularly” or 
+> draw it wet and label it “often dry”
+> 
+>  
+> 
+> Bruce
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From gfe_list at aliceadsl.fr  Fri Apr 10 07:31:17 2009
+From: gfe_list at aliceadsl.fr (Gilbert Fernandes (mailinglist))
+Date: Fri, 10 Apr 2009 07:31:17 +0200
+Subject: [Therion] custumizing lines wall subtype blocks
+Message-ID: <49DED9A5.5000301@aliceadsl.fr>
+
+
+Hello,
+I tried to custumise the line drawing for Wall subtype blocks
+but I did not succeed. I try to use the same technique (and syntaxe) 
+used for others kinds of lines but here, it's not a line but a SUBTYPE 
+of line
+Is it possible ? and what is the syntaxe ?
+Thanks,
+ 
+Here my code, written in the layout bloc
+
+  code metapost
+    def l_wall_blocks_PINEE (expr P) =
+    %  pickup PenD;
+    %  draw P withcolor red;
+ 
+      T:=identity;
+      cas := 0;
+      dlzka := arclength P;
+      if dlzka > 0:
+        mojkrok:=adjust_step(dlzka, 1.5u);
+        pickup PenA;
+        forever:
+          t1 := arctime (cas + mojkrok*1/10) of P;
+          t2 := arctime (cas + mojkrok*9/10) of P;
+          q := ((point t1 of P) + .4u * unitvector(thdir(P,t1) rotated 
+-90)) --
+             (subpath (t1,t2) of P) --
+             ((point t2 of P) + .4u * unitvector(thdir(P,t2) rotated -90));
+          thdraw q randomized (u/6);
+          cas := cas + mojkrok;
+          exitif cas > dlzka - (2*mojkrok/3); % for rounding errors
+        endfor;
+      fi;
+    enddef;
+ 
+  initsymbol("l_wall_blocks_PINEE");
+  #symbol-assign line wall_blocks PINEE
+#  let l_wall_blocks = l_wall_blocks_PINEE
+  endcode
+ 
+The symbol-assign command did not work, and the "let l_wall_blocks = 
+l_wall_blocks_PINEE" generate an error on compiling
+An extract of the logs
+
+####################### metapost log file ########################
+This is MetaPost, Version 0.641 (Web2c 7.5.2) (mem=mpost 2004.3.2)  9 
+APR 2009 10:25
+**data.mp
+(data.mp [4001] [4002] [4003] [4004] [4005] [4006] [4007]
+! Extra tokens will be flushed.
+<to be read again>
+                   string
+mapsymbol->string
+                 
+.s,stype,lname,ID;stype=substring(0,1)of(EXPR0);lname=(EXPR...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I've just read as much of that statement as I could fathom,
+so a semicolon should have been next. It's very puzzling...
+but I'll try to get myself back together, by ignoring
+everything up to the next `;'. Please insert a semicolon
+now in front of anything that you don't want me to delete.
+(See Chapter 27 of The METAFONTbook for an example.)
+ 
+> > stype
+> > "a"
+! Equation cannot be performed (numeric=string).
+<to be read again>
+                   ;
+mapsymbol->...me,ID;stype=substring(0,1)of(EXPR0);
+                                                  
+lname=(EXPR0)&"_"&(EXPR1);...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm sorry, but I don't know how to make such things equal.
+(See the two expressions just above the error message.)
+ 
+> > lname
+> > "a_bedrock_UIS"
+! Equation cannot be performed (numeric=string).
+<to be read again>
+                   ;
+mapsymbol->...of(EXPR0);lname=(EXPR0)&"_"&(EXPR1);
+                                                  
+ID:="ID_"&lname;if(known.s...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm sorry, but I don't know how to make such things equal.
+(See the two expressions just above the error message.)
+ 
+> > "ID_"
+> > lname
+! Not implemented: (string)&(unknown numeric).
+<to be read again>
+                   ;
+mapsymbol->...(EXPR0)&"_"&(EXPR1);ID:="ID_"&lname;
+                                                  
+if(known.scantokens.ID):if...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+ 
+> > lname
+! Not a string.
+<to be read again>
+                   )
+mapsymbol->...="ID_"&lname;if(known.scantokens.ID)
+                                                  :if.stype="a":s="def 
+"&(EX...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm going to flush this expression, since
+scantokens should be followed by a known string.
+ 
+! A primary expression can't begin with `:'.
+<inserted text>
+                0
+<to be read again>
+                   :
+mapsymbol->..."ID_"&lname;if(known.scantokens.ID):
+                                                  if.stype="a":s="def 
+"&(EXP...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm afraid I need some sort of value in order to continue,
+so I've tentatively inserted `0'. You may want to
+delete this zero and insert something else;
+see Chapter 27 of The METAFONTbook for an example.
+ 
+! Missing `)' has been inserted.
+<to be read again>
+                   :
+mapsymbol->..."ID_"&lname;if(known.scantokens.ID):
+                                                  if.stype="a":s="def 
+"&(EXP...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I found no right delimiter to match a left one. So I've
+put one in, behind the scenes; this may fix the problem.
+ 
+> > stype
+> > "a"
+! Not implemented: (unknown numeric)=(string).
+<to be read again>
+                   :
+mapsymbol->...f(known.scantokens.ID):if.stype="a":
+                                                  s="def "&(EXPR0)&" = 
+scant...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+ 
+> > "a"
+! Undefined condition will be treated as `false'.
+<to be read again>
+                   :
+mapsymbol->...f(known.scantokens.ID):if.stype="a":
+                                                  s="def "&(EXPR0)&" = 
+scant...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+The expression shown above should have had a definite
+true-or-false value. I'm changing it to `false'.
+ 
+> > "let a_bedrock = "
+> > lname
+! Not implemented: (string)&(unknown numeric).
+<to be read again>
+                   &
+mapsymbol->...";else:s="let "&(EXPR0)&" = "&lname&
+                                                  
+";";fi;scantokens.s;elseif...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+ 
+> > lname
+> > ";"
+! Not implemented: (unknown numeric)&(string).
+<to be read again>
+                   ;
+mapsymbol->...se:s="let "&(EXPR0)&" = "&lname&";";
+                                                  
+fi;scantokens.s;elseif(EXP...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+ 
+! Inconsistent equation.
+<to be read again>
+                   ;
+mapsymbol->...se:s="let "&(EXPR0)&" = "&lname&";";
+                                                  
+fi;scantokens.s;elseif(EXP...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+The equation I just read contradicts what was said before.
+But don't worry; continue and I'll just ignore it.
+ 
+! Redundant equation.
+<to be read again>
+                   ;
+mapsymbol->...R0)&" = "&lname&";";fi;scantokens.s;
+                                                  
+elseif(EXPR2):message("[Wa...
+l.3748 mapsymbol("a_bedrock","UIS",false)
+                                         ;
+I already knew that this equation was true.
+But perhaps no harm has been done; let's continue.
+ 
+ 
+
+
+
+From gpacher at sbox.tugraz.at  Fri Apr 10 12:11:17 2009
+From: gpacher at sbox.tugraz.at (Georg Pacher)
+Date: Fri, 10 Apr 2009 12:11:17 +0200
+Subject: [Therion] custumizing lines wall subtype blocks
+In-Reply-To: <49DED9A5.5000301@aliceadsl.fr>
+References: <49DED9A5.5000301@aliceadsl.fr>
+Message-ID: <49DF1B45.7050608@sbox.tugraz.at>
+
+Hi!
+
+The syntax for the symbol-assign with subtypes is using a colon:
+symbol-assign line wall:blocks PINEE
+yet, note that this is a therion command and not a metapost command. 
+Therefore it should not be inside the code metapost section (though it 
+works!?).
+
+On the other hand the "let" is a metapost command, and the line has to 
+be terminated by a semicolon, or you get metapost errors.
+
+regards,
+Georg.
+
+Ps.: This is the redefinition of line wall:blocks, I did:
+def l_wall_blocks_AUT (expr P) =
+
+  T:=identity;
+  pickup PenC;
+  laenge := arclength P;
+
+  path block;
+  path old_block;
+ 
+  cur := 0;
+  t:= arctime cur of P;
+ 
+  % draw first block
+  old_block := ( 
+(.7u,-.35u)--(.85u,0.01u)--(.4u,.5u)--(.1u,.3u)--(-.0u,-.0u) );
+  block_width := (xpart urcorner old_block - xpart ulcorner old_block);
+  old_block:=old_block rotated angle( thdir(P,0) ) shifted point t of P;
+  thclean (old_block--cycle);
+  thdraw old_block;
+ 
+ 
+  cur := cur + block_width/2;
+  t:= arctime cur of P;
+  forever:
+    % generate random block
+    block := punked ( ( 
+(.8u,-.35u)--(.85u,0.01u)--(.6u,.4u)--(.1u,.1u)--(-.0u,-.3u) )
+          randomized (0.3u) )
+           scaled (uniformdeviate(0.3)+.65)
+          rotated (uniformdeviate(45)-15);
+    % check width of block
+    block_width := (xpart urcorner block - xpart ulcorner block);
+   
+    exitif cur > (laenge- 3.5*block_width/2);
+    % find next position where the block fits in without intersecting 
+the previous one
+    forever:   
+      exitif xpart ( ((block--cycle) rotated angle(direction t of P) 
+shifted point t of P) intersectiontimes old_block) < 0;
+      cur:=cur+0.01u;
+      t:= arctime cur of P;
+      exitif cur > (laenge- 3.5*block_width/2);
+    endfor;
+    exitif cur > (laenge- 3.5*block_width/2);
+   
+    old_block:= block rotated angle(direction t of P) shifted point t of P;
+    thclean (old_block--cycle);
+    thdraw old_block;
+   
+   
+    cur := cur + block_width/2;
+    t:= arctime cur of P;
+  endfor;
+ 
+    % generate last block
+    t:= arctime laenge-eps of P;
+    block := (( 
+(-.15u,-.35u)--(.0u,.0u)--(-.45u,.5u)--(-.75u,.3u)--(-.85u,-.0u)) );
+    block_width := (xpart urcorner block - xpart ulcorner block);
+    % scale last block to fit in the remaining gap
+    scale_factor:=(laenge-cur)/block_width;
+    forever:
+      exitif xpart ( ( (block) rotated angle (direction t of P) scaled 
+scale_factor shifted (point t of P) ) intersectiontimes old_block) < 0;
+      scale_factor:=scale_factor-0.001;
+    endfor;
+   
+    thclean (block--cycle) rotated angle (direction t of P) scaled 
+scale_factor shifted (point t of P);
+    thdraw (block) rotated angle (direction t of P) scaled scale_factor 
+shifted (point t of P);
+   
+enddef;
+
+
+Gilbert Fernandes (mailinglist) schrieb:
+>
+> Hello,
+> I tried to custumise the line drawing for Wall subtype blocks
+> but I did not succeed. I try to use the same technique (and syntaxe) 
+> used for others kinds of lines but here, it's not a line but a SUBTYPE 
+> of line
+> Is it possible ? and what is the syntaxe ?
+[...]
+> initsymbol("l_wall_blocks_PINEE");
+>  #symbol-assign line wall_blocks PINEE
+> #  let l_wall_blocks = l_wall_blocks_PINEE
+>  endcode
+>
+> The symbol-assign command did not work, and the "let l_wall_blocks = 
+> l_wall_blocks_PINEE" generate an error on compiling
+> An extract of the logs
+[...]
+
+
+From il.mara at tiscali.it  Fri Apr 17 12:21:53 2009
+From: il.mara at tiscali.it (mara)
+Date: Fri, 17 Apr 2009 12:21:53 +0200 (CEST)
+Subject: [Therion] 3D sample
+Message-ID: <1363231.1019911239963713828.JavaMail.defaultUser@defaultHost>
+
+
+Hi everybody,
+
+I am no Therion expert but would like to try some 3d modeling; 
+honestly speaking I am having some difficulties. To get a better 
+understanding could some of you send me a sample file with both config 
+and th files so that I can run it and understand little more?
+Tried to find more info on wiki and therionbook but without success.
+
+Thanks for yr help
+best
+
+Mara
+
+
+Arriva Tiscali Mobile! Acquista la tua SIM Tiscali a soli €5 e scopri la semplicità e la convenienza del nuovo servizio per il tuo cellulare. Passa a Tiscali Mobile http://abbonati.tiscali.it/promo/tiscalimobile/
+
+
+From wookey at wookware.org  Fri Apr 17 15:34:08 2009
+From: wookey at wookware.org (Wookey)
+Date: Fri, 17 Apr 2009 14:34:08 +0100
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <1237895009.10143.73.camel@localhost.localdomain>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+Message-ID: <20090417133407.GQ26861@knossos.aleph1.co.uk>
+
++++ marco corvi [2009-03-24 12:43 +0100]:
+> On Tue, 2009-03-24 at 21:50 +1300, Bruce Mutton wrote:
+> > Hi there
+> > 
+> > I have a Disto arriving hopefully in a few days, and looking ahead
+> > I’ve been tentatively trialling PocketTopo on my PC.
+> > 
+> >  
+> hi,
+> 
+> also i have a distoX.
+> i am writing a program to use it with linux.
+> (the programs runs also on windows).
+> 
+> export as therion, of course.
+> 
+> anyone interested to alpha test ?
+> (cannot guarantee, but is should not damage your distox)
+
+John Pybus has a disto and no Windows machines so he will no doubt be
+interested...
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From thierrygonon at mac.com  Fri Apr 17 16:32:00 2009
+From: thierrygonon at mac.com (thierrygonon)
+Date: Fri, 17 Apr 2009 16:32:00 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <20090417133407.GQ26861@knossos.aleph1.co.uk>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+Message-ID: <49E892E0.2010709@mac.com>
+
+Hi all,
+
+I should be interested too...
+
+Thierry
+
+Wookey a écrit :
+> +++ marco corvi [2009-03-24 12:43 +0100]:
+>   
+>> On Tue, 2009-03-24 at 21:50 +1300, Bruce Mutton wrote:
+>>     
+>>> Hi there
+>>>
+>>> I have a Disto arriving hopefully in a few days, and looking ahead
+>>> I’ve been tentatively trialling PocketTopo on my PC.
+>>>
+>>>  
+>>>       
+>> hi,
+>>
+>> also i have a distoX.
+>> i am writing a program to use it with linux.
+>> (the programs runs also on windows).
+>>
+>> export as therion, of course.
+>>
+>> anyone interested to alpha test ?
+>> (cannot guarantee, but is should not damage your distox)
+>>     
+>
+> John Pybus has a disto and no Windows machines so he will no doubt be
+> interested...
+>
+> Wookey
+>   
+
+
+
+
+From gfe_list at aliceadsl.fr  Fri Apr 17 18:51:49 2009
+From: gfe_list at aliceadsl.fr (Gilbert Fernandes (mailinglist))
+Date: Fri, 17 Apr 2009 18:51:49 +0200
+Subject: [Therion] 3D sample
+In-Reply-To: <1363231.1019911239963713828.JavaMail.defaultUser@defaultHost>
+References: <1363231.1019911239963713828.JavaMail.defaultUser@defaultHost>
+Message-ID: <49E8B3A5.6080909@aliceadsl.fr>
+
+Hello,
+
+look at the exemples in the wiki
+http://therion.speleo.sk/wiki/doku.php?id=examples
+how to run an exemple data : http://therion.speleo.sk/wiki/doku.php?id=run
+
+And the main of the wiki
+http://therion.speleo.sk/wiki/doku.php
+
+I propose you the doc : "therion for cavers"
+http://therion.speleo.sk/wiki/doku.php?id=tfc
+
+Bye,
+
+
+mara a écrit :
+> Hi everybody,
+> 
+> I am no Therion expert but would like to try some 3d modeling; 
+> honestly speaking I am having some difficulties. To get a better 
+> understanding could some of you send me a sample file with both config 
+> and th files so that I can run it and understand little more?
+> Tried to find more info on wiki and therionbook but without success.
+> 
+> Thanks for yr help
+> best
+> 
+> Mara
+> 
+> 
+> Arriva Tiscali Mobile! Acquista la tua SIM Tiscali a soli €5 e scopri la semplicità e la convenienza del nuovo servizio per il tuo cellulare. Passa a Tiscali Mobile http://abbonati.tiscali.it/promo/tiscalimobile/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Sat Apr 18 20:40:34 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 18 Apr 2009 20:40:34 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <49E892E0.2010709@mac.com>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<49E892E0.2010709@mac.com>
+Message-ID: <157953982403785266912972406423795131390-Webmail@me.com>
+
+Me too, please,
+
+Martin S.
+
+
+>Hi all,
+>
+>I should be interested too...
+>
+>Thierry
+>
+>Wookey a écrit :
+>> +++ marco corvi [2009-03-24 12:43 +0100]:
+>>   
+>>> On Tue, 2009-03-24 at 21:50 +1300, Bruce Mutton wrote:
+>>>     
+>>>> Hi there
+>>>>
+>>>> I have a Disto arriving hopefully in a few days, and looking ahead
+>>>> I’ve been tentatively trialling PocketTopo on my PC.
+>>>>
+>>>>  
+>>>>       
+>>> hi,
+>>>
+>>> also i have a distoX.
+>>> i am writing a program to use it with linux.
+>>> (the programs runs also on windows).
+>>>
+>>> export as therion, of course.
+>>>
+>>> anyone interested to alpha test ?
+>>> (cannot guarantee, but is should not damage your distox)
+>>>     
+>>
+>> John Pybus has a disto and no Windows machines so he will no doubt be
+>> interested...
+>>
+>> Wookey
+>>   
+>
+>
+>_______________________________________________
+>Therion mailing list
+>Therion at speleo.sk
+>http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+
+
+From guidonts at hotmail.com  Mon Apr 20 13:27:45 2009
+From: guidonts at hotmail.com (Guido Verhoeven)
+Date: Mon, 20 Apr 2009 13:27:45 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <20090417133407.GQ26861@knossos.aleph1.co.uk>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain> 
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+Message-ID: <COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+
+
+Hello
+
+ 
+
+Do you know about Auriga from Luc Le Blanc? This runs on a Palm. (see: http://www.speleo.qc.ca/auriga/)
+
+ 
+
+Guido
+
+ 
+
+
+ 
+> Date: Fri, 17 Apr 2009 14:34:08 +0100
+> From: wookey at wookware.org
+> To: therion at speleo.sk
+> Subject: Re: [Therion] DistoX and PocketTopo with Therion
+> 
+> +++ marco corvi [2009-03-24 12:43 +0100]:
+> > On Tue, 2009-03-24 at 21:50 +1300, Bruce Mutton wrote:
+> > > Hi there
+> > > 
+> > > I have a Disto arriving hopefully in a few days, and looking ahead
+> > > I’ve been tentatively trialling PocketTopo on my PC.
+> > > 
+> > > 
+> > hi,
+> > 
+> > also i have a distoX.
+> > i am writing a program to use it with linux.
+> > (the programs runs also on windows).
+> > 
+> > export as therion, of course.
+> > 
+> > anyone interested to alpha test ?
+> > (cannot guarantee, but is should not damage your distox)
+> 
+> John Pybus has a disto and no Windows machines so he will no doubt be
+> interested...
+> 
+> Wookey
+> -- 
+> Principal hats: iEndian - Balloonboard - Toby Churchill - Emdebian
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+_________________________________________________________________
+Hebben jij en je vrienden leuke foto's van jullie feestje? Maak een groepsalbum en geniet nog extra na. 
+http://www.microsoft.com/belux/nl/windows/windowslive/products/photos.aspx
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090420/f8cfef38/attachment.htm>
+
+From wookey at wookware.org  Mon Apr 20 13:40:13 2009
+From: wookey at wookware.org (Wookey)
+Date: Mon, 20 Apr 2009 12:40:13 +0100
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+Message-ID: <20090420114012.GA26861@knossos.aleph1.co.uk>
+
++++ Guido Verhoeven [2009-04-20 13:27 +0200]:
+>    Hello
+> 
+>    Do you know about Auriga from Luc Le Blanc? This runs on a Palm. (see:
+>    [1]http://www.speleo.qc.ca/auriga/)
+
+Yes. At the CSG meet yesterday we used a distoX with both Auriga and
+pockettopo, and compared with a SAP+Disto and conventional
+instruments. i.e we surveyed the same route 4 times with 4
+methods/teams at once and had 6 laser measures on one trip :-)
+
+I also worked on the data import from pockettopo to Therion (not quite
+finished), as a variation on the existing pt2pdf script. I have not
+yet tried the auriga import because I failed to extract data from it.
+
+This work will be reported in in more detail in Compass Points, but
+various issues arose to do with platform support, calibration,
+bluetooth syncing, data transfer, distoX-disto integration, auriga
+focus bug and data import. The SAP/conventional surveyors were still
+much faster by the time we had made all our computers work, but even
+so the process, especially with pockettopo, is very powerful and
+promising, and is clearly the way to go. But it does still need a bit
+of work to reduce the pain and faffing :-)
+
+Thanks to all involved for very useful excercise and especially Svein
+and Torsten for bringing lots of cool toys from Norway. 
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From drfootleg at googlemail.com  Mon Apr 20 16:04:41 2009
+From: drfootleg at googlemail.com (Footleg)
+Date: Mon, 20 Apr 2009 15:04:41 +0100
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <20090420114012.GA26861@knossos.aleph1.co.uk>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+Message-ID: <3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+
+Just returned from Matienzo exedition in Spain using a DistoX with
+PocketTopo on a Windows Mobile PDA. I found it to be a very powerful and
+time saving way to survey. Sketching underground is still the rate limiting
+step, but being able to extract the data (into Survex in my case) and get a
+scale survey printed out within minutes after the trip was superb.
+
+My tool for getting existing Survex data into PocketTopo, and getting data
+from the surveying trip into Survex from the PDA is detailed here:
+http://www.darkgem.com/wscc/caving-talk/index.php?title=CaveSurveyDataConverter
+
+Footleg
+
+2009/4/20 Wookey <wookey at wookware.org>
+
+> +++ Guido Verhoeven [2009-04-20 13:27 +0200]:
+> >    Hello
+> >
+> >    Do you know about Auriga from Luc Le Blanc? This runs on a Palm. (see:
+> >    [1]http://www.speleo.qc.ca/auriga/)
+>
+> Yes. At the CSG meet yesterday we used a distoX with both Auriga and
+> pockettopo, and compared with a SAP+Disto and conventional
+> instruments. i.e we surveyed the same route 4 times with 4
+> methods/teams at once and had 6 laser measures on one trip :-)
+>
+> I also worked on the data import from pockettopo to Therion (not quite
+> finished), as a variation on the existing pt2pdf script. I have not
+> yet tried the auriga import because I failed to extract data from it.
+>
+> This work will be reported in in more detail in Compass Points, but
+> various issues arose to do with platform support, calibration,
+> bluetooth syncing, data transfer, distoX-disto integration, auriga
+> focus bug and data import. The SAP/conventional surveyors were still
+> much faster by the time we had made all our computers work, but even
+> so the process, especially with pockettopo, is very powerful and
+> promising, and is clearly the way to go. But it does still need a bit
+> of work to reduce the pain and faffing :-)
+>
+> Thanks to all involved for very useful excercise and especially Svein
+> and Torsten for bringing lots of cool toys from Norway.
+>
+> Wookey
+> --
+> Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090420/c697f70a/attachment.htm>
+
+From martinsluka at mac.com  Mon Apr 20 16:42:07 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 20 Apr 2009 16:42:07 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+Message-ID: <FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+
+
+On 20.4.2009, at 16:04, Footleg wrote:
+
+> Just returned from Matienzo exedition in Spain using a DistoX with  
+> PocketTopo on a Windows Mobile PDA. I found it to be a very  
+> powerful and time saving way to survey. Sketching underground is  
+> still the rate limiting step, but being able to extract the data  
+> (into Survex in my case) and get a scale survey printed out within  
+> minutes after the trip was superb.
+
+Just an example of real using of Therion - Dave Clucas drawn more  
+than 24 km of new explored passages on Mulu 2009 expedition. The  
+attached file illustrated what was finished at the day of end of  
+expedition.
+
+Footleg, I know, I wrote it before, but just try the import to  
+therion from data file exported from PocketTopo. Both to data editor  
+and map editor.
+
+Martin
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: api_2007.jpg
+Type: image/jpeg
+Size: 78324 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090420/8a1f7561/attachment.jpg>
+
+From drfootleg at googlemail.com  Mon Apr 20 16:51:55 2009
+From: drfootleg at googlemail.com (Footleg)
+Date: Mon, 20 Apr 2009 15:51:55 +0100
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+	<FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+Message-ID: <3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+
+Yes, I realise PocketTopo exports directly to Therion, but we are using
+Survex to manage the survey data and I am drawing up the finished surveys in
+Tunnel. If I import to Therion then I am not aware of a method to get my
+data out again to use in Survex. I did take a look at the Therion export
+file in a plain text editor, but could not determine the actual survey data
+from the sketches (I am not an experienced Therion user).
+
+Footleg
+
+2009/4/20 Martin Sluka <martinsluka at mac.com>
+
+>
+>
+> Footleg, I know, I wrote it before, but just try the import to therion from
+> data file exported from PocketTopo. Both to data editor and map editor.
+>
+> Martin
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090420/933ca3b9/attachment.htm>
+
+From martinsluka at mac.com  Mon Apr 20 17:05:17 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 20 Apr 2009 17:05:17 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+	<FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+	<3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+Message-ID: <DC2B1394-DF05-4286-BD64-3F1A30B4961C@mac.com>
+
+
+On 20.4.2009, at 16:51, Footleg wrote:
+
+> Therion export file in a plain text editor, but could not determine  
+> the actual survey data from the sketches (I am not an experienced  
+> Therion user).
+
+Therion export file from PockeTopo is an intermediate format. The  
+data and sketches are generated right in Therion - Import for data  
+and Insert background images -> format PocketTopo for sketches.
+
+m.
+
+
+From wookey at wookware.org  Mon Apr 20 17:49:17 2009
+From: wookey at wookware.org (Wookey)
+Date: Mon, 20 Apr 2009 16:49:17 +0100
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <DC2B1394-DF05-4286-BD64-3F1A30B4961C@mac.com>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+	<FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+	<3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+	<DC2B1394-DF05-4286-BD64-3F1A30B4961C@mac.com>
+Message-ID: <20090420154916.GF26861@knossos.aleph1.co.uk>
+
++++ Martin Sluka [2009-04-20 17:05 +0200]:
+>
+> On 20.4.2009, at 16:51, Footleg wrote:
+>
+>> Therion export file in a plain text editor, but could not determine  
+>> the actual survey data from the sketches (I am not an experienced  
+>> Therion user).
+>
+> Therion export file from PockeTopo is an intermediate format. 
+
+Indeed. Pockettopo puts out threee slightly different text files, none
+of which is actually in therion or survex format. The one intended
+for toporobot is closest to one you could use directly in survex.
+
+I don't really understand why it outputs something called 'therion
+export' which is not in therion format. 
+
+In another message, decribing the process you say:
+"At base camp, or at home you export data from EasyTopo and import
+both data and sketches into Therion."
+
+Easytopo? Where does that come from - or is that a typo for pockettopo?
+
+Therion 5.2.7 comes with a pt2pdf.pl script which does a direct
+conversion of the 'therion' pockettopo export file into a PDF file
+containing the data in 3 column format and then the actual
+rendered plan and elevation, over 4 pages.
+
+I guess that's useful as something you could import and draw over,
+but it seems useless for importing the actual data. It is this script I
+rewrote to just turn the 'therion export' format file into something which
+therion could actually understand directly. 
+
+I get the feeling that I am missing something here...
+
+Who writes PocketTopo? Is the code available so we could just make it
+directly export both survex and therion data? (and so we could port it
+to Linux perhaps). 
+
+Wookey
+-- 
+Principal hats:  iEndian - Balloonboard - Toby Churchill - Emdebian
+http://wookware.org/
+
+
+From m.budaj at gmail.com  Mon Apr 20 18:03:34 2009
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 20 Apr 2009 18:03:34 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <20090420154916.GF26861@knossos.aleph1.co.uk>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+	<FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+	<3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+	<DC2B1394-DF05-4286-BD64-3F1A30B4961C@mac.com>
+	<20090420154916.GF26861@knossos.aleph1.co.uk>
+Message-ID: <f64c1c4a0904200903x51e2fd88i7038af0941a0a695@mail.gmail.com>
+
+On Mon, Apr 20, 2009 at 5:49 PM, Wookey <wookey at wookware.org> wrote:
+
+> Therion 5.2.7 comes with a pt2pdf.pl script which does a direct
+> conversion of the 'therion' pockettopo export file into a PDF file
+> containing the data in 3 column format and then the actual
+> rendered plan and elevation, over 4 pages.
+
+> I guess that's useful as something you could import and draw over,
+> but it seems useless for importing the actual data. It is this script I
+> rewrote to just turn the 'therion export' format file into something which
+> therion could actually understand directly.
+
+pt2pdf is intended for archivation. It will be included as a tool in
+xtherion in the future (this is the reason why it is not documented
+yet).
+
+You can already import 'therion export' from PocketTopo directly into
+latest XTherion:
+
+   - centerline in text editor - File->Import->PocketTopo therion export
+   - sketches in map editor - Backgroud Images->Insert->PocketTopo
+therion export
+
+> Who writes PocketTopo? Is the code available so we could just make it
+> directly export both survex and therion data? (and so we could port it
+> to Linux perhaps).
+
+Beat Heeb, author of DistoX. Unfortunately it is closed-source, like Auriga.
+
+Martin
+
+
+From martinsluka at mac.com  Mon Apr 20 18:13:46 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 20 Apr 2009 18:13:46 +0200
+Subject: [Therion] DistoX and PocketTopo with Therion
+In-Reply-To: <20090420154916.GF26861@knossos.aleph1.co.uk>
+References: <CA0BD7E0777E4F559D8C7706EF3EDED0@JUICEBRAIN>
+	<1237895009.10143.73.camel@localhost.localdomain>
+	<20090417133407.GQ26861@knossos.aleph1.co.uk>
+	<COL107-W74BA87CA817D2C9A333E50D6760@phx.gbl>
+	<20090420114012.GA26861@knossos.aleph1.co.uk>
+	<3a2bbd710904200704i1500aa1dgb354015c1783ac28@mail.gmail.com>
+	<FEB653A9-548C-480D-9669-1B8704D7DD14@mac.com>
+	<3a2bbd710904200751w594c6d0v5c012ae46d09063c@mail.gmail.com>
+	<DC2B1394-DF05-4286-BD64-3F1A30B4961C@mac.com>
+	<20090420154916.GF26861@knossos.aleph1.co.uk>
+Message-ID: <3A2FF3F2-8028-4CF4-AA3E-C03C72513AA9@mac.com>
+
+
+On 20.4.2009, at 17:49, Wookey wrote:
+
+> Easytopo? Where does that come from - or is that a typo for  
+> pockettopo?
+
+typo, sorry
+
+> Who writes PocketTopo? Is the code available so we could just make it
+> directly export both survex and therion data? (and so we could port it
+> to Linux perhaps).
+
+Beat Heeb himself - paperless.bheeb.ch
+
+m.
+
+
+From martinsluka at mac.com  Thu Apr 23 18:23:26 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Apr 2009 18:23:26 +0200
+Subject: [Therion] New snapshot of therion
+Message-ID: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>
+
+Unstable version is 5.2.8, released on Apr 23, 2009. Contains bug  
+fixes, new features (mostly undocumented and subject to change until  
+new stable version is released) and occasionaly introduces new bugs.
+
+
+
+m.s.
+
+
+From martinsluka at mac.com  Thu Apr 23 20:17:39 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Apr 2009 20:17:39 +0200
+Subject: [Therion] New snapshot of therion - changes
+In-Reply-To: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>
+References: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>
+Message-ID: <D8295F8D-4849-431A-9674-51A9125F0A98@mac.com>
+
+therion:
+  * added <lang:XX> switch to labels
+  * added albanian language (sq), thanks to Fatos Katallozi
+  * updated german translation
+
+   * bugs fixed:
+     - segfault on line with single point
+    - "-flip none" do not working for scrap
+    - map-header x y off behaves as if map-header x y nw (B#25537)
+
+xtherion:
+    -
+
+loch:
+    -
+  * bugs fixed:
+    -
+
+
+
+From martinsluka at mac.com  Fri Apr 24 11:09:04 2009
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 24 Apr 2009 11:09:04 +0200
+Subject: [Therion] New snapshot of therion - multiligual labels
+In-Reply-To: <D8295F8D-4849-431A-9674-51A9125F0A98@mac.com>
+References: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>
+	<D8295F8D-4849-431A-9674-51A9125F0A98@mac.com>
+Message-ID: <D45A3864-DF76-4597-BFC4-58DE468A5B33@mac.com>
+
+> therion:
+>  * added <lang:XX> switch to labels
+
+-text "something default, when no any laguage code is the same as  
+code in layout<lang:cz><bf>hezky česky<lang:sk><it>cudzie  
+nechceme<br>svoje
+si nedáme<land:en_UK>and now something completely different, sir"
+
+In a case you should generate several versions of map for example  
+russian version and english version :)
+
+m.
+
+From bruce.mutton at paradise.net.nz  Sat Apr 25 04:18:08 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Sat, 25 Apr 2009 14:18:08 +1200
+Subject: [Therion] Ponit Label Alignment
+Message-ID: <54969F96D9B54C308CE1F1D98C5985B4@JUICEBRAIN>
+
+Hi
+
+I have had a long standing (at least since version 0.5.1) difficulty with
+point label text alignment.
+
+(Currently using 5.2.7)
+
+ 
+
+It seems that if rotate = 0 and the alignment of the scrap in the map editor
+matches (more or less) the alignment of the scrap in pdf outputs, then
+commands such as  -align right or -align tl are honoured.
+
+ 
+
+If however rotate = 70 (for example) or the scrap alignment in the map
+editor is significantly different to the alignment of the scrap in the pdf
+outputs then the -align parameters are incorrectly (in my view) applied.
+
+ 
+
+The effect of this is to require the user to align scraps and xvi files to
+match the finished pdf drawing output if text alignment is to be readily
+controllable.  It also makes it nearly impossible to produce a scrap that
+generates nice labels where it is desired to produce sets of pdf outputs
+with various orientations.
+
+ 
+
+In the attachment I have put together a dataset that starts to demonstrate
+characteristics of the problem.
+
+I have superposed survey station points and point labels so that the
+alignment can be observed - a clear pattern is observable.
+
+You can see that the alignment is based on the orientation in the map
+editor, not the pdf output.
+
+I have added some text that has orientation and applied some distortion to
+the scrap by misaligning the survey stations, so you can see (another
+reason)  why 'orientation' of point labels is not a good idea - scrap
+distortions misalign the text a little. 
+
+ 
+
+While it may seem trivial in this example, on a real map with labels
+(perhaps at the end of arrows) it tends to make a real mess that can only be
+resolved by iteration and can not usually be resolved if two or more
+distinct 'rotations' are required without changing all the point labels
+positions.  Not a feasible proposition.
+
+ 
+
+Has anyone else noticed or had difficulty with this behaviour?
+
+Is it likely that it can be altered?
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090425/c3a3fbd7/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: th_TextAlignmentIssues.zip
+Type: application/x-zip-compressed
+Size: 25610 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090425/c3a3fbd7/attachment.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: MapTextAlignmentPlan.pdf
+Type: application/pdf
+Size: 25899 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20090425/c3a3fbd7/attachment.pdf>
+
+From andrew at wotcc.org.uk  Sun Apr 26 20:44:41 2009
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 26 Apr 2009 19:44:41 +0100
+Subject: [Therion] Possible minor point increment bug
+In-Reply-To: <D45A3864-DF76-4597-BFC4-58DE468A5B33@mac.com>
+References: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>	<D8295F8D-4849-431A-9674-51A9125F0A98@mac.com>
+	<D45A3864-DF76-4597-BFC4-58DE468A5B33@mac.com>
+Message-ID: <49F4AB99.7030608@wotcc.org.uk>
+
+Hi all
+
+In therion 5.2
+
+When using -name f01 on a station point
+
+the next station is incremented to -name f2 not -name f02. Very minor, 
+but it does get tedious I have had to correct quiet a few similar ones.
+
+also would it be possible to increment alphabetical stations ie
+
+-name 2a
+to -name 2b
+
+thanks
+
+Andrew
+
+
+
+
+From bruce.mutton at paradise.net.nz  Mon Apr 27 08:54:41 2009
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Mon, 27 Apr 2009 18:54:41 +1200
+Subject: [Therion] Possible minor point increment bug
+In-Reply-To: <49F4AB99.7030608@wotcc.org.uk>
+References: <858532A5-7DCE-4C93-AF2E-82305849F4BE@mac.com>
+	<D8295F8D-4849-431A-9674-51A9125F0A98@mac.com>
+	<D45A3864-DF76-4597-BFC4-58DE468A5B33@mac.com>
+	<49F4AB99.7030608@wotcc.org.uk>
+Message-ID: <1EBD022C4453457EB924DD61FFBE1018@JUICEBRAIN>
+
+>When using -name f01 on a station point the next station is incremented to
+> -name f2 not -name f02.
+
+I bumped into the leading zero issue the other day and took the expedient
+option of accepting the lack of digits.  I have also wanted to increment
+f01a f01b f01c in the past.
+
+I'd give it low priority, but agree preserving the leading zero and
+incrementing the suffix regardless of whether it's numeric or alpha would be
+a nice touch.
+
+Bruce
+
+
+

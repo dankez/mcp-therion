@@ -1,0 +1,504 @@
+From rls at hwyl.org  Fri Feb  2 20:05:46 2024
+From: rls at hwyl.org (Rich Smith)
+Date: Fri, 2 Feb 2024 19:05:46 +0000
+Subject: [Therion] XVI commands: xth_me_area_adjust etc.
+In-Reply-To: <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+References: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+ <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+Message-ID: <CABfnNwrt5N6u11drnb+22Cx=-AXj8Pbrvs629A9XwmOHUHJc7w@mail.gmail.com>
+
+Thanks Stacho! That all makes sense now. I think I've managed to get the
+export working properly with that info.
+
+I don't suppose there is any way of inserting an SVG using xth_me_image_insert?
+That would be very useful.
+
+first of all, thanks a lot for the great work on SexyTopo! I like your app
+a lot.
+
+
+Thanks for all the work on Therion! I'm a big fan.
+
+cheers
+Rich
+
+
+
+
+On Sun, 28 Jan 2024 at 22:04, Stacho Mudrak <lists at group-s.sk> wrote:
+
+> Hi Rich,
+>
+> first of all, thanks a lot for the great work on SexyTopo! I like your app
+> a lot.
+>
+> Unfortunately, there is no documentation, but the attributes are the
+> following:
+>
+> xth_me_area_adjust <Xmin> <Ymin> <Xmax> <Ymax> - where Xmin, Ymin and
+> Xmax, Ymax are cartesian coordinates of lower left and upper right corners
+> of drawing area
+> xth_me_area_zoom_to <zoom> - where <zoom> is the default zoom factor, when
+> drawing is open in xtherion. Should be 25,50,100,200,400.
+> xth_me_image_insert {<Xpos> <visibility> <gamma>} {<Ypos> <root>}
+> {<filename>} 0 {}
+>   <Xpos> <Ypos> is the position of the 0,0 point of XVI coordinate system
+>   <visibility> - 0 image is hidden / 1 image is shown
+>   <gamma> - image gamma
+>   <root> - root station name (if XVI is changed during compilation, this
+> station keeps its position relative to the entire drawing). Can be omitted.
+>   <filename> - name of image file
+>   0 {} - image identifiers, can be 0 {} for all images - if it is like
+> this, it will be calculated automatically
+>
+> HTH, S.
+>
+>
+> On Fri, 26 Jan 2024 at 14:12, Rich Smith <rls at hwyl.org> wrote:
+>
+>> Hi Therion
+>>
+>> I'm the author of cave surveying app SexyTopo, and I'm trying to write a
+>> better Therion exporter. Previously I'd kind of hacked an exporter that did
+>> an approximate job, but I'm rewriting it and trying to do a better job.
+>>
+>> I understand I should generate an XVI file for each projection that
+>> represents the sketch. I then need to set this in the th2 file with some
+>> commands. For example:
+>>
+>> ##XTHERION## xth_me_area_adjust -132.0 -156.10532659555793
+>> 1768.2371519518056 726.0
+>> ##XTHERION## xth_me_area_zoom_to 100
+>> ##XTHERION## xth_me_image_insert {950.6824683592552 1 1.0}
+>> {267.841199967364 5} {blaengwynlais plan.xvi} 0 {}
+>>
+>> Are these documented anywhere? It seems like xth_me_area_adjust sets the
+>> dimensions of the image, and xth_me_image_insert specifies the position and
+>> filename, but I'm not clear what all the values represent.
+>>
+>> Many thanks for any pointers!
+>> Rich
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240202/b961ba9a/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Feb  2 22:58:23 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 3 Feb 2024 10:58:23 +1300
+Subject: [Therion] station-names []@survey not implemented for point station
+ -from option
+Message-ID: <000801da5622$f25f2750$d71d75f0$@tomo.co.nz>
+
+Kia ora
+
+Maybe I found a minor bug.
+
+ 
+
+I have an extended elevation that includes a loop (many actually) and of
+course there is a gap in the loop as rendered that I would like to
+illustrate with a map-connection line.  Where the yellow shading is in the
+image below, I would like to draw a horizontal map-connection line.
+
+So following the guidance in the Therion Book pages 105 and 106 I have
+created a scrap.
+
+ 
+
+scrap 2-HawkesElevEXT-s1connection -projection extended -station-names []@2
+
+  point 0 0   station -name 2.4 -from 2.5
+
+  point 100 0 station -name 2.4 -from 2.3
+
+  
+
+  line map-connection
+
+    0   0
+
+   100 0
+
+  endline
+
+endscrap
+
+ 
+
+On creating the scrap and before referencing it in any maps, Therion is
+unhappy and exits with the following:
+
+ 
+
+#################### end of cavern log file ####################
+
+done
+
+calculating basic statistics ... done
+
+processing extended elevation ... done
+
+processing references ... 
+
+C:\Program Files\Therion\therion.exe: error -- string pointer is null
+
+writing xtherion file ... done
+
+ 
+
+Am using therion 6.2.0+fd5c1b6 (2024-01-10)
+
+ 
+
+On experimenting a little, I realised that -station-names has no effect on
+the -from station parameter.
+
+So this was my workaround.
+
+scrap 2-HawkesElevEXT-s1connection -projection extended -station-names []@2
+
+  point 0 0   station -name 2.4 -from 2.5 at 2
+
+  point 100 0 station -name 2.4 -from 2.3 at 2
+
+  
+
+  line map-connection
+
+    0   0
+
+    100 0
+
+  endline
+
+endscrap
+
+ 
+
+
+
+I'll create an issue in GitHub.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240203/c369263d/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 97024 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240203/c369263d/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 136901 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240203/c369263d/attachment-0003.png>
+
+From martinsluka at mac.com  Sat Feb  3 15:52:31 2024
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 3 Feb 2024 15:52:31 +0100
+Subject: [Therion] XVI commands: xth_me_area_adjust etc.
+In-Reply-To: <CABfnNwrt5N6u11drnb+22Cx=-AXj8Pbrvs629A9XwmOHUHJc7w@mail.gmail.com>
+References: <CABfnNwq84=hfXKr_cygHSkDVjsmcZOfzS9SMh205O5dsZK4BYQ@mail.gmail.com>
+ <CAP35+gHDakyXTfH_65b-qPzzGS_3Qix6oysyE8pCSCQAM-gdGg@mail.gmail.com>
+ <CABfnNwrt5N6u11drnb+22Cx=-AXj8Pbrvs629A9XwmOHUHJc7w@mail.gmail.com>
+Message-ID: <A93DF4EB-B06F-414A-939A-0B2511D8A771@mac.com>
+
+
+
+> 2. 2. 2024 v 20:05, Rich Smith <rls at hwyl.org>:
+> 
+> I don't suppose there is any way of inserting an SVG using xth_me_image_insert? That would be very useful.
+
+
+Rich, anyway you may convert SVG to PNG as part of SexyTopo. Let?s say as  CairoSVG
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240203/ab4da425/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Feb  5 23:03:01 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 6 Feb 2024 11:03:01 +1300
+Subject: [Therion] Compilation outcome depends on order of source statements
+Message-ID: <000001da587f$178bf4f0$46a3ded0$@tomo.co.nz>
+
+Here is an issue that took me too many days to unravel.
+
+ 
+
+The order of source statements in a thconfig affects the outcome of the
+compilation.
+
+I think the problem, or constraint, can be described as:
+
+ 
+
+*	Multi-line source statements must follow all single line source
+statements, else not all surveys will not be read correctly, or
+*	Single-line source statements that follow a multi-line source
+statement will not be read.
+
+ 
+
+For example, a thconfig contains:
+
+ 
+
+source ./Greenlinkcave/INDEXGreenlink.th
+
+source ./swissmaidcave/INDEXSwissMaid.th
+
+ 
+
+source
+
+    #join the two cave surveys without an index file
+
+    equate 133 at jp.SwissM  I68 at s.Greenlink
+
+    equate 156 at second.SwissM S45 at ss.Greenlink
+
+    equate 144 at jp.SwissM H32 at h.Greenlink        
+
+endsource
+
+ 
+
+source ./middleearthcave/INDEXMiddleEarth.th
+
+ 
+
+source
+
+    #join the two cave surveys without an index file
+
+    equate F76 at f.MiddleEarth F102 at f2.Greenlink            
+
+endsource
+
+ 
+
+This results in a fatal error:
+
+reading source files ... done
+
+preprocessing database ... done
+
+C:\Program Files\Therion\therion.exe: error --
+./middleearthcave/INDEXMiddleEarth.th [24] -- survey does not exist -- 74
+
+ 
+
+Which confused me because each of these would compile alone an in
+combination via other thconfig files.
+
+If I changed the order of the source statements, the 'non-existent' survey
+would change.
+
+ 
+
+I tried 6.2.0 + fd5c1b6 and 6.17 and 6.13 all with similar effect (although
+I'm not that confident because the latter two being 32-bit and toggling
+between the 64-bit 6.2.0 variants results in duplicate therion programs on
+my Windows machine, thus I'm not sure I have 'clean' installs). 
+
+ 
+
+Too late, I tried putting all the single line sources first, followed by the
+multi-line sources, and viola, success.
+
+ 
+
+So this seems like a bug, in that I understand Therion should read all
+sources before processing the survey and map input.  With sources, this
+seems not to be happening, and Therion is crashing inappropriately if the
+sources are not listed in the 'correct' order.
+
+ 
+
+Bruce
+
+ 
+
+PS: Yes, I know the example above is a rather messy way of treating sources.
+I would not usually do this - it is a hack to work around an unfortunate
+decision made early in the project history.
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240206/3fb4651c/attachment.htm>
+
+From dropstone at gmx.de  Tue Feb 20 09:46:35 2024
+From: dropstone at gmx.de (Axel)
+Date: Tue, 20 Feb 2024 09:46:35 +0100
+Subject: [Therion] svg Import
+Message-ID: <trinity-163b22dc-c4b7-45a5-9bc8-f92631f61fda-1708418795939@3c-app-gmx-bs01>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240220/3825a6ef/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Tue Feb 20 18:00:21 2024
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Tue, 20 Feb 2024 18:00:21 +0100
+Subject: [Therion] Calibrating surface map
+In-Reply-To: <1705190263.839742122@f150.i.mail.ru>
+References: <000001da402d$6c4ad340$44e079c0$@tomo.co.nz>
+ <1705096070.552008111@f162.i.mail.ru>
+ <CAEzKa9060xkHgis28e48AniZuxb+58_ia+ipicfDsdzQ43ijKg@mail.gmail.com>
+ <1705190263.839742122@f150.i.mail.ru>
+Message-ID: <44559F5D-E8DD-4719-A1A3-6D291B6843B2@univ-grenoble-alpes.fr>
+
+Hi all,
+
+I have a similar behavior, for some of my huge lox files, the map texture does not show on the DEM when loaded. But if I push the ?-button ? entrances ?, the overlay loads. They open OK with Caveview.
+
+If it is needed to find the bug, I am running Therion and Loch on a MacOS 12.6.9, and I have installed Therion and Loch from sources:
+$ therion  --version
+therion 6.1.7+dev (compiled on 2023-06-02)
+  - using Proj 9.3.1, compiled against 9.2.1
+Loch version 6.1.7 (compiled on 2023-06-02)
+
+Cheers
+
+Xavier
+
+
+
+> Le 14 janv. 2024 ? 00:57, Andrey via Therion <therion at speleo.sk> a ?crit :
+> 
+> Hello Jonny,
+>  
+> Thanks for the hint! 
+>  
+> I?ve tried to open few old models which were surely working and half of them did not show any map texture.
+>  
+> Trying to open the same models on other computer proved that they all work fine.
+> There must be something wrong with graphics on my laptop.  Will try updating drivers etc.
+>  
+> Cheers,
+> Andrey
+>  
+> ???????, 13 ?????? 2024, 18:36 UTC ?? Jonny Prouty <jonathanprouty at gmail.com>:
+>  
+> Hello Andrey,
+>  
+> Are you able to see _any_ bitmap overlays in other loch models? I had an issue long ago where an issue with my video card caused textures to load incorrectly or not at all. 
+>  
+> Also, in the scene settings options in loch, do you have it set to actually show the bitmap overlay?
+>  
+> Cheers,
+> Jonny
+>  
+> On Fri, Jan 12, 2024, 5:22PM Andrey via Therion <therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3atherion at speleo.sk>> wrote:
+> Dear Therion users,
+>  
+> I am struggling to make a 3D model with terrain overlaid by a raster map.
+>  
+> Everything is done according to the Thbook however  Loch is only showing me a semi-transparent grid without any map overlay.   
+>  
+> Here is what I put into my Surface.th file:
+>  
+> surface
+> cs epsg:32637 #UTM zone 37N Datum WGS84
+>  
+> bitmap Khipsta_DEM_utm.jpg [0 0 634154.048728 4787812.294106 13345 10428 642161.048728 4794069.094106] # 0 0 - SW corner
+>  
+> grid-units meter
+> grid 634148.414 4787799.503 10 10 803 628  # x lower leftt, y lower left SW
+> 1088.598 1088.548 1088.4978 1088.4384 1088.3688 1089.3929 1090.4301 1091.0236 1089.8979 1088.7723 1087.3954 1085.6592 1083.9077 1080.9875 1077.3958 1073.8142 1065.2386 1055.7455 1046.4127 1039.4907 1032.5994 1025.662 1018.52 1011.3781 1004.0082 996.3887 988.7744 982.0675 975.7867 969??.
+> --------------------------------------------------------------------------------------------------------------------------------------------------------------
+>  
+> The corner point coords for the image:
+>   File "Khipsta_DEM_utm.jpg"
+>   Type "RASTER"
+>   (634154.048728, 4794069.094106) (0, 0) Label "NW",
+>   (634154.048728, 4787812.294106) (0, 10428) Label "SW",
+>   (642161.048728, 4794069.094106) (13345, 0) Label "NE",
+>   (642161.048728, 4787812.294106) (13345, 10428) Label "SE"
+>   CoordSys Earth Projection 8, 104, "m", 39, 0, 0.9996, 500000, 0
+>   Units "m"
+>  
+> If I comment ?bitmap? line the .lox file will be a lot smaller and vice versa if uncommented so I assume that overlay is being written into .lox
+>  
+> Could this be due to the .jpg file size which is 10.5Mb?  
+>  
+> I was able to make 3D models with terrain overlay in the past but image size was under 10Mb.
+>  
+> Many thanks,
+> Andrey
+>  
+>  
+>  
+>  
+>  
+> --
+> Kind regards,
+> Andrey
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <x-msg://e.mail.ru/compose/?mailto=mailto%3aTherion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion> 
+>  
+> --
+> Kind regards,
+> Andrey
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240220/2410eb9a/attachment.htm>
+
+From gardere.yann at gmail.com  Sat Feb 24 17:33:04 2024
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Sat, 24 Feb 2024 17:33:04 +0100
+Subject: [Therion] Space between altitude / line
+Message-ID: <CAD0miv62JtA0Pan6wKp2XS5Mc7DtqkMaKbF=F7_Jh3KTVVCMnQ@mail.gmail.com>
+
+Hello therion users
+
+
+when I put the automatic altitude option on a line,
+the altitude appears too close (tight, stuck, ...) to the line,
+
+is there a way to define the distance of the altitude figure from at the
+line ?
+
+thanks
+
+Yann
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240224/69ab7e23/attachment.htm>
+

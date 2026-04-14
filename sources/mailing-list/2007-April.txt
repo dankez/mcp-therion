@@ -1,0 +1,1949 @@
+From stefan_oswald at gmx.at  Fri Apr  6 22:10:23 2007
+From: stefan_oswald at gmx.at (Stefan Oswald)
+Date: Fri, 06 Apr 2007 22:10:23 +0200
+Subject: [Therion] unselect in thconfig
+In-Reply-To: <mailman.107.1175275215.3400.therion@speleo.sk>
+References: <mailman.107.1175275215.3400.therion@speleo.sk>
+Message-ID: <20070406201023.36760@gmx.net>
+
+Hi together, 
+
+We have a problem exporting multiple .pdf files from different maps of one cave. It should work like this in thconfig: 
+
+source zusammenbau
+
+  select map1 at zusammenbau
+  export map -o m1.pdf
+ unselect m1 at zusammenbau
+
+ select map2 at zusammenbau
+  export map -o m2.pdf
+ unselect m2 at zusammenbau
+
+With only the map1 at zusammenbau ->m1.pdf is generated correctly; as soon as we add the second select-export-unselect in both .pdf files both maps are drawn. 
+
+
+
+From s.m at group-s.sk  Sat Apr  7 12:08:55 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Sat, 07 Apr 2007 12:08:55 +0200
+Subject: [Therion] unselect in thconfig
+In-Reply-To: <20070406201023.36760@gmx.net>
+References: <mailman.107.1175275215.3400.therion@speleo.sk>
+	<20070406201023.36760@gmx.net>
+Message-ID: <46176DB7.3090009@group-s.sk>
+
+Currently you can not export more then one "selection configuration" 
+from single thconfig file. In other words - therion first reads all 
+select & unselect commands, process them and after this export is done.
+
+I usually solve this problem by splitting two configurations into two 
+separate files and then using "system" command in main thconfig file.
+
+system "therion thconfig.m1"
+system "therion thconfig.m2"
+
+where thconfig.m1 and thconfig.m2 are like
+
+select mapN at zusammenbau
+export map -o m1.pdf
+
+It is not very clean solution, but it works. But I will check, whether 
+it is not possible to implement selections like you have written - it is 
+a quite old item in the TODO list.
+
+S.
+
+Stefan Oswald wrote:
+> Hi together, 
+> 
+> We have a problem exporting multiple .pdf files from different maps of one cave. It should work like this in thconfig: 
+> 
+> source zusammenbau
+> 
+>   select map1 at zusammenbau
+>   export map -o m1.pdf
+>  unselect m1 at zusammenbau
+> 
+>  select map2 at zusammenbau
+>   export map -o m2.pdf
+>  unselect m2 at zusammenbau
+> 
+> With only the map1 at zusammenbau ->m1.pdf is generated correctly; as soon as we add the second select-export-unselect in both .pdf files both maps are drawn. 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From ohc at vt.edu  Thu Apr 12 16:13:44 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Thu, 12 Apr 2007 10:13:44 -0400
+Subject: [Therion] Loch Study - I need loch models.
+Message-ID: <200704121013.45055.ohc@vt.edu>
+
+I'm doing a study on immersive vs non-immersive environments here at Virginia 
+Tech.  I need one or two more loch models for the study.  I would prefer the 
+model were 1.5 km or longer.  If I use your model, I will mention your name 
+in the research paper that I'm writting.  Also,  if you ever near Virginia 
+Tech, I will be more then happy to show your model in our immersive VR 
+environment (http://www.cave.vt.edu/).    
+
+Please send me the model using the latest developer-snapshot.  The latest 
+developer-snapshot has portability fixes over amd64 and x86.  Do not send me 
+loch files that are compiled under a powerpc. I haven't fixed the endian 
+problem yet.
+
+Thanks.
+Philip Schuchardt
+
+
+From wolfgang.zillig at web.de  Sat Apr 14 20:19:59 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sat, 14 Apr 2007 20:19:59 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+Message-ID: <46211B4F.6040408@web.de>
+
+Hi,
+
+is there somewhere a list with all the libraries that are needed to 
+compile therion under linux? Or a kind of manual?
+
+I just tried "make" but I'm getting errors, so I suppose that I miss 
+some libraries.
+
+Greetings
+Wolfgang
+
+
+From s.m at group-s.sk  Sun Apr 15 20:31:45 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Sun, 15 Apr 2007 20:31:45 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46211B4F.6040408@web.de>
+References: <46211B4F.6040408@web.de>
+Message-ID: <46226F91.7060805@group-s.sk>
+
+I am not sure, but probably loch compilation does not work by default. 
+List of libraries needed for loch is at loch/README.
+
+Regards, S.
+
+Wolfgang Zillig wrote:
+> Hi,
+> 
+> is there somewhere a list with all the libraries that are needed to 
+> compile therion under linux? Or a kind of manual?
+> 
+> I just tried "make" but I'm getting errors, so I suppose that I miss 
+> some libraries.
+> 
+> Greetings
+> Wolfgang
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From ohc at vt.edu  Sun Apr 15 20:36:52 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sun, 15 Apr 2007 14:36:52 -0400
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46226F91.7060805@group-s.sk>
+References: <46211B4F.6040408@web.de> <46226F91.7060805@group-s.sk>
+Message-ID: <200704151436.52571.ohc@vt.edu>
+
+I had to modify the make file to get it to build.
+
+On Sunday 15 April 2007 2:31 pm, Stacho Mudrak wrote:
+> I am not sure, but probably loch compilation does not work by default.
+> List of libraries needed for loch is at loch/README.
+>
+> Regards, S.
+>
+> Wolfgang Zillig wrote:
+> > Hi,
+> >
+> > is there somewhere a list with all the libraries that are needed to
+> > compile therion under linux? Or a kind of manual?
+> >
+> > I just tried "make" but I'm getting errors, so I suppose that I miss
+> > some libraries.
+> >
+> > Greetings
+> > Wolfgang
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From wolfgang.zillig at web.de  Sun Apr 15 21:30:47 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sun, 15 Apr 2007 21:30:47 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46226F91.7060805@group-s.sk>
+References: <46211B4F.6040408@web.de> <46226F91.7060805@group-s.sk>
+Message-ID: <46227D67.3000809@web.de>
+
+I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib 
+from the makefile. (the terminal was not configured to scroll through so 
+many lines and therefore I did not see the uppermost error) .
+There were a lot of warnings like:  "warning: dereferencing type-punned 
+pointer will break strict-aliasing rules" during compillation. If needed 
+I can send you the full screen output.
+
+I can compile my project but the surface graphic is missing! Only a gray 
+surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do 
+I need to compile vtk from sources? I've installed libvtk5 and 
+libvtk5-dev (5.0.2-4ubuntu1).
+
+Thanks for any help
+Wolfgang
+
+
+
+Stacho Mudrak wrote:
+> I am not sure, but probably loch compilation does not work by default. 
+> List of libraries needed for loch is at loch/README.
+>
+> Regards, S.
+>
+> Wolfgang Zillig wrote:
+>   
+>> Hi,
+>>
+>> is there somewhere a list with all the libraries that are needed to 
+>> compile therion under linux? Or a kind of manual?
+>>
+>> I just tried "make" but I'm getting errors, so I suppose that I miss 
+>> some libraries.
+>>
+>> Greetings
+>> Wolfgang
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>
+>>     
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+>   
+
+
+
+From ohc at vt.edu  Sun Apr 15 21:40:32 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sun, 15 Apr 2007 15:40:32 -0400
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46227D67.3000809@web.de>
+References: <46211B4F.6040408@web.de> <46226F91.7060805@group-s.sk>
+	<46227D67.3000809@web.de>
+Message-ID: <200704151540.33033.ohc@vt.edu>
+
+Ahh.  The linux version of loch has a bug preventing rendering correct texture 
+mapping.  I think it has to do with openGL problem factor of 2 texture 
+mapping.  The textures dimensions need to be a factor of 2.  I'm just 
+guessing that this is the problem.  Try to re-scale your overlay to be a 
+factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us if it works.
+
+Philip Schuchardt
+
+
+On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+> from the makefile. (the terminal was not configured to scroll through so
+> many lines and therefore I did not see the uppermost error) .
+> There were a lot of warnings like:  "warning: dereferencing type-punned
+> pointer will break strict-aliasing rules" during compillation. If needed
+> I can send you the full screen output.
+>
+> I can compile my project but the surface graphic is missing! Only a gray
+> surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do
+> I need to compile vtk from sources? I've installed libvtk5 and
+> libvtk5-dev (5.0.2-4ubuntu1).
+>
+> Thanks for any help
+> Wolfgang
+>
+> Stacho Mudrak wrote:
+> > I am not sure, but probably loch compilation does not work by default.
+> > List of libraries needed for loch is at loch/README.
+> >
+> > Regards, S.
+> >
+> > Wolfgang Zillig wrote:
+> >> Hi,
+> >>
+> >> is there somewhere a list with all the libraries that are needed to
+> >> compile therion under linux? Or a kind of manual?
+> >>
+> >> I just tried "make" but I'm getting errors, so I suppose that I miss
+> >> some libraries.
+> >>
+> >> Greetings
+> >> Wolfgang
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> http://www.speleo.sk/mailman/listinfo/therion
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From wolfgang.zillig at web.de  Sun Apr 15 22:13:23 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sun, 15 Apr 2007 22:13:23 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <200704151540.33033.ohc@vt.edu>
+References: <46211B4F.6040408@web.de>
+	<46226F91.7060805@group-s.sk>	<46227D67.3000809@web.de>
+	<200704151540.33033.ohc@vt.edu>
+Message-ID: <46228763.2020506@web.de>
+
+Hi Philip,
+
+what do I have to do? Interpolating the pixel graphic or changing 
+something in my .th file?
+
+Greetings
+Wolfgang
+
+Philip Schuchardt wrote:
+> Ahh.  The linux version of loch has a bug preventing rendering correct texture 
+> mapping.  I think it has to do with openGL problem factor of 2 texture 
+> mapping.  The textures dimensions need to be a factor of 2.  I'm just 
+> guessing that this is the problem.  Try to re-scale your overlay to be a 
+> factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us if it works.
+>
+> Philip Schuchardt
+>
+>
+> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+>   
+>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+>> from the makefile. (the terminal was not configured to scroll through so
+>> many lines and therefore I did not see the uppermost error) .
+>> There were a lot of warnings like:  "warning: dereferencing type-punned
+>> pointer will break strict-aliasing rules" during compillation. If needed
+>> I can send you the full screen output.
+>>
+>> I can compile my project but the surface graphic is missing! Only a gray
+>> surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do
+>> I need to compile vtk from sources? I've installed libvtk5 and
+>> libvtk5-dev (5.0.2-4ubuntu1).
+>>
+>> Thanks for any help
+>> Wolfgang
+>>
+>> Stacho Mudrak wrote:
+>>     
+>>> I am not sure, but probably loch compilation does not work by default.
+>>> List of libraries needed for loch is at loch/README.
+>>>
+>>> Regards, S.
+>>>
+>>> Wolfgang Zillig wrote:
+>>>       
+>>>> Hi,
+>>>>
+>>>> is there somewhere a list with all the libraries that are needed to
+>>>> compile therion under linux? Or a kind of manual?
+>>>>
+>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>>> some libraries.
+>>>>
+>>>> Greetings
+>>>> Wolfgang
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>         
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>       
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>     
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From ohc at vt.edu  Sun Apr 15 22:17:30 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sun, 15 Apr 2007 16:17:30 -0400
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46228763.2020506@web.de>
+References: <46211B4F.6040408@web.de> <200704151540.33033.ohc@vt.edu>
+	<46228763.2020506@web.de>
+Message-ID: <200704151617.30688.ohc@vt.edu>
+
+You have interpolate the pixel graphics. 
+
+On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+> Hi Philip,
+>
+> what do I have to do? Interpolating the pixel graphic or changing
+> something in my .th file?
+>
+> Greetings
+> Wolfgang
+>
+> Philip Schuchardt wrote:
+> > Ahh.  The linux version of loch has a bug preventing rendering correct
+> > texture mapping.  I think it has to do with openGL problem factor of 2
+> > texture mapping.  The textures dimensions need to be a factor of 2.  I'm
+> > just guessing that this is the problem.  Try to re-scale your overlay to
+> > be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us if it works.
+> >
+> > Philip Schuchardt
+> >
+> > On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+> >> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+> >> from the makefile. (the terminal was not configured to scroll through so
+> >> many lines and therefore I did not see the uppermost error) .
+> >> There were a lot of warnings like:  "warning: dereferencing type-punned
+> >> pointer will break strict-aliasing rules" during compillation. If needed
+> >> I can send you the full screen output.
+> >>
+> >> I can compile my project but the surface graphic is missing! Only a gray
+> >> surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do
+> >> I need to compile vtk from sources? I've installed libvtk5 and
+> >> libvtk5-dev (5.0.2-4ubuntu1).
+> >>
+> >> Thanks for any help
+> >> Wolfgang
+> >>
+> >> Stacho Mudrak wrote:
+> >>> I am not sure, but probably loch compilation does not work by default.
+> >>> List of libraries needed for loch is at loch/README.
+> >>>
+> >>> Regards, S.
+> >>>
+> >>> Wolfgang Zillig wrote:
+> >>>> Hi,
+> >>>>
+> >>>> is there somewhere a list with all the libraries that are needed to
+> >>>> compile therion under linux? Or a kind of manual?
+> >>>>
+> >>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+> >>>> some libraries.
+> >>>>
+> >>>> Greetings
+> >>>> Wolfgang
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> http://www.speleo.sk/mailman/listinfo/therion
+> >>>
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> http://www.speleo.sk/mailman/listinfo/therion
+> >>
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> http://www.speleo.sk/mailman/listinfo/therion
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From wolfgang.zillig at web.de  Sun Apr 15 22:55:33 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sun, 15 Apr 2007 22:55:33 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <200704151617.30688.ohc@vt.edu>
+References: <46211B4F.6040408@web.de>
+	<200704151540.33033.ohc@vt.edu>	<46228763.2020506@web.de>
+	<200704151617.30688.ohc@vt.edu>
+Message-ID: <46229145.5010803@web.de>
+
+it does not change much: it is still gray but in some cases strange 
+triangles occur.
+
+I've tested 0.5 2 4 and 8 as factors. But with 8x the limits of my 
+computer seem to be almost reached.
+
+Any other ideas?
+Greetings
+Wolfgang
+
+PS: I'm using 0.5.0 v of therion. Has something changed in the 
+development version?
+
+
+
+
+
+Philip Schuchardt wrote:
+> You have interpolate the pixel graphics. 
+> 
+> On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+>> Hi Philip,
+>>
+>> what do I have to do? Interpolating the pixel graphic or changing
+>> something in my .th file?
+>>
+>> Greetings
+>> Wolfgang
+>>
+>> Philip Schuchardt wrote:
+>>> Ahh.  The linux version of loch has a bug preventing rendering correct
+>>> texture mapping.  I think it has to do with openGL problem factor of 2
+>>> texture mapping.  The textures dimensions need to be a factor of 2.  I'm
+>>> just guessing that this is the problem.  Try to re-scale your overlay to
+>>> be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us if it works.
+>>>
+>>> Philip Schuchardt
+>>>
+>>> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+>>>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+>>>> from the makefile. (the terminal was not configured to scroll through so
+>>>> many lines and therefore I did not see the uppermost error) .
+>>>> There were a lot of warnings like:  "warning: dereferencing type-punned
+>>>> pointer will break strict-aliasing rules" during compillation. If needed
+>>>> I can send you the full screen output.
+>>>>
+>>>> I can compile my project but the surface graphic is missing! Only a gray
+>>>> surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do
+>>>> I need to compile vtk from sources? I've installed libvtk5 and
+>>>> libvtk5-dev (5.0.2-4ubuntu1).
+>>>>
+>>>> Thanks for any help
+>>>> Wolfgang
+>>>>
+>>>> Stacho Mudrak wrote:
+>>>>> I am not sure, but probably loch compilation does not work by default.
+>>>>> List of libraries needed for loch is at loch/README.
+>>>>>
+>>>>> Regards, S.
+>>>>>
+>>>>> Wolfgang Zillig wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> is there somewhere a list with all the libraries that are needed to
+>>>>>> compile therion under linux? Or a kind of manual?
+>>>>>>
+>>>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>>>>> some libraries.
+>>>>>>
+>>>>>> Greetings
+>>>>>> Wolfgang
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://www.speleo.sk/mailman/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From ohc at vt.edu  Sun Apr 15 23:06:19 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sun, 15 Apr 2007 17:06:19 -0400
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46229145.5010803@web.de>
+References: <46211B4F.6040408@web.de> <200704151617.30688.ohc@vt.edu>
+	<46229145.5010803@web.de>
+Message-ID: <200704151706.20245.ohc@vt.edu>
+
+I think I explained it wrong???
+
+Your image dimesion needs to be a factor of 2.
+
+Examples:
+overlay.png  has a dimesion of 128x128 or
+overlay2.png has a dimesion of 512x256
+
+Is that what your doing?
+
+You can easily re-scale the images using gimp.  
+
+Philip Schuchardt
+
+On Sunday 15 April 2007 4:55 pm, Wolfgang Zillig wrote:
+> it does not change much: it is still gray but in some cases strange
+> triangles occur.
+>
+> I've tested 0.5 2 4 and 8 as factors. But with 8x the limits of my
+> computer seem to be almost reached.
+>
+> Any other ideas?
+> Greetings
+> Wolfgang
+>
+> PS: I'm using 0.5.0 v of therion. Has something changed in the
+> development version?
+>
+> Philip Schuchardt wrote:
+> > You have interpolate the pixel graphics.
+> >
+> > On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+> >> Hi Philip,
+> >>
+> >> what do I have to do? Interpolating the pixel graphic or changing
+> >> something in my .th file?
+> >>
+> >> Greetings
+> >> Wolfgang
+> >>
+> >> Philip Schuchardt wrote:
+> >>> Ahh.  The linux version of loch has a bug preventing rendering correct
+> >>> texture mapping.  I think it has to do with openGL problem factor of 2
+> >>> texture mapping.  The textures dimensions need to be a factor of 2. 
+> >>> I'm just guessing that this is the problem.  Try to re-scale your
+> >>> overlay to be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us
+> >>> if it works.
+> >>>
+> >>> Philip Schuchardt
+> >>>
+> >>> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+> >>>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+> >>>> from the makefile. (the terminal was not configured to scroll through
+> >>>> so many lines and therefore I did not see the uppermost error) . There
+> >>>> were a lot of warnings like:  "warning: dereferencing type-punned
+> >>>> pointer will break strict-aliasing rules" during compillation. If
+> >>>> needed I can send you the full screen output.
+> >>>>
+> >>>> I can compile my project but the surface graphic is missing! Only a
+> >>>> gray surface is displayed. Is this due to the skipped parameter
+> >>>> -lvtkjpeg? Do I need to compile vtk from sources? I've installed
+> >>>> libvtk5 and libvtk5-dev (5.0.2-4ubuntu1).
+> >>>>
+> >>>> Thanks for any help
+> >>>> Wolfgang
+> >>>>
+> >>>> Stacho Mudrak wrote:
+> >>>>> I am not sure, but probably loch compilation does not work by
+> >>>>> default. List of libraries needed for loch is at loch/README.
+> >>>>>
+> >>>>> Regards, S.
+> >>>>>
+> >>>>> Wolfgang Zillig wrote:
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> is there somewhere a list with all the libraries that are needed to
+> >>>>>> compile therion under linux? Or a kind of manual?
+> >>>>>>
+> >>>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+> >>>>>> some libraries.
+> >>>>>>
+> >>>>>> Greetings
+> >>>>>> Wolfgang
+> >>>>>> _______________________________________________
+> >>>>>> Therion mailing list
+> >>>>>> Therion at speleo.sk
+> >>>>>> http://www.speleo.sk/mailman/listinfo/therion
+> >>>>>
+> >>>>> _______________________________________________
+> >>>>> Therion mailing list
+> >>>>> Therion at speleo.sk
+> >>>>> http://www.speleo.sk/mailman/listinfo/therion
+> >>>>
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> http://www.speleo.sk/mailman/listinfo/therion
+> >>>
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> http://www.speleo.sk/mailman/listinfo/therion
+> >>
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From wolfgang.zillig at web.de  Mon Apr 16 08:04:41 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 16 Apr 2007 08:04:41 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <200704151706.20245.ohc@vt.edu>
+References: <46211B4F.6040408@web.de>
+	<200704151617.30688.ohc@vt.edu>	<46229145.5010803@web.de>
+	<200704151706.20245.ohc@vt.edu>
+Message-ID: <462311F9.7050705@web.de>
+
+no, that is exactly what I did. My image has 2196x2196 pix and 
+interpolating it 8x results in 17568
+x17568 pix and gimp consumed a lot of RAM.
+
+Is there a switch to get a more verbose output of therion? Or switching 
+to the development kernel?
+
+Wolfgang
+
+
+
+Philip Schuchardt wrote:
+> I think I explained it wrong???
+>
+> Your image dimesion needs to be a factor of 2.
+>
+> Examples:
+> overlay.png  has a dimesion of 128x128 or
+> overlay2.png has a dimesion of 512x256
+>
+> Is that what your doing?
+>
+> You can easily re-scale the images using gimp.  
+>
+> Philip Schuchardt
+>
+> On Sunday 15 April 2007 4:55 pm, Wolfgang Zillig wrote:
+>   
+>> it does not change much: it is still gray but in some cases strange
+>> triangles occur.
+>>
+>> I've tested 0.5 2 4 and 8 as factors. But with 8x the limits of my
+>> computer seem to be almost reached.
+>>
+>> Any other ideas?
+>> Greetings
+>> Wolfgang
+>>
+>> PS: I'm using 0.5.0 v of therion. Has something changed in the
+>> development version?
+>>
+>> Philip Schuchardt wrote:
+>>     
+>>> You have interpolate the pixel graphics.
+>>>
+>>> On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+>>>       
+>>>> Hi Philip,
+>>>>
+>>>> what do I have to do? Interpolating the pixel graphic or changing
+>>>> something in my .th file?
+>>>>
+>>>> Greetings
+>>>> Wolfgang
+>>>>
+>>>> Philip Schuchardt wrote:
+>>>>         
+>>>>> Ahh.  The linux version of loch has a bug preventing rendering correct
+>>>>> texture mapping.  I think it has to do with openGL problem factor of 2
+>>>>> texture mapping.  The textures dimensions need to be a factor of 2. 
+>>>>> I'm just guessing that this is the problem.  Try to re-scale your
+>>>>> overlay to be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us
+>>>>> if it works.
+>>>>>
+>>>>> Philip Schuchardt
+>>>>>
+>>>>> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+>>>>>           
+>>>>>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+>>>>>> from the makefile. (the terminal was not configured to scroll through
+>>>>>> so many lines and therefore I did not see the uppermost error) . There
+>>>>>> were a lot of warnings like:  "warning: dereferencing type-punned
+>>>>>> pointer will break strict-aliasing rules" during compillation. If
+>>>>>> needed I can send you the full screen output.
+>>>>>>
+>>>>>> I can compile my project but the surface graphic is missing! Only a
+>>>>>> gray surface is displayed. Is this due to the skipped parameter
+>>>>>> -lvtkjpeg? Do I need to compile vtk from sources? I've installed
+>>>>>> libvtk5 and libvtk5-dev (5.0.2-4ubuntu1).
+>>>>>>
+>>>>>> Thanks for any help
+>>>>>> Wolfgang
+>>>>>>
+>>>>>> Stacho Mudrak wrote:
+>>>>>>             
+>>>>>>> I am not sure, but probably loch compilation does not work by
+>>>>>>> default. List of libraries needed for loch is at loch/README.
+>>>>>>>
+>>>>>>> Regards, S.
+>>>>>>>
+>>>>>>> Wolfgang Zillig wrote:
+>>>>>>>               
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> is there somewhere a list with all the libraries that are needed to
+>>>>>>>> compile therion under linux? Or a kind of manual?
+>>>>>>>>
+>>>>>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>>>>>>> some libraries.
+>>>>>>>>
+>>>>>>>> Greetings
+>>>>>>>> Wolfgang
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk
+>>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>>>                 
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>>               
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>             
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>           
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>         
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>     
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From s.m at speleo.sk  Mon Apr 16 07:45:06 2007
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 16 Apr 2007 07:45:06 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <200704151706.20245.ohc@vt.edu>
+References: <46211B4F.6040408@web.de>
+	<200704151617.30688.ohc@vt.edu>	<46229145.5010803@web.de>
+	<200704151706.20245.ohc@vt.edu>
+Message-ID: <46230D62.9010406@speleo.sk>
+
+I am almost sure this is not the case on Linux system - it was (still 
+is???) a limitation of Win32 OpenGL. But loch does this interpolation 
+internally - it scales every image to a square 2^n pixel size, before it 
+use it as a texture.
+
+I do not know where the problem on Linux is - it has probably something 
+to do with Linux OpenGL architecture - on both other platforms (Win32 
+and Mac OS X), texture mapping works as expected. And it works on Linux 
+also - at home I have NVidia OpenGL driver (with NVidia OpenGL shared 
+library) and there it works also.
+
+OK, I will try to install some plain Linux without hardware acceleration 
+and debug it.
+
+Regards, S.
+
+Philip Schuchardt wrote:
+> I think I explained it wrong???
+> 
+> Your image dimesion needs to be a factor of 2.
+> 
+> Examples:
+> overlay.png  has a dimesion of 128x128 or
+> overlay2.png has a dimesion of 512x256
+> 
+> Is that what your doing?
+> 
+> You can easily re-scale the images using gimp.  
+> 
+> Philip Schuchardt
+> 
+> On Sunday 15 April 2007 4:55 pm, Wolfgang Zillig wrote:
+>> it does not change much: it is still gray but in some cases strange
+>> triangles occur.
+>>
+>> I've tested 0.5 2 4 and 8 as factors. But with 8x the limits of my
+>> computer seem to be almost reached.
+>>
+>> Any other ideas?
+>> Greetings
+>> Wolfgang
+>>
+>> PS: I'm using 0.5.0 v of therion. Has something changed in the
+>> development version?
+>>
+>> Philip Schuchardt wrote:
+>>> You have interpolate the pixel graphics.
+>>>
+>>> On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+>>>> Hi Philip,
+>>>>
+>>>> what do I have to do? Interpolating the pixel graphic or changing
+>>>> something in my .th file?
+>>>>
+>>>> Greetings
+>>>> Wolfgang
+>>>>
+>>>> Philip Schuchardt wrote:
+>>>>> Ahh.  The linux version of loch has a bug preventing rendering correct
+>>>>> texture mapping.  I think it has to do with openGL problem factor of 2
+>>>>> texture mapping.  The textures dimensions need to be a factor of 2. 
+>>>>> I'm just guessing that this is the problem.  Try to re-scale your
+>>>>> overlay to be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us
+>>>>> if it works.
+>>>>>
+>>>>> Philip Schuchardt
+>>>>>
+>>>>> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+>>>>>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+>>>>>> from the makefile. (the terminal was not configured to scroll through
+>>>>>> so many lines and therefore I did not see the uppermost error) . There
+>>>>>> were a lot of warnings like:  "warning: dereferencing type-punned
+>>>>>> pointer will break strict-aliasing rules" during compillation. If
+>>>>>> needed I can send you the full screen output.
+>>>>>>
+>>>>>> I can compile my project but the surface graphic is missing! Only a
+>>>>>> gray surface is displayed. Is this due to the skipped parameter
+>>>>>> -lvtkjpeg? Do I need to compile vtk from sources? I've installed
+>>>>>> libvtk5 and libvtk5-dev (5.0.2-4ubuntu1).
+>>>>>>
+>>>>>> Thanks for any help
+>>>>>> Wolfgang
+>>>>>>
+>>>>>> Stacho Mudrak wrote:
+>>>>>>> I am not sure, but probably loch compilation does not work by
+>>>>>>> default. List of libraries needed for loch is at loch/README.
+>>>>>>>
+>>>>>>> Regards, S.
+>>>>>>>
+>>>>>>> Wolfgang Zillig wrote:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> is there somewhere a list with all the libraries that are needed to
+>>>>>>>> compile therion under linux? Or a kind of manual?
+>>>>>>>>
+>>>>>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>>>>>>> some libraries.
+>>>>>>>>
+>>>>>>>> Greetings
+>>>>>>>> Wolfgang
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk
+>>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://www.speleo.sk/mailman/listinfo/therion
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+From wolfgang.zillig at web.de  Mon Apr 16 08:11:53 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 16 Apr 2007 08:11:53 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46230D62.9010406@speleo.sk>
+References: <46211B4F.6040408@web.de>	<200704151617.30688.ohc@vt.edu>	<46229145.5010803@web.de>	<200704151706.20245.ohc@vt.edu>
+	<46230D62.9010406@speleo.sk>
+Message-ID: <462313A9.7080909@web.de>
+
+Hi Stacho,
+
+I also have a NVidia card in my computer! Does it help if I send you the 
+output from the compilling? Can it be that it has to do with the changed 
+Makefile (removed -lvtkjpeg -lvtkpng -lktkzlib)?
+
+Greetings
+Wolfgang
+
+Stacho Mudrak wrote:
+> I am almost sure this is not the case on Linux system - it was (still 
+> is???) a limitation of Win32 OpenGL. But loch does this interpolation 
+> internally - it scales every image to a square 2^n pixel size, before it 
+> use it as a texture.
+>
+> I do not know where the problem on Linux is - it has probably something 
+> to do with Linux OpenGL architecture - on both other platforms (Win32 
+> and Mac OS X), texture mapping works as expected. And it works on Linux 
+> also - at home I have NVidia OpenGL driver (with NVidia OpenGL shared 
+> library) and there it works also.
+>
+> OK, I will try to install some plain Linux without hardware acceleration 
+> and debug it.
+>
+> Regards, S.
+>
+> Philip Schuchardt wrote:
+>   
+>> I think I explained it wrong???
+>>
+>> Your image dimesion needs to be a factor of 2.
+>>
+>> Examples:
+>> overlay.png  has a dimesion of 128x128 or
+>> overlay2.png has a dimesion of 512x256
+>>
+>> Is that what your doing?
+>>
+>> You can easily re-scale the images using gimp.  
+>>
+>> Philip Schuchardt
+>>
+>> On Sunday 15 April 2007 4:55 pm, Wolfgang Zillig wrote:
+>>     
+>>> it does not change much: it is still gray but in some cases strange
+>>> triangles occur.
+>>>
+>>> I've tested 0.5 2 4 and 8 as factors. But with 8x the limits of my
+>>> computer seem to be almost reached.
+>>>
+>>> Any other ideas?
+>>> Greetings
+>>> Wolfgang
+>>>
+>>> PS: I'm using 0.5.0 v of therion. Has something changed in the
+>>> development version?
+>>>
+>>> Philip Schuchardt wrote:
+>>>       
+>>>> You have interpolate the pixel graphics.
+>>>>
+>>>> On Sunday 15 April 2007 4:13 pm, Wolfgang Zillig wrote:
+>>>>         
+>>>>> Hi Philip,
+>>>>>
+>>>>> what do I have to do? Interpolating the pixel graphic or changing
+>>>>> something in my .th file?
+>>>>>
+>>>>> Greetings
+>>>>> Wolfgang
+>>>>>
+>>>>> Philip Schuchardt wrote:
+>>>>>           
+>>>>>> Ahh.  The linux version of loch has a bug preventing rendering correct
+>>>>>> texture mapping.  I think it has to do with openGL problem factor of 2
+>>>>>> texture mapping.  The textures dimensions need to be a factor of 2. 
+>>>>>> I'm just guessing that this is the problem.  Try to re-scale your
+>>>>>> overlay to be a factor of 2(1, 2, 8, 16, 32, 64, 128 ... etc).  Tell us
+>>>>>> if it works.
+>>>>>>
+>>>>>> Philip Schuchardt
+>>>>>>
+>>>>>> On Sunday 15 April 2007 3:30 pm, Wolfgang Zillig wrote:
+>>>>>>             
+>>>>>>> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+>>>>>>> from the makefile. (the terminal was not configured to scroll through
+>>>>>>> so many lines and therefore I did not see the uppermost error) . There
+>>>>>>> were a lot of warnings like:  "warning: dereferencing type-punned
+>>>>>>> pointer will break strict-aliasing rules" during compillation. If
+>>>>>>> needed I can send you the full screen output.
+>>>>>>>
+>>>>>>> I can compile my project but the surface graphic is missing! Only a
+>>>>>>> gray surface is displayed. Is this due to the skipped parameter
+>>>>>>> -lvtkjpeg? Do I need to compile vtk from sources? I've installed
+>>>>>>> libvtk5 and libvtk5-dev (5.0.2-4ubuntu1).
+>>>>>>>
+>>>>>>> Thanks for any help
+>>>>>>> Wolfgang
+>>>>>>>
+>>>>>>> Stacho Mudrak wrote:
+>>>>>>>               
+>>>>>>>> I am not sure, but probably loch compilation does not work by
+>>>>>>>> default. List of libraries needed for loch is at loch/README.
+>>>>>>>>
+>>>>>>>> Regards, S.
+>>>>>>>>
+>>>>>>>> Wolfgang Zillig wrote:
+>>>>>>>>                 
+>>>>>>>>> Hi,
+>>>>>>>>>
+>>>>>>>>> is there somewhere a list with all the libraries that are needed to
+>>>>>>>>> compile therion under linux? Or a kind of manual?
+>>>>>>>>>
+>>>>>>>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>>>>>>>> some libraries.
+>>>>>>>>>
+>>>>>>>>> Greetings
+>>>>>>>>> Wolfgang
+>>>>>>>>> _______________________________________________
+>>>>>>>>> Therion mailing list
+>>>>>>>>> Therion at speleo.sk
+>>>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>>>>                   
+>>>>>>>> _______________________________________________
+>>>>>>>> Therion mailing list
+>>>>>>>> Therion at speleo.sk
+>>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>>>                 
+>>>>>>> _______________________________________________
+>>>>>>> Therion mailing list
+>>>>>>> Therion at speleo.sk
+>>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>>               
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>>             
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>>>           
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>       
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>
+>>     
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From s.m at group-s.sk  Mon Apr 16 11:07:11 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 16 Apr 2007 11:07:11 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <462313A9.7080909@web.de>
+References: <46211B4F.6040408@web.de>	<200704151617.30688.ohc@vt.edu>	<46229145.5010803@web.de>	<200704151706.20245.ohc@vt.edu>	<46230D62.9010406@speleo.sk>
+	<462313A9.7080909@web.de>
+Message-ID: <46233CBF.8030809@group-s.sk>
+
+> I also have a NVidia card in my computer! Does it help if I send you the 
+> output from the compilling?
+
+Unfortunatelly not. It is a bug, that is present also on NVidia 
+machines. Only in some very rare harware/software configurations, it 
+works on Linux also.
+
+> Can it be that it has to do with the changed 
+> Makefile (removed -lvtkjpeg -lvtkpng -lktkzlib)?
+
+I do not think so - this has nothing to do with rendering. All that has 
+to be done is to add checking of OpenGL return codes to the loch codes 
+to see, where the problem is hidden. But there is no switch for it right 
+now. It needs to be coded. I am sorry for this.
+
+Regards, S.
+
+
+
+From wolfgang.zillig at web.de  Mon Apr 16 11:22:42 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 16 Apr 2007 11:22:42 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46233CBF.8030809@group-s.sk>
+References: <46211B4F.6040408@web.de>	<200704151617.30688.ohc@vt.edu>	<46229145.5010803@web.de>	<200704151706.20245.ohc@vt.edu>	<46230D62.9010406@speleo.sk>	<462313A9.7080909@web.de>
+	<46233CBF.8030809@group-s.sk>
+Message-ID: <46234062.9090703@web.de>
+
+Ok, thanks for your information. I'm not a specialist in programming 
+(especially C/C++) and also again a beginner in linux as this is the 
+first time after 2 years that I use linux again.
+
+If I can help you finding the bug, just tell me.
+
+Wolfgang
+
+
+Stacho Mudrak schrieb:
+>> I also have a NVidia card in my computer! Does it help if I send you the 
+>> output from the compilling?
+>>     
+>
+> Unfortunatelly not. It is a bug, that is present also on NVidia 
+> machines. Only in some very rare harware/software configurations, it 
+> works on Linux also.
+>
+>   
+>> Can it be that it has to do with the changed 
+>> Makefile (removed -lvtkjpeg -lvtkpng -lktkzlib)?
+>>     
+>
+> I do not think so - this has nothing to do with rendering. All that has 
+> to be done is to add checking of OpenGL return codes to the loch codes 
+> to see, where the problem is hidden. But there is no switch for it right 
+> now. It needs to be coded. I am sorry for this.
+>
+> Regards, S.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From wookey at aleph1.co.uk  Mon Apr 16 12:35:28 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 16 Apr 2007 11:35:28 +0100
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46211B4F.6040408@web.de>
+References: <46211B4F.6040408@web.de>
+Message-ID: <20070416103527.GV21423@xios.aleph1.co.uk>
+
+On 2007-04-14 20:19 +0200, Wolfgang Zillig wrote:
+> Hi,
+> 
+> is there somewhere a list with all the libraries that are needed to 
+> compile therion under linux? Or a kind of manual?
+> 
+> I just tried "make" but I'm getting errors, so I suppose that I miss 
+> some libraries.
+
+Use the packages in debian experimental:
+http://packages.debian.org/cgi-bin/search_packages.pl?keywords=therion&searchon=names&subword=1&version=experimental&release=all
+
+These have been properly debianised.
+
+I think there has been a new development release since then so if you
+want to very latest you'll have to merge that in, but the control
+files and modified makefiles in that package will show you the changes
+needed.
+
+These packages will be going into debian testing as soon as I get
+round to it (I was waiting for the stable release that has just
+occurred).
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From ohc at vt.edu  Mon Apr 16 16:19:52 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Mon, 16 Apr 2007 10:19:52 -0400
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46234062.9090703@web.de>
+References: <46211B4F.6040408@web.de> <46233CBF.8030809@group-s.sk>
+	<46234062.9090703@web.de>
+Message-ID: <200704161019.52644.ohc@vt.edu>
+
+Yea.  I have the same texture problem in linux.   Textures work fine in VTK.
+
+On Monday 16 April 2007 5:22 am, Wolfgang Zillig wrote:
+> Ok, thanks for your information. I'm not a specialist in programming
+> (especially C/C++) and also again a beginner in linux as this is the
+> first time after 2 years that I use linux again.
+>
+> If I can help you finding the bug, just tell me.
+>
+> Wolfgang
+>
+> Stacho Mudrak schrieb:
+> >> I also have a NVidia card in my computer! Does it help if I send you the
+> >> output from the compilling?
+> >
+> > Unfortunatelly not. It is a bug, that is present also on NVidia
+> > machines. Only in some very rare harware/software configurations, it
+> > works on Linux also.
+> >
+> >> Can it be that it has to do with the changed
+> >> Makefile (removed -lvtkjpeg -lvtkpng -lktkzlib)?
+> >
+> > I do not think so - this has nothing to do with rendering. All that has
+> > to be done is to add checking of OpenGL return codes to the loch codes
+> > to see, where the problem is hidden. But there is no switch for it right
+> > now. It needs to be coded. I am sorry for this.
+> >
+> > Regards, S.
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From wolfgang.zillig at web.de  Mon Apr 16 19:16:20 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 16 Apr 2007 19:16:20 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <20070416103527.GV21423@xios.aleph1.co.uk>
+References: <46211B4F.6040408@web.de>
+	<20070416103527.GV21423@xios.aleph1.co.uk>
+Message-ID: <4623AF64.2080602@web.de>
+
+Wookey wrote:
+> On 2007-04-14 20:19 +0200, Wolfgang Zillig wrote:
+>   
+>> Hi,
+>>
+>> is there somewhere a list with all the libraries that are needed to 
+>> compile therion under linux? Or a kind of manual?
+>>
+>> I just tried "make" but I'm getting errors, so I suppose that I miss 
+>> some libraries.
+>>     
+>
+> Use the packages in debian experimental:
+> http://packages.debian.org/cgi-bin/search_packages.pl?keywords=therion&searchon=names&subword=1&version=experimental&release=all
+>
+> These have been properly debianised.
+>
+> I think there has been a new development release since then so if you
+> want to very latest you'll have to merge that in, but the control
+> files and modified makefiles in that package will show you the changes
+> needed.
+>
+> These packages will be going into debian testing as soon as I get
+> round to it (I was waiting for the stable release that has just
+> occurred).
+>
+> Wookey
+>   
+
+Hi Wooky,
+
+I've installed the debs with "dpkg -i --force-architecture" but when I 
+start loch I only get:
+zillig at joke:~/Desktop$ loch
+loch: error while loading shared libraries: libwx_gtk2u_gl-2.6.so.0: 
+cannot open shared object file: No such file or directory
+
+whereas grep locates me that file in /usr/lib/
+
+any idea?
+
+Greetings
+Wolfgang
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Apr 16 23:34:33 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 16 Apr 2007 22:34:33 +0100
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <4623AF64.2080602@web.de>
+References: <46211B4F.6040408@web.de>
+	<20070416103527.GV21423@xios.aleph1.co.uk>
+	<4623AF64.2080602@web.de>
+Message-ID: <20070416213432.GK21423@xios.aleph1.co.uk>
+
+On 2007-04-16 19:16 +0200, Wolfgang Zillig wrote:
+> Wookey wrote:
+> > On 2007-04-14 20:19 +0200, Wolfgang Zillig wrote:
+> >   
+> >> Hi,
+> >>
+> >> is there somewhere a list with all the libraries that are needed to 
+> >> compile therion under linux? Or a kind of manual?
+> >>
+> >> I just tried "make" but I'm getting errors, so I suppose that I miss 
+> >> some libraries.
+> >>     
+> >
+> > Use the packages in debian experimental:
+> > http://packages.debian.org/cgi-bin/search_packages.pl?keywords=therion&searchon=names&subword=1&version=experimental&release=all
+
+
+> I've installed the debs with "dpkg -i --force-architecture" but when I 
+> start loch I only get:
+> zillig at joke:~/Desktop$ loch
+> loch: error while loading shared libraries: libwx_gtk2u_gl-2.6.so.0: 
+> cannot open shared object file: No such file or directory
+> 
+> whereas grep locates me that file in /usr/lib/
+> 
+> any idea?
+
+Hmm, that is the first library it tries to load (according to ldd
+/usr/bin/loch). and that resolves to /usr/lib/libwx_gtk2u_gl-2.6.so.0,
+as you suggested. What does ldd say on your box?
+
+That file is from libwxgtk2.6-0 on my machine (debian unstable)
+
+The problem may be that the package is built for debian experimental,
+rather than ubuntu whatever-you-are-using, and something is upset
+about library versions. In that case a rebuild may fix things:
+
+download the source then unpack (dpkg-source -x) and cd into it:
+apt-get build-dep therion
+dpkg-buildpackage
+
+see if the resulting package works any better?
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From wolfgang.zillig at web.de  Tue Apr 17 21:22:59 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Tue, 17 Apr 2007 21:22:59 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <20070416213432.GK21423@xios.aleph1.co.uk>
+References: <46211B4F.6040408@web.de>	<20070416103527.GV21423@xios.aleph1.co.uk>	<4623AF64.2080602@web.de>
+	<20070416213432.GK21423@xios.aleph1.co.uk>
+Message-ID: <46251E93.80609@web.de>
+
+Wookey wrote:
+> On 2007-04-16 19:16 +0200, Wolfgang Zillig wrote:
+>> Wookey wrote:
+>>> On 2007-04-14 20:19 +0200, Wolfgang Zillig wrote:
+>>>   
+>>>> Hi,
+>>>>
+>>>> is there somewhere a list with all the libraries that are needed to 
+>>>> compile therion under linux? Or a kind of manual?
+>>>>
+>>>> I just tried "make" but I'm getting errors, so I suppose that I miss 
+>>>> some libraries.
+>>>>     
+>>> Use the packages in debian experimental:
+>>> http://packages.debian.org/cgi-bin/search_packages.pl?keywords=therion&searchon=names&subword=1&version=experimental&release=all
+> 
+> 
+>> I've installed the debs with "dpkg -i --force-architecture" but when I 
+>> start loch I only get:
+>> zillig at joke:~/Desktop$ loch
+>> loch: error while loading shared libraries: libwx_gtk2u_gl-2.6.so.0: 
+>> cannot open shared object file: No such file or directory
+>>
+>> whereas grep locates me that file in /usr/lib/
+>>
+>> any idea?
+> 
+> Hmm, that is the first library it tries to load (according to ldd
+> /usr/bin/loch). and that resolves to /usr/lib/libwx_gtk2u_gl-2.6.so.0,
+> as you suggested. What does ldd say on your box?
+> 
+> That file is from libwxgtk2.6-0 on my machine (debian unstable)
+> 
+> The problem may be that the package is built for debian experimental,
+> rather than ubuntu whatever-you-are-using, and something is upset
+> about library versions. In that case a rebuild may fix things:
+> 
+> download the source then unpack (dpkg-source -x) and cd into it:
+> apt-get build-dep therion
+> dpkg-buildpackage
+> 
+> see if the resulting package works any better?
+> 
+> Wookey
+
+
+I compiled it from the sources from the debian server, but still the 
+same: gray overlay.
+
+Greetings
+Wolfgang
+
+
+From wookey at aleph1.co.uk  Wed Apr 18 03:05:46 2007
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 18 Apr 2007 02:05:46 +0100
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46251E93.80609@web.de>
+References: <46211B4F.6040408@web.de>
+	<20070416103527.GV21423@xios.aleph1.co.uk>
+	<4623AF64.2080602@web.de>
+	<20070416213432.GK21423@xios.aleph1.co.uk> <46251E93.80609@web.de>
+Message-ID: <20070418010545.GW21423@xios.aleph1.co.uk>
+
+On 2007-04-17 21:22 +0200, Wolfgang Zillig wrote:
+
+> 
+> I compiled it from the sources from the debian server, but still the 
+> same: gray overlay.
+
+I can't help here as loch does not run on my machine. 
+
+I have a new amd64 machine I can try it on, but that has an nvidia
+card and I refuse to use the non-free driver, so it may not work there
+either - not sure if the 'nv' driver has the right support?
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From ohc at vt.edu  Wed Apr 18 18:17:16 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Wed, 18 Apr 2007 12:17:16 -0400
+Subject: [Therion] Fwd: Loch - Study
+Message-ID: <200704181217.16866.ohc@vt.edu>
+
+Study is currently going on.   If you can come, we can easily get your models 
+working in the VT-CAVE.
+
+----------  Forwarded Message  ----------
+
+Subject: Loch - Study
+Date: Thursday 12 April 2007 10:59 pm
+From: Philip Schuchardt <ohc at vt.edu>
+To: CAVE-CLUB at listserv.vt.edu
+
+Help evaluate the next generation of cave visualization and mapping software
+with the VT-CAVE!
+
+Requirement for participating:
+General knowledge of caves and cave features, such as domes, pits, multi
+ level passage, and drainage paths.  You must be over 18 years of age to
+participate.  If you have questions email me.
+
+Benefits:
+You will be able to use new technology for visualization cave data.  You may
+gain a better knowledge of the structures of Alva Blankenship Cave,
+Blankenship Blowhole, and topography of the caving areas.
+
+Length:
+Study should take about 1 hour.
+
+Where:
+Torgerson 3050 – The VT CAVE
+
+When:
+Contact me via email or at the VPI Cave Club meeting, Friday April 20th for
+scheduling your session.
+
+Free Times:
+April 16th
+4:00PM to Midnight
+
+April 17th
+8:00AM to 10:00AM
+12:00PM to Midnight
+
+April 18th
+10:30AM to 1:00PM
+4:00PM to Midnight
+
+April 19th
+8:00AM to 10:00AM
+12:00PM to Midnight
+
+April 20th
+10:30AM to 1:00PM
+
+April 23rd
+10:30AM to 1:00PM
+4:00PM to Midnight
+
+April 24th
+8:00AM to Midnight
+
+April 25th
+10:30AM to 1:00PM
+4:00PM to Midnight
+
+April 26th
+8:00AM to 10:00AM
+12:00AM to Midnight
+
+April 27th
+10:30AM to 1:00PM
+2:30PM to 6:00PM
+
+Thanks,
+Philip Schuchardt
+
+-------------------------------------------------------
+
+
+From wolfgang.zillig at web.de  Thu Apr 19 10:35:27 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Thu, 19 Apr 2007 10:35:27 +0200
+Subject: [Therion] Fwd: Loch - Study
+In-Reply-To: <200704181217.16866.ohc@vt.edu>
+References: <200704181217.16866.ohc@vt.edu>
+Message-ID: <462729CF.7010806@web.de>
+
+Philip Schuchardt schrieb:
+> Study is currently going on.   If you can come, we can easily get your models 
+> working in the VT-CAVE.
+> 
+
+Hi Philip,
+
+it would be really nice to see my models in that 3D visualizer, but I'm 
+located on the old continent, so it is not so easy (and cheap) just to 
+come to the states to have a look. I also have only polygon plots in the 
+model, but the elevation model of the whole mountain looks already 
+really nice on the screen.
+
+Greetings from Belgium
+Wolfgang
+
+
+From ohc at vt.edu  Thu Apr 19 15:49:16 2007
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Thu, 19 Apr 2007 09:49:16 -0400
+Subject: [Therion] Fwd: Loch - Study
+In-Reply-To: <462729CF.7010806@web.de>
+References: <200704181217.16866.ohc@vt.edu> <462729CF.7010806@web.de>
+Message-ID: <200704190949.16747.ohc@vt.edu>
+
+Yea.  You shouldn't fly here just to see the VT-CAVE. If your ever in the area 
+you should send me an email and we can try to meet up.  You guys could always 
+have a therion meeting over here. ;)
+
+Philip Schuchardt
+
+On Thursday 19 April 2007 4:35 am, Wolfgang Zillig wrote:
+> Philip Schuchardt schrieb:
+> > Study is currently going on.   If you can come, we can easily get your
+> > models working in the VT-CAVE.
+>
+> Hi Philip,
+>
+> it would be really nice to see my models in that 3D visualizer, but I'm
+> located on the old continent, so it is not so easy (and cheap) just to
+> come to the states to have a look. I also have only polygon plots in the
+> model, but the elevation model of the whole mountain looks already
+> really nice on the screen.
+>
+> Greetings from Belgium
+> Wolfgang
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From epsm at naex.sk  Fri Apr 20 16:43:49 2007
+From: epsm at naex.sk (Stacho Mudrak)
+Date: Fri, 20 Apr 2007 16:43:49 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46227D67.3000809@web.de>
+References: <46211B4F.6040408@web.de> <46226F91.7060805@group-s.sk>
+	<46227D67.3000809@web.de>
+Message-ID: <20070420164349.nydp5wq734kc4c80@webmailer.sk>
+
+It looks I have found the bug - at least now on my linux it seems to  
+work. The problem is strange - OpenGL on Linux returns very huge  
+number for maximal texture size.
+
+If I have limited it to 2048 pixels, it seems to work. Just replace  
+attached lxGLCs.cxx file in your loch sources and recompile. Please  
+let me know, if it still does not work.
+
+Regards, S.
+
+Quoting Wolfgang Zillig <wolfgang.zillig at web.de>:
+
+> I had to adapt the path to vtk and remove -lvtkjpeg -lvtkpng -lktkzlib
+> from the makefile. (the terminal was not configured to scroll through so
+> many lines and therefore I did not see the uppermost error) .
+> There were a lot of warnings like:  "warning: dereferencing type-punned
+> pointer will break strict-aliasing rules" during compillation. If needed
+> I can send you the full screen output.
+>
+> I can compile my project but the surface graphic is missing! Only a gray
+> surface is displayed. Is this due to the skipped parameter -lvtkjpeg? Do
+> I need to compile vtk from sources? I've installed libvtk5 and
+> libvtk5-dev (5.0.2-4ubuntu1).
+>
+> Thanks for any help
+> Wolfgang
+>
+>
+>
+> Stacho Mudrak wrote:
+>> I am not sure, but probably loch compilation does not work by default.
+>> List of libraries needed for loch is at loch/README.
+>>
+>> Regards, S.
+>>
+>> Wolfgang Zillig wrote:
+>>
+>>> Hi,
+>>>
+>>> is there somewhere a list with all the libraries that are needed to
+>>> compile therion under linux? Or a kind of manual?
+>>>
+>>> I just tried "make" but I'm getting errors, so I suppose that I miss
+>>> some libraries.
+>>>
+>>> Greetings
+>>> Wolfgang
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://www.speleo.sk/mailman/listinfo/therion
+>>>
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: lxGLCs.cxx.gz
+Type: application/x-gzip
+Size: 3897 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20070420/ad550d04/attachment.bin>
+
+From olly at survex.com  Fri Apr 20 17:14:47 2007
+From: olly at survex.com (Olly Betts)
+Date: Fri, 20 Apr 2007 16:14:47 +0100
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <20070420164349.nydp5wq734kc4c80@webmailer.sk>
+References: <46211B4F.6040408@web.de> <46226F91.7060805@group-s.sk>
+	<46227D67.3000809@web.de>
+	<20070420164349.nydp5wq734kc4c80@webmailer.sk>
+Message-ID: <20070420151447.GT10244@survex.com>
+
+On Fri, Apr 20, 2007 at 04:43:49PM +0200, Stacho Mudrak wrote:
+> It looks I have found the bug - at least now on my linux it seems to  
+> work. The problem is strange - OpenGL on Linux returns very huge  
+> number for maximal texture size.
+
+Reading the OpenGL texture size works for me on Linux.  If you have Aven
+1.1 to hand, try running it, load a 3d file, and look in the "About"
+dialog (help menu).  On my Linux box, the "System Information:" includes:
+
+    Max Texture size: 4096x4096
+
+I'm reading that using:
+
+    GLint max_texture_size;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
+
+Hmm, what type are m_maxTSizeO and m_maxTSizeS?  If they aren't the same
+size as GLint, then you'll get bad sizes back...
+
+Cheers,
+    Olly
+
+
+From wolfgang.zillig at web.de  Fri Apr 20 22:07:56 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Fri, 20 Apr 2007 22:07:56 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <20070420164349.nydp5wq734kc4c80@webmailer.sk>
+References: <46211B4F.6040408@web.de>
+	<46226F91.7060805@group-s.sk>	<46227D67.3000809@web.de>
+	<20070420164349.nydp5wq734kc4c80@webmailer.sk>
+Message-ID: <46291D9C.9090508@web.de>
+
+Stacho Mudrak wrote:
+> It looks I have found the bug - at least now on my linux it seems to 
+> work. The problem is strange - OpenGL on Linux returns very huge number 
+> for maximal texture size.
+> 
+> If I have limited it to 2048 pixels, it seems to work. Just replace 
+> attached lxGLCs.cxx file in your loch sources and recompile. Please let 
+> me know, if it still does not work.
+> 
+> Regards, S.
+> 
+
+Hello Stacho,
+
+it seems that it is still not working. But now I also get this here:
+
+** (loch:9451): CRITICAL **: clearlooks_style_draw_focus: assertion 
+`height >= -1' failed
+
+One further question: should the linux loch be able to read lox files 
+that were created on windows (at least it is not working here)? For the 
+tests here I compiled the files newly, but I get a smaller file size for 
+the lox file.
+windows 10.5 MB
+linux: 4.6 MB
+
+Greetings
+Wolfgang
+
+
+
+
+From s.m at group-s.sk  Sat Apr 21 08:22:32 2007
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Sat, 21 Apr 2007 08:22:32 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <46291D9C.9090508@web.de>
+References: <46211B4F.6040408@web.de>	<46226F91.7060805@group-s.sk>	<46227D67.3000809@web.de>	<20070420164349.nydp5wq734kc4c80@webmailer.sk>
+	<46291D9C.9090508@web.de>
+Message-ID: <4629ADA8.6030706@group-s.sk>
+
+Hmmm, it should work - at least on my systems it works, but I do not 
+have 64bit machine. I will experiment with OpenGL today and I will try 
+to upload new snapshot also for win32.
+
+Wolfgang Zillig wrote:
+> ** (loch:9451): CRITICAL **: clearlooks_style_draw_focus: assertion 
+> `height >= -1' failed
+
+No idea where does it come from - it looks like it is a problem of 
+reading 32bit files on 64bit system. Do you use latest snapshot on 
+Windows also?
+
+> One further question: should the linux loch be able to read lox files 
+> that were created on windows (at least it is not working here)?
+
+Yes, as I wrote before, on my system it works.
+
+> For the 
+> tests here I compiled the files newly, but I get a smaller file size for 
+> the lox file.
+> windows 10.5 MB
+> linux: 4.6 MB
+
+It looks, you have an old version of therion on Windows. In the latest 
+snapshot - there is 64/32bit bug fix from Philip Schuchardt - which 
+should generate only small files.
+
+Regards, S.
+
+
+From wolfgang.zillig at web.de  Sat Apr 21 10:10:10 2007
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sat, 21 Apr 2007 10:10:10 +0200
+Subject: [Therion] compiling therion under Ubuntu AMD64
+In-Reply-To: <4629ADA8.6030706@group-s.sk>
+References: <46211B4F.6040408@web.de>	<46226F91.7060805@group-s.sk>	<46227D67.3000809@web.de>	<20070420164349.nydp5wq734kc4c80@webmailer.sk>	<46291D9C.9090508@web.de>
+	<4629ADA8.6030706@group-s.sk>
+Message-ID: <4629C6E2.8000505@web.de>
+
+Hi,
+
+
+> Hmmm, it should work - at least on my systems it works, but I do not 
+> have 64bit machine. I will experiment with OpenGL today and I will try 
+> to upload new snapshot also for win32.
+>
+>   
+there is no hurry, but I tried compiling from the main release 0.5.0 of 
+therion and not the dev snapshot.
+
+
+> Wolfgang Zillig wrote:
+>   
+>> ** (loch:9451): CRITICAL **: clearlooks_style_draw_focus: assertion 
+>> `height >= -1' failed
+>>     
+>
+> No idea where does it come from - it looks like it is a problem of 
+> reading 32bit files on 64bit system. Do you use latest snapshot on 
+> Windows also?
+>
+>   
+I just remembered that clearlooks it the desktop theme that I use. So it 
+might not be important.
+
+>> One further question: should the linux loch be able to read lox files 
+>> that were created on windows (at least it is not working here)?
+>>     
+>
+> Yes, as I wrote before, on my system it works.
+>
+>   
+>> For the 
+>> tests here I compiled the files newly, but I get a smaller file size for 
+>> the lox file.
+>> windows 10.5 MB
+>> linux: 4.6 MB
+>>     
+>
+> It looks, you have an old version of therion on Windows. In the latest 
+> snapshot - there is 64/32bit bug fix from Philip Schuchardt - which 
+> should generate only small files.
+>
+>   
+I cant tell you which version is used on win as my laptop is again in 
+repair. Next weekend I will bring a win install cd from home (I don't 
+have my one here), and then I have also a running windows again.
+
+Greetings
+Wolfgang
+
+

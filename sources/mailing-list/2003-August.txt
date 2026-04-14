@@ -1,0 +1,464 @@
+From mikel at speleonics.com.au  Thu Aug 28 07:27:20 2003
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Thu, 28 Aug 2003 15:27:20 +1000
+Subject: [therion-users] therion does a seg fault when I try and run it
+Message-ID: <3F4D92B8.40804@speleonics.com.au>
+
+Hi all,
+
+I have just installed therion from source on a Debian Ti PowerBook and 
+Im getting seg faults when I run it.
+
+The compiliation had a few warnings but nothing serious. I can post the 
+output later if you want that.
+
+xtherion runs ok but fails with a compile warning. So I tried just 
+therian as below. I am using your demo data.
+
+demo$ therion
+therion (null)
+reading initialization file ... done.
+reading configuration file ... done.
+reading source files ... done.
+processing survey data ... done.
+calculating basic statistics ... done.
+processing references ... done.
+selecting export objects ... done.
+scanning data tree ... done.
+processing projection (null) ... done.
+writing  ...
+This is MetaPost, Version 0.641 (Web2C 7.3.7)
+(data.mp [4001] [4002] [4003] [4004]
+[1] [2] [3] [4] [6] [7] [8] [9] )
+12 output files written: data.1 .. data.4004
+Transcript written on data.log.
+converting scraps... done.
+Segmentation fault
+
+I tried "therion -h" runs fine,
+demo$ therion -v
+	therion gduxs:l:qLvhip:
+
+demo$ therion --print-encodings
+gduxs:l:qLvhip:
+Segmentation fault
+
+I removed the encoding lines from all the files that had utf-8 in them 
+just in case that was the problem but no luck.
+
+Any suggestions on tests that I can do ?
+
+-- 
+
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+
+
+
+UTS CRICOS Provider Code:  00099F
+
+DISCLAIMER
+========================================================================
+This email message and any accompanying attachments may contain
+confidential information.  If you are not the intended recipient, do not
+read, use, disseminate, distribute or copy this message or attachments.
+If you have received this message in error, please notify the sender
+immediately and delete this message. Any views expressed in this message
+are those of the individual sender, except where the sender expressly,
+and with authority, states them to be the views the University of
+Technology Sydney. Before opening any attachments, please check them for
+viruses and defects.
+========================================================================
+
+
+
+
+
+
+From s.m at group-s.sk  Thu Aug 28 09:14:48 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 28 Aug 2003 09:14:48 +0200
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+In-Reply-To: <3F4D92B8.40804@speleonics.com.au>
+References: <3F4D92B8.40804@speleonics.com.au>
+Message-ID: <opruls2yc1yfws2v@mail.stonline.sk>
+
+Uff - this is the first time therion does not work on linux!
+
+It seems to me, that this is some global problem with pointers on your 
+machine. Following lines indicate this:
+
+> therion (null)
+
+(null) should be a version number
+
+> processing projection (null) ... done.
+
+(null) should be "plan". Both strings are given in C code as constants, so 
+some part of therion is writing to the memory, it should not touch.
+
+> 	therion gduxs:l:qLvhip:
+
+This can be an indication - this is a string, that is passed to getopt 
+library, so may be there are some conflicts of versions or something like 
+that...
+
+Could you please try the following make process:
+
+make clean make config-macosx
+
+than you have probably to change the line 42 in the Makefile (CC = cc) 
+after that step to CC = gcc, and than
+
+make
+
+It should use the included getopt code, may be it will help you... If not, 
+than probably only low-level debugging will help :(
+
+Regards, S.
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Aug 28 15:52:07 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 28 Aug 2003 14:52:07 +0100
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+In-Reply-To: <opruls2yc1yfws2v@mail.stonline.sk>
+References: <3F4D92B8.40804@speleonics.com.au>
+	<opruls2yc1yfws2v@mail.stonline.sk>
+Message-ID: <20030828135206.GK20733@court.aleph1.co.uk>
+
++++ Stacho Mudrak [03-08-28 09:14 +0200]:
+> Uff - this is the first time therion does not work on linux!
+
+Mike is almost certainly the first person even to try a non-x86 version
+(I haven't actually tried it on arm yet - I really must do and see if
+similar problems arise). Is powerpc big or little-endian Mike
+
+> It seems to me, that this is some global problem with pointers on your 
+> machine. Following lines indicate this:
+
+Indeed - looks like a serious miscompilation.
+
+Stacho - worth taking a look at the build log for powerpc to see if there
+are any clues:
+<url:http://buildd.debian.org/fetch.php?&pkg=therion&ver=0.2.14-1&arch=powerpc&stamp=1058554482&file=log&as=raw>
+
+Looks like there are some issues in thpoint- warnings about assigning -1 to
+char. (Which probably means that the default char is unsigned on powerpc,
+like it is on arm - people used to x86 tend to assume that 'char' means
+'signed char' so don't explicitly specify it. This leads to failures like
+EOF tests going wrong amongst other things.
+
+g++ -c -g -Wall -D_GNU_SOURCE -DTHLINUX -O2 -o thpoint.o thpoint.cxx
+thpoint.cxx: In function void thpoint_parse_value(int&, double&, bool&,
+char&, char*)':
+thpoint.cxx:731: warning: assignment of negative value -1' to char'
+thpoint.cxx:731: warning: argument of negative value -1' to char'
+thpoint.cxx: In member function void thpoint::parse_value(char*)':
+thpoint.cxx:814: warning: comparison is always false due to limited range of data type
+thpoint.cxx:874: warning: comparison is always false due to limited range of data type
+thpoint.cxx:893: warning: comparison is always false due to limited range of data type
+
+That seems to be the only big thing the compiler spotted although there is
+also a load of stuff about missing fonts which may well not be important.
+
+> >processing projection (null) ... done.
+> 
+> (null) should be "plan". Both strings are given in C code as constants, so 
+> some part of therion is writing to the memory, it should not touch.
+> 
+> >	therion gduxs:l:qLvhip:
+> 
+> This can be an indication - this is a string, that is passed to getopt 
+> library, so may be there are some conflicts of versions or something like 
+> that...
+
+Does therion need a particular version of getopt? At the moment it's
+compilaing against whatever is current in the distribution.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From mikel at speleonics.com.au  Fri Aug 29 02:29:38 2003
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Fri, 29 Aug 2003 10:29:38 +1000
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+References: <3F4D92B8.40804@speleonics.com.au>
+	<opruls2yc1yfws2v@mail.stonline.sk>
+	<20030828135206.GK20733@court.aleph1.co.uk>
+Message-ID: <3F4E9E72.8070500@speleonics.com.au>
+
+Hi all,
+
+> +++ Stacho Mudrak [03-08-28 09:14 +0200]:
+>>Uff - this is the first time therion does not work on linux!
+
+:-)
+
+Wookey wrote:
+> Mike is almost certainly the first person even to try a non-x86 version
+> (I haven't actually tried it on arm yet - I really must do and see if
+> similar problems arise). Is powerpc big or little-endian Mike
+
+Hehe at me using a non-intel architecture. And I have some results for 
+you on Alpha LX164 architecture too :-)
+I'll comment on  that at the end of this email.
+Looking on google it seems PPC is big endian and Alpha is LE.(but i have 
+seem some comments that Alpha can emulate any endianness)
+
+> Stacho - worth taking a look at the build log for powerpc to see if there
+> are any clues:
+> <url:http://buildd.debian.org/fetch.php?&pkg=therion&ver=0.2.14-1&arch=powerpc&stamp=1058554482&file=log&as=raw
+> > Looks like there are some issues in thpoint- warnings about assigning -1 to
+> char. (Which probably means that the default char is unsigned on powerpc,
+> like it is on arm - people used to x86 tend to assume that 'char' means
+> 'signed char' so don't explicitly specify it. This leads to failures like
+> EOF tests going wrong amongst other things. 
+
+That url above shows many of the warnings that I get in my build on PPC.
+
+> Does therion need a particular version of getopt? At the moment it's
+> compilaing against whatever is current in the distribution.
+> 
+> Wookey
+
+therion$ getopt --version
+getopt (enhanced) 1.1.2
+
+Stacho wrote yesterday....
+ > Could you please try the following make process:
+ > make clean make config-macosx
+ > than you have probably to change the line 42 in the Makefile (CC = 
+cc) > after that step to CC = gcc, and than
+ > make
+
+I did that and I get exactly the same error. The programs compile but I 
+still get the seg fault and the funny verion number when doing a therion -v
+
+What suggestions now to debug this? I am keen to get this working on 
+both PPC and Alpha. I am installing a new Debian on Jills Athlon at home 
+  and this weekend I will compile it on the Athlon - that should work.
+
+Results for Alpha Architecture
+------------------------------
+
+Machine: Alpha LX164
+Running Debian, stable
+
+Compiled fine, some warnings but it did compile. I can post the 
+compilation results later if needed.
+Xtherion works OK
+If i run therion in the demo directory as just 'therion' in that 
+directory it fails with a metapost error. I have attached the logfile 
+that it created , it was called therion.log and I have renamed it to 
+therian_alpha.log
+
+I checked my metapost and it does work for small pictures.
+I saw that on the PPC there were the mp files in /tmp. They arent there 
+for the alpha as I presume that they are deleted as therion runs.
+
+Mike
+
+-- 
+
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+
+
+UTS CRICOS Provider Code:  00099F
+
+DISCLAIMER
+========================================================================
+This email message and any accompanying attachments may contain
+confidential information.  If you are not the intended recipient, do not
+read, use, disseminate, distribute or copy this message or attachments.
+If you have received this message in error, please notify the sender
+immediately and delete this message. Any views expressed in this message
+are those of the individual sender, except where the sender expressly,
+and with authority, states them to be the views the University of
+Technology Sydney. Before opening any attachments, please check them for
+viruses and defects.
+========================================================================
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: therion_alpha.log
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20030829/df40cc4d/attachment.ksh>
+
+From wookey at aleph1.co.uk  Fri Aug 29 13:14:11 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 29 Aug 2003 12:14:11 +0100
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+In-Reply-To: <3F4E9E72.8070500@speleonics.com.au>
+References: <3F4D92B8.40804@speleonics.com.au>
+	<opruls2yc1yfws2v@mail.stonline.sk>
+	<20030828135206.GK20733@court.aleph1.co.uk>
+	<3F4E9E72.8070500@speleonics.com.au>
+Message-ID: <20030829111411.GD12384@court.aleph1.co.uk>
+
++++ Michael Lake [03-08-29 10:29 +1000]:
+> Hi all,
+> 
+> > +++ Stacho Mudrak [03-08-28 09:14 +0200]:
+> >>Uff - this is the first time therion does not work on linux!
+> 
+> :-)
+> 
+> Wookey wrote:
+> > Mike is almost certainly the first person even to try a non-x86 version
+> > (I haven't actually tried it on arm yet - I really must do and see if
+> > similar problems arise). Is powerpc big or little-endian Mike
+> 
+> Hehe at me using a non-intel architecture. And I have some results for 
+> you on Alpha LX164 architecture too :-)
+> I'll comment on  that at the end of this email.
+> Looking on google it seems PPC is big endian and Alpha is LE.(but i have 
+> seem some comments that Alpha can emulate any endianness)
+
+yes - Arm can do either endianness as well (and so can SH4) but the Debian version picks a
+'standard' endianness for the architecture. I'm not sure which it is for
+Alpha. ARM is LE in Debian.
+
+
+> What suggestions now to debug this? I am keen to get this working on 
+> both PPC and Alpha. 
+
+Run it under strace to see where it actually dies. Look at the code giving
+the char/unsigned char warnings - that's very likely to break something and
+is suggestive of 'x86isms' in the code. Structure packing is different on
+ARM from x86 and that can catch people out too, although I'd expect it to be
+less of a problem with C++ than C. Maybe this is true on powerpc too?
+
+It's also possible that the C++ compiler for powerpc has gremlins at the
+moment - there has been a lot of transition recently from G++ 2.95 to 3, 3.1
+3.2 and 3.3. Testing and unstable are now on g++3.3 but stable is still 2.95.
+
+Certainly C++ compiling on ARM prior to about 3.2 was 'mostly broken' - I'd
+expect powerpc to be better than that but compiler problems could easily
+exist there too.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From martinsluka at mac.com  Fri Aug 29 09:41:12 2003
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 29 Aug 2003 09:41:12 +0200
+Subject: [therion-users] for all
+In-Reply-To: <3F4E9E72.8070500@speleonics.com.au>
+References: <3F4D92B8.40804@speleonics.com.au>
+	<opruls2yc1yfws2v@mail.stonline.sk>
+	<20030828135206.GK20733@court.aleph1.co.uk>
+	<3F4E9E72.8070500@speleonics.com.au>
+Message-ID: <p05100302bb74b382dec1@[10.10.119.14]>
+
+Stacho and Martin are not in front of their comps till September 02. 
+They are aranging meeting with some wild bears in slovakian 
+mountains. (They have several free days there.)
+-- 
+
+
+
+
+From mikel at speleonics.com.au  Sun Aug 31 05:13:49 2003
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Sun, 31 Aug 2003 13:13:49 +1000
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+References: <3F4D92B8.40804@speleonics.com.au>	<opruls2yc1yfws2v@mail.stonline.sk>	<20030828135206.GK20733@court.aleph1.co.uk>	<3F4E9E72.8070500@speleonics.com.au>
+	<20030829111411.GD12384@court.aleph1.co.uk>
+Message-ID: <3F5167ED.70800@speleonics.com.au>
+
+Wookey wrote in reply to Mikes question:
+>>What suggestions now to debug this? I am keen to get this working on 
+>>both PPC and Alpha. 
+> 
+> Run it under strace to see where it actually dies. Look at the code giving
+> the char/unsigned char warnings - that's very likely to break something and
+> is suggestive of 'x86isms' in the code. 
+
+I have one strace output as its small (trace1.txt, 3.5k) for 'therion -v'.
+The other strace (trace2.txt , 100k) is up on my website and its from 
+'therion' running in the therion supplied demo directory.
+http://www.speleonics.com.au/mikes/trace2.txt
+
+I havent used strace before but I see these errors:
+open("/etc/ld.so.preload", O_RDONLY)    = -1 ENOENT (No such file or 
+directory)
+
+I have /etc/ld.so.cache but no ld.so.preload
+
+I see that here its writing the wrong string to output (stdout) 1 but 
+the correct version number to output 3 (therion.log)
+
+write(1, "therion gduxs:l:qLvhip:", 23) = 23
+write(1, "\n", 1)                       = 1
+write(3, "therion 0.2.15\n", 15)        = 15
+
+and indeed therion.log does say "therion 0.2.15"
+
+I presume its best to debug first the simple :therion -v" rather than 
+the therion running the data set in demo.
+
+
+Mike
+-- 
+Mike Lake
+Caver, Linux enthusiast and interested in anything technical.
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: trace1.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20030831/fbc9a0d0/attachment.txt>
+
+From martinsluka at mac.com  Sun Aug 31 10:16:06 2003
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 31 Aug 2003 10:16:06 +0200
+Subject: [therion-users] Re: therion does a seg fault when I try and run it
+In-Reply-To: <3F5167ED.70800@speleonics.com.au>
+References: <3F4D92B8.40804@speleonics.com.au>
+	<opruls2yc1yfws2v@mail.stonline.sk>
+	<20030828135206.GK20733@court.aleph1.co.uk>
+	<3F4E9E72.8070500@speleonics.com.au>
+	<20030829111411.GD12384@court.aleph1.co.uk>
+	<3F5167ED.70800@speleonics.com.au>
+Message-ID: <p05100303bb775e6e4e7a@[10.10.119.14]>
+
+Mike,
+
+Stacho will be on mail at Thuesday. Please be patient.
+
+Only small note from my experience - I use PPC with BSD and Darwin 
+(G4 with MacOSX 10.2.6) and Therion compiles without any problem.
+
+May you compare somewhere compilation under MacOSX?
+
+Martin
+
+At 13:13 +1000 31.8.2003, Michael Lake wrote:
+*******************************************
+
+>Wookey wrote in reply to Mikes question:
+>What suggestions now to debug this? I am keen to get this working on 
+>both PPC and Alpha.
+>>
+>>Run it under strace to see where it actually dies. Look at the code giving
+>>the char/unsigned char warnings - that's very likely to break something and
+>>is suggestive of 'x86isms' in the code.
+
+
+-- 
+
+
+
+

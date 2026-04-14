@@ -1,0 +1,5242 @@
+From martinsluka at mac.com  Mon May  2 18:12:48 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 02 May 2016 18:12:48 +0200
+Subject: [Therion] How to generate PDF only with polygon - solution
+In-Reply-To: <000701d19b0b$25afd180$710f7480$@t-online.de>
+References: <000001d19571$afd12f20$0f738d60$@t-online.de>
+	<CAP35+gG48JWPSj9wGC0f_Vjq1yWmN=r01fOVVMw3VtsvBoNoKA@mail.gmail.com>
+	<000701d19b0b$25afd180$710f7480$@t-online.de>
+Message-ID: <F105134E-2D3A-4AD6-A4B1-107B030D3090@mac.com>
+
+The trick is to „select“ a map defined from surveys in thconfig with full path, including the name of highest survey, where that map is defined.
+
+source index.th <http://index.th/> 
+
+select polygon.map at index_survey
+
+export map -layout-debug station-names ### to display station names too.
+
+
+######where#######
+
+
+survey index_survey -title "Perlová jaskyňa"
+
+input 2015.th <http://2015.th/>
+input 2016.th <http://2016.th/>
+
+equate 48 at 2015_survey    0 at 2016_survey
+
+map polygon.map -projection plan
+	2015_survey
+	2016_survey
+endmap
+
+endsurvey
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160502/ebb70584/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: cave.pdf
+Type: application/pdf
+Size: 79303 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160502/ebb70584/attachment.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160502/ebb70584/attachment-0001.htm>
+
+From chr_rossi at kartan.de  Mon May  2 23:10:06 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Mon, 02 May 2016 23:10:06 +0200
+Subject: [Therion] Therion compiling error (Loch, lxGUI)
+Message-ID: <1544589.pWjPA5Wzpx@sayaaron>
+
+Good evening,
+
+I am trying to compile Therion on an openSuse 13.2 64bit, and had no 
+success so far. After some research (including the mailing list, of 
+course) I noticed it seems to be hanging on Loch compiling, as you maybe 
+would have guessed:).
+
+I used the patch of detrito (29.12.2015 10:56, many thanks for that, by 
+the way!) and set C_INCLUDE_PATH=/usr/include/vtk-6.1, and also 
+CPLUS_INCLUDE_PATH=/usr/include/vtk-6.1 (a link from /usr/include/vtk --> 
+vtk-6.1 would have also sufficed, perhaps, after I saw  
+I"/usr/include/vtk/" in the compiling messages.
+
+But now it hangs at:
+
+
+c++ -c -Wall -D_GNU_SOURCE -DLOCH -DLXLINUX -I/usr/lib64/wx/include/gtk2-
+unicode-3.0 -I/usr/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -DwxDEBUG_LEVEL=0 
+-DWXUSINGDLL -D__WXGTK__ -pthread -Wno-deprecated -I/usr/include/freetype2 
+-I"/usr/include/vtk/" -O2 -o lxGUI.o lxGUI.cxx
+lxGUI.cxx: In member function ‘int lxFrame::GetFileType(wxString)’:
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:518:3: note: in expansion of macro ‘matchtype’
+   matchtype(".lox",1);
+   ^
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:519:3: note: in expansion of macro ‘matchtype’
+   matchtype(".LOX",1);
+   ^
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:520:3: note: in expansion of macro ‘matchtype’
+   matchtype(".plt",2);
+   ^
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:521:3: note: in expansion of macro ‘matchtype’
+   matchtype(".PLT",2);
+   ^
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:522:3: note: in expansion of macro ‘matchtype’
+   matchtype(".3d",3);
+   ^
+lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type ‘const 
+wxChar* {aka const wchar_t*}’
+ #define matchtype(w,t) if (fName.EndsWith((const wxChar 
+*)wxString(_T(w)))) return t;
+                                                                         ^
+lxGUI.cxx:523:3: note: in expansion of macro ‘matchtype’
+   matchtype(".3D",3);
+   ^
+Makefile:129: recipe for target 'lxGUI.o' failed
+make[1]: *** [lxGUI.o] Error 1
+make[1]: Leaving directory '/home/chr/downloads/frisch/therion/loch'
+Makefile:182: recipe for target 'loch/loch' failed
+make: *** [loch/loch] Error 2
+
+
+…and I do not know how to get over this error. I would very much like to 
+use Therion again. Has anyona a hint for me how to cope with this error, 
+please?
+
+Best regards,
+Christian
+
+
+
+
+From chr_rossi at kartan.de  Tue May  3 12:29:25 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Tue, 03 May 2016 12:29:25 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to compensate?
+Message-ID: <2391492.8TkuzI91lW@sayaaron>
+
+Hallo everyone,
+
+I have another little problem: I am entering LRUD data of my last mine 
+survey, and I am missing LRUD values of the start of a centerline (way too 
+besmirched paper;).
+
+Now, missing values in between would not be such big of a problem, but how 
+do I compensate for missing start values? For now I have entered 0/0/0/0, 
+but that does not seem to be a good way.
+
+Best regards,
+Christian
+
+
+PS. By the way: I have installed a debian within a virtual machine to 
+temporarily solve that Loch compiling problem. But this is uncomfortable, 
+of course.
+
+
+From martinsluka at mac.com  Tue May  3 13:22:14 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 03 May 2016 11:22:14 +0000 (GMT)
+Subject: [Therion] =?utf-8?q?_Re=3A__Centerline=3A_missing_start_lrud_valu?=
+ =?utf-8?q?es=3F_How_to_compensate=3F?=
+Message-ID: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+
+there are 3 ways how to enter LRUD data in Therion:
+
+1. on "to" station
+    data normal from to clino compass length left right up down
+                          1       2    10          120       4        1     1       2      0
+2. on both stations:
+    data normal from to clino compass length left right up down
+                          1       2    10          120       4       [0 1]    [2 1]   [1  2]  [0  0] # [on_from on_to]
+3. on station
+    data normal from to clino compass length 
+                          1       2    10          120       4       
+
+    data normal station left right up down
+                               1        0     2    1     0
+                               2        1     1     2    0
+
+
+m.s.
+
+
+On May 03, 2016, at 12:30 PM, Christian Rößler (Roessler) <chr_rossi at kartan.de> wrote:
+
+Hallo everyone,
+
+I have another little problem: I am entering LRUD data of my last mine 
+survey, and I am missing LRUD values of the start of a centerline (way too 
+besmirched paper;).
+
+Now, missing values in between would not be such big of a problem, but how 
+do I compensate for missing start values? For now I have entered 0/0/0/0, 
+but that does not seem to be a good way.
+
+Best regards,
+Christian
+
+
+PS. By the way: I have installed a debian within a virtual machine to 
+temporarily solve that Loch compiling problem. But this is uncomfortable, 
+of course.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160503/bbfb52c3/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Tue May  3 13:30:04 2016
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 3 May 2016 13:30:04 +0200 (CEST)
+Subject: [Therion] Centerline: missing start lrud values? How to
+ compensate?
+In-Reply-To: <2391492.8TkuzI91lW@sayaaron>
+References: <2391492.8TkuzI91lW@sayaaron>
+Message-ID: <49439986.114413.1462275004807@comcenter.netcologne.de>
+
+Hi
+I would suggest to use a dash (-) for missing data.
+This differs to a measured distance of 0.
+cheers,
+Torsten
+
+> "Christian Rößler (Roessler)" <chr_rossi at kartan.de> hat am 3. Mai 2016 um 12:29 geschrieben:
+> 
+> 
+> Hallo everyone,
+> 
+> I have another little problem: I am entering LRUD data of my last mine 
+> survey, and I am missing LRUD values of the start of a centerline (way too 
+> besmirched paper;).
+> 
+> Now, missing values in between would not be such big of a problem, but how 
+> do I compensate for missing start values? For now I have entered 0/0/0/0, 
+> but that does not seem to be a good way.
+> 
+> Best regards,
+> Christian
+> 
+> 
+> PS. By the way: I have installed a debian within a virtual machine to 
+> temporarily solve that Loch compiling problem. But this is uncomfortable, 
+> of course.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Tue May  3 13:34:13 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 03 May 2016 13:34:13 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to
+	compensate?
+In-Reply-To: <49439986.114413.1462275004807@comcenter.netcologne.de>
+References: <2391492.8TkuzI91lW@sayaaron>
+	<49439986.114413.1462275004807@comcenter.netcologne.de>
+Message-ID: <0479F880-AEAE-47EF-B942-13BF134A6F9E@mac.com>
+
+Dash (-) is for missing data 0 is distance zero. 
+
+M.s. 
+
+Odesláno z iPhonu
+
+3. 5. 2016 v 13:30, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+
+> Hi
+> I would suggest to use a dash (-) for missing data.
+> This differs to a measured distance of 0.
+> cheers,
+> Torsten
+> 
+>> "Christian Rößler (Roessler)" <chr_rossi at kartan.de> hat am 3. Mai 2016 um 12:29 geschrieben:
+>> 
+>> 
+>> Hallo everyone,
+>> 
+>> I have another little problem: I am entering LRUD data of my last mine 
+>> survey, and I am missing LRUD values of the start of a centerline (way too 
+>> besmirched paper;).
+>> 
+>> Now, missing values in between would not be such big of a problem, but how 
+>> do I compensate for missing start values? For now I have entered 0/0/0/0, 
+>> but that does not seem to be a good way.
+>> 
+>> Best regards,
+>> Christian
+>> 
+>> 
+>> PS. By the way: I have installed a debian within a virtual machine to 
+>> temporarily solve that Loch compiling problem. But this is uncomfortable, 
+>> of course.
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From chr_rossi at kartan.de  Tue May  3 23:10:32 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 03 May 2016 23:10:32 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to
+	compensate?
+In-Reply-To: <49439986.114413.1462275004807@comcenter.netcologne.de>
+References: <2391492.8TkuzI91lW@sayaaron>
+	<49439986.114413.1462275004807@comcenter.netcologne.de>
+Message-ID: <1827765.U7X4x1bM6J@sayaaron>
+
+Am Dienstag, 3. Mai 2016, 13:30:04 schrieb Torsten Schnitter:
+
+Hallo Torsten,
+
+>> Now, missing values in between would not be such big of a problem, but
+>> how do I compensate for missing start values? For now I have entered
+>> 0/0/0/0, but that does not seem to be a good way.
+> I would suggest to use a dash (-) for missing data.
+> This differs to a measured distance of 0.
+
+thank you, that's it!
+
+Glückauf, Christian
+
+
+From chr_rossi at kartan.de  Tue May  3 23:12:16 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 03 May 2016 23:12:16 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to
+	compensate?
+In-Reply-To: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+References: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+Message-ID: <1714466.0VYOQ5LUDN@sayaaron>
+
+Am Dienstag, 3. Mai 2016, 11:22:14 schrieb Martin Sluka:
+
+Hallo Martin,
+
+I did not know these differences, and it certainly gives me stuff for 
+thought. And, by the way, thank you for providing such a mighty program!
+
+>> Now, missing values in between would not be such big of a problem, but
+>> how do I compensate for missing start values? For now I have entered
+>> 0/0/0/0, but that does not seem to be a good way.
+> there are 3 ways how to enter LRUD data in Therion:
+> 1. on "to" station
+>  data normal from to clino compass length left right up down
+>              1    2  10    120     4      1    1     2  0
+
+…good to have that cleared, as this was (I have obviously not read the 
+manual enough) the only way I knew.
+
+> 2. on both stations:
+>   data normal from to clino compass length left  right up    down
+>               1    2  10    120     4      [0 1] [2 1] [1 2] [0  0] #
+
+Nice! One question: Is the '#' at the end a needed character or an 
+artefact?
+
+> [on_from on_to] 3. on station
+>   data normal from to clino compass length 
+>               1    2  10    120     4       
+
+Understood!
+
+>   data normal station left right up down
+>               1       0    2     1  0
+>               2       1    1     2  0
+
+And that's another one I missed; that's the one I need.
+
+Best regards & Glückauf,
+Christian
+
+
+From chr_rossi at kartan.de  Tue May  3 23:16:08 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 03 May 2016 23:16:08 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to
+	compensate?
+In-Reply-To: <1714466.0VYOQ5LUDN@sayaaron>
+References: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+	<1714466.0VYOQ5LUDN@sayaaron>
+Message-ID: <26589617.9rQgRJ6WpW@sayaaron>
+
+Am Dienstag, 3. Mai 2016, 23:12:16 schrieb Christian Rößler:
+
+> And, by the way, thank you for providing such a mighty program!
+
+sorry, I thought you were one of the developers of therion. No offense 
+meant to anyone!
+
+Viele Grüße,
+Christian
+
+
+From chr_rossi at kartan.de  Tue May  3 23:19:19 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 03 May 2016 23:19:19 +0200
+Subject: [Therion] Centerline: missing start lrud values? How to
+	compensate?
+In-Reply-To: <26589617.9rQgRJ6WpW@sayaaron>
+References: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+	<1714466.0VYOQ5LUDN@sayaaron> <26589617.9rQgRJ6WpW@sayaaron>
+Message-ID: <33236486.cxP4amqcD5@sayaaron>
+
+Am Dienstag, 3. Mai 2016, 23:16:08 schrieb Christian Rößler:
+
+>> And, by the way, thank you for providing such a mighty program!
+> sorry, I thought you were one of the developers of therion. No offense 
+> meant to anyone!
+
+And now I see you are. Before I walk deeper into the Gesenk I keep my 
+mouth shut. Should have kept it closed. Sorry.
+
+Quietened, Christian
+
+
+From martinsluka at mac.com  Wed May  4 09:16:09 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 04 May 2016 09:16:09 +0200
+Subject: [Therion] Centerline: missing start lrud values? How
+	to	compensate?
+In-Reply-To: <33236486.cxP4amqcD5@sayaaron>
+References: <874880f6-669e-4a72-9846-f5d00dedb407@me.com>
+	<1714466.0VYOQ5LUDN@sayaaron> <26589617.9rQgRJ6WpW@sayaaron>
+	<33236486.cxP4amqcD5@sayaaron>
+Message-ID: <7AA59B2E-89A5-4C03-BFE3-AA447E69B318@mac.com>
+
+HAHA, 
+
+good joke, my official title is „spokesman“ of Therion.
+
+But I and my friend we were dreaming about something similar in time when „fathers“ of Therion were very very young. :D :D :D
+
+m.s.
+
+
+> 3. 5. 2016 v 23:19, Christian Rößler <chr_rossi at kartan.de>:
+> 
+> Am Dienstag, 3. Mai 2016, 23:16:08 schrieb Christian Rößler:
+> 
+>>> And, by the way, thank you for providing such a mighty program!
+>> sorry, I thought you were one of the developers of therion. No offense 
+>> meant to anyone!
+> 
+> And now I see you are. Before I walk deeper into the Gesenk I keep my 
+> mouth shut. Should have kept it closed. Sorry.
+> 
+> Quietened, Christian
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Wed May  4 17:03:05 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 04 May 2016 17:03:05 +0200
+Subject: [Therion] non-magnetic screws for DistoX2
+Message-ID: <9EF82387-9CE0-41CE-96C1-B64C81F2F7C9@mac.com>
+
+To replace all steel screw you may use these
+
+https://de.screwerk.com/shop/detail/stp/STP390200160E.html
+
+They have e-shops in several countries.
+
+m.s.
+
+
+From chr_rossi at kartan.de  Thu May  5 18:39:17 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Thu, 05 May 2016 18:39:17 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+Message-ID: <2159190.QfIcnh9tWm@sayaaron>
+
+Hallo everyone,
+
+just two questions, if you please, as it is sometimes not easy to find a 
+negative ('cannot do') when searching through wiki pages and such.
+
+I have not mastered working with maps, so far; and I am unsure whether I 
+need them at all. So I would like to know whether it is possible to do 
+these things without them:
+
+First, I would like to know if I can get symbols like 'entrance' in the 
+output:
+
+In a th-file (called per 'input', of course) I have written the entry 
+|station 0 "Mundloch" entrance
+and in the thconfig-file:
+| symbol-show point station
+…but I cannot get them to show in the output pdf. Is that the wrong way, 
+in principle?
+
+Second: The polygon draw leaves edges unfilled when two following, bending 
+polygon lines (centrelines) meet. Can these edges be filled via 
+interpolation or such?
+
+Best regards, Christian
+
+
+PS. As I do not want to flood the list with beginner questions, I would be 
+happy if there is someone I could ask simple questions, perhaps via email?
+
+
+From martinsluka at mac.com  Fri May  6 08:11:21 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 06 May 2016 08:11:21 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <2159190.QfIcnh9tWm@sayaaron>
+References: <2159190.QfIcnh9tWm@sayaaron>
+Message-ID: <BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>
+
+Dear Christian,
+
+any „beginner’s“ question to Therion’s mailing list is OK, because we are looking to try to solve as much as possible problems and ideas which cavers have about documentation of caves.
+
+You may not use symbols without definition of scraps - small parts of maps. But you may define a scrap (several stations long only) and use only point symbols for stations and let’s say symbol for entrance. Then the other one scrap and the next scrap…
+
+You should only define map then:
+
+map polygon_only.map -projection plan
+    scrap1
+    scrap2
+    scrap3
+    …
+endmap
+
+in thconfig you just use „select“ command:
+
+select polygon_only.map
+
+m.s.
+
+> 5. 5. 2016 v 18:39, Christian Rößler (Roessler) <chr_rossi at kartan.de>:
+> 
+> Hallo everyone,
+> 
+> just two questions, if you please, as it is sometimes not easy to find a 
+> negative ('cannot do') when searching through wiki pages and such.
+> 
+> I have not mastered working with maps, so far; and I am unsure whether I 
+> need them at all. So I would like to know whether it is possible to do 
+> these things without them:
+> 
+> First, I would like to know if I can get symbols like 'entrance' in the 
+> output:
+> 
+> In a th-file (called per 'input', of course) I have written the entry 
+> |station 0 "Mundloch" entrance
+> and in the thconfig-file:
+> | symbol-show point station
+> …but I cannot get them to show in the output pdf. Is that the wrong way, 
+> in principle?
+> 
+> Second: The polygon draw leaves edges unfilled when two following, bending 
+> polygon lines (centrelines) meet. Can these edges be filled via 
+> interpolation or such?
+> 
+> Best regards, Christian
+> 
+> 
+> PS. As I do not want to flood the list with beginner questions, I would be 
+> happy if there is someone I could ask simple questions, perhaps via email?
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Fri May  6 10:14:56 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 6 May 2016 20:14:56 +1200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <2159190.QfIcnh9tWm@sayaaron>
+References: <2159190.QfIcnh9tWm@sayaaron>
+Message-ID: <B66B44FFAA144DA8A25C0A887ED52C1B@JUICEBRAIN>
+
+Christian
+
+> First, I would like to know if I can get symbols like 'entrance' in the 
+output:
+
+> station 0 "Mundloch" entrance
+Information from station statement like the above is not, as far as I know,
+able to be echoed in map exports (such as pdf outputs).  Both the text and
+the entrance indicator is however present in model exports of type .lox, and
+the entrance indicator only for .3d
+
+>  symbol-show point station
+This statement is referring only to the drawing point station symbol that
+you might create in a scrap.  It has no effect on the model centreline
+symbols. The components of the centreline (or 'model') are considered
+differently to (scrap) drawing symbols by Therion. Martins suggestion is an
+elegant way of including entrance symbols on a centreline with minimal scrap
+drawing.
+
+It is possible to control how the stations are displayed in 'centreline
+only' outputs, but I would consider it an advanced topic, and even the
+experts have trouble with it. It is a fickle thing to attempt to control, in
+my experience. See
+http://therion.speleo.sk/wiki/doku.php/faq#how_do_i_print_only_cave_or_surfa
+ce_stations_with_a_particular_mark_ie_fixed_or_painted
+
+> Second: The polygon draw leaves edges unfilled when two following, bending
+
+polygon lines (centrelines) meet. Can these edges be filled via 
+interpolation or such?
+
+No. I think the usual way to think of centreline outputs is a temporary
+debug-like output that is a precursor to drawing scraps that you collect
+together in maps, ready for a final presentation. And so no, the polygons
+generated by the LRUD information are not processed further by Therion.  If
+you draw scraps, and the scraps do not join perfectly, you can use the join
+statement to force a smooth join of scraps.
+
+> PS. As I do not want to flood the list with beginner questions, I would be
+
+happy if there is someone I could ask simple questions, perhaps via email?
+
+I think it is better to ask such questions on the forum.  That way everyone
+else gets to ponder how well they really know therion, and to learn possibly
+unexpected ways of solving problems.  And maybe insight as to how to improve
+the documentation.
+Bruce
+
+
+
+From chr_rossi at kartan.de  Fri May  6 14:18:27 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Fri, 06 May 2016 14:18:27 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>
+References: <2159190.QfIcnh9tWm@sayaaron>
+	<BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>
+Message-ID: <1516173.Dh4HEm6KG4@sayaaron>
+
+Am Freitag, 6. Mai 2016, 08:11:21 schrieb Martin Sluka:
+
+Dear Martin, dear Bruce,
+
+> any „beginner’s“ question to Therion’s mailing list is OK, because we
+> are looking to try to solve as much as possible problems and ideas
+> which cavers have about documentation of caves.
+>
+> [Bruce:]
+> I think it is better to ask such questions on the forum.  That way
+> everyone else gets to ponder how well they really know therion, and to
+> learn possibly unexpected ways of solving problems.  And maybe insight
+> as to how to improve the documentation.
+
+thank you both; then I will ask lots of stupid questions :-)
+
+> You may not use symbols without definition of scraps - small parts of
+> maps. But you may define a scrap (several stations long only) and use
+> only point symbols for stations and let’s say symbol for entrance. Then
+> the other one scrap and the next scrap…
+> 
+> You should only define map then:
+> 
+> map polygon_only.map -projection plan
+>     scrap1
+>     scrap2
+>     scrap3
+>     …
+> endmap
+
+I think I understand now. I tried to work in this route, then, is this a 
+correct work-flow? (Tried after 
+therion.speleo.sk/wiki/doku.php/drawingchecklist)
+
+I:
+- opened the therion project file (bergwerk.thconfig),
+- went to "Map editor",
+- 'new'-file symbol,
+- went to "Background image" --> xvi-File of polygon (centreline) drawing
+- the file commands ("Dateibefehle"), insert scrap ("Skizze einfügen")
+- Pointsymbol - insert point--> type "entrance"
+- Saved as "bergwerk.th2".
+
+Then in the highest level th-file (bergwerk.th):
+
+(survey bergwerk -title "Bergwerk 1"
+... lots of input, equate ...)
+
+input bergwerk.th2
+map polygon_only.map -projection plan
+   scrap1
+endmap
+
+endsurvey
+
+Then, after a lot of fiddling I realized there needs to be a map hierarchy 
+also, so I set after 'endsurvey':
+
+map total-map
+  polygon_only.map at bergwerk
+  bergwerk
+endmap
+
+... and modified the th-file as such:
+
+source bergwerk.th
+
+select total-map
+
+layout bergwerk_export
+    language de
+    units metric	[etc. pp. ff.]
+endlayout
+
+select polygon_only.map at bergwerk
+
+export map -projection plan -o bergwerk.xvi
+export map -projection plan -layout bergwerk_export -layout-color map-fg 
+60 -output Bergwerk.pdf -fmt pdf
+
+
+In the compiler compartment the little window on the right "Planstruktur" 
+(map structure) shows:
+
+[Folder symbol] Plan
+	|
+	|-[Double sheet symbol] total-map
+	|
+	|----[Single sheet symbol] polygon-only.map
+
+... which seems correct to me, and it compiles without error.
+
+But now I get an exported pdf like that:
+
+Before:
+---------
+| poly	|
+| gon	|
+| draw	|
+---------
+
+Now:
+|-------|
+| scrap	|
+| entr.	|
+---------
+| poly	|
+| gon	|
+| draw	|
+---------
+
+(I hope you see what O meant to draw:). But I see the entrance symbol now!
+
+So I fear I missed something to tell Therion to layer this correctly 
+instead of first the scrap, then on paper below the polygopn draw. I think 
+it has something to do with 'joining scraps', 
+http://therion.speleo.sk/wiki/doku.php/tips, but how do I join only one 
+scrap to the polygon draw?
+
+Or is it simply a nesting problem, and I nested wrong somewhere? Do I need 
+to use the 'join' command in the th file, somthing like 'join scrap1 
+0 at Bergwerk=1'? Do I simply need at least one lineor such in the scrap, and 
+a single point is not enough? Tried to fiddle with that, but to no avail 
+so far.
+
+Thanks again, an best regards,
+Christian
+
+
+From chr_rossi at kartan.de  Fri May  6 14:24:54 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Fri, 06 May 2016 14:24:54 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <B66B44FFAA144DA8A25C0A887ED52C1B@JUICEBRAIN>
+References: <2159190.QfIcnh9tWm@sayaaron>
+	<B66B44FFAA144DA8A25C0A887ED52C1B@JUICEBRAIN>
+Message-ID: <146255909.WzlAEZ8tbV@sayaaron>
+
+Am Freitag, 6. Mai 2016, 20:14:56 schrieb Bruce <bruce at tomo.co.nz>:
+
+Hallo Bruce,
+
+> http://therion.speleo.sk/wiki/doku.php/faq#how_do_i_print_only_cave_or_s
+> urface_stations_with_a_particular_mark_ie_fixed_or_painted
+
+you are correct; that's _way_ too advanced for me, if desirable at all. It 
+was a great help to me to see what does not work, and what work-flow is 
+not meant to be followed, so to say.
+
+So, for my next steps, if I need to see the centreline/ polygon draw as a 
+intermediate output, would it be the right way to out-line the 
+intermediate polygon lrud shadowings via the map editor to get correctly 
+set walls, which were then filled correctly?
+
+Best regards, Christian
+
+
+From chr_rossi at kartan.de  Fri May  6 17:14:20 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Fri, 06 May 2016 17:14:20 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <1516173.Dh4HEm6KG4@sayaaron>
+References: <2159190.QfIcnh9tWm@sayaaron>
+	<BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>
+	<1516173.Dh4HEm6KG4@sayaaron>
+Message-ID: <1618234.LkxD0Ovjnt@sayaaron>
+
+Am Freitag, 6. Mai 2016, 14:18:27 schrieb Christian Rößler:
+
+> Dear Martin, dear Bruce,
+
+thanks again; these were the things I needed to overcome to get it work! 
+Now I am happily tracing mine walls (cave walls) over the centerline 
+background pictures, and starting to put symbols in.
+
+> In the compiler compartment the little window on the right
+> "Planstruktur" (map structure) shows:
+> 
+> [Folder symbol] Plan
+> 
+> 	|-[Double sheet symbol] total-map
+> 	|
+> 	|----[Single sheet symbol] polygon-only.map
+> 
+> ... which seems correct to me, and it compiles without error.
+> 
+> But now I get an exported pdf like that:
+> 
+> Before:
+> ---------
+> 
+> | poly	|
+> | gon	|
+> | draw	|
+> 
+> ---------
+> 
+> Now:
+> |-------|
+> |
+> | scrap	|
+> | entr.	|
+> 
+> ---------
+> 
+> | poly	|
+> | gon	|
+> | draw	|
+> 
+> ---------
+> 
+> (I hope you see what O meant to draw:). But I see the entrance symbol
+> now!
+> 
+> So I fear I missed something to tell Therion to layer this correctly
+> instead of first the scrap, then on paper below the polygopn draw. I
+> think it has something to do with 'joining scraps',
+> http://therion.speleo.sk/wiki/doku.php/tips, but how do I join only one
+> scrap to the polygon draw?
+> 
+> Or is it simply a nesting problem, and I nested wrong somewhere? Do I
+> need to use the 'join' command in the th file, somthing like 'join
+> scrap1 0 at Bergwerk=1'? Do I simply need at least one lineor such in the
+> scrap, and a single point is not enough? Tried to fiddle with that, but
+> to no avail so far.
+
+according to http://therion.speleo.sk/wiki/doku.php/exportselectionformat 
+this happens as centreline (polygon draws) and map drawings are 
+fundamentally different, if I understand this correctly; is it possible 
+there is no way to export them 'layered', I mean the map-scraps 
+translucent over the centerline? I would like in some circumstances to 
+have it printed within the resulting mine plan, but, if not possible, I 
+can live without.
+
+Another question: I am putting line points over the background image 
+centerline 'wings' (l+r). Is there, perhaps, a function I do not know of 
+which sets the line-points automatically over the centerline left- and 
+right-wings?
+
+Best regards, Christian
+
+
+
+
+From bruce at tomo.co.nz  Fri May  6 22:55:46 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 7 May 2016 08:55:46 +1200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <1618234.LkxD0Ovjnt@sayaaron>
+References: <2159190.QfIcnh9tWm@sayaaron><BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>	<1516173.Dh4HEm6KG4@sayaaron>
+	<1618234.LkxD0Ovjnt@sayaaron>
+Message-ID: <CD4C70F0D56E4EE7A8816B952A9D848B@JUICEBRAIN>
+
+> according to http://therion.speleo.sk/wiki/doku.php/exportselectionformat 
+this happens as centreline (polygon draws) and map drawings are 
+fundamentally different, if I understand this correctly; is it possible 
+there is no way to export them 'layered', I mean the map-scraps 
+translucent over the centerline? I would like in some circumstances to 
+have it printed within the resulting mine plan.
+
+This is easily done.  You need to define a map with just scraps and define a
+separate map with just centreline(s).  Then select both of those maps for
+export (or combine those two maps, and select the combination map for
+export).
+
+I see the table on that wiki page is a bit confusing and contains an error
+on the map - map - centrelines line.  I will try to fix.
+
+> Another question: I am putting line points over the background image 
+centerline 'wings' (l+r). Is there, perhaps, a function I do not know of 
+which sets the line-points automatically over the centerline left- and 
+right-wings?
+
+No, you have to draw the walls manually for pdf output (although Loch will
+display the LRUD as smooth walls).
+
+Bruce
+
+
+
+From martinsluka at mac.com  Sat May  7 08:13:39 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 07 May 2016 08:13:39 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <CD4C70F0D56E4EE7A8816B952A9D848B@JUICEBRAIN>
+References: <2159190.QfIcnh9tWm@sayaaron>
+	<BC4C1D2E-B0FE-4AE2-A887-7D4C833194C4@mac.com>
+	<1516173.Dh4HEm6KG4@sayaaron> <1618234.LkxD0Ovjnt@sayaaron>
+	<CD4C70F0D56E4EE7A8816B952A9D848B@JUICEBRAIN>
+Message-ID: <404DED5D-2EA4-4AD6-9B42-FD7A33974049@mac.com>
+
+
+> 6. 5. 2016 v 22:55, Bruce <bruce at tomo.co.nz>:
+> 
+> No, you have to draw the walls manually for pdf output 
+
+Anyway you may export .xvi file first and use it as background so you’ll see the LR distances.
+
+And for map you don’t use curves for walls, you may use straight lines only with points in LR.
+
+m.s.
+
+From chr_rossi at kartan.de  Sat May  7 12:47:56 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Sat, 07 May 2016 12:47:56 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <404DED5D-2EA4-4AD6-9B42-FD7A33974049@mac.com>
+References: <2159190.QfIcnh9tWm@sayaaron>
+	<CD4C70F0D56E4EE7A8816B952A9D848B@JUICEBRAIN>
+	<404DED5D-2EA4-4AD6-9B42-FD7A33974049@mac.com>
+Message-ID: <76982058.D5PuYHjJ9T@sayaaron>
+
+Am Samstag, 7. Mai 2016, 08:13:39 schrieb Martin Sluka:
+
+>> 6. 5. 2016 v 22:55, Bruce <bruce at tomo.co.nz>:
+>> No, you have to draw the walls manually for pdf output 
+> Anyway you may export .xvi file first and use it as background so you’ll
+> see the LR distances. 
+> And for map you don’t use curves for walls, you may use straight lines
+> only with points in LR.
+
+This I have done, and what I first thought as a bit of an inconvenience I 
+have now learned to notice as a better way: I exported the xvi-file as 
+background, as you said, and set straight line points.
+
+Then I used the "convert to curve" function and manipulated these little 
+extending lines with squares (sorry, do not know how they are being 
+called) until the now curved line fitted my expectation, and inserted 
+(seldom) points a-new where necessary, so I could realign the adit walls 
+according to my memory and photos. Now I will apply this knowledge to some 
+other surveys we made.
+
+I am very pleased with the output, and now I will learn how to define a 
+centreline as part of a map output as Bruce hinted (if needed at all, my 
+co-explorers did not deem it necessary).
+
+By the way I think some of the other people here will start to use Therion 
+as well, as they too were very pleased with the resulting complete map.
+
+Thanks again for the friendly help, best regards and Glückauf!
+Christian
+
+
+PS. Would it be of interest if I write a story "How a miner learned to use 
+simple Therion"? I would like to give something back to the Therion users.
+
+
+From chr_rossi at kartan.de  Sat May  7 13:00:06 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Sat, 07 May 2016 13:00:06 +0200
+Subject: [Therion] Mining symbols?
+Message-ID: <4229381.fKz3LguMuB@sayaaron>
+
+Hallo everyone,
+
+I remember faintly that some years ago, when I used Therion for a bit (but 
+did not progress further as centreline output) there was a discussion 
+about mining symbols for Therion. I lost these Mails; archive says 2007. I 
+think this would broaden the applicability of Therion to mine explorers.
+
+Has, by any chance, work progressed in this field, as I could not find 
+anything via web/wiki search? If not, how can I help? Are there other 
+miners here who would like mining symbol sets, too?
+
+Until then, is there a possibility I can insert a free hand draw of, say, 
+a shaft symbol (which would be more of an area)?
+
+Best regards, Christian
+
+
+From bruce at tomo.co.nz  Sat May  7 22:07:02 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 8 May 2016 08:07:02 +1200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <76982058.D5PuYHjJ9T@sayaaron>
+References: <2159190.QfIcnh9tWm@sayaaron><CD4C70F0D56E4EE7A8816B952A9D848B@JUICEBRAIN><404DED5D-2EA4-4AD6-9B42-FD7A33974049@mac.com>
+	<76982058.D5PuYHjJ9T@sayaaron>
+Message-ID: <904BD36D6A684B348D7BB789550E87F7@JUICEBRAIN>
+
+> Then I used the "convert to curve" function and manipulated these little 
+extending lines with squares (sorry, do not know how they are being 
+called) 
+
+=>Bezier control points (perhaps).
+
+> until the now curved line fitted my expectation, and inserted 
+(seldom) points a-new where necessary, so I could realign the adit walls 
+according to my memory and photos. Now I will apply this knowledge to some 
+other surveys we made.
+
+This is the way to amend old drawings, but if you are drawing new lines,
+then 'click-hold-drag' to create curves on the fly.  Much faster.
+
+
+>PS. Would it be of interest if I write a story "How a miner learned to use 
+simple Therion"? I would like to give something back to the Therion users.
+
+I think you input would be valuable.  Writing good guidance can be a big
+job. Probably best to have a look at the wiki, and make or suggest edits to
+fill some gaps or misleading information on the existing pages that are
+listed on the wiki front page.
+Therion for cavers
+Therion by examples
+Footlegs drawing tutorial latest draft
+Data organisation
+
+Bruce
+
+
+
+From bruce at tomo.co.nz  Sat May  7 22:27:56 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 8 May 2016 08:27:56 +1200
+Subject: [Therion] Mining symbols?
+In-Reply-To: <4229381.fKz3LguMuB@sayaaron>
+References: <4229381.fKz3LguMuB@sayaaron>
+Message-ID: <2F4D915ED94A43DC8C6FB68322486A14@JUICEBRAIN>
+
+> I remember faintly that some years ago, when I used Therion for a bit (but
+
+did not progress further as centreline output) there was a discussion 
+about mining symbols for Therion. I lost these Mails; archive says 2007. I 
+think this would broaden the applicability of Therion to mine explorers.
+
+I remember.
+http://search.gmane.org/?query=mine+mining&author=&group=gmane.comp.gis.ther
+ion&sort=relevance&DEFAULTOP=or&xP=Zmine&xFILTERS=Gcomp.gis.therion---A
+
+
+> Has, by any chance, work progressed in this field, as I could not find 
+anything via web/wiki search? If not, how can I help? 
+
+Not as far as I know.
+
+
+> Until then, is there a possibility I can insert a free hand draw of, say, 
+a shaft symbol (which would be more of an area)?
+
+No, images can be inserted, but they are located relative to the page, not
+to the survey.  And background pencil sketches can be displayed, so you
+could redraw bits of your map in pencil (or another software package)and
+insert the bitmap as a background sketch.  Both terrible hacks, lets just
+say the answer is no.
+
+You can take existing symbols and rename and change them to your liking.
+Refer to
+http://therion.speleo.sk/wiki/lib/exe/fetch.php/therion_symbols_20130407_.pd
+f for a list of built-in symbols
+Refer to http://therion.speleo.sk/wiki/doku.php/metapost for some other
+symbols and guidance on how to make or adjust for your own use.
+
+Perhaps there are other mine explorers who have done this already?
+
+Bruce
+
+
+
+
+
+
+
+From chr_rossi at kartan.de  Sun May  8 14:21:10 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Sun, 08 May 2016 14:21:10 +0200
+Subject: [Therion] Symbols without map editor, polygon line filling?
+In-Reply-To: <904BD36D6A684B348D7BB789550E87F7@JUICEBRAIN>
+References: <2159190.QfIcnh9tWm@sayaaron> <76982058.D5PuYHjJ9T@sayaaron>
+	<904BD36D6A684B348D7BB789550E87F7@JUICEBRAIN>
+Message-ID: <6096785.SylCD4XYeA@sayaaron>
+
+Am Sonntag, 8. Mai 2016, 08:07:02 schrieb Bruce <bruce at tomo.co.nz>:
+
+>> until the now curved line fitted my expectation, and inserted
+>> (seldom) points a-new where necessary, so I could realign the adit
+>> walls according to my memory and photos. Now I will apply this
+>> knowledge to some other surveys we made.
+> 
+> This is the way to amend old drawings, but if you are drawing new lines,
+> then 'click-hold-drag' to create curves on the fly.  Much faster.
+
+Thank for the hint, I practiced that for a while, and while my first 
+results were a bit… shitty I will get the hang of it.
+
+>> PS. Would it be of interest if I write a story "How a miner learned to
+>> use simple Therion"? I would like to give something back to the Therion
+>> users.
+> 
+> I think you input would be valuable.  Writing good guidance can be a big
+> job. Probably best to have a look at the wiki, and make or suggest
+> edits to fill some gaps or misleading information on the existing pages
+> that are listed on the wiki front page.
+> Therion for cavers
+> Therion by examples
+> Footlegs drawing tutorial latest draft
+> Data organisation
+
+Will do that, and while I am doing my next survey I will write the steps 
+down. This may take a while, but I will not forget it. And I will look 
+over the wiki pages you mentioned, but I have to admit I do have 
+difficulties to understand a lot of things there.
+
+Best regards and Glückauf!
+Christian
+
+
+From chr_rossi at kartan.de  Sun May  8 14:37:25 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Sun, 08 May 2016 14:37:25 +0200
+Subject: [Therion] Mining symbols?
+In-Reply-To: <2F4D915ED94A43DC8C6FB68322486A14@JUICEBRAIN>
+References: <4229381.fKz3LguMuB@sayaaron>
+	<2F4D915ED94A43DC8C6FB68322486A14@JUICEBRAIN>
+Message-ID: <1947254.xdGSvW3jxY@sayaaron>
+
+Am Sonntag, 8. Mai 2016, 08:27:56 schrieb Bruce <bruce at tomo.co.nz>:
+
+>> I remember faintly that some years ago, when I used Therion for a bit
+>> (but did not progress further as centreline output) there was a
+>> discussion about mining symbols for Therion. I lost these Mails;
+>> archive says 2007. I think this would broaden the applicability of
+>> Therion to mine explorers.
+> I remember.
+> http://search.gmane.org/?query=mine+mining&author=&group=gmane.comp.gis.
+> therion&sort=relevance&DEFAULTOP=or&xP=Zmine&xFILTERS=
+>  Gcomp.gis.therion---A
+
+Yes, these they were.
+
+>> Has, by any chance, work progressed in this field, as I could not find
+>> anything via web/wiki search? If not, how can I help?
+> Not as far as I know.
+
+>> Until then, is there a possibility I can insert a free hand draw of,
+>> say, a shaft symbol (which would be more of an area)?
+> 
+> No, images can be inserted, but they are located relative to the page,
+> not to the survey.  And background pencil sketches can be displayed, so
+> you could redraw bits of your map in pencil (or another software
+> package)and insert the bitmap as a background sketch.  Both terrible
+> hacks, lets just say the answer is no.
+
+Understood. A pity (for miner's needs), but then I…
+
+> You can take existing symbols and rename and change them to your liking.
+> Refer to
+> http://therion.speleo.sk/wiki/lib/exe/fetch.php/therion_symbols_20130407
+> _.pdf for a list of built-in symbols
+> Refer to http://therion.speleo.sk/wiki/doku.php/metapost for some other
+> symbols and guidance on how to make or adjust for your own use.
+
+… just will work into the metapost link; I think bet starting point for me 
+would be 'overloading' existing symbols, as you mentioned.
+
+> Perhaps there are other mine explorers who have done this already?
+
+I would like to know that also:)
+
+Best regards, Christian
+
+
+From chr_rossi at kartan.de  Sun May  8 14:51:21 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Sun, 08 May 2016 14:51:21 +0200
+Subject: [Therion] Line label: Line printable? Are walls printable as
+	dotted/dashed lines?
+Message-ID: <2284081.WN0cBRq0HS@sayaaron>
+
+Hallo everyone,
+
+two questions:
+
+- I would like sometimes to draw an Erzgang (ore load? lode? mineral 
+vein?) into a mine survey. The line type Label (Beschriftung) would fit 
+into that bill nicely. Is it possible to draw the line along to the label? 
+And it is possible to draw the line and keep the label text together 
+(instead of being distributed along the whole line)? Well, or is there a 
+better way?
+
+- Is it possible to mark a wall line to be printed dashed/dotted? I could 
+not find any line options save id in the Therion handbook (p. 29). I would 
+like to do that for wall types when I only guess the continuation of an 
+adit. Or do I need to do metapost magic for that as eg. in 
+http://comments.gmane.org/gmane.comp.gis.therion/2189 (search for dashed)?
+
+Thanks, and best regards,
+Christian
+
+
+From chr_rossi at kartan.de  Sun May  8 17:14:15 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Sun, 08 May 2016 17:14:15 +0200
+Subject: [Therion] Are walls printable as dotted/dashed lines? [solved]
+In-Reply-To: <2284081.WN0cBRq0HS@sayaaron>
+References: <2284081.WN0cBRq0HS@sayaaron>
+Message-ID: <7824194.xT8CS7sQCX@sayaaron>
+
+Am Sonntag, 8. Mai 2016, 14:51:21 schrieb Christian Rößler (Roessler):
+
+> - Is it possible to mark a wall line to be printed dashed/dotted? I
+> could not find any line options save id in the Therion handbook (p.
+> 29). I would like to do that for wall types when I only guess the
+> continuation of an adit. Or do I need to do metapost magic for that as
+> eg. in
+> http://comments.gmane.org/gmane.comp.gis.therion/2189 (search for
+> dashed)?
+
+found that by myself, as I learned about border subtypes for water filled 
+adit parts - [Line] "-subtype unsurveyed" in options fits that bill 
+nicely. Have not found this being mentioned elsewhere.
+
+Perhaps it would be nice to insert into the Wiki at the appropriate point 
+something like "insert these subtypes into the options field prepended by 
+-subtype"; this took me some fiddling time to learn (not that I wish to 
+complain:).
+
+Sorry for asking needlessly; it's sometimes not easy to know where to 
+start to search. I found it as a by-product preparing to overlay symbols 
+in Bruce's symbol list link.
+
+Thanks, and best regards,
+Christian
+
+
+
+From bruce at tomo.co.nz  Sun May  8 22:41:45 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 9 May 2016 08:41:45 +1200
+Subject: [Therion] Line label: Line printable? Are walls printable
+	asdotted/dashed lines?
+In-Reply-To: <2284081.WN0cBRq0HS@sayaaron>
+References: <2284081.WN0cBRq0HS@sayaaron>
+Message-ID: <6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+
+
+- I would like sometimes to draw an Erzgang (ore load? lode? mineral 
+vein?) into a mine survey. The line type Label (Beschriftung) would fit 
+into that bill nicely. Is it possible to draw the line along to the label? 
+
+You mean one line entity creating a parallel line and text? I have not seen
+this, but I am sure it is possible with metapost.
+Or do you mean an independent line, perhaps with arrow from text to the
+subject of the label? For this see line arrow in by following the link
+below.
+
+
+- And it is possible to draw the line and keep the label text together 
+(instead of being distributed along the whole line)? Well, or is there a 
+better way?
+
+The line label shrinks or stretches the text to fit the whole length of the
+line. See the heading 'Label' in
+http://therion.speleo.sk/wiki/doku.php/drawingchecklist#lines
+You have some control by adjusting the scale parameter for the line label.
+Personally I generally use point label, with no orientation (this way text
+is always 'horizontal', even after scrap morphing distortions).  I use line
+labels from time to time for special effect or emphasis.
+
+Bruce
+
+
+
+
+From phil.vernant at gmail.com  Sun May  8 22:46:11 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sun, 8 May 2016 22:46:11 +0200
+Subject: [Therion] plot the splay shots
+In-Reply-To: <6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+References: <2284081.WN0cBRq0HS@sayaaron>
+	<6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+Message-ID: <6FD438BC-931F-4A91-8CBF-F740A3EE26E7@gmail.com>
+
+Hello therion users !
+
+After looking in the guide book, the wikis and others I could not find the answer to my question so here I am. Can we plot the splay shots with xtherion, if not, can we at least print them on the pdf export ? And maybe re-import the pdf in xtherion to have the splay shots ?
+I’m using topodroid and therion, and the combination seems wicked good, I’ve stopped developing my own mapping software after discovering therion.
+
+Thanks,
+Phil
+
+
+
+From chr_rossi at kartan.de  Mon May  9 00:36:39 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Mon, 09 May 2016 00:36:39 +0200
+Subject: [Therion] Line label: Line printable? Are walls printable as
+	dotted/dashed lines?
+In-Reply-To: <6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+References: <2284081.WN0cBRq0HS@sayaaron>
+	<6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+Message-ID: <1865531.tBqHAcqom2@sayaaron>
+
+Am Montag, 9. Mai 2016, 08:41:45 schrieb Bruce <bruce at tomo.co.nz>:
+
+>> - I would like sometimes to draw an Erzgang (ore load? lode? mineral
+>> vein?) into a mine survey. The line type Label (Beschriftung) would fit
+>> into that bill nicely. Is it possible to draw the line along to the
+>> label?
+> You mean one line entity creating a parallel line and text? I have not
+> seen this, but I am sure it is possible with metapost.
+
+thanks, then I know I haven't overlooked something in the interface. I 
+searched and found the Example 'l_u_fault' on bottom  
+http://therion.speleo.sk/wiki/doku.php?id=metapost, which I should be able 
+to 'misuse'.
+
+But it dows not yield a dashed line (which would be perfect), but a thick, 
+red line in the pdf output. This does not seem to be a problem of the 
+matepost code snippet, as the strata example above (second from bottom) 
+yields the same red line.
+
+Do you have, perhaps, any idea where this comes from? Is there something 
+missing? I think I have seen somewhere something about legend entry 
+modification, next step I will learn that.
+
+> Or do you mean an independent line, perhaps with arrow from text to the
+> subject of the label? For this see line arrow in by following the link
+> below.
+
+This I will use until I could solve the 'red line' problem: A headless 
+arrow with a point label, as you mentioned…
+ 
+> The line label shrinks or stretches the text to fit the whole length of
+> the line. See the heading 'Label' in
+> http://therion.speleo.sk/wiki/doku.php/drawingchecklist#lines
+> You have some control by adjusting the scale parameter for the line
+> label. Personally I generally use point label, with no orientation
+> (this way text is always 'horizontal', even after scrap morphing
+> distortions).  I use line labels from time to time for special effect
+> or emphasis.
+
+…here. It is good to see what others are doing to learn about good 
+practice.
+
+Thanks and best regards,
+Christian
+
+
+From chr_rossi at kartan.de  Mon May  9 00:49:26 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Mon, 09 May 2016 00:49:26 +0200
+Subject: [Therion] Line label: Line printable? Are walls printable as
+	dotted/dashed lines?
+In-Reply-To: <1865531.tBqHAcqom2@sayaaron>
+References: <2284081.WN0cBRq0HS@sayaaron>
+	<6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>
+	<1865531.tBqHAcqom2@sayaaron>
+Message-ID: <29854155.7fMonFmBWc@sayaaron>
+
+Am Montag, 9. Mai 2016, 00:36:39 schrieb Christian Rößler:
+
+>>> - I would like sometimes to draw an Erzgang (ore load? lode? mineral
+>>> vein?) into a mine survey. The line type Label (Beschriftung) would
+
+> thanks, then I know I haven't overlooked something in the interface. I
+> searched and found the Example 'l_u_fault' on bottom
+> http://therion.speleo.sk/wiki/doku.php?id=metapost, which I should be
+> able to 'misuse'.
+> 
+> But it dows not yield a dashed line (which would be perfect), but a
+> thick, red line in the pdf output. This does not seem to be a problem
+> of the matepost code snippet, as the strata example above (second from
+> bottom) yields the same red line.
+
+sorry, I forgot: Is this the correct way to access this metapost 
+modfification: I choose 'line', 'u', type 'u', options: "-subtype 
+l_u_fault"? (see attached screen shot)
+
+Thanks again, and best regards,
+Christian
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: new_line_type_fault.png
+Type: image/png
+Size: 12181 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160509/e2047234/attachment.png>
+
+From bruce at tomo.co.nz  Mon May  9 04:04:14 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 9 May 2016 14:04:14 +1200
+Subject: [Therion] Line label: Line printable? Are walls printable
+	asdotted/dashed lines?
+In-Reply-To: <29854155.7fMonFmBWc@sayaaron>
+References: <2284081.WN0cBRq0HS@sayaaron><6326B036EBB2464694C64AA06F347F0D@JUICEBRAIN>	<1865531.tBqHAcqom2@sayaaron>
+	<29854155.7fMonFmBWc@sayaaron>
+Message-ID: <7BCF4662C149446D9ED61E46B5FBCE58@JUICEBRAIN>
+
+Red output means therion thinks the symbol is undefined.
+In this case you should correct your syntax and enter u:fault or u -subtype
+fault for a definition like def l_u_fault
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Christian Rößler
+Sent: Monday, 9 May 2016 10:49 a.m.
+To: List for Therion users
+Subject: Re: [Therion] Line label: Line printable? Are walls printable
+asdotted/dashed lines?
+
+Am Montag, 9. Mai 2016, 00:36:39 schrieb Christian Rößler:
+
+>>> - I would like sometimes to draw an Erzgang (ore load? lode? mineral
+>>> vein?) into a mine survey. The line type Label (Beschriftung) would
+
+> thanks, then I know I haven't overlooked something in the interface. I
+> searched and found the Example 'l_u_fault' on bottom
+> http://therion.speleo.sk/wiki/doku.php?id=metapost, which I should be
+> able to 'misuse'.
+> 
+> But it dows not yield a dashed line (which would be perfect), but a
+> thick, red line in the pdf output. This does not seem to be a problem
+> of the matepost code snippet, as the strata example above (second from
+> bottom) yields the same red line.
+
+sorry, I forgot: Is this the correct way to access this metapost 
+modfification: I choose 'line', 'u', type 'u', options: "-subtype 
+l_u_fault"? (see attached screen shot)
+
+Thanks again, and best regards,
+Christian
+
+
+
+From Henry_Bennett at Dell.com  Mon May  9 08:50:58 2016
+From: Henry_Bennett at Dell.com (Henry_Bennett at Dell.com)
+Date: Mon, 9 May 2016 06:50:58 +0000
+Subject: [Therion] export more than one map?
+Message-ID: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM>
+
+Dell - Internal Use - Confidential
+Trying to export a survey that is primarily one system but also show the other smaller caves in the area.  Easy to do in a single map but then the statistics reflect all the surveys.  Is it possible to export to pdf multiple maps?
+
+Or is there a workaround? Such as telling therion to olnly pick up length and team from a specific branch?
+
+Thanks, Henry Bennett
+
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160509/ef2cea44/attachment.htm>
+
+From bruce at tomo.co.nz  Mon May  9 11:10:17 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 9 May 2016 21:10:17 +1200
+Subject: [Therion] export more than one map?
+In-Reply-To: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM>
+Message-ID: <084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>
+
+Henry
+
+Pg 31 of Therion Book.  You can specify a survey when you define a map.  If
+you do that then the reported map statistics are forced to match those of
+the survey.  This would satisfy your second suggestion.
+
+ 
+
+Alternatively you could 'preview below' the 'other caves' and then their
+statistics will be automatically suppressed, and it would be clear what the
+statistics refer to.
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Henry_Bennett at Dell.com
+Sent: Monday, 9 May 2016 6:51 p.m.
+To: therion at speleo.sk
+Subject: [Therion] export more than one map?
+
+ 
+
+Trying to export a survey that is primarily one system but also show the
+other smaller caves in the area.  Easy to do in a single map but then the
+statistics reflect all the surveys.  Is it possible to export to pdf
+multiple maps?  
+
+ 
+
+Or is there a workaround? Such as telling therion to olnly pick up length
+and team from a specific branch?
+
+ 
+
+Thanks, Henry Bennett
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160509/9e472a05/attachment.htm>
+
+From chr_rossi at kartan.de  Mon May  9 12:04:58 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Mon, 09 May 2016 12:04:58 +0200
+Subject: [Therion] Line label: Line printable? Are walls printable
+	asdotted/dashed lines?
+In-Reply-To: <7BCF4662C149446D9ED61E46B5FBCE58@JUICEBRAIN>
+References: <2284081.WN0cBRq0HS@sayaaron> <29854155.7fMonFmBWc@sayaaron>
+	<7BCF4662C149446D9ED61E46B5FBCE58@JUICEBRAIN>
+Message-ID: <2042311.KVLNHqJ7M7@sayaaron>
+
+Am Montag, 9. Mai 2016, 14:04:14 schrieb Bruce <bruce at tomo.co.nz>:
+
+> Am Montag, 9. Mai 2016, 00:36:39 schrieb Christian Rößler:
+>>>> - I would like sometimes to draw an Erzgang (ore load? lode? mineral
+>>>> vein?) into a mine survey. The line type Label (Beschriftung) would
+>> thanks, then I know I haven't overlooked something in the interface. I
+>> searched and found the Example 'l_u_fault' on bottom
+>> http://therion.speleo.sk/wiki/doku.php?id=metapost, which I should be
+>> able to 'misuse'.
+>> But it dows not yield a dashed line (which would be perfect), but a
+>> thick, red line in the pdf output. This does not seem to be a problem
+>> of the matepost code snippet, as the strata example above (second from
+>> bottom) yields the same red line.
+>> sorry, I forgot: Is this the correct way to access this metapost
+>> modfification: I choose 'line', 'u', type 'u', options: "-subtype
+>> l_u_fault"? (see attached screen shot)
+>
+> Red output means therion thinks the symbol is undefined.
+> In this case you should correct your syntax and enter u:fault or u
+> -subtype fault for a definition like def l_u_fault
+
+Thanks, Bruce! Now, with a little procedure name change and a text 
+substitution for the legend - lo and behold! I got my Erzgang (ore vein). 
+And not only one, many of them; miner's delight :).
+
+My mine surveys are starting to get really useful now. And now onto point 
+symbol redefinition!
+
+Best regards, and Glückauf (or what the caver's greet:),
+Christian
+
+
+From Henry_Bennett at Dell.com  Mon May  9 21:23:31 2016
+From: Henry_Bennett at Dell.com (Henry_Bennett at Dell.com)
+Date: Mon, 9 May 2016 19:23:31 +0000
+Subject: [Therion] export more than one map?
+In-Reply-To: <084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM>
+	<084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>
+Message-ID: <FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+
+Thanks Bruce, the "Survey" option in the MAP syntax is a really good place for me to start.
+
+Ultimately it would have been great if I could use a different layout file for different caves/surveys and then pull them all together in a single PDF.  I thought that is what may be possible with this
+
+export map -projection plan \
+     -layout LayoutMapThisCave   \
+     -layout LayoutMapThisCavePlan   \
+     -output ../Output/MiddleEarthPlan.pdf
+http://therion.speleo.sk/wiki/doku.php/outputs
+
+However this just appears to work with a single declared MAP.  In which case I'm struggling to see the usage case for this construct.  What I'm looking for is a UNION command to join two or more SELECT statements.  (or confirmation that this can't be done).
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce
+Sent: 09 May 2016 10:10
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] export more than one map?
+
+Henry
+Pg 31 of Therion Book.  You can specify a survey when you define a map.  If you do that then the reported map statistics are forced to match those of the survey.  This would satisfy your second suggestion.
+
+Alternatively you could 'preview below' the 'other caves' and then their statistics will be automatically suppressed, and it would be clear what the statistics refer to.
+Bruce
+
+________________________________
+From: therion-bounces at speleo.sk<mailto:therion-bounces at speleo.sk> [mailto:therion-bounces at speleo.sk] On Behalf Of Henry_Bennett at Dell.com<mailto:Henry_Bennett at Dell.com>
+Sent: Monday, 9 May 2016 6:51 p.m.
+To: therion at speleo.sk<mailto:therion at speleo.sk>
+Subject: [Therion] export more than one map?
+
+Trying to export a survey that is primarily one system but also show the other smaller caves in the area.  Easy to do in a single map but then the statistics reflect all the surveys.  Is it possible to export to pdf multiple maps?
+
+Or is there a workaround? Such as telling therion to olnly pick up length and team from a specific branch?
+
+Thanks, Henry Bennett
+
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160509/d82cbf34/attachment.htm>
+
+From martinsluka at mac.com  Tue May 10 09:13:11 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 10 May 2016 09:13:11 +0200
+Subject: [Therion] export more than one map?
+In-Reply-To: <FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM>
+	<084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>
+	<FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+Message-ID: <EA79D6CF-4951-4C5B-9AAF-DE3FBD04FB7F@mac.com>
+
+The problem is that thconfig reads all the file and interprets only last versions of commands or parameters.
+
+It is not the sequential interpreting.
+
+But you may export all your maps to PDFs separately and than put them together in other thconfig (or add them to last export of cave map):
+
+• map-image <x> <y> <n/s/e/w/ne/nw/se/sw/center> <filename> ◃ include image
+specified by <filename> into map at location specified by <x> <y>. For coordinates
+and alignment details, see map-header specification.
+
+(ThBook 2.3.16 page 53)
+
+You may use a script to make such complex queue of compilations (exports).
+
+m.s.
+
+
+> 9. 5. 2016 v 21:23, Henry_Bennett at Dell.com:
+> 
+> Thanks Bruce, the “Survey” option in the MAP syntax is a really good place for me to start. 
+>  
+> Ultimately it would have been great if I could use a different layout file for different caves/surveys and then pull them all together in a single PDF.  I thought that is what may be possible with this 
+>  
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160510/22c1d993/attachment.htm>
+
+From bruce at tomo.co.nz  Tue May 10 09:46:22 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 10 May 2016 19:46:22 +1200
+Subject: [Therion] export more than one map?
+In-Reply-To: <FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM><084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>
+	<FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+Message-ID: <6FE49EFE54D24A098DB1BAE467766633@JUICEBRAIN>
+
+Hi Henry 
+
+Both the suggestions that Martin has just made are good ones.
+
+Within a single th-config file, all select's are merged (as many as you
+want) to produce composite outputs.  You can include any or all of 'model'
+and various 'projections' (plan, extended, elev 0 deg, elev 1 deg, elev 2
+deg .elev 359 deg) and I generally do (but limit myself to no more than 3
+elevation projections).  The selections for one projection are of course
+never mixed with other projections.  And so you would then export a map for
+each projection (from a single th-config file)
+
+And using Martin's technique you can get therion to insert a map of one
+projection into the map of another.
+
+ 
+
+Regarding my LayoutMapThisCave and LayoutMapThisCavePlan ,
+LayoutMapThisCaveElev090 etc.
+
+This construct allows modular usage of layout statements, ensuring
+consistency across all th-config files,  all maps for a cave system and
+avoiding need for typing the same layout statements in multiple places.
+
+ 
+
+Cave wide parameters are put in LayoutMapThisCave
+
+Projection specific parameters are put in the others (such as rotation,
+header content and header position).
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Henry_Bennett at Dell.com
+Sent: Tuesday, 10 May 2016 7:24 a.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] export more than one map?
+
+ 
+
+Thanks Bruce, the "Survey" option in the MAP syntax is a really good place
+for me to start.  
+
+ 
+
+Ultimately it would have been great if I could use a different layout file
+for different caves/surveys and then pull them all together in a single PDF.
+I thought that is what may be possible with this 
+
+ 
+
+export map -projection plan \
+
+     -layout LayoutMapThisCave   \
+
+     -layout LayoutMapThisCavePlan   \
+
+     -output ../Output/MiddleEarthPlan.pdf
+
+http://therion.speleo.sk/wiki/doku.php/outputs
+
+ 
+
+However this just appears to work with a single declared MAP.  In which case
+I'm struggling to see the usage case for this construct.  What I'm looking
+for is a UNION command to join two or more SELECT statements.  (or
+confirmation that this can't be done).
+
+ 
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bruce
+Sent: 09 May 2016 10:10
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] export more than one map?
+
+ 
+
+Henry
+
+Pg 31 of Therion Book.  You can specify a survey when you define a map.  If
+you do that then the reported map statistics are forced to match those of
+the survey.  This would satisfy your second suggestion.
+
+ 
+
+Alternatively you could 'preview below' the 'other caves' and then their
+statistics will be automatically suppressed, and it would be clear what the
+statistics refer to.
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Henry_Bennett at Dell.com
+Sent: Monday, 9 May 2016 6:51 p.m.
+To: therion at speleo.sk
+Subject: [Therion] export more than one map?
+
+ 
+
+Trying to export a survey that is primarily one system but also show the
+other smaller caves in the area.  Easy to do in a single map but then the
+statistics reflect all the surveys.  Is it possible to export to pdf
+multiple maps?  
+
+ 
+
+Or is there a workaround? Such as telling therion to olnly pick up length
+and team from a specific branch?
+
+ 
+
+Thanks, Henry Bennett
+
+ 
+
+Dell Corporation Limited is registered in England and Wales. Company
+Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,
+Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160510/521062c5/attachment.htm>
+
+From chr_rossi at kartan.de  Tue May 10 17:45:14 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Tue, 10 May 2016 17:45:14 +0200
+Subject: [Therion] Metapost snippets out-source-able from thconfig/layout?
+Message-ID: <2820840.tHHzKtBhIQ@sayaaron>
+
+Hallo everybody,
+
+due to learning some metapost for making a Schacht (shaft?) symbol, I got 
+a thconfig file getting really fat and difficult to maintain. Is there a 
+possibility to source metapost snippets from another file?
+
+Neither 'source' nor 'input' (Handbook p. 15) seem to work, which does not 
+wonder me as the context 'layout' has to be obeyed.
+
+So, how are the people here handling that? Big, fat thconfig, or is there 
+another way?
+
+Best regards, Christian
+
+
+From ladislav at lblazek.cz  Tue May 10 17:55:31 2016
+From: ladislav at lblazek.cz (=?utf-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Tue, 10 May 2016 17:55:31 +0200
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <2820840.tHHzKtBhIQ@sayaaron>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+Message-ID: <D07793F3-E13B-4210-9959-16F4D9633B35@lblazek.cz>
+
+Hi Christian,
+input should work. See attached example files. Ladislav
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Archiv.zip
+Type: application/zip
+Size: 1652 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160510/d650776c/attachment.zip>
+-------------- next part --------------
+
+
+> 10. 5. 2016 v 17:45, Christian Rößler (Roessler) <chr_rossi at kartan.de>:
+> 
+> Hallo everybody,
+> 
+> due to learning some metapost for making a Schacht (shaft?) symbol, I got 
+> a thconfig file getting really fat and difficult to maintain. Is there a 
+> possibility to source metapost snippets from another file?
+> 
+> Neither 'source' nor 'input' (Handbook p. 15) seem to work, which does not 
+> wonder me as the context 'layout' has to be obeyed.
+> 
+> So, how are the people here handling that? Big, fat thconfig, or is there 
+> another way?
+> 
+> Best regards, Christian
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From henry at hbennett.com  Tue May 10 17:56:00 2016
+From: henry at hbennett.com (Henry Bennett)
+Date: Tue, 10 May 2016 16:56:00 +0100
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <2820840.tHHzKtBhIQ@sayaaron>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+Message-ID: <008201d1aad4$72c3fa90$584befb0$@hbennett.com>
+
+Hi Christian, try this
+
+	code metapost 
+	    input "link_to_where\myfile.mp"
+	endcode
+
+you can't use a network path.
+
+Enjoy, Henry
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Christian Rößler (Roessler)
+Sent: 10 May 2016 16:45
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Metapost snippets out-source-able from thconfig/layout?
+
+Hallo everybody,
+
+due to learning some metapost for making a Schacht (shaft?) symbol, I got a
+thconfig file getting really fat and difficult to maintain. Is there a
+possibility to source metapost snippets from another file?
+
+Neither 'source' nor 'input' (Handbook p. 15) seem to work, which does not
+wonder me as the context 'layout' has to be obeyed.
+
+So, how are the people here handling that? Big, fat thconfig, or is there
+another way?
+
+Best regards, Christian
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From henry at hbennett.com  Tue May 10 18:06:49 2016
+From: henry at hbennett.com (Henry Bennett)
+Date: Tue, 10 May 2016 17:06:49 +0100
+Subject: [Therion] export more than one map?
+In-Reply-To: <6FE49EFE54D24A098DB1BAE467766633@JUICEBRAIN>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM><084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN>	<FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM>
+	<6FE49EFE54D24A098DB1BAE467766633@JUICEBRAIN>
+Message-ID: <008e01d1aad5$f634b3a0$e29e1ae0$@hbennett.com>
+
+Hi Martin and Bruce,
+
+ 
+
+I can see "map-image" being a useful way to handle merging PDF documents.
+Have been using it for jpgs but never realised that you could merge pdf
+surveys.  Will take some thought around defining the coordinate systems
+space and getting alignment right but all the tools are there I believe.
+
+ 
+
+Still don't totally get the use of multiple layouts in a single export
+statement.  Surely if you are using plan and elevation they would be
+different "maps".   (or am I just being think?  Wouldn't be the first time).
+
+ 
+
+Cheers (and many thanks), Henry
+
+ 
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bruce
+Sent: 10 May 2016 08:46
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] export more than one map?
+
+ 
+
+Hi Henry 
+
+Both the suggestions that Martin has just made are good ones.
+
+Within a single th-config file, all select's are merged (as many as you
+want) to produce composite outputs.  You can include any or all of 'model'
+and various 'projections' (plan, extended, elev 0 deg, elev 1 deg, elev 2
+deg .elev 359 deg) and I generally do (but limit myself to no more than 3
+elevation projections).  The selections for one projection are of course
+never mixed with other projections.  And so you would then export a map for
+each projection (from a single th-config file)
+
+And using Martin's technique you can get therion to insert a map of one
+projection into the map of another.
+
+ 
+
+Regarding my LayoutMapThisCave and LayoutMapThisCavePlan ,
+LayoutMapThisCaveElev090 etc.
+
+This construct allows modular usage of layout statements, ensuring
+consistency across all th-config files,  all maps for a cave system and
+avoiding need for typing the same layout statements in multiple places.
+
+ 
+
+Cave wide parameters are put in LayoutMapThisCave
+
+Projection specific parameters are put in the others (such as rotation,
+header content and header position).
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>
+[mailto:therion-bounces at speleo.sk] On Behalf Of Henry_Bennett at Dell.com
+<mailto:Henry_Bennett at Dell.com> 
+Sent: Tuesday, 10 May 2016 7:24 a.m.
+To: therion at speleo.sk <mailto:therion at speleo.sk> 
+Subject: Re: [Therion] export more than one map?
+
+ 
+
+Thanks Bruce, the "Survey" option in the MAP syntax is a really good place
+for me to start.  
+
+ 
+
+Ultimately it would have been great if I could use a different layout file
+for different caves/surveys and then pull them all together in a single PDF.
+I thought that is what may be possible with this 
+
+ 
+
+export map -projection plan \
+
+     -layout LayoutMapThisCave   \
+
+     -layout LayoutMapThisCavePlan   \
+
+     -output ../Output/MiddleEarthPlan.pdf
+
+http://therion.speleo.sk/wiki/doku.php/outputs
+
+ 
+
+However this just appears to work with a single declared MAP.  In which case
+I'm struggling to see the usage case for this construct.  What I'm looking
+for is a UNION command to join two or more SELECT statements.  (or
+confirmation that this can't be done).
+
+ 
+
+From: therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>
+[mailto:therion-bounces at speleo.sk] On Behalf Of Bruce
+Sent: 09 May 2016 10:10
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: Re: [Therion] export more than one map?
+
+ 
+
+Henry
+
+Pg 31 of Therion Book.  You can specify a survey when you define a map.  If
+you do that then the reported map statistics are forced to match those of
+the survey.  This would satisfy your second suggestion.
+
+ 
+
+Alternatively you could 'preview below' the 'other caves' and then their
+statistics will be automatically suppressed, and it would be clear what the
+statistics refer to.
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>
+[mailto:therion-bounces at speleo.sk] On Behalf Of Henry_Bennett at Dell.com
+<mailto:Henry_Bennett at Dell.com> 
+Sent: Monday, 9 May 2016 6:51 p.m.
+To: therion at speleo.sk <mailto:therion at speleo.sk> 
+Subject: [Therion] export more than one map?
+
+ 
+
+Trying to export a survey that is primarily one system but also show the
+other smaller caves in the area.  Easy to do in a single map but then the
+statistics reflect all the surveys.  Is it possible to export to pdf
+multiple maps?  
+
+ 
+
+Or is there a workaround? Such as telling therion to olnly pick up length
+and team from a specific branch?
+
+ 
+
+Thanks, Henry Bennett
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160510/b0b13275/attachment.htm>
+
+From chr_rossi at kartan.de  Tue May 10 18:12:52 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 10 May 2016 18:12:52 +0200
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <D07793F3-E13B-4210-9959-16F4D9633B35@lblazek.cz>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+	<D07793F3-E13B-4210-9959-16F4D9633B35@lblazek.cz>
+Message-ID: <1899561.FXnxALDID2@sayaaron>
+
+Am Dienstag, 10. Mai 2016, 17:55:31 schrieb Ladislav Blažek:
+
+> input should work. See attached example files. Ladislav
+
+Ah, I see: You have out-sourced the whole layout! Thank you for the hint, 
+this idea has escaped me. This will help at least a little, but my hope 
+was, that I could do such:
+
+# input metacode_thistry
+# input metacode_thattry
+input metacode_perhapslikethis
+
+and 
+
+# input metacode_thistry
+input metacode_thattry
+# input metacode_perhapslikethis
+
+…while mangling metapost code.
+
+Best regards, Christian
+
+
+From chr_rossi at kartan.de  Tue May 10 18:14:53 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 10 May 2016 18:14:53 +0200
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <008201d1aad4$72c3fa90$584befb0$@hbennett.com>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+	<008201d1aad4$72c3fa90$584befb0$@hbennett.com>
+Message-ID: <3903218.oUpAoKXuuC@sayaaron>
+
+Am Dienstag, 10. Mai 2016, 16:56:00 schrieb Henry Bennett:
+
+>> due to learning some metapost for making a Schacht (shaft?) symbol, I
+>> got a thconfig file getting really fat and difficult to maintain. Is
+>> there a possibility to source metapost snippets from another file?
+
+> 	code metapost
+> 	    input "link_to_where\myfile.mp"
+> 	endcode
+
+of course! Thanks! That's it!
+
+Best regards, Christian
+
+
+From ladislav at lblazek.cz  Tue May 10 18:21:46 2016
+From: ladislav at lblazek.cz (=?utf-8?q?Ladislav_Bla=C5=BEek?=)
+Date: Tue, 10 May 2016 18:21:46 +0200
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <1899561.FXnxALDID2@sayaaron>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+	<D07793F3-E13B-4210-9959-16F4D9633B35@lblazek.cz>
+	<1899561.FXnxALDID2@sayaaron>
+Message-ID: <20160510162146.7139414.15104.678@lblazek.cz>
+
+Hi, it is just one option how to handle complex thconfig files. I am using one "layout" file for several projects. This file sits in top folder and is referenced from all thconfig files. L.
+
+  Původní zpráva  
+Od: Christian Rößler
+Odesláno: úterý, 10. května 2016 18:13
+Komu: List for Therion users
+Odpovědět: List for Therion users
+Předmět: Re: [Therion] Metapost snippets out-source-able from thconfig/layout?
+
+Am Dienstag, 10. Mai 2016, 17:55:31 schrieb Ladislav Blažek:
+
+> input should work. See attached example files. Ladislav
+
+Ah, I see: You have out-sourced the whole layout! Thank you for the hint, 
+this idea has escaped me. This will help at least a little, but my hope 
+was, that I could do such:
+
+# input metacode_thistry
+# input metacode_thattry
+input metacode_perhapslikethis
+
+and 
+
+# input metacode_thistry
+input metacode_thattry
+# input metacode_perhapslikethis
+
+…while mangling metapost code.
+
+Best regards, Christian
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From chr_rossi at kartan.de  Tue May 10 18:58:14 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 10 May 2016 18:58:14 +0200
+Subject: [Therion] Metapost snippets out-source-able from
+	thconfig/layout?
+In-Reply-To: <20160510162146.7139414.15104.678@lblazek.cz>
+References: <2820840.tHHzKtBhIQ@sayaaron> <1899561.FXnxALDID2@sayaaron>
+	<20160510162146.7139414.15104.678@lblazek.cz>
+Message-ID: <2137779.y6LeytM0DP@sayaaron>
+
+Am Dienstag, 10. Mai 2016, 18:21:46 schrieb Ladislav Blažek:
+
+> Hi, it is just one option how to handle complex thconfig files. I am
+> using one "layout" file for several projects. This file sits in top
+> folder and is referenced from all thconfig files. L.
+
+Good idea! Haven't thought about that, as I need shaft sympols dearly and 
+was focused on that. But as I just have finished the third therion mine 
+map, and have many more I need to work onto stacked up during the last 
+years (even such without shafts into them), I will outsource the layouts 
+of the maps I made so far at once. Next step.
+
+Best of all: if I combine both methods of linking stuff in, layouts and 
+metapost code, I can now change my shaft symbols easily and centrally. 
+This will make it very easy to re-view them very fast in many different 
+maps, easily scriptable, and even better, change them in all maps at once 
+if I made a workable version. Which may take a while, I fear.
+
+Best regards, and extra thanks for re-hinting which should have been 
+obvious to me,
+
+Christian
+
+
+From bruce at tomo.co.nz  Tue May 10 22:02:53 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 11 May 2016 08:02:53 +1200
+Subject: [Therion] export more than one map?
+In-Reply-To: <008e01d1aad5$f634b3a0$e29e1ae0$@hbennett.com>
+References: <FDFCB0E72FBD9D4E86092B66DED10986458439BC@SNNX10HMDC101.EMEA.DELL.COM><084CD33B5E7F40E4BBB1B04ABD8C1F39@JUICEBRAIN><FDFCB0E72FBD9D4E86092B66DED1098645844414@SNNX10HMDC101.EMEA.DELL.COM><6FE49EFE54D24A098DB1BAE467766633@JUICEBRAIN>
+	<008e01d1aad5$f634b3a0$e29e1ae0$@hbennett.com>
+Message-ID: <902318E70C4746828B3537F49D39878D@JUICEBRAIN>
+
+Henry, Christian also,
+
+ 
+
+> Still don't totally get the use of multiple layouts in a single export
+statement.  Surely if you are using plan and elevation they would be
+different "maps".   (or am I just being think?  Wouldn't be the first time).
+
+ 
+
+You can 'input' many layouts in one export and each layout can 'input' many
+layouts.
+
+See the examples in 
+
+http://therion.speleo.sk/wiki/doku.php/bds#order_of_layout_functions_called
+
+ 
+
+And this one shows some layout templates I came up with ages ago
+http://therion.speleo.sk/wiki/doku.php/templates 
+
+I think I have refined the ones I use these days.  Perhaps I should finish
+and update the page one day.
+
+ 
+
+And yes, the plan and elevation are different maps.  Therion will never mix
+up projection specific information, that is why you can reference and mix up
+many differing projection selects, map definitions and exports in one
+th-config file, and Therion will behave well and only include the relevant
+information in each exported output.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160511/db1b4f9e/attachment.htm>
+
+From bruce at tomo.co.nz  Tue May 10 22:13:13 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 11 May 2016 08:13:13 +1200
+Subject: [Therion] Metapost snippets out-source-able fromthconfig/layout?
+In-Reply-To: <2137779.y6LeytM0DP@sayaaron>
+References: <2820840.tHHzKtBhIQ@sayaaron>
+	<1899561.FXnxALDID2@sayaaron><20160510162146.7139414.15104.678@lblazek.cz>
+	<2137779.y6LeytM0DP@sayaaron>
+Message-ID: <865336C68203478B91BCC01CAC39E8F3@JUICEBRAIN>
+
+A Therion principle.  Write once, use many times.
+Be cautious however and balance the 'centralised layout' idea against the
+contrary advantage of having each mine or 'collection of mines' in self
+contained folders that can be moved to different machines or environments
+without breaking links to outsourced locations.
+
+As most of 'my' cave systems are constrained to several square km in area, I
+have a single master layout for those at the top folder level. If I want to
+separate out just one cave from a sub folder and say give to someone else I
+only have to copy the 'central layout file' to that folder and one or two
+input statements to change to make the sub project work.
+There is a balance between totally centralised and having each subproject
+completely self contained if its folder is removed from its parent.  
+A choice.  See the links in my reply to Henry just now.
+
+Bruce
+
+> But as I just have finished the third therion mine 
+map, and have many more I need to work onto stacked up during the last 
+years (even such without shafts into them), I will outsource the layouts 
+of the maps I made so far at once. Next step.
+
+> Best of all: if I combine both methods of linking stuff in, layouts and 
+metapost code, I can now change my shaft symbols easily and centrally. 
+This will make it very easy to re-view them very fast in many different 
+maps, easily scriptable, and even better, change them in all maps at once 
+if I made a workable version. Which may take a while, I fear.
+
+
+
+
+From chr_rossi at kartan.de  Wed May 11 00:15:21 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Wed, 11 May 2016 00:15:21 +0200
+Subject: [Therion] Metapost snippets out-source-able fromthconfig/layout?
+In-Reply-To: <865336C68203478B91BCC01CAC39E8F3@JUICEBRAIN>
+References: <2820840.tHHzKtBhIQ@sayaaron> <2137779.y6LeytM0DP@sayaaron>
+	<865336C68203478B91BCC01CAC39E8F3@JUICEBRAIN>
+Message-ID: <2008906.i07as2Z5lD@sayaaron>
+
+Am Mittwoch, 11. Mai 2016, 08:13:13 schrieb Bruce <bruce at tomo.co.nz>:
+
+Hallo Bruce,
+
+> A Therion principle.  Write once, use many times.
+> Be cautious however and balance the 'centralised layout' idea against
+> the contrary advantage of having each mine or 'collection of mines' in
+> self contained folders that can be moved to different machines or
+> environments without breaking links to outsourced locations.
+
+yes. I have centralized my meager three Therion maps, and then one of my 
+colleagues asked me about the nice map I have sent to him, which program I 
+made them with etc. pp., got interest and asked me about the source files 
+to see for herself. And then I nearly archive-packed and sent…
+
+> As most of 'my' cave systems are constrained to several square km in
+> area, I have a single master layout for those at the top folder level.
+> If I want to separate out just one cave from a sub folder and say give
+> to someone else I only have to copy the 'central layout file' to that
+> folder and one or two input statements to change to make the sub
+> project work.
+> There is a balance between totally centralised and having each
+> subproject completely self contained if its folder is removed from its
+> parent. A choice.  See the links in my reply to Henry just now.
+
+…not enough, I mean with missing centralized layout and metapost files; 
+exactly, what you meant above. Funny coincidence, but perhaps to be 
+expected. I have solved it as following:
+
+therion directory
+|	|-- metapost file
+|	|-- centralized layout, input'ing metapost file in same dir
+|
+|-project directory
+	|-- symlink to centralized layout 
+	|-- (normally unneeded) symlink to metapost file
+	|-- thconfig input'ing centralized layout in _same_ directory (./)
+
+(I hope this is readable)
+
+That way I can edit the centralized layout and metapost file in therion 
+directory before recompiling, as: thconfig -> centr. layout -> (following 
+symlink) -> centr. layout in therion directory.
+
+And if I archive I just need to dereference the symlinks (no editing of 
+files), so I archive the directory as following:
+
+project directory
+	|-- centralized layout (dereferenced symlink)
+	|-- metapost file (via previously unneded symlink to metapost file)
+
+But: If I forget to dereference the symlinks while packing, or forget the 
+(while working) unneeded symlink to the metapost file, this would break. 
+And I would need more unneeded symlinks, if I decide to input more than 
+one metapost file. And this way does only work with OS's capable of 
+symlinks; I am not sure whether windows could do such.
+
+But's but: This dereferencing method gives me an easy route to hew any 
+project directory from the mineral lode, so to say, for others and for me, 
+if the need arises. 
+
+So I am going that route, but - as you correctly warned - with care.
+
+Another coincidence was the parallel discussion about several layouts per 
+map export, as I noticed I lost eg. the map comments when wholly 
+centralized. So I add, if needed, another layout zusaetze (addons) for 
+stuff I would not or could not centralize to the map export.
+
+So thanks, Bruce, and Ladislav, and also Henry for asking the right 
+question at the right time for me to use, and of course Martin, and a 
+hearty Glückauf (or what cavers greet themselves) to you all!
+
+Christian
+
+
+From martinsluka at mac.com  Wed May 11 09:22:54 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 11 May 2016 09:22:54 +0200
+Subject: [Therion] Metapost snippets out-source-able fromthconfig/layout?
+In-Reply-To: <2008906.i07as2Z5lD@sayaaron>
+References: <2820840.tHHzKtBhIQ@sayaaron> <2137779.y6LeytM0DP@sayaaron>
+	<865336C68203478B91BCC01CAC39E8F3@JUICEBRAIN>
+	<2008906.i07as2Z5lD@sayaaron>
+Message-ID: <94AD80A9-8581-40CE-82D3-5A3CF00AECDA@mac.com>
+
+Láďo, potřeboval bych to protlačit do konfery, ale nechce mi to pustit přílohy.
+
+> 11. 5. 2016 v 0:15, Christian Rößler <chr_rossi at kartan.de>:
+> 
+> herion directory
+> |	|-- metapost file
+> |	|-- centralized layout, input'ing metapost file in same dir
+> |
+> |-project directory
+> 	|-- symlink to centralized layout 
+> 	|-- (normally unneeded) symlink to metapost file
+> 	|-- thconfig input'ing centralized layout in _same_ directory (./)
+> 
+
+
+My add-on to structure of files:
+
+
+
+
+
+
+The central .th file:
+
+survey klisura -title "Great Canyon <br>Gryka e Madhe <br>Velika Klisura"
+
+input ../indexes/index_th
+input ../indexes/index_th2
+input ../indexes/index_equate
+input ../indexes/index_join
+input ../indexes/index_map
+
+endsurvey
+
+m.s.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160511/8a1a04eb/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2016-05-11 v?9.13.21.png
+Type: image/png
+Size: 28863 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160511/8a1a04eb/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2016-05-11 v?9.13.36.png
+Type: image/png
+Size: 14272 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160511/8a1a04eb/attachment-0001.png>
+
+From martinsluka at mac.com  Thu May 12 11:23:48 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 12 May 2016 09:23:48 +0000 (GMT)
+Subject: [Therion] export more than one map?
+In-Reply-To: <902318E70C4746828B3537F49D39878D@JUICEBRAIN>
+Message-ID: <b004585f-81cb-494c-9c29-26e3f2385a27@me.com>
+
+Anyway you may open as many as you need running copies of therion and compile map after map from different xtherions.
+
+m.s.
+
+On May 10, 2016, at 10:02 PM, Bruce <bruce at tomo.co.nz> wrote:
+
+Henry, Christian also,
+ 
+> Still don’t totally get the use of multiple layouts in a single export statement.  Surely if you are using plan and elevation they would be different “maps”.   (or am I just being think?  Wouldn’t be the first time).
+ 
+You can ‘input’ many layouts in one export and each layout can ‘input’ many layouts.
+See the examples in
+http://therion.speleo.sk/wiki/doku.php/bds#order_of_layout_functions_called
+ 
+And this one shows some layout templates I came up with ages ago http://therion.speleo.sk/wiki/doku.php/templates
+I think I have refined the ones I use these days.  Perhaps I should finish and update the page one day.
+ 
+And yes, the plan and elevation are different maps.  Therion will never mix up projection specific information, that is why you can reference and mix up many differing projection selects, map definitions and exports in one th-config file, and Therion will behave well and only include the relevant information in each exported output.
+ 
+Bruce
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/fd9593f7/attachment.htm>
+
+From vld.georgiev at gmail.com  Thu May 12 18:14:43 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Thu, 12 May 2016 19:14:43 +0300
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+Message-ID: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+
+Hi
+
+Here are a couple of updates I did, which might be useful to someone.
+
+1) KML model and map export. When exporting a KML it always got a title of
+"Therion KML", which made it harder to navigate when several files are
+opened in Google Earth.
+I updated the title to contain the survey title in whatever language is
+selected for the export.
+The description contains the length and depth for the cave.
+
+2) I wanted to use a rope line, but the existing symbol for it was hidden
+and not completely finished. I used the existing metapost, which displays
+the rope very nicely, with a couple of additions. You can control whether
+the rebelay rope loops are shown with the option "-rebelays on/off" and the
+anchor points with "-anchors on/off"
+The line handrail looked very similar to rope, so I changed the little dots
+to squares.
+
+Attached are the code patches and a couple of screenshots.
+If someone recompiles and tests those I would be happy to hear the comments
+:)
+
+Vladimir
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/91ffbbe6/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: KML.png
+Type: image/png
+Size: 62263 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/91ffbbe6/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Rope.png
+Type: image/png
+Size: 6731 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/91ffbbe6/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Line-rope.patch
+Type: application/octet-stream
+Size: 10306 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/91ffbbe6/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: KML-map-model-export.patch
+Type: application/octet-stream
+Size: 7017 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/91ffbbe6/attachment-0001.obj>
+
+From bruce at tomo.co.nz  Thu May 12 21:39:32 2016
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 13 May 2016 07:39:32 +1200
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+Message-ID: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+
+
+    
+Fantastic Vladimir I have been wishing for 'proper' kml titles for many years. If you are still enthusiastic then there are other outputs that need titles, html lists for one.Looking forward to when your recent patches are incorporated into the mainstream windows install files.
+Bruce
+Sent from my Samsung device, hence the typo's
+
+-------- Original message --------
+From: Владимир Георгиев <vld.georgiev at gmail.com> 
+Date: 13/05/2016  04:14  (GMT+12:00) 
+To: TherionList <therion at speleo.sk> 
+Subject: [Therion] A couple of Therion updates: KML and line-rope 
+
+Hi
+
+Here are a couple of updates I did, which might be useful to someone.
+
+1) KML model and map export. When exporting a KML it always got a title of "Therion KML", which made it harder to navigate when several files are opened in Google Earth.
+I updated the title to contain the survey title in whatever language is selected for the export.
+The description contains the length and depth for the cave.
+
+2) I wanted to use a rope line, but the existing symbol for it was hidden and not completely finished. I used the existing metapost, which displays the rope very nicely, with a couple of additions. You can control whether the rebelay rope loops are shown with the option "-rebelays on/off" and the anchor points with "-anchors on/off"
+The line handrail looked very similar to rope, so I changed the little dots to squares.
+
+Attached are the code patches and a couple of screenshots.
+If someone recompiles and tests those I would be happy to hear the comments :)
+
+Vladimir
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/da86d81a/attachment.htm>
+
+From phil.vernant at gmail.com  Thu May 12 22:20:47 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Thu, 12 May 2016 22:20:47 +0200
+Subject: [Therion] exporting gif file in xvi
+In-Reply-To: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+References: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+Message-ID: <ED2F5ED2-2CED-4002-B5F1-39188A9E9077@gmail.com>
+
+Hi guys,
+
+Doing some great progress with therion, but I’m stuck with the conversion from gif to xvi file to be able to do some morphing.
+I’ve been trying to follow Marco’s tutorial : http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm
+
+But I keep getting the following message : C:\Program Files\Therion\therion.exe: warning -- no data to export
+
+Anyone has an idea or some exemple files to share so I can figure this out ?
+
+Thanks,
+Phil
+
+From vld.georgiev at gmail.com  Thu May 12 22:31:27 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Thu, 12 May 2016 23:31:27 +0300
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+In-Reply-To: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+References: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+Message-ID: <CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+
+Bruce
+
+I like the app and would like to make it better as far as I can. So far I
+am doing small patches here and there in features that I needed for my own
+usage, nothing systematic. The source code is quite large and the features
+are a lot, so the todo list will be endless :)
+If you have suggestion about the html, kml or other outputs, let me know
+and I'll see what I can do. For the kml I was wondering what else to put in
+the description field besides the length and depth.
+
+The next feature I was considering is the option to add images inside of
+scraps(with "point image [file name]..."), and not only in the layout with
+map-image. I need to research some more about inserting images in TEX and
+Metapost and how to position them.
+
+As for the Windows installer, I could build it, but I don't have the source
+for the install script. I can recreate it if needed and if there is
+interest...
+If you are willing to take the risk, I can send you the compiled
+therion.exe :)
+
+Vladimir
+
+On Thu, May 12, 2016 at 10:39 PM, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Fantastic Vladimir
+> I have been wishing for 'proper' kml titles for many years. If you are
+> still enthusiastic then there are other outputs that need titles, html
+> lists for one.
+> Looking forward to when your recent patches are incorporated into the
+> mainstream windows install files.
+>
+> Bruce
+>
+> Sent from my Samsung device, hence the typo's
+>
+>
+> -------- Original message --------
+> From: Владимир Георгиев <vld.georgiev at gmail.com>
+> Date: 13/05/2016 04:14 (GMT+12:00)
+> To: TherionList <therion at speleo.sk>
+> Subject: [Therion] A couple of Therion updates: KML and line-rope
+>
+> Hi
+>
+> Here are a couple of updates I did, which might be useful to someone.
+>
+> 1) KML model and map export. When exporting a KML it always got a title of
+> "Therion KML", which made it harder to navigate when several files are
+> opened in Google Earth.
+> I updated the title to contain the survey title in whatever language is
+> selected for the export.
+> The description contains the length and depth for the cave.
+>
+> 2) I wanted to use a rope line, but the existing symbol for it was hidden
+> and not completely finished. I used the existing metapost, which displays
+> the rope very nicely, with a couple of additions. You can control whether
+> the rebelay rope loops are shown with the option "-rebelays on/off" and the
+> anchor points with "-anchors on/off"
+> The line handrail looked very similar to rope, so I changed the little
+> dots to squares.
+>
+> Attached are the code patches and a couple of screenshots.
+> If someone recompiles and tests those I would be happy to hear the
+> comments :)
+>
+> Vladimir
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160512/a9e18256/attachment.htm>
+
+From xavier.robert at ujf-grenoble.fr  Fri May 13 01:16:02 2016
+From: xavier.robert at ujf-grenoble.fr (xavier.robert at ujf-grenoble.fr)
+Date: Fri, 13 May 2016 01:16:02 +0200 (CEST)
+Subject: [Therion] exporting gif file in xvi
+In-Reply-To: <ED2F5ED2-2CED-4002-B5F1-39188A9E9077@gmail.com>
+References: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+	<ED2F5ED2-2CED-4002-B5F1-39188A9E9077@gmail.com>
+Message-ID: <2024012173.16720328.1463094962026.JavaMail.zimbra@univ-grenoble-alpes.fr>
+
+Hi Phil, 
+
+I have used "old" png maps inside XTherion to redraw the cave, but I've never tried to fit the png to the xvi. If that can help you, you will find an example of what I did in attachment. 
+
+Cheers, 
+
+Xav 
+
+
+----- Mail original -----
+
+De: "Philippe Vernant" <phil.vernant at gmail.com> 
+À: "TherionList" <therion at speleo.sk> 
+Envoyé: Jeudi 12 Mai 2016 15:20:47 
+Objet: [Therion] exporting gif file in xvi 
+
+Hi guys, 
+
+Doing some great progress with therion, but I’m stuck with the conversion from gif to xvi file to be able to do some morphing. 
+I’ve been trying to follow Marco’s tutorial : http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm 
+
+But I keep getting the following message : C:\Program Files\Therion\therion.exe: warning -- no data to export 
+
+Anyone has an idea or some exemple files to share so I can figure this out ? 
+
+Thanks, 
+Phil 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/194a63d8/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: BA6.zip
+Type: application/zip
+Size: 725303 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/194a63d8/attachment.zip>
+
+From martinsluka at mac.com  Fri May 13 11:33:29 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 13 May 2016 11:33:29 +0200
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+In-Reply-To: <CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+References: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+	<CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+Message-ID: <1FA95F99-B0ED-4474-B2D0-BA0D37029AE2@mac.com>
+
+There is a repository of therion on github: https://github.com/therion/test
+
+I spoke today with Martin Budaj and coerced him to change the status of this repository from test to regular.
+
+m.s.
+
+> 12. 5. 2016 v 22:31, Владимир Георгиев <vld.georgiev at gmail.com>:
+> 
+> Bruce
+> 
+> I like the app and would like to make it better as far as I can. So far I am doing small patches here and there in features that I needed for my own usage, nothing systematic. The source code is quite large and the features are a lot, so the todo list will be endless :)
+> If you have suggestion about the html, kml or other outputs, let me know and I'll see what I can do. For the kml I was wondering what else to put in the description field besides the length and depth.
+> 
+> The next feature I was considering is the option to add images inside of scraps(with "point image [file name]..."), and not only in the layout with map-image. I need to research some more about inserting images in TEX and Metapost and how to position them.
+> 
+> As for the Windows installer, I could build it, but I don't have the source for the install script. I can recreate it if needed and if there is interest...
+> If you are willing to take the risk, I can send you the compiled therion.exe :)
+> 
+> Vladimir
+> 
+> On Thu, May 12, 2016 at 10:39 PM, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz>> wrote:
+> Fantastic Vladimir 
+> I have been wishing for 'proper' kml titles for many years. If you are still enthusiastic then there are other outputs that need titles, html lists for one.
+> Looking forward to when your recent patches are incorporated into the mainstream windows install files.
+> 
+> Bruce
+> 
+> Sent from my Samsung device, hence the typo's
+> 
+> 
+> -------- Original message --------
+> From: Владимир Георгиев <vld.georgiev at gmail.com <mailto:vld.georgiev at gmail.com>> 
+> Date: 13/05/2016 04:14 (GMT+12:00) 
+> To: TherionList <therion at speleo.sk <mailto:therion at speleo.sk>> 
+> Subject: [Therion] A couple of Therion updates: KML and line-rope 
+> 
+> Hi
+> 
+> Here are a couple of updates I did, which might be useful to someone.
+> 
+> 1) KML model and map export. When exporting a KML it always got a title of "Therion KML", which made it harder to navigate when several files are opened in Google Earth.
+> I updated the title to contain the survey title in whatever language is selected for the export.
+> The description contains the length and depth for the cave.
+> 
+> 2) I wanted to use a rope line, but the existing symbol for it was hidden and not completely finished. I used the existing metapost, which displays the rope very nicely, with a couple of additions. You can control whether the rebelay rope loops are shown with the option "-rebelays on/off" and the anchor points with "-anchors on/off"
+> The line handrail looked very similar to rope, so I changed the little dots to squares.
+> 
+> Attached are the code patches and a couple of screenshots.
+> If someone recompiles and tests those I would be happy to hear the comments :)
+> 
+> Vladimir
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/32517e09/attachment.htm>
+
+From martinsluka at mac.com  Fri May 13 11:42:37 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 13 May 2016 11:42:37 +0200
+Subject: [Therion] exporting gif file in xvi
+In-Reply-To: <2024012173.16720328.1463094962026.JavaMail.zimbra@univ-grenoble-alpes.fr>
+References: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+	<ED2F5ED2-2CED-4002-B5F1-39188A9E9077@gmail.com>
+	<2024012173.16720328.1463094962026.JavaMail.zimbra@univ-grenoble-alpes.fr>
+Message-ID: <8E703DB0-B0AF-4E09-B75E-1B3695E95E86@mac.com>
+
+Philippe, check the thBook, appendix, page 89 (version 5.3.16).
+
+Use "point dimension“ to add additional informations as LR to your sketch.
+
+All details are in folder: therion/samples/morphing/sample2 of source code of Therion.
+
+m.s.
+
+> 13. 5. 2016 v 1:16, xavier.robert at ujf-grenoble.fr:
+> 
+> Hi Phil,
+> 
+> I have used "old" png maps inside XTherion to redraw the cave, but I've never tried to fit the png to the xvi. If that can help you, you will find an example of what I did in attachment.
+> 
+> Cheers,
+> 
+> Xav
+> 
+> 
+> De: "Philippe Vernant" <phil.vernant at gmail.com <mailto:phil.vernant at gmail.com>>
+> À: "TherionList" <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Envoyé: Jeudi 12 Mai 2016 15:20:47
+> Objet: [Therion] exporting gif file in xvi
+> 
+> Hi guys,
+> 
+> Doing some great progress with therion, but I’m stuck with the conversion from gif to xvi file to be able to do some morphing.
+> I’ve been trying to follow Marco’s tutorial : http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm
+> 
+> But I keep getting the following message : C:\Program Files\Therion\therion.exe: warning -- no data to export
+> 
+> Anyone has an idea or some exemple files to share so I can figure this out ?
+> 
+> Thanks,
+> Phil
+> <BA6.zip>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/be828f59/attachment.htm>
+
+From bruce at tomo.co.nz  Fri May 13 11:43:06 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 13 May 2016 21:43:06 +1200
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+In-Reply-To: <CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+References: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+	<CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+Message-ID: <D8C82DBE23A34DC6AF29F6B0BB47E2EF@JUICEBRAIN>
+
+> For the kml I was wondering what else to put in the description field
+besides the length and depth.
+
+Possibly option to include 'map-comment' for export plan -o "cave.kml"
+
+> The next feature I was considering is the option to add images inside of
+scraps(with "point image [file name]..."), and not only in the layout with
+map-image. I need to research some more about inserting images in TEX and
+Metapost and how to position them.
+
+A similar idea, perhaps, was discussed some years ago.
+
+Refer to the first few returns of this search
+
+http://search.gmane.org/?query=link
+<http://search.gmane.org/?query=link&group=gmane.comp.gis.therion>
+&group=gmane.comp.gis.therion
+
+My preferred implementation would be to have a 'link' property for most
+point entities as described in here.
+http://article.gmane.org/gmane.comp.gis.therion/3029/match=link
+
+There could be another property that results in the destination file (if
+image or plain text) 'printing' in the resulting cave pdf output (which is
+more like what you describe).
+
+Just ideas.
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/5065bb27/attachment.htm>
+
+From vld.georgiev at gmail.com  Fri May 13 12:01:31 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Fri, 13 May 2016 13:01:31 +0300
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+In-Reply-To: <1FA95F99-B0ED-4474-B2D0-BA0D37029AE2@mac.com>
+References: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+	<CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+	<1FA95F99-B0ED-4474-B2D0-BA0D37029AE2@mac.com>
+Message-ID: <CAHzQzvR0bpCwvcdEvdJa4HAsixQtCrXYeQyYF2Njy6kimdNanw@mail.gmail.com>
+
+Thanks Martin, that's great. Let me know when Budaj moves the source from
+"test" to the "therion" repo so I can push my recent changes.
+
+Can you ask him how he would like to share the repo in case me or someone
+else wants to
+​make changes?
+If I make a fork of the repo the changes will have to be approved and
+merged by him periodically, which is the better way if he has the time :)
+Or if he gives me access I can work directly with the repo.
+
+If it is not too much trouble, can you ask Budaj what was used for building
+the Windows installer and where is the source? The people here that use
+Therion (not that many unfortunately) work on Windows.
+
+Vladimir
+
+
+
+
+On Fri, May 13, 2016 at 12:33 PM, Martin Sluka <martinsluka at mac.com> wrote:
+
+> There is a repository of therion on github:
+> https://github.com/therion/test
+>
+> I spoke today with Martin Budaj and coerced him to change the status of
+> this repository from test to regular.
+>
+> m.s.
+>
+> 12. 5. 2016 v 22:31, Владимир Георгиев <vld.georgiev at gmail.com>:
+>
+> Bruce
+>
+> I like the app and would like to make it better as far as I can. So far I
+> am doing small patches here and there in features that I needed for my own
+> usage, nothing systematic. The source code is quite large and the features
+> are a lot, so the todo list will be endless :)
+> If you have suggestion about the html, kml or other outputs, let me know
+> and I'll see what I can do. For the kml I was wondering what else to put in
+> the description field besides the length and depth.
+>
+> The next feature I was considering is the option to add images inside of
+> scraps(with "point image [file name]..."), and not only in the layout with
+> map-image. I need to research some more about inserting images in TEX and
+> Metapost and how to position them.
+>
+> As for the Windows installer, I could build it, but I don't have the
+> source for the install script. I can recreate it if needed and if there is
+> interest...
+> If you are willing to take the risk, I can send you the compiled
+> therion.exe :)
+>
+> Vladimir
+>
+> On Thu, May 12, 2016 at 10:39 PM, Bruce Mutton <bruce at tomo.co.nz> wrote:
+>
+>> Fantastic Vladimir
+>> I have been wishing for 'proper' kml titles for many years. If you are
+>> still enthusiastic then there are other outputs that need titles, html
+>> lists for one.
+>> Looking forward to when your recent patches are incorporated into the
+>> mainstream windows install files.
+>>
+>> Bruce
+>>
+>> Sent from my Samsung device, hence the typo's
+>>
+>>
+>> -------- Original message --------
+>> From: Владимир Георгиев <vld.georgiev at gmail.com>
+>> Date: 13/05/2016 04:14 (GMT+12:00)
+>> To: TherionList <therion at speleo.sk>
+>> Subject: [Therion] A couple of Therion updates: KML and line-rope
+>>
+>> Hi
+>>
+>> Here are a couple of updates I did, which might be useful to someone.
+>>
+>> 1) KML model and map export. When exporting a KML it always got a title
+>> of "Therion KML", which made it harder to navigate when several files are
+>> opened in Google Earth.
+>> I updated the title to contain the survey title in whatever language is
+>> selected for the export.
+>> The description contains the length and depth for the cave.
+>>
+>> 2) I wanted to use a rope line, but the existing symbol for it was hidden
+>> and not completely finished. I used the existing metapost, which displays
+>> the rope very nicely, with a couple of additions. You can control whether
+>> the rebelay rope loops are shown with the option "-rebelays on/off" and the
+>> anchor points with "-anchors on/off"
+>> The line handrail looked very similar to rope, so I changed the little
+>> dots to squares.
+>>
+>> Attached are the code patches and a couple of screenshots.
+>> If someone recompiles and tests those I would be happy to hear the
+>> comments :)
+>>
+>> Vladimir
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/53ad0177/attachment.htm>
+
+From vld.georgiev at gmail.com  Fri May 13 12:07:57 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Fri, 13 May 2016 13:07:57 +0300
+Subject: [Therion] A couple of Therion updates: KML and line-rope
+In-Reply-To: <D8C82DBE23A34DC6AF29F6B0BB47E2EF@JUICEBRAIN>
+References: <qy8dvq12w12lsfyds664qam8.1463081972141@email.android.com>
+	<CAHzQzvTMu_HUrNiBnaPQ+Yci13GnXeBBWbPJazPcDX0-4By0WA@mail.gmail.com>
+	<D8C82DBE23A34DC6AF29F6B0BB47E2EF@JUICEBRAIN>
+Message-ID: <CAHzQzvTO5b36AbKcqDF9dN6LJreLjPLOOM9xNeLfKiwF-5A7VQ@mail.gmail.com>
+
+On Fri, May 13, 2016 at 12:43 PM, Bruce <bruce at tomo.co.nz> wrote:
+
+> Possibly option to include ‘map-comment’ for export plan –o “cave.kml”
+>
+​That might be nice, yes. I will see if I can do it. I still have problems
+finding where a particular piece of data is stored in Therions data
+structures​. But for the plan kml it should be possible.
+
+> > The next feature I was considering is the option to add images inside
+> of scraps(with "point image [file name]..."), and not only in the layout
+> with map-image. I need to research some more about inserting images in TEX
+> and Metapost and how to position them.
+>
+> A similar idea, perhaps, was discussed some years ago.
+>
+> Refer to the first few returns of this search
+>
+> http://search.gmane.org/?query=link&group=gmane.comp.gis.therion
+>
+> My preferred implementation would be to have a ‘link’ property for most
+> point entities as described in here.
+> http://article.gmane.org/gmane.comp.gis.therion/3029/match=link
+>
+> There could be another property that results in the destination file (if
+> image or plain text) ‘printing’ in the resulting cave pdf output (which is
+> more like what you describe).
+>
+​That is an interesting idea too. I will read the old discussions.
+Placing the link properties and parsing them is not a problem. The thing is
+how to display them best in the outputs and how to easily control them.
+
+Vladimir​
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/53f4602c/attachment.htm>
+
+From chr_rossi at kartan.de  Fri May 13 23:32:59 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Fri, 13 May 2016 23:32:59 +0200
+Subject: [Therion] Therion compiling error (Loch, lxGUI)
+In-Reply-To: <1544589.pWjPA5Wzpx@sayaaron>
+References: <1544589.pWjPA5Wzpx@sayaaron>
+Message-ID: <2445566.0XIlmLedJb@sayaaron>
+
+Am Montag, 2. Mai 2016, 23:10:06 schrieb Christian Rößler (Roessler):
+
+Hallo everyone,
+
+>> I am trying to compile Therion on an openSuse 13.2 64bit, and had no
+>> success so far. After some research (including the mailing list, of
+>> course) I noticed it seems to be hanging on Loch compiling, as you
+>> maybe would have guessed:).
+>> I used the patch of detrito (29.12.2015 10:56, many thanks for that, by
+>> the way!) and set C_INCLUDE_PATH=/usr/include/vtk-6.1, and also
+>> CPLUS_INCLUDE_PATH=/usr/include/vtk-6.1 (a link from /usr/include/vtk
+>> --> vtk-6.1 would have also sufficed, perhaps, after I saw
+>> I"/usr/include/vtk/" in the compiling messages.
+>> 
+> But now it hangs at:
+>> lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type
+>> ‘const wxChar* {aka const wchar_t*}’
+>>  #define matchtype(w,t) if (fName.EndsWith((const wxChar
+>> *)wxString(_T(w)))) return t;
+>
+> [Martin Sluka, Re: [Therion] exporting gif file in xvia
+> Message-id: <8E703DB0-B0AF-4E09-B75E-1B3695E95E86 at mac.com>]
+>
+> There is a repository of therion on github:
+> https://github.com/therion/test 
+> I spoke today with Martin Budaj and coerced him to change the status of 
+> this repository from test to regular.
+
+well, after reading the hint to that repository, I downloaded it at once, 
+and read in file changes: VTK 6.0 support. So I compiled it anew, as 
+working in a virtual machine is sometimes a bit bothersone. But it hangs 
+at the exactly same point while compiling as mentioned above. So I would 
+like to ask if there is a solution on the horizon, so to say?
+
+Just curious…
+
+Best regards,
+Christian
+
+
+From phil.vernant at gmail.com  Fri May 13 23:46:09 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 13 May 2016 23:46:09 +0200
+Subject: [Therion] exporting gif file in xvi
+In-Reply-To: <8E703DB0-B0AF-4E09-B75E-1B3695E95E86@mac.com>
+References: <CAHzQzvTpzFT5FkNRJcNs7Y0GefKPHieqvkzz0D=PHDJ=nOXYOA@mail.gmail.com>
+	<ED2F5ED2-2CED-4002-B5F1-39188A9E9077@gmail.com>
+	<2024012173.16720328.1463094962026.JavaMail.zimbra@univ-grenoble-alpes.fr>
+	<8E703DB0-B0AF-4E09-B75E-1B3695E95E86@mac.com>
+Message-ID: <E32AAA78-B536-4727-95F0-398BE8580FB4@gmail.com>
+
+Thanks Martin and Xav,
+
+Now it is starting to work.
+
+Cheers,
+Phil
+
+> On 13 May 2016, at 11:42 AM, Martin Sluka <martinsluka at mac.com> wrote:
+> 
+> Philippe, check the thBook, appendix, page 89 (version 5.3.16).
+> 
+> Use "point dimension“ to add additional informations as LR to your sketch.
+> 
+> All details are in folder: therion/samples/morphing/sample2 of source code of Therion.
+> 
+> m.s.
+> 
+>> 13. 5. 2016 v 1:16, xavier.robert at ujf-grenoble.fr <mailto:xavier.robert at ujf-grenoble.fr>:
+>> 
+>> Hi Phil,
+>> 
+>> I have used "old" png maps inside XTherion to redraw the cave, but I've never tried to fit the png to the xvi. If that can help you, you will find an example of what I did in attachment.
+>> 
+>> Cheers,
+>> 
+>> Xav
+>> 
+>> 
+>> De: "Philippe Vernant" <phil.vernant at gmail.com <mailto:phil.vernant at gmail.com>>
+>> À: "TherionList" <therion at speleo.sk <mailto:therion at speleo.sk>>
+>> Envoyé: Jeudi 12 Mai 2016 15:20:47
+>> Objet: [Therion] exporting gif file in xvi
+>> 
+>> Hi guys,
+>> 
+>> Doing some great progress with therion, but I’m stuck with the conversion from gif to xvi file to be able to do some morphing.
+>> I’ve been trying to follow Marco’s tutorial : http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm <http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm>
+>> 
+>> But I keep getting the following message : C:\Program Files\Therion\therion.exe: warning -- no data to export
+>> 
+>> Anyone has an idea or some exemple files to share so I can figure this out ?
+>> 
+>> Thanks,
+>> Phil
+>> <BA6.zip>_______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160513/28a2b2aa/attachment.htm>
+
+From wookey at wookware.org  Sat May 14 04:14:59 2016
+From: wookey at wookware.org (Wookey)
+Date: Sat, 14 May 2016 03:14:59 +0100
+Subject: [Therion] Therion compiling error (Loch, lxGUI)
+In-Reply-To: <2445566.0XIlmLedJb@sayaaron>
+References: <1544589.pWjPA5Wzpx@sayaaron>
+ <2445566.0XIlmLedJb@sayaaron>
+Message-ID: <20160514021459.GL26256@mail.wookware.org>
+
++++ Christian Rößler [2016-05-13 23:32 +0200]:
+> Am Montag, 2. Mai 2016, 23:10:06 schrieb Christian Rößler (Roessler):
+> 
+> Hallo everyone,
+> 
+> >> I am trying to compile Therion on an openSuse 13.2 64bit, and had no
+> >> success so far. 
+
+> > But now it hangs at:
+> >> lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type
+> >> ‘const wxChar* {aka const wchar_t*}’
+> >>  #define matchtype(w,t) if (fName.EndsWith((const wxChar
+> >> *)wxString(_T(w)))) return t;
+
+> well, after reading the hint to that repository, I downloaded it at once, 
+> and read in file changes: VTK 6.0 support. So I compiled it anew, as 
+> working in a virtual machine is sometimes a bit bothersone. But it hangs 
+> at the exactly same point while compiling as mentioned above. So I would 
+> like to ask if there is a solution on the horizon, so to say?
+
+You might have more joy with the Debian package which is patched to fix various such build-time issues:
+http://httpredir.debian.org/debian/pool/main/t/therion/therion_5.3.16-10.dsc
+and the corresponding .orig.tar.gz and .debian.tar.gz
+That's built against vtk6.2
+
+This one is built against vtk6.1:
+http://httpredir.debian.org/debian/pool/main/t/therion/therion_5.3.15-2.dsc
+
+The debian vtk packaging layouts may not exactly match the Suse ones
+but you will probably find clues.
+Or you can look online here (although I don't see anything much that looks relevant):
+https://sources.debian.net/src/therion/5.3.16-10/debian/patches/
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 819 bytes
+Desc: Digital signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160514/cbe3e613/attachment.sig>
+
+From olly at survex.com  Sat May 14 07:45:05 2016
+From: olly at survex.com (Olly Betts)
+Date: Sat, 14 May 2016 06:45:05 +0100
+Subject: [Therion] Therion compiling error (Loch, lxGUI)
+In-Reply-To: <20160514021459.GL26256@mail.wookware.org>
+References: <1544589.pWjPA5Wzpx@sayaaron> <2445566.0XIlmLedJb@sayaaron>
+	<20160514021459.GL26256@mail.wookware.org>
+Message-ID: <20160514054505.GM4607@survex.com>
+
+On Sat, May 14, 2016 at 03:14:59AM +0100, Wookey wrote:
+> +++ Christian Rößler [2016-05-13 23:32 +0200]:
+> > Am Montag, 2. Mai 2016, 23:10:06 schrieb Christian Rößler (Roessler):
+> > >> I am trying to compile Therion on an openSuse 13.2 64bit, and had no
+> > >> success so far. 
+> 
+> > > But now it hangs at:
+> > >> lxGUI.cxx:517:73: error: invalid cast from type ‘wxString’ to type
+> > >> ‘const wxChar* {aka const wchar_t*}’
+> > >>  #define matchtype(w,t) if (fName.EndsWith((const wxChar
+> > >> *)wxString(_T(w)))) return t;
+> 
+> > well, after reading the hint to that repository, I downloaded it at once, 
+> > and read in file changes: VTK 6.0 support. So I compiled it anew, as 
+> > working in a virtual machine is sometimes a bit bothersone. But it hangs 
+> > at the exactly same point while compiling as mentioned above. So I would 
+> > like to ask if there is a solution on the horizon, so to say?
+> 
+> You might have more joy with the Debian package which is patched to fix various such build-time issues:
+> http://httpredir.debian.org/debian/pool/main/t/therion/therion_5.3.16-10.dsc
+> and the corresponding .orig.tar.gz and .debian.tar.gz
+> That's built against vtk6.2
+> 
+> This one is built against vtk6.1:
+> http://httpredir.debian.org/debian/pool/main/t/therion/therion_5.3.15-2.dsc
+> 
+> The debian vtk packaging layouts may not exactly match the Suse ones
+> but you will probably find clues.
+> Or you can look online here (although I don't see anything much that looks relevant):
+> https://sources.debian.net/src/therion/5.3.16-10/debian/patches/
+
+The above error sounds like a wx issue not a vtk one, but indeed not one
+we seem to have hit in the debian package.
+
+I don't understand why there's a cast to (const wxChar*) there - I'd
+try removing that, since that's what's causing the error - i.e. make
+that line (loch/lxGUI.cxx line 517):
+
+#define matchtype(w,t) if (fName.EndsWith(wxString(_T(w)))) return t;
+
+Cheers,
+    Olly
+
+
+From chr_rossi at kartan.de  Mon May 16 17:16:31 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler_=28Roessler=29?=)
+Date: Mon, 16 May 2016 17:16:31 +0200
+Subject: [Therion] scrap-drawn maps to small by factor 2
+Message-ID: <1574628.vLGyb0PVsJ@sayaaron>
+
+Hallo everybody,
+
+I noticed a strange problem drawing a quick survey of a little adit today. 
+This being a little adit I immediately noticed that the scale bar is off 
+by a factor 2, as 20 real meters (in the adit) gave 10 meters in the scale 
+bar.
+
+Then I fell back to Therion defaults (no values of mine, no input'ed 
+metapost files etc.), but could not find anything unusual. I noticed then 
+I had the same problem in the survey before, so I wonder. I forced the 
+polygon draw printed besides the scraps-drawn map, then I saw the polygon 
+draw is correct but the acrap-drawn outlines (via th2) are not. 
+
+So I think I have done some mistake drawing the outlines (curve points 
+followed by 'convert to curve'), but I cannot find anything regarding some 
+scaling I have inadvertly done.
+
+As I assume it has something to do with scraps, here the first scrap line 
+from th2:
+scrap scrap1 -scale [-128.0 -147.685 954.77 -147.685 0.0 0.0 
+27.502357999999997 0.0 m]
+
+Well, can anyone give me a hint? I will gladly give more information, if I 
+just know which:).
+
+By the way: I confess I have not read the attachment policy of the list. I 
+risk a little attachment anyway; on may see the scaling mishap in the 
+resulting pdf.
+
+Best regards, Christian
+
+
+
+file.th:
+--------------------------------------------------------
+survey adenauerrank -title "Stollen am Adenauerrank"
+
+input stollen_klein_intervall_01.th
+[some more inputs]
+
+equate 0 at Stollen_klein_02   25 at Stollen_klein_01
+[some more equates]
+
+input stollen_klein.th2
+
+join scrap2 scrap1
+join scrap3 scrap1
+
+map polygon_only.map -projection plan
+  scrap1
+  scrap2
+  scrap3
+endmap
+
+endsurvey
+
+map total-map
+  polygon_only.map at stollen_klein
+#  stollen_klein
+endmap
+
+
+thconfig:
+------------------------------------------------------------
+source stollen_klein.th
+
+select total-map
+select polygon_only.map at stollen_klein
+export map -projection plan -o stollen_klein.xvi
+export map -projection plan -layout-color map-fg 90 -output 
+Stollen_klein.pdf -fmt pdf
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Stollen_klein_polygonzug_2.pdf
+Type: application/pdf
+Size: 44963 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160516/ae27d96d/attachment.pdf>
+
+From chr_rossi at kartan.de  Tue May 17 20:01:12 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 17 May 2016 20:01:12 +0200
+Subject: [Therion] scrap-drawn maps to small by factor 2
+In-Reply-To: <1574628.vLGyb0PVsJ@sayaaron>
+References: <1574628.vLGyb0PVsJ@sayaaron>
+Message-ID: <2534778.lWRZGonWYr@sayaaron>
+
+Am Montag, 16. Mai 2016, 17:16:31 schrieb Christian Rößler (Roessler):
+
+Hallo everybody,
+ 
+> I noticed a strange problem drawing a quick survey of a little adit
+> today. This being a little adit I immediately noticed that the scale
+> bar is off by a factor 2, as 20 real meters (in the adit) gave 10
+> meters in the scale bar.
+
+well, I cannot find any misconfiguration, and on the other hand I do not 
+think this could be a bug in Therion as other people would have surely 
+noticed such before me.
+
+But it drives me nuts, as none of my surveys is of course complete without 
+correct scaling or, in other words, at least a correct scale bar. I think 
+I should give more information to make it easier for others to take a 
+look.
+
+I have included a polygon line output in the archive 
+(testmine_polygon_only.pdf) so one may see easily that the polygon draw is 
+correctly scaled.
+
+I could not find any information whether the Therion mailing list policy 
+allows attachments, so I prepared two archives containing a Therion 
+project folder for download:
+
+http://kartan.de/div/scaling_mishap.zip
+http://kartan.de/div/scaling_mishap.tar.gz
+
+Best regards,
+Christian
+
+
+From chr_rossi at kartan.de  Tue May 17 20:06:10 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Tue, 17 May 2016 20:06:10 +0200
+Subject: [Therion] scrap-drawn maps to small by factor 2
+In-Reply-To: <2534778.lWRZGonWYr@sayaaron>
+References: <1574628.vLGyb0PVsJ@sayaaron> <2534778.lWRZGonWYr@sayaaron>
+Message-ID: <3212206.rocgiWLC3b@sayaaron>
+
+Am Dienstag, 17. Mai 2016, 20:01:12 schrieb Christian Rößler:
+
+I am sorry; I forgot:
+running is a Debian Linux 8.4 (jessie) 64bit, Therion is installed via 
+Debian repository, Therion version is therion 5.3.15-2+b1 amd64.
+
+Please let me know if I can supply anything more!
+
+Best regards, Christian
+
+
+
+From McLendonJP at aol.com  Thu May 19 19:42:13 2016
+From: McLendonJP at aol.com (McLendonJP at aol.com)
+Date: Thu, 19 May 2016 13:42:13 -0400
+Subject: [Therion] Issue with magnetic declination calculation
+Message-ID: <3bd785.6796c7ab.446f54f5@aol.com>
+
+I'm not sure if it is a bug or not, but I noticed that if I  have one or 
+more undated surveys I get a warning saying "Unable  to compute magnetic 
+declination for undated surveys." However if all of the  surveys are undated I no 
+longer get this warning and the output is uncorrected  for declination. 
+This is bad IMO because if you forgot to include the date  in your survey files 
+you would get an uncorrected output without  realizing it. 
+ 
+JP
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160519/30acb2a3/attachment.htm>
+
+From bruce at tomo.co.nz  Thu May 19 21:19:57 2016
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 20 May 2016 07:19:57 +1200
+Subject: [Therion] Issue with magnetic declination calculation
+Message-ID: <3t1jsryya63qygkqh54p5487.1463685596963@email.android.com>
+
+
+    
+Assuming you have a coordinate system set, it does sound like a bug.
+Bruce
+Sent from my Samsung device, hence the typo's
+
+-------- Original message --------
+From: McLendonJP at aol.com 
+Date: 20/05/2016  05:42  (GMT+12:00) 
+To: therion at speleo.sk 
+Subject: [Therion] Issue with magnetic declination calculation 
+
+
+I'm not sure if it is a bug or not, but I noticed that if I 
+have one or more undated surveys I get a warning saying "Unable 
+to compute magnetic declination for undated surveys." However if all of the 
+surveys are undated I no longer get this warning and the output is uncorrected 
+for declination. This is bad IMO because if you forgot to include the date 
+in your survey files you would get an uncorrected output without 
+realizing it. 
+ 
+JP
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160520/c1443790/attachment.htm>
+
+From olly at survex.com  Wed May 25 02:11:22 2016
+From: olly at survex.com (Olly Betts)
+Date: Wed, 25 May 2016 01:11:22 +0100
+Subject: [Therion] non-magnetic screws for DistoX2
+In-Reply-To: <9EF82387-9CE0-41CE-96C1-B64C81F2F7C9@mac.com>
+References: <9EF82387-9CE0-41CE-96C1-B64C81F2F7C9@mac.com>
+Message-ID: <20160525001122.GT30046@survex.com>
+
+On Wed, May 04, 2016 at 05:03:05PM +0200, Martin Sluka wrote:
+> To replace all steel screw you may use these
+> 
+> https://de.screwerk.com/shop/detail/stp/STP390200160E.html
+
+I asked Martin about these off-list, as I was wondering how much
+difference changing the screws makes - he's not sure, as he has
+just aimed to eliminate as many potentially magnetic parts as possible.
+
+But one important detail is that the above link is apparently for the
+wrong length, as they need to be 12mm long not 16mm long:
+
+https://de.screwerk.com/shop/detail/stp/STP390200120E.html
+
+There are apparently 8 screws you can change, but the 15 EUR minimum
+order on the site means 30 costs the same as 8, so you'd be best off to
+club together with some friends.
+
+Cheers,
+    Olly
+
+
+From phil.vernant at gmail.com  Fri May 27 23:34:05 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Fri, 27 May 2016 23:34:05 +0200
+Subject: [Therion] Therion on Mac El Capitan
+Message-ID: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+
+Hi guys,
+
+Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+
+Any idea ?
+
+Cheers,
+Phil
+
+
+
+From chr_rossi at kartan.de  Fri May 27 00:08:27 2016
+From: chr_rossi at kartan.de (Christian =?ISO-8859-1?Q?R=F6=DFler?=)
+Date: Fri, 27 May 2016 00:08:27 +0200
+Subject: [Therion] scrap-drawn maps to small by factor 2
+In-Reply-To: <2534778.lWRZGonWYr@sayaaron>
+References: <1574628.vLGyb0PVsJ@sayaaron> <2534778.lWRZGonWYr@sayaaron>
+Message-ID: <3400206.JNHc7KurbD@sayaaron>
+
+Am Dienstag, 17. Mai 2016, 20:01:12 schrieb Christian Rößler:
+
+Hallo everybody,
+ 
+>> I noticed a strange problem drawing a quick survey of a little adit
+>> today. This being a little adit I immediately noticed that the scale
+>> bar is off by a factor 2, as 20 real meters (in the adit) gave 10
+>> meters in the scale bar.
+> 
+> well, I cannot find any misconfiguration, and on the other hand I do not
+> think this could be a bug in Therion as other people would have surely
+> noticed such before me.
+>
+> http://kartan.de/div/scaling_mishap.zip
+> http://kartan.de/div/scaling_mishap.tar.gz
+
+could anyone reproduce this, or even better _not_ reproduce, so I at least 
+know I have done some mistake?
+
+By the way: I have tried it on a friend's computer: Newly installed 
+Therion (Debian install); same result.
+
+Best regards, Christian
+
+
+From xavier.robert at ujf-grenoble.fr  Sat May 28 17:21:13 2016
+From: xavier.robert at ujf-grenoble.fr (Xavier Robert)
+Date: Sat, 28 May 2016 10:21:13 -0500
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+Message-ID: <B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+
+Hi Phil,
+
+I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+1) type : cd to/your/topo/folder
+2) type : xtherion [yourfilename].thconfig
+
+And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+
+Xav
+
+
+> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+> 
+> Hi guys,
+> 
+> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+> 
+> Any idea ?
+> 
+> Cheers,
+> Phil
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From xavier.robert at ujf-grenoble.fr  Sat May 28 17:50:20 2016
+From: xavier.robert at ujf-grenoble.fr (Xavier Robert)
+Date: Sat, 28 May 2016 10:50:20 -0500
+Subject: [Therion] scrap-drawn maps to small by factor 2
+In-Reply-To: <3400206.JNHc7KurbD@sayaaron>
+References: <1574628.vLGyb0PVsJ@sayaaron> <2534778.lWRZGonWYr@sayaaron>
+	<3400206.JNHc7KurbD@sayaaron>
+Message-ID: <9AD00152-4C8A-4978-83B7-DA88E066D914@ujf-grenoble.fr>
+
+Hi Christian,
+
+I had a quick look on your files.
+
+First, open you th2 file : you have drawn the walls, but you do not have makes any stations. I think that the mistake comes from that. Maybe I am wrong, but if i have good understood the way Therion is working, for each scrap, you need to plot the stations (using the point "station", and having the option -name 5 at testmine_03.testmine for instance). This the way to clip the drawing to the survey.
+
+An other comment : in your *.th files, you define both
+date 2016.05.16
+and then
+declination -2 degrees
+If I good understood, the « date » option gives the date of the survey, not the date of the drawing (for that, you have to add it in each scrap of the *th2 files). This date is used to correct from the declination.
+In consequence, you do not have to add the declination -2 degrees after the date option if you have set it well ;-)
+
+Cheers,
+
+Xavier
+
+
+
+> Le 26 mai 2016 à 17:08, Christian Rößler <chr_rossi at kartan.de> a écrit :
+> 
+> Am Dienstag, 17. Mai 2016, 20:01:12 schrieb Christian Rößler:
+> 
+> Hallo everybody,
+> 
+>>> I noticed a strange problem drawing a quick survey of a little adit
+>>> today. This being a little adit I immediately noticed that the scale
+>>> bar is off by a factor 2, as 20 real meters (in the adit) gave 10
+>>> meters in the scale bar.
+>> 
+>> well, I cannot find any misconfiguration, and on the other hand I do not
+>> think this could be a bug in Therion as other people would have surely
+>> noticed such before me.
+>> 
+>> http://kartan.de/div/scaling_mishap.zip
+>> http://kartan.de/div/scaling_mishap.tar.gz
+> 
+> could anyone reproduce this, or even better _not_ reproduce, so I at least 
+> know I have done some mistake?
+> 
+> By the way: I have tried it on a friend's computer: Newly installed 
+> Therion (Debian install); same result.
+> 
+> Best regards, Christian
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Sat May 28 18:09:44 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 28 May 2016 18:09:44 +0200
+Subject: [Therion] scrap-drawn maps to small by factor 2
+In-Reply-To: <9AD00152-4C8A-4978-83B7-DA88E066D914@ujf-grenoble.fr>
+References: <1574628.vLGyb0PVsJ@sayaaron> <2534778.lWRZGonWYr@sayaaron>
+	<3400206.JNHc7KurbD@sayaaron>
+	<9AD00152-4C8A-4978-83B7-DA88E066D914@ujf-grenoble.fr>
+Message-ID: <65E9A3A4-3C50-49BD-A791-51216082710F@mac.com>
+
+You have to add to each scrap the calibration - either minimum two stations, either manual calibration (scale). 
+
+Odesláno z iPhonu
+
+28. 5. 2016 v 17:50, Xavier Robert <xavier.robert at ujf-grenoble.fr>:
+
+> Hi Christian,
+> 
+> I had a quick look on your files.
+> 
+> First, open you th2 file : you have drawn the walls, but you do not have makes any stations. I think that the mistake comes from that. Maybe I am wrong, but if i have good understood the way Therion is working, for each scrap, you need to plot the stations (using the point "station", and having the option -name 5 at testmine_03.testmine for instance). This the way to clip the drawing to the survey.
+> 
+> An other comment : in your *.th files, you define both
+> date 2016.05.16
+> and then
+> declination -2 degrees
+> If I good understood, the « date » option gives the date of the survey, not the date of the drawing (for that, you have to add it in each scrap of the *th2 files). This date is used to correct from the declination.
+> In consequence, you do not have to add the declination -2 degrees after the date option if you have set it well ;-)
+> 
+> Cheers,
+> 
+> Xavier
+> 
+> 
+> 
+>> Le 26 mai 2016 à 17:08, Christian Rößler <chr_rossi at kartan.de> a écrit :
+>> 
+>> Am Dienstag, 17. Mai 2016, 20:01:12 schrieb Christian Rößler:
+>> 
+>> Hallo everybody,
+>> 
+>>>> I noticed a strange problem drawing a quick survey of a little adit
+>>>> today. This being a little adit I immediately noticed that the scale
+>>>> bar is off by a factor 2, as 20 real meters (in the adit) gave 10
+>>>> meters in the scale bar.
+>>> 
+>>> well, I cannot find any misconfiguration, and on the other hand I do not
+>>> think this could be a bug in Therion as other people would have surely
+>>> noticed such before me.
+>>> 
+>>> http://kartan.de/div/scaling_mishap.zip
+>>> http://kartan.de/div/scaling_mishap.tar.gz
+>> 
+>> could anyone reproduce this, or even better _not_ reproduce, so I at least 
+>> know I have done some mistake?
+>> 
+>> By the way: I have tried it on a friend's computer: Newly installed 
+>> Therion (Debian install); same result.
+>> 
+>> Best regards, Christian
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From phil.vernant at gmail.com  Sun May 29 00:45:16 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sun, 29 May 2016 00:45:16 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+	<6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+Message-ID: <C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+
+Maybe this can help, when I run “ therion --print-symbols “
+
+first thing that goes wrong is :
+kpathsea: Running mktexmf csr10
+! I can't find file `csr10'.
+<*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+
+Thanks,
+Phil
+
+
+> On 28 May 2016, at 23:39 PM, Philippe Vernant <phil.vernant at gmail.com> wrote:
+> 
+> Thanks Xav !
+> 
+> Now it is working, except when I compile, I get the message :
+> 
+> ! ! Unable to read mpx file.
+> l.6483 ...(-243.46,-8.39),(-242.762,-7.82209),btex
+>                                                   \thwallaltitude \thfb\cha...
+> The two files given above are one of your source files
+> and an auxiliary file I need to read to find out what your
+> btex..etex blocks mean. If you don't know why I had trouble,
+> try running it manually through MPtoTeX, TeX, and DVItoMP
+> .
+> .
+> .
+> therion: error -- metapost exit code -- 768”
+> 
+> Most likely a MacTex issue, any idea ?
+> 
+> Thanks,
+> Phil
+> 
+> 
+> 
+>> On 28 May 2016, at 17:21 PM, Xavier Robert <xavier.robert at ujf-grenoble.fr> wrote:
+>> 
+>> Hi Phil,
+>> 
+>> I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+>> 1) type : cd to/your/topo/folder
+>> 2) type : xtherion [yourfilename].thconfig
+>> 
+>> And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+>> 
+>> Xav
+>> 
+>> 
+>>> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+>>> 
+>>> Hi guys,
+>>> 
+>>> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+>>> 
+>>> Any idea ?
+>>> 
+>>> Cheers,
+>>> Phil
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+From phil.vernant at gmail.com  Sat May 28 23:39:02 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Sat, 28 May 2016 23:39:02 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+Message-ID: <6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+
+Thanks Xav !
+
+Now it is working, except when I compile, I get the message :
+
+! ! Unable to read mpx file.
+l.6483 ...(-243.46,-8.39),(-242.762,-7.82209),btex
+                                                   \thwallaltitude \thfb\cha...
+The two files given above are one of your source files
+and an auxiliary file I need to read to find out what your
+btex..etex blocks mean. If you don't know why I had trouble,
+try running it manually through MPtoTeX, TeX, and DVItoMP
+.
+.
+.
+therion: error -- metapost exit code -- 768”
+
+Most likely a MacTex issue, any idea ?
+
+Thanks,
+Phil
+
+
+ 
+> On 28 May 2016, at 17:21 PM, Xavier Robert <xavier.robert at ujf-grenoble.fr> wrote:
+> 
+> Hi Phil,
+> 
+> I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+> 1) type : cd to/your/topo/folder
+> 2) type : xtherion [yourfilename].thconfig
+> 
+> And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+> 
+> Xav
+> 
+> 
+>> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+>> 
+>> Hi guys,
+>> 
+>> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+>> 
+>> Any idea ?
+>> 
+>> Cheers,
+>> Phil
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From jeanflorent at no-log.org  Sun May 29 19:11:53 2016
+From: jeanflorent at no-log.org (Jean-Florent Raymond)
+Date: Sun, 29 May 2016 19:11:53 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+	<6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+	<C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+Message-ID: <e431c256-b1eb-03e3-3257-cae432ec6c2b@no-log.org>
+
+Hi,
+
+Seems that a font is missing.
+According to
+https://lists.debian.org/debian-tex-maint/2007/01/msg00003.html
+it is a Czech font, which belongs to the (debian) package
+texlive-lang-czechslovak.
+
+Do you have all latex fonts installed?
+
+Cheers,
+
+Jean-Florent.
+
+Le 29/05/2016 à 00:45, Philippe Vernant a écrit :
+> Maybe this can help, when I run “ therion --print-symbols “
+> 
+> first thing that goes wrong is :
+> kpathsea: Running mktexmf csr10
+> ! I can't find file `csr10'.
+> <*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+> 
+> Thanks,
+> Phil
+> 
+> 
+>> On 28 May 2016, at 23:39 PM, Philippe Vernant <phil.vernant at gmail.com> wrote:
+>>
+>> Thanks Xav !
+>>
+>> Now it is working, except when I compile, I get the message :
+>>
+>> ! ! Unable to read mpx file.
+>> l.6483 ...(-243.46,-8.39),(-242.762,-7.82209),btex
+>>                                                   \thwallaltitude \thfb\cha...
+>> The two files given above are one of your source files
+>> and an auxiliary file I need to read to find out what your
+>> btex..etex blocks mean. If you don't know why I had trouble,
+>> try running it manually through MPtoTeX, TeX, and DVItoMP
+>> .
+>> .
+>> .
+>> therion: error -- metapost exit code -- 768”
+>>
+>> Most likely a MacTex issue, any idea ?
+>>
+>> Thanks,
+>> Phil
+>>
+>>
+>>
+>>> On 28 May 2016, at 17:21 PM, Xavier Robert <xavier.robert at ujf-grenoble.fr> wrote:
+>>>
+>>> Hi Phil,
+>>>
+>>> I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+>>> 1) type : cd to/your/topo/folder
+>>> 2) type : xtherion [yourfilename].thconfig
+>>>
+>>> And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+>>>
+>>> Xav
+>>>
+>>>
+>>>> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+>>>>
+>>>> Hi guys,
+>>>>
+>>>> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+>>>>
+>>>> Any idea ?
+>>>>
+>>>> Cheers,
+>>>> Phil
+>>>>
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: OpenPGP digital signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160529/14c9dd5b/attachment.sig>
+
+From phil.vernant at gmail.com  Mon May 30 00:49:12 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Mon, 30 May 2016 00:49:12 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <e431c256-b1eb-03e3-3257-cae432ec6c2b@no-log.org>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+	<6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+	<C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+	<e431c256-b1eb-03e3-3257-cae432ec6c2b@no-log.org>
+Message-ID: <33F1F671-5AE2-4D1A-8137-4F780917FCCE@gmail.com>
+
+Thanks Jean-Florent,
+
+Seems that I have two Tex on my mac, is there a way to force Therion to look in one place for the Tex programs ?
+
+Cheers,
+Phil
+
+> On 29 May 2016, at 19:11 PM, Jean-Florent Raymond <jeanflorent at no-log.org> wrote:
+> 
+> Hi,
+> 
+> Seems that a font is missing.
+> According to
+> https://lists.debian.org/debian-tex-maint/2007/01/msg00003.html
+> it is a Czech font, which belongs to the (debian) package
+> texlive-lang-czechslovak.
+> 
+> Do you have all latex fonts installed?
+> 
+> Cheers,
+> 
+> Jean-Florent.
+> 
+> Le 29/05/2016 à 00:45, Philippe Vernant a écrit :
+>> Maybe this can help, when I run “ therion --print-symbols “
+>> 
+>> first thing that goes wrong is :
+>> kpathsea: Running mktexmf csr10
+>> ! I can't find file `csr10'.
+>> <*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+>> 
+>> Thanks,
+>> Phil
+>> 
+>> 
+>>> On 28 May 2016, at 23:39 PM, Philippe Vernant <phil.vernant at gmail.com> wrote:
+>>> 
+>>> Thanks Xav !
+>>> 
+>>> Now it is working, except when I compile, I get the message :
+>>> 
+>>> ! ! Unable to read mpx file.
+>>> l.6483 ...(-243.46,-8.39),(-242.762,-7.82209),btex
+>>>                                                  \thwallaltitude \thfb\cha...
+>>> The two files given above are one of your source files
+>>> and an auxiliary file I need to read to find out what your
+>>> btex..etex blocks mean. If you don't know why I had trouble,
+>>> try running it manually through MPtoTeX, TeX, and DVItoMP
+>>> .
+>>> .
+>>> .
+>>> therion: error -- metapost exit code -- 768”
+>>> 
+>>> Most likely a MacTex issue, any idea ?
+>>> 
+>>> Thanks,
+>>> Phil
+>>> 
+>>> 
+>>> 
+>>>> On 28 May 2016, at 17:21 PM, Xavier Robert <xavier.robert at ujf-grenoble.fr> wrote:
+>>>> 
+>>>> Hi Phil,
+>>>> 
+>>>> I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+>>>> 1) type : cd to/your/topo/folder
+>>>> 2) type : xtherion [yourfilename].thconfig
+>>>> 
+>>>> And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+>>>> 
+>>>> Xav
+>>>> 
+>>>> 
+>>>>> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+>>>>> 
+>>>>> Hi guys,
+>>>>> 
+>>>>> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+>>>>> 
+>>>>> Any idea ?
+>>>>> 
+>>>>> Cheers,
+>>>>> Phil
+>>>>> 
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Mon May 30 08:55:15 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 30 May 2016 08:55:15 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <33F1F671-5AE2-4D1A-8137-4F780917FCCE@gmail.com>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+	<6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+	<C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+	<e431c256-b1eb-03e3-3257-cae432ec6c2b@no-log.org>
+	<33F1F671-5AE2-4D1A-8137-4F780917FCCE@gmail.com>
+Message-ID: <3C42055C-A7B6-49CF-A2F9-19D4DC874F76@mac.com>
+
+RTFM or check therion.ini:
+
+### Output character encodings ###
+# encoding-default  ASCII
+# encoding-sql  ASCII
+
+### Default regional settings ###
+# language  en_UK
+# units metric
+
+### Prefered loop closure method
+# loop-closure survex
+
+### Paths to called executable files ###
+# mpost-path  "mpost"
+# mpost-options  "-tex=etex"
+# pdftex-path  "pdfetex"
+# cavern-path  "cavern"
+# convert-path  "convert"
+# identify-path  "identify"
+
+### Search paths for source and configuration files ###
+# source-path  ""
+
+### Tex initialization ###
+# tex-env off
+# tex-fonts <encoding> <roman> <italic> <bold> <sansserif> <sansserifoblique>
+# tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+# tex-fonts xl2 csr10 csti10 csbx10 csss10 csssi10
+
+### PDF fonts initialization
+# otf2pfb off
+# pdf-fonts <roman> <italic> <bold> <sansserif> <sansserifoblique>
+
+### Path to temporary directory ###
+# tmp-path  ""
+
+### User defined coordinate system ###
+# cs-def <id> <proj4id> [other options]
+
+### Command to remove temporary directory ###
+# tmp-remove  ""
+
+m.s.
+
+> 30. 5. 2016 v 0:49, Philippe Vernant <phil.vernant at gmail.com>:
+> 
+> Thanks Jean-Florent,
+> 
+> Seems that I have two Tex on my mac, is there a way to force Therion to look in one place for the Tex programs ?
+> 
+> Cheers,
+> Phil
+> 
+>> On 29 May 2016, at 19:11 PM, Jean-Florent Raymond <jeanflorent at no-log.org> wrote:
+>> 
+>> Hi,
+>> 
+>> Seems that a font is missing.
+>> According to
+>> https://lists.debian.org/debian-tex-maint/2007/01/msg00003.html
+>> it is a Czech font, which belongs to the (debian) package
+>> texlive-lang-czechslovak.
+>> 
+>> Do you have all latex fonts installed?
+>> 
+>> Cheers,
+>> 
+>> Jean-Florent.
+>> 
+>> Le 29/05/2016 à 00:45, Philippe Vernant a écrit :
+>>> Maybe this can help, when I run “ therion --print-symbols “
+>>> 
+>>> first thing that goes wrong is :
+>>> kpathsea: Running mktexmf csr10
+>>> ! I can't find file `csr10'.
+>>> <*> ...e:=ljfour; mag:=1; nonstopmode; input csr10
+>>> 
+>>> Thanks,
+>>> Phil
+>>> 
+>>> 
+>>>> On 28 May 2016, at 23:39 PM, Philippe Vernant <phil.vernant at gmail.com> wrote:
+>>>> 
+>>>> Thanks Xav !
+>>>> 
+>>>> Now it is working, except when I compile, I get the message :
+>>>> 
+>>>> ! ! Unable to read mpx file.
+>>>> l.6483 ...(-243.46,-8.39),(-242.762,-7.82209),btex
+>>>>                                                 \thwallaltitude \thfb\cha...
+>>>> The two files given above are one of your source files
+>>>> and an auxiliary file I need to read to find out what your
+>>>> btex..etex blocks mean. If you don't know why I had trouble,
+>>>> try running it manually through MPtoTeX, TeX, and DVItoMP
+>>>> .
+>>>> .
+>>>> .
+>>>> therion: error -- metapost exit code -- 768”
+>>>> 
+>>>> Most likely a MacTex issue, any idea ?
+>>>> 
+>>>> Thanks,
+>>>> Phil
+>>>> 
+>>>> 
+>>>> 
+>>>>> On 28 May 2016, at 17:21 PM, Xavier Robert <xavier.robert at ujf-grenoble.fr> wrote:
+>>>>> 
+>>>>> Hi Phil,
+>>>>> 
+>>>>> I am also running therion and Xtherion under El capitan. That is true that I cannot open any thconfig file from whereon itself (it was working under the previous versions of Macos x). However, it is working if you are using the console : 
+>>>>> 1) type : cd to/your/topo/folder
+>>>>> 2) type : xtherion [yourfilename].thconfig
+>>>>> 
+>>>>> And from there, you are able to edit the thconfig, and also to load/edit all *.th2 files
+>>>>> 
+>>>>> Xav
+>>>>> 
+>>>>> 
+>>>>>> Le 27 mai 2016 à 16:34, Philippe Vernant <phil.vernant at gmail.com> a écrit :
+>>>>>> 
+>>>>>> Hi guys,
+>>>>>> 
+>>>>>> Does anyone runs therion under Mac OSX El Capitan. I can run xtherion, but it does not want to open the files, there is no way to get them clickable. I’ve tried the homebrew version and also compiled it myself but the results are the same.
+>>>>>> 
+>>>>>> Any idea ?
+>>>>>> 
+>>>>>> Cheers,
+>>>>>> Phil
+>>>>>> 
+>>>>>> _______________________________________________
+>>>>>> Therion mailing list
+>>>>>> Therion at speleo.sk
+>>>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>>> 
+>>>>> _______________________________________________
+>>>>> Therion mailing list
+>>>>> Therion at speleo.sk
+>>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>> 
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From phil.vernant at gmail.com  Mon May 30 09:47:47 2016
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Mon, 30 May 2016 09:47:47 +0200
+Subject: [Therion] Therion on Mac El Capitan
+In-Reply-To: <3C42055C-A7B6-49CF-A2F9-19D4DC874F76@mac.com>
+References: <E8F809D4-7BEB-48AA-97E1-A4A6D8E1D3F4@gmail.com>
+	<B3016459-21FD-462C-A2A1-4862EA7324A9@ujf-grenoble.fr>
+	<6FF02392-DC0C-4976-9348-2B5DA23067A1@gmail.com>
+	<C50B278F-01A8-4CAE-B341-46D42729F3F5@gmail.com>
+	<e431c256-b1eb-03e3-3257-cae432ec6c2b@no-log.org>
+	<33F1F671-5AE2-4D1A-8137-4F780917FCCE@gmail.com>
+	<3C42055C-A7B6-49CF-A2F9-19D4DC874F76@mac.com>
+Message-ID: <AC4B3501-3DE7-43A0-9C4D-743DEE15B3EC@gmail.com>
+
+Thanks Martin,
+
+I read that fucking manual ! The trouble was coming from a double installation of Tex (one with macport that had been installed as a dependency for another program, and the other with mactex). Now I have fixed that issue, but I get a segmentation fault.
+
+For a thconfig running under windows, on mac I have :
+
+writing ./Output/garrel.lox ...............Segmentation fault: 11
+
+The map a properly generated, but not the lox file.
+
+And if I try to run the commande : 
+
+therion --print-symbols
+
+I get :
+
+354 output files written: data.1 .. data.4012
+Transcript written on data.log.
+converting scraps* ... done
+Segmentation fault: 11
+
+I have the same error messages with the home brew installation, or if I compile therion myself (had to slightly modify makeinstall.tcl to make it work).
+
+Phil
+
+
+> On 30 May 2016, at 8:55 AM, Martin Sluka <martinsluka at mac.com> wrote:
+> 
+> ### Output character encodings ###
+> # encoding-default  ASCII
+> # encoding-sql  ASCII
+> 
+> ### Default regional settings ###
+> # language  en_UK
+> # units metric
+> 
+> ### Prefered loop closure method
+> # loop-closure survex
+> 
+> ### Paths to called executable files ###
+> # mpost-path  "mpost"
+> # mpost-options  "-tex=etex"
+> # pdftex-path  "pdfetex"
+> # cavern-path  "cavern"
+> # convert-path  "convert"
+> # identify-path  "identify"
+> 
+> ### Search paths for source and configuration files ###
+> # source-path  ""
+> 
+> ### Tex initialization ###
+> # tex-env off
+> # tex-fonts <encoding> <roman> <italic> <bold> <sansserif> <sansserifoblique>
+> # tex-fonts raw cmr10 cmti10 cmbx10 cmss10 cmssi10
+> # tex-fonts xl2 csr10 csti10 csbx10 csss10 csssi10
+> 
+> ### PDF fonts initialization
+> # otf2pfb off
+> # pdf-fonts <roman> <italic> <bold> <sansserif> <sansserifoblique>
+> 
+> ### Path to temporary directory ###
+> # tmp-path  ""
+> 
+> ### User defined coordinate system ###
+> # cs-def <id> <proj4id> [other options]
+> 
+> ### Command to remove temporary directory ###
+> # tmp-remove  ""
+> 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160530/14218e4c/attachment.htm>
+
+From G.Voelkl at rmvg.at  Tue May 31 07:22:15 2016
+From: G.Voelkl at rmvg.at (=?iso-8859-1?Q?V=F6lkl_Gernot?=)
+Date: Tue, 31 May 2016 05:22:15 +0000
+Subject: [Therion] Therion iMac El Capitan jpeg
+Message-ID: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+
+Hello!
+
+I have a Problem with my iMac. I want to draw a sketch in therion.
+Therefor i want to insert a old plan ending jpg. I can't open it. It is always grey......
+
+Please can help me someone.
+
+Bg Gernot
+
+
+Gernot Völkl
+Assistent der Geschäftsführung
+
+[cid:0210-0001 at 01d1bafc.64d539a7]
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>
+www.asamer.at<http://www.asamer.at>
+
+
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a163adbf/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Logo_Asamer_RMVG_4C.gif
+Type: image/gif
+Size: 2273 bytes
+Desc: Logo_Asamer_RMVG_4C.gif
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a163adbf/attachment.gif>
+
+From guy.demars7 at orange.fr  Tue May 31 07:48:39 2016
+From: guy.demars7 at orange.fr (Guy Demars)
+Date: Tue, 31 May 2016 07:48:39 +0200
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+Message-ID: <b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+
+ Hello,
+Try tu use png or better gif
+Therion works fine with gif
+
+Guy
+
+De : Völkl Gernot
+Envoyé le :mardi 31 mai 2016 07:22
+À : 'therion at speleo.sk'
+Objet :[Therion] Therion iMac El Capitan jpeg
+
+Hello!
+
+I have a Problem with my iMac. I want to draw a sketch in therion. 
+Therefor i want to insert a old plan ending jpg. I can’t open it. It is always grey……
+
+Please can help me someone.
+
+Bg Gernot
+
+
+Gernot Völkl
+Assistent der Geschäftsführung 
+
+
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at
+www.asamer.at
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a4d1e30f/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2F9529B5F4CC468EA1ABA160D68FFD1A.gif
+Type: image/gif
+Size: 6701 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a4d1e30f/attachment.gif>
+
+From G.Voelkl at rmvg.at  Tue May 31 08:14:31 2016
+From: G.Voelkl at rmvg.at (=?utf-8?B?VsO2bGtsIEdlcm5vdA==?=)
+Date: Tue, 31 May 2016 06:14:31 +0000
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+Message-ID: <380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+
+Hello!
+
+I have tryed png. But it is the same problem.  On windows it works!
+
+Do you have an other idea?
+
+Lg Gernot
+
+
+Von: Guy Demars [mailto:guy.demars7 at orange.fr]
+Gesendet: Dienstag, 31. Mai 2016 07:49
+An: Völkl Gernot; 'therion at speleo.sk'
+Betreff: RE: [Therion] Therion iMac El Capitan jpeg
+
+Hello,
+Try tu use png or better gif
+Therion works fine with gif
+
+Guy
+
+De : Völkl Gernot<mailto:G.Voelkl at rmvg.at>
+Envoyé le :mardi 31 mai 2016 07:22
+À : 'therion at speleo.sk'<mailto:therion at speleo.sk>
+Objet :[Therion] Therion iMac El Capitan jpeg
+
+Hello!
+
+I have a Problem with my iMac. I want to draw a sketch in therion.
+Therefor i want to insert a old plan ending jpg. I can’t open it. It is always grey……
+
+Please can help me someone.
+
+Bg Gernot
+
+
+Gernot Völkl
+Assistent der Geschäftsführung
+
+[cid:0210-0001 at 01d1bafc.64d539a7]
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>
+www.asamer.at<http://www.asamer.at>
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/f0e66d9a/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 8221 bytes
+Desc: image002.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/f0e66d9a/attachment.png>
+
+From martinsluka at mac.com  Tue May 31 08:41:47 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 May 2016 08:41:47 +0200
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+Message-ID: <423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+
+
+> 31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at>:
+> 
+> I have tryed png. But it is the same problem.  On windows it works!
+>  
+> Do you have an other idea?
+> 
+
+Have you chance to save it as "friendly for windows“? Which software did you use?
+
+m.s.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/969ef1f9/attachment.htm>
+
+From christian.sandrini at me.com  Tue May 31 08:49:16 2016
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Tue, 31 May 2016 08:49:16 +0200
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+Message-ID: <2E55B7A5-66A9-43D3-AC7F-EE6BDD64F456@me.com>
+
+Hi
+
+Can you open the terminal and run the command
+
+GetFileInfo image-file-name
+
+While image-file-name is the name of your image file. You need to be in the same directory as the image or specify the full path of it.
+
+best
+Chris
+
+
+> On 31 May 2016, at 07:22, Völkl Gernot <G.Voelkl at rmvg.at> wrote:
+> 
+> Hello!
+>  
+> I have a Problem with my iMac. I want to draw a sketch in therion.
+> Therefor i want to insert a old plan ending jpg. I can’t open it. It is always grey……
+>  
+> Please can help me someone.
+>  
+> Bg Gernot
+> 
+> 
+> Gernot Völkl
+> Assistent der Geschäftsführung 
+> 
+> <Logo_Asamer_RMVG_4C.gif> 
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> tel  +43 3848 5700
+> fax +43 5700 - 20
+> mobile +43 664 963 32 07
+> email G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>
+> www.asamer.at <http://www.asamer.at/>
+> 
+> 
+> This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/4003d047/attachment.htm>
+
+From G.Voelkl at rmvg.at  Tue May 31 08:50:08 2016
+From: G.Voelkl at rmvg.at (=?utf-8?B?VsO2bGtsIEdlcm5vdA==?=)
+Date: Tue, 31 May 2016 06:50:08 +0000
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+	<423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+Message-ID: <380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+
+Hy!
+
+I don’t know what you meen! I use the aktuell Version of Therion and the new version of Mac OS X.
+
+I have the therion file fo1.th in the editor and want to paste the picture in the Background put i can’t open it. The Picture ist grey. I checked the roots option but there are ok. I am write able..
+
+lg
+
+
+
+Gernot Völkl
+Assistent der Geschäftsführung
+
+[cid:0155-0001 at 01d1bb08.ac091403]
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>
+www.asamer.at<http://www.asamer.at>
+
+
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+Gesendet: Dienstag, 31. Mai 2016 08:42
+An: List for Therion users
+Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+
+
+31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>>:
+
+I have tryed png. But it is the same problem.  On windows it works!
+
+Do you have an other idea?
+
+
+Have you chance to save it as "friendly for windows“? Which software did you use?
+
+m.s.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a9610e21/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Logo_Asamer_RMVG_4C.gif
+Type: image/gif
+Size: 2273 bytes
+Desc: Logo_Asamer_RMVG_4C.gif
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/a9610e21/attachment.gif>
+
+From martinsluka at mac.com  Tue May 31 08:56:37 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 May 2016 08:56:37 +0200
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+	<423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+Message-ID: <A1057B18-13F5-4B0B-9AF7-321706DD53D9@mac.com>
+
+Some softwares save JPG with strange headers which are not 100% correct. So some other softwares, not only Therion, could have problems with them.
+
+May you write which soft you used to generate that jpg? 
+
+m.s.
+
+
+> 31. 5. 2016 v 8:50, Völkl Gernot <G.Voelkl at rmvg.at>:
+> 
+> Hy!
+>  
+> I don’t know what you meen! I use the aktuell Version of Therion and the new version of Mac OS X.
+>  
+> I have the therion file fo1.th <http://fo1.th/> in the editor and want to paste the picture in the Background put i can’t open it. The Picture ist grey. I checked the roots option but there are ok. I am write able..
+>  
+> lg
+>  
+> 
+> 
+> Gernot Völkl
+> Assistent der Geschäftsführung 
+> 
+> <Logo_Asamer_RMVG_4C.gif> 
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> tel  +43 3848 5700
+> fax +43 5700 - 20
+> mobile +43 664 963 32 07
+> email G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>
+> www.asamer.at <http://www.asamer.at/>
+> 
+> 
+> This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+> 
+> 
+> Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+> Gesendet: Dienstag, 31. Mai 2016 08:42
+> An: List for Therion users
+> Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+>  
+>  
+> 31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>>:
+>  
+> I have tryed png. But it is the same problem.  On windows it works!
+>  
+> Do you have an other idea?
+>  
+>  
+> Have you chance to save it as "friendly for windows“? Which software did you use?
+>  
+> m.s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/43962dd0/attachment.htm>
+
+From G.Voelkl at rmvg.at  Tue May 31 09:00:35 2016
+From: G.Voelkl at rmvg.at (=?utf-8?B?VsO2bGtsIEdlcm5vdA==?=)
+Date: Tue, 31 May 2016 07:00:35 +0000
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <A1057B18-13F5-4B0B-9AF7-321706DD53D9@mac.com>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+	<423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+	<A1057B18-13F5-4B0B-9AF7-321706DD53D9@mac.com>
+Message-ID: <380F2ECA78028445A89869262B358AF999CA15D6@aohmail01.asamer.holding.ah>
+
+I tryed to set a better contrast and i use Gimp 2.8 to change the settings.
+
+I also export .png with gimp. It also doesn’t work.
+
+I will try to export .gif
+
+lg
+
+
+
+Gernot Völkl
+Assistent der Geschäftsführung
+
+[cid:01bd-0001 at 01d1bb0a.21a2148b]
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>
+www.asamer.at<http://www.asamer.at>
+
+
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+Gesendet: Dienstag, 31. Mai 2016 08:57
+An: List for Therion users
+Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+
+Some softwares save JPG with strange headers which are not 100% correct. So some other softwares, not only Therion, could have problems with them.
+
+May you write which soft you used to generate that jpg?
+
+m.s.
+
+
+31. 5. 2016 v 8:50, Völkl Gernot <G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>>:
+
+Hy!
+
+I don’t know what you meen! I use the aktuell Version of Therion and the new version of Mac OS X.
+
+I have the therion file fo1.th<http://fo1.th/> in the editor and want to paste the picture in the Background put i can’t open it. The Picture ist grey. I checked the roots option but there are ok. I am write able..
+
+lg
+
+
+
+Gernot Völkl
+Assistent der Geschäftsführung
+
+<Logo_Asamer_RMVG_4C.gif>
+RMVG Restmüllverwertung
+Erzberg 3
+8790 Eisenerz
+Austria
+tel  +43 3848 5700
+fax +43 5700 - 20
+mobile +43 664 963 32 07
+email G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>
+www.asamer.at<http://www.asamer.at/>
+
+This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+
+Von: therion-bounces at speleo.sk<mailto:therion-bounces at speleo.sk> [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+Gesendet: Dienstag, 31. Mai 2016 08:42
+An: List for Therion users
+Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+
+
+31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at<mailto:G.Voelkl at rmvg.at>>:
+
+I have tryed png. But it is the same problem.  On windows it works!
+
+Do you have an other idea?
+
+
+Have you chance to save it as "friendly for windows“? Which software did you use?
+
+m.s.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk<mailto:Therion at speleo.sk>
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/923769ae/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Logo_Asamer_RMVG_4C.gif
+Type: image/gif
+Size: 2273 bytes
+Desc: Logo_Asamer_RMVG_4C.gif
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/923769ae/attachment.gif>
+
+From martinsluka at mac.com  Tue May 31 10:05:02 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 May 2016 10:05:02 +0200
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <380F2ECA78028445A89869262B358AF999CA15D6@aohmail01.asamer.holding.ah>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+	<423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+	<A1057B18-13F5-4B0B-9AF7-321706DD53D9@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15D6@aohmail01.asamer.holding.ah>
+Message-ID: <55BD784E-2E56-49A3-A1B2-11D512195EE7@mac.com>
+
+It is very strange. GIMP should 100% correct soft.
+
+May you try to convert your image by ImageMagick from command line?
+
+BTW, what is the size and resolution of your image?
+
+m.s.
+
+
+
+
+> 31. 5. 2016 v 9:00, Völkl Gernot <G.Voelkl at rmvg.at>:
+> 
+> I tryed to set a better contrast and i use Gimp 2.8 to change the settings.
+>  
+> I also export .png with gimp. It also doesn’t work.
+>  
+> I will try to export .gif
+>  
+> lg
+>  
+> 
+> 
+> Gernot Völkl
+> Assistent der Geschäftsführung 
+> 
+> <Logo_Asamer_RMVG_4C.gif> 
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> tel  +43 3848 5700
+> fax +43 5700 - 20
+> mobile +43 664 963 32 07
+> email G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>
+> www.asamer.at <http://www.asamer.at/>
+> 
+> 
+> This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+> 
+> 
+> Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+> Gesendet: Dienstag, 31. Mai 2016 08:57
+> An: List for Therion users
+> Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+>  
+> Some softwares save JPG with strange headers which are not 100% correct. So some other softwares, not only Therion, could have problems with them.
+>  
+> May you write which soft you used to generate that jpg? 
+>  
+> m.s.
+>  
+>  
+> 31. 5. 2016 v 8:50, Völkl Gernot <G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>>:
+>  
+> Hy!
+>  
+> I don’t know what you meen! I use the aktuell Version of Therion and the new version of Mac OS X.
+>  
+> I have the therion file fo1.th <http://fo1.th/> in the editor and want to paste the picture in the Background put i can’t open it. The Picture ist grey. I checked the roots option but there are ok. I am write able..
+>  
+> lg
+>  
+> 
+> 
+> Gernot Völkl
+> Assistent der Geschäftsführung 
+> 
+> <Logo_Asamer_RMVG_4C.gif> 
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> tel  +43 3848 5700
+> fax +43 5700 - 20
+> mobile +43 664 963 32 07
+> email G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>
+> www.asamer.at <http://www.asamer.at/>
+> 
+> This message is confidential. It may not be disclosed to, or used by, anyone other than the addressee. If you receive this message by mistake, please advise the sender.
+>  
+> Von: therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> [mailto:therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>] Im Auftrag von Martin Sluka
+> Gesendet: Dienstag, 31. Mai 2016 08:42
+> An: List for Therion users
+> Betreff: Re: [Therion] Therion iMac El Capitan jpeg
+>  
+>  
+> 31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at <mailto:G.Voelkl at rmvg.at>>:
+>  
+> I have tryed png. But it is the same problem.  On windows it works!
+>  
+> Do you have an other idea?
+>  
+>  
+> Have you chance to save it as "friendly for windows“? Which software did you use?
+>  
+> m.s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/62099d9c/attachment.htm>
+
+From drfootleg at gmail.com  Tue May 31 10:50:54 2016
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 31 May 2016 08:50:54 +0000
+Subject: [Therion] Therion iMac El Capitan jpeg
+In-Reply-To: <55BD784E-2E56-49A3-A1B2-11D512195EE7@mac.com>
+References: <380F2ECA78028445A89869262B358AF999CA12E3@aohmail01.asamer.holding.ah>
+	<b9d0fb5270c724338e9d7c18ce795a56@mwinf5d47.me-wanadoo.net>
+	<380F2ECA78028445A89869262B358AF999CA14BB@aohmail01.asamer.holding.ah>
+	<423EDA78-E91D-442E-ACCA-84E9A4C789A1@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15A6@aohmail01.asamer.holding.ah>
+	<A1057B18-13F5-4B0B-9AF7-321706DD53D9@mac.com>
+	<380F2ECA78028445A89869262B358AF999CA15D6@aohmail01.asamer.holding.ah>
+	<55BD784E-2E56-49A3-A1B2-11D512195EE7@mac.com>
+Message-ID: <CAJkGg4n1hkwVqcpz7Hm7VCuTyx+xEOiXJ8-YtOW8xZX1jKSA0Q@mail.gmail.com>
+
+I have seen bitmaps always rendered in one grey shade in the Loch viewer
+(on Windows) when used as landscape overlays. It was a graphics card driver
+issue in that case. So it is possible you are seeing a related issue on the
+map editor. I found that if I viewed the same Loch model on a different
+laptop (or in a virtual machine running on the same laptop) then it
+rendered fine. But using the native OS on the laptop directly (I think it
+was an ATI graphics chipset) just rendered a plain grey overlap.
+
+Footleg
+
+On Tue, May 31, 2016 at 9:05 AM Martin Sluka <martinsluka at mac.com> wrote:
+
+> It is very strange. GIMP should 100% correct soft.
+>
+> May you try to convert your image by ImageMagick from command line?
+>
+> BTW, what is the size and resolution of your image?
+>
+> m.s.
+>
+>
+>
+>
+> 31. 5. 2016 v 9:00, Völkl Gernot <G.Voelkl at rmvg.at>:
+>
+> I tryed to set a better contrast and i use Gimp 2.8 to change the settings.
+>
+> I also export .png with gimp. It also doesn’t work.
+>
+> I will try to export .gif
+>
+> lg
+>
+>
+>
+>
+> Gernot Völkl
+> Assistent der Geschäftsführung
+>
+> <Logo_Asamer_RMVG_4C.gif>
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> *tel * +43 3848 5700
+> *fax *+43 5700 - 20
+> *mobile *+43 664 963 32 07
+> *email *G.Voelkl at rmvg.at
+> *www.asamer.at* <http://www.asamer.at/>
+>
+>
+> This message is confidential. It may not be disclosed to, or used by,
+> anyone other than the addressee. If you receive this message by mistake,
+> please advise the sender.
+>
+> *Von:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk
+> <therion-bounces at speleo.sk>] *Im Auftrag von *Martin Sluka
+> *Gesendet:* Dienstag, 31. Mai 2016 08:57
+>
+>
+> *An:* List for Therion users
+> *Betreff:* Re: [Therion] Therion iMac El Capitan jpeg
+>
+>
+> Some softwares save JPG with strange headers which are not 100% correct.
+> So some other softwares, not only Therion, could have problems with them.
+>
+> May you write which soft you used to generate that jpg?
+>
+> m.s.
+>
+>
+>
+> 31. 5. 2016 v 8:50, Völkl Gernot <G.Voelkl at rmvg.at>:
+>
+> Hy!
+>
+> I don’t know what you meen! I use the aktuell Version of Therion and the
+> new version of Mac OS X.
+>
+> I have the therion file fo1.th in the editor and want to paste the
+> picture in the Background put i can’t open it. The Picture ist grey. I
+> checked the roots option but there are ok. I am write able..
+>
+> lg
+>
+>
+>
+>
+> Gernot Völkl
+> Assistent der Geschäftsführung
+>
+> <Logo_Asamer_RMVG_4C.gif>
+> RMVG Restmüllverwertung
+> Erzberg 3
+> 8790 Eisenerz
+> Austria
+> *tel * +43 3848 5700
+> *fax* +43 5700 - 20
+> *mobile* +43 664 963 32 07
+> *email* G.Voelkl at rmvg.at
+> *www.asamer.at* <http://www.asamer.at/>
+>
+> This message is confidential. It may not be disclosed to, or used by,
+> anyone other than the addressee. If you receive this message by mistake,
+> please advise the sender.
+>
+> *Von:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk
+> <therion-bounces at speleo.sk>] *Im Auftrag von *Martin Sluka
+> *Gesendet:* Dienstag, 31. Mai 2016 08:42
+> *An:* List for Therion users
+> *Betreff:* Re: [Therion] Therion iMac El Capitan jpeg
+>
+>
+>
+> 31. 5. 2016 v 8:14, Völkl Gernot <G.Voelkl at rmvg.at>:
+>
+> I have tryed png. But it is the same problem.  On windows it works!
+>
+> Do you have an other idea?
+>
+>
+>
+> Have you chance to save it as "friendly for windows“? Which software did
+> you use?
+>
+> m.s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160531/b8359b67/attachment.htm>
+

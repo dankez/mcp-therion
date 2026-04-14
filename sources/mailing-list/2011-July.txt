@@ -1,0 +1,1513 @@
+From dangle at tomo.co.nz  Fri Jul  1 10:39:17 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 1 Jul 2011 20:39:17 +1200
+Subject: [Therion] Bug with background sketches?
+In-Reply-To: <4E0A38B2.2040002@inria.fr>
+References: <4E0A38B2.2040002@inria.fr>
+Message-ID: <B25512FECE044142B366CD11ECA1E972@JUICEBRAIN>
+
+
+>When I compile the pdf for that map the warped sketch image is included 9
+>times instead of only one. ... There is not only 
+>the problem of file size explosion (over 50 Mb for the original survey 
+>sketch with 16 scraps above), but the image is also hiding the scraps 
+>that are supposed to be above it.
+
+Version 5.2.10 does not have this problem.
+Versions 5.2.11 onwards do have this problem.
+
+Bruce
+
+
+
+From andrew at wotcc.org.uk  Fri Jul  1 16:53:18 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 01 Jul 2011 15:53:18 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+Message-ID: <4E0DDF5E.4030807@wotcc.org.uk>
+
+After getting no output in ubuntu I decided to try Debian. So squeeze 
+ran fine, nice bat icons and everything in the menu. But it was version 
+5.3.3 so bit the bullet and changed to wheezy. Excellent, 5.3.7 xtherion 
+works fine. (Well as far as I can tell) But loch just does nothing, 
+whether from the or opening a file.
+Trying the command line I get this
+
+The program 'loch' received an X Window System error.
+This probably reflects a bug in the program.
+The error was 'BadMatch (invalid parameter attributes)'.
+   (Details: serial 2540 error_code 8 request_code 73 minor_code 0)
+   (Note to programmers: normally, X errors are reported asynchronously;
+    that is, you will receive the error a while after causing it.
+    To debug your program, run it with the --sync command line
+    option to change this behavior. You can then get a meaningful
+    backtrace from your debugger if you break on the gdk_x_error() 
+function.)
+
+Back to where I started, at least I have Aven this time, although it is 
+not really that useable, as it flickers loads
+
+Not found any other graphics that do not work, but then I only changed 
+over a few hours ago
+
+Andrew
+
+
+From wookey at wookware.org  Fri Jul  1 19:56:00 2011
+From: wookey at wookware.org (Wookey)
+Date: Fri, 1 Jul 2011 18:56:00 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <4E0DDF5E.4030807@wotcc.org.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>
+Message-ID: <20110701175600.GX3023@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2011-07-01 15:53 +0100]:
+> After getting no output in ubuntu I decided to try Debian. So
+> squeeze ran fine, nice bat icons and everything in the menu. But it
+> was version 5.3.3 so bit the bullet and changed to wheezy.
+> Excellent, 5.3.7 xtherion works fine. (Well as far as I can tell)
+> But loch just does nothing, whether from the or opening a file.
+
+OK. So testing here with Xephyr from a wheezy chroot, loch works fine
+for me. So this is probably something to do with your graphics
+card/drivers not getting on with loch or vtk5.8
+
+> Trying the command line I get this
+> 
+> The program 'loch' received an X Window System error.
+> This probably reflects a bug in the program.
+> The error was 'BadMatch (invalid parameter attributes)'.
+>   (Details: serial 2540 error_code 8 request_code 73 minor_code 0)
+>   (Note to programmers: normally, X errors are reported asynchronously;
+>    that is, you will receive the error a while after causing it.
+>    To debug your program, run it with the --sync command line
+>    option to change this behavior. You can then get a meaningful
+>    backtrace from your debugger if you break on the gdk_x_error()
+> function.)
+
+That means about as much to me as it does to you. I have two opengl
+geeks sat here and they just said 'yeah, that's the sort of error you
+get'. What sort of graphics card have you got? (and which
+drivers/kernel) Can you save the info from the Aven 'about' window -
+that can be helpful.
+
+This is going to be difficult to debug remotely if I can't reproduce. 
+
+There should be some wxgtk samples/demos you can run which would show
+if it is a wx problem or a loch problem. (loch uses VTK, which uses WX).
+
+I've also just noticed that we are linking against libwxgtk2.6 when
+2.8 is available. Stacho - do you expect v2.8 to work or are there ABI
+changes needed? If the new one works then hopefully it has bugfixes. 
+
+You could install libwxgtk2.6-dbg and libvtk5-dbg and see if you get
+any more debug info. You may need to use xxgdb to get any good info
+that way.
+
+Another thing to try is 
+strace loch <filename> 2>&1> therion.strace.log
+
+
+There is also therion 5.3.8 in unstable. Add that repo and you should
+be able to  do 
+aptitude install therion/unstable
+
+and try that one. It's very unlikely to be different in the graphics
+area though.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Fri Jul  1 21:20:39 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 01 Jul 2011 20:20:39 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <20110701175600.GX3023@dream.aleph1.co.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>
+	<20110701175600.GX3023@dream.aleph1.co.uk>
+Message-ID: <4E0E1E07.8030504@wotcc.org.uk>
+
+What sort of graphics card have you got? (and which
+> drivers/kernel)
+
+lshw gives
+            *-display
+                 description: VGA compatible controller
+                 product: G71 [GeForce 7300 GS]
+                 vendor: nVidia Corporation
+                 physical id: 0
+                 bus info: pci at 0000:01:00.0
+                 version: a1
+                 width: 64 bits
+                 clock: 33MHz
+                 capabilities: pm msi pciexpress vga_controller 
+bus_master cap_list rom
+                 configuration: driver=nouveau latency=0
+                 resources: irq:16 memory:e1000000-e1ffffff 
+memory:d0000000-dfffffff memory:e0000000-e0ffffff
+
+lspci give
+
+01:00.0 VGA compatible controller: nVidia Corporation G71 [GeForce 7300 
+GS] (rev a1)
+
+If I have this right the install put on
+X.Org X server -- Nouveau display driver (experimental)
+1:0.0.16+git20110411+8378443-1+b1
+
+Thought the drive might be a problem so tired installing
+
+nvidia-kernel-common 20110515+1
+
+Now I am not positive this was the right thing, and I have no idea how 
+to check to see which one is in use, which might help to see if it is 
+the right one, as the other one is still there! There are a plethora of 
+nvidia things I could install, including nvidia-settings and 
+nvidia-xconfig, butnot found much of use on the internet about what does 
+what
+
+I notice that
+nvidia-kernel-common 20110515+2
+
+is available, but I have not played with forcing yet, and the graphics 
+driver seems a poor one to start with.
+
+
+
+
+
+Can you save the info from the Aven 'about' window -
+> that can be helpful.
+
+Linux 2.6.39-2-amd64 x86_64
+wxWidgets 2.8.10 (GTK+ >= 2.6)
+Display Depth: 24 bpp (colour)
+OpenGL 2.1 Mesa 7.10.2
+Mesa Project
+Software Rasterizer
+R8G8B8
+Max Texture size: 16384x16384
+Max Viewport size: 16384x16384
+Smooth Point Size 1.000-60.000 (granularity 0.100)
+Aliased point size 1.000-60.000
+GL_ARB_copy_buffer GL_ARB_depth_clamp GL_ARB_depth_texture 
+GL_ARB_draw_buffers GL_ARB_draw_elements_base_vertex 
+GL_ARB_explicit_attrib_location GL_ARB_fragment_coord_conventions 
+GL_ARB_fragment_program GL_ARB_fragment_program_shadow 
+GL_ARB_fragment_shader GL_ARB_framebuffer_object GL_ARB_half_float_pixel 
+GL_ARB_half_float_vertex GL_ARB_map_buffer_range GL_ARB_multisample 
+GL_ARB_multitexture GL_ARB_occlusion_query GL_ARB_pixel_buffer_object 
+GL_ARB_point_parameters GL_ARB_point_sprite GL_ARB_provoking_vertex 
+GL_ARB_shader_objects GL_ARB_shading_language_100 GL_ARB_shadow_ambient 
+GL_ARB_shadow GL_ARB_sync GL_ARB_texture_border_clamp 
+GL_ARB_texture_compression GL_ARB_texture_cube_map 
+GL_ARB_texture_env_add GL_ARB_texture_env_combine 
+GL_ARB_texture_env_crossbar GL_ARB_texture_env_dot3 
+GL_ARB_texture_mirrored_repeat GL_ARB_texture_non_power_of_two 
+GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_swizzle 
+GL_ARB_transpose_matrix GL_ARB_vertex_array_bgra 
+GL_ARB_vertex_array_object GL_ARB_vertex_buffer_object 
+GL_ARB_vertex_program GL_ARB_vertex_shader GL_ARB_window_pos GL_EXT_abgr 
+GL_EXT_bgra GL_EXT_blend_color GL_EXT_blend_equation_separate 
+GL_EXT_blend_func_separate GL_EXT_blend_logic_op GL_EXT_blend_minmax 
+GL_EXT_blend_subtract GL_EXT_compiled_vertex_array GL_EXT_copy_texture 
+GL_EXT_depth_bounds_test GL_EXT_draw_buffers2 GL_EXT_draw_range_elements 
+GL_EXT_fog_coord GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample 
+GL_EXT_framebuffer_object GL_EXT_gpu_program_parameters 
+GL_EXT_multi_draw_arrays GL_EXT_packed_depth_stencil 
+GL_EXT_packed_pixels GL_EXT_paletted_texture GL_EXT_pixel_buffer_object 
+GL_EXT_point_parameters GL_EXT_polygon_offset GL_EXT_provoking_vertex 
+GL_EXT_rescale_normal GL_EXT_secondary_color 
+GL_EXT_separate_shader_objects GL_EXT_separate_specular_color 
+GL_EXT_shadow_funcs GL_EXT_shared_texture_palette 
+GL_EXT_stencil_two_side GL_EXT_stencil_wrap GL_EXT_subtexture 
+GL_EXT_texture3D GL_EXT_texture_array GL_EXT_texture_cube_map 
+GL_EXT_texture_edge_clamp GL_EXT_texture_env_add 
+GL_EXT_texture_env_combine GL_EXT_texture_env_dot3 
+GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp 
+GL_EXT_texture_object GL_EXT_texture GL_EXT_texture_rectangle 
+GL_EXT_texture_sRGB GL_EXT_texture_swizzle GL_EXT_vertex_array_bgra 
+GL_EXT_vertex_array GL_OES_read_format GL_3DFX_texture_compression_FXT1 
+GL_APPLE_object_purgeable GL_APPLE_packed_pixels 
+GL_APPLE_vertex_array_object GL_ATI_blend_equation_separate 
+GL_ATI_envmap_bumpmap GL_ATI_fragment_shader GL_ATI_separate_stencil 
+GL_ATI_texture_env_combine3 GL_ATI_texture_mirror_once 
+GL_IBM_multimode_draw_arrays GL_IBM_rasterpos_clip 
+GL_IBM_texture_mirrored_repeat GL_INGR_blend_func_separate 
+GL_MESA_pack_invert GL_MESA_resize_buffers GL_MESA_texture_array 
+GL_MESA_window_pos GL_MESA_ycbcr_texture GL_NV_blend_square 
+GL_NV_conditional_render GL_NV_depth_clamp GL_NV_fragment_program 
+GL_NV_fragment_program_option GL_NV_light_max_exponent 
+GL_NV_packed_depth_stencil GL_NV_point_sprite GL_NV_texgen_reflection 
+GL_NV_texture_env_combine4 GL_NV_texture_rectangle 
+GL_NV_vertex_program1_1 GL_NV_vertex_program GL_SGIS_generate_mipmap 
+GL_SGIS_texture_border_clamp GL_SGIS_texture_edge_clamp 
+GL_SGIS_texture_lod GL_SGI_texture_color_table GL_SUN_multi_draw_arrays
+>
+> This is going to be difficult to debug remotely if I can't reproduce.
+
+Time for a remote control program that works across the web, been 
+looking for one that works on linux, easy to do on Windows nowadays :(
+>
+> There should be some wxgtk samples/demos you can run which would show
+> if it is a wx problem or a loch problem. (loch uses VTK, which uses WX).
+>
+
+A bit more of a pointer could be useful, but I will see what I can find
+
+>
+> Another thing to try is
+> strace loch<filename>  2>&1>  therion.strace.log
+
+strace not found? : fixed that
+
+You meant
+
+strace -o therion.strace.log loch
+
+the command you cave me just dumped it on the screen and made an empty 
+file. (So I resorted to the manual!)
+
+Also found xtrace, which might be useful, but the manual did not mean 
+much to me, but was about display outputs, it did complain that I did 
+not specify a display, but at least gave the out the file
+
+Available from
+
+http://www.ubss.org.uk/__therion/
+>
+>
+> There is also therion 5.3.8 in unstable. Add that repo and you should
+> be able to  do
+> aptitude install therion/unstable
+>
+> and try that one. It's very unlikely to be different in the graphics
+> area though.
+
+# aptitude install therion/unstable
+Unable to find an archive "unstable" for the package "therion"
+Unable to find an archive "unstable" for the package "therion"
+The following packages will be REMOVED:
+   abiword{u} abiword-common{u} abiword-plugin-grammar{u}
+   abiword-plugin-mathview{u} aptdaemon{u} aumix{u} aumix-common{u}
+.
+.
+.
+   xfce4-verve-plugin{u} xfce4-wavelan-plugin{u} xfce4-weather-plugin{u}
+   xfce4-xkb-plugin{u} xfprint4{u} xli{u}
+0 packages upgraded, 0 newly installed, 207 to remove and 0 not upgraded.
+Need to get 0 B of archives. After unpacking 376 MB will be freed.
+Do you want to continue? [Y/n/?]
+
+I chose not too
+
+Andrew	
+
+
+From olly at survex.com  Fri Jul  1 21:50:18 2011
+From: olly at survex.com (Olly Betts)
+Date: Fri, 1 Jul 2011 20:50:18 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <4E0E1E07.8030504@wotcc.org.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>
+	<20110701175600.GX3023@dream.aleph1.co.uk>
+	<4E0E1E07.8030504@wotcc.org.uk>
+Message-ID: <20110701195018.GH30996@survex.com>
+
+On Fri, Jul 01, 2011 at 08:20:39PM +0100, Andrew Atkinson wrote:
+> Can you save the info from the Aven 'about' window -
+>> that can be helpful.
+>
+> Linux 2.6.39-2-amd64 x86_64
+> wxWidgets 2.8.10 (GTK+ >= 2.6)
+> Display Depth: 24 bpp (colour)
+> OpenGL 2.1 Mesa 7.10.2
+> Mesa Project
+> Software Rasterizer
+
+That's why Aven is slow and flickery - your OpenGL stack is rendering in
+software.  Aven currently redraws more than it needs to as well, which
+doesn't help - hopefully I'll fix that soon.
+
+You probably need the nvidia drivers from non-free for good 3D
+performance - the Debian wiki has details on how to install them:
+
+http://wiki.debian.org/NvidiaGraphicsDrivers#non-free_drivers
+
+Cheers,
+    Olly
+
+
+From wookey at wookware.org  Sat Jul  2 04:02:27 2011
+From: wookey at wookware.org (Wookey)
+Date: Sat, 2 Jul 2011 03:02:27 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <4E0E1E07.8030504@wotcc.org.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>
+	<20110701175600.GX3023@dream.aleph1.co.uk>
+	<4E0E1E07.8030504@wotcc.org.uk>
+Message-ID: <20110702020227.GZ3023@dream.aleph1.co.uk>
+
++++ Andrew Atkinson [2011-07-01 20:20 +0100]:
+> What sort of graphics card have you got? (and which
+> >drivers/kernel)
+> 
+> lshw gives
+>            *-display
+>                 description: VGA compatible controller
+>                 product: G71 [GeForce 7300 GS]
+>                 vendor: nVidia Corporation
+>                 physical id: 0
+>                 bus info: pci at 0000:01:00.0
+>                 version: a1
+>                 width: 64 bits
+>                 clock: 33MHz
+>                 capabilities: pm msi pciexpress vga_controller
+> bus_master cap_list rom
+>                 configuration: driver=nouveau latency=0
+>                 resources: irq:16 memory:e1000000-e1ffffff
+> memory:d0000000-dfffffff memory:e0000000-e0ffffff
+> 
+> lspci give
+> 
+> 01:00.0 VGA compatible controller: nVidia Corporation G71 [GeForce
+> 7300 GS] (rev a1)
+> 
+> If I have this right the install put on
+> X.Org X server -- Nouveau display driver (experimental)
+> 1:0.0.16+git20110411+8378443-1+b1
+ 
+> Thought the drive might be a problem so tired installing
+> 
+> nvidia-kernel-common 20110515+1
+> 
+> Now I am not positive this was the right thing, and I have no idea
+> how to check to see which one is in use, 
+
+Nouveau is the Free Software driver. It is better for your karma, but
+is still quite new and does not always actually work better than the
+proprietary nvidia driver.
+
+You can find which one is actually being used by looking in your
+/etc/X11/xorg.conf if you have one ('driver' section) or
+/var/log/Xorg.0.log which will have a Loadmodule 'nouvea' or
+Loadmodule 'nvidia' line.
+
+> which might help to see if
+> it is the right one, as the other one is still there! There are a
+> plethora of nvidia things I could install, including nvidia-settings
+> and nvidia-xconfig, butnot found much of use on the internet about
+> what does what
+
+Those are utilities for setting up the proprietary driver (not sure
+why there are two).
+
+> I notice that
+> nvidia-kernel-common 20110515+2
+> 
+> is available, but I have not played with forcing yet, and the
+> graphics driver seems a poor one to start with.
+
+The nvidia proprietary X drivers are in 'nvidia-glx', and you will
+need that kernel as well for them to work. 
+ 
+ 
+> Can you save the info from the Aven 'about' window -
+> >that can be helpful.
+> 
+> Linux 2.6.39-2-amd64 x86_64
+> wxWidgets 2.8.10 (GTK+ >= 2.6)
+> Display Depth: 24 bpp (colour)
+> OpenGL 2.1 Mesa 7.10.2
+> Mesa Project
+> Software Rasterizer
+
+As Ol says you are missing the hardware openGl support. That comes
+built-in with the nvidia proprietary drivers. To get it going with
+noveau you need stuff as described here:
+http://nouveau.freedesktop.org/wiki/MesaDrivers but to be honest I'm a
+bit vague about the details there. Ah, yes you need noveau_dri.so
+loaded which is in the package libgl1-mesa-dri-experimental
+which is available in wheezy. Try installing that and see how things
+are.
+
+This is the state of the art about a year ago:
+http://www.seanius.net/blog/2010/04/nouveau-gallium-and-compiz-on-debian/
+which is informative in terms of what is involved, but it seems all
+that is no longer necessary.
+
+This is slightly less scary Feb this year
+status:http://mapopa.blogspot.com/2011/02/gallium3-nouveau-on-debian-sid-now.html
+
+As it happens my work machine has an nvidia card running noveau so
+I'll check loch on there. Probably a different card vintage though.
+
+> >This is going to be difficult to debug remotely if I can't reproduce.
+> 
+> Time for a remote control program that works across the web, been
+> looking for one that works on linux, easy to do on Windows nowadays
+> :(
+
+Been around for ages it's called vino/vinagre. (if you have gnome
+installed it'll probably already be there. The tricky bit is that both
+ends are often behind NAT so the machines can't see each other. It
+works well given an IP. 
+
+> >There should be some wxgtk samples/demos you can run which would show
+> >if it is a wx problem or a loch problem. (loch uses VTK, which uses WX).
+> >
+> 
+> A bit more of a pointer could be useful, but I will see what I can find
+
+Sorry I failed to find that info quickly, so left as excercise for the
+reader.
+
+> >Another thing to try is
+> >strace loch<filename>  2>&1>  therion.strace.log
+> 
+> strace not found? : fixed that
+> 
+> You meant
+> 
+> strace -o therion.strace.log loch
+
+right, yes.  good. 
+
+> Available from
+> 
+> http://www.ubss.org.uk/__therion/
+
+Hopefuly Stacho can make something of that lot...
+
+> >There is also therion 5.3.8 in unstable. Add that repo and you should
+> >be able to  do
+> >aptitude install therion/unstable
+> >
+> >and try that one. It's very unlikely to be different in the graphics
+> >area though.
+> 
+> # aptitude install therion/unstable
+> Unable to find an archive "unstable" for the package "therion"
+> Unable to find an archive "unstable" for the package "therion"
+
+You would need to add 
+deb http://ftp.uk/debian.org/debian unstable main
+to your /etc/apt/sources.list and apt-get update. You would probably
+also want to set /etc/apt/apt.conf to have APT::Default-release "wheezy";
+
+I suggest not doing that just yet - lets see how far we can get with
+wheezy first. 
+
+> The following packages will be REMOVED:
+>   abiword{u} abiword-common{u} abiword-plugin-grammar{u}
+>   abiword-plugin-mathview{u} aptdaemon{u} aumix{u} aumix-common{u}
+> .
+> .
+> .
+>   xfce4-verve-plugin{u} xfce4-wavelan-plugin{u} xfce4-weather-plugin{u}
+>   xfce4-xkb-plugin{u} xfprint4{u} xli{u}
+> 0 packages upgraded, 0 newly installed, 207 to remove and 0 not upgraded.
+> Need to get 0 B of archives. After unpacking 376 MB will be freed.
+> Do you want to continue? [Y/n/?]
+> 
+> I chose not too
+
+good call :-)
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From dangle at tomo.co.nz  Sat Jul  2 11:31:25 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Sat, 2 Jul 2011 21:31:25 +1200
+Subject: [Therion] Line wall AUT crashes and a fix
+Message-ID: <51E1739740AF48A290EDF113F5F4D672@JUICEBRAIN>
+
+I have been using some of Georg Pacher's very clever (I think) AUT symbols
+in their standard form, allocated from within a layout with .
+
+  symbol-assign area debris AUT   
+
+  symbol-assign line wall:debris AUT  
+
+  symbol-assign point debris AUT  
+
+etc
+
+ 
+
+All has been going quite well for sometime, but tonight Therion 5.3.8 gets
+into an endless loop, repeating the following text.
+
+ 
+
+l_wall_debris->...factor:=scale_factor-0.01;endfor
+
+ 
+;thdraw.block.rotated.angl.
+
+l.6513 ))
+
+         ;
+
+! Value is too large (-4104.55951).
+
+<forever> ...k)<0;scale_factor:=scale_factor-0.01;
+
+                                                   ENDFOR
+
+ 
+
+I tend to use a scale of 1:1000, but this time I was using 1:5000, so I'm
+guessing that has overloaded one of the functions in the final loop below.
+Not sure which variable or function is causing the crash but the value is
+always the same for any particular scale at each loop cycle.  
+
+ 
+
+At these scales the length of each line is often going to be much less than
+the size of the symbol so I expect we need a more cunning exitif criteria.
+I have made a stab at fixing it below (the exitif in grey), but it is
+probably not the best solution.  It works now however at 1:1000, 1:5000 and
+1:10,000.
+
+ 
+
+Someone who knows what they are doing might be able to propose a better fix
+and Martin/Stacho could include it in the next snapshot.
+
+ 
+
+I am perplexed by two other somewhat unrelated things.  
+
+The debris symbols as they turn out in the output are all filled except the
+first or last one (not sure which) and yet I cannot find a fill command in
+the code.  Having one not filled gives nice quirky random effect, but they
+are perhaps better filled?
+
+Line blocks AUT works perfectly, and yet the code seems to have the same
+general type of loop and test as the line debris AUT that gives this
+problem.
+
+ 
+
+Cheers, Bruce
+
+ 
+
+def l_wall_debris_AUT (expr P) = 
+
+  T:=identity;
+
+  pickup PenC;
+
+  laenge := arclength P;
+
+  path block;
+
+  path old_block;
+
+  
+
+  cur := 0;
+
+  t:= arctime cur of P;
+
+  % draw first block
+
+  old_block :=
+(((-.0u,-.0u)--(.25u,-.15u)--(.45u,0.01u)--(.2u,.25u)--(.05u,.15u)--cycle));
+
+  block_width := (xpart urcorner old_block - xpart ulcorner old_block);
+
+  old_block:=old_block rotated angle(thdir(P,0)) shifted point t of P;
+
+  thclean old_block;
+
+  thdraw old_block;
+
+   
+
+  cur := cur + 0.9*block_width;
+
+  t:= arctime cur of P;
+
+            % proceed with path
+
+    forever:
+
+              % generate random block
+
+        block := punked
+(((-.25u,-.25u)--(0.25.u,-.25u)--(0.50u,0.01u)--(0.25u,.25u)--(-.25u,.25u)--
+cycle) 
+
+          randomized (u/4))
+
+          scaled (uniformdeviate(0.3)+.4)
+
+          rotated uniformdeviate(360);
+
+              % check width of block
+
+        block_width := (xpart urcorner block - xpart ulcorner block);
+
+        exitif cur > (laenge- 2.5*block_width/2);
+
+        % find next position where the block fits in without intersecting
+the previous one
+
+              forever:           
+
+                exitif xpart ( (block rotated angle(-direction t of P)
+shifted point t of P) intersectiontimes old_block) < 0;
+
+            cur:=cur+0.01u;
+
+            t:= arctime cur of P;
+
+            exitif cur > (laenge- 2.5*block_width/2);
+
+          endfor;
+
+        exitif cur > (laenge- 2.5*block_width/2);
+
+ 
+
+        old_block:= block rotated angle(-direction t of P) shifted point t
+of P;
+
+        thclean old_block;
+
+        thdraw old_block;
+
+        cur := cur + block_width/2;
+
+        t:= arctime cur of P;
+
+    endfor;
+
+            t:= arctime laenge-eps of P;
+
+ 
+
+            % generate last block
+
+      block :=
+(((-.0u,-.0u)--(.25u,-.15u)--(.45u,0.01u)--(.2u,.25u)--(.1u,.15u)--cycle));
+
+     block_width := (xpart urcorner block - xpart ulcorner block);
+
+     
+
+            % scale last block to fit in the remaining gap
+
+     scale_factor:=1.5*(laenge-cur)/block_width;
+
+     forever:
+
+           exitif scale_factor < 0;  % bruces stab at preventing endless
+loop at large scales
+
+           exitif xpart ( (block rotated angle(-direction t of P) scaled
+scale_factor shifted (point t of P)) intersectiontimes old_block) < 0;
+
+           scale_factor:=scale_factor-0.01;
+
+     endfor;
+
+ 
+
+     thdraw block rotated angle(-direction t of P) scaled scale_factor
+shifted (point t of P);
+
+enddef;
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110702/fd355970/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 11133 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110702/fd355970/attachment.jpg>
+
+From andrew at wotcc.org.uk  Sat Jul  2 22:46:16 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 02 Jul 2011 21:46:16 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <20110702020227.GZ3023@dream.aleph1.co.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>	<20110701175600.GX3023@dream.aleph1.co.uk>	<4E0E1E07.8030504@wotcc.org.uk>
+	<20110702020227.GZ3023@dream.aleph1.co.uk>
+Message-ID: <4E0F8398.50103@wotcc.org.uk>
+
+
+
+On 02/07/11 03:02, Wookey wrote:
+>> Time for a remote control program that works across the web, been
+>> >  looking for one that works on linux, easy to do on Windows nowadays
+>> >  :(
+> Been around for ages it's called vino/vinagre. (if you have gnome
+> installed it'll probably already be there. The tricky bit is that both
+> ends are often behind NAT so the machines can't see each other. It
+> works well given an IP.
+
+Hence I said across the web, I use the above at work, this one keeps 
+promising Linux support, but....
+
+Hmmm in getting the web address, I see they seem to have released a beta 
+for linux yesterday
+
+http://www.mikogo.com/2011/04/21/mikogo-linux-beta-testers/
+>
+>>> >  >There should be some wxgtk samples/demos you can run which would show
+>>> >  >if it is a wx problem or a loch problem. (loch uses VTK, which uses WX).
+>>> >  >
+>> >
+>> >  A bit more of a pointer could be useful, but I will see what I can find
+> Sorry I failed to find that info quickly, so left as excercise for the
+> reader.
+>
+As I said a pointer, not actually the test, a search for wxgtk, takes me 
+to all sort of thing, like wxpython wxperl....
+vtk I thought was typo of gtk at first, but it is also a graphics tool, 
+but again, I do not have the knowledge to do a useful search, sorry this 
+reader failed.
+
+I will work on all the other alternatives early next week, cave 
+surveying getting in the way of computing.
+
+Andrew
+
+
+From andrew at wotcc.org.uk  Wed Jul  6 22:22:20 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 06 Jul 2011 21:22:20 +0100
+Subject: [Therion] Extended elevation
+Message-ID: <4E14C3FC.5010607@wotcc.org.uk>
+
+I am struggling with the extend: left right normal and reverse, they do 
+not seem to be doing what I would expect or as described at
+
+http://therion.speleo.sk/wiki/doku.php?id=tfc:321
+
+therion 5.3.7 on debian wheezy
+
+These have been generated from the th file attached, which was an import 
+from pocket topo. The file is as I needed it to work, for the below, 
+remove all extend commands and then only add before the first line as 
+shown. which is how PocketTopo export comes in. Adding it to the 
+centreline -extend ##### seems to have the same effect as below. They 
+are all viewed in the pdf, as I really have nothing else at the moment :(
+
+Also it appears that the extend command, moves all the splays in the 
+same direction, which I guess is how survex intended it, but this is 
+different from the PocketTopo, that treats slays differently and to me 
+more sensibly (well in most situations). But this is not really that 
+important as the splays generated by therion are not used for the 
+PocketTopo image import.
+
+Noextend.pdf as it says has all the extend commands removed, so I would 
+expect everything to go right, apart fro, 2.0 to 2.1 goes left
+
+
+case1.pdf
+So add extend right before the line
+
+extend right
+   2.0 - 260.00 11.60 2.610
+
+So the legs go right then left, right,left right right...right, left, 
+leftleft???
+
+case2.pdf (file not included as it is the same as Noextend)
+extend normal
+   2.0 - 260.00 11.60 2.610
+
+should be the same as right (unless I am missing a subtle difference) 
+and no commands at all. It is the same as Noextend.pdf but different 
+from case 1
+
+case3.pdf
+extend left
+   2.0 - 260.00 11.60 2.610
+
+opposite of right so at least consistent
+left, right, left, right, left, left ... left right, right
+
+case4.pdf
+extend reverse
+   2.0 - 260.00 11.60 2.610
+
+consistent again: opposite of normal, but the first leg goes right 
+instead of left and the they all go left
+
+So normal and reverse seem to work apart from the first leg, but left 
+and right are doing something strange to the first few legs
+
+Using the commands in anywhere else in a linear part of the centreline 
+mostly seems to work fine, and as expected, continuing down the 
+consecutive numbering at a branch fine (but this could also be the order 
+of the data in the file). However, left and right are less reliable than 
+normal and reverse?? But not worked out a pattern yet. Other branches it 
+is less clear for and this email is long enough
+
+Andrew
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Hazelnut.tar.gz
+Type: application/x-gzip
+Size: 124608 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110706/b9f5851c/attachment.bin>
+
+From dangle at tomo.co.nz  Sun Jul 10 12:13:04 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Sun, 10 Jul 2011 22:13:04 +1200
+Subject: [Therion] Extended elevation
+In-Reply-To: <4E14C3FC.5010607@wotcc.org.uk>
+References: <4E14C3FC.5010607@wotcc.org.uk>
+Message-ID: <7D1DCE7968C644BAAC83829F0769A9AA@JUICEBRAIN>
+
+Hi Andrew
+I have not really used extend yet, but have it in mind for some future
+projects. I am hoping to use 'revise' to allow multiple extended elevation
+projections of the same piece of cave and to move the 'extend' out of the
+survey data and into the map definition where it more logically sits if one
+is keeping map structure independent of survey structure.  I digress.
+ 
+I had a play with your hazelnut file with v5.3.8 to see what would happen.
+I got exactly the same outputs as you did.
+
+I read the Therion book on extend, and figured that although I agree, there
+is quite a bit of unexpected behaviour as you described, the extend normal
+or reverse before the first station did not make sense as there is no
+previous station. See description on pg 21.  So that aberration at least
+could be excused.  The examples near the end of the Therion Book are also
+quite helpful.
+
+Maybe Therion needs a bit more specification to help it along with the
+hazelnut survey?
+For example...
+
+extend start 2.0
+extend normal
+
+...before the first data line makes it do what you might expect, although
+possibly not for any logical reason.
+
+Similarly...
+
+extend right 2.0 2.1
+
+... before the first data line makes all the legs head right correctly.
+
+So there are some aberrations, but some lateral thinking seems to make it
+work out quite efficiently.
+
+And I agree, PocketTopo does seem to make a better stab at where the splays
+should be drawn.  Maybe the algorithm could be borrowed from Beat?
+
+Bruce
+
+
+
+
+From Dirk.Peinelt at t-online.de  Wed Jul 13 13:50:47 2011
+From: Dirk.Peinelt at t-online.de (Dirk.Peinelt at t-online.de)
+Date: Wed, 13 Jul 2011 13:50:47 +0200
+Subject: [Therion] Fw: self designed text to the data export
+Message-ID: <1Qgxxn-1ttJ0S0@fwd17.aul.t-online.de>
+
+Hi, 
+
+	how can I extend the HTML-cave-data-export with a actually
+export-date on Top, and a self-designed data-matrix (only text) for
+own attribute-Data-shortcuts on the bottom of export. 
+
+	I use the attr flag on station to set a own attribute. In the data
+set should only be a shortcut for a information. The information hold
+the matrix on the bottom. 
+
+	   station C0 "CaveX" entrance  
+
+	       attr Coordinate ""  
+
+	       attr Tag ""  
+
+	       attr Cadastre ""  
+
+	       attr CadastreNumber "0000-000"  
+
+	       attr Level "AB"  
+
+	       attr Character "C"  
+
+	       attr Survey "S(P)"  
+
+	       attr Description "v/"  
+
+	       attr Pix "EH" 
+
+	My HTML-export looks like: 
+
+	Title       Length  Depth   Explored             Altitude            
+  Cadastre              CadastreNumber            Coordinate          
+  Character            Description        Level            Pix        
+ Survey  Tag 
+
+	…datasets… 
+
+	It should be: 
+
+	12-07-2011 
+
+	[blanc]
+Title       Length  Depth   Explored             Altitude             
+ Cadastre             Character            Description        Level   
+            CadastreNumber            Pix          Survey  Tag 
+
+	…datasets… 
+
+	[blanc] 
+
+	MATRIX: 
+
+	<Cadastre> 
+
+	X: delivered 
+
+	<Character> 
+
+	C: Canyon 
+
+	W: Water 
+
+	K: Crevice 
+
+	… 
+
+	<Survey> 
+
+	D: draft 
+
+	P: plan 
+
+	…. 
+
+	<Description> 
+
+	X: available 
+
+	<Level> 
+
+	A: Entry Coordinate 
+
+	B: part explored 
+
+	C: full explored 
+
+	D: part surveyed 
+
+	E: full surveyed 
+
+	<Tag> 
+
+	X: fixed 
+
+	..... 
+
+	Regards, 
+
+	Dirk Peinelt
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110713/3d49ed1f/attachment.htm>
+
+From dangle at tomo.co.nz  Thu Jul 14 21:41:30 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Fri, 15 Jul 2011 07:41:30 +1200
+Subject: [Therion] Point Debris AUT uses wrong pen with clip off if outside
+	of passage
+Message-ID: <367FAA099420473E8F5E6E2592B3DCE8@JUICEBRAIN>
+
+Hi
+
+Has anyone else noticed that for the point debris AUT with -clip off it will
+draw with a heavy weight pen of part of the symbol is outside of the cave
+passage?
+
+While the effect is perhaps OK in the green example below, it looks a bit
+odd in the blue example.
+
+ 
+
+-clip on for point debris, and -clip off for point debris    
+
+ 
+
+
+
+
+
+I am not sure why it would do this.  Seems to be nothing in the point
+definition that should cause this (to my inexperienced eye).
+
+Maybe something in thdraw?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110715/e010118b/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.gif
+Type: image/gif
+Size: 4178 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110715/e010118b/attachment.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.gif
+Type: image/gif
+Size: 4686 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110715/e010118b/attachment-0001.gif>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 9475 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110715/e010118b/attachment.jpg>
+
+From m.budaj at gmail.com  Sat Jul 16 20:28:06 2011
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 16 Jul 2011 20:28:06 +0200
+Subject: [Therion] Point Debris AUT uses wrong pen with clip off if
+ outside of passage
+In-Reply-To: <367FAA099420473E8F5E6E2592B3DCE8@JUICEBRAIN>
+References: <367FAA099420473E8F5E6E2592B3DCE8@JUICEBRAIN>
+Message-ID: <CALPsdSv+2L-BF32vEnA+vt=+BzonVGq_mmAZV4m5gZBywavqsA@mail.gmail.com>
+
+On Thu, Jul 14, 2011 at 9:41 PM, Bruce <dangle at tomo.co.nz> wrote:
+>
+> Has anyone else noticed that for the point debris AUT with –clip off it will draw with a heavy weight pen of part of the symbol is outside of the cave passage?
+
+> I am not sure why it would do this.  Seems to be nothing in the point definition that should cause this (to my inexperienced eye).
+
+If you want to fix it, add "pickup PenC;" at the beginning of the
+symbol definition. Will be fixed in the next snapshot.
+
+Martin
+
+
+From georg.pacher at gmail.com  Sun Jul 17 21:14:31 2011
+From: georg.pacher at gmail.com (Georg Pacher)
+Date: Sun, 17 Jul 2011 21:14:31 +0200
+Subject: [Therion] Line wall AUT crashes and a fix
+In-Reply-To: <51E1739740AF48A290EDF113F5F4D672@JUICEBRAIN>
+References: <51E1739740AF48A290EDF113F5F4D672@JUICEBRAIN>
+Message-ID: <4E233497.90706@gmail.com>
+
+On 02.07.2011 11:31, Bruce wrote:
+>
+> I have been using some of Georg Pacher's very clever (I think) AUT 
+> symbols in their standard form, allocated from within a layout with ...
+>
+>   symbol-assign area debris AUT
+>
+>   symbol-assign line wall:debris AUT
+>
+>   symbol-assign point debris AUT
+>
+> etc
+>
+> All has been going quite well for sometime, but tonight Therion 5.3.8 
+> gets into an endless loop, repeating the following text...
+>
+> l_wall_debris->...factor:=scale_factor-0.01;endfor
+>
+>                                                   
+> ;thdraw.block.rotated.angl.
+>
+> l.6513 ))
+>
+>          ;
+>
+> ! Value is too large (-4104.55951).
+>
+> <forever> ...k)<0;scale_factor:=scale_factor-0.01;
+>
+>                                                    ENDFOR
+>
+> I tend to use a scale of 1:1000, but this time I was using 1:5000, so 
+> I'm guessing that has overloaded one of the functions in the final 
+> loop below.  Not sure which variable or function is causing the crash 
+> but the value is always the same for any particular scale at each loop 
+> cycle.
+>
+> At these scales the length of each line is often going to be much less 
+> than the size of the symbol so I expect we need a more cunning exitif 
+> criteria.  I have made a stab at fixing it below (the exitif in grey), 
+> but it is probably not the best solution.  It works now however at 
+> 1:1000, 1:5000 and 1:10,000.
+>
+> Someone who knows what they are doing might be able to propose a 
+> better fix and Martin/Stacho could include it in the next snapshot.
+>
+> I am perplexed by two other somewhat unrelated things.
+>
+> The debris symbols as they turn out in the output are all filled 
+> except the first or last one (not sure which) and yet I cannot find a 
+> fill command in the code.  Having one not filled gives nice quirky 
+> random effect, but they are perhaps better filled?
+>
+> Line blocks AUT works perfectly, and yet the code seems to have the 
+> same general type of loop and test as the line debris AUT that gives 
+> this problem.
+>
+> Cheers, Bruce
+>
+[...]
+
+Hi!
+
+Thanks for your feedback Bruce, it's good to know that the symbols are 
+also used somewhere else, outside of Austria ;-)
+When I checked the problems, I found another one in the symbol "line 
+wall:pit", so I simply attach the newest version of the Austrian symbol 
+set, so Martin can include it.
+
+The changes regard the following symbols:
+line wall:pit
+line wall:debris
+point debris
+
+It includes the fix (as suggested by Martin) for point debris, your fix 
+for the scale problem with wall:debris, an additional thclean for the 
+'filling' of the first debris in the line and a fix for wall:pit in 
+large scales.
+
+Thanks for pointing out these issues,
+Georg.
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110717/150eca9c/attachment.htm>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: uAUT.mp
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110717/150eca9c/attachment.ksh>
+
+From dirk.peinelt at t-online.de  Tue Jul 19 01:46:49 2011
+From: dirk.peinelt at t-online.de (Dirk Peinelt)
+Date: Tue, 19 Jul 2011 01:46:49 +0200
+Subject: [Therion] survex 3d without splay
+Message-ID: <003701cc45a4$f66b1df0$e34159d0$@t-online.de>
+
+Hi,
+
+is it possible to export a survex 3d file without splay shots?
+
+ 
+
+Regards, 
+
+dirk
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110719/ce143d71/attachment.htm>
+
+From andrew at wotcc.org.uk  Tue Jul 19 10:08:35 2011
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 19 Jul 2011 09:08:35 +0100
+Subject: [Therion] Loch 5.3.7 fails to start in Debian wheezy
+In-Reply-To: <20110702020227.GZ3023@dream.aleph1.co.uk>
+References: <4E0DDF5E.4030807@wotcc.org.uk>	<20110701175600.GX3023@dream.aleph1.co.uk>	<4E0E1E07.8030504@wotcc.org.uk>
+	<20110702020227.GZ3023@dream.aleph1.co.uk>
+Message-ID: <4E253B83.10507@wotcc.org.uk>
+
+Okay I have found time (mainly contingency time to fix a mess was the 
+problem) to change the drives to the nvidia once as in the instructions on
+
+http://wiki.debian.org/NvidiaGraphicsDrivers#non-free_drivers
+
+
+And loch runs, unfortunatly it only shows a grey screen when you load a 
+file, and it is not refreshing properly as the menus get left behind.
+
+Worse, Aven now also shows a grey screen when you load items, although 
+it seems to be there as the tree appears, and by randomly stabbing at 
+the screen I can select stations and measure to another station.
+
+Xorg.log and the information from the Aven help screen included
+
+I notice that 5.3.8 is now an update, but I have not applied that yet.
+
+
+
+On 02/07/11 03:02, Wookey wrote:
+
+>>> >  >This is going to be difficult to debug remotely if I can't reproduce.
+>> >
+>> >  Time for a remote control program that works across the web, been
+>> >  looking for one that works on linux, easy to do on Windows nowadays
+>> >  :(
+> Been around for ages it's called vino/vinagre. (if you have gnome
+> installed it'll probably already be there. The tricky bit is that both
+> ends are often behind NAT so the machines can't see each other. It
+> works well given an IP.
+
+My parents broke their computer, so it spurred me into looking again 
+Teamview does remote access across the web, and does not need installing
+Works quiet well, although you cannot shut down X which might be needed 
+for this.
+
+http://www.teamviewer.com/en/download/index.aspx
+
+>
+>>> >  >There should be some wxgtk samples/demos you can run which would show
+>>> >  >if it is a wx problem or a loch problem. (loch uses VTK, which uses WX).
+>>> >  >
+>> >
+>> >  A bit more of a pointer could be useful, but I will see what I can find
+> Sorry I failed to find that info quickly, so left as excercise for the
+> reader.
+
+Is this the sort of thing you meant?
+
+http://gtkperf.sourceforge.net/
+
+It worked before and after and gave a time
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Xorg.0.log
+Type: text/x-log
+Size: 24248 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110719/fec3ebb0/attachment.bin>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: System_info_Aven.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110719/fec3ebb0/attachment.txt>
+
+From niklas.konstenius at gmail.com  Sat Jul 23 01:10:31 2011
+From: niklas.konstenius at gmail.com (Niklas Konstenius)
+Date: Sat, 23 Jul 2011 01:10:31 +0200
+Subject: [Therion] Odd behavior exporting map using LRUD's
+Message-ID: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+
+Hi,
+I have survey data with LRUD's for the from-station as follows:
+
+-----
+centerline
+data normal from  to  length  compass  clino left right up down
+a  b  10 90 0 2 0 2 0
+b  c  10 90 0 0 2 2 0
+c  d  10 90 0 2 0 2 0
+endcenterline
+-----
+Since LRUD is measured at from-station this data indicates that station a
+and c is positiond at the right cave wall and station b is positioned at the
+left wall (station d is undefined).
+
+In the generated map however the cave walls is drawn so that station b is
+positioned at the right wall and station c is positioned at the left wall
+(see attached pdf). It seems that the LRUD's are applied to the to-station
+instead of from-station (except for station a). Is it possible to change
+this behavior?
+
+I'm using the following thconfig file to export a map with walls generated
+by the LRUD values:
+-----
+source data.th
+
+layout my_layout
+colour map-fg [100 0 0]
+colour map-bg [100 100 100]
+debug all
+endlayout
+
+export map -projection plan -o map.pdf -layout my_layout
+-----
+
+/niklas
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110723/63dccfc9/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: data.th
+Type: application/octet-stream
+Size: 228 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110723/63dccfc9/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: map.pdf
+Type: application/pdf
+Size: 18314 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110723/63dccfc9/attachment.pdf>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig
+Type: application/octet-stream
+Size: 213 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110723/63dccfc9/attachment-0001.obj>
+
+From martinsluka at mac.com  Sat Jul 23 08:21:51 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 23 Jul 2011 08:21:51 +0200
+Subject: [Therion] Odd behavior exporting map using LRUD's
+In-Reply-To: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+References: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+Message-ID: <60E12273-BD86-4FE0-8CBF-D452C20FD373@mac.com>
+
+
+On 23.7.2011, at 1:10, Niklas Konstenius wrote:
+
+> 	a  b  10 90 0 2 0 2 0
+> 	b  c  10 90 0 0 2 2 0
+> 	c  d  10 90 0 2 0 2 0
+> endcenterline
+> -----
+> Since LRUD is measured at from-station this data indicates that  
+> station a and c is positiond at the right cave wall and station b is  
+> positioned at the left wall (station d is undefined).
+>
+
+Therion in this case use LRUD on TO station - default behavior.
+
+If you need LRUD on FROM station you may:
+
+1. use [from to] syntax:
+
+data normal from  to  length  compass  clino left right up down
+
+     a b 10 90 0 [2 0] [0 2] [2 2] [0 0]
+     b c 10 90 0 [0 2] [2 0] [2 2] [0 0]
+
+2. station left right up down
+
+data normal from  to  length  compass  clino
+
+	a  b  10 90 0
+	b  c  10 90 0
+	c  d  10 90 0
+
+station left right up down
+
+        a 2 0 2 0
+         b 0 2 2 0
+         c 2 0 2 0
+
+m.
+
+
+From niklas.konstenius at gmail.com  Sat Jul 23 12:42:53 2011
+From: niklas.konstenius at gmail.com (Niklas Konstenius)
+Date: Sat, 23 Jul 2011 12:42:53 +0200
+Subject: [Therion] Odd behavior exporting map using LRUD's
+In-Reply-To: <60E12273-BD86-4FE0-8CBF-D452C20FD373@mac.com>
+References: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+	<60E12273-BD86-4FE0-8CBF-D452C20FD373@mac.com>
+Message-ID: <CABuoLxxsCo4s=KU3yAfo8LkiY+ABqUr4H+CYgb4RRnaXOiNGyw@mail.gmail.com>
+
+> 1. use [from to] syntax:
+
+Thanks for the tip. This method however forces us to write the LRUD
+measurements in the data files twice. This redundancy in the data is not a
+good thing as I see it.
+
+It would be very nice if therion could have an option to define which
+station the LRUD's belongs to. For example:
+
+centerline
+*lrud-station from*
+data normal from  to  length  compass  clino left right up down
+a  b  10 90 0 2 0 2 0
+b  c  10 90 0 0 2 2 0
+c  d  10 90 0 2 0 2 0
+endcenterline
+
+
+Or is it so uncommon to get LRUD from the FROM station that this
+functionality is not needed?
+
+/niklas
+
+On 23 July 2011 08:21, Martin Sluka <martinsluka at mac.com> wrote:
+
+>
+> On 23.7.2011, at 1:10, Niklas Konstenius wrote:
+>
+>         a  b  10 90 0 2 0 2 0
+>>        b  c  10 90 0 0 2 2 0
+>>        c  d  10 90 0 2 0 2 0
+>> endcenterline
+>> -----
+>> Since LRUD is measured at from-station this data indicates that station a
+>> and c is positiond at the right cave wall and station b is positioned at the
+>> left wall (station d is undefined).
+>>
+>>
+> Therion in this case use LRUD on TO station - default behavior.
+>
+> If you need LRUD on FROM station you may:
+>
+> 1. use [from to] syntax:
+>
+>
+> data normal from  to  length  compass  clino left right up down
+>
+>    a b 10 90 0 [2 0] [0 2] [2 2] [0 0]
+>    b c 10 90 0 [0 2] [2 0] [2 2] [0 0]
+>
+> 2. station left right up down
+>
+>
+> data normal from  to  length  compass  clino
+>
+>        a  b  10 90 0
+>        b  c  10 90 0
+>        c  d  10 90 0
+>
+> station left right up down
+>
+>
+>       a 2 0 2 0
+>        b 0 2 2 0
+>        c 2 0 2 0
+>
+> m.
+> ______________________________**_________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/**mailman/listinfo/therion<http://mailman.speleo.sk/mailman/listinfo/therion>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110723/73063d54/attachment.htm>
+

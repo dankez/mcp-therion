@@ -1,0 +1,2427 @@
+From s.m at group-s.sk  Fri Feb  1 16:22:59 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 01 Feb 2008 16:22:59 +0100
+Subject: [Therion] Output map Scale
+In-Reply-To: <001b01c862aa$171e1930$9e25f6d2@JUICEBRAIN>
+References: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+	<1201619603.479f429379219@mail.atlantis.sk>
+	<001b01c862aa$171e1930$9e25f6d2@JUICEBRAIN>
+Message-ID: <1201879379.47a33953e8959@mail.atlantis.sk>
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+> By experiment, I think if I use base-scale, (and consequently enlarge the
+> printed image after output) then somewhere I need to substitute base-scale
+> for scale in the code below, but my attempts at editing it failed.
+
+Use decimal(BaseScale) instead of decimal(Scale).
+
+Regards, S.
+
+> Regards
+> Bruce
+> 
+> -----Original Message-----
+> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+> Of Stacho Mudrak
+> Sent: Wednesday, 30 January 2008 4:13 a.m.
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Output map Scale
+> 
+> All you need to do is to redefine legend metapost macro. Example - derived
+> from
+> basic scalebar definiton (just add it to your layout):
+> 
+> code metapost
+> def s_scalebar (expr l, units, txt) =
+>  begingroup
+>   interim warningcheck:=0;
+>   tmpl:=l / Scale * cm * units / 2;
+>  endgroup;
+>  pickup PenC;
+>  draw (-tmpl,0)--(tmpl,0);
+>  draw (-tmpl,0)--(-tmpl,2bp);
+>  draw (tmpl,0)--(tmpl,2bp);
+>  begingroup
+>   interim labeloffset:=2bp;
+>   label.top(thTEX(decimal (l) & "\thinspace" & txt),origin);
+>   label.top(thTEX("1\thinspace:\thinspace" & decimal (Scale) & "00"), origin
+> +
+> (0,12bp));
+>  endgroup
+> enddef;    
+> endcode
+> 
+> Regards, S.
+> 
+> Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+> 
+> > Can Therion output the scale of the map as drawn, in text?  (I'd like to
+> > display this as say 1:1000, as well as the scalebar)
+> > 
+> > Thanks
+> > 
+> > Bruce
+> > 
+> >  
+> > 
+> > 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From s.m at group-s.sk  Fri Feb  1 16:27:04 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 01 Feb 2008 16:27:04 +0100
+Subject: [Therion] Concatinate map-comment?
+In-Reply-To: <000001c8624b$f6a18970$be25f6d2@JUICEBRAIN>
+References: <000001c8624b$f6a18970$be25f6d2@JUICEBRAIN>
+Message-ID: <1201879624.47a33a48b1ebd@mail.atlantis.sk>
+
+Currently it can be done only via TeX code trick, but probably it is a good idea
+that if one layout is copied into another, map-comments will be concatenated,
+not replaced. Would this solve your problem?
+
+Regards, S.
+
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+
+> I'd like to add some 'standardised' blocks of text to my finished cave maps,
+> and a convenient way seems to be to use the map-comment command to add the
+> text to the title block.  As far as it goes the following works fine.
+> 
+>  
+> 
+> FILE THCONFIG- GreenlinkAnnotationLayout
+> 
+> layout GreenlinkAnnotationLayout
+> 
+>   map-comment "REFERENCES:\
+> 
+>            <br>Discovery and early exploration of Greenlink cave\
+> 
+>            <br>NZSS Bulletin Vol 7 No 100 p500-510\
+> 
+>            <br> \
+> 
+>            <br>Original Maps of Greenlink cave\
+> 
+>            <br>NZSS Bulletin Vol X No XXX pXXX-XXX"
+> 
+> endlayout GreenlinkAnnotationLayout
+> 
+> END FILE
+> 
+>  
+> 
+> I'd then like to be able to concatenate similar blocks of text at
+> compilation time.
+> 
+> Trouble is if multiple map-comments are used, then the last one executed
+> overwrites the other.
+> 
+>  
+> 
+> Why concatenate them?
+> 
+> For example;
+> 
+> The thconfig file(s) producing output files for a particular cave all refer
+> to the above layout for that particular cave.  This works fine.  I have
+> three caves, each with their own files.  Now I'd like to reuse the data at
+> the next level up, without maintaining duplicate copies.
+> 
+>  
+> 
+> The data for these three caves is contained in a directory with a master
+> thconfig that produces output files for the whole system of three caves.
+> Rather than having duplicate copies of the map-comment layouts containing
+> the text above, I'd like to refer to the same layout each time, ie
+> concatenate the text along the lines of.
+> 
+>  
+> 
+> layout.
+> 
+> copy GreenlinkAnnotationLayout
+> 
+> copy MiddleEAnnotationLayout
+> 
+> copy SwissMAnnotationLayout
+> 
+> .endlayout
+> 
+>  
+> 
+> Trouble is each one overwrites the previous.
+> 
+>  
+> 
+> Can I concatenate the map-comment field?
+> 
+> Is there a better way to do this?
+> 
+>  
+> 
+> Thanks
+> 
+> Bruce
+> 
+>  
+> 
+> 
+
+
+
+
+From dormat at gmail.com  Wed Feb  6 20:09:12 2008
+From: dormat at gmail.com (Jonathan Prouty)
+Date: Wed, 06 Feb 2008 14:09:12 -0500
+Subject: [Therion] symbol for a stump?
+Message-ID: <47AA05D8.6060809@gmail.com>
+
+Howdy! Does anybody have any suggestions as to what sort of symbol I 
+should use to indicate a stump? It is hanging over the entrance and I 
+can't really leave it off the map. I can make a big brown circle, but I 
+was hoping somebody has a more elegant solution. Have any of you ever 
+run into this before? Thanks!
+
+-Jonny
+
+-- 
+    ^v^
+ ^v^  ^v^     Take nothing but pictures,
+   ^v^     Leave nothing but footprints,
+ ^v^     Kill nothing but time.
+(**)
+
+
+
+
+From wookey at wookware.org  Thu Feb  7 02:01:52 2008
+From: wookey at wookware.org (Wookey)
+Date: Thu, 7 Feb 2008 01:01:52 +0000
+Subject: [Therion] Vercours 2008 conference
+Message-ID: <20080207010152.GI19276@knossos.aleph1.co.uk>
+
+See http://vercors2008.ffspeleo.fr
+
+Has anyone volunteered to talk about therion or show off posters of
+work done with it? I don;t see anything on the site yet but I suppose
+the programme is not yet completed.
+
+I think someone should. Either the authors or a French speaker
+(perhaps both?)
+
+I no-one else is volunteering I could be persuaded.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From ohc at vt.edu  Thu Feb  7 03:06:31 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Wed, 6 Feb 2008 21:06:31 -0500
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <20080207010152.GI19276@knossos.aleph1.co.uk>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+Message-ID: <07EA7286-8A08-45A0-B7D0-71BEFFE0289B@vt.edu>
+
+That looks awesome!
+
+
+On Feb 6, 2008, at 8:01 PM, Wookey wrote:
+
+> See http://vercors2008.ffspeleo.fr
+>
+> Has anyone volunteered to talk about therion or show off posters of
+> work done with it? I don;t see anything on the site yet but I suppose
+> the programme is not yet completed.
+>
+> I think someone should. Either the authors or a French speaker
+> (perhaps both?)
+>
+> I no-one else is volunteering I could be persuaded.
+>
+> Wookey
+> -- 
+> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From thierrygonon at mac.com  Thu Feb  7 07:56:49 2008
+From: thierrygonon at mac.com (thierrygonon)
+Date: Thu, 07 Feb 2008 07:56:49 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <07EA7286-8A08-45A0-B7D0-71BEFFE0289B@vt.edu>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+	<07EA7286-8A08-45A0-B7D0-71BEFFE0289B@vt.edu>
+Message-ID: <47AAABB1.9060103@mac.com>
+
+Hi all !
+
+I'm responsible of the sessions of Vercors 2008... In the database and 
+cave inventories session, I have a proposal of Stacho Mudrak about 
+Therion. For the other session, for example "Exploration and 
+Expedition", I have nothing about Therion, nor mentionning it...
+For the programme, we can't put it on line yet, as you can still send 
+some proposal !
+
+Thierry
+
+Philip Schuchardt a écrit :
+> That looks awesome!
+>
+>
+> On Feb 6, 2008, at 8:01 PM, Wookey wrote:
+>
+>   
+>> See http://vercors2008.ffspeleo.fr
+>>
+>> Has anyone volunteered to talk about therion or show off posters of
+>> work done with it? I don;t see anything on the site yet but I suppose
+>> the programme is not yet completed.
+>>
+>> I think someone should. Either the authors or a French speaker
+>> (perhaps both?)
+>>
+>> I no-one else is volunteering I could be persuaded.
+>>
+>> Wookey
+>> -- 
+>> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+>> http://wookware.org/
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://www.speleo.sk/mailman/listinfo/therion
+>>     
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+
+From bruce.mutton at paradise.net.nz  Thu Feb  7 08:36:06 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 07 Feb 2008 20:36:06 +1300
+Subject: [Therion] Concatinate map-comment?
+In-Reply-To: <1201879624.47a33a48b1ebd@mail.atlantis.sk>
+References: <000001c8624b$f6a18970$be25f6d2@JUICEBRAIN>
+	<1201879624.47a33a48b1ebd@mail.atlantis.sk>
+Message-ID: <000001c8695c$1affab50$0234f6d2@JUICEBRAIN>
+
+Stacho
+Yes, copying map-comments from one layout into another would suit my needs
+exactly.
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Saturday, 2 February 2008 4:27 a.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Concatinate map-comment?
+
+Currently it can be done only via TeX code trick, but probably it is a good
+idea
+that if one layout is copied into another, map-comments will be
+concatenated,
+not replaced. Would this solve your problem?
+
+Regards, S.
+
+
+
+From bruce.mutton at paradise.net.nz  Thu Feb  7 08:36:06 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Thu, 07 Feb 2008 20:36:06 +1300
+Subject: [Therion] Output map Scale
+In-Reply-To: <1201879379.47a33953e8959@mail.atlantis.sk>
+References: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+	<1201619603.479f429379219@mail.atlantis.sk>
+	<001b01c862aa$171e1930$9e25f6d2@JUICEBRAIN>
+	<1201879379.47a33953e8959@mail.atlantis.sk>
+Message-ID: <000101c8695c$1c0d23b0$0234f6d2@JUICEBRAIN>
+
+Thanks Stacho
+That's great.
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Saturday, 2 February 2008 4:23 a.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Output map Scale
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+> By experiment, I think if I use base-scale, (and consequently enlarge the
+> printed image after output) then somewhere I need to substitute base-scale
+> for scale in the code below, but my attempts at editing it failed.
+
+Use decimal(BaseScale) instead of decimal(Scale).
+
+Regards, S.
+
+> Regards
+> Bruce
+> 
+> -----Original Message-----
+> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On
+Behalf
+> Of Stacho Mudrak
+> Sent: Wednesday, 30 January 2008 4:13 a.m.
+> To: therion at speleo.sk
+> Subject: Re: [Therion] Output map Scale
+> 
+> All you need to do is to redefine legend metapost macro. Example - derived
+> from
+> basic scalebar definiton (just add it to your layout):
+> 
+> code metapost
+> def s_scalebar (expr l, units, txt) =
+>  begingroup
+>   interim warningcheck:=0;
+>   tmpl:=l / Scale * cm * units / 2;
+>  endgroup;
+>  pickup PenC;
+>  draw (-tmpl,0)--(tmpl,0);
+>  draw (-tmpl,0)--(-tmpl,2bp);
+>  draw (tmpl,0)--(tmpl,2bp);
+>  begingroup
+>   interim labeloffset:=2bp;
+>   label.top(thTEX(decimal (l) & "\thinspace" & txt),origin);
+>   label.top(thTEX("1\thinspace:\thinspace" & decimal (Scale) & "00"),
+origin
+> +
+> (0,12bp));
+>  endgroup
+> enddef;    
+> endcode
+> 
+> Regards, S.
+> 
+> Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+> 
+> > Can Therion output the scale of the map as drawn, in text?  (I'd like to
+> > display this as say 1:1000, as well as the scalebar)
+> > 
+> > Thanks
+> > 
+> > Bruce
+> > 
+> >  
+> > 
+> > 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From Eric.Madelaine at sophia.inria.fr  Thu Feb  7 08:41:01 2008
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Thu, 07 Feb 2008 08:41:01 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <20080207010152.GI19276@knossos.aleph1.co.uk>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+Message-ID: <47AAB60D.6060507@sophia.inria.fr>
+
+Wookey wrote:
+> See http://vercors2008.ffspeleo.fr
+>
+> Has anyone volunteered to talk about therion or show off posters of
+> work done with it? I don;t see anything on the site yet but I suppose
+> the programme is not yet completed.
+>
+> I think someone should. Either the authors or a French speaker
+> (perhaps both?)
+>
+> I no-one else is volunteering I could be persuaded.
+>
+> Wookey
+>   
+We have two nice surveys built with Therion, I hope we'll be able to 
+have them shown at Vercors 2008.
+
+Eric.
+
+
+From martinsluka at mac.com  Thu Feb  7 09:15:17 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 7 Feb 2008 09:15:17 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <20080207010152.GI19276@knossos.aleph1.co.uk>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+Message-ID: <20362F6A-A68F-4EAD-BD31-EB27DF9D8DF4@mac.com>
+
+
+On 7.2.2008, at 2:01, Wookey wrote:
+
+> Has anyone volunteered to talk about therion or show off posters of
+> work done with it?
+
+As I remember I paid for a booth there.
+
+Martin
+
+
+From Eric.Madelaine at sophia.inria.fr  Thu Feb  7 09:17:27 2008
+From: Eric.Madelaine at sophia.inria.fr (Eric Madelaine)
+Date: Thu, 07 Feb 2008 09:17:27 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <20362F6A-A68F-4EAD-BD31-EB27DF9D8DF4@mac.com>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+	<20362F6A-A68F-4EAD-BD31-EB27DF9D8DF4@mac.com>
+Message-ID: <47AABE97.8000306@sophia.inria.fr>
+
+Martin Sluka wrote:
+> On 7.2.2008, at 2:01, Wookey wrote:
+>
+>   
+>> Has anyone volunteered to talk about therion or show off posters of
+>> work done with it?
+>>     
+>
+> As I remember I paid for a booth there.
+>   
+You'll have a machine on which we can show our Therion models ???
+
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+From martinsluka at mac.com  Thu Feb  7 09:21:32 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 7 Feb 2008 09:21:32 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <47AABE97.8000306@sophia.inria.fr>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+	<20362F6A-A68F-4EAD-BD31-EB27DF9D8DF4@mac.com>
+	<47AABE97.8000306@sophia.inria.fr>
+Message-ID: <B7EEE203-68AF-44A0-BB68-B6AA920BFF6C@mac.com>
+
+
+On 7.2.2008, at 9:17, Eric Madelaine wrote:
+
+> You'll have a machine on which we can show our Therion models ???
+
+It could be better to have there data projector and project the data  
+somewhere on wall if possible. and "any kind" of PC with windows (or  
+Linux) because of Loch. Or Stacho will debug the installation on MacOSX
+:)
+
+m.
+
+
+
+
+From stefan_oswald at gmx.at  Fri Feb  8 12:50:06 2008
+From: stefan_oswald at gmx.at (Stefan Oswald)
+Date: Fri, 08 Feb 2008 12:50:06 +0100
+Subject: [Therion] easyer to handle?
+Message-ID: <20080208115006.140210@gmx.net>
+
+Hi together, 
+
+We draw on therion in our caving club, but we have a few problems, which i want to report to you, we also have made a little "brainstorming"...
+
+It is always very difficult to introduce new people, no software engineers, into therion, also i had great problems. The map editor user interface gives many options, but thereby it is not really easy to handle, the same with the layout. It is difficult to produce a good looking plan-layout with text and so on. 
+A generall icon-interface, such as most leading CAD programmes use would be much more efficient in our opinion. Is this planed in final version?
+
+In Therion you draw something and you do not know what it will exactly  
+look like. For handling the Programm it would be easyer if you could  
+immediately see the result without pressing F9, opening the .pdf, take a look at the result, close it again (Windows) and return to therion.
+just an idea. 
+Also showing other scraps (.th2 files) in map editor, as with CAD for Cavers (Autocad) would be an option.
+
+To abstract we mean placing focus on usability would make it easyer for many people using therion, not only in our club.
+
+
+Glück Tief from stefan and the Höhlenbären caving club
+
+
+
+From martinsluka at mac.com  Fri Feb  8 13:09:44 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 8 Feb 2008 13:09:44 +0100
+Subject: [Therion] easyer to handle?
+In-Reply-To: <20080208115006.140210@gmx.net>
+References: <20080208115006.140210@gmx.net>
+Message-ID: <41F28A6D-8EC5-4C70-8CF4-529384EE8604@mac.com>
+
+
+On 8.2.2008, at 12:50, Stefan Oswald wrote:
+
+> We draw on therion in our caving club, but we have a few problems,  
+> which i want to report to you, we also have made a little  
+> "brainstorming"...
+>
+> It is always very difficult to introduce new people, no software  
+> engineers, into therion, also i had great problems. The map editor  
+> user interface gives many options, but thereby it is not really  
+> easy to handle, the same with the layout. It is difficult to  
+> produce a good looking plan-layout with text and so on.
+> A generall icon-interface, such as most leading CAD programmes use  
+> would be much more efficient in our opinion. Is this planed in  
+> final version?
+>
+> In Therion you draw something and you do not know what it will exactly
+> look like. For handling the Programm it would be easyer if you could
+> immediately see the result without pressing F9, opening the .pdf,  
+> take a look at the result, close it again (Windows) and return to  
+> therion.
+> just an idea.
+> Also showing other scraps (.th2 files) in map editor, as with CAD  
+> for Cavers (Autocad) would be an option.
+>
+> To abstract we mean placing focus on usability would make it easyer  
+> for many people using therion, not only in our club.
+
+Hi Stefan,
+
+you are absolutely right, your arguments or wishes are evergreen from  
+the very beginning of therion.
+
+BUT, therion is a piece of software "as is". It was made by two men  
+(with help of several others). Both authors are very busy now and  
+there is no any space to rewrite for example xtherion map editor from  
+scratch.
+
+Another BUT - the format of data is open, the source code is  
+available. So there is theoretically no any problem to make new map  
+editor for therion. Wysiwyg, with menus, icons, etc., etc. AND  
+compatible with Linux, MacOSX and Windows. AND free.
+
+Good luck
+
+Martin
+
+
+From ohc at vt.edu  Fri Feb  8 15:38:55 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Fri, 8 Feb 2008 09:38:55 -0500
+Subject: [Therion] easyer to handle?
+In-Reply-To: <41F28A6D-8EC5-4C70-8CF4-529384EE8604@mac.com>
+References: <20080208115006.140210@gmx.net>
+	<41F28A6D-8EC5-4C70-8CF4-529384EE8604@mac.com>
+Message-ID: <11B296E3-B73D-464C-9F46-57B18BC73740@vt.edu>
+
+Stefan,
+
+I completely agree.  I really like Therion and I've drawn large  
+systems with it.  In contrast of a user centric system, Therion is  
+system centric, where the user must conform to the system.  It is  
+definitely takes more time and effort to develop a user centric system.
+
+I'm currently trying to develop a more user friendly cave drawing  
+software, called Cavewhere (www.cavewhere.org).   It's currently under  
+heavy development and has a long long way to go.  You can't even draw  
+or enter a centerline.  There are some major underlying design issues  
+that I'm fixing right now.  For now, Therion is definitely the best  
+thing out there.
+
+Steelwool
+
+On Feb 8, 2008, at 7:09 AM, Martin Sluka wrote:
+
+>
+> On 8.2.2008, at 12:50, Stefan Oswald wrote:
+>
+>> We draw on therion in our caving club, but we have a few problems,
+>> which i want to report to you, we also have made a little
+>> "brainstorming"...
+>>
+>> It is always very difficult to introduce new people, no software
+>> engineers, into therion, also i had great problems. The map editor
+>> user interface gives many options, but thereby it is not really
+>> easy to handle, the same with the layout. It is difficult to
+>> produce a good looking plan-layout with text and so on.
+>> A generall icon-interface, such as most leading CAD programmes use
+>> would be much more efficient in our opinion. Is this planed in
+>> final version?
+>>
+>> In Therion you draw something and you do not know what it will  
+>> exactly
+>> look like. For handling the Programm it would be easyer if you could
+>> immediately see the result without pressing F9, opening the .pdf,
+>> take a look at the result, close it again (Windows) and return to
+>> therion.
+>> just an idea.
+>> Also showing other scraps (.th2 files) in map editor, as with CAD
+>> for Cavers (Autocad) would be an option.
+>>
+>> To abstract we mean placing focus on usability would make it easyer
+>> for many people using therion, not only in our club.
+>
+> Hi Stefan,
+>
+> you are absolutely right, your arguments or wishes are evergreen from
+> the very beginning of therion.
+>
+> BUT, therion is a piece of software "as is". It was made by two men
+> (with help of several others). Both authors are very busy now and
+> there is no any space to rewrite for example xtherion map editor from
+> scratch.
+>
+> Another BUT - the format of data is open, the source code is
+> available. So there is theoretically no any problem to make new map
+> editor for therion. Wysiwyg, with menus, icons, etc., etc. AND
+> compatible with Linux, MacOSX and Windows. AND free.
+>
+> Good luck
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From s.m at group-s.sk  Fri Feb  8 20:58:19 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 08 Feb 2008 20:58:19 +0100
+Subject: [Therion] easyer to handle?
+In-Reply-To: <20080208115006.140210@gmx.net>
+References: <20080208115006.140210@gmx.net>
+Message-ID: <1202500699.47acb45b55e4e@mail.atlantis.sk>
+
+Quoting Stefan Oswald <stefan_oswald at gmx.at>:
+> We draw on therion in our caving club, but we have a few problems, which i
+> want to report to you, we also have made a little "brainstorming"...
+
+Thanks for your feedback. You are asking very difficult questions, but I will
+try to answer...
+
+> It is always very difficult to introduce new people, no software engineers,
+> into therion, also i had great problems.
+
+You are right, but... 
+
+>From time to time we get a crazy idea - that we will start programming much
+more simple therion again from the scratch. But when we start 
+to analyze again all functionality that is definitely needed,
+we are not able to find data model, that is much more simple
+than current state.
+
+> The map editor user interface gives
+> many options, but thereby it is not really easy to handle, the same with the
+> layout. It is difficult to produce a good looking plan-layout with text and
+> so on.
+
+Well, I am afraid you will never get really good looking map with all bells and
+whistles from therion. Our goal was to have a system, where we can have
+complete, up to date and very flexible documentation of the cave. For this, we
+are now paying price of good looking cave map. But if you have several tens of
+km cave with multiple levels and passages that connects to each other - even
+schematic map in therion is a pain, not a precisely drawn map with all the
+details... At least in our situation, when we do not have a lot of free
+time...
+
+> A generall icon-interface, such as most leading CAD programmes use would be
+> much more efficient in our opinion. Is this planed in final version?
+
+The main problem of therion user interface is, that it is not standard vector
+drawing interface. Here I 100% agree. But I am afraid - I have no resources to
+start working on another CADlike interface. 
+
+> In Therion you draw something and you do not know what it will exactly  
+> look like. For handling the Programm it would be easyer if you could  
+> immediately see the result without pressing F9, opening the .pdf, take a look
+> at the result, close it again (Windows) and return to therion.
+> just an idea. 
+
+On Windows it is a problem of acrobat reader - I usually use ghostscript, when
+I
+need check how it looks frequently. I have tried several times to control
+Acrobat Reader from xtherion - but without success. I do not know, what is
+going wrong - but from version to version, Adobe Acrobat Reader has different
+behaviour when controled from other program.
+
+I would like to add some features to xtherion in this case (e.g. showing some
+symbols instead of simple dots). But it is only in TODO.
+
+> Also showing other scraps (.th2 files) in map editor, as with CAD for Cavers
+> (Autocad) would be an option.
+
+Yes, it would be great. But I am afraid - with the current state of the code in
+xtherion, this is not possible...
+
+> To abstract we mean placing focus on usability would make it easyer for many
+> people using therion, not only in our club.
+
+This would be great, but it implies very deep changes in the system design and
+currently I have no resources to do that. 
+
+When I started therion - I was single and student. Now I am married, I am
+working and I have three little children. I am really happy if I find time to
+fix bugs, add little features or go to the cave :)
+
+Best regards, S.
+
+
+From s.m at group-s.sk  Fri Feb  8 21:09:22 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Fri, 08 Feb 2008 21:09:22 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <20080207010152.GI19276@knossos.aleph1.co.uk>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+Message-ID: <1202501362.47acb6f2e3aec@mail.atlantis.sk>
+
+As Thierry wrote, MartinB (with a little help of me) is preparing some short
+high level presentation, but if you could tell something from your experience,
+it would be great.
+
+Regards, S.
+
+Quoting Wookey <wookey at wookware.org>:
+> See http://vercors2008.ffspeleo.fr
+> 
+> Has anyone volunteered to talk about therion or show off posters of
+> work done with it? I don;t see anything on the site yet but I suppose
+> the programme is not yet completed.
+> 
+> I think someone should. Either the authors or a French speaker
+> (perhaps both?)
+> 
+> I no-one else is volunteering I could be persuaded.
+> 
+> Wookey
+> -- 
+> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From wolfgang.zillig at web.de  Sat Feb  9 16:07:26 2008
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sat, 09 Feb 2008 16:07:26 +0100
+Subject: [Therion] timeline/outlook of therion/loch
+Message-ID: <47ADC1AE.6090406@web.de>
+
+Hi Stacho, hi Martin,
+
+I'll address you both directly as you are the two main developers of 
+therion/loch.
+
+Just to start with my background: I'm mainly using therion/loch to 
+create 3D models of the polygon plot with associated elevation model and 
+overlaying surface texture. So I have almost no experience with creating 
+2d printable cave maps at all.
+
+But back to the topic, I could not find any information on the web page 
+or wiki what your plans are with therion. As you've mentioned recently 
+on the mailing list your free time is limited (I can understand that 
+quite well!). I think I'm not alone when I ask you what are your plans 
+to extend (to develop further) therion/loch?
+
+For myself I don't see a way to contribute code, as I absolutely have no 
+knowledge of C (and any dialects C++, C#, etc).
+
+Regards
+Wolfgang
+
+
+From wolfgang.zillig at web.de  Sat Feb  9 15:51:53 2008
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sat, 09 Feb 2008 15:51:53 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <1202501362.47acb6f2e3aec@mail.atlantis.sk>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+	<1202501362.47acb6f2e3aec@mail.atlantis.sk>
+Message-ID: <47ADBE09.6010004@web.de>
+
+Hi,
+
+I'm not sure if I can attend Vercours2008 myself, as I have to finish my 
+PhD this year and there is still a lot to do. But I could provide some 
+slides how to create suitable input for 3D surface models for loch. It 
+will be based on a German region (as I already have some samples for 
+there) but if suggested I can try with a different location as well. The 
+main focus will be on free data sources, free conversion tools (as 
+rectangular elevation grid is needed for loch) and the input to therion.
+
+Remaining questions:
+- do you already have enough input for stated tasks mentioned above?
+- shall I prepare a sample case on my own or has anybody the need for a 
+model anyhow?
+- where to discuss about this? Shall I just put something at the wiki?
+- any victims here that would volunteer to test out my code snippets?
+
+Regards
+Wolfgang
+
+
+From juergen at bohnert.name  Sat Feb  9 16:43:26 2008
+From: juergen at bohnert.name (Juergen Bohnert)
+Date: Sat, 09 Feb 2008 07:43:26 -0800
+Subject: [Therion] easyer to handle?
+Message-ID: <47ADCA1E.6030403@bohnert.name>
+
+Hi Stacho,
+
+you are absolutely right, Therion has the basic functionality that is 
+needed to keep a cave map up to date. And it is a reliable work horse.
+
+We should always remind ourselves that there is no other software that 
+has the flexibility of Therion combined with this platform-independent 
+and open source approach when it comes to cave cartography.
+I repeat, no other!
+Therion sets the high standard to which all other programs have to be 
+compared...
+
+CAD for caves is a nice piece of software, but it needs a non-open 
+source system (AutoCAD) which you can only obtain at a price that 
+prevents most cavers from buying it.
+
+Although the Therion GUI might be a bit old-fashioned, it still does the 
+job. It is not as fancy as AutoCAD and CorelDraw, but since I know both 
+programs I have to admit that it didn't take me much longer to get 
+accustomed to it.
+
+OK, I admit that the GUI could be a bit "renovated", but in my opinion 
+this is a mid- to long-term thing... function is more important than 
+look and feel.
+
+And since Therion is an open-source project every caver can contribute 
+to improving this software package....
+
+And instead of creating completely new cave mapping software I would 
+rather prefer an approach of building modules within the Therion 
+framework which means at least using the Therion data format.
+
+Therion might not be the best tool for the casual cave cartographer but 
+it is definitely the best tool if you are into long-term GIS-based 
+mapping of complex cave systems with multiple entrances and frequent 
+survey shot changes e.g. based on refinement of already existing surveys 
+by radio location or loop-closure. Try that in AutoCAD... very 
+cumbersome ....
+
+Therion definetely closes the gap between conventional GIS, CAD and cave 
+survey visualization software...
+
+Regards,
+
+Juergen
+
+
+
+Stacho Mudrak schrieb:
+
+ > Quoting Stefan Oswald <stefan_oswald at gmx.at>:
+ >
+ >> We draw on therion in our caving club, but we have a few problems, 
+which i
+ >> want to report to you, we also have made a little "brainstorming"...
+ >
+ >
+ >
+ > Thanks for your feedback. You are asking very difficult questions, 
+but I will
+ > try to answer...
+ >
+ >
+ >> It is always very difficult to introduce new people, no software 
+engineers,
+ >> into therion, also i had great problems.
+ >
+ >
+ >
+ > You are right, but...
+ >
+ >> From time to time we get a crazy idea - that we will start 
+programming much
+ >
+ > more simple therion again from the scratch. But when we start to 
+analyze again all functionality that is definitely needed,
+ > we are not able to find data model, that is much more simple
+ > than current state.
+ >
+ >
+ >> The map editor user interface gives
+ >> many options, but thereby it is not really easy to handle, the same 
+with the
+ >> layout. It is difficult to produce a good looking plan-layout with 
+text and
+ >> so on.
+ >
+ >
+ >
+ > Well, I am afraid you will never get really good looking map with all 
+bells and
+ > whistles from therion. Our goal was to have a system, where we can have
+ > complete, up to date and very flexible documentation of the cave. For 
+this, we
+ > are now paying price of good looking cave map. But if you have 
+several tens of
+ > km cave with multiple levels and passages that connects to each other 
+- even
+ > schematic map in therion is a pain, not a precisely drawn map with 
+all the
+ > details... At least in our situation, when we do not have a lot of free
+ > time...
+ >
+ >
+ >> A generall icon-interface, such as most leading CAD programmes use 
+would be
+ >> much more efficient in our opinion. Is this planed in final version?
+ >
+ >
+ >
+ > The main problem of therion user interface is, that it is not 
+standard vector
+ > drawing interface. Here I 100% agree. But I am afraid - I have no 
+resources to
+ > start working on another CADlike interface.
+ >
+ >> In Therion you draw something and you do not know what it will 
+exactly  look like. For handling the Programm it would be easyer if you 
+could  immediately see the result without pressing F9, opening the .pdf, 
+take a look
+ >> at the result, close it again (Windows) and return to therion.
+ >> just an idea.
+ >
+ >
+ >
+ > On Windows it is a problem of acrobat reader - I usually use 
+ghostscript, when
+ > I
+ > need check how it looks frequently. I have tried several times to control
+ > Acrobat Reader from xtherion - but without success. I do not know, 
+what is
+ > going wrong - but from version to version, Adobe Acrobat Reader has 
+different
+ > behaviour when controled from other program.
+ >
+ > I would like to add some features to xtherion in this case (e.g. 
+showing some
+ > symbols instead of simple dots). But it is only in TODO.
+ >
+ >
+ >> Also showing other scraps (.th2 files) in map editor, as with CAD 
+for Cavers
+ >> (Autocad) would be an option.
+ >
+ >
+ >
+ > Yes, it would be great. But I am afraid - with the current state of 
+the code in
+ > xtherion, this is not possible...
+ >
+ >
+ >> To abstract we mean placing focus on usability would make it easyer 
+for many
+ >> people using therion, not only in our club.
+ >
+ >
+ >
+ > This would be great, but it implies very deep changes in the system 
+design and
+ > currently I have no resources to do that.
+ > When I started therion - I was single and student. Now I am married, I am
+ > working and I have three little children. I am really happy if I find 
+time to
+ > fix bugs, add little features or go to the cave
+ >
+ > Best regards, S.
+ > _______________________________________________
+ > Therion mailing list
+ > Therion at speleo.sk
+ > http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+
+From s.m at group-s.sk  Tue Feb 12 09:01:43 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 12 Feb 2008 09:01:43 +0100
+Subject: [Therion] Vercours 2008 conference
+In-Reply-To: <47ADBE09.6010004@web.de>
+References: <20080207010152.GI19276@knossos.aleph1.co.uk>
+	<1202501362.47acb6f2e3aec@mail.atlantis.sk>
+	<47ADBE09.6010004@web.de>
+Message-ID: <1202803303.47b152670304d@mail.atlantis.sk>
+
+Thanks for your offer - our presentation will be just basic one, so probably if
+you could put the stuff you have mentioned on the Wiki, it would help people
+interested in 3D model generation. If we will prepare some more detailed
+material, we will probably take it from Wiki too. Or if somebody else is
+interested in presenting these topics...
+
+For the Vercors, we would greatly appreciate if you could prepare and send us
+some nice 3D Rendering (e.g. A2/A3 format, 300dpi) that we could print and show
+there.
+
+Thanks, S.
+
+Quoting Wolfgang Zillig <wolfgang.zillig at web.de>:
+> Hi,
+> 
+> I'm not sure if I can attend Vercours2008 myself, as I have to finish my 
+> PhD this year and there is still a lot to do. But I could provide some 
+> slides how to create suitable input for 3D surface models for loch. It 
+> will be based on a German region (as I already have some samples for 
+> there) but if suggested I can try with a different location as well. The 
+> main focus will be on free data sources, free conversion tools (as 
+> rectangular elevation grid is needed for loch) and the input to therion.
+> 
+> Remaining questions:
+> - do you already have enough input for stated tasks mentioned above?
+> - shall I prepare a sample case on my own or has anybody the need for a 
+> model anyhow?
+> - where to discuss about this? Shall I just put something at the wiki?
+> - any victims here that would volunteer to test out my code snippets?
+> 
+> Regards
+> Wolfgang
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From s.m at group-s.sk  Tue Feb 12 20:40:28 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 12 Feb 2008 20:40:28 +0100
+Subject: [Therion] timeline/outlook of therion/loch
+In-Reply-To: <47ADC1AE.6090406@web.de>
+References: <47ADC1AE.6090406@web.de>
+Message-ID: <47B1F62C.4060609@group-s.sk>
+
+> But back to the topic, I could not find any information on the web page 
+> or wiki what your plans are with therion. As you've mentioned recently 
+> on the mailing list your free time is limited (I can understand that 
+> quite well!). I think I'm not alone when I ask you what are your plans 
+> to extend (to develop further) therion/loch?
+
+Currently, we are fixing some bugs and adding some new features to 
+centerline we are missing in therion. This should be finished soon - 
+within 2-3 weeks I hope, there will be new release.
+
+Then I would like to focus on loch developement. We are missing labeling 
+there (stations, comments, surveys), highlighting entrances, survey tree 
+and real-time survey selection and some measurements. If you need some 
+other features - do not hesitate to ask for them.
+
+Best regards, S.
+
+
+
+From s.m at group-s.sk  Tue Feb 12 20:58:00 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 12 Feb 2008 20:58:00 +0100
+Subject: [Therion] easyer to handle?
+In-Reply-To: <47ADCA1E.6030403@bohnert.name>
+References: <47ADCA1E.6030403@bohnert.name>
+Message-ID: <47B1FA48.7030602@group-s.sk>
+
+Thanks Juergen for your feedback - we appreciate it a lot.
+
+Regards, S.
+
+Juergen Bohnert wrote:
+> Hi Stacho,
+> 
+> you are absolutely right, Therion has the basic functionality that is 
+> needed to keep a cave map up to date. And it is a reliable work horse.
+> 
+> We should always remind ourselves that there is no other software that 
+> has the flexibility of Therion combined with this platform-independent 
+> and open source approach when it comes to cave cartography.
+> I repeat, no other!
+> Therion sets the high standard to which all other programs have to be 
+> compared...
+> 
+> CAD for caves is a nice piece of software, but it needs a non-open 
+> source system (AutoCAD) which you can only obtain at a price that 
+> prevents most cavers from buying it.
+> 
+> Although the Therion GUI might be a bit old-fashioned, it still does the 
+> job. It is not as fancy as AutoCAD and CorelDraw, but since I know both 
+> programs I have to admit that it didn't take me much longer to get 
+> accustomed to it.
+> 
+> OK, I admit that the GUI could be a bit "renovated", but in my opinion 
+> this is a mid- to long-term thing... function is more important than 
+> look and feel.
+> 
+> And since Therion is an open-source project every caver can contribute 
+> to improving this software package....
+> 
+> And instead of creating completely new cave mapping software I would 
+> rather prefer an approach of building modules within the Therion 
+> framework which means at least using the Therion data format.
+> 
+> Therion might not be the best tool for the casual cave cartographer but 
+> it is definitely the best tool if you are into long-term GIS-based 
+> mapping of complex cave systems with multiple entrances and frequent 
+> survey shot changes e.g. based on refinement of already existing surveys 
+> by radio location or loop-closure. Try that in AutoCAD... very 
+> cumbersome ....
+> 
+> Therion definetely closes the gap between conventional GIS, CAD and cave 
+> survey visualization software...
+> 
+> Regards,
+> 
+> Juergen
+> 
+> 
+> 
+> Stacho Mudrak schrieb:
+> 
+>  > Quoting Stefan Oswald <stefan_oswald at gmx.at>:
+>  >
+>  >> We draw on therion in our caving club, but we have a few problems, 
+> which i
+>  >> want to report to you, we also have made a little "brainstorming"...
+>  >
+>  >
+>  >
+>  > Thanks for your feedback. You are asking very difficult questions, 
+> but I will
+>  > try to answer...
+>  >
+>  >
+>  >> It is always very difficult to introduce new people, no software 
+> engineers,
+>  >> into therion, also i had great problems.
+>  >
+>  >
+>  >
+>  > You are right, but...
+>  >
+>  >> From time to time we get a crazy idea - that we will start 
+> programming much
+>  >
+>  > more simple therion again from the scratch. But when we start to 
+> analyze again all functionality that is definitely needed,
+>  > we are not able to find data model, that is much more simple
+>  > than current state.
+>  >
+>  >
+>  >> The map editor user interface gives
+>  >> many options, but thereby it is not really easy to handle, the same 
+> with the
+>  >> layout. It is difficult to produce a good looking plan-layout with 
+> text and
+>  >> so on.
+>  >
+>  >
+>  >
+>  > Well, I am afraid you will never get really good looking map with all 
+> bells and
+>  > whistles from therion. Our goal was to have a system, where we can have
+>  > complete, up to date and very flexible documentation of the cave. For 
+> this, we
+>  > are now paying price of good looking cave map. But if you have 
+> several tens of
+>  > km cave with multiple levels and passages that connects to each other 
+> - even
+>  > schematic map in therion is a pain, not a precisely drawn map with 
+> all the
+>  > details... At least in our situation, when we do not have a lot of free
+>  > time...
+>  >
+>  >
+>  >> A generall icon-interface, such as most leading CAD programmes use 
+> would be
+>  >> much more efficient in our opinion. Is this planed in final version?
+>  >
+>  >
+>  >
+>  > The main problem of therion user interface is, that it is not 
+> standard vector
+>  > drawing interface. Here I 100% agree. But I am afraid - I have no 
+> resources to
+>  > start working on another CADlike interface.
+>  >
+>  >> In Therion you draw something and you do not know what it will 
+> exactly  look like. For handling the Programm it would be easyer if you 
+> could  immediately see the result without pressing F9, opening the .pdf, 
+> take a look
+>  >> at the result, close it again (Windows) and return to therion.
+>  >> just an idea.
+>  >
+>  >
+>  >
+>  > On Windows it is a problem of acrobat reader - I usually use 
+> ghostscript, when
+>  > I
+>  > need check how it looks frequently. I have tried several times to control
+>  > Acrobat Reader from xtherion - but without success. I do not know, 
+> what is
+>  > going wrong - but from version to version, Adobe Acrobat Reader has 
+> different
+>  > behaviour when controled from other program.
+>  >
+>  > I would like to add some features to xtherion in this case (e.g. 
+> showing some
+>  > symbols instead of simple dots). But it is only in TODO.
+>  >
+>  >
+>  >> Also showing other scraps (.th2 files) in map editor, as with CAD 
+> for Cavers
+>  >> (Autocad) would be an option.
+>  >
+>  >
+>  >
+>  > Yes, it would be great. But I am afraid - with the current state of 
+> the code in
+>  > xtherion, this is not possible...
+>  >
+>  >
+>  >> To abstract we mean placing focus on usability would make it easyer 
+> for many
+>  >> people using therion, not only in our club.
+>  >
+>  >
+>  >
+>  > This would be great, but it implies very deep changes in the system 
+> design and
+>  > currently I have no resources to do that.
+>  > When I started therion - I was single and student. Now I am married, I am
+>  > working and I have three little children. I am really happy if I find 
+> time to
+>  > fix bugs, add little features or go to the cave
+>  >
+>  > Best regards, S.
+>  > _______________________________________________
+>  > Therion mailing list
+>  > Therion at speleo.sk
+>  > http://www.speleo.sk/mailman/listinfo/therion
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From s.m at group-s.sk  Tue Feb 12 21:12:10 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 12 Feb 2008 21:12:10 +0100
+Subject: [Therion] symbol for a stump?
+In-Reply-To: <47AA05D8.6060809@gmail.com>
+References: <47AA05D8.6060809@gmail.com>
+Message-ID: <47B1FD9A.60800@group-s.sk>
+
+I am sorry for the late answer, firstly I thought I can answer 
+immediatelly, but then I realized - that solution I wanted to suggest 
+you is still not fully supported.
+
+OK - I am not sure, I 100% understand what do you mean by stump and how 
+does your symbol for it looks like (is it point, line or area symbol?). 
+But for such cases - there is "user defined" symbol in therion. Whatever 
+symbol it is (point, line, area), I would use u:stump type for it - this 
+you can do also in the current version, but symbol will be just shown 
+with red color.
+
+In the next release, there will be support for these symbols to show 
+them also in legends, hide-show them in maps etc. The only problem is, 
+that you will have to define MP macro for your symbol - but for most 
+cases, this macro is very simple and if you will send us picture how 
+your symbol looks like, we can send you the correct macro.
+
+Would such a symbol type solve your problem?
+
+Regards, S.
+
+Jonathan Prouty wrote:
+> Howdy! Does anybody have any suggestions as to what sort of symbol I 
+> should use to indicate a stump? It is hanging over the entrance and I 
+> can't really leave it off the map. I can make a big brown circle, but I 
+> was hoping somebody has a more elegant solution. Have any of you ever 
+> run into this before? Thanks!
+> 
+> -Jonny
+> 
+
+
+From dormat at gmail.com  Wed Feb 13 03:06:07 2008
+From: dormat at gmail.com (Jonathan Prouty)
+Date: Tue, 12 Feb 2008 21:06:07 -0500
+Subject: [Therion] symbol for a stump?
+In-Reply-To: <47B1FD9A.60800@group-s.sk>
+References: <47AA05D8.6060809@gmail.com> <47B1FD9A.60800@group-s.sk>
+Message-ID: <50d2a16a0802121806m3e27e692s95f3ae17a08faa7f@mail.gmail.com>
+
+On Feb 12, 2008 3:12 PM, Stacho Mudrak <s.m at group-s.sk> wrote:
+
+> I am sorry for the late answer,
+
+
+No problem at all.
+
+
+> OK - I am not sure, I 100% understand what do you mean by stump and how
+> does your symbol for it looks like (is it point, line or area symbol?).
+
+
+It is an area symbol. The cave isn't that big (it's just a pit), so the
+stump can actually be drawn to scale on the map.
+
+What I envisioned was a circle with a relatively thick border (representing
+the bark of the tree) with thinner concentric circles inside this
+(representing the rings). I've attached a scan of how I sketched it.
+
+Thanks for the help!
+
+-Jonny
+
+
+-- 
+      ^v^
+ ^v^   ^v^      Take nothing but pictures,
+    ^v^       Leave nothing but footprints,
+ ^v^       Kill nothing but time.
+(**)
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080212/ab1d8534/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: stump.png
+Type: image/png
+Size: 74674 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080212/ab1d8534/attachment.png>
+
+From dormat at gmail.com  Wed Feb 13 03:43:06 2008
+From: dormat at gmail.com (Jonathan Prouty)
+Date: Tue, 12 Feb 2008 21:43:06 -0500
+Subject: [Therion] trouble with joining scraps while digitizing an old map
+Message-ID: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+
+I decided to digitize an old map of one of my favorite caves. The JPG of the
+entire original map was too big for therion to load, so I cut it up into
+smaller images that will load.Tracing the map and compiling it worked
+perfectly for the first section that I digitized (section_1.th2). I moved
+onto the second one, traced the old map same as before (section_2.th2). All
+that is pretty straightforward.
+
+The problem arises when I try to join scraps from section 2 with scraps from
+section 1. The join fails miserably. I tried to follow the instructions from
+the wiki (http://therion.speleo.sk/wiki/doku.php?id=tbe:wiki4#importing_maps),
+but it seems the instructions are geared towards joining unsurveyed data
+with surveyed data. I don't see how to join unsurveyed scraps with other
+unsurveyed scraps. I have no "fake" data like the instructions suggest.
+
+I've included links to an image of a portion of the old map I'm digitizing
+and to a PDF that therion spit out. Comparing the two will make the problem
+very apparent. I'm sure there is a pretty straightforward solution, I simply
+don't know it. Thanks in advance in for the help!
+
+http://www.talkingnerdy.com/jonny/images/slices.png
+http://www.talkingnerdy.com/jonny/images/byers.pdf
+
+-Jonny
+
+P.S.
+Just in case it wasn't clear, I don't have access to any of the original
+survey data. The cave was surveyed in the 60s. I'd be surprised if the
+original data still exists.
+
+
+-- 
+      ^v^
+ ^v^   ^v^      Take nothing but pictures,
+    ^v^       Leave nothing but footprints,
+ ^v^       Kill nothing but time.
+(**)
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080212/a2172af5/attachment.htm>
+
+From martinsluka at mac.com  Wed Feb 13 05:09:53 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 13 Feb 2008 05:09:53 +0100
+Subject: [Therion] trouble with joining scraps while digitizing an old
+	map
+In-Reply-To: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+References: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+Message-ID: <48ADB0C8-4091-461B-B5D7-D90333B8F06D@mac.com>
+
+
+On 13.2.2008, at 3:43, Jonathan Prouty wrote:
+
+> I have no "fake" data like the instructions suggest.
+
+Just create several "surveying" points in the drawing and add them  
+coordinates according to scale of drawing. Theoretically two such  
+points for each scrap are enough.
+
+Martin
+
+
+From dormat at gmail.com  Wed Feb 13 05:20:50 2008
+From: dormat at gmail.com (Jonathan Prouty)
+Date: Tue, 12 Feb 2008 23:20:50 -0500
+Subject: [Therion] trouble with joining scraps while digitizing an old
+	map
+In-Reply-To: <48ADB0C8-4091-461B-B5D7-D90333B8F06D@mac.com>
+References: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+	<48ADB0C8-4091-461B-B5D7-D90333B8F06D@mac.com>
+Message-ID: <50d2a16a0802122020h684e0256u23b6f521fd56cc31@mail.gmail.com>
+
+Ok, I'll give that a try. Thanks for the quick reply.
+
+On Feb 12, 2008 11:09 PM, Martin Sluka <martinsluka at mac.com> wrote:
+
+>
+> On 13.2.2008, at 3:43, Jonathan Prouty wrote:
+>
+> > I have no "fake" data like the instructions suggest.
+>
+> Just create several "surveying" points in the drawing and add them
+> coordinates according to scale of drawing. Theoretically two such
+> points for each scrap are enough.
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+
+-- 
+      ^v^
+ ^v^   ^v^      Take nothing but pictures,
+    ^v^       Leave nothing but footprints,
+ ^v^       Kill nothing but time.
+(**)
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080212/a0784a3b/attachment.htm>
+
+From s.m at group-s.sk  Wed Feb 13 09:04:17 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 13 Feb 2008 09:04:17 +0100
+Subject: [Therion] trouble with joining scraps while digitizing an old
+	map
+In-Reply-To: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+References: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+Message-ID: <1202889857.47b2a481ee700@mail.atlantis.sk>
+
+As MartinS wrote, you will definitely need some reference points, but they do
+not need to be stations. In the case, if there are no survey data - all you
+need to do is just to scale each scrap properly.
+
+I would do following steps:
+
+1. Put some grid on the scanned images according to scale. Ideal is some real
+coordinate grid like UTM, but also some local coordinate system is OK.
+
+2. Then set X Y coordinates of two real points and two points on the JPG image
+for each scrap in the section - you have to set them in "Scraps" tab in map
+editor - under "picture scale points" and "real scale points".
+
+In fact you have to calibrate the scraps same way, as you do it for
+cross-sections (with exception, that projection is plan). See Wiki for
+details:
+
+http://therion.speleo.sk/wiki/doku.php?id=tbe:wiki3#cross_sections
+
+After calibration - each scrap should be displayed on the correct place and in
+the correct scale. If you will enter real coordinates in some, UTM grid - you
+have to add "-cs UTM32" option to the scrap, that it will know where to put the
+scrap.
+
+HTH, S.
+
+Quoting Jonathan Prouty <dormat at gmail.com>:
+
+> I decided to digitize an old map of one of my favorite caves. The JPG of the
+> entire original map was too big for therion to load, so I cut it up into
+> smaller images that will load.Tracing the map and compiling it worked
+> perfectly for the first section that I digitized (section_1.th2). I moved
+> onto the second one, traced the old map same as before (section_2.th2). All
+> that is pretty straightforward.
+> 
+> The problem arises when I try to join scraps from section 2 with scraps from
+> section 1. The join fails miserably. I tried to follow the instructions from
+> the wiki
+> (http://therion.speleo.sk/wiki/doku.php?id=tbe:wiki4#importing_maps),
+> but it seems the instructions are geared towards joining unsurveyed data
+> with surveyed data. I don't see how to join unsurveyed scraps with other
+> unsurveyed scraps. I have no "fake" data like the instructions suggest.
+> 
+> I've included links to an image of a portion of the old map I'm digitizing
+> and to a PDF that therion spit out. Comparing the two will make the problem
+> very apparent. I'm sure there is a pretty straightforward solution, I simply
+> don't know it. Thanks in advance in for the help!
+> 
+> http://www.talkingnerdy.com/jonny/images/slices.png
+> http://www.talkingnerdy.com/jonny/images/byers.pdf
+> 
+> -Jonny
+> 
+> P.S.
+> Just in case it wasn't clear, I don't have access to any of the original
+> survey data. The cave was surveyed in the 60s. I'd be surprised if the
+> original data still exists.
+> 
+> 
+> -- 
+>       ^v^
+>  ^v^   ^v^      Take nothing but pictures,
+>     ^v^       Leave nothing but footprints,
+>  ^v^       Kill nothing but time.
+> (**)
+> 
+
+
+
+
+From s.m at group-s.sk  Wed Feb 13 09:04:17 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 13 Feb 2008 09:04:17 +0100
+Subject: [Therion] trouble with joining scraps while digitizing an old
+	map
+In-Reply-To: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+References: <50d2a16a0802121843j5db3abe4q5b8a8a4d756e66b9@mail.gmail.com>
+Message-ID: <1202889857.47b2a481ee700@mail.atlantis.sk>
+
+As MartinS wrote, you will definitely need some reference points, but they do
+not need to be stations. In the case, if there are no survey data - all you
+need to do is just to scale each scrap properly.
+
+I would do following steps:
+
+1. Put some grid on the scanned images according to scale. Ideal is some real
+coordinate grid like UTM, but also some local coordinate system is OK.
+
+2. Then set X Y coordinates of two real points and two points on the JPG image
+for each scrap in the section - you have to set them in "Scraps" tab in map
+editor - under "picture scale points" and "real scale points".
+
+In fact you have to calibrate the scraps same way, as you do it for
+cross-sections (with exception, that projection is plan). See Wiki for
+details:
+
+http://therion.speleo.sk/wiki/doku.php?id=tbe:wiki3#cross_sections
+
+After calibration - each scrap should be displayed on the correct place and in
+the correct scale. If you will enter real coordinates in some, UTM grid - you
+have to add "-cs UTM32" option to the scrap, that it will know where to put the
+scrap.
+
+HTH, S.
+
+Quoting Jonathan Prouty <dormat at gmail.com>:
+
+> I decided to digitize an old map of one of my favorite caves. The JPG of the
+> entire original map was too big for therion to load, so I cut it up into
+> smaller images that will load.Tracing the map and compiling it worked
+> perfectly for the first section that I digitized (section_1.th2). I moved
+> onto the second one, traced the old map same as before (section_2.th2). All
+> that is pretty straightforward.
+> 
+> The problem arises when I try to join scraps from section 2 with scraps from
+> section 1. The join fails miserably. I tried to follow the instructions from
+> the wiki
+> (http://therion.speleo.sk/wiki/doku.php?id=tbe:wiki4#importing_maps),
+> but it seems the instructions are geared towards joining unsurveyed data
+> with surveyed data. I don't see how to join unsurveyed scraps with other
+> unsurveyed scraps. I have no "fake" data like the instructions suggest.
+> 
+> I've included links to an image of a portion of the old map I'm digitizing
+> and to a PDF that therion spit out. Comparing the two will make the problem
+> very apparent. I'm sure there is a pretty straightforward solution, I simply
+> don't know it. Thanks in advance in for the help!
+> 
+> http://www.talkingnerdy.com/jonny/images/slices.png
+> http://www.talkingnerdy.com/jonny/images/byers.pdf
+> 
+> -Jonny
+> 
+> P.S.
+> Just in case it wasn't clear, I don't have access to any of the original
+> survey data. The cave was surveyed in the 60s. I'd be surprised if the
+> original data still exists.
+> 
+> 
+> -- 
+>       ^v^
+>  ^v^   ^v^      Take nothing but pictures,
+>     ^v^       Leave nothing but footprints,
+>  ^v^       Kill nothing but time.
+> (**)
+> 
+
+
+
+
+From stefan_oswald at gmx.at  Wed Feb 13 11:18:59 2008
+From: stefan_oswald at gmx.at (Stefan Oswald)
+Date: Wed, 13 Feb 2008 11:18:59 +0100
+Subject: [Therion] easyer to handle?
+In-Reply-To: <mailman.1.1202846293.3303.therion@speleo.sk>
+References: <mailman.1.1202846293.3303.therion@speleo.sk>
+Message-ID: <20080213101859.126100@gmx.net>
+
+Hi, 
+
+thanks for discussion, thats what we wantet to start. 
+
+To be accurate CAD for cavers was the reason, why we startet discussion in our club. We just were impressed by the workflow of CAD for cavers which is much more intuitive, although we had our problems too;-)
+
+In fact an  easier user interface would bring terion, definitely outstanding in functions and "principe", to much more people!
+
+Maybe I can motivate other caving software engineers in this thread to work on it... 
+
+Glück Tief, 
+
+Stefan
+
+
+From david.a.riggs at gmail.com  Sun Feb 17 22:36:46 2008
+From: david.a.riggs at gmail.com (David A. Riggs)
+Date: Sun, 17 Feb 2008 16:36:46 -0500
+Subject: [Therion] FOSDEM 2008
+Message-ID: <d8169c660802171336p26e8cc84v27c54b88c30b0798@mail.gmail.com>
+
+Will there be any Therion/Survex developers or users at FOSDEM [1]
+this weekend? Care to meet up and talk caving, surveying, geeking,
+etc. - perhaps at the beer event on Friday night?
+
+I'll be flying in to Brussels from the US and will be in the general
+area for 10 days. I don't plan on bringing much gear, but I don't
+think I can go 10 days without being underground! Perhaps someone
+would be interested in caving after the conference...
+
+Dave Riggs
+NSS 56189
+Morgantown, WV, US
+
+[1] http://fosdem.org/2008/
+
+-- 
+David A. Riggs <david.a.riggs at gmail.com>
+
+
+From wookey at wookware.org  Mon Feb 18 13:00:51 2008
+From: wookey at wookware.org (Wookey)
+Date: Mon, 18 Feb 2008 12:00:51 +0000
+Subject: [Therion] FOSDEM 2008
+In-Reply-To: <d8169c660802171336p26e8cc84v27c54b88c30b0798@mail.gmail.com>
+References: <d8169c660802171336p26e8cc84v27c54b88c30b0798@mail.gmail.com>
+Message-ID: <20080218120050.GE21422@knossos.aleph1.co.uk>
+
+On 2008-02-17 16:36 -0500, David A. Riggs wrote:
+> Will there be any Therion/Survex developers or users at FOSDEM [1]
+> this weekend? Care to meet up and talk caving, surveying, geeking,
+> etc. - perhaps at the beer event on Friday night?
+
+Yep, I'll be there. Should be around in the pub on friday evg -
+sometime after 8-9pm, but finding you amongst several hundred geeks
+could be tricky. If you can find some Debian people they have a
+fighting chance of knowing who I am. 
+
+> I'll be flying in to Brussels from the US and will be in the general
+> area for 10 days. I don't plan on bringing much gear, but I don't
+> think I can go 10 days without being underground! Perhaps someone
+> would be interested in caving after the conference...
+
+That's not an option for me, I'm afraid, but Belgium does have a few
+caves worth visiting I understand. If you can find the right people
+there I'm sure thay'd be keen to take you. Failing that the Caves of
+Han Sur Lesse are open to the Public, (but maybe not in February?)
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From martin.speleo at googlemail.com  Tue Feb 19 20:03:42 2008
+From: martin.speleo at googlemail.com (Martin Green)
+Date: Tue, 19 Feb 2008 19:03:42 +0000
+Subject: [Therion] easyer to handle?
+In-Reply-To: <11B296E3-B73D-464C-9F46-57B18BC73740@vt.edu>
+References: <20080208115006.140210@gmx.net>
+	<41F28A6D-8EC5-4C70-8CF4-529384EE8604@mac.com>
+	<11B296E3-B73D-464C-9F46-57B18BC73740@vt.edu>
+Message-ID: <a32695e20802191103l545247b1n44e8cbeb258b538a@mail.gmail.com>
+
+On 2/8/08, Philip Schuchardt <ohc at vt.edu> wrote:
+> For now, Therion is definitely the best thing out there.
+
+Not wishing to troll too much, but I would not be too quick to rule
+out tunnel.  It is relatively user centric and is in active
+development.  It is in a state where complicated plans can be
+produced.  http://www.freesteel.co.uk/wiki/index.php/Tunnel
+
+Martin
+
+
+From ohc at vt.edu  Tue Feb 19 20:22:50 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Tue, 19 Feb 2008 14:22:50 -0500
+Subject: [Therion] easyer to handle?
+In-Reply-To: <a32695e20802191103l545247b1n44e8cbeb258b538a@mail.gmail.com>
+References: <20080208115006.140210@gmx.net>
+	<41F28A6D-8EC5-4C70-8CF4-529384EE8604@mac.com>
+	<11B296E3-B73D-464C-9F46-57B18BC73740@vt.edu>
+	<a32695e20802191103l545247b1n44e8cbeb258b538a@mail.gmail.com>
+Message-ID: <ECFF8F1D-1809-44FE-9257-169B846A72B6@vt.edu>
+
+I glad that there are choices!
+
+Philip
+
+On Feb 19, 2008, at 2:03 PM, Martin Green wrote:
+
+> On 2/8/08, Philip Schuchardt <ohc at vt.edu> wrote:
+>> For now, Therion is definitely the best thing out there.
+>
+> Not wishing to troll too much, but I would not be too quick to rule
+> out tunnel.  It is relatively user centric and is in active
+> development.  It is in a state where complicated plans can be
+> produced.  http://www.freesteel.co.uk/wiki/index.php/Tunnel
+>
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From wookey at wookware.org  Wed Feb 20 02:59:33 2008
+From: wookey at wookware.org (Wookey)
+Date: Wed, 20 Feb 2008 01:59:33 +0000
+Subject: [Therion] Therion 0.5.1 in Debian Testing
+Message-ID: <20080220015932.GA21422@knossos.aleph1.co.uk>
+
+Therion 0.5.1 has finally migrated into Debian Testing (after a
+month's delay due to build problems on sparc).
+
+I will now upload v0.5.2, which will hopefully migrate a bit faster.
+
+As ever feedback on the Debian packaging is very welcome.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From bruce.mutton at paradise.net.nz  Sun Feb 24 20:41:46 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Mon, 25 Feb 2008 08:41:46 +1300
+Subject: [Therion] Size of Drawing Area?
+Message-ID: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+
+Hi all
+
+The area of one of my scans (actually a composite of multiple scan files)
+exceeds the area of the 'white space' in the drawing editor, and at 100%
+zoom and greater I cannot always access this outer area for drawing.  (I
+have not experimented too much, because I think one of you will be able to
+answer this easily)
+
+ 
+
+I have a very complex, single layer, part of a cave that is surrounded by
+about five simple passages that intersect it, so I want it to be one scrap.
+Are there any restrictions on drawing outside the 'white space' other that
+not being able to view it at higher magnifications?  For example, will
+Therion clip the scrap to these borders?
+
+ 
+
+And if there is a problem, what is the best solution(s)?
+
+            Two or more scraps?
+
+            Scan at lower resolution?
+
+            Stitch scans together before loading into the drawing editor?
+
+            Other ideas?
+
+ 
+
+Regards
+
+Bruce Mutton
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080225/fa0a293e/attachment.htm>
+
+From martinsluka at mac.com  Mon Feb 25 06:50:28 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 25 Feb 2008 06:50:28 +0100
+Subject: [Therion] Size of Drawing Area?
+In-Reply-To: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+References: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+Message-ID: <64E06B37-BBA3-48E3-BE89-AED258795959@mac.com>
+
+
+On 24.2.2008, at 20:41, Bruce Mutton wrote:
+
+> Two or more scraps?
+>             Scan at lower resolution?
+>             Stitch scans together before loading into the drawing  
+> editor?
+>             Other ideas?
+
+Any of your solutions are right.
+
+But generally there is no any reason NOT to divide the cave into  
+several scraps. Scrap is only the small peace of final map. Dividing  
+of your drawing into several (many) scraps will not change your final  
+map. Only morfing  in place of rough joins may happen.
+
+Martin
+
+
+From s.m at group-s.sk  Mon Feb 25 09:46:35 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 25 Feb 2008 09:46:35 +0100
+Subject: [Therion] Size of Drawing Area?
+In-Reply-To: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+References: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+Message-ID: <1203929195.47c2806b832b0@mail.atlantis.sk>
+
+As far as I know, drawing area has no restrictions - it is there only to set
+scrolling region in fact.
+
+You can adjust it by your self in "Drawing area" toolbar. Either enter x-y
+min-max and press "Adjust" button or usually pressing "Auto adjust" button does
+its job (it adjusts area that all background images are shown on the "white
+space").
+
+HTH, S.
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+
+> Hi all
+> 
+> The area of one of my scans (actually a composite of multiple scan files)
+> exceeds the area of the 'white space' in the drawing editor, and at 100%
+> zoom and greater I cannot always access this outer area for drawing.  (I
+> have not experimented too much, because I think one of you will be able to
+> answer this easily)
+> 
+> I have a very complex, single layer, part of a cave that is surrounded by
+> about five simple passages that intersect it, so I want it to be one scrap.
+> Are there any restrictions on drawing outside the 'white space' other that
+> not being able to view it at higher magnifications?  For example, will
+> Therion clip the scrap to these borders?
+> 
+>  
+> 
+> And if there is a problem, what is the best solution(s)?
+> 
+>             Two or more scraps?
+> 
+>             Scan at lower resolution?
+> 
+>             Stitch scans together before loading into the drawing editor?
+> 
+>             Other ideas?
+> 
+>  
+> 
+> Regards
+> 
+> Bruce Mutton
+> 
+> 
+
+
+
+
+From bruce.mutton at paradise.net.nz  Mon Feb 25 10:43:58 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Mon, 25 Feb 2008 22:43:58 +1300
+Subject: [Therion] Size of Drawing Area?
+In-Reply-To: <64E06B37-BBA3-48E3-BE89-AED258795959@mac.com>
+References: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+	<64E06B37-BBA3-48E3-BE89-AED258795959@mac.com>
+Message-ID: <001501c87792$f4bb8640$6325f6d2@JUICEBRAIN>
+
+Thanks Martin
+Don't worry, my cave IS MANY times bigger than the larger scrap I am
+planning. I'm just avoiding joins in areas of high passage infill complexity
+and detail, as recommended in the Therion book and the Wiki.  Based on my
+Therion experience so far, in this part of the cave reasonable choices would
+be one, two, or about twenty scraps.  I'm going for two as the best
+compromise between scrap size and drawing effort.
+
+And I tried stitching the two scans together for my first scrap.  Looks
+promising, the 'white editing area' got bigger to accommodate the image.
+
+And thanks for putting all the effort into this software.  It's much
+appreciated.
+
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Martin Sluka
+Sent: Monday, 25 February 2008 6:50 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Size of Drawing Area?
+
+
+On 24.2.2008, at 20:41, Bruce Mutton wrote:
+
+> Two or more scraps?
+> Scan at lower resolution?
+> Stitch scans together before loading into the drawing editor?
+> Other ideas?
+
+Any of your solutions are right.
+
+But generally there is not any reason NOT to divide the cave into  
+several scraps. Scrap is only the small peace of final map. Dividing  
+of your drawing into several (many) scraps will not change your final  
+map. Only morfing  in place of rough joins may happen.
+
+Martin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From bruce.mutton at paradise.net.nz  Mon Feb 25 20:39:09 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 26 Feb 2008 08:39:09 +1300
+Subject: [Therion] Size of Drawing Area?
+In-Reply-To: <1203929195.47c2806b832b0@mail.atlantis.sk>
+References: <000901c8771d$4b3daff0$e034f6d2@JUICEBRAIN>
+	<1203929195.47c2806b832b0@mail.atlantis.sk>
+Message-ID: <000a01c877e6$1b9397a0$3034f6d2@JUICEBRAIN>
+
+Thanks Stacho
+That helps my understanding...
+I did wonder what those buttons were for.
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Monday, 25 February 2008 9:47 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Size of Drawing Area?
+
+As far as I know, drawing area has no restrictions - it is there only to set
+scrolling region in fact.
+
+You can adjust it by your self in "Drawing area" toolbar. Either enter x-y
+min-max and press "Adjust" button or usually pressing "Auto adjust" button
+does its job (it adjusts area that all background images are shown on the
+"white
+space").
+
+HTH, S.
+
+
+
+From marco.corvi at elsagdatamat.com  Tue Feb 26 15:52:28 2008
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Tue, 26 Feb 2008 15:52:28 +0100
+Subject: [Therion] vi
+Message-ID: <1204037548.4985.13.camel@localhost.localdomain>
+
+hi,
+
+is anyone using vi to write therion files ?
+
+marco
+
+
+
+From luethi at vaw.baug.ethz.ch  Tue Feb 26 15:03:54 2008
+From: luethi at vaw.baug.ethz.ch (Martin =?iso-8859-1?Q?L=81=FCthi?=)
+Date: Tue, 26 Feb 2008 14:03:54 +0000
+Subject: [Therion]  vi
+In-Reply-To: <1204037548.4985.13.camel@localhost.localdomain>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+Message-ID: <18372.7242.477276.842@gargle.gargle.HOWL>
+
+Hi
+
+marco corvi writes:
+ > is anyone using vi to write therion files ?
+
+Not vi, but Emacs. I adapted the Python mode to work for Therion
+files. It now supports syntax highlighting and shell integration (C-c
+C-c runs therion in the background).
+
+The mode needs some cleanup. Let me know if anyone is interested.
+
+Best, Martin
+
+
+From marco.corvi at elsagdatamat.com  Tue Feb 26 17:38:16 2008
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Tue, 26 Feb 2008 17:38:16 +0100
+Subject: [Therion] vi
+In-Reply-To: <18372.7242.477276.842@gargle.gargle.HOWL>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+	<18372.7242.477276.842@gargle.gargle.HOWL>
+Message-ID: <1204043896.4985.20.camel@localhost.localdomain>
+
+
+On Tue, 2008-02-26 at 14:03 +0000, Martin Lüthi wrote:
+> Hi
+> 
+> marco corvi writes:
+>  > is anyone using vi to write therion files ?
+> 
+> Not vi, but Emacs. I adapted the Python mode to work for Therion
+> files. It now supports syntax highlighting and shell integration (C-c
+> C-c runs therion in the background).
+> 
+> The mode needs some cleanup. Let me know if anyone is interested.
+> 
+thanks for the quick reply, martin.
+
+i am interested.
+
+i use vi, but i do not disregard emacs, and
+think that syntax highlight makes editing therion
+file so much easier ...
+
+marco
+
+
+
+From luethi at vaw.baug.ethz.ch  Tue Feb 26 16:09:38 2008
+From: luethi at vaw.baug.ethz.ch (Martin =?iso-8859-1?Q?L=81=FCthi?=)
+Date: Tue, 26 Feb 2008 15:09:38 +0000
+Subject: [Therion] vi
+In-Reply-To: <1204043896.4985.20.camel@localhost.localdomain>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+	<18372.7242.477276.842@gargle.gargle.HOWL>
+	<1204043896.4985.20.camel@localhost.localdomain>
+Message-ID: <18372.11186.316871.311217@gargle.gargle.HOWL>
+
+Hi again
+
+marco corvi writes:
+ > > marco corvi writes:
+ > >  > is anyone using vi to write therion files ?
+ > > 
+ > > Not vi, but Emacs. I adapted the Python mode to work for Therion
+ > > files. It now supports syntax highlighting and shell integration (C-c
+ > > C-c runs therion in the background).
+ > > 
+ > > The mode needs some cleanup. Let me know if anyone is interested.
+ > 
+ > i am interested.
+
+For the time being I put it on
+
+http://people.ee.ethz.ch/~luthi/soft/
+
+If there is interest it could be hosted on the Therion web site.
+BTW: is there svn access to the therion source?
+
+ > i use vi, but i do not disregard emacs, and think that syntax
+ > highlight makes editing therion file so much easier ...
+
+Use viper-mode and you'll feel at home.
+
+Best, Martin
+
+
+From wookey at wookware.org  Tue Feb 26 19:00:32 2008
+From: wookey at wookware.org (Wookey)
+Date: Tue, 26 Feb 2008 18:00:32 +0000
+Subject: [Therion] vi
+In-Reply-To: <1204043896.4985.20.camel@localhost.localdomain>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+	<18372.7242.477276.842@gargle.gargle.HOWL>
+	<1204043896.4985.20.camel@localhost.localdomain>
+Message-ID: <20080226180032.GD8283@knossos.aleph1.co.uk>
+
+On 2008-02-26 17:38 +0100, marco corvi wrote:
+> 
+> On Tue, 2008-02-26 at 14:03 +0000, Martin Lüthi wrote:
+> > Hi
+> > 
+> > marco corvi writes:
+> >  > is anyone using vi to write therion files ?
+> > 
+> > Not vi, but Emacs. I adapted the Python mode to work for Therion
+> > files. It now supports syntax highlighting and shell integration (C-c
+> > C-c runs therion in the background).
+> > 
+> > The mode needs some cleanup. Let me know if anyone is interested.
+> > 
+> thanks for the quick reply, martin.
+> 
+> i am interested.
+> 
+> i use vi, but i do not disregard emacs, and
+> think that syntax highlight makes editing therion
+> file so much easier ...
+
+Survex includes some vi syntax-colouring definition files. These might
+be a good start for making a therion vi mode. I'll put them in the
+debian packaging if any are provided.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From marco.corvi at elsagdatamat.com  Wed Feb 27 14:05:53 2008
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Wed, 27 Feb 2008 14:05:53 +0100
+Subject: [Therion] vi
+In-Reply-To: <18372.11186.316871.311217@gargle.gargle.HOWL>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+	<18372.7242.477276.842@gargle.gargle.HOWL>
+	<1204043896.4985.20.camel@localhost.localdomain>
+	<18372.11186.316871.311217@gargle.gargle.HOWL>
+Message-ID: <1204117553.4836.60.camel@localhost.localdomain>
+
+
+On Tue, 2008-02-26 at 15:09 +0000, Martin Lüthi wrote:
+> Hi again
+>
+> For the time being I put it on
+> 
+> http://people.ee.ethz.ch/~luthi/soft/
+
+tried it and think it is good.
+really liked very much C-c C-c to compile with therion
+then with a shell and xpdf -remote had the preview.
+
+in my opinion it's good to upload it on therion website.
+there might be a space for people contributions.
+
+i started a syntax-file for vi,
+but it far from satisfactory.
+
+suggested stacho color (and shape) highlight for
+xtherion canvas. if anyone is interested can send a
+patch (just a "proof of concept", not a solution).
+
+marco
+
+
+
+From s.m at group-s.sk  Wed Feb 27 12:57:11 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Wed, 27 Feb 2008 12:57:11 +0100
+Subject: [Therion] vi
+In-Reply-To: <1204117553.4836.60.camel@localhost.localdomain>
+References: <1204037548.4985.13.camel@localhost.localdomain>
+	<18372.7242.477276.842@gargle.gargle.HOWL>
+	<1204043896.4985.20.camel@localhost.localdomain>
+	<18372.11186.316871.311217@gargle.gargle.HOWL>
+	<1204117553.4836.60.camel@localhost.localdomain>
+Message-ID: <1204113431.47c5501754e61@mail.atlantis.sk>
+
+Quoting marco corvi <marco.corvi at elsagdatamat.com>:
+> in my opinion it's good to upload it on therion website.
+> there might be a space for people contributions.
+
+Is it not possible to put these contributions in some archive on the Wiki page?
+
+No problem to put these files to official distribution, probably to some
+separate folder. Should it be in source code only, or also win32 binary?
+
+Regards, S.
+
+
+From mikel at speleonics.com.au  Thu Feb 28 07:52:23 2008
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Thu, 28 Feb 2008 17:52:23 +1100
+Subject: [Therion]  vi
+Message-ID: <1204181543.47c65a270f8d1@anchor.net.au>
+
+Hi all
+
+> is anyone using vi to write therion files ?
+> marco
+
+Yep, My wife Jill uses vim to edit her Therion files and I use gvim.
+ 
+Mike Lake
+
+
+
+From marco.corvi at elsagdatamat.com  Thu Feb 28 11:34:10 2008
+From: marco.corvi at elsagdatamat.com (marco corvi)
+Date: Thu, 28 Feb 2008 11:34:10 +0100
+Subject: [Therion] vi
+In-Reply-To: <1204181543.47c65a270f8d1@anchor.net.au>
+References: <1204181543.47c65a270f8d1@anchor.net.au>
+Message-ID: <1204194850.4811.9.camel@localhost.localdomain>
+
+
+On Thu, 2008-02-28 at 17:52 +1100, Michael Lake wrote:
+> Hi all
+> 
+> Yep, My wife Jill uses vim to edit her Therion files and I use gvim.
+>  
+i put an attempt of syntax file in my therion backroom
+http://marcocorvi.altervista.org/caving/tbe/backroom
+
+help is appreciated.
+
+this sort of stuff (as well as martin emacs file)
+could go in a contrib dir on therion wiki.
+everyone could check out and improve.
+is upload possible ?
+
+marco
+
+
+
+From martinsluka at mac.com  Thu Feb 28 10:08:34 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 28 Feb 2008 10:08:34 +0100
+Subject: [Therion] vi
+In-Reply-To: <1204181543.47c65a270f8d1@anchor.net.au>
+References: <1204181543.47c65a270f8d1@anchor.net.au>
+Message-ID: <313F498D-BC0A-4090-ABB9-399610B35BC5@mac.com>
+
+
+On 28.2.2008, at 7:52, Michael Lake wrote:
+
+> My wife Jill uses vim to edit her Therion files
+
+Just for fun, is here any other lady which use therion or Jill is  
+only one?
+
+Martin
+
+
+From lada.blazek at gmail.com  Thu Feb 28 09:53:58 2008
+From: lada.blazek at gmail.com (=?WINDOWS-1252?Q?Ladislav_Bla=9Eek?=)
+Date: Thu, 28 Feb 2008 09:53:58 +0100
+Subject: [Therion] vi
+In-Reply-To: <1204194850.4811.9.camel@localhost.localdomain>
+References: <1204181543.47c65a270f8d1@anchor.net.au>
+	<1204194850.4811.9.camel@localhost.localdomain>
+Message-ID: <e4fa72560802280053p2923edcdod67ad3d1838a2ead@mail.gmail.com>
+
+Hi all,
+uploading files/images is possible for registered users only. See
+Therion wiki tutorial -
+http://therion.speleo.sk/wiki/doku.php?id=wiki:tutorial#inserting_files_images
+
+It is good idea to create Contrib page with stuff like this.
+
+L.
+
+On Thu, Feb 28, 2008 at 11:34 AM, marco corvi
+<marco.corvi at elsagdatamat.com> wrote:
+>
+>  On Thu, 2008-02-28 at 17:52 +1100, Michael Lake wrote:
+>  > Hi all
+>
+> >
+>  > Yep, My wife Jill uses vim to edit her Therion files and I use gvim.
+>  >
+>  i put an attempt of syntax file in my therion backroom
+>  http://marcocorvi.altervista.org/caving/tbe/backroom
+>
+>  help is appreciated.
+>
+>  this sort of stuff (as well as martin emacs file)
+>  could go in a contrib dir on therion wiki.
+>  everyone could check out and improve.
+>  is upload possible ?
+>
+>  marco
+>
+>
+>
+>  _______________________________________________
+>  Therion mailing list
+>  Therion at speleo.sk
+>  http://www.speleo.sk/mailman/listinfo/therion
+>
+
+
+From mikel at speleonics.com.au  Thu Feb 28 11:58:15 2008
+From: mikel at speleonics.com.au (Michael Lake)
+Date: Thu, 28 Feb 2008 21:58:15 +1100
+Subject: [Therion] vi
+Message-ID: <1204196295.47c693c7869f1@anchor.net.au>
+
+Hi all
+
+On 28.2.2008, at 7:52, Michael Lake wrote:
+> My wife Jill uses vim to edit her Therion files
+
+Martin asked light heartedly ....
+> Just for fun, is here any other lady which use therion or Jill is
+> only one?
+
+She also uses ed! She is a sys admin and thinks therion is really nice :-)
+We will eventually get around to putting up a map of the cave on a web site. 
+At present we just have a small entry on your Wiki (Fig Tree Cave, Wombeyan).
+
+Mike & Jill
+
+
+

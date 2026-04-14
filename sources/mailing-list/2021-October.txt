@@ -1,0 +1,1044 @@
+From therion at speleo.sk  Sun Oct  3 12:20:02 2021
+From: therion at speleo.sk (Therion)
+Date: Sun,  3 Oct 2021 12:20:02 +0200 (CEST)
+Subject: [Therion] new Therion 6.0.3
+Message-ID: <20211003102002.EAB1E5FE57@mail.speleo.sk>
+
+Hi, there is a new release 6.0.3 of Therion.
+Check https://github.com/therion/therion/releases/tag/v6.0.3 for more details.
+
+Best regards,
+Therion team
+
+From wookey at wookware.org  Mon Oct  4 04:31:51 2021
+From: wookey at wookware.org (Wookey)
+Date: Mon, 4 Oct 2021 03:31:51 +0100
+Subject: [Therion] new Therion 6.0.3
+In-Reply-To: <20211003102002.EAB1E5FE57@mail.speleo.sk>
+References: <20211003102002.EAB1E5FE57@mail.speleo.sk>
+Message-ID: <20211004023150.GO17067@mail.wookware.org>
+
+On 2021-10-03 12:20 +0200, Therion via Therion wrote:
+> Hi, there is a new release 6.0.3 of Therion.
+> Check https://github.com/therion/therion/releases/tag/v6.0.3 for more details.
+
+This builds, but doesn't install, on debian unstable.
+
+Something is wrong with the new help file stuff:
+The issue is ninja tries to install
+build/loch/help/en/loch.htb
+but it hasn't been built.
+I'm not sure if this is windows-specific like the old help files loch.chm or if this should be present on linux?
+
+Either way it should be built-and-installed or
+not-built-and-not-installed (or even built-and-not-installed).
+
+From log:
+dh_installdirs -O--buildsystem=cmake\+ninja -O--builddirectory=build
+	install -d debian/therion/etc debian/therion/usr/bin debian/therion/usr/share/doc/therion debian/therion/usr/share/doc/therion/examples debian/therion/usr/share/therion
+   debian/rules override_dh_auto_install-arch
+make[1]: Entering directory '/home/wookey/packages/therion/therion-6.0.3'
+dh_auto_install
+	install -d /home/wookey/packages/therion/therion-6.0.3/debian/tmp
+	cd build && DESTDIR=/home/wookey/packages/therion/therion-6.0.3/debian/tmp LC_ALL=C.UTF-8 ninja install
+[0/1] Install the project...
+-- Install configuration: "None"
+-- Installing: /home/wookey/packages/therion/therion-6.0.3/debian/tmp/usr/bin/therion
+-- Installing: /home/wookey/packages/therion/therion-6.0.3/debian/tmp/usr/bin/loch
+CMake Error at loch/help/cmake_install.cmake:46 (file):
+  file INSTALL cannot find
+  "/home/wookey/packages/therion/therion-6.0.3/build/loch/help/en/loch.htb":
+  No such file or directory.
+Call Stack (most recent call first):
+  loch/cmake_install.cmake:63 (include)
+  cmake_install.cmake:69 (include)
+
+
+FAILED: CMakeFiles/install.util 
+cd /home/wookey/packages/therion/therion-6.0.3/build && /usr/bin/cmake -P cmake_install.cmake
+ninja: build stopped: subcommand failed.
+
+reproduce with:
+sbuild -d unstable -A -s
+
+
+One other thing:
+I also noticed the source incudes extern/img.patch. I think that's superfluous - it's been applied.
+That should presumably just be removed.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211004/45d5d232/attachment.sig>
+
+From bruce at tomo.co.nz  Mon Oct  4 06:53:55 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 4 Oct 2021 17:53:55 +1300
+Subject: [Therion] Selecting map defined with preview only causes error
+Message-ID: <000c01d7b8db$d7ca58b0$875f0a10$@tomo.co.nz>
+
+Hello Team
+
+ 
+
+I think this may be a bug.
+
+Selecting a map with only previews inside of it is causing an error, where
+possibly it should not.
+
+And if it is by design that it triggers an error, then the message it gives
+is not helpful.  A better message would be "map cannot contain only
+previews"
+
+ 
+
+The error message.
+
+therion.exe: error -- GreenlinkArea/INDEXGLMESM_System.th [164] --
+incompatible map projection -- SwissM_PlanMap at GLMESM_system
+
+ 
+
+The map definition.
+
+  map GLMESMPreviewOnlyMap -projection plan
+
+                preview below SwissM_PlanMap at GLMESM_system      #map
+
+                preview below DwarfsDoorPlanMap at GLMESM_system   #map
+
+                preview below MiddleEarthPlanMap at GLMESM_system  #map
+
+  endmap GLMESMPreviewOnlyMap
+
+ 
+
+The maps all have -projection plan explicitly defined, and the error is
+unchanged if I remove the projection option from the definition above.
+
+ 
+
+The thconfig.
+
+select QEII-01GreenLinkPlanCL
+
+select QEII-01GreenLinkPlan
+
+select GLMESMPreviewOnlyMap
+
+ 
+
+I have selected three maps, two contain valid maps, and one contains only
+previews.  If I remove one of the 'preview below' statements preceding any
+of the previewed maps, the project compiles as expected.
+
+If I try to type the preview below directly into the thconfig, there is an
+error also, but I suspect this might be by design.
+
+ 
+
+Using 6.0.3, but am not assuming this was introduced recently.  I have never
+tried it before.
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211004/a9b731ac/attachment.htm>
+
+From m.budaj at gmail.com  Mon Oct  4 20:20:19 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 4 Oct 2021 20:20:19 +0200
+Subject: [Therion] new Therion 6.0.3
+In-Reply-To: <20211004023150.GO17067@mail.wookware.org>
+References: <20211003102002.EAB1E5FE57@mail.speleo.sk>
+ <20211004023150.GO17067@mail.wookware.org>
+Message-ID: <CALPsdStyzwGTp63-LqZQxoj4btBVvwxZEhTwZqXkb_zuOQeoow@mail.gmail.com>
+
+On Mon, Oct 4, 2021 at 5:10 AM Wookey <wookey at wookware.org> wrote:
+> This builds, but doesn't install, on debian unstable.
+
+Hi, I'm attaching modified build files which should work.
+
+I couldn't find a more elegant way to specify --prefix in
+'override_dh_auto_install-indep'; could you look into it? For some
+reason cmake --install doesn't use the right destination and we can't
+use ninja to install at this place, as it doesn't support --component
+option.
+
+> I also noticed the source incudes extern/img.patch. I think that's superfluous - it's been applied.
+> That should presumably just be removed.
+
+We keep it in the sources ready to apply it again when img.c gets updated ;)
+
+Cheers
+Martin
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: debian.tar.gz
+Type: application/gzip
+Size: 3665 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211004/8e06c2ba/attachment.gz>
+
+From m.budaj at gmail.com  Mon Oct  4 20:22:34 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 4 Oct 2021 20:22:34 +0200
+Subject: [Therion] Metapost exit code in therion 6.0.1 and 6.0.2
+In-Reply-To: <CAAJF8V-PY6j4Ph5=0KAVeo2BLjO3KVRAvy=sDs5cKLabUug98w@mail.gmail.com>
+References: <CAAJF8V-PY6j4Ph5=0KAVeo2BLjO3KVRAvy=sDs5cKLabUug98w@mail.gmail.com>
+Message-ID: <CALPsdSt1cSgGu59gHcRDoPvWhC7iabq-i+3XzR6XwRtHsYkRgA@mail.gmail.com>
+
+Hi, this has been fixed in 6.0.3.
+
+Cheers
+Martin
+
+On Wed, Sep 22, 2021 at 11:01 PM A Gott <alastairgott at gmail.com> wrote:
+>
+> HI Everyone,
+>
+> A friend messaged me while I was lucky enough to escape the UK and get to spain for some caving, which was great!
+>
+> I've got back and tonight I tried to look at the problem he was having outputting in Therion 6.0.1
+>  I ran his survey in 5.5.3 with no issues whatsoever, I thought he could be getting a bug from 6.0.1 so i updated my software, and now i'm bugged in 6.0.2 with the metapost exit code on his survey.
+>
+> ####################### metapost log file ########################
+> This is MetaPost, version 2.00 (TeX Live 2020/W32TeX) (kpathsea version 6.3.2)  22 SEP 2021 21:44
+> **data.mp
+> (c:/Program Files (x86)/Therion/texmf/mpost/mpost.mp
+> (c:/Program Files (x86)/Therion/texmf/mpost/plain.mp
+> Preloading the plain mem file, version 1.005) ) (./data.mp
+> {randomseed:=42}
+>  [1] [2] [3] [4]
+> [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
+> [1]
+> [Warning: scrap outline intersects itself in scrap loper-p at inglorious.CusseyMas
+> ter] [2] [3] [4] [5]
+> [Warning: scrap outline intersects itself in scrap indy-1p at Indy.CusseyMaster]
+> [6] [7] [8] [9] [10] [11] [12]
+> [Warning: scrap outline intersects itself in scrap timewarp-3p at Timewarp.CusseyM
+> aster] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26]
+> [27]
+> [Warning: scrap outline intersects itself in scrap inglorious-1p at inglorious.Cus
+> seyMaster] [28] [29] [30] [31]
+> [Warning: scrap outline intersects itself in scrap mine1 at inglorious.CusseyMaste
+> r] [32] [33] [34] [35] [36] [37] [38]
+> [Warning: scrap outline intersects itself in scrap shattered_dreams-2p at shattere
+> d_dreams.CusseyMaster] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49]
+> [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60] (./mptextmp.mp) [61]
+> ! Logarithm of -64.77 has been replaced by 0.
+> log->begingroup(if(EXPR2)=0:0else:mlog((EXPR2))/
+>                                                 mlog(10)fi)endgroup
+> <to be read again>
+>                    ;
+> s_altitudebar->...d:=(EXPR1)-(EXPR0);dlog:=log(d);
+>                                                   if.dlog.mod1<0.301:dv:=2;e...
+> l.10965 ...,(0.00000,0.75000,0.75000,0.00000))("")
+>                                                   ;
+> Since I don't take logs of non-positive numbers,
+> I'm zeroing this one. Proceed, with fingers crossed.
+>
+> (./mptextmp.mp) (./mptextmp.mp) [62] )
+>
+> Here is how much of MetaPost's memory you used:
+>  18042 strings using 388328 characters
+>  2412656 bytes of node memory
+>  1681 symbolic tokens
+>  11i,82n,19p,452b,5f stack positions out of 16i,98n,20p,487b,6f
+> 76 output files written: data-patt.1 .. data.62
+>
+>
+> #################### end of metapost log file ####################
+> C:\Program Files (x86)\Therion\therion.exe: error -- metapost exit code -- 2
+> writing xtherion file ... done
+>
+>
+> I don't know whether its a bug or whether there is an error with the config file which only presents in 6.0.1/2
+>  but I thought I would send it to the list for thoughts?
+>
+> Alastair.
+>
+> please find below config file which ran fine in 5.5.3
+>
+>
+> source CusseyMaster.th
+>
+>
+> export model -fmt survex -o CusseyMaster.3d
+>
+> export map -proj [elevation 0]  -layout localside -o CusseyElevation.pdf
+> export map -proj plan -layout LayoutMapBorder -layout sidesurvey -layout localplan -layout-map-image 5 20 sw "./arrow.png" -layout-map-header 0 0 off -o CusseyMaster.pdf
+> #export map -proj plan -layout LayoutMapBorder -layout sidesurvey -layout localplan -layout-map-image 17 20 sw "./arrow.png" -o CusseyMaster.pdf
+> export map -proj plan -layout LayoutMapBorder -layout localplan -o CusseyPlan.pdf
+>
+>
+> layout sidesurvey
+> map-image 55 100 s CusseyElevation.pdf
+> endlayout
+>
+>
+> layout localside
+> symbol-set BCRA
+> symbol-hide group cave-centreline
+> scale-bar 25 m
+> map-header 98 97 n
+> map-comment "Discovered and Explored by Eldon Pothole Club 2020 - 2021<br>Surveyed By: Luke Cafferty, Rob Eavis, Jon Pemberton, Jeff Wade<br>Survey Drawn By: Rob Eavis<br>Elevation, facing North<br>Entrance: SK 21545 76524<br>Altitude: 244m<br>"
+> legend on
+>   grid bottom
+>   grid-coords border
+>   grid-size 10 10 10 m
+>   #grid-origin 0  0  0 m
+>
+> colour map-fg [80 89 94]
+> #colour map-bg [20 39 14]
+>
+> code metapost
+>     def s_scalebar (expr l, units, txt) =
+>   begingroup
+>     interim warningcheck:=0;
+>     tmpl:=l / Scale * cm * units / 2;
+>     tmpx:=l / Scale * cm * units / 5;
+>     tmph:=5bp; % bar height
+>   endgroup;
+>   pickup PenC;
+>   draw (-tmpl,0)--(tmpl,0)--(tmpl,-tmph)--(-tmpl,-tmph)--cycle;
+>   p:=(0,0)--(tmpx,0)--(tmpx,-tmph)--(0,-tmph)--cycle;
+>   for i:=-2.5 step 2 until 2:
+>     fill p shifted (i * tmpx,0);
+>   endfor;
+>   begingroup
+>     interim labeloffset:=3.5bp;
+>     for i:=0 step (l/5) until (l-1):
+>       tmpx:=tmpl * (i * 2 / l - 1);
+>       label.top(thTEX(decimal (i)),(tmpx,0));
+>     endfor;
+>     label.top(thTEX(decimal (l) & "\thinspace" & txt),(tmpl,0));
+>     label.bot(thTEX("Scale = 1 : " & decimal round(Scale*100)),(0,-tmph));
+>   endgroup;
+> enddef;
+>   endcode
+>
+>   code tex-map
+> \legendcontent={%
+>   \hsize=\legendwidth
+>   \ifnortharrow\vbox to 0pt{\line{\hfil\northarrow}\vss}\fi
+>   \edef\tmp{\the\cavename} \ifx\tmp\empty \else
+>     {\size[40]\the\cavename} \vskip1cm
+>   \fi
+>   \ifscalebar\scalebar\vskip1cm\fi
+>   {\rightskip=0pt plus 3em\parskip=3bp
+>     \edef\tmp{\the\comment} \ifx\tmp\empty \else
+>     {\size[12]\the\comment} \par\medskip
+>     \fi
+>   }
+>   \formattedlegend
+> }
+>
+> endlayout
+>
+> layout LayoutMapBorder
+> code tex-map
+>   \framethickness=0.5mm
+> endlayout
+>
+> ####### PLAN #######
+>
+> layout localplan
+> symbol-hide group cave-centreline
+> #scale-bar 20 m
+> #symbol-hide special scale-bar
+> symbol-hide special north-arrow
+>
+>     code tex-map
+>       \legendtitle={}
+>       \cavename={}
+>       \scalebarfalse
+>       \cavelengthtitle={}
+>       \cavelength={}
+>       \cavedepthtitle={}
+>       \cavedepth={}
+>     endcode
+>
+> map-header 5 20 sw
+> map-comment "Plan View"
+>
+>
+> colour map-fg depth
+> #colour map-bg [20 39 14]
+>
+> endlayout
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From lists at group-s.sk  Mon Oct  4 22:05:15 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 4 Oct 2021 22:05:15 +0200
+Subject: [Therion] Compile error do to "calibrate" command
+In-Reply-To: <153024439.204377.1633004794869@comcenter.netcologne.de>
+References: <490813520.203881.1632999566777@comcenter.netcologne.de>
+ <F00DE435-3295-4F36-89E4-B39D308F9175@me.com>
+ <153024439.204377.1633004794869@comcenter.netcologne.de>
+Message-ID: <CAP35+gGN2s14wS=fD161mRBm9-t4gM25+AMZy=-Rp8JLB5sEsw@mail.gmail.com>
+
+Hi Torsten,
+
+your data are correct - there was a bug in therion with calibration
+adjustments. It should be fixed in dd6835b.
+
+Thanks a lot for finding out.
+
+S.
+
+On Thu, 30 Sept 2021 at 14:27, Torsten Schnitter <
+torsten.schnitter at netcologne.de> wrote:
+
+> Quantity List doesn't contain fromdepth or todepth. But only depth.
+>
+> Btw with "calibrate depth 0 -1" there is no error while compiling.
+>
+> Martin Sluka via Therion <therion at speleo.sk> hat am 30.09.2021 14:08
+> geschrieben:
+>
+>
+> But you use fromdepth and todepth as quantity. Shouldn?t it be calibrate
+> fromdepth todepth 4 -1 ?
+>
+> Martin S.
+>
+> 30. 9. 2021 v 12:59, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+>
+> Due to the different waterlevel there is a difference of 4.0m in depth
+> readings.
+> To correct this I used "calibrate depth 4 -1" within the resurvey data.
+>
+>
+> From Therionbook:
+>
+> calibrate <quantity list> <zero error> [<scale>] . set the instrument
+> calibration.
+> The measured value is calculated using the following formula: measured
+> value =
+> (read value - zero error) x scale. The supported quantities are the same
+> as sd.
+>
+> From Survex manual:
+>
+> 4.5.3. CALIBRATE
+>
+> Syntax
+> *calibrate <quantity list> <zero error> [<scale>] *calibrate <quantity
+> list> <zero error> <units> [<scale>] *calibrate default
+>
+> Example
+>
+>     *calibrate tape +0.3
+>
+> Description
+>
+> *calibrate is used to specify instrument calibrations, via a zero error
+> and a scale factor. By default, the zero error is 0.0 and the scale factor
+> 1.0 for all quantities.
+>
+> <quantity> is one of TAPE|COMPASS|CLINO|COUNTER|DEPTH|DECLINATION|X|Y|Z
+>
+> Several quantities can be given in <quantity list> - the specified
+> calibration will be applied to each of them.
+>
+> You need to be careful about the sign of the ZeroError. Survex follows the
+> convention used with scientific instruments - the ZeroError is what the
+> instrument reads when measuring a reading which should be zero. So for
+> example, if your tape measure has the end missing, and you are using the
+> 30cm mark to take all measurements from, then a zero distance would be
+> measured as 30cm and you would correct this with:
+>
+>     *CALIBRATE tape +0.3
+>
+> If you tape was too long, starting at -20cm (it does happen!) then you can
+> correct it with:
+>
+>     *CALIBRATE tape -0.2
+>
+> Note: ZeroError is irrelevant for Topofil counters and depth gauges since
+> pairs of readings are subtracted.
+>
+> In the first form in the synopsis above, the zero error is measured by the
+> instrument itself (e.g. reading off the number where a truncated tape now
+> ends) and any scale factor specified applies to it, like so:
+>
+> Value = ( Reading - ZeroError ) * Scale (Scale defaults to 1.0)
+>
+> In the second form above (supported since Survex 1.2.21), the zero error
+> has been measured externally (e.g. measuring how much too long your tape is
+> with a ruler) - the units of the zero error are explicitly specified and
+> any scale factor isn?t applied to it:
+>
+> Value = ( Reading * Scale ) - ZeroError (Scale defaults to 1.0)
+>
+> If the scale factor is 1.0, then the two forms are equivalent, though they
+> still allow you to differentiate between how the zero error has been
+> determined.
+>
+> With older Survex versions, you would specify the magnetic declination
+> (difference between True North and Magnetic North) by using *calibrate
+> declination to set an explicit value (with no scale factor allowed). Since
+> Survex 1.2.22, it?s recommended to instead use the new *declination command
+> instead - see the documentation of that command for more details.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211004/226807f9/attachment-0001.htm>
+
+From lists at group-s.sk  Mon Oct  4 23:15:46 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 4 Oct 2021 23:15:46 +0200
+Subject: [Therion] Selecting map defined with preview only causes error
+In-Reply-To: <000c01d7b8db$d7ca58b0$875f0a10$@tomo.co.nz>
+References: <000c01d7b8db$d7ca58b0$875f0a10$@tomo.co.nz>
+Message-ID: <CAP35+gGZWJKAs5=_H3_5AduFMPiGZt46nFTMRN73w-7KNMn5Tw@mail.gmail.com>
+
+Hi Bruce,
+
+thanks for pointing it out. I have tried to allow map containing only
+previews, but there were apparently a lot of subsequent issues with its
+zero dimensions. Normally, previews are ignored when calculating the extent
+of a map. So I have modified the error message according to your
+suggestion.
+
+I assume the same map can be generated using a single map-fg color and
+hiding all symbols. Or am I missing something?
+
+S.
+
+On Mon, 4 Oct 2021 at 06:54, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Hello Team
+>
+>
+>
+> I think this may be a bug.
+>
+> Selecting a map with only previews inside of it is causing an error, where
+> possibly it should not.
+>
+> And if it is by design that it triggers an error, then the message it
+> gives is not helpful.  A better message would be ?map cannot contain only
+> previews?
+>
+>
+>
+> *The error message.*
+>
+> therion.exe: error -- GreenlinkArea/INDEXGLMESM_System.th [164] --
+> incompatible map projection -- SwissM_PlanMap at GLMESM_system
+>
+>
+>
+> *The map definition.*
+>
+>   map GLMESMPreviewOnlyMap -projection plan
+>
+>                 preview below SwissM_PlanMap at GLMESM_system      #map
+>
+>                 preview below DwarfsDoorPlanMap at GLMESM_system   #map
+>
+>                 preview below MiddleEarthPlanMap at GLMESM_system  #map
+>
+>   endmap GLMESMPreviewOnlyMap
+>
+>
+>
+> The maps all have -projection plan explicitly defined, and the error is
+> unchanged if I remove the projection option from the definition above.
+>
+>
+>
+> *The thconfig.*
+>
+> select QEII-01GreenLinkPlanCL
+>
+> select QEII-01GreenLinkPlan
+>
+> select GLMESMPreviewOnlyMap
+>
+>
+>
+> I have selected three maps, two contain valid maps, and one contains only
+> previews.  If I remove one of the ?preview below? statements preceding any
+> of the previewed maps, the project compiles as expected.
+>
+> If I try to type the preview below directly into the thconfig, there is an
+> error also, but I suspect this might be by design.
+>
+>
+>
+> Using 6.0.3, but am not assuming this was introduced recently.  I have
+> never tried it before.
+>
+>
+>
+> Regards
+>
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211004/4a875670/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Oct  5 01:47:03 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 5 Oct 2021 12:47:03 +1300
+Subject: [Therion] Selecting map defined with preview only causes error
+In-Reply-To: <CAP35+gGZWJKAs5=_H3_5AduFMPiGZt46nFTMRN73w-7KNMn5Tw@mail.gmail.com>
+References: <000c01d7b8db$d7ca58b0$875f0a10$@tomo.co.nz>
+ <CAP35+gGZWJKAs5=_H3_5AduFMPiGZt46nFTMRN73w-7KNMn5Tw@mail.gmail.com>
+Message-ID: <000001d7b97a$23bbae10$6b330a30$@tomo.co.nz>
+
+Thanks Stacho
+
+That is a good solution.  It is appropriate that previews are ignored when calculating map extents.
+
+ 
+
+My experimental use case was to have a generic preview only map that I could then select in tandem with (non-previewed) maps, with the extents determined by the (non-previewed) maps.  It was an idea to allow further ?modularisation? and standardisation of my datasets.
+
+ 
+
+It is easy to arrange map definitions to give the same effect, just have to make sure there is a non-previewed map in each.
+
+ 
+
+And as you suggest, a ?preview? that contributes to map extent definition can be emulated with map-fg and hiding all symbols.
+
+ 
+
+Impressed by the time and effort you are putting in.
+
+Much appreciated.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Tuesday, 5 October 2021 10:16
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Selecting map defined with preview only causes error
+
+ 
+
+Hi Bruce,
+
+ 
+
+thanks for pointing it out. I have tried to allow map containing only previews, but there were apparently a lot of subsequent issues with its zero dimensions. Normally, previews are ignored when calculating the extent of a map. So I have modified the error message according to your suggestion. 
+
+ 
+
+I assume the same map can be generated using a single map-fg color and hiding all symbols. Or am I missing something?
+
+ 
+
+S.
+
+ 
+
+On Mon, 4 Oct 2021 at 06:54, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+Hello Team
+
+ 
+
+I think this may be a bug.
+
+Selecting a map with only previews inside of it is causing an error, where possibly it should not.
+
+And if it is by design that it triggers an error, then the message it gives is not helpful.  A better message would be ?map cannot contain only previews?
+
+ 
+
+The error message.
+
+therion.exe: error -- GreenlinkArea/INDEXGLMESM_System.th [164] -- incompatible map projection -- SwissM_PlanMap at GLMESM_system
+
+ 
+
+The map definition.
+
+  map GLMESMPreviewOnlyMap -projection plan
+
+                preview below SwissM_PlanMap at GLMESM_system      #map
+
+                preview below DwarfsDoorPlanMap at GLMESM_system   #map
+
+                preview below MiddleEarthPlanMap at GLMESM_system  #map
+
+  endmap GLMESMPreviewOnlyMap
+
+ 
+
+The maps all have -projection plan explicitly defined, and the error is unchanged if I remove the projection option from the definition above.
+
+ 
+
+The thconfig.
+
+select QEII-01GreenLinkPlanCL
+
+select QEII-01GreenLinkPlan
+
+select GLMESMPreviewOnlyMap
+
+ 
+
+I have selected three maps, two contain valid maps, and one contains only previews.  If I remove one of the ?preview below? statements preceding any of the previewed maps, the project compiles as expected.
+
+If I try to type the preview below directly into the thconfig, there is an error also, but I suspect this might be by design.
+
+ 
+
+Using 6.0.3, but am not assuming this was introduced recently.  I have never tried it before.
+
+ 
+
+Regards
+
+Bruce
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211005/fb3a84a6/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Oct 13 21:01:32 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 14 Oct 2021 08:01:32 +1300
+Subject: [Therion] Therion Github plan
+Message-ID: <000001d7c064$bebba4b0$3c32ee10$@tomo.co.nz>
+
+Just curious
+
+Is the Therion repository on Github <https://github.com/pricing>  supported
+by a free or a pain plan?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211014/2b4fcabf/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Oct 13 21:07:34 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 14 Oct 2021 08:07:34 +1300
+Subject: [Therion] Therion Github plan
+In-Reply-To: <000001d7c064$bebba4b0$3c32ee10$@tomo.co.nz>
+References: <000001d7c064$bebba4b0$3c32ee10$@tomo.co.nz>
+Message-ID: <001b01d7c065$95a976a0$c0fc63e0$@tomo.co.nz>
+
+Oops, a free or paid plan?
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Thursday, 14 October 2021 08:02
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Therion Github plan
+
+ 
+
+Just curious
+
+Is the Therion repository on Github <https://github.com/pricing>  supported
+by a free or a pain plan?
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211014/35c5d16e/attachment.htm>
+
+From m.budaj at gmail.com  Wed Oct 13 21:09:08 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 13 Oct 2021 21:09:08 +0200
+Subject: [Therion] Therion Github plan
+In-Reply-To: <001b01d7c065$95a976a0$c0fc63e0$@tomo.co.nz>
+References: <000001d7c064$bebba4b0$3c32ee10$@tomo.co.nz>
+ <001b01d7c065$95a976a0$c0fc63e0$@tomo.co.nz>
+Message-ID: <CALPsdSu1Z-YPLv6cOkUBD71bE9h21TG-M8XFOOr61bvi0c9ubg@mail.gmail.com>
+
+Free plan ;)
+
+Martin
+
+On Wed, Oct 13, 2021 at 9:08 PM Bruce Mutton <bruce at tomo.co.nz> wrote:
+>
+> Oops, a free or paid plan?
+>
+>
+>
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+> Sent: Thursday, 14 October 2021 08:02
+> To: 'List for Therion users' <therion at speleo.sk>
+> Subject: [Therion] Therion Github plan
+>
+>
+>
+> Just curious
+>
+> Is the Therion repository on Github supported by a free or a pain plan?
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From graham.mullan at coly.org.uk  Fri Oct 22 09:45:42 2021
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Fri, 22 Oct 2021 07:45:42 +0000
+Subject: [Therion] Import to Therion from Qave
+Message-ID: <ca885f3a90e14906b1f1e64ba0c97636@sha-exsp2-mbx84.exsp2.ifeltd.com>
+
+Hi All
+
+Someone I am working with is collecting his data using an application called Qave. He is having a problem exporting to Therion to do the final drawing.
+
+I have no experience of Qave (spoiler, I've never heard of it before) so can offer no advice as to how to do this.
+
+Can anyone on here assist?
+
+Graham
+
+graham.mullan at coly.org.uk
+
+In the UK +44 7887 637064 or +44 117 9502556
+In France +33 5 53 51 19 15 or +33 6 02 53 37 81
+France from the Uk 0844 232 7803
+
+
+
+From adampyka at gmail.com  Fri Oct 22 10:47:37 2021
+From: adampyka at gmail.com (Adam Pyka)
+Date: Fri, 22 Oct 2021 10:47:37 +0200
+Subject: [Therion] Import to Therion from Qave
+In-Reply-To: <ca885f3a90e14906b1f1e64ba0c97636@sha-exsp2-mbx84.exsp2.ifeltd.com>
+References: <ca885f3a90e14906b1f1e64ba0c97636@sha-exsp2-mbx84.exsp2.ifeltd.com>
+Message-ID: <CAOEBQn=Hvbu9_787B3mXTLp8u0iNFT47iWwA4K6ZkmyG8PKF2g@mail.gmail.com>
+
+Hello,
+Qave can export .th data and "draft" .th2 file. The .th2 file is a direct
+conversion from polylines You draw in the application so it's not a final
+file for your surveying project!
+The best option to export data is to export .th and .svg and use the .svg
+as a background to draw the plan from scratch. Use .th2 only if You want to
+quickly survey some part of the cave and check results "on-the-field".
+
+pt., 22 pa? 2021 o 09:51 Graham Mullan <graham.mullan at coly.org.uk>
+napisa?(a):
+
+> Hi All
+>
+> Someone I am working with is collecting his data using an application
+> called Qave. He is having a problem exporting to Therion to do the final
+> drawing.
+>
+> I have no experience of Qave (spoiler, I've never heard of it before) so
+> can offer no advice as to how to do this.
+>
+> Can anyone on here assist?
+>
+> Graham
+>
+> graham.mullan at coly.org.uk
+>
+> In the UK +44 7887 637064 or +44 117 9502556
+> In France +33 5 53 51 19 15 or +33 6 02 53 37 81
+> France from the Uk 0844 232 7803
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211022/d0caf29b/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Oct 25 09:17:19 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 25 Oct 2021 20:17:19 +1300
+Subject: [Therion] Colour map-fg altitude quick shading breaks object colour
+ fills
+Message-ID: <000001d7c970$5b363bc0$11a2b340$@tomo.co.nz>
+
+Hello Forum
+
+Just noticed something missing on a few of my maps.
+
+Looks like:
+
+ 
+
+   colour map-fg altitude
+
+   smooth-shading quick # or default
+
+ 
+
+disables the colour filling of objects like rocks and area flowstone.
+
+Eg 
+
+
+
+
+
+ 
+
+If I turn off smooth-shading OR use a fixed colour or scrap or topo-date
+shading regime, then the objects are correctly filled.
+
+Eg
+
+
+
+
+
+So it looks like a bug with smooth-shading = quick.
+
+Perhaps.
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211025/e255e3db/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 55633 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211025/e255e3db/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image008.jpg
+Type: image/jpeg
+Size: 16658 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211025/e255e3db/attachment-0001.jpg>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image009.png
+Type: image/png
+Size: 64413 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211025/e255e3db/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image010.png
+Type: image/png
+Size: 69915 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20211025/e255e3db/attachment-0005.png>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Oct 28 10:50:15 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 28 Oct 2021 09:50:15 +0100
+Subject: [Therion] Minimum symbol scale
+In-Reply-To: <35948b31-2f69-2201-2a51-054a19d83796@ntlworld.com>
+References: <c85c1ed9-8cce-1e71-3a0c-d6dd27c148a8@ntlworld.com>
+ <000001d76c54$6e4aaf80$4ae00e80$@tomo.co.nz>
+ <35948b31-2f69-2201-2a51-054a19d83796@ntlworld.com>
+Message-ID: <c63f5acc-3199-a66d-fe4c-64252c783ac8@ntlworld.com>
+
+> I know that I suggested one format below, but thinking about it more,
+> this might be better:
+> min-symbol-scale <scale> [<point/line/area/group/special> <symbol-type>]
+> 
+> That means no fussing around with the parameter ordering. But it is then
+> inconsistent with symbol-colour.
+
+I have run into this one again, and really need this functionality.
+
+Andrew (or perhaps this is Bruce's originally) has a partial solution in
+MetaPost:
+if abs(llcorner txt - ulcorner txt ) > 3pt:
+The trouble with this is that it only works if the text is all on one
+line. It breaks with this because it sees the outer dimensions as huge:
+point label -text [foo<br>bar>]
+
+The text has already been converted into a "picture" by the use of the
+"btex" operator. I tried using the "textpart" operator to get back to
+the original (so I could use a substring operator to look for the
+\thlabel\thlargesize substring), but that didn't work, unfortunately.
+
+Any other thoughts about how to analyse it? Obviously I could construct
+my own btex picture objects and compare the sizes to see if it perfectly
+matches a known size, but that gets confused by "L" and "g" being
+different sizes due to "g" descending below the line, so it would be
+prone to errors, and would need a lot of tests with different text.
+
+There has to be a MetaPost solution in here somewhere...
+
+From bruce at tomo.co.nz  Thu Oct 28 21:33:17 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 29 Oct 2021 08:33:17 +1300
+Subject: [Therion] Minimum symbol scale
+In-Reply-To: <c63f5acc-3199-a66d-fe4c-64252c783ac8@ntlworld.com>
+References: <c85c1ed9-8cce-1e71-3a0c-d6dd27c148a8@ntlworld.com>
+ <000001d76c54$6e4aaf80$4ae00e80$@tomo.co.nz>
+ <35948b31-2f69-2201-2a51-054a19d83796@ntlworld.com>
+ <c63f5acc-3199-a66d-fe4c-64252c783ac8@ntlworld.com>
+Message-ID: <000c01d7cc32$aa18c4a0$fe4a4de0$@tomo.co.nz>
+
+> Andrew (or perhaps this is Bruce's originally) has a partial solution in
+MetaPost:
+if abs(llcorner txt - ulcorner txt ) > 3pt:
+
+I borrowed from Thomas Holder
+https://therion.speleo.sk/wiki/metapost#scale_dependant_visualization_of_sym
+bols 
+
+Good luck with your quest Tarquin.
+Bruce
+
+

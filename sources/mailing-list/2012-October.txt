@@ -1,0 +1,3684 @@
+From bruce at tomo.co.nz  Mon Oct  1 10:24:51 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 1 Oct 2012 21:24:51 +1300
+Subject: [Therion] bug encounter
+In-Reply-To: <5065D662.8020600@aliceadsl.fr>
+References: <504B09DE.4040006@aliceadsl.fr><CANkn7RdUqCEWoMFEBbiOVN41U2axwaU=uAKf3oMy_AHXgznxRw@mail.gmail.com>
+	<5065D662.8020600@aliceadsl.fr>
+Message-ID: <BA594564F0C545BDA3D0BB043F19180D@JUICEBRAIN>
+
+Gilbert
+I have had a look at your dataset with version 5.3.10
+I get the same results as you did with 5.2.8
+
+I do not think there is any bug.
+There is a conceptual problem with the way the house and areas have been
+drawn in the file surface1.th2
+
+The area water in your terrasse was making use of the already closed line
+that depicts the house.  This is too complicated for Therion I think, as I
+would have trouble guessing a unique solution if I were filling the areas
+myself and I did not already guess what answer was wanted.
+
+Also the house, terrasse and invisible wall, all defined with 'line wall' do
+not uniquely define a passage 'inside' and 'outside'.  That is why your
+areas are shaded with odd gaps (the clue is that the missing triangles all
+project from corners of the above three shapes).
+
+I have added some extra lines and separated the house from the terrasse and
+closed the invisible wall to mostly correct the shading aberrations in the
+attached file. If you insert it into your sample dataset you should get
+better area shading.
+
+The problem is that the way you have tried to draw the house is not
+consistent with the way a cave passage wall might be configured.  Hence not
+surprising that Therion has trouble with it.  You need a single wall
+outline.  Any internal 'walls' would need to be a different linetype or a
+wall with '-outline none' set.
+
+Hope that explanation is clear.
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Gilbert Fernandes (mailinglist)
+Sent: Saturday, 29 September 2012 4:55 a.m.
+To: List for Therion users
+Subject: [Therion] bug encounter
+
+Hello,
+
+I have a bug in my (old) release of therion (5.2.8)
+It's on the drawing of the area (swump area) witch represent a house 
+over a cave.
+We have a triangle white, I think the software have a problem to 
+calculate the correct surface.
+I try to split the line (one only line for all the cave), nothing change.
+It's not a probleme for me. I give it to you to reproduce the bug if 
+it's useful.
+On the plan, I put the cave upper the house, it's normal, it's to see the 
+cave.
+Thanks a lot for your work.
+
+Gilbert
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: surface1.th2
+Type: application/octet-stream
+Size: 4963 bytes
+Desc: surface1.th2
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121001/938a014b/attachment.obj>
+
+From andrew at wotcc.org.uk  Wed Oct  3 13:12:57 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 03 Oct 2012 12:12:57 +0100
+Subject: [Therion] pdf title
+Message-ID: <506C1DB9.9000509@wotcc.org.uk>
+
+Hello
+
+At the moment the title of the pdf comes from the source th file
+
+So if
+survey CheddarCatchment
+
+the title is CheddarCatchment
+
+This can be improved by
+
+survey CheddarCatchment -title "The Cheddar Catchmet"
+
+however sometimes in the thconfig I only select a couple of caves
+
+so would like to change the title, which I can do, but it becomes a
+little tedious.
+
+I was wondering if I am missing something like a way to change the title
+in the layout.
+
+This would be very useful, as I tend to produce different thconfig files
+for my different outputs, but have the same th file, so I would not have
+to remember to edit the th file each time I run a different thconfig.
+
+I guess I could make a custom header box, but that seems a little over
+the top for something that people must want to do quiet often
+
+Andrew
+
+
+From john at k-stevens.co.uk  Wed Oct  3 13:54:25 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Wed, 3 Oct 2012 12:54:25 +0100
+Subject: [Therion] Declination and the cs command
+Message-ID: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+
+It seems the cs command over writes any declination that has been set, using the date provided with the survey data.
+
+I have a large batch of old data with some accurate local declinations given. Unfortunately these are overridden so I can’t compare my results with the original results.
+How can I make sure my local declinations are used rather than the cs global declination.
+
+Another problem on the same line. I have a set of data where the declination has been taken off the bearings, so the local declination is now 0 degrees but the cs command still adds a declination, moving it way out from its expected line.
+
+Can we have therion having a priority for local declinations rather than the gobal cs delinations ?
+
+John
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/78f5b385/attachment.htm>
+
+From lists at group-s.sk  Wed Oct  3 15:04:36 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 3 Oct 2012 15:04:36 +0200
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+Message-ID: <CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com>
+
+If declination is explicitly specified for centerline, automatic
+declination is turned off.
+
+The reason, why you have a rotated map is probably "meridian convergence".
+I am not an expert in this topic, but coordinate system north is usually
+also rotated against true astronomical north.
+
+Have you played with layout north settings? E.g. include:
+
+north grid
+
+in the layout? Are you able to measure somehow this artificial rotation?
+Therion in its output reports both - calculated magnetic declination and
+meridian convergence for cave area.
+
+Another question? Do you measure declination against true (astronomical) or
+grid north?
+
+S.
+
+On 3 October 2012 13:54, John Stevens <john at k-stevens.co.uk> wrote:
+
+>   It seems the cs command over writes any declination that has been set,
+> using the date provided with the survey data.
+>
+> I have a large batch of old data with some accurate local declinations
+> given. Unfortunately these are overridden so I can’t compare my results
+> with the original results.
+> How can I make sure my local declinations are used rather than the cs
+> global declination.
+>
+> Another problem on the same line. I have a set of data where the
+> declination has been taken off the bearings, so the local declination is
+> now 0 degrees but the cs command still adds a declination, moving it way
+> out from its expected line.
+>
+> Can we have therion having a priority for local declinations rather than
+> the gobal cs delinations ?
+>
+> John
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/5973c86f/attachment.htm>
+
+From lists at group-s.sk  Wed Oct  3 15:07:56 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 3 Oct 2012 15:07:56 +0200
+Subject: [Therion] pdf title
+In-Reply-To: <506C1DB9.9000509@wotcc.org.uk>
+References: <506C1DB9.9000509@wotcc.org.uk>
+Message-ID: <CAP35+gF6PM5GwXfQvGjpCx6-o=gPL9gY1=8WO__AWj0yQNLVjw@mail.gmail.com>
+
+Have you tried:
+
+code tex-map
+\cavename{Your cave title.}
+
+in the layout?
+
+For setting pdf document title, also layout's doc-title option should be
+used.
+
+S.
+
+On 3 October 2012 13:12, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+
+> Hello
+>
+> At the moment the title of the pdf comes from the source th file
+>
+> So if
+> survey CheddarCatchment
+>
+> the title is CheddarCatchment
+>
+> This can be improved by
+>
+> survey CheddarCatchment -title "The Cheddar Catchmet"
+>
+> however sometimes in the thconfig I only select a couple of caves
+>
+> so would like to change the title, which I can do, but it becomes a
+> little tedious.
+>
+> I was wondering if I am missing something like a way to change the title
+> in the layout.
+>
+> This would be very useful, as I tend to produce different thconfig files
+> for my different outputs, but have the same th file, so I would not have
+> to remember to edit the th file each time I run a different thconfig.
+>
+> I guess I could make a custom header box, but that seems a little over
+> the top for something that people must want to do quiet often
+>
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/591a27fc/attachment.htm>
+
+From andrew at wotcc.org.uk  Wed Oct  3 15:11:38 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 03 Oct 2012 14:11:38 +0100
+Subject: [Therion] pdf title
+In-Reply-To: <CAP35+gF6PM5GwXfQvGjpCx6-o=gPL9gY1=8WO__AWj0yQNLVjw@mail.gmail.com>
+References: <506C1DB9.9000509@wotcc.org.uk>
+	<CAP35+gF6PM5GwXfQvGjpCx6-o=gPL9gY1=8WO__AWj0yQNLVjw@mail.gmail.com>
+Message-ID: <506C398A.3080103@wotcc.org.uk>
+
+
+
+On 03/10/12 14:07, Stacho Mudrak wrote:
+> Have you tried:
+> 
+> code tex-map
+> \cavename{Your cave title.}
+
+Thank you, I had tried searching for title, label etc but not name
+> 
+> in the layout?
+> 
+> For setting pdf document title, also layout's doc-title option should be
+> used.
+
+
+That is set :)
+
+
+From john at k-stevens.co.uk  Wed Oct  3 16:41:07 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Wed, 3 Oct 2012 15:41:07 +0100
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+	<CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com>
+Message-ID: <25D176090B854A97A7B586ABBED59FD9@Study>
+
+The calibrations were to grid north not true north
+The little file help illustrate the problem. Either declination statement can be used (or both, as they don’t stack).
+If the cs command is commented out, we get a level square, but a rotated square if the cs command is used. 
+So that was the solution, the difference between grid and true north.
+
+I then used the north true command and this rotated it to be level, north grid then moved it back. So back to north true.
+I am now unable to reproduce the the twisted again. I seem to be locked into this north command. 
+Even when the declinations are commented out, I cant get it to use the cs declinations. Whoops!
+(yep I did restart the computer with no joy)
+
+John
+
+
+From: Stacho Mudrak 
+Sent: Wednesday, October 03, 2012 2:04 PM
+To: List for Therion users 
+Subject: Re: [Therion] Declination and the cs command
+
+If declination is explicitly specified for centerline, automatic declination is turned off. 
+
+The reason, why you have a rotated map is probably "meridian convergence". I am not an expert in this topic, but coordinate system north is usually also rotated against true astronomical north.
+
+Have you played with layout north settings? E.g. include:
+
+north grid
+
+in the layout? Are you able to measure somehow this artificial rotation? Therion in its output reports both - calculated magnetic declination and meridian convergence for cave area.
+
+Another question? Do you measure declination against true (astronomical) or grid north?
+
+S.
+
+On 3 October 2012 13:54, John Stevens <john at k-stevens.co.uk> wrote:
+
+  It seems the cs command over writes any declination that has been set, using the date provided with the survey data.
+
+  I have a large batch of old data with some accurate local declinations given. Unfortunately these are overridden so I can’t compare my results with the original results.
+  How can I make sure my local declinations are used rather than the cs global declination.
+
+  Another problem on the same line. I have a set of data where the declination has been taken off the bearings, so the local declination is now 0 degrees but the cs command still adds a declination, moving it way out from its expected line.
+
+  Can we have therion having a priority for local declinations rather than the gobal cs delinations ?
+
+  John
+
+
+  _______________________________________________
+  Therion mailing list
+  Therion at speleo.sk
+  http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+
+
+--------------------------------------------------------------------------------
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+--------------------------------------------------------------------------------
+
+No virus found in this message.
+Checked by AVG - www.avg.com
+Version: 2012.0.2221 / Virus Database: 2441/5306 - Release Date: 10/02/12
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/00da1937/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: testcalibration.th
+Type: application/octet-stream
+Size: 440 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/00da1937/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: thconfig.thc
+Type: application/octet-stream
+Size: 226 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121003/00da1937/attachment-0001.obj>
+
+From erik at speleo.tv  Fri Oct  5 12:39:33 2012
+From: erik at speleo.tv (Erik VdBroeck)
+Date: Fri, 5 Oct 2012 12:39:33 +0200
+Subject: [Therion] auriga to therion
+Message-ID: <20121005103447.2DF847000084@msfrf2509.sfr.fr>
+
+hi to all!
+ 
+As I was wondering if there would be a way to convert Auriga files into
+Therion .th data files without losing the radiant (splay) shots etc, I
+contacted Luc Leblanc, author of Auriga. We tried out some conversion into
+.csv file, but a real export to Therion format could be a possible option
+Some questions remain, though, before the converter can be programmed, so
+I'm forwarding some questions we would like to see answered, as the Therion
+book is not clear about it:
+ 
+- If the "data" command contains "backcompass" and/or "backclino" and the
+user did not actually take a backsight for some shots, can I put 0.00 or do
+I have to fake backsights to prevent bad averaging? Or is there a way to
+tell Therion to ignore this missing data (other than repeating a "data"
+command), like putting a ? or some special character?
+
+- Can I interleave station flags between survey shots, like:
+
+3.1 3.2 10.00 359.99 -10.00
+
+station 3.1 "" entrance
+
+3.2 3.3 11.00 1.00 -12.00
+
+- For splay shots (between a station and some detail, where one station is .
+or -), do I have to put LRUD data? It's always going to be 0.00.
+
+- If I want to pass topofil data, can I pass both start and end readings?
+How? The Therion book only mentions "topofil".
+
+- How do I tell Therion that slope 0 is up or down? Such 0-180 clinometers
+are used on topofils.
+
+- How do I pass dive data? I just put the depth instead of the slope and I
+set "meters" for the "depth" instrument?
+
+- The Therion book would gain much clarity by providing examples for each
+command.
+
+ 
+
+Thanks for any help !
+ 
+Erik Van den Broeck
+Nature-Témoin,
+Labastide-de-Virac, Ardèche, France
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121005/9aca480a/attachment.htm>
+
+From lists at group-s.sk  Fri Oct  5 14:06:49 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 5 Oct 2012 14:06:49 +0200
+Subject: [Therion] auriga to therion
+In-Reply-To: <20121005103447.2DF847000084@msfrf2509.sfr.fr>
+References: <20121005103447.2DF847000084@msfrf2509.sfr.fr>
+Message-ID: <CAP35+gFCcd2eJcw5Vsqv+mLsfxVRKpH900Jay23m1nNAN7CSiA@mail.gmail.com>
+
+> - If the "data" command contains "backcompass" and/or "backclino" and the
+> user did not actually take a backsight for some shots, can I put 0.00 or do
+> I have to fake backsights to prevent bad averaging? Or is there a way to
+> tell Therion to ignore this missing data (other than repeating a "data"
+> command), like putting a ? or some special character?
+
+You should be able to use -, if backcompass reading is missing.
+
+> - Can I interleave station flags between survey shots, like:
+>
+> 3.1 3.2 10.00 359.99 -10.00
+>
+> station 3.1 "" entrance
+>
+> 3.2 3.3 11.00 1.00 -12.00
+
+This should be possible.
+
+> - For splay shots (between a station and some detail, where one station is
+> . or -), do I have to put LRUD data? It's always going to be 0.00.
+
+You may use -, if LRUD data are missing. For splay shots, they are
+simply ignored.
+
+> - If I want to pass topofil data, can I pass both start and end readings?
+> How? The Therion book only mentions "topofil".
+
+You can use fromcount/tocount for start and end readings:
+data topofil from to compass clino fromcount tocount
+
+> - How do I tell Therion that slope 0 is up or down? Such 0-180 clinometers
+> are used on topofils.
+
+Using calibrate clino. If 0 is up, use:
+
+calibrate clino 90 -1
+
+If 0 is down:
+
+calibrate clino 90  1
+
+> - How do I pass dive data? I just put the depth instead of the slope and I
+> set "meters" for the "depth" instrument?
+
+It depends, if you have interleaved data or not. This is simple example:
+
+data diving from to compass fromdepth todepth tape
+
+> - The Therion book would gain much clarity by providing examples for each
+> command.
+
+Therion should have basicly the same syntax of centerline data as
+survex has, so you should look at survex manual.
+
+HTH, S.
+
+
+From andrew at wotcc.org.uk  Fri Oct  5 14:19:31 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 05 Oct 2012 13:19:31 +0100
+Subject: [Therion] auriga to therion
+In-Reply-To: <20121005103447.2DF847000084@msfrf2509.sfr.fr>
+References: <20121005103447.2DF847000084@msfrf2509.sfr.fr>
+Message-ID: <506ED053.5090806@wotcc.org.uk>
+
+I am not sure what you are going to write it in. However, in case it is
+any use I have written a converter, and file creator for pockettopo in
+python, which also takes writes in other information that is not stored
+by pockettopo. It might be possible to write a module to read the file
+and use the rest as is?
+
+https://bitbucket.org/AndrewA/topparser/overview
+
+This will also output to survex, but Olly has said that survex
+understanding splays with - as the to station is very close to so
+awaiting that.
+
+If you send me some output files, I may even find chance to have a look
+
+Andrew
+
+
+
+On 05/10/12 11:39, Erik VdBroeck wrote:
+> Some questions remain, though, before the converter can be programmed,
+
+
+From lists at group-s.sk  Fri Oct  5 14:22:01 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Fri, 5 Oct 2012 14:22:01 +0200
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <25D176090B854A97A7B586ABBED59FD9@Study>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+	<CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com>
+	<25D176090B854A97A7B586ABBED59FD9@Study>
+Message-ID: <CAP35+gGmd5r06i7Rpui4waScnSJRTQfF_A6ni6gSmA3Z6bBV7Q@mail.gmail.com>
+
+The problem of your sample data is, that you have cs specification
+after fix command in centerline.
+
+If you put cs OSGB:SO before "fix 1 10000 10000 0", then it starts to
+behave as it should. Otherwise this fix is in local coordinate system.
+
+Declination in therion is allways agains true north. So just
+substracting "meridian convergence" from declination specification
+should solve your problem.
+
+S.
+
+On 3 October 2012 16:41, John Stevens <john at k-stevens.co.uk> wrote:
+> The calibrations were to grid north not true north
+> The little file help illustrate the problem. Either declination statement
+> can be used (or both, as they don’t stack).
+> If the cs command is commented out, we get a level square, but a rotated
+> square if the cs command is used.
+> So that was the solution, the difference between grid and true north.
+>
+> I then used the north true command and this rotated it to be level, north
+> grid then moved it back. So back to north true.
+> I am now unable to reproduce the the twisted again. I seem to be locked into
+> this north command.
+> Even when the declinations are commented out, I cant get it to use the cs
+> declinations. Whoops!
+> (yep I did restart the computer with no joy)
+>
+> John
+>
+>
+> From: Stacho Mudrak
+> Sent: Wednesday, October 03, 2012 2:04 PM
+> To: List for Therion users
+> Subject: Re: [Therion] Declination and the cs command
+>
+> If declination is explicitly specified for centerline, automatic declination
+> is turned off.
+>
+> The reason, why you have a rotated map is probably "meridian convergence". I
+> am not an expert in this topic, but coordinate system north is usually also
+> rotated against true astronomical north.
+>
+> Have you played with layout north settings? E.g. include:
+>
+> north grid
+>
+> in the layout? Are you able to measure somehow this artificial rotation?
+> Therion in its output reports both - calculated magnetic declination and
+> meridian convergence for cave area.
+>
+> Another question? Do you measure declination against true (astronomical) or
+> grid north?
+>
+> S.
+>
+> On 3 October 2012 13:54, John Stevens <john at k-stevens.co.uk> wrote:
+>>
+>> It seems the cs command over writes any declination that has been set,
+>> using the date provided with the survey data.
+>>
+>> I have a large batch of old data with some accurate local declinations
+>> given. Unfortunately these are overridden so I can’t compare my results with
+>> the original results.
+>> How can I make sure my local declinations are used rather than the cs
+>> global declination.
+>>
+>> Another problem on the same line. I have a set of data where the
+>> declination has been taken off the bearings, so the local declination is now
+>> 0 degrees but the cs command still adds a declination, moving it way out
+>> from its expected line.
+>>
+>> Can we have therion having a priority for local declinations rather than
+>> the gobal cs delinations ?
+>>
+>> John
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> ________________________________
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> ________________________________
+>
+> No virus found in this message.
+> Checked by AVG - www.avg.com
+> Version: 2012.0.2221 / Virus Database: 2441/5306 - Release Date: 10/02/12
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From bruce at tomo.co.nz  Sun Oct  7 07:26:43 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 7 Oct 2012 18:26:43 +1300
+Subject: [Therion] pdf title
+In-Reply-To: <506C1DB9.9000509@wotcc.org.uk>
+References: <506C1DB9.9000509@wotcc.org.uk>
+Message-ID: <84C727076EC343D49CFAC2464A9B7B17@JUICEBRAIN>
+
+>I was wondering if ... a way to change the title
+in the layout.
+>
+>This would be very useful, as I tend to produce different thconfig files
+for my different outputs, but have the same th file, so I would not have
+to remember to edit the th file each time I run a different thconfig.
+
+The entry "Output Map Title Override" on the page below explains how I think
+therion determines whether it can make use of a unique pdf map title from
+the source files given.
+
+http://therion.speleo.sk/wiki/doku.php?id=tex&s[]=output&s[]=map&s[]=title&s
+[]=override#overriding_data_supplied_by_therion_map_headers 
+
+It is not as direct or simple as Stachos' suggestion, but it is a little bit
+automatic and tolerant of user forgetfulness.
+Bruce 
+
+
+
+From john at k-stevens.co.uk  Wed Oct 10 16:08:28 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Wed, 10 Oct 2012 15:08:28 +0100
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <CAP35+gGmd5r06i7Rpui4waScnSJRTQfF_A6ni6gSmA3Z6bBV7Q@mail.gmail.com>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study><CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com><25D176090B854A97A7B586ABBED59FD9@Study>
+	<CAP35+gGmd5r06i7Rpui4waScnSJRTQfF_A6ni6gSmA3Z6bBV7Q@mail.gmail.com>
+Message-ID: <5D95DDC8605844DDB7A1B54DF5465D1D@Study>
+
+Thank you for the answer, I now see that Therion deals with declination in a 
+slightly different way to Survex. So i will need to adjust all the 
+calibrated  data I have converted from Survex. It also explains why the gaps 
+(closures) between caves has changed when some data was imported using a .3d 
+file from Survex and others with the data converted into Therion.
+Rather than going through all my files and finding out the differing 
+meridian convergence for each file and changing the declination figures. 
+(this would make it hard to see where these figures have come from). Is 
+there any problem with setting a compass calibration to take care of the 
+meridian convergence and use my old declination readings? As in the attached 
+file.
+
+John
+
+-----Original Message----- 
+From: Stacho Mudrak
+Sent: Friday, October 05, 2012 1:22 PM
+To: List for Therion users
+Subject: Re: [Therion] Declination and the cs command
+
+The problem of your sample data is, that you have cs specification
+after fix command in centerline.
+
+If you put cs OSGB:SO before "fix 1 10000 10000 0", then it starts to
+behave as it should. Otherwise this fix is in local coordinate system.
+
+Declination in therion is allways agains true north. So just
+substracting "meridian convergence" from declination specification
+should solve your problem.
+
+S.
+
+On 3 October 2012 16:41, John Stevens <john at k-stevens.co.uk> wrote:
+> The calibrations were to grid north not true north
+> The little file help illustrate the problem. Either declination statement
+> can be used (or both, as they don’t stack).
+> If the cs command is commented out, we get a level square, but a rotated
+> square if the cs command is used.
+> So that was the solution, the difference between grid and true north.
+>
+> I then used the north true command and this rotated it to be level, north
+> grid then moved it back. So back to north true.
+> I am now unable to reproduce the the twisted again. I seem to be locked 
+> into
+> this north command.
+> Even when the declinations are commented out, I cant get it to use the cs
+> declinations. Whoops!
+> (yep I did restart the computer with no joy)
+>
+> John
+>
+>
+> From: Stacho Mudrak
+> Sent: Wednesday, October 03, 2012 2:04 PM
+> To: List for Therion users
+> Subject: Re: [Therion] Declination and the cs command
+>
+> If declination is explicitly specified for centerline, automatic 
+> declination
+> is turned off.
+>
+> The reason, why you have a rotated map is probably "meridian convergence". 
+> I
+> am not an expert in this topic, but coordinate system north is usually 
+> also
+> rotated against true astronomical north.
+>
+> Have you played with layout north settings? E.g. include:
+>
+> north grid
+>
+> in the layout? Are you able to measure somehow this artificial rotation?
+> Therion in its output reports both - calculated magnetic declination and
+> meridian convergence for cave area.
+>
+> Another question? Do you measure declination against true (astronomical) 
+> or
+> grid north?
+>
+> S.
+>
+> On 3 October 2012 13:54, John Stevens <john at k-stevens.co.uk> wrote:
+>>
+>> It seems the cs command over writes any declination that has been set,
+>> using the date provided with the survey data.
+>>
+>> I have a large batch of old data with some accurate local declinations
+>> given. Unfortunately these are overridden so I can’t compare my results 
+>> with
+>> the original results.
+>> How can I make sure my local declinations are used rather than the cs
+>> global declination.
+>>
+>> Another problem on the same line. I have a set of data where the
+>> declination has been taken off the bearings, so the local declination is 
+>> now
+>> 0 degrees but the cs command still adds a declination, moving it way out
+>> from its expected line.
+>>
+>> Can we have therion having a priority for local declinations rather than
+>> the gobal cs delinations ?
+>>
+>> John
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> ________________________________
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> ________________________________
+>
+> No virus found in this message.
+> Checked by AVG - www.avg.com
+> Version: 2012.0.2221 / Virus Database: 2441/5306 - Release Date: 10/02/12
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+-----
+No virus found in this message.
+Checked by AVG - www.avg.com
+Version: 2012.0.2221 / Virus Database: 2441/5310 - Release Date: 10/04/12
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: testcalibration.th
+Type: application/octet-stream
+Size: 550 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121010/1af4a079/attachment.obj>
+
+From lists at group-s.sk  Thu Oct 11 17:48:55 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 11 Oct 2012 17:48:55 +0200
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <5D95DDC8605844DDB7A1B54DF5465D1D@Study>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study>
+	<CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com>
+	<25D176090B854A97A7B586ABBED59FD9@Study>
+	<CAP35+gGmd5r06i7Rpui4waScnSJRTQfF_A6ni6gSmA3Z6bBV7Q@mail.gmail.com>
+	<5D95DDC8605844DDB7A1B54DF5465D1D@Study>
+Message-ID: <CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+
+Do you mean adding some option, that would specify, that given declination
+is not against true but grid north?
+
+S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121011/f709f6b2/attachment.htm>
+
+From john at k-stevens.co.uk  Fri Oct 12 18:25:33 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Fri, 12 Oct 2012 17:25:33 +0100
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+References: <83B5FD4EFE75425F84B58DA8C85193E1@Study><CAP35+gGjZaEAQPbNgiTwvbhdEdmxZT3K+YenYWiS0HzoNOWZ9g@mail.gmail.com><25D176090B854A97A7B586ABBED59FD9@Study><CAP35+gGmd5r06i7Rpui4waScnSJRTQfF_A6ni6gSmA3Z6bBV7Q@mail.gmail.com><5D95DDC8605844DDB7A1B54DF5465D1D@Study>
+	<CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+Message-ID: <2052E81DAF3544C69FD78FD7AE0751F1@Study>
+
+As it was a test file I forgot to copy my normal statements across.
+I tend to use a line like
+
+declination xx degrees  # xx.x degrees (based on Grid Bearing of 18.5 deg to Llangattock Church)
+
+to show the location of the calibrated bearing we have used. This line was set out over 40 years ago and most of the calibrations have been an average of 6 or so readings taken. I have now adapted a tripod so I can calibrate the distox on the same line. (most tripods have quite a bit of iron in them, so replace all with suitable non magnetic nuts and bolts, discarding any springs etc.)
+I have been taking calibration in each orientation of the distox, rotating one way then the other to get 8 hopefully similar readings. Then average to produce
+
+declination -1.8 degrees  # 20.31 degrees (based on Grid Bearing of 18.5 deg to Llangattock Church)
+calibrate compass 0.9280    # meridian convergence for OSGB:SO location
+
+with the actual calibration readings in with the cave survey data but commented out.
+
+Maybe this is more how to use the distox and pda than Therion
+
+John
+
+
+From: Stacho Mudrak 
+Sent: Thursday, October 11, 2012 4:48 PM
+To: List for Therion users 
+Subject: Re: [Therion] Declination and the cs command
+
+Do you mean adding some option, that would specify, that given declination is not against true but grid north? 
+
+S.
+
+
+--------------------------------------------------------------------------------
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+--------------------------------------------------------------------------------
+
+No virus found in this message.
+Checked by AVG - www.avg.com
+Version: 2012.0.2221 / Virus Database: 2441/5325 - Release Date: 10/11/12
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121012/aa1a07f5/attachment.htm>
+
+From martinsluka at mac.com  Sat Oct 13 09:45:48 2012
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 13 Oct 2012 09:45:48 +0200
+Subject: [Therion] reposting from Survex
+Message-ID: <1713E1A8-CB62-4FAD-B5C8-9B31AF017103@mac.com>
+
+Luc le Blanc:
+
+Hi,
+
+I'm currently implementing an export feature in Auriga to allow
+exporting cave data to files on the memory card in various native
+survey formats. Survex is among them, along with Compass, Therion,
+Toporobot, VisualTopo, Walls and plain-text CSV. I hope to ship this
+in October. I just started that less than a month ago, so it's been a
+quick intro to various formats. Here are a few observations regarding
+Survex.
+
+As I already told the Therion people (whose data format draws heavily
+on Survex's), if the backsight compass and clino can have their own
+units, they should also have their own calibration. And it makes much
+sense: if you take backsights, it's better to take them at the same
+time you take foresights in order to compare them and repeat as
+necessary until they agree, so you do need two sets of instruments,
+each with their own calibration.
+
+I'm told a future Survex version  will support splay measures taken
+from a station to some non-station cave feature. It's a good thing as
+they are a wonderful help for sketching, akin to drawing by numbers :)
+Auriga implements them as additional measures hooked to regular survey
+shots (like additional LRUDs, but with a heading and slope), others,
+like Therion or Walls, support them as plain survey shots, albeit with
+a fake "to" station. Therion distinguishes between a splay shot to a
+wall/floor/ceiling and one to some cave feature while Auriga
+distinguishes between a splay measure to a wall, to the floor/ceiling
+or to some cave feature (the wall vs floor/ceiling distinction is much
+arbitrary but helps deciding which to pick to draw outlines in top
+view or profiles)
+
+Given that software evolves and new versions support new features, I'm
+surprised only one PC software (Visual Topo) implements a version
+number in its data format. Wouldn't it make sense that when new
+features are met by an old software version, it has the ability to
+tell the user this version is outdated?
+
+Regards,
+
+--
+Luc Le Blanc
+http://www.speleo.qc.ca/Auriga
+
+
+
+
+From andrew at wotcc.org.uk  Sat Oct 13 11:29:11 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 13 Oct 2012 10:29:11 +0100
+Subject: [Therion] Area working in file but not in overall
+Message-ID: <50793467.4070400@wotcc.org.uk>
+
+I am a little puzzled by this one.
+
+I have and area sand that when I compile the file (FrozenDeep) by itself
+works and shows up, but when compiled within the cave (reservoir) does
+not show up, however as far as I can tell all the other sand areas are
+working fine? I would be most grateful if someone could help solve this
+problem for me. I am using a custom (from the thrion wiki) sand but  I
+have changed the area to water to and the same thing plus not used the
+custom sand by not using my common_layout file.
+
+The data for the Frozendeep is at
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Reservoir/FrozenDeep/
+
+compiled using the thconfig file in there
+
+the whole cave is at
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Reservoir/
+
+Again, compiled using the thconfig file in there
+
+thanks
+
+Andrew
+
+
+From ben at caver.plus.com  Sun Oct 14 15:01:16 2012
+From: ben at caver.plus.com (Ben Cooper)
+Date: Sun, 14 Oct 2012 14:01:16 +0100
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+Message-ID: <20121014130112.5EAE134C353@outsider2.texxar.cz>
+
+Yes please - that would help a problem I have with the Upper Flood data
+where much of the "old" data is declined against Grid North, and hence all
+my "new" data has also been delcined to Grid North too.  When I add the CS
+option, the data is rotated by 0.55 degrees (the Grid to True difference in
+UK).
+ 
+(First posted Feb 2011 under subjects "CS and grid alignmenrt" and "grid
+alignment rotation")
+Ben
+
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: 11 October 2012 16:49
+To: List for Therion users
+Subject: Re: [Therion] Declination and the cs command
+
+
+Do you mean adding some option, that would specify, that given declination
+is not against true but grid north? 
+
+S.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121014/40d295b7/attachment.htm>
+
+From knollesimage at t-online.de  Tue Oct 16 08:35:31 2012
+From: knollesimage at t-online.de (Michael Wasmund)
+Date: Tue, 16 Oct 2012 08:35:31 +0200
+Subject: [Therion] How to add our cave to the Wiki ?
+Message-ID: <B093CF05B1F84B268EC6A4F44189BD9C@boeblingen.de.ibm.com>
+
+BlankHello,
+We'd like to add our cave to the list of "Therion Caves" in the Wiki.
+How can I obtain a userid ?
+
+Greetings,
+Michael
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121016/295c2ced/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Blank Bkgrd.gif
+Type: image/gif
+Size: 145 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121016/295c2ced/attachment.gif>
+
+From drfootleg at gmail.com  Tue Oct 16 15:07:35 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 16 Oct 2012 14:07:35 +0100
+Subject: [Therion] Area working in file but not in overall
+In-Reply-To: <50793467.4070400@wotcc.org.uk>
+References: <50793467.4070400@wotcc.org.uk>
+Message-ID: <CAJkGg4kzvv-E1Y3UkUfS0RBNNwAgmCs2StYv5OHzZTnOh+fUBg@mail.gmail.com>
+
+Hi Andrew,
+
+I did a little playing with your project from SVN, and it points to
+your symbol customisation as the potential trigger.
+Rendering your project as in SVN I see the same as you. The Frozen
+Deep sub map renders the sand fine, but the complete cave does not.
+
+Then I swapped in my own customised symbol set, and it renders the
+sand in both surveys.
+
+I've attached my custom layout file. I just included this instead of
+your common_layout.th and then replaced the line:
+
+copy common
+    with
+copy Mat_Std
+
+in your local layout.
+
+Comparing the two PDFs, there are some interesting rendering
+differences too. There appears to be some rotation of the entire
+survey for a start. Not sure what is causing that. My filled
+background colour shows up some quirks in some of the cross sections.
+My boulders look nice, but some other symbols in the main chamber get
+a bit lost among them (they are there, but not so prominent). You have
+nicer ceiling lines (I might borrow them :-)  ). Your x-section near
+the label 'Herbert's Attic' contains a boulder, but this is missing on
+my render.
+
+One thing the comparison of the two PDFs illustrates is that for these
+sorts of detailed surveys you really do need to draw for a specific
+symbol set, as a number of things get messed up by my symbol set just
+due to positioning and sizing. e.g. Boulder walls in my layout are
+rendered larger and obscure passage detail where as yours are much
+finer and take up less of the passage width.
+
+I hope some of that helps. I'll email you the two PDFs seperately, as
+they are too big to post to the list.
+
+Footleg
+
+On 13 October 2012 10:29, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+> I am a little puzzled by this one.
+>
+> I have and area sand that when I compile the file (FrozenDeep) by itself
+> works and shows up, but when compiled within the cave (reservoir) does
+> not show up, however as far as I can tell all the other sand areas are
+> working fine? I would be most grateful if someone could help solve this
+> problem for me. I am using a custom (from the thrion wiki) sand but  I
+> have changed the area to water to and the same thing plus not used the
+> custom sand by not using my common_layout file.
+>
+> The data for the Frozendeep is at
+>
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/Reservoir/FrozenDeep/
+>
+> compiled using the thconfig file in there
+>
+> the whole cave is at
+>
+> http://www.cave-registry.org.uk/svn/CheddarCatchment/Reservoir/
+>
+> Again, compiled using the thconfig file in there
+>
+> thanks
+>
+> Andrew
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: matienzo.layout
+Type: application/octet-stream
+Size: 10114 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121016/35a9de9a/attachment.obj>
+
+From andrew at wotcc.org.uk  Tue Oct 16 18:08:23 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Tue, 16 Oct 2012 17:08:23 +0100
+Subject: [Therion] Area working in file but not in overall
+In-Reply-To: <CAJkGg4kzvv-E1Y3UkUfS0RBNNwAgmCs2StYv5OHzZTnOh+fUBg@mail.gmail.com>
+References: <50793467.4070400@wotcc.org.uk>
+	<CAJkGg4kzvv-E1Y3UkUfS0RBNNwAgmCs2StYv5OHzZTnOh+fUBg@mail.gmail.com>
+Message-ID: <507D8677.90404@wotcc.org.uk>
+
+Thanks, Marco and I have had some attempts at solving this off the list,
+it works fine for him, both on the individual file and the overall. I
+have a few more things to work through.  In the mean time, I can easily
+solve it by redrawing the area, so something somewhere is not quiet right.
+
+I did try removing my layout completely, and therefore reverting to the
+default, but got the same result, sand for the single file, but not overall
+
+A very hard to trace bug.
+
+Andrew
+
+On 16/10/12 14:07, Footleg wrote:
+> Hi Andrew,
+> 
+> I did a little playing with your project from SVN, and it points to
+> your symbol customisation as the potential trigger.
+> Rendering your project as in SVN I see the same as you. The Frozen
+> Deep sub map renders the sand fine, but the complete cave does not.
+> 
+> Then I swapped in my own customised symbol set, and it renders the
+> sand in both surveys.
+> 
+> I've attached my custom layout file. I just included this instead of
+> your common_layout.th and then replaced the line:
+> 
+> copy common
+>     with
+> copy Mat_Std
+> 
+> in your local layout.
+> 
+> Comparing the two PDFs, there are some interesting rendering
+> differences too. There appears to be some rotation of the entire
+> survey for a start. Not sure what is causing that. My filled
+> background colour shows up some quirks in some of the cross sections.
+> My boulders look nice, but some other symbols in the main chamber get
+> a bit lost among them (they are there, but not so prominent). You have
+> nicer ceiling lines (I might borrow them :-)  ). Your x-section near
+> the label 'Herbert's Attic' contains a boulder, but this is missing on
+> my render.
+> 
+> One thing the comparison of the two PDFs illustrates is that for these
+> sorts of detailed surveys you really do need to draw for a specific
+> symbol set, as a number of things get messed up by my symbol set just
+> due to positioning and sizing. e.g. Boulder walls in my layout are
+> rendered larger and obscure passage detail where as yours are much
+> finer and take up less of the passage width.
+> 
+> I hope some of that helps. I'll email you the two PDFs seperately, as
+> they are too big to post to the list.
+> 
+> Footleg
+
+
+From andrew at wotcc.org.uk  Wed Oct 17 10:50:48 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 17 Oct 2012 09:50:48 +0100
+Subject: [Therion] Projected Elevation
+Message-ID: <507E7168.5080200@wotcc.org.uk>
+
+I have a couple of caves (probably more) that could really do with a
+projected elevation, rather than extended.
+
+so I set off trying to do it. I started with one looking towards 90
+degrees, but did not get any walls and the centreline was always
+projected looking north.
+
+Eventually found this
+
+http://mailman.speleo.sk/pipermail/therion/2009-January/002291.html
+
+Which indicates that in atlas this is all that is implemented. I assume
+it is the same for map?
+
+So I moved onto the cave that has a projection looking north. At least
+the centreline now looks right, but I am not getting any walls. Should I
+be, or is this not implemented either?
+
+Is the implementation of Elevation likely to happen, or should I start
+to look for another way?
+
+Andrew
+
+
+From john at k-stevens.co.uk  Wed Oct 17 11:26:10 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Wed, 17 Oct 2012 10:26:10 +0100
+Subject: [Therion] Projected Elevation
+In-Reply-To: <507E7168.5080200@wotcc.org.uk>
+References: <507E7168.5080200@wotcc.org.uk>
+Message-ID: <2268F369A5B14F1BA9C68EFD1C195532@Study>
+
+In the scrap projection box have you used something like :-
+elevation 045 deg
+I draw the section detail on the extended and then let it be projected. Some 
+will need flipping though.
+config file statement :-
+export map -proj [elevation 045 deg] -layout localee -o 
+turkeysump1to3section045.pdf
+
+
+John
+
+-----Original Message----- 
+From: Andrew Atkinson
+Sent: Wednesday, October 17, 2012 9:50 AM
+To: List for Therion users
+Subject: [Therion] Projected Elevation
+
+I have a couple of caves (probably more) that could really do with a
+projected elevation, rather than extended.
+
+so I set off trying to do it. I started with one looking towards 90
+degrees, but did not get any walls and the centreline was always
+projected looking north.
+
+Eventually found this
+
+http://mailman.speleo.sk/pipermail/therion/2009-January/002291.html
+
+Which indicates that in atlas this is all that is implemented. I assume
+it is the same for map?
+
+So I moved onto the cave that has a projection looking north. At least
+the centreline now looks right, but I am not getting any walls. Should I
+be, or is this not implemented either?
+
+Is the implementation of Elevation likely to happen, or should I start
+to look for another way?
+
+Andrew
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+-----
+No virus found in this message.
+Checked by AVG - www.avg.com
+Version: 2012.0.2221 / Virus Database: 2441/5336 - Release Date: 10/16/12 
+
+
+
+From andrew at wotcc.org.uk  Wed Oct 17 12:07:27 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Wed, 17 Oct 2012 11:07:27 +0100
+Subject: [Therion] Projected Elevation
+In-Reply-To: <2268F369A5B14F1BA9C68EFD1C195532@Study>
+References: <507E7168.5080200@wotcc.org.uk>
+	<2268F369A5B14F1BA9C68EFD1C195532@Study>
+Message-ID: <507E835F.50204@wotcc.org.uk>
+
+Thanks John
+
+such a simple mistake which should have been obvious
+
+thconfig accepts
+
+export map -proj elevation
+
+And appears to default to north, for which I have no maps in one, the
+other I do have maps, but stillonly get teh centreline, adding the
+[elevation 0] gives me the walls,
+
+excellent, I can now get on with drawing
+
+Andrew
+
+On 17/10/12 10:26, John Stevens wrote:
+> In the scrap projection box have you used something like :-
+> elevation 045 deg
+> I draw the section detail on the extended and then let it be projected.
+> Some will need flipping though.
+> config file statement :-
+> export map -proj [elevation 045 deg] -layout localee -o
+> turkeysump1to3section045.pdf
+
+
+From john at k-stevens.co.uk  Wed Oct 17 12:28:20 2012
+From: john at k-stevens.co.uk (John Stevens)
+Date: Wed, 17 Oct 2012 11:28:20 +0100
+Subject: [Therion]  Marked stations
+In-Reply-To: <2268F369A5B14F1BA9C68EFD1C195532@Study>
+References: <507E7168.5080200@wotcc.org.uk>
+	<2268F369A5B14F1BA9C68EFD1C195532@Study>
+Message-ID: <B7DAD6EA78634375BEB9B1F8DDD25251@Study>
+
+I have been trying to just print the marked (and painted) stations on my 
+plan.
+Used -
+mark 1.0 1.18 1.46 fixed
+mark 1.46 painted
+to mark stations within the centreline in the .th file
+I can show all stations with
+symbol-show point cave-station
+then I tried
+symbol-show point station:fixed
+but it didn't work, but no error occurred.
+When I
+symbol-show point cave-station
+symbol-hide point station:fixed
+it showed all points but the fixed ! so that bit is working correctly.
+
+Would also like it to show their station number, with an option of altitude 
+or position, but I may have to do this manually in the plan rather than 
+automatically from within the config file.
+
+John 
+
+
+
+From bruce at tomo.co.nz  Wed Oct 17 20:31:17 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 18 Oct 2012 07:31:17 +1300
+Subject: [Therion] Marked stations
+In-Reply-To: <B7DAD6EA78634375BEB9B1F8DDD25251@Study>
+References: <507E7168.5080200@wotcc.org.uk><2268F369A5B14F1BA9C68EFD1C195532@Study>
+	<B7DAD6EA78634375BEB9B1F8DDD25251@Study>
+Message-ID: <06D617F2FBF546748AF9471F00BC65BD@JUICEBRAIN>
+
+John
+
+In my experience there are significant issues with station visibility
+control.  Some previous posts here http://search.gmane.org/?query=mark
+<http://search.gmane.org/?query=mark&group=gmane.comp.gis.therion>
+&group=gmane.comp.gis.therion 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of John Stevens
+Sent: Wednesday, 17 October 2012 11:28 p.m.
+To: List for Therion users
+Subject: [Therion] Marked stations
+
+ 
+
+I have been trying to just print the marked (and painted) stations on my 
+
+plan.
+
+Used -
+
+mark 1.0 1.18 1.46 fixed
+
+mark 1.46 painted
+
+to mark stations within the centreline in the .th file
+
+I can show all stations with
+
+symbol-show point cave-station
+
+then I tried
+
+symbol-show point station:fixed
+
+but it didn't work, but no error occurred.
+
+When I
+
+symbol-show point cave-station
+
+symbol-hide point station:fixed
+
+it showed all points but the fixed ! so that bit is working correctly.
+
+ 
+
+Would also like it to show their station number, with an option of altitude 
+
+or position, but I may have to do this manually in the plan rather than 
+
+automatically from within the config file.
+
+ 
+
+John 
+
+ 
+
+_______________________________________________
+
+Therion mailing list
+
+Therion at speleo.sk
+
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121018/5dab098c/attachment.htm>
+
+From martinsluka at mac.com  Thu Oct 18 08:57:34 2012
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 18 Oct 2012 08:57:34 +0200
+Subject: [Therion] Another pool on Cavechat
+Message-ID: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+
+I'm sorry, but another pool on Cavechat: http://forums.caves.org/viewtopic.php?f=26&t=14576
+
+;)
+
+m.s.
+
+
+From markus.boldt at gmx.net  Thu Oct 18 20:23:16 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Thu, 18 Oct 2012 20:23:16 +0200
+Subject: [Therion] Cavesystem - Addition of cavelenght
+In-Reply-To: <CAJkGg4kzvv-E1Y3UkUfS0RBNNwAgmCs2StYv5OHzZTnOh+fUBg@mail.gmail.com>
+Message-ID: <20121018182151.03EEA34C15D@outsider2.texxar.cz>
+
+Dear all, 
+I want to make a plan, which includes three caves. But how is it possible
+that the cavelenght is only added from one Cave-centerline. 
+
+For example: 
+Cave1 = 100m
+Cave2 = 2000m
+Cave3 = 50m 
+
+The best would be if I will get following Header: 
+
+Name of cave2 
+
+Scalebar and northarrow
+
+Name of cave1 with there length
+Name of cave3 with there length
+
+Length of cave2
+Depth of cave2
+And so on....
+
+Thank you for getting a reply. 
+Markus
+
+
+
+
+From bruce at tomo.co.nz  Thu Oct 18 21:18:29 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 19 Oct 2012 08:18:29 +1300
+Subject: [Therion] Cavesystem - Addition of cavelenght
+In-Reply-To: <20121018182151.03EEA34C15D@outsider2.texxar.cz>
+References: <CAJkGg4kzvv-E1Y3UkUfS0RBNNwAgmCs2StYv5OHzZTnOh+fUBg@mail.gmail.com>
+	<20121018182151.03EEA34C15D@outsider2.texxar.cz>
+Message-ID: <AEB85B8340FD48A5BF6E433DD75F7E29@JUICEBRAIN>
+
+Marcus
+A hack, not a nice solution...
+
+Look for "Output Map Title Override" in...
+
+http://therion.speleo.sk/wiki/doku.php?id=tex#overriding_data_supplied_by_th
+erion_map_headers 
+(or more simply you can simply use ...
+
+  code tex-map
+     \cavename={Name of cave2}
+     \cavelength{1000\thinspace{}ft}  %enter cave length and units here
+     \cavedepth{300\thinspace{}m}
+  Endcode
+
+...)
+
+And then the rest of the statistics you can enter by creating a multi-line
+map-comment.
+
+map-comment "Name of cave1 with there length \
+<br>Name of cave3 with there length \
+<br> \
+<br> Length of cave2 \
+<br> Depth of cave2"
+
+A more elegant solution would be to modify the map-header so that it is
+aware of multiple caves in the same way that the cave-list output is aware.
+Beyond me I am afraid, but I have a number of projects where this would be a
+very desirable addition to Therion.
+
+Bruce
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Markus Boldt
+Sent: Friday, 19 October 2012 7:23 a.m.
+To: 'List for Therion users'
+Subject: [Therion] Cavesystem - Addition of cavelenght
+
+Dear all, 
+I want to make a plan, which includes three caves. But how is it possible
+that the cavelenght is only added from one Cave-centerline. 
+
+For example: 
+Cave1 = 100m
+Cave2 = 2000m
+Cave3 = 50m 
+
+The best would be if I will get following Header: 
+
+Name of cave2 
+
+Scalebar and northarrow
+
+Name of cave1 with there length
+Name of cave3 with there length
+
+Length of cave2
+Depth of cave2
+And so on....
+
+Thank you for getting a reply. 
+Markus
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From markus.boldt at gmx.net  Thu Oct 18 22:59:05 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Thu, 18 Oct 2012 22:59:05 +0200
+Subject: [Therion] *** GMX Spamverdacht *** Re: Cavesystem - Addition of
+	cavelenght
+In-Reply-To: <AEB85B8340FD48A5BF6E433DD75F7E29@JUICEBRAIN>
+Message-ID: <20121018205140.A70F434C238@outsider2.texxar.cz>
+
+Bruce
+Thank you very much for that fast answer. Now I will have success. There are
+some Ideas in your writing. 
+So I must process all three caves alone to get the correct length for each
+cave. OK, clear! 
+
+Sometimes during drawing this project I have thought that it would be fine
+if there were a possibility for making two headers (or more) on one Map in
+therion. 
+
+For example: You have two caves nearby, but there is no connection. Both
+caves are small enough to do it on one Map so that you can print it on a big
+piece of paper (A0). If you have a header for each cave (map-header cave1 0
+0 sw - map-header cave2 0 100 sw......) which you can do with the map-header
+command at a place you like. 
+But may be there is a possibility....
+Markus
+
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag
+von Bruce
+Gesendet: Donnerstag, 18. Oktober 2012 21:18
+An: 'List for Therion users'
+Betreff: *** GMX Spamverdacht *** Re: [Therion] Cavesystem - Addition of
+cavelenght
+
+Marcus
+A hack, not a nice solution...
+
+Look for "Output Map Title Override" in...
+
+http://therion.speleo.sk/wiki/doku.php?id=tex#overriding_data_supplied_by_th
+erion_map_headers 
+(or more simply you can simply use ...
+
+  code tex-map
+     \cavename={Name of cave2}
+     \cavelength{1000\thinspace{}ft}  %enter cave length and units here
+     \cavedepth{300\thinspace{}m}
+  Endcode
+
+...)
+
+And then the rest of the statistics you can enter by creating a multi-line
+map-comment.
+
+map-comment "Name of cave1 with there length \
+<br>Name of cave3 with there length \
+<br> \
+<br> Length of cave2 \
+<br> Depth of cave2"
+
+A more elegant solution would be to modify the map-header so that it is
+aware of multiple caves in the same way that the cave-list output is aware.
+Beyond me I am afraid, but I have a number of projects where this would be a
+very desirable addition to Therion.
+
+Bruce
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Markus Boldt
+Sent: Friday, 19 October 2012 7:23 a.m.
+To: 'List for Therion users'
+Subject: [Therion] Cavesystem - Addition of cavelenght
+
+Dear all, 
+I want to make a plan, which includes three caves. But how is it possible
+that the cavelenght is only added from one Cave-centerline. 
+
+For example: 
+Cave1 = 100m
+Cave2 = 2000m
+Cave3 = 50m 
+
+The best would be if I will get following Header: 
+
+Name of cave2 
+
+Scalebar and northarrow
+
+Name of cave1 with there length
+Name of cave3 with there length
+
+Length of cave2
+Depth of cave2
+And so on....
+
+Thank you for getting a reply. 
+Markus
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Thu Oct 18 23:04:23 2012
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 18 Oct 2012 23:04:23 +0200
+Subject: [Therion] *** GMX Spamverdacht *** Re: Cavesystem - Addition of
+ cavelenght
+In-Reply-To: <20121018205140.A70F434C238@outsider2.texxar.cz>
+References: <20121018205140.A70F434C238@outsider2.texxar.cz>
+Message-ID: <44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+
+
+On Oct 18, 2012, at 10:59 PM, Markus Boldt <markus.boldt at gmx.net> wrote:
+
+> But may be there is a possibility….
+
+Generate map1 first and place it to map2:
+
+map-image <x> <y> <n/s/e/w/ne/nw/se/sw/center> <filename> ▷ include image
+specified by <filename> into map at location specified by <x> <y>. For coordinates
+and alignment details, see map-header specification.
+
+map-image 100 100 nw map1.pdf
+
+m.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121018/43a32292/attachment.htm>
+
+From marco_corvi at yahoo.com  Fri Oct 19 09:22:01 2012
+From: marco_corvi at yahoo.com (Marco Corvi)
+Date: Fri, 19 Oct 2012 00:22:01 -0700 (PDT)
+Subject: [Therion] *** GMX Spamverdacht *** Re: Cavesystem - Addition of
+	cavelenght
+In-Reply-To: <44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+References: <20121018205140.A70F434C238@outsider2.texxar.cz>
+	<44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+Message-ID: <1350631321.53007.YahooMailNeo@web120305.mail.ne1.yahoo.com>
+
+hi markus,
+
+i usually do martin's way:
+i often put extended section and plan of small caves on the same pdf,
+and have a layout for the extended section that does not show the map-header.
+
+you can do the same to put many cave plan on the same pdf, each with 
+
+its own map header,
+
+... and you can define layouts so that the north arrow and the scale bar
+appear only on one header, or one has the north and another the scale bar
+(sopposing the scale is the sama for all the maps, as well as the north).
+
+
+marco
+
+
+
+
+________________________________
+ From: Martin Sluka <martinsluka at mac.com>
+To: List for Therion users <therion at speleo.sk> 
+Sent: Thursday, October 18, 2012 11:04 PM
+Subject: Re: [Therion] *** GMX Spamverdacht *** Re: Cavesystem - Addition of cavelenght
+ 
+
+
+
+On Oct 18, 2012, at 10:59 PM, Markus Boldt <markus.boldt at gmx.net> wrote:
+
+But may be there is a possibility….
+
+Generate map1 first and place it to map2:
+
+map-image <x> <y> <n/s/e/w/ne/nw/se/sw/center> <filename> ▷ include image
+specified by <filename> into map at location specified by <x> <y>. For coordinates
+and alignment details, see map-header specification.
+
+map-image 100 100 nw map1.pdf
+
+m.
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121019/8fe685ac/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Oct 19 11:08:12 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 19 Oct 2012 22:08:12 +1300
+Subject: [Therion] Cavesystem - Addition ofcavelenght
+In-Reply-To: <1350631321.53007.YahooMailNeo@web120305.mail.ne1.yahoo.com>
+References: <20121018205140.A70F434C238@outsider2.texxar.cz><44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+	<1350631321.53007.YahooMailNeo@web120305.mail.ne1.yahoo.com>
+Message-ID: <CA71AF4DC75A44FFA69344BB43EA9B6E@JUICEBRAIN>
+
+>you can do the same to put many cave plan on the same pdf, each with 
+
+its own map header,
+
+ 
+
+however the cave plans will no longer be positioned in their true relative
+relationship to each other -which is presumably the usual reason why one
+would use Therion to put more than one plan on the same output.
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121019/08b11939/attachment.htm>
+
+From marco_corvi at yahoo.com  Fri Oct 19 14:21:27 2012
+From: marco_corvi at yahoo.com (Marco Corvi)
+Date: Fri, 19 Oct 2012 05:21:27 -0700 (PDT)
+Subject: [Therion] Marked stations
+In-Reply-To: <06D617F2FBF546748AF9471F00BC65BD@JUICEBRAIN>
+References: <507E7168.5080200@wotcc.org.uk><2268F369A5B14F1BA9C68EFD1C195532@Study>
+	<B7DAD6EA78634375BEB9B1F8DDD25251@Study>
+	<06D617F2FBF546748AF9471F00BC65BD@JUICEBRAIN>
+Message-ID: <1350649287.19881.YahooMailNeo@web120301.mail.ne1.yahoo.com>
+
+hi bruce and john,
+
+
+i played a bit with symbol-show/hideand triedi think ti think that i think that hat 
+symbol-show group centerline
+symbol-show point cave-station
+symbol-hide point station:fixed
+
+symbol-hide group centerline
+symbol-show point cave-station
+symbol-show point station:fixed
+
+and others. a bit messy, but i think that
+
+after playing a while one can get to show only fixed (and painted) stations,
+or all the station except for the fixed ones,
+and other combinations ...
+
+marco
+
+
+
+________________________________
+ From: Bruce <bruce at tomo.co.nz>
+To: 'List for Therion users' <therion at speleo.sk> 
+Sent: Wednesday, October 17, 2012 8:31 PM
+Subject: Re: [Therion] Marked stations
+ 
+
+ 
+John
+In my experience there are significant issues with
+station visibility control.  Some previous posts here http://search.gmane.org/?query=mark&group=gmane.comp.gis.therion 
+Bruce
+ 
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of
+John Stevens
+Sent: Wednesday, 17 October 2012 11:28 p.m.
+To: List for Therion users
+Subject: [Therion] Marked stations
+ 
+I have been trying to just print the marked (and
+painted) stations on my 
+plan.
+Used -
+mark 1.0 1.18 1.46 fixed
+mark 1.46 painted
+to mark stations within the centreline in the .th file
+I can show all stations with
+symbol-show point cave-station
+then I tried
+symbol-show point station:fixed
+but it didn't work, but no error occurred.
+When I
+symbol-show point cave-station
+symbol-hide point station:fixed
+it showed all points but the fixed ! so that bit is
+working correctly.
+ 
+Would also like it to show their station number, with
+an option of altitude 
+or position, but I may have to do this manually in the
+plan rather than 
+automatically from within the config file.
+ 
+John 
+ 
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121019/98efda6a/attachment.htm>
+
+From andrew at wotcc.org.uk  Fri Oct 19 15:04:09 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 19 Oct 2012 14:04:09 +0100
+Subject: [Therion] *** GMX Spamverdacht *** Re: Cavesystem - Addition of
+ cavelenght
+In-Reply-To: <44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+References: <20121018205140.A70F434C238@outsider2.texxar.cz>
+	<44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+Message-ID: <50814FC9.8030400@wotcc.org.uk>
+
+Bit puzzled at first when this did not work, however, it appears that if
+in your layout you have
+
+code tex-map
+   \def\maplayout{
+      \legendbox{70}{90}{NW}{
+      \northarrow
+      \bigskip
+      \scalebar
+      \bigskip
+      \the\comment
+      }
+    }
+
+the map-image does not seem to work. So you cannot use this at the same
+time as a custom legend box, which is a bit of a pain.
+
+Looking at data.tex it seems to be defining the maplayout twice
+
+\def\maplayout{\legendbox{0}{100}{SW}{\loadpicture{/media/data/Andrew/Caving/Surveys/CheddarCatchment/Outputs/Reservoir-WhiteSpotE90.pdf}}}
+\cavename{Reservoir Hole and White Spot Cave}
+\def\maplayout{
+\legendbox{0}{100}{sw}{
+\northarrow
+\bigskip
+\scalebar
+\bigskip
+\the\comment
+}
+
+Now you can put the pdf in using the code, and another legend box
+
+   \def\maplayout{
+
+\legendbox{0}{100}{sw}{\loadpicture{/media/data/Andrew/Caving/Surveys/CheddarCatchment/Outputs/Reservoir-WhiteSpotE90.pdf}}
+      \legendbox{0}{100}{sw}{
+      \northarrow
+      \bigskip
+      \scalebar
+      \bigskip
+      \the\comment
+     }
+    }
+
+But that requires absolute path, which does not work very well in the
+repository, so not much good to me. The data.tex show me this
+
+\def\maplayout{}
+\cavename{Reservoir Hole and White Spot Cave}
+\def\maplayout{
+\legendbox{0}{100}{sw}{\loadpicture{/media/data/Andrew/Caving/Surveys/CheddarCatchment/Outputs/Reservoir-WhiteSpotE90.pdf}}
+\legendbox{0}{100}{sw}{
+\northarrow
+\bigskip
+\scalebar
+\bigskip
+\the\comment
+
+again only the second maplayout works.
+
+Is it possible to refer to the map-image in the \def\maplayout code, so
+that I can insert images without using absolute paths, or make it so
+map-image is not overriden by a \def\maplayout
+
+Data available from
+http://www.cave-registry.org.uk/svn/CheddarCatchment/
+
+The above comes from the file
+
+http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfigres+whitespot
+
+Andrew
+Using Therion 5.3.9
+
+On 18/10/12 22:04, Martin Sluka wrote:
+> Generate map1 first and place it to map2:
+> 
+> map-image <x> <y> <n/s/e/w/ne/nw/se/sw/center> <filename> ▷ include image
+> specified by <filename> into map at location specified by <x> <y>. For coordinates
+> and alignment details, see map-header specification.
+> 
+> map-image 100 100 nw map1.pdf
+
+
+From martinsluka at mac.com  Fri Oct 19 16:42:35 2012
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 19 Oct 2012 16:42:35 +0200
+Subject: [Therion] Cavesystem - Addition ofcavelenght
+In-Reply-To: <CA71AF4DC75A44FFA69344BB43EA9B6E@JUICEBRAIN>
+References: <20121018205140.A70F434C238@outsider2.texxar.cz>
+	<44DD3846-8EB8-4BA9-A70D-91A1131D2383@mac.com>
+	<1350631321.53007.YahooMailNeo@web120305.mail.ne1.yahoo.com>
+	<CA71AF4DC75A44FFA69344BB43EA9B6E@JUICEBRAIN>
+Message-ID: <E99D3B8C-D52B-42A6-86BE-3DEAA0507EA4@mac.com>
+
+To generate empty map and input image with both maps?
+
+Odesláno z iPhonu
+
+19. 10. 2012 v 11:08, Bruce <bruce at tomo.co.nz>:
+
+> >you can do the same to put many cave plan on the same pdf, each with
+> its own map header,
+>  
+> however the cave plans will no longer be positioned in their true relative relationship to each other –which is presumably the usual reason why one would use Therion to put more than one plan on the same output.
+> Bruce
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121019/d90fd320/attachment.htm>
+
+From sbc23 at cantab.net  Sat Oct 20 01:37:45 2012
+From: sbc23 at cantab.net (Stephen Clark)
+Date: Sat, 20 Oct 2012 00:37:45 +0100
+Subject: [Therion] Diving LRUD dxf export - Vertical floor/ceiling alignment
+ at scrap joins
+Message-ID: <5081E449.4050706@cantab.net>
+
+I am new to Therion, so please forgive me if I am making a simple error.
+
+I am experiencing a problem when exporting 3d .dxf model data (to AutoCAD)
+
+Background :
+I have a centreline of diving data with LRUD's. Approx 1000m / 0-70m 
+depth  / 125stations. Simple linear passage (The St Georges Resurgence, 
+Montvalent, France)
+I have used the .xvi export of plan and elevation into the map editor.
+I have drawn 12 plan scraps and 12 elevation scraps.
+These are joined and have exported correctly as conventional pdf plan 
+and elevation maps.
+
+Problem:
+When I export the data as a dxf model using the '-wall-source maps' 
+option, there appear to be vertical steps in the passage floor and 
+ceiling at the start and end of each (plan) scrap. Within a single scrap 
+there are no steps. Typically the dimensions relative to the centreline 
+in the scrap 'before' the join are correct. The first up/down dimensions 
+in the 'next' scrap are incorrect. The horizontal alignment of the walls 
+is perfect.
+
+Typical image illustrating the problem here :
+
+http://www.steveclark.demon.co.uk/dxf_error.png
+
+It does not appear to be a problem with the centreline data, because if 
+I re-draw two scraps as a single scrap with only 2 wall lines there is 
+no step in the ceiling or floor.
+
+There is no step in the pdf elevation export of the same scraps.
+
+Joining all the individual wall lines in both plan and elevation does 
+not solve the problem.
+
+The export does not appear to use the elevation scraps to generate 
+passage heights. I get identical output if these are deleted or adjusted.
+
+If I use the export '-wall-source centreline' option, there are no 
+steps. This, however, does not allow me to export/render any features 
+not recorded in the simple LRUD data.
+
+I am relucant to draw the whole survey as a single scrap with just 2 
+walls, but it appears this may solve the problem.
+
+Any thoughts, or is this just a quirk of the dxf export?
+
+Regards,
+
+Steve Clark
+
+
+From andrew at wotcc.org.uk  Sat Oct 20 13:15:45 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sat, 20 Oct 2012 12:15:45 +0100
+Subject: [Therion] colour by map
+Message-ID: <508287E1.3020809@wotcc.org.uk>
+
+When you have coloured by map, in the header there Therion automatically
+added a legend of what colours go with each map. Generally I do not find
+this useful, but cannot find a way to turn it off, without doing a
+\def\maplayout in code, which seems over the top. Is it possible to turn
+off the map colour legend without resorting to code.
+It would be very useful to be able to stitch this off without having to
+redefine the header!
+
+Andrew
+
+
+From markus.boldt at gmx.net  Sat Oct 20 23:55:33 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sat, 20 Oct 2012 23:55:33 +0200
+Subject: [Therion] Cavesystem - Addition of cavelenght
+In-Reply-To: <50814FC9.8030400@wotcc.org.uk>
+Message-ID: <20121020214722.2E7BA34C0A5@outsider2.texxar.cz>
+
+I say many thanks to all who has answered my question. Next weeks I will try
+some of your samples to find out which may be the best for me. 
+Markus
+
+
+
+
+From wookey at wookware.org  Sun Oct 21 00:09:34 2012
+From: wookey at wookware.org (Wookey)
+Date: Sat, 20 Oct 2012 23:09:34 +0100
+Subject: [Therion] Another pool on Cavechat
+In-Reply-To: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+References: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+Message-ID: <20121020220934.GH24695@stoneboat.aleph1.co.uk>
+
++++ Martin Sluka [2012-10-18 08:57 +0200]:
+> I'm sorry, but another pool on Cavechat: http://forums.caves.org/viewtopic.php?f=26&t=14576
+
+I don't seem to have an account there (which is odd, I thought I've
+posted there in the past), nor can I create one, or see the contact
+list to point this out (you need an account to see the contact info on
+'the team' link - how delightfully catch22)
+
+If anyone who _can_ see this info could tell me what email to pester,
+that would be useful. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Sun Oct 21 12:31:46 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 21 Oct 2012 11:31:46 +0100
+Subject: [Therion] Another pool on Cavechat
+In-Reply-To: <20121020220934.GH24695@stoneboat.aleph1.co.uk>
+References: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+	<20121020220934.GH24695@stoneboat.aleph1.co.uk>
+Message-ID: <5083CF12.1060606@wotcc.org.uk>
+
+Cannot find an email, only private messages, so I have asked  Cheryl
+Jonesto setup/reactivate your account
+
+Andrew
+
+
+On 20/10/12 23:09, Wookey wrote:
+> I don't seem to have an account there (which is odd, I thought I've
+> posted there in the past), nor can I create one, or see the contact
+> list to point this out (you need an account to see the contact info on
+> 'the team' link - how delightfully catch22)
+> 
+> If anyone who _can_ see this info could tell me what email to pester,
+> that would be useful.
+
+
+From wookey at wookware.org  Sun Oct 21 13:11:27 2012
+From: wookey at wookware.org (Wookey)
+Date: Sun, 21 Oct 2012 12:11:27 +0100
+Subject: [Therion] Another pool on Cavechat
+In-Reply-To: <5083CF12.1060606@wotcc.org.uk>
+References: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+	<20121020220934.GH24695@stoneboat.aleph1.co.uk>
+	<5083CF12.1060606@wotcc.org.uk>
+Message-ID: <20121021111127.GI24695@stoneboat.aleph1.co.uk>
+
++++ Andrew Atkinson [2012-10-21 11:31 +0100]:
+> Cannot find an email, only private messages, so I have asked  Cheryl
+> Jonesto setup/reactivate your account
+
+Cheers. Tell her this is what I got:
+
+This page:
+http://forums.caves.org/ucp.php?mode=register&change_lang=en
+
+Which I reached by hitting I agree to these terms'
+on this page: (yes, the same URL)
+http://forums.caves.org/ucp.php?mode=register&change_lang=en
+
+Gave this error: 
+"The page you are trying to view cannot be shown because it uses an
+invalid or unsupported form of compression."
+
+And showed no content at all.
+
+(Firefox/Iceweasel 10.0.7)
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From andrew at wotcc.org.uk  Sun Oct 21 14:35:17 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Sun, 21 Oct 2012 13:35:17 +0100
+Subject: [Therion] Another pool on Cavechat
+In-Reply-To: <20121021111127.GI24695@stoneboat.aleph1.co.uk>
+References: <1A63F86C-436F-4193-8E82-C21865F2BCB0@mac.com>
+	<20121020220934.GH24695@stoneboat.aleph1.co.uk>
+	<5083CF12.1060606@wotcc.org.uk>
+	<20121021111127.GI24695@stoneboat.aleph1.co.uk>
+Message-ID: <5083EC05.2010702@wotcc.org.uk>
+
+Turns out that at the bottom of the page on the left there is a
+
+HAVING A PROBLEM?
+
+Contact - Site Admin
+
+Which is an email address admin at cavechat.org
+
+I did not forward the error below, you can take over now
+
+Andrew
+
+On 21/10/12 12:11, Wookey wrote:
+> This page:
+> http://forums.caves.org/ucp.php?mode=register&change_lang=en
+> 
+> Which I reached by hitting I agree to these terms'
+> on this page: (yes, the same URL)
+> http://forums.caves.org/ucp.php?mode=register&change_lang=en
+> 
+> Gave this error: 
+> "The page you are trying to view cannot be shown because it uses an
+> invalid or unsupported form of compression."
+> 
+> And showed no content at all.
+> 
+> (Firefox/Iceweasel 10.0.7)
+
+
+From bruce at tomo.co.nz  Mon Oct 22 01:49:30 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 22 Oct 2012 12:49:30 +1300
+Subject: [Therion] Diving LRUD dxf export - Vertical floor/ceiling
+	alignment at scrap joins
+In-Reply-To: <5081E449.4050706@cantab.net>
+References: <5081E449.4050706@cantab.net>
+Message-ID: <AA4B57213F9B415BA0BDE099FF7F8538@JUICEBRAIN>
+
+Steve
+The vertical offset of _model_ outputs at the end of scraps is common to
+*.lox and *.dxf file formats, and to _map_ outputs in *.3d format.  Maybe
+some others as well.
+
+I think that it has been this way for several versions of Therion, if not
+always. (At least I think I noticed this sort of aberration in *.lox long
+ago, but in the grand scheme of things was just a minor irritation-I have
+never tried to resolve it).
+
+Seems like you have researched the problem quite well.  
+I presume it is a bug in Therion.
+
+As a possible work around you might like to try adding;
+point dimensions -value [2.0 0.5 m]
+or
+point passage-height -value [2.0 -0.5]
+
+near station 28 in your scrap plan4
+
+I've not tried this, just an idea...
+
+Bruce
+
+
+
+
+From bruce at tomo.co.nz  Mon Oct 22 01:56:53 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 22 Oct 2012 12:56:53 +1300
+Subject: [Therion] colour by map
+In-Reply-To: <508287E1.3020809@wotcc.org.uk>
+References: <508287E1.3020809@wotcc.org.uk>
+Message-ID: <1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+
+>When you have coloured by map, in the header there Therion automatically
+adds a legend of what colours go with each map. ...
+>Is it possible to turn off the map colour legend without resorting to code.
+
+
+Similar to my question re map-fg altitude
+http://article.gmane.org/gmane.comp.gis.therion/3259/match=legend+altitude
+
+Perhaps we could have a new option
+
+legend-map-fg [on|off] #with the (current) default as on.
+
+Bruce
+
+
+
+From ipogeorge at email.it  Mon Oct 22 09:50:12 2012
+From: ipogeorge at email.it (Giorgio Pannuzzo)
+Date: Mon, 22 Oct 2012 09:50:12 +0200
+Subject: [Therion] Compass .plt export problem
+Message-ID: <c667e2e774853d47c708cf872544a7c7@89.97.177.8>
+
+I recently noticed that Compass .plt exports miss georeferencing data, as
+long I know.
+Is possible to add this feature?
+
+Thanks
+Giorgio
+
+ 
+ --
+ Caselle da 1GB, trasmetti allegati fino a 3GB e in piu' IMAP, POP3 e SMTP
+autenticato? GRATIS solo con Email.it: http://www.email.it/f
+ 
+ Sponsor:
+ Vuoi fare un regalo davvero originale? Su MisterCupido.com troverai
+centinaia di IDEE REGALO per tutte le tasche! Consegne in tutta Italia in
+soli 2-3 giorni
+ Clicca qui: http://adv.email.it/cgi-bin/foclick.cgi?mid=12387&d=20121022
+
+
+ 
+ 
+ --
+ Caselle da 1GB, trasmetti allegati fino a 3GB e in piu' IMAP, POP3 e SMTP autenticato? GRATIS solo con Email.it http://www.email.it/f
+ 
+ Sponsor:
+ Apri subito Conto Corrente Arancio. Carta Visa Gratis e nessun Canone!
+ Clicca qui: http://adv.email.it/cgi-bin/foclick.cgi?mid=12247&d=22-10
+
+
+From lists at group-s.sk  Mon Oct 22 21:55:25 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 22 Oct 2012 21:55:25 +0200
+Subject: [Therion] Diving LRUD dxf export - Vertical floor/ceiling
+ alignment at scrap joins
+In-Reply-To: <5081E449.4050706@cantab.net>
+References: <5081E449.4050706@cantab.net>
+Message-ID: <CAP35+gFWmV=1ftaWjVWVcLOaAww3bZDPZRO5NoTDuqLGbqKTPw@mail.gmail.com>
+
+Unfortunatelly, what you are asking for are features, that are not yet
+implemented into therion.
+
+Both things do not work at the moment.
+
+Neither passage height adjustment at scrap joins, nor usage of elevation
+scraps for reconstruction of 3D model of the cave. It has nothing to do
+with DXF export.
+
+New 3D generation algorithm with these features is on the way, but it will
+definitely take some time, until it will be implemented.
+
+To generate your 3D model correctly now, you really need just one scrap.
+But you do not need to redraw whole cave again. You can export map as th2
+file (with adjusted scraps) - delete all scrap/endscrap commands between
+and use this huge scrap for model generation.
+
+HTH, S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121022/76936cf0/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Oct 23 10:43:21 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 23 Oct 2012 21:43:21 +1300
+Subject: [Therion] Cannot log into Savannah
+Message-ID: <AAA67F3EE86945D582904F9CF885372F@JUICEBRAIN>
+
+Hi
+
+Is there a problem with the Savannah therion page?
+
+I tried to log in this morning, but it will not let me in.  I know what my
+password is, but anyway I used the 'lost your password' script. It has not
+sent me any message in 13 hours, so I suspect that the system may not have
+properly registered my new email address when I changed it last August.
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121023/c1a3f505/attachment.htm>
+
+From lists at group-s.sk  Tue Oct 23 12:47:43 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 23 Oct 2012 12:47:43 +0200
+Subject: [Therion] Cannot log into Savannah
+In-Reply-To: <AAA67F3EE86945D582904F9CF885372F@JUICEBRAIN>
+References: <AAA67F3EE86945D582904F9CF885372F@JUICEBRAIN>
+Message-ID: <CAP35+gHhmEbHyrLvxZLohGw9HcoCUOuCHcQYZHAPrFd_Sqc0zg@mail.gmail.com>
+
+My password did not work also, but after renewal request, everything seems
+to work fine again. Message arrived within minute.
+
+S.
+
+On 23 October 2012 10:43, Bruce <bruce at tomo.co.nz> wrote:
+
+> ** **
+>
+> Hi****
+>
+> Is there a problem with the ****Savannah**** therion page?****
+>
+> I tried to log in this morning, but it will not let me in.  I know what my
+> password is, but anyway I used the ‘lost your password’ script. It has not
+> sent me any message in 13 hours, so I suspect that the system may not have
+> properly registered my new email address when I changed it last August.***
+> *
+>
+> Bruce****
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121023/f5eebfd9/attachment.htm>
+
+From marco_corvi at yahoo.com  Tue Oct 23 12:56:26 2012
+From: marco_corvi at yahoo.com (Marco Corvi)
+Date: Tue, 23 Oct 2012 03:56:26 -0700 (PDT)
+Subject: [Therion] colour by map
+In-Reply-To: <1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+References: <508287E1.3020809@wotcc.org.uk>
+	<1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+Message-ID: <1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com>
+
+hi bruce,
+
+not sure this answer your question.
+and it's a hack, thus not something that should be used.the real solution would be an implemented feature, as you asked.
+
+anyways, i switch off  the color legend with
+code tex-map
+
+  \colorlegendfalse
+endcode
+
+marco
+
+
+________________________________
+ From: Bruce <bruce at tomo.co.nz>
+To: 'List for Therion users' <therion at speleo.sk> 
+Sent: Monday, October 22, 2012 1:56 AM
+Subject: Re: [Therion] colour by map
+ 
+>When you have coloured by map, in the header there Therion automatically
+adds a legend of what colours go with each map. ...
+>Is it possible to turn off the map colour legend without resorting to code.
+
+
+Similar to my question re map-fg altitude
+http://article.gmane.org/gmane.comp.gis.therion/3259/match=legend+altitude
+
+Perhaps we could have a new option
+
+legend-map-fg [on|off] #with the (current) default as on.
+
+Bruce
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121023/b0994b70/attachment.htm>
+
+From sbc23 at cantab.net  Tue Oct 23 19:59:02 2012
+From: sbc23 at cantab.net (Stephen Clark)
+Date: Tue, 23 Oct 2012 18:59:02 +0100
+Subject: [Therion] Diving LRUD dxf export - Vertical floor/ceiling
+ alignment at scrap joins
+In-Reply-To: <mailman.1.1350986402.31408.therion@speleo.sk>
+References: <mailman.1.1350986402.31408.therion@speleo.sk>
+Message-ID: <5086DAE6.9080503@cantab.net>
+
+Stacho,
+
+Thanks for the clarification on the 3d modeling. That has helped a lot 
+with my understanding of how the output is generated. Even in its 
+current form, it is an exceptionally simple way of generating an initial 
+model for AutoCAD. I look forward to any improvements to the 3d 
+modelling in the future.
+
+The suggestion by Bruce to introduce additional dimension points close 
+to the ends of the scraps has reduced the lack of alignment to a few cm, 
+which is prefectly acceptable for our purposes. Estimating distance 
+underwater, at depth in poor visibility is not very precise! Also, 
+adding the points for the same single station to both scraps has 
+improved things. I will try the single scrap method, but actually really 
+like the ability to use different scale plans of the dry cave sections 
+in the same .th2.
+
+Do you have proposals about how the proposed 3d algorithm will work in 
+the future? It seems, to me at least, that the ability to introduce 
+cross-sectional shape on LRUD data would be even more useful than the 
+use of elevation scraps for passage height. I understand this is a 
+subject that may get very complicated, very quickly.
+
+I'm a big fan on AutoCAD and am therefore somewhat biased. I have a few 
+suggestions for the dxf export that may be worth considering for future 
+releases :
+
+1. Export of a closed 3d polyline of the assumed (rectangular) cave 
+cross-section at each station on another layer. This x,y,z data is 
+already generated for the vertices of the surfaces and would simplify 
+over-drawing of known cross-sections and 'working inside the cave' in 
+autocad.
+
+2. Export of a 3d ellipse or the current flat floor/arch ceiling 3d 
+polyline at each cross-section on a separate layer.  Again, this x,y,z 
+data is already calculated. The latest autocad versions have a very 
+powerful 'LOFT' command that can seamlessly connect together complicated 
+cross-sections along paths.
+
+3. Maybe the export of cross-sections drawn in Xtherion, exported as 
+correctly scaled and aligned 3d polylines in the dxf would be a first 
+step. The complex triangulation of the surface between two 
+cross-sections could be handled by autocad/3dsmax in the first instance.
+
+Excellent software and support. Thank you for your efforts,
+
+Steve Clark
+
+
+
+From knollesimage at t-online.de  Wed Oct 24 08:22:27 2012
+From: knollesimage at t-online.de (Michael Wasmund)
+Date: Wed, 24 Oct 2012 08:22:27 +0200
+Subject: [Therion] How can I obtain a userid for the Wiki ?
+Message-ID: <6B98527A7B00466C979D953641246A2D@boeblingen.de.ibm.com>
+
+BlankHello,
+We'd like to add our cave to the list of "Therion Caves" in the Wiki.
+How can I obtain a userid ?
+
+Greetings,
+Michael
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/ad58d00c/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Blank Bkgrd.gif
+Type: image/gif
+Size: 145 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/ad58d00c/attachment.gif>
+
+From lada at jeskynar.cz  Wed Oct 24 09:35:35 2012
+From: lada at jeskynar.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Wed, 24 Oct 2012 09:35:35 +0200
+Subject: [Therion] How can I obtain a userid for the Wiki ?
+In-Reply-To: <6B98527A7B00466C979D953641246A2D@boeblingen.de.ibm.com>
+References: <6B98527A7B00466C979D953641246A2D@boeblingen.de.ibm.com>
+Message-ID: <CANkn7RdK4STidMnhE2i_BD-1Di0s5N0UXmPY+Z_XW=Jyc5mntw@mail.gmail.com>
+
+Hi,
+because of some problems with spambots user registration was disabled some
+time ago. New registrations were so far handled by admins manually upon
+request.
+
+This week I enabled user registration again together with text captcha
+plugin and other precautions - you can register here
+http://therion.speleo.sk/wiki/doku.php?id=start&do=register
+
+L.
+
+2012/10/24 Michael Wasmund <knollesimage at t-online.de>
+
+> **
+>  Hello,
+> We'd like to add our cave to the list of "Therion Caves" in the Wiki.
+> How can I obtain a userid ?
+>
+> Greetings,
+> Michael
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/ebe92683/attachment.htm>
+
+From drfootleg at gmail.com  Wed Oct 24 14:39:33 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 24 Oct 2012 13:39:33 +0100
+Subject: [Therion] How can I obtain a userid for the Wiki ?
+In-Reply-To: <CANkn7RdK4STidMnhE2i_BD-1Di0s5N0UXmPY+Z_XW=Jyc5mntw@mail.gmail.com>
+References: <6B98527A7B00466C979D953641246A2D@boeblingen.de.ibm.com>
+	<CANkn7RdK4STidMnhE2i_BD-1Di0s5N0UXmPY+Z_XW=Jyc5mntw@mail.gmail.com>
+Message-ID: <CAJkGg4=fhB0h5dgLYZoObuiLj6fEhG7G4oRHD_XqiZ+y-LQJ7Q@mail.gmail.com>
+
+That registration worked for me, but the captcha text was displayed as
+plain text. I used Google Chrome browser.
+Just letting you know in case the plugin is not working as expected
+and you start getting Spam bot registrations due to being able to read
+the plain text captcha text.
+
+Footleg
+
+On 24 October 2012 08:35, Ladislav Blažek <lada at jeskynar.cz> wrote:
+> Hi,
+> because of some problems with spambots user registration was disabled some
+> time ago. New registrations were so far handled by admins manually upon
+> request.
+>
+> This week I enabled user registration again together with text captcha
+> plugin and other precautions - you can register here
+> http://therion.speleo.sk/wiki/doku.php?id=start&do=register
+>
+> L.
+>
+> 2012/10/24 Michael Wasmund <knollesimage at t-online.de>
+>>
+>> Hello,
+>> We'd like to add our cave to the list of "Therion Caves" in the Wiki.
+>> How can I obtain a userid ?
+>>
+>> Greetings,
+>> Michael
+>>
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From lada at jeskynar.cz  Wed Oct 24 15:01:24 2012
+From: lada at jeskynar.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Wed, 24 Oct 2012 15:01:24 +0200
+Subject: [Therion] How can I obtain a userid for the Wiki ?
+In-Reply-To: <CAJkGg4=fhB0h5dgLYZoObuiLj6fEhG7G4oRHD_XqiZ+y-LQJ7Q@mail.gmail.com>
+References: <6B98527A7B00466C979D953641246A2D@boeblingen.de.ibm.com>
+	<CANkn7RdK4STidMnhE2i_BD-1Di0s5N0UXmPY+Z_XW=Jyc5mntw@mail.gmail.com>
+	<CAJkGg4=fhB0h5dgLYZoObuiLj6fEhG7G4oRHD_XqiZ+y-LQJ7Q@mail.gmail.com>
+Message-ID: <CANkn7RdtOing6HRQ9sv6-J6rwp_TnwP8pcawv-my0P-3Rhf2NA@mail.gmail.com>
+
+I know it is primitive but personally I don't like image capthas...
+Password is auto-generated (not visible during registration) and sent to
+e-mail address specified in the registration form - so you need to 1. enter
+valid email address & 2. have access to this mailbox to be able to login.
+Hopefully it will keep spambots away. L.
+
+2012/10/24 Footleg <drfootleg at gmail.com>
+
+> That registration worked for me, but the captcha text was displayed as
+> plain text. I used Google Chrome browser.
+> Just letting you know in case the plugin is not working as expected
+> and you start getting Spam bot registrations due to being able to read
+> the plain text captcha text.
+>
+> Footleg
+>
+> On 24 October 2012 08:35, Ladislav Blažek <lada at jeskynar.cz> wrote:
+> > Hi,
+> > because of some problems with spambots user registration was disabled
+> some
+> > time ago. New registrations were so far handled by admins manually upon
+> > request.
+> >
+> > This week I enabled user registration again together with text captcha
+> > plugin and other precautions - you can register here
+> > http://therion.speleo.sk/wiki/doku.php?id=start&do=register
+> >
+> > L.
+> >
+> > 2012/10/24 Michael Wasmund <knollesimage at t-online.de>
+> >>
+> >> Hello,
+> >> We'd like to add our cave to the list of "Therion Caves" in the Wiki.
+> >> How can I obtain a userid ?
+> >>
+> >> Greetings,
+> >> Michael
+> >>
+> >>
+> >>
+> >>
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> http://mailman.speleo.sk/mailman/listinfo/therion
+> >>
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> >
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/d8a079f5/attachment.htm>
+
+From lists at group-s.sk  Wed Oct 24 15:06:32 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 24 Oct 2012 15:06:32 +0200
+Subject: [Therion] colour by map
+In-Reply-To: <1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com>
+References: <508287E1.3020809@wotcc.org.uk>
+	<1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+	<1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com>
+Message-ID: <CAP35+gH7WiHKgeFQaFG1YRq7pJcda-SiDPz-Pao93e4d+vdkBQ@mail.gmail.com>
+
+Well, after trying to implement this feature I realized, that it already
+works, but it is missing in therion book.
+
+Try:
+
+color-legend on|off
+
+in your layout.
+
+I am sorry for that.
+
+S.
+
+On 23 October 2012 12:56, Marco Corvi <marco_corvi at yahoo.com> wrote:
+
+> hi bruce,
+>
+>  not sure this answer your question.
+> and it's a hack, thus not something that should be used.
+> the real solution would be an implemented feature, as you asked.
+>
+>  anyways, i switch off  the color legend with
+> code tex-map
+>    \colorlegendfalse
+> endcode
+>
+>  marco
+>
+>   ------------------------------
+> *From:* Bruce <bruce at tomo.co.nz>
+> *To:* 'List for Therion users' <therion at speleo.sk>
+> *Sent:* Monday, October 22, 2012 1:56 AM
+> *Subject:* Re: [Therion] colour by map
+>
+> >When you have coloured by map, in the header there Therion automatically
+> adds a legend of what colours go with each map. ...
+> >Is it possible to turn off the map colour legend without resorting to
+> code.
+>
+>
+> Similar to my question re map-fg altitude
+> http://article.gmane.org/gmane.comp.gis.therion/3259/match=legend+altitude
+>
+> Perhaps we could have a new option
+>
+> legend-map-fg [on|off] #with the (current) default as on.
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/916bac1b/attachment.htm>
+
+From m.budaj at gmail.com  Wed Oct 24 16:15:49 2012
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 24 Oct 2012 16:15:49 +0200
+Subject: [Therion] colour by map
+In-Reply-To: <CAP35+gH7WiHKgeFQaFG1YRq7pJcda-SiDPz-Pao93e4d+vdkBQ@mail.gmail.com>
+References: <508287E1.3020809@wotcc.org.uk>
+	<1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+	<1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com>
+	<CAP35+gH7WiHKgeFQaFG1YRq7pJcda-SiDPz-Pao93e4d+vdkBQ@mail.gmail.com>
+Message-ID: <CALPsdSsGfsOD_JuZwNQw+N3LzC5V7nrY5XodCkY9jydXWSn6Xw@mail.gmail.com>
+
+In fact it's there, but in a form which is not easy to find using Ctrl+F
+
+colo[u]r-legend <on/off>
+
+Martin
+
+On Wed, Oct 24, 2012 at 3:06 PM, Stacho Mudrak <lists at group-s.sk> wrote:
+> Well, after trying to implement this feature I realized, that it already
+> works, but it is missing in therion book.
+>
+> Try:
+>
+> color-legend on|off
+>
+> in your layout.
+>
+> I am sorry for that.
+>
+> S.
+>
+>
+> On 23 October 2012 12:56, Marco Corvi <marco_corvi at yahoo.com> wrote:
+>>
+>> hi bruce,
+>>
+>> not sure this answer your question.
+>> and it's a hack, thus not something that should be used.
+>> the real solution would be an implemented feature, as you asked.
+>>
+>> anyways, i switch off  the color legend with
+>> code tex-map
+>>   \colorlegendfalse
+>> endcode
+>>
+>> marco
+>>
+>> ________________________________
+>> From: Bruce <bruce at tomo.co.nz>
+>> To: 'List for Therion users' <therion at speleo.sk>
+>> Sent: Monday, October 22, 2012 1:56 AM
+>> Subject: Re: [Therion] colour by map
+>>
+>> >When you have coloured by map, in the header there Therion automatically
+>> adds a legend of what colours go with each map. ...
+>> >Is it possible to turn off the map colour legend without resorting to
+>> > code.
+>>
+>>
+>> Similar to my question re map-fg altitude
+>> http://article.gmane.org/gmane.comp.gis.therion/3259/match=legend+altitude
+>>
+>> Perhaps we could have a new option
+>>
+>> legend-map-fg [on|off] #with the (current) default as on.
+>>
+>> Bruce
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From lists at group-s.sk  Wed Oct 24 16:46:14 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 24 Oct 2012 16:46:14 +0200
+Subject: [Therion] Marked stations
+In-Reply-To: <1350649287.19881.YahooMailNeo@web120301.mail.ne1.yahoo.com>
+References: <507E7168.5080200@wotcc.org.uk>
+	<2268F369A5B14F1BA9C68EFD1C195532@Study>
+	<B7DAD6EA78634375BEB9B1F8DDD25251@Study>
+	<06D617F2FBF546748AF9471F00BC65BD@JUICEBRAIN>
+	<1350649287.19881.YahooMailNeo@web120301.mail.ne1.yahoo.com>
+Message-ID: <CAP35+gFerkphHaRhrvLzxPyj--0AcJkLNcrzDWfC2rJRw459=A@mail.gmail.com>
+
+As Marco already mentioned, it can be done after playing a little bit with
+symbol show/hide.
+
+Well, I needed to run therion in debugger to see, what is going on.
+
+The problem is, that there are multiple "attributes" and therion does
+support only hide show for single symbol type. Therefore, specification is
+tricky. But in your case, this is what you can use:
+
+symbol-hide group centerline symbol-show point cave-station symbol-show
+point station:painted symbol-show point station:fixed
+
+First line hides all centerline symbols from everywhere (stations and
+shots).
+
+Second tells therion, that you want to show stations in the cave. But in
+fact - point cave-station itself does not show any symbol. It only
+specifies, that stations in the cave should be shown.
+
+Therefore 3. and 4. lines are needed to specify, that you want painted and
+fixed stations to be shown.
+
+In fact, if you use symbol-hide group centerline, and want to show some
+station afterwards, you need to specify explicitely both, whether you want
+to show stations in cave or on surface and which kind of stations you want
+to show. You can use also symbol-show point station to show all kinds of
+stations.
+
+And now I am not sure, whether I understand my self ;)
+
+But at least, this configuration seems to work on my data sample.
+
+It would be great to have some kind of query language, show/hide/color
+symbols...
+
+HTH, S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/da55653a/attachment.htm>
+
+From marco_corvi at yahoo.com  Wed Oct 24 17:01:27 2012
+From: marco_corvi at yahoo.com (Marco Corvi)
+Date: Wed, 24 Oct 2012 08:01:27 -0700 (PDT)
+Subject: [Therion] colour by map
+In-Reply-To: <CALPsdSsGfsOD_JuZwNQw+N3LzC5V7nrY5XodCkY9jydXWSn6Xw@mail.gmail.com>
+References: <508287E1.3020809@wotcc.org.uk>
+	<1BB58C30B657425F97205E027AAD8982@JUICEBRAIN>
+	<1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com>
+	<CAP35+gH7WiHKgeFQaFG1YRq7pJcda-SiDPz-Pao93e4d+vdkBQ@mail.gmail.com>
+	<CALPsdSsGfsOD_JuZwNQw+N3LzC5V7nrY5XodCkY9jydXWSn6Xw@mail.gmail.com>
+Message-ID: <1351090887.35873.YahooMailNeo@web120305.mail.ne1.yahoo.com>
+
+thanks,
+i did not look in the source (thlayout.h): sorry, my fault.
+
+and can also color by the scraps.
+i rather use a feature (layout command) than a hack (inserted tex/mpost code).
+
+by the way, i wish color by survey date (topo-date) will be implemented soon.
+
+now i tried the layout command (5.3.10): had some problems.
+
+marco
+
+
+
+
+________________________________
+ From: Martin Budaj <m.budaj at gmail.com>
+To: List for Therion users <therion at speleo.sk> 
+Sent: Wednesday, October 24, 2012 4:15 PM
+Subject: Re: [Therion] colour by map
+ 
+In fact it's there, but in a form which is not easy to find using Ctrl+F
+
+colo[u]r-legend <on/off>
+
+Martin
+
+On Wed, Oct 24, 2012 at 3:06 PM, Stacho Mudrak <lists at group-s.sk> wrote:
+> Well, after trying to implement this feature I realized, that it already
+> works, but it is missing in therion book.
+>
+> Try:
+>
+> color-legend on|off
+>
+> in your layout.
+>
+> I am sorry for that.
+>
+> S.
+>
+>
+> On 23 October 2012 12:56, Marco Corvi <marco_corvi at yahoo.com> wrote:
+>>
+>> hi bruce,
+>>
+>> not sure this answer your question.
+>> and it's a hack, thus not something that should be used.
+>> the real solution would be an implemented feature, as you asked.
+>>
+>> anyways, i switch off  the color legend with
+>> code tex-map
+>>   \colorlegendfalse
+>> endcode
+>>
+>> marco
+>>
+>> ________________________________
+>> From: Bruce <bruce at tomo.co.nz>
+>> To: 'List for Therion users' <therion at speleo.sk>
+>> Sent: Monday, October 22, 2012 1:56 AM
+>> Subject: Re: [Therion] colour by map
+>>
+>> >When you have coloured by map, in the header there Therion automatically
+>> adds a legend of what colours go with each map. ...
+>> >Is it possible to turn off the map colour legend without resorting to
+>> > code.
+>>
+>>
+>> Similar to my question re map-fg altitude
+>> http://article.gmane.org/gmane.comp.gis.therion/3259/match=legend+altitude
+>>
+>> Perhaps we could have a new option
+>>
+>> legend-map-fg [on|off] #with the (current) default as on.
+>>
+>> Bruce
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121024/cf938c45/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Oct 24 21:14:43 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 25 Oct 2012 08:14:43 +1300
+Subject: [Therion] Marked stations
+In-Reply-To: <CAP35+gFerkphHaRhrvLzxPyj--0AcJkLNcrzDWfC2rJRw459=A@mail.gmail.com>
+References: <507E7168.5080200@wotcc.org.uk><2268F369A5B14F1BA9C68EFD1C195532@Study><B7DAD6EA78634375BEB9B1F8DDD25251@Study><06D617F2FBF546748AF9471F00BC65BD@JUICEBRAIN><1350649287.19881.YahooMailNeo@web120301.mail.ne1.yahoo.com>
+	<CAP35+gFerkphHaRhrvLzxPyj--0AcJkLNcrzDWfC2rJRw459=A@mail.gmail.com>
+Message-ID: <A9737567B9004FFFB9EAF4CF6E63FACD@JUICEBRAIN>
+
+Thanks Stacho
+
+This is a useful post, and (assuming it is correct) deserves to be written
+up clearly in the Therion Book and wiki.
+
+It potentially clears up problems for which I (and others on the forum) have
+been searching for a solution for years.
+
+I may now revisit some of those old projects when I have time.
+
+Bruce 
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Thursday, 25 October 2012 3:46 a.m.
+To: List for Therion users
+Subject: Re: [Therion] Marked stations
+
+ 
+
+As Marco already mentioned, it can be done after playing a little bit with
+symbol show/hide.
+
+ 
+
+Well, I needed to run therion in debugger to see, what is going on.
+
+
+
+
+
+The problem is, that there are multiple "attributes" and therion does
+support only hide show for single symbol type. Therefore, specification is
+tricky. But in your case, this is what you can use:
+
+
+
+
+
+symbol-hide group centerline symbol-show point cave-station symbol-show
+point station:painted symbol-show point station:fixed
+
+
+
+
+
+First line hides all centerline symbols from everywhere (stations and
+shots).
+
+
+
+
+
+Second tells therion, that you want to show stations in the cave. But in
+fact - point cave-station itself does not show any symbol. It only
+specifies, that stations in the cave should be shown.
+
+
+
+
+
+Therefore 3. and 4. lines are needed to specify, that you want painted and
+fixed stations to be shown.
+
+
+
+
+
+In fact, if you use symbol-hide group centerline, and want to show some
+station afterwards, you need to specify explicitely both, whether you want
+to show stations in cave or on surface and which kind of stations you want
+to show. You can use also symbol-show point station to show all kinds of
+stations.
+
+
+
+
+
+And now I am not sure, whether I understand my self ;)
+
+
+
+
+
+But at least, this configuration seems to work on my data sample.
+
+
+
+
+
+It would be great to have some kind of query language, show/hide/color
+symbols...
+
+
+
+
+
+HTH, S.
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121025/9de61589/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Oct 24 21:20:27 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 25 Oct 2012 08:20:27 +1300
+Subject: [Therion] colour by map
+In-Reply-To: <CALPsdSsGfsOD_JuZwNQw+N3LzC5V7nrY5XodCkY9jydXWSn6Xw@mail.gmail.com>
+References: <508287E1.3020809@wotcc.org.uk><1BB58C30B657425F97205E027AAD8982@JUICEBRAIN><1350989786.85181.YahooMailNeo@web120306.mail.ne1.yahoo.com><CAP35+gH7WiHKgeFQaFG1YRq7pJcda-SiDPz-Pao93e4d+vdkBQ@mail.gmail.com>
+	<CALPsdSsGfsOD_JuZwNQw+N3LzC5V7nrY5XodCkY9jydXWSn6Xw@mail.gmail.com>
+Message-ID: <B00FF4F0FE2A4AE4A4C748EC8E2BCB2C@JUICEBRAIN>
+
+Ah ha
+
+I thought that colour-legend had a different purpose, due to a test that I must have performed badly in one of my first trials of Therion. Funny how misconceptions can persist for years.
+
+ 
+
+Perhaps the Therion Book could clarify that it applies only when map-fg is set to altitude, map or scrap.
+
+ 
+
+colo[u]r-legend <on/off> ◃ turn on/off legend of map-fg colours when map-fg is set to altitude, scrap or map (M, A)
+
+ 
+
+Similar to Marco, I also have 
+
+ 
+
+map-fg date #survey or topo date
+
+and
+
+map-fg explo-date #passage exploration date
+
+ 
+
+on my wish list.
+
+ 
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Martin Budaj
+Sent: Thursday, 25 October 2012 3:16 a.m.
+To: List for Therion users
+Subject: Re: [Therion] colour by map
+
+ 
+
+In fact it's there, but in a form which is not easy to find using Ctrl+F
+
+ 
+
+colo[u]r-legend <on/off>
+
+ 
+
+Martin
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121025/04c60acf/attachment.htm>
+
+From lists at group-s.sk  Thu Oct 25 16:51:24 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 25 Oct 2012 16:51:24 +0200
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <20121014130112.5EAE134C353@outsider2.texxar.cz>
+References: <CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+	<20121014130112.5EAE134C353@outsider2.texxar.cz>
+Message-ID: <CAP35+gEij+jAVhgyjTtS3brC2N2kDH+=6y1-7US+dYJiqPgeaw@mail.gmail.com>
+
+When trying to implement new feature we have figured out in literature,
+that declination against grid north is called "needle deflection". Is this
+english term, OK? It means, instead of declination, you would specify
+
+needle-deflection 10 deg
+
+In Slovakia, we call it  "magnetic deflection". Or may be just
+
+declination-north grid
+
+would be sufficient. Any comments?
+
+S.
+
+
+
+On 14 October 2012 15:01, Ben Cooper <ben at caver.plus.com> wrote:
+
+> **
+> Yes please - that would help a problem I have with the Upper Flood data
+> where much of the "old" data is declined against Grid North, and hence all
+> my "new" data has also been delcined to Grid North too.  When I add the CS
+> option, the data is rotated by 0.55 degrees (the Grid to True difference in
+> UK).
+>
+> (First posted Feb 2011 under subjects "CS and grid alignmenrt" and "grid
+> alignment rotation")
+> Ben
+>
+>  ------------------------------
+> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Stacho Mudrak
+> *Sent:* 11 October 2012 16:49
+>
+> *To:* List for Therion users
+> *Subject:* Re: [Therion] Declination and the cs command
+>
+> Do you mean adding some option, that would specify, that given declination
+> is not against true but grid north?
+>
+> S.
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121025/51ae8e7c/attachment.htm>
+
+From drfootleg at gmail.com  Thu Oct 25 21:43:32 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Thu, 25 Oct 2012 20:43:32 +0100
+Subject: [Therion] Declination and the cs command
+In-Reply-To: <CAP35+gEij+jAVhgyjTtS3brC2N2kDH+=6y1-7US+dYJiqPgeaw@mail.gmail.com>
+References: <CAP35+gGMAT+8HUY6HeMmGua+gyknxYPh5bnAJUeQTpqBMMMjJw@mail.gmail.com>
+	<20121014130112.5EAE134C353@outsider2.texxar.cz>
+	<CAP35+gEij+jAVhgyjTtS3brC2N2kDH+=6y1-7US+dYJiqPgeaw@mail.gmail.com>
+Message-ID: <CAJkGg4=rt8WEx8hbsKkuYr_WNgS0zLgdG+c44SKHG9ZbYr-8Jg@mail.gmail.com>
+
+I wasn't certain of the correct terms to use either, but I found this
+on the British Ordnance Survey website:
+http://www.ordnancesurvey.co.uk/oswebsite/support/knowledgebase/grid-north-magnetic-north-and-true-north.html
+
+"The horizontal angular difference between True North and Magnetic
+North is called MAGNETIC VARIATION or DECLINATION. The horizontal
+angular difference between Grid North and Magnetic North is called
+GRID MAGNETIC ANGLE."
+
+Footleg
+
+On 25 October 2012 15:51, Stacho Mudrak <lists at group-s.sk> wrote:
+> When trying to implement new feature we have figured out in literature, that
+> declination against grid north is called "needle deflection". Is this
+> english term, OK? It means, instead of declination, you would specify
+>
+> needle-deflection 10 deg
+>
+> In Slovakia, we call it  "magnetic deflection". Or may be just
+>
+> declination-north grid
+>
+> would be sufficient. Any comments?
+>
+> S.
+>
+>
+>
+> On 14 October 2012 15:01, Ben Cooper <ben at caver.plus.com> wrote:
+>>
+>> Yes please - that would help a problem I have with the Upper Flood data
+>> where much of the "old" data is declined against Grid North, and hence all
+>> my "new" data has also been delcined to Grid North too.  When I add the CS
+>> option, the data is rotated by 0.55 degrees (the Grid to True difference in
+>> UK).
+>>
+>> (First posted Feb 2011 under subjects "CS and grid alignmenrt" and "grid
+>> alignment rotation")
+>> Ben
+>>
+>> ________________________________
+>> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On
+>> Behalf Of Stacho Mudrak
+>> Sent: 11 October 2012 16:49
+>>
+>> To: List for Therion users
+>> Subject: Re: [Therion] Declination and the cs command
+>>
+>> Do you mean adding some option, that would specify, that given declination
+>> is not against true but grid north?
+>>
+>> S.
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From markus.boldt at gmx.net  Sun Oct 28 11:02:21 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sun, 28 Oct 2012 11:02:21 +0100
+Subject: [Therion] Color for one scrap in a Project
+Message-ID: <20121028095355.70EB334C37B@outsider2.texxar.cz>
+
+Is it possible to define color-map fg only for one scrap in a Project of
+about 50 scraps in several surveys? 
+I have an "all-thconfig" file for this Project and there I have defined a
+light yellow for the cave. And in the scrap which I want to have in very
+light grey I have defined this very light grey, but it will overwritten. 
+Many thanks for Ideas. 
+Markus
+
+
+
+From martinsluka at mac.com  Sun Oct 28 11:21:59 2012
+From: martinsluka at mac.com (Sluka Martin)
+Date: Sun, 28 Oct 2012 11:21:59 +0100
+Subject: [Therion] Color for one scrap in a Project
+In-Reply-To: <20121028095355.70EB334C37B@outsider2.texxar.cz>
+References: <20121028095355.70EB334C37B@outsider2.texxar.cz>
+Message-ID: <37C33D2C-FD0A-4C2E-8FCE-11056CC655C4@mac.com>
+
+Marcus, 
+
+try user area with light grey filling all the scrap.
+
+something as this:
+
+layout:
+
+ def a_u_lgrey (expr p) =
+      T:=identity;
+      thfill p withcolor (0.73, 0.71, 0.75);
+ enddef;
+
+th2:
+
+area u:lgrey
+  l249-1027-2729
+endarea
+
+In this way may fill your map with color areas easy.
+
+m.
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: colibri_r9.pdf
+Type: application/pdf
+Size: 17257 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121028/231ea3c3/attachment.pdf>
+-------------- next part --------------
+
+
+On 28.10.2012, at 11:02, Markus Boldt wrote:
+
+> Is it possible to define color-map fg only for one scrap in a Project of
+> about 50 scraps in several surveys? 
+> I have an "all-thconfig" file for this Project and there I have defined a
+> light yellow for the cave. And in the scrap which I want to have in very
+> light grey I have defined this very light grey, but it will overwritten. 
+> Many thanks for Ideas. 
+> Markus
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From markus.boldt at gmx.net  Sun Oct 28 11:56:29 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sun, 28 Oct 2012 11:56:29 +0100
+Subject: [Therion] Color for one scrap in a Project
+In-Reply-To: <37C33D2C-FD0A-4C2E-8FCE-11056CC655C4@mac.com>
+Message-ID: <20121028104802.1A04534C37B@outsider2.texxar.cz>
+
+Martin, 
+it works! Many Thanks!! 
+Is there an additionally possibility to make this definition so that the
+area will be a bit transparent?
+Markus
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag
+von Sluka Martin
+Gesendet: Sonntag, 28. Oktober 2012 11:22
+An: List for Therion users
+Betreff: *** GMX Spamverdacht *** Re: [Therion] Color for one scrap in a
+Project
+
+Marcus, 
+
+try user area with light grey filling all the scrap.
+
+something as this:
+
+layout:
+
+ def a_u_lgrey (expr p) =
+      T:=identity;
+      thfill p withcolor (0.73, 0.71, 0.75);
+ enddef;
+
+th2:
+
+area u:lgrey
+  l249-1027-2729
+endarea
+
+In this way may fill your map with color areas easy.
+
+m.
+
+
+
+
+From markus.boldt at gmx.net  Sun Oct 28 12:00:13 2012
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sun, 28 Oct 2012 12:00:13 +0100
+Subject: [Therion] *** GMX Spamverdacht *** Re: Color for one scrap in a
+	Project
+In-Reply-To: <37C33D2C-FD0A-4C2E-8FCE-11056CC655C4@mac.com>
+Message-ID: <20121028105146.51A7E34C37B@outsider2.texxar.cz>
+
+Martin, 
+in the moment I see, that under the light grey ist the light yellow. That is
+not what I want to have. And therefore I think to define a transparency is
+not really possible - or?
+Markus
+
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag
+von Sluka Martin
+Gesendet: Sonntag, 28. Oktober 2012 11:22
+An: List for Therion users
+Betreff: *** GMX Spamverdacht *** Re: [Therion] Color for one scrap in a
+Project
+
+Marcus, 
+
+try user area with light grey filling all the scrap.
+
+something as this:
+
+layout:
+
+ def a_u_lgrey (expr p) =
+      T:=identity;
+      thfill p withcolor (0.73, 0.71, 0.75);
+ enddef;
+
+th2:
+
+area u:lgrey
+  l249-1027-2729
+endarea
+
+In this way may fill your map with color areas easy.
+
+m.
+
+
+
+
+From bruce at tomo.co.nz  Tue Oct 30 19:45:15 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 31 Oct 2012 07:45:15 +1300
+Subject: [Therion] background sketch inserted multiple times
+Message-ID: <9F1C3EFA53B6434696D022D5963F3791@JUICEBRAIN>
+
+Michael
+
+I think you just added a wiki item on Fuchslabyrinth caves where it says
+Therions bitmap morphing feature is being used.
+
+I am intrigued because in 2008 or 2009 we were starting to use this feature,
+then we were delayed, and by the time we got back to experimenting there was
+a bug in the next version of Therion whereby the sketches were inserted into
+the pdf outputs multiple times, taking inordinate time to compile and making
+the pdf files very large, 100's of megabytes in many cases.  Stacho
+acknowledged the bug and I think some change was made in 5.3.9, but it did
+not fix the problem for us.
+
+ 
+
+Described here
+http://article.gmane.org/gmane.comp.gis.therion/2680/match=sketches
+
+ 
+
+I have tried again with a couple of different files using 5.3.10, in one
+trivial case a 283kB sketch inserted in a small map produced an 11MB pdf
+file (the pdf without the sketch is 300kB).
+
+ 
+
+So I am wondering how you are making it workable?
+
+Either;
+
+-          something in our custom metapost or layouts is causing the error
+for us and you are not experiencing this bug, or
+
+-          you are using an old version of Therion in which this feature was
+bug free, or
+
+-          you are putting up with very large output files, even for very
+small portions of your overall project
+
+I'm interested in your comments.
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121031/d57f64a4/attachment.htm>
+
+From marco.menchise at gmail.com  Wed Oct 31 12:37:55 2012
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Wed, 31 Oct 2012 12:37:55 +0100
+Subject: [Therion] Doubt about vertical sections
+Message-ID: <CADzYBB5sKpriGewozJ+G+Yqby1=pyQX4UCnt42EGO8zaB+WsMA@mail.gmail.com>
+
+Hello,
+I tried to make a .xvi for elevation and extended section starting from
+this dataset:
+
+survey test
+  centerline
+    units compass degrees
+    units clino degrees
+    units tape metres
+    data normal from to length compass clino     left        right    up
+   down
+    0 1 10   45  -67        [1 2]         [3 4]          [5 6]          [7
+8]
+  endcenterline
+endsurvey
+
+everything looks good, the up and down data are plotted in the right way.
+
+Then I changed the clino to -68 degrees and noticed that vertical sections
+were rotated in the elevation and extended xvi. Is that correct? Am I
+missing something?
+
+Here's the thconfig:
+
+encoding  utf-8
+source dati.th
+
+export map -proj plan      -o pianta.xvi
+export map -proj extended  -o sezione.xvi
+export map -proj elevation -o elevazione.xvi
+
+
+Thanks,
+Marco
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121031/5f5f8196/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Oct 31 19:08:28 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 1 Nov 2012 07:08:28 +1300
+Subject: [Therion] Doubt about vertical sections
+In-Reply-To: <CADzYBB5sKpriGewozJ+G+Yqby1=pyQX4UCnt42EGO8zaB+WsMA@mail.gmail.com>
+References: <CADzYBB5sKpriGewozJ+G+Yqby1=pyQX4UCnt42EGO8zaB+WsMA@mail.gmail.com>
+Message-ID: <0E34C4493A5C4B1AAE6D2A652AC7BB7A@JUICEBRAIN>
+
+Marco
+
+I tested your example and got the result you described with both xvi and pdf outputs.
+
+ 
+
+I think you have found the transition defined by ‘vthreshold’.
+
+>From the Therion Book…
+
+“
+
+vthreshold <number> <units> ◃ threshold for interpreting LRUD readings as left-right-front-back reading perpendicular to the shot.
+
+If passeges are horizontal (inclination < vthreshold), LR is perpendicular to the shot and UD is vertical.
+
+If passages are more or less vertical (inclination > vthreshold), even UD becomes perpendicular to the shot – otherwise passages would not look very good. In the case of vertical shots, UD is interpreted as north-south dimension from the station to allow tube-like modelling of verticals
+
+“
+
+I had thought the default value of vthreshold was 60 degrees, but it seems it may be around 67.5 degrees.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20121101/8d8e9f7c/attachment.htm>
+

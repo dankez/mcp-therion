@@ -7,10 +7,15 @@ from src.anonymizer import anonymize_th
 mcp = FastMCP("Therion Mentor")
 DATA_ROOT = "/home/dankez/Downloads/dropbox-spolu/"
 STUDNICA_PATH = "studnica.json"
+SOURCES_DIR = "sources"
+
+# Vytvorenie adresára pre zdroje, ak neexistuje
+if not os.path.exists(SOURCES_DIR):
+    os.makedirs(SOURCES_DIR)
 
 @mcp.tool()
 def search_studnica(query: str):
-    """Vyhľadá záznamy v Studnici (podľa kľúča alebo hodnoty)."""
+    """Vyhľadá záznamy v Studnici (vaša vedomostná báza)."""
     if not os.path.exists(STUDNICA_PATH):
         return "Studnica je prázdna."
     
@@ -32,98 +37,80 @@ def search_studnica(query: str):
 
 @mcp.tool()
 def add_to_studnica(topic: str, trick: str):
-    """Uloží novú tému a trik do Studnice."""
+    """Pridá nový trik alebo poznatok do Studnice."""
     data = {}
     if os.path.exists(STUDNICA_PATH):
         try:
             with open(STUDNICA_PATH, 'r', encoding='utf-8') as f:
                 data = json.load(f)
         except Exception:
-            pass # Vytvoríme nový objekt, ak je súbor poškodený
+            pass
             
     data[topic] = trick
     
     try:
         with open(STUDNICA_PATH, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-        return f"Téma '{topic}' bola úspešne pridaná do Studnice."
+        return f"Téma '{topic}' pridaná do Studnice."
     except Exception as e:
-        return f"Chyba pri ukladaní do Studnice: {str(e)}"
+        return f"Chyba pri ukladaní: {str(e)}"
 
 @mcp.tool()
-def list_therion_projects():
-    """Zoznam adresárov s Therion projektmi."""
-    if not os.path.exists(DATA_ROOT):
-        return f"Chyba: Adresár {DATA_ROOT} neexistuje."
-    
-    projects = []
-    try:
-        for d in os.listdir(DATA_ROOT):
-            full_path = os.path.join(DATA_ROOT, d)
-            if os.path.isdir(full_path):
-                projects.append(d)
-    except Exception as e:
-        return f"Interná chyba pri prehľadávaní adresárov: {str(e)}"
-        
-    return projects
-
-@mcp.tool()
-def read_anonymized_th(rel_path: str):
-    """Prečíta a anonymizuje .th súbor."""
+def read_therion_file(rel_path: str, anonymize: bool = False):
+    """
+    Načíta Therion súbor (.th, .th2, .thcfg, .txt, thconfig).
+    Predvolene načítava plnohodnotné dáta. Ak anonymize=True, citlivé údaje sa odfiltrujú.
+    """
     full_path = os.path.join(DATA_ROOT, rel_path)
+    
+    # Podpora pre 'thconfig' bez prípony
+    if not os.path.exists(full_path) and not rel_path.endswith('.thconfig'):
+        potential_path = full_path + "" # Skúsime presne tak, ako je
+        if not os.path.exists(potential_path):
+             return f"Chyba: Súbor {rel_path} nebol nájdený."
+
     try:
-        with open(full_path, 'r', encoding='utf-8') as f:
+        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
-        return anonymize_th(content)
+        
+        if anonymize:
+            return anonymize_th(content)
+        return content
     except Exception as e:
         return f"Chyba pri čítaní súboru: {str(e)}"
 
 @mcp.tool()
+def list_therion_projects():
+    """Zoznam projektov v dátovom úložisku."""
+    if not os.path.exists(DATA_ROOT):
+        return f"Chyba: {DATA_ROOT} neexistuje."
+    return [d for d in os.listdir(DATA_ROOT) if os.path.isdir(os.path.join(DATA_ROOT, d))]
+
+@mcp.tool()
 def compile_therion(rel_path: str):
-    """Spustí kompiláciu Therion lokálne."""
+    """Spustí kompiláciu Therion lokálne a vráti výsledok."""
     full_path = os.path.join(DATA_ROOT, rel_path)
     dir_path = os.path.dirname(full_path)
     file_name = os.path.basename(full_path)
     
-    if not os.path.exists(full_path):
-        return f"Chyba: Súbor {rel_path} neexistuje."
-        
     try:
         result = subprocess.run(
             ['therion', file_name],
             cwd=dir_path,
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=60
         )
         if result.returncode == 0:
             return "Kompilácia úspešná."
-        else:
-            return f"Chyba pri kompilácii:\n{result.stderr}"
+        return f"Chyba pri kompilácii:\n{result.stderr}"
     except Exception as e:
         return f"Interná chyba: {str(e)}"
 
 @mcp.tool()
 def generate_th2_skeleton(description: str):
-    """Vygeneruje logickú kostru .th2 súboru z popisu."""
-    # Jednoduchá generácia na základe kľúčových slov
-    lines = [
-        "layout local",
-        "  scale 1 100",
-        "endlayout",
-        "",
-        f"# Logická kostra pre: {description}",
-        "scrap scrap1 -projection plan",
-        "  line wall",
-        "    10 10",
-        "    20 10",
-        "    20 20",
-        "    10 20",
-        "    10 10",
-        "  endline",
-        "endscrap"
-    ]
-    return "\n".join(lines)
+    """Vygeneruje logickú kostru .th2 súboru."""
+    return f"layout local\n  scale 1 100\nendlayout\n\n# Kostra: {description}\nscrap scrap1 -projection plan\n  line wall\n    10 10\n    20 10\n    20 20\n    10 20\n    10 10\n  endline\nendscrap"
 
 if __name__ == "__main__":
     mcp.run()

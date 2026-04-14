@@ -1,0 +1,2079 @@
+From bgee at campercaver.net  Sun Feb  2 22:00:59 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 02 Feb 2014 15:00:59 -0600
+Subject: [Therion] How to use user-defined symbols
+Message-ID: <2703903.bVFeKcP5TM@main2>
+
+Hello everyone -
+
+I have been struggling for the last several days trying to figure out how to 
+build and use my own symbols.  I need a symbol for two kinds of formations - 
+Stalactiflats and Stalagmaflats.  These are basically stalagmites which are fat 
+(several feet diameter) and flat on top like a table (or flat on the bottom).
+
+It appears there are two problems to solve.  The first, which I address in this 
+question, is how to get xTherion to use a custom symbol.  The second is to 
+figure out how to draw the symbol in Metapost.  For now I am ignoring the 
+second problem.  One step at a time!
+
+After spending several hours going through Therion By Example, I was able to 
+get a custom symbol to work, but only by replacing an existing symbol.  I used 
+the NSS "gradient point" example.
+
+Changing the Metapost code as shown does not produce any error messages.  
+However, it also does not produce a symbol in the PDF output.  All I get is a 
+red dot.
+
+===============
+        code metapost
+ 
+        def p_stalagmaflat_AMER (expr pos,theta,sc,al) =
+          U:=(.15u, .4u);
+          T:=identity aligned al rotated theta scaled sc shifted pos;
+          pickup PenC;
+  
+          #Left Hand side
+          thdraw (-.3u, -.2u) -- (-.7u, .1u);
+          thdraw (-.2u, -.1u) -- (-.4u, .6u);
+  
+          #Centerline
+          thdraw (0u, 0u) -- (0u, .9u);
+  
+          #Right side
+          thdraw (.3u, -.2u) -- (.7u, .1u);
+          thdraw (.2u, -.1u) -- (.4u, .6u);
+  
+        enddef;
+      
+      initsymbol ("p_stalagmaflat_AMER");
+      
+   endcode
+==================
+
+Since I am not replacing an existing symbol, I leave out the "symbol-assign" 
+line.
+
+In xTherion I try to use this by inserting a point of type "u" and adding an 
+option "-subtype stalagmaflat".
+
+I think this is where I am missing something ...  How to call the custom 
+symbol with a "u" point.  Is this the right syntax?
+
+In the worst case I suppose I could set it up to replace a symbol that I won't 
+use for this cave - a ladder, for example.  That would probably cause quite a 
+bit of confusion down the road, so I would much prefer to avoid it.
+
+I am using Therion 5.3.13 on 64-bit Fedora 20.
+
+Thanks - Bill Gee
+
+
+From martinsluka at mac.com  Sun Feb  2 23:06:21 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 02 Feb 2014 23:06:21 +0100
+Subject: [Therion] How to use user-defined symbols
+In-Reply-To: <2703903.bVFeKcP5TM@main2>
+References: <2703903.bVFeKcP5TM@main2>
+Message-ID: <CE37656D-8272-404E-B3E3-EE78DE10C09D@mac.com>
+
+Bill,
+There are two kinds of symbols in Therion - first one are symbols which are included to Therion in time of compilation - like symbol "stalagmite". Second kind are user symbols. The definition of user symbol should be like:
+
+def u_p_stalagmaflat_AMER (expr pos,theta,sc,al) =
+
+In XTherion you call it as:
+
+point u:stalagmaflat_AMER
+
+Red are symbols which definition is not known. 
+
+M. 
+
+
+
+Odesláno z iPhonu
+
+2. 2. 2014 v 22:00, Bill Gee <bgee at campercaver.net>:
+
+> Hello everyone -
+> 
+> I have been struggling for the last several days trying to figure out how to 
+> build and use my own symbols.  I need a symbol for two kinds of formations - 
+> Stalactiflats and Stalagmaflats.  These are basically stalagmites which are fat 
+> (several feet diameter) and flat on top like a table (or flat on the bottom).
+> 
+> It appears there are two problems to solve.  The first, which I address in this 
+> question, is how to get xTherion to use a custom symbol.  The second is to 
+> figure out how to draw the symbol in Metapost.  For now I am ignoring the 
+> second problem.  One step at a time!
+> 
+> After spending several hours going through Therion By Example, I was able to 
+> get a custom symbol to work, but only by replacing an existing symbol.  I used 
+> the NSS "gradient point" example.
+> 
+> Changing the Metapost code as shown does not produce any error messages.  
+> However, it also does not produce a symbol in the PDF output.  All I get is a 
+> red dot.
+> 
+> ===============
+>        code metapost
+> 
+>        def p_stalagmaflat_AMER (expr pos,theta,sc,al) =
+>          U:=(.15u, .4u);
+>          T:=identity aligned al rotated theta scaled sc shifted pos;
+>          pickup PenC;
+> 
+>          #Left Hand side
+>          thdraw (-.3u, -.2u) -- (-.7u, .1u);
+>          thdraw (-.2u, -.1u) -- (-.4u, .6u);
+> 
+>          #Centerline
+>          thdraw (0u, 0u) -- (0u, .9u);
+> 
+>          #Right side
+>          thdraw (.3u, -.2u) -- (.7u, .1u);
+>          thdraw (.2u, -.1u) -- (.4u, .6u);
+> 
+>        enddef;
+> 
+>      initsymbol ("p_stalagmaflat_AMER");
+> 
+>   endcode
+> ==================
+> 
+> Since I am not replacing an existing symbol, I leave out the "symbol-assign" 
+> line.
+> 
+> In xTherion I try to use this by inserting a point of type "u" and adding an 
+> option "-subtype stalagmaflat".
+> 
+> I think this is where I am missing something ...  How to call the custom 
+> symbol with a "u" point.  Is this the right syntax?
+> 
+> In the worst case I suppose I could set it up to replace a symbol that I won't 
+> use for this cave - a ladder, for example.  That would probably cause quite a 
+> bit of confusion down the road, so I would much prefer to avoid it.
+> 
+> I am using Therion 5.3.13 on 64-bit Fedora 20.
+> 
+> Thanks - Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From dave at daveclucas.com  Mon Feb  3 17:44:11 2014
+From: dave at daveclucas.com (Dave Clucas)
+Date: Mon, 3 Feb 2014 16:44:11 +0000
+Subject: [Therion] How to use user-defined symbols, Therion Digest,
+	Vol 98, Issue 2
+References: <mailman.1.1391425201.23633.therion@speleo.sk>
+Message-ID: <234D94C9-FDAF-4836-B156-C46DB6AF5CBF@daveclucas.com>
+
+Have a look at this.
+http://therion.speleo.sk/wiki/doku.php/metapost
+
+You will find a symbol which I defined for a stalagmite boss which I guess is what you are talking about.
+
+def p_u_boss (expr pos,theta,sc,al)=
+  T:=identity aligned al rotated theta scaled sc shifted pos;
+  pickup PenD;
+  p := (0.08u,0.25u)..(0,0.29u)..(-0.08u,0.25u);
+  q := (0.16u,0.5u)..(0u,0.58u)..(-0.16u,0.5u);
+  for i=0 upto 9:
+   thdraw p rotated 36i;
+   thdraw q rotated 36i;
+  endfor
+  p := fullcircle scaled 0.15u; 
+  thdraw p;
+enddef;
+To use a user defined symbol click on type U in the points drop down and then after the U, type in a colon followed by the name of your symbol so, in the case of the above "U:boss"
+
+Dave Clucas
+daveclucas.com
+mycaves.org.
+daveclucas at icloud.com
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140203/100bf9c6/attachment.htm>
+
+From bgee at campercaver.net  Tue Feb  4 02:36:50 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 03 Feb 2014 19:36:50 -0600
+Subject: [Therion] How to use user-defined symbols, Therion Digest,
+	Vol 98, Issue 2
+In-Reply-To: <234D94C9-FDAF-4836-B156-C46DB6AF5CBF@daveclucas.com>
+References: <mailman.1.1391425201.23633.therion@speleo.sk>
+	<234D94C9-FDAF-4836-B156-C46DB6AF5CBF@daveclucas.com>
+Message-ID: <10543703.GB1X65VsY4@main2>
+
+Hi Dave -
+
+Thanks!  I managed to figure out the "secret sauce" today.  I have spent hours 
+looking through the Wiki article on Metapost.  What it left out was the 
+"u:newname" syntax.  It either is not there or it is so hidden that I never 
+found it.  Martin's note from last night was helpful.
+
+I saw your definition for the boss formation and thought about using it.  
+However, the standard this map must conform to calls for it to be represented 
+as a triangle base with a bar across the top, almost like a table.  The thfill 
+line I came up with is ...
+
+        thfill 
+(0.2u,-0.4u)--(0.1u,0.2u)--(0.3u,0.2u)--(0.3u,0.4u)--(-0.3u,0.4u)--(-0.3u,0.2u)--(-0.1u,0.2u)--(-0.2u,-0.4u)--
+cycle;
+
+Bill Gee
+
+
+
+On Monday, February 03, 2014 16:44:11 Dave Clucas wrote:
+> Have a look at this.
+> http://therion.speleo.sk/wiki/doku.php/metapost
+> 
+> You will find a symbol which I defined for a stalagmite boss which I guess
+> is what you are talking about.
+> 
+> def p_u_boss (expr pos,theta,sc,al)=
+>   T:=identity aligned al rotated theta scaled sc shifted pos;
+>   pickup PenD;
+>   p := (0.08u,0.25u)..(0,0.29u)..(-0.08u,0.25u);
+>   q := (0.16u,0.5u)..(0u,0.58u)..(-0.16u,0.5u);
+>   for i=0 upto 9:
+>    thdraw p rotated 36i;
+>    thdraw q rotated 36i;
+>   endfor
+>   p := fullcircle scaled 0.15u;
+>   thdraw p;
+> enddef;
+> To use a user defined symbol click on type U in the points drop down and
+> then after the U, type in a colon followed by the name of your symbol so,
+> in the case of the above "U:boss"
+> 
+> Dave Clucas
+> daveclucas.com
+> mycaves.org.
+> daveclucas at icloud.com
+
+
+
+From bgee at campercaver.net  Tue Feb  4 02:43:39 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Mon, 03 Feb 2014 19:43:39 -0600
+Subject: [Therion] How to use user-defined symbols
+In-Reply-To: <CE37656D-8272-404E-B3E3-EE78DE10C09D@mac.com>
+References: <2703903.bVFeKcP5TM@main2>
+	<CE37656D-8272-404E-B3E3-EE78DE10C09D@mac.com>
+Message-ID: <2063654.ip0E0ciUnb@main2>
+
+Hi Martin -
+
+Thanks!  Just one error ...  The definition is p_u_stalagmaflat_AMER.  You got 
+the u and p reversed.  Took me a couple of hours to figure that one out today, 
+but I eventually got it.
+
+The new symbol is working for me.  It goes on the map like it should.  I have 
+two followup questions:
+
+1) The map legend labels the symbol as "point u:stalagmaflat_AMER".  I tried to 
+use a text line in the thconfig file, but it has no apparent effect.  If I put it 
+inside the layout/endlayout pair, therion throws an error.  If I put it 
+outside the layout/endlayout section, then no error - and no change.    
+
+2) It would be handy to split the Metapost code out to an include file.  I 
+tried to use both source and input to read a file, but therion did not like 
+them.  Is there a way to do this?
+
+The only example I found in the Wiki has the entire layout section in a 
+separate file.  I just want to split the Metapost code out.
+
+Bill Gee
+
+
+On Sunday, February 02, 2014 23:06:21 Martin Sluka wrote:
+> Bill,
+> There are two kinds of symbols in Therion - first one are symbols which are
+> included to Therion in time of compilation - like symbol "stalagmite".
+> Second kind are user symbols. The definition of user symbol should be like:
+> 
+> def u_p_stalagmaflat_AMER (expr pos,theta,sc,al) =
+> 
+> In XTherion you call it as:
+> 
+> point u:stalagmaflat_AMER
+> 
+> Red are symbols which definition is not known.
+> 
+> M.
+> 
+> 
+> 
+> Odesláno z iPhonu
+> 
+> 2. 2. 2014 v 22:00, Bill Gee <bgee at campercaver.net>:
+> > Hello everyone -
+> > 
+> > I have been struggling for the last several days trying to figure out how
+> > to build and use my own symbols.  I need a symbol for two kinds of
+> > formations - Stalactiflats and Stalagmaflats.  These are basically
+> > stalagmites which are fat (several feet diameter) and flat on top like a
+> > table (or flat on the bottom).
+> > 
+> > It appears there are two problems to solve.  The first, which I address in
+> > this question, is how to get xTherion to use a custom symbol.  The second
+> > is to figure out how to draw the symbol in Metapost.  For now I am
+> > ignoring the second problem.  One step at a time!
+> > 
+> > After spending several hours going through Therion By Example, I was able
+> > to get a custom symbol to work, but only by replacing an existing symbol.
+> >  I used the NSS "gradient point" example.
+> > 
+> > Changing the Metapost code as shown does not produce any error messages.
+> > However, it also does not produce a symbol in the PDF output.  All I get
+> > is a red dot.
+> > 
+> > ===============
+> > 
+> >        code metapost
+> >        
+> >        def p_stalagmaflat_AMER (expr pos,theta,sc,al) =
+> >        
+> >          U:=(.15u, .4u);
+> >          T:=identity aligned al rotated theta scaled sc shifted pos;
+> >          pickup PenC;
+> >          
+> >          #Left Hand side
+> >          thdraw (-.3u, -.2u) -- (-.7u, .1u);
+> >          thdraw (-.2u, -.1u) -- (-.4u, .6u);
+> >          
+> >          #Centerline
+> >          thdraw (0u, 0u) -- (0u, .9u);
+> >          
+> >          #Right side
+> >          thdraw (.3u, -.2u) -- (.7u, .1u);
+> >          thdraw (.2u, -.1u) -- (.4u, .6u);
+> >        
+> >        enddef;
+> >      
+> >      initsymbol ("p_stalagmaflat_AMER");
+> >   
+> >   endcode
+> > 
+> > ==================
+> > 
+> > Since I am not replacing an existing symbol, I leave out the
+> > "symbol-assign" line.
+> > 
+> > In xTherion I try to use this by inserting a point of type "u" and adding
+> > an option "-subtype stalagmaflat".
+> > 
+> > I think this is where I am missing something ...  How to call the custom
+> > symbol with a "u" point.  Is this the right syntax?
+> > 
+> > In the worst case I suppose I could set it up to replace a symbol that I
+> > won't use for this cave - a ladder, for example.  That would probably
+> > cause quite a bit of confusion down the road, so I would much prefer to
+> > avoid it.
+> > 
+> > I am using Therion 5.3.13 on 64-bit Fedora 20.
+> > 
+> > Thanks - Bill Gee
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Tue Feb  4 07:07:42 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 4 Feb 2014 19:07:42 +1300
+Subject: [Therion] How to use user-defined symbols
+In-Reply-To: <2063654.ip0E0ciUnb@main2>
+References: <2703903.bVFeKcP5TM@main2><CE37656D-8272-404E-B3E3-EE78DE10C09D@mac.com>
+	<2063654.ip0E0ciUnb@main2>
+Message-ID: <42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+
+>two followup questions:
+
+>1) The map legend labels the symbol as "point u:stalagmaflat_AMER".  I
+tried to use a text line in the thconfig file, but it has no apparent
+effect.  If I put it inside the layout/endlayout pair, therion throws an
+error.  If I put it outside the layout/endlayout section, then no error -
+and no change.    
+
+
+It needs to go in the th-config outside of a layout.  See page 48 of Therion
+Book on 'text' translations.  You probably need to define a legend entry as
+well.  Here is an example I use towards the end of my custom symbol rope
+definition metapost...
+
+initsymbol("l_u_rope")
+
+def l_u_rope_legend =
+	l_u_rope(((.2,.2) -- (.8,.8)) inscale)
+enddef;
+endcode
+#Need to add next line to all thconfig files to define legend text
+text en "line u:rope" "rope" #text to appear in legend
+
+
+>2) It would be handy to split the Metapost code out to an include file.  I 
+tried to use both source and input to read a file, but therion did not like 
+them.  Is there a way to do this?
+
+>The only example I found in the Wiki has the entire layout section in a 
+separate file.  I just want to split the Metapost code out.
+
+You should use 'input' defined in or via your th-config, and you will need
+to have at least the metapost encapsulated in a 'code metapost' 'endcode'
+block I expect.  I have never included less than a whole 'layout' 'end
+layout' in one file but see no reason why it would work.  I suggest if you
+are having trouble, start with all explicitly typed in a th-config, then
+once you have that working, progressively split out portions into an
+'included' file.  If you have syntax correct, it should work just the same.
+
+Bruce
+
+
+
+From martinsluka at mac.com  Tue Feb  4 09:50:13 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 04 Feb 2014 09:50:13 +0100
+Subject: [Therion] How to use user-defined symbols
+In-Reply-To: <42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+References: <2703903.bVFeKcP5TM@main2>
+	<CE37656D-8272-404E-B3E3-EE78DE10C09D@mac.com>
+	<2063654.ip0E0ciUnb@main2>
+	<42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+Message-ID: <0D5648E3-0215-4362-975D-8830CF00E5B3@mac.com>
+
+You may use several layouts in export definition. 
+
+export map -layout a -layout b ...
+
+M. 
+
+Odesláno z iPhonu
+
+4. 2. 2014 v 7:07, Bruce <bruce at tomo.co.nz>:
+
+>> two followup questions:
+> 
+>> 1) The map legend labels the symbol as "point u:stalagmaflat_AMER".  I
+> tried to use a text line in the thconfig file, but it has no apparent
+> effect.  If I put it inside the layout/endlayout pair, therion throws an
+> error.  If I put it outside the layout/endlayout section, then no error -
+> and no change.    
+> 
+> 
+> It needs to go in the th-config outside of a layout.  See page 48 of Therion
+> Book on 'text' translations.  You probably need to define a legend entry as
+> well.  Here is an example I use towards the end of my custom symbol rope
+> definition metapost...
+> 
+> initsymbol("l_u_rope")
+> 
+> def l_u_rope_legend =
+>    l_u_rope(((.2,.2) -- (.8,.8)) inscale)
+> enddef;
+> endcode
+> #Need to add next line to all thconfig files to define legend text
+> text en "line u:rope" "rope" #text to appear in legend
+> 
+> 
+>> 2) It would be handy to split the Metapost code out to an include file.  I
+> tried to use both source and input to read a file, but therion did not like 
+> them.  Is there a way to do this?
+> 
+>> The only example I found in the Wiki has the entire layout section in a
+> separate file.  I just want to split the Metapost code out.
+> 
+> You should use 'input' defined in or via your th-config, and you will need
+> to have at least the metapost encapsulated in a 'code metapost' 'endcode'
+> block I expect.  I have never included less than a whole 'layout' 'end
+> layout' in one file but see no reason why it would work.  I suggest if you
+> are having trouble, start with all explicitly typed in a th-config, then
+> once you have that working, progressively split out portions into an
+> 'included' file.  If you have syntax correct, it should work just the same.
+> 
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From Marco.Corvi at selex-es.com  Wed Feb  5 10:39:21 2014
+From: Marco.Corvi at selex-es.com (Corvi Marco)
+Date: Wed, 5 Feb 2014 10:39:21 +0100
+Subject: [Therion] dxf model export
+Message-ID: <5D8303AC780CE242A1F72D806BA49DA609B979@GRPGEPWMX005.grptop.net>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140205/9d74ef0a/attachment.htm>
+
+From Marco.Corvi at selex-es.com  Wed Feb  5 10:42:04 2014
+From: Marco.Corvi at selex-es.com (Corvi Marco)
+Date: Wed, 5 Feb 2014 10:42:04 +0100
+Subject: [Therion] loch texture problem ?
+Message-ID: <5D8303AC780CE242A1F72D806BA49DA609B97A@GRPGEPWMX005.grptop.net>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140205/471c7e9d/attachment.htm>
+
+From lists at group-s.sk  Wed Feb  5 11:46:13 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 5 Feb 2014 11:46:13 +0100
+Subject: [Therion] dxf model export
+In-Reply-To: <5D8303AC780CE242A1F72D806BA49DA609B979@GRPGEPWMX005.grptop.net>
+References: <5D8303AC780CE242A1F72D806BA49DA609B979@GRPGEPWMX005.grptop.net>
+Message-ID: <CAP35+gFjRh09DOq_UzqCQ22fCNM5fJX_KEQG58WS-02ZOVhE_Q@mail.gmail.com>
+
+I am afraid that it is not exporting station names. As far as I remember,
+it is in the TODO list.
+
+S.
+
+
+2014-02-05 Corvi Marco <Marco.Corvi at selex-es.com>:
+
+>  does therion export station names in the dxf model export ?
+>
+> i could not find this, but i did not check carefully.
+>
+> marco
+> This email and any attachments are confidential to the intended recipient
+> and may also be privileged. If you are not the intended recipient please
+> delete it from your system and notify the sender. You should not copy it or
+> use it for any purpose nor disclose or distribute its contents to any other
+> person.
+> Questa e-mail e tutti i suoi allegati sono da intendersi inviati in via
+> riservata all'effettivo destinatario e possono essere soggetti a
+> restrizioni legali. Se non siete l'effettivo destinatario o avete ricevuto
+> il messaggio per errore siete pregati di cancellarlo dal vostro sistema e
+> di avvisare il mittente. E' vietata la duplicazione, l'uso a qualsiasi
+> titolo, la divulgazione o la distribuzione dei contenuti di questa e-mail a
+> qualunque altro soggetto.
+>
+> Prima di stampare questa comunicazione consideratene, per favore,
+> l'impatto ambientale
+> Please consider the environment before printing this email
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140205/14a48984/attachment.htm>
+
+From lists at group-s.sk  Wed Feb  5 11:44:46 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Wed, 5 Feb 2014 11:44:46 +0100
+Subject: [Therion] loch texture problem ?
+In-Reply-To: <5D8303AC780CE242A1F72D806BA49DA609B97A@GRPGEPWMX005.grptop.net>
+References: <5D8303AC780CE242A1F72D806BA49DA609B97A@GRPGEPWMX005.grptop.net>
+Message-ID: <CAP35+gEpanWKvAjHK2GGFu-2QaRnW88N+o_DfAfGZnCg7R3g3g@mail.gmail.com>
+
+I am not sure, but it is probably due to "Progressive" option checked, when
+saving an image. Same problem with Adobe photoshop.
+
+I have no idea, why libjpeg is not able to read these images (linked old
+version?).
+
+S.
+
+
+On 5 February 2014 10:42, Corvi Marco <Marco.Corvi at selex-es.com> wrote:
+
+>  i tried to load in loch (v. 5.3.12) a model with a jpeg texture
+> exported by gimp (v. 2.8.2).
+> the texture does not show.
+>
+> if i convert (imagemagick) the texture, loch shows it.
+>
+> marco
+> This email and any attachments are confidential to the intended recipient
+> and may also be privileged. If you are not the intended recipient please
+> delete it from your system and notify the sender. You should not copy it or
+> use it for any purpose nor disclose or distribute its contents to any other
+> person.
+> Questa e-mail e tutti i suoi allegati sono da intendersi inviati in via
+> riservata all'effettivo destinatario e possono essere soggetti a
+> restrizioni legali. Se non siete l'effettivo destinatario o avete ricevuto
+> il messaggio per errore siete pregati di cancellarlo dal vostro sistema e
+> di avvisare il mittente. E' vietata la duplicazione, l'uso a qualsiasi
+> titolo, la divulgazione o la distribuzione dei contenuti di questa e-mail a
+> qualunque altro soggetto.
+>
+> Prima di stampare questa comunicazione consideratene, per favore,
+> l'impatto ambientale
+> Please consider the environment before printing this email
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140205/6afbeabf/attachment.htm>
+
+From wookey at wookware.org  Wed Feb  5 12:30:26 2014
+From: wookey at wookware.org (Wookey)
+Date: Wed, 5 Feb 2014 11:30:26 +0000
+Subject: [Therion] loch texture problem ?
+In-Reply-To: <CAP35+gEpanWKvAjHK2GGFu-2QaRnW88N+o_DfAfGZnCg7R3g3g@mail.gmail.com>
+References: <5D8303AC780CE242A1F72D806BA49DA609B97A@GRPGEPWMX005.grptop.net>
+	<CAP35+gEpanWKvAjHK2GGFu-2QaRnW88N+o_DfAfGZnCg7R3g3g@mail.gmail.com>
+Message-ID: <20140205113026.GA26564@stoneboat.aleph1.co.uk>
+
++++ Stacho Mudrak [2014-02-05 11:44 +0100]:
+>    On 5 February 2014 10:42, Corvi Marco <[1]Marco.Corvi at selex-es.com> wrote:
+> 
+>      i tried to load in loch (v. 5.3.12) a model with a jpeg texture
+>      exported by gimp (v. 2.8.2).
+>      the texture does not show.
+> 
+>      if i convert (imagemagick) the texture, loch shows it.
+
+>    I am not sure, but it is probably due to "Progressive" option checked,
+>    when saving an image. Same problem with Adobe photoshop.
+>    I have no idea, why libjpeg is not able to read these images (linked old
+>    version?).
+
+Are you using the Debian packages?
+
+The version in 5.3.13 is libjpeg.so.8 from libjpeg8 v8d-2
+same in 5.3.12
+
+I wouldn't expect progressive jpegs to be an issue, although it's
+probably not the ideal format. If you file a bug with the example files
+someone might take a look.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Thu Feb  6 01:56:11 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 6 Feb 2014 13:56:11 +1300
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+Message-ID: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+
+Loch model of 39 km cave features in this TV news clip at 3:47  
+
+(Me carrying two packs on the opening still, and stuck at 2:00)
+
+ 
+
+http://www.3news.co.nz/Deepest-cave-discovered-in-our-backyard/tabid/817/art
+icleID/330973/Default.aspx 
+
+ 
+
+Centreline data has been processed for the last few(?) decades with a
+home-made unix application that uses proprietary routines, so will only live
+while Jonathan is with his current employer.  As you might have guessed, an
+'export to Therion' routine is being worked on.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140206/24b1e066/attachment.htm>
+
+From wookey at wookware.org  Thu Feb  6 03:11:10 2014
+From: wookey at wookware.org (Wookey)
+Date: Thu, 6 Feb 2014 02:11:10 +0000
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+In-Reply-To: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+References: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+Message-ID: <20140206021110.GH26564@stoneboat.aleph1.co.uk>
+
++++ Bruce [2014-02-06 13:56 +1300]:
+>    Loch model of 39 km cave features in this TV news clip at 3:47  
+> 
+>    (Me carrying two packs on the opening still, and stuck at 2:00)
+> 
+>     
+> 
+>    [1]http://www.3news.co.nz/Deepest-cave-discovered-in-our-backyard/tabid/817/articleID/330973/Default.aspx
+
+Nice vid Bruce, and even a website where you get an actual file to play
+instead of stupid, broken, flash players :-) top marks to 3news. The
+news people did a good job of explaining why we do it too.
+
+I'm guessing this is the system I read a report of last year in Descent
+(UK caving rag) where they pushed and strived but failed to find a
+connection and it was looking a bit hopeless. Obviously they didn't give
+up and this year things have gone rather better :-)
+
+That's one hell of a long through-trip.
+
+>    Centreline data has been processed for the last few(?) decades with a
+>    home-made unix application that uses proprietary routines, so will only
+>    live while Jonathan is with his current employer.  As you might have
+>    guessed, an ‘export to Therion’ routine is being worked on.
+
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Thu Feb  6 07:17:20 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 6 Feb 2014 19:17:20 +1300
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+In-Reply-To: <20140206021110.GH26564@stoneboat.aleph1.co.uk>
+References: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+	<20140206021110.GH26564@stoneboat.aleph1.co.uk>
+Message-ID: <7484FDB8C5C94BDB92B1E93E7689F7AA@JUICEBRAIN>
+
+
+>I'm guessing this is the system I read a report of last year in Descent
+(UK caving rag) where they pushed and strived but failed to find a
+connection and it was looking a bit hopeless. Obviously they didn't give
+up and this year things have gone rather better :-)
+
+>That's one hell of a long through-trip.
+
+Should be a nice one thanks Wooky, here are some caver perspective vid's on
+the Mt Arthur caves, rather better I think.
+
+Deep trailer http://www.youtube.com/watch?v=-TFEulGEIV4 
+Deep, The Story of stormy Pot, 35 minutes
+http://www.youtube.com/watch?v=MtFFqB7xrOk 
+
+And back in history, filmed Christmas 1982, Two days to Soft Rock Café, 48
+minutes http://www.youtube.com/watch?v=UyCnxytq-Dc 
+
+Bruce
+
+
+
+From martinsluka at mac.com  Thu Feb  6 10:57:27 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 06 Feb 2014 10:57:27 +0100
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+In-Reply-To: <7484FDB8C5C94BDB92B1E93E7689F7AA@JUICEBRAIN>
+References: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+	<20140206021110.GH26564@stoneboat.aleph1.co.uk>
+	<7484FDB8C5C94BDB92B1E93E7689F7AA@JUICEBRAIN>
+Message-ID: <AAB24B84-714D-44E7-B655-A45A24E46A02@mac.com>
+
+Bruce and what about Bohemia cave?
+
+M. 
+
+Odesláno z iPhonu
+
+6. 2. 2014 v 7:17, Bruce <bruce at tomo.co.nz>:
+
+> 
+>> I'm guessing this is the system I read a report of last year in Descent
+> (UK caving rag) where they pushed and strived but failed to find a
+> connection and it was looking a bit hopeless. Obviously they didn't give
+> up and this year things have gone rather better :-)
+> 
+>> That's one hell of a long through-trip.
+> 
+> Should be a nice one thanks Wooky, here are some caver perspective vid's on
+> the Mt Arthur caves, rather better I think.
+> 
+> Deep trailer http://www.youtube.com/watch?v=-TFEulGEIV4 
+> Deep, The Story of stormy Pot, 35 minutes
+> http://www.youtube.com/watch?v=MtFFqB7xrOk 
+> 
+> And back in history, filmed Christmas 1982, Two days to Soft Rock Café, 48
+> minutes http://www.youtube.com/watch?v=UyCnxytq-Dc 
+> 
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From bruce at tomo.co.nz  Fri Feb  7 07:23:05 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 7 Feb 2014 19:23:05 +1300
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+In-Reply-To: <AAB24B84-714D-44E7-B655-A45A24E46A02@mac.com>
+References: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN><20140206021110.GH26564@stoneboat.aleph1.co.uk><7484FDB8C5C94BDB92B1E93E7689F7AA@JUICEBRAIN>
+	<AAB24B84-714D-44E7-B655-A45A24E46A02@mac.com>
+Message-ID: <BBFED6EB484F41FCAF1CF6092E938548@JUICEBRAIN>
+
+> Bruce and what about Bohemia cave?
+> M.
+
+No movies about Bohemia as far as I am aware.
+
+Lots of visitors I think, but not much exploration (nor Therion dataset)
+these days.
+Bruce 
+
+
+
+
+
+From martinsluka at mac.com  Fri Feb  7 07:41:28 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 07 Feb 2014 07:41:28 +0100
+Subject: [Therion] Therion's Loch features (incognito) on NZ TV
+In-Reply-To: <BBFED6EB484F41FCAF1CF6092E938548@JUICEBRAIN>
+References: <FCF88053309A44B789C9E746154CED22@JUICEBRAIN>
+	<20140206021110.GH26564@stoneboat.aleph1.co.uk>
+	<7484FDB8C5C94BDB92B1E93E7689F7AA@JUICEBRAIN>
+	<AAB24B84-714D-44E7-B655-A45A24E46A02@mac.com>
+	<BBFED6EB484F41FCAF1CF6092E938548@JUICEBRAIN>
+Message-ID: <5015D97D-5A1C-4F3E-9DEF-A36E546F1CB6@mac.com>
+
+As I know there is only one big chimney  to climb in very bad quality rock. 
+
+M. 
+
+Odesláno z iPhonu
+
+7. 2. 2014 v 7:23, Bruce <bruce at tomo.co.nz>:
+
+>> Bruce and what about Bohemia cave?
+>> M.
+> 
+> No movies about Bohemia as far as I am aware.
+> 
+> Lots of visitors I think, but not much exploration (nor Therion dataset)
+> these days.
+> Bruce 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From markus.boldt at gmx.net  Sat Feb  8 14:00:27 2014
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sat, 8 Feb 2014 14:00:27 +0100
+Subject: [Therion] Problems with Execution
+Message-ID: <002a01cf24cd$c0a8fe70$41fafb50$@gmx.net>
+
+Suddenly I have a Problem with getting drawings from Pockettopo to Therion. 
+
+If I have made a Therion-Export-File on my PDA and I want to load it in
+Therion-Map-Editor I get the Error like below. If I say OK the XVI-File will
+produced anyway! 
+
+Then I have tried to import that File to the Editor and I get the error
+below. 
+
+I have done this procedure very often. But now it is a new Computer. 
+
+OS is Windows 7 professionell, therion is 5.3.13
+
+Has anyone an idea? 
+
+Markus
+
+ 
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140208/4bf05b79/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 45285 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140208/4bf05b79/attachment.png>
+
+From bgee at campercaver.net  Sat Feb  8 17:36:45 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 08 Feb 2014 10:36:45 -0600
+Subject: [Therion] Changing text on a legend entry
+In-Reply-To: <42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+References: <2703903.bVFeKcP5TM@main2> <2063654.ip0E0ciUnb@main2>
+	<42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+Message-ID: <1779826.tXU0rbcdGt@main2>
+
+Hi Bruce - 
+
+Thanks for your response.  I tried adding a text line in the thconfig file, but 
+it does not change the legend.  With the line at either the top or bottom, no 
+error is produced - it just doesn't work.  If I put the line inside the layout 
+block, then Therion throws a compile error.
+
+Below is the thconfig file I am using.  I also attach a screen clip from the 
+resulting map.
+
+Thanks - Bill Gee
+
+====================
+
+encoding  utf-8
+source MillCreekCave.th
+
+# This layout is for the main 2D map, all on one page
+layout mainmap
+	units imperial
+	scale-bar 20 feet
+	page-numbers on
+	scale 1 200
+	color map-fg [100 86 66]
+	map-comment "A compass and tape survey of Mill Creek Cave, Pulaski 
+County, Missouri"
+	statistics explo all
+	legend on
+	symbol-set UIS
+
+# section for PDF properties
+	doc-author "Bill Gee"
+	doc-title "Map of Mill Creek Cave"
+	doc-subject "Plan map of Mill Creek Cave"
+
+# Section for map photos
+	map-image 32 30 center DSC_0004.JPG
+	map-image 52 105 center DSC_0056.JPG
+	
+# Include custom Metapost code for special symbols
+#        source CustomSymbolsCode.txt
+
+# Custom metapost code
+    code metapost
+
+# This code defines a gradient point that looks like the NSS-standard symbol 
+    def p_gradient_AMER (expr pos,theta,sc,al) =
+      U:=(.15u, .4u);
+      T:=identity aligned al rotated theta scaled sc shifted pos;
+      pickup PenC;
+  
+      #Left Hand side
+      thdraw (-.3u, -.2u) -- (-.7u, .1u);
+      thdraw (-.2u, -.1u) -- (-.4u, .6u);
+  
+      #Centerline
+      thdraw (0u, 0u) -- (0u, .9u);
+  
+      #Right side
+      thdraw (.3u, -.2u) -- (.7u, .1u);
+      thdraw (.2u, -.1u) -- (.4u, .6u);
+  
+    enddef;
+
+# This code defines a stalagmaflat symbol.        
+      def p_u_stalagmaflat_AMER (expr pos,theta,sc,al) =
+        U:=(0.3u, 0.4u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+  
+        #Draw and paint the symbol
+        thfill 
+(0.2u,-0.4u)--(0.1u,0.2u)--(0.3u,0.2u)--(0.3u,0.4u)--(-0.3u,0.4u)--(-0.3u,0.2u)--(-0.1u,0.2u)--(-0.2u,-0.4u)--
+cycle;
+ 
+      enddef;
+
+# This code redefines the stalagmite symbol.        
+      def p_stalagmite_AMER (expr pos,theta,sc,al) =
+        U:=(0.2u, 0.4u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+  
+        #Draw and paint the symbol
+        thfill (0.2u,-0.4u)--(0.0u,0.4u)--(-0.2u,-0.4u)--cycle;
+ 
+      enddef;
+
+# This code redefines the stalactite symbol.        
+      def p_stalactite_AMER (expr pos,theta,sc,al) =
+        U:=(0.2u, 0.4u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+  
+        #Draw and paint the symbol
+       thfill (0.2u,0.4u)--(-0.2u,0.4u)--(0.0u,-0.4u)--cycle;
+ 
+      enddef;
+
+# This code redefines the pillar symbol.        
+      def p_pillar_AMER (expr pos,theta,sc,al) =
+        U:=(0.2u, 0.4u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+  
+        #Draw and paint the symbol
+       thfill 
+(0.2u,-0.4u)--(0.1u,0.0u)--(0.2u,0.4u)--(-0.2u,0.4u)--(-0.1u,0.0u)--(-0.2u,-0.4u)--
+cycle;
+ 
+      enddef;
+
+# Redefine popcorn to use hollow circles instead of filled-in
+      def p_popcorn_AMER (expr pos,theta,sc,al)=
+        U:=(.5u,.2u);
+        T:=identity aligned al rotated theta scaled sc shifted pos;
+        pickup PenC;
+        thdraw (-.5u,-.2u)--(.5u,-.2u);
+        pickup PenD;
+        thdraw (-.3u,-.2u)--(-.3u,.0u);
+        thdraw (0,-.2u)--(0,.0u);
+        thdraw (.3u,-.2u)--(.3u,.0u);
+        thdraw fullcircle scaled .2u shifted (-.3u,.1u);
+        thdraw fullcircle scaled .2u shifted (0,.1u);
+        thdraw fullcircle scaled .2u shifted (.3u,.1u);
+      enddef;
+
+# Define a dotted dripline      
+      def l_u_dripline_AMER (expr Path) =
+        T:=identity;
+        pickup PenC;
+        draw Path dashed withdots scaled (.75*optical_zoom) withpen PenA;
+      enddef;
+
+# Initialize the new symbols      
+    initsymbol ("p_gradient_AMER");
+    initsymbol ("p_stalagmite_AMER");
+    initsymbol ("p_stalactite_AMER");
+    initsymbol ("p_u_stalagmaflat_AMER");
+    initsymbol ("p_pillar_AMER");
+    initsymbol ("p_popcorn_AMER");
+    initsymbol ("l_u_dripline_AMER");
+    let p_gradient=p_gradient_AMER;
+    let p_stalagmite=p_stalagmite_AMER;
+    let p_stalactite=p_stalactite_AMER;
+    let p_pillar=p_pillar_AMER;
+    let p_popcorn=p_popcorn_AMER;
+      
+  endcode
+  
+  symbol-assign point gradient AMER
+  symbol-assign point stalagmite AMER
+  symbol-assign point stalactite AMER
+  symbol-assign point pillar AMER
+  symbol-assign point popcorn AMER
+
+endlayout
+
+# Change the legend callout for stalagmaflats
+  text en_US "point u:stalagmaflat.AMER" "stalagmaflat"
+      
+export map -proj plan -layout mainmap -o MillCreekCave.pdf
+
+=====================
+
+
+On Tuesday, February 04, 2014 19:07:42 Bruce wrote:
+> >two followup questions:
+> >
+> >1) The map legend labels the symbol as "point u:stalagmaflat_AMER".  I
+> 
+> tried to use a text line in the thconfig file, but it has no apparent
+> effect.  If I put it inside the layout/endlayout pair, therion throws an
+> error.  If I put it outside the layout/endlayout section, then no error -
+> and no change.
+> 
+> 
+> It needs to go in the th-config outside of a layout.  See page 48 of Therion
+> Book on 'text' translations.  You probably need to define a legend entry as
+> well.  Here is an example I use towards the end of my custom symbol rope
+> definition metapost...
+> 
+> initsymbol("l_u_rope")
+> 
+> def l_u_rope_legend =
+> 	l_u_rope(((.2,.2) -- (.8,.8)) inscale)
+> enddef;
+> endcode
+> #Need to add next line to all thconfig files to define legend text
+> text en "line u:rope" "rope" #text to appear in legend
+> 
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: MillCreekSymbols1.jpg
+Type: image/jpeg
+Size: 13221 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140208/22287017/attachment.jpg>
+
+From bgee at campercaver.net  Sat Feb  8 17:54:25 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Sat, 08 Feb 2014 10:54:25 -0600
+Subject: [Therion] Adding elevation profile to a map
+Message-ID: <3665043.nMdXEETNR3@main2>
+
+Hello everyone -
+
+I have several questions regarding elevation profiles.  I am not sure this is 
+the correct term, so here is a link to a map which shows what I am looking 
+for.
+
+http://www.planivy.cz/aktivity/47/planivy_mapa.png
+
+The elevation profile is the bottom part of this map.  It is similar to a 
+cross-section except it goes along the survey centerline.  
+
+1) When creating the scraps, are these defined as "elevation" or as "extended"?  
+I cannot find anything in the Therion book which describes what the difference 
+is.
+
+2) How are these included in the main map?  
+
+As best I can figure, I need to define a new layout for the profile, export it, 
+then use some sort of image or include to get it to show up on the main map.  
+If true, then perhaps I need to create a new thconfig file just for the profile.
+
+Is this illustrated with any of the samples that come with Therion?  I looked 
+at some (not all) of the samples and did not see anything obvious.
+
+Thanks - Bill Gee
+
+
+From bruce at tomo.co.nz  Sat Feb  8 19:50:00 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 9 Feb 2014 07:50:00 +1300
+Subject: [Therion] Adding elevation profile to a map
+In-Reply-To: <3665043.nMdXEETNR3@main2>
+References: <3665043.nMdXEETNR3@main2>
+Message-ID: <0A86B353F7644840BF618B1B4F98E3CC@JUICEBRAIN>
+
+
+Bill
+
+In answer to your questions...
+
+1) When creating the scraps, are these defined as "elevation" or as
+"extended"?  
+>I cannot find anything in the Therion book which describes what the
+difference is.
+Yes, I commiserate.  I added this to the wiki some time back.
+
+http://therion.speleo.sk/wiki/doku.php/faq#projections_plan_elevation_extend
+ed_and_none The example you linked to looks like "extended", but the
+principle for including a map within a map is identical regardless of the
+projections.
+
+2) How are these included in the main map?  
+
+You can do it in a single thconfig file (or multiple files).  Main thing is
+to create the 'inserted' map before creating the main map, so in a single
+thconfig you would write in this order...
+
+	export map -proj extended -layout LayoutExtended -o
+MillCreekExtendedElevation.pdf
+
+
+	export map -proj plan -layout mainmap -o MillCreekCave.pdf
+
+
+Somewhere in the layout for mainmap you would have already included;
+	map-image 0 0 nw MillCreekExtendedElevation.pdf
+
+or else you could do the second export like this without including the
+output image in the layout.
+
+	export map -proj plan \
+	-layout mainmap \
+	-layout-map-image 0 0 nw MillCreekExtendedElevation.pdf \
+	-o MillCreekCave.pdf
+
+I think it is written up somewhere, perhaps it is only in the forum posts.
+Here is one
+http://article.gmane.org/gmane.comp.gis.therion/2213/match=insert+map 
+Bruce
+
+
+
+From graham.mullan at coly.org.uk  Sat Feb  8 20:01:33 2014
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Sat, 8 Feb 2014 20:01:33 +0100
+Subject: [Therion] RE :elevation profiles
+In-Reply-To: <mailman.195.1391883854.2919.therion@speleo.sk>
+References: <mailman.195.1391883854.2919.therion@speleo.sk>
+Message-ID: <116ED31A9EAD454F90FDFEAADBF7B750@GrahamsColyPC>
+
+Bill Gee wrote:
+Hello everyone -
+
+I have several questions regarding elevation profiles.  I am not sure this
+is the correct term, so here is a link to a map which shows what I am
+looking for.
+
+http://www.planivy.cz/aktivity/47/planivy_mapa.png
+
+The elevation profile is the bottom part of this map.  It is similar to a
+cross-section except it goes along the survey centerline.  
+
+1) When creating the scraps, are these defined as "elevation" or as
+"extended"?  
+I cannot find anything in the Therion book which describes what the
+difference is.
+
+2) How are these included in the main map?  
+
+As best I can figure, I need to define a new layout for the profile, export
+it, then use some sort of image or include to get it to show up on the main
+map.  
+If true, then perhaps I need to create a new thconfig file just for the
+profile.
+
+Is this illustrated with any of the samples that come with Therion?  I
+looked at some (not all) of the samples and did not see anything obvious.
+
+Thanks - Bill Gee
+
+Hi Bill
+
+Yes that's an elevantion. Whether it is extended or projected depends on how
+you set it up in the first place. Are you importing paperless data from
+pocket topo, in which case I suggest you use Andrew Atkinson's Topparser to
+import your data and set you files up properly.
+
+We use a single thconfig file which generates the elevation pdf and then
+imports it (as a pdf) into the image being generated for the plan (or vice
+versa, either can work).
+
+I suggest that you look at the Cheddar catchment stuff at
+http://www.cave-registry.org.uk/svn/CheddarCatchment/ particularly the file
+http://www.cave-registry.org.uk/svn/CheddarCatchment/thconfigres+whitespot
+or for a slightly simpler alternative, the file
+http://www.cave-registry.org.uk/svn/CheddarCatchment/Spider/thconfig
+
+Graham
+
+
+
+From bruce at tomo.co.nz  Sat Feb  8 20:07:17 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 9 Feb 2014 08:07:17 +1300
+Subject: [Therion] Changing text on a legend entry
+In-Reply-To: <1779826.tXU0rbcdGt@main2>
+References: <2703903.bVFeKcP5TM@main2>
+	<2063654.ip0E0ciUnb@main2><42E5B741A031454DBBC931910A5A3F46@JUICEBRAIN>
+	<1779826.tXU0rbcdGt@main2>
+Message-ID: <5E2FD1BFA1C14C1EA3BD229FFC42D498@JUICEBRAIN>
+
+Bill
+
+ 
+
+You have the symbols appearing in your legend and presumably in your maps
+and the text redefinition looks OK-ish.
+
+One thing to note is that metapost (or something) renders quite a few
+characters as '.'.  I think underscore may be one of them.  This might have
+been confusing you. So try this;
+
+ 
+
+  text en_US "point u:stalagmaflat_AMER" "stalagmaflat"
+
+ 
+
+Also, it may be conversion to email has altered the start of your layout
+definition.  Check that the layout definition starts on a new line, and is
+not part of the commented line.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bill Gee
+Sent: Sunday, 9 February 2014 5:37 a.m.
+To: therion at speleo.sk
+Subject: [Therion] Changing text on a legend entry
+
+ 
+
+Hi Bruce - 
+
+ 
+
+Thanks for your response.  I tried adding a text line in the thconfig file,
+but 
+
+it does not change the legend.  With the line at either the top or bottom,
+no 
+
+error is produced - it just doesn't work.  If I put the line inside the
+layout 
+
+block, then Therion throws a compile error.
+
+ 
+
+Below is the thconfig file I am using.  I also attach a screen clip from the
+
+
+resulting map.
+
+ 
+
+Thanks - Bill Gee
+
+ 
+
+====================
+
+ 
+
+encoding  utf-8
+
+source MillCreekCave.th
+
+ 
+
+# This layout is for the main 2D map, all on one page <layout must start on
+new line>
+
+ 
+
+layout mainmap
+
+      units imperial
+
+      scale-bar 20 feet
+
+      page-numbers on
+
+      scale 1 200
+
+.. 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140209/10db1358/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Feb  9 08:55:15 2014
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 9 Feb 2014 20:55:15 +1300
+Subject: [Therion] revise extends
+Message-ID: <3562D20711C84497BBFE882ECD90BA16@JUICEBRAIN>
+
+Michael and I have held off venturing into extended elevations for many
+years, but it seems that now might be the time.  Have been browsing the last
+7 years of forum posts on this, and so it is with some trepidation.
+
+ 
+
+We have a cave system that now has a variety of often travelled circuits and
+through trips, and so we envisage having perhaps two or three or more
+extended elevation projections (maps/scraps) as route guides.  ie  -proj
+extended:1 -proj extended:2 -proj extended:3 etc.  A number of the passages
+will be included in more than one map, and the nature and location of the
+'extend xxx' statements in these common passages will likely be different
+for each projection/map.  At the very least, we do not want the existence of
+an extended drawing for one survey prejudicing the creation of a completely
+different extended drawing for the same survey (in keeping with the Therion
+principle of do it once, use it many times).
+
+ 
+
+My long time (but untested) idea for this is to keep all the surveys with
+the default 'extend right', and then at the time of compiling, include a
+file full of revise statements to tweak he various surveys to extend left,
+right, ignore etc to suit the particular extended drawing to be compiled.
+
+ 
+
+I have a simple one survey cave that I thought I would test this idea on,
+and it seems already my idea is unravelling.
+
+ 
+
+I had hoped to use a revise block for each survey as below to insert the
+required extend statements at compile time.  Unfortunately I see that I can
+amend the survey properties (in this case the title), but not the
+stations/shots.
+
+ 
+
+  revise hunters at HuntersCave -title "Hunters Cave - Revised title"
+
+  #above single line works, but multiline as below causes error.  unknown
+command - extend
+
+ 
+
+            extend left 1.7
+
+            extend right 3.17
+
+            extend hide 3.21 #3.22
+
+  endrevise
+
+ 
+
+Then I thought perhaps I could use one revise statement per station/shot;
+
+ 
+
+revise 1.7 at hunters.HuntersCave extend left 
+
+ 
+
+but this brings up a therion error -- INDEXHunters.th [49] -- object does
+not exist -- 1.7 at hunters.HuntersCave
+
+ 
+
+I can verify the station exists and is named as such, because it is labelled
+that way in the pdf output and the aven 3d model
+
+ 
+
+So, is there a trick with the revise syntax for surveys or stations that I
+have missed?  Or am I trying to stretch it's capabilities too much?
+
+Or is there another way to manage multiple extended survey network shapes
+for various extended drawing projections, rather than having the extended
+survey shape fixed by the original survey definition?
+
+ 
+
+There are about 170 surveys in the real project and growing, so we would
+rather not keep two sets of files or manually edit them each time!
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140209/6dce6f58/attachment.htm>
+
+From bgee at campercaver.net  Sun Feb  9 17:44:55 2014
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 09 Feb 2014 10:44:55 -0600
+Subject: [Therion] Changing text on a legend entry
+In-Reply-To: <5E2FD1BFA1C14C1EA3BD229FFC42D498@JUICEBRAIN>
+References: <2703903.bVFeKcP5TM@main2> <1779826.tXU0rbcdGt@main2>
+	<5E2FD1BFA1C14C1EA3BD229FFC42D498@JUICEBRAIN>
+Message-ID: <2120872.o2KmQEVtai@main2>
+
+Hi Bruce -
+
+Thanks for the suggestion.  Indeed it turned out to be that simple.  I changed 
+the text line to use an underscore instead of a dot, and now it comes out 
+correctly.
+
+I think the email conversion must have messed up the look of the layout line.  
+It is correct in the original file, and it compiles without error.
+
+Bill Gee
+
+
+
+On Sunday, February 09, 2014 08:07:17 Bruce wrote:
+> Bill
+> 
+> 
+> 
+> You have the symbols appearing in your legend and presumably in your maps
+> and the text redefinition looks OK-ish.
+> 
+> One thing to note is that metapost (or something) renders quite a few
+> characters as '.'.  I think underscore may be one of them.  This might have
+> been confusing you. So try this;
+> 
+> 
+> 
+>   text en_US "point u:stalagmaflat_AMER" "stalagmaflat"
+> 
+> 
+> 
+> Also, it may be conversion to email has altered the start of your layout
+> definition.  Check that the layout definition starts on a new line, and is
+> not part of the commented line.
+> 
+> 
+> 
+> Bruce
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> -----Original Message-----
+> From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+> Of Bill Gee
+> Sent: Sunday, 9 February 2014 5:37 a.m.
+> To: therion at speleo.sk
+> Subject: [Therion] Changing text on a legend entry
+> 
+> 
+> 
+> Hi Bruce -
+> 
+> 
+> 
+> Thanks for your response.  I tried adding a text line in the thconfig file,
+> but
+> 
+> it does not change the legend.  With the line at either the top or bottom,
+> no
+> 
+> error is produced - it just doesn't work.  If I put the line inside the
+> layout
+> 
+> block, then Therion throws a compile error.
+> 
+> 
+> 
+> Below is the thconfig file I am using.  I also attach a screen clip from the
+> 
+> 
+> resulting map.
+> 
+> 
+> 
+> Thanks - Bill Gee
+> 
+> 
+> 
+> ====================
+> 
+> 
+> 
+> encoding  utf-8
+> 
+> source MillCreekCave.th
+> 
+> 
+> 
+> # This layout is for the main 2D map, all on one page <layout must start on
+> new line>
+> 
+> 
+> 
+> layout mainmap
+> 
+>       units imperial
+> 
+>       scale-bar 20 feet
+> 
+>       page-numbers on
+> 
+>       scale 1 200
+> 
+> ..
+
+
+
+From dave at daveclucas.com  Sun Feb  9 18:43:50 2014
+From: dave at daveclucas.com (Dave Clucas)
+Date: Sun, 9 Feb 2014 17:43:50 +0000
+Subject: [Therion] Changing text on a legend entry (Bill Gee)
+Message-ID: <E982858D-35E2-4A95-B985-A9B6DE93609D@daveclucas.com>
+
+> # Change the legend callout for stalagmaflats
+>  text en_US "point u:stalagmaflat.AMER" "stalagmaflat"
+
+I don't think your command should not include the symbole set name “AMER” as that isn’t included in the legend.
+
+It should be text en_US "point u:stalagmaflat" “sttlagmaflat"
+
+Dave Clucas
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140209/a9d71036/attachment.htm>
+
+From markus.boldt at gmx.net  Sun Feb  9 23:09:12 2014
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Sun, 9 Feb 2014 23:09:12 +0100
+Subject: [Therion] Problems with Execution - I have the answer :-)
+Message-ID: <003701cf25e3$917ebd80$b47c3880$@gmx.net>
+
+Hello, 
+
+the problem happens, if I use a stick as medium for fetching the Pockettopo
+file and then the File from Therion to the stick will not be written. 
+
+Let I fetch the TXT-File from a drive on the computer it works as before
+with Win XP. 
+
+Another problem is now fixed to. That Therion works proper, I must start it
+in administrator-mode. Otherwise the compilation don`t works but
+interestingly it looks like it has worked without any error indication by
+the first time of compilation after starting therion (Geen, OK). If one
+starts compilation a second time without any changes therion "says" red,
+error. But again without explanation in the log. 
+
+All with Win 7 professional
+
+FYI
+
+ 
+
+Markus 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140209/a394e7ae/attachment.htm>
+
+From lists at group-s.sk  Thu Feb 20 11:41:12 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 20 Feb 2014 11:41:12 +0100
+Subject: [Therion] revise extends
+In-Reply-To: <3562D20711C84497BBFE882ECD90BA16@JUICEBRAIN>
+References: <3562D20711C84497BBFE882ECD90BA16@JUICEBRAIN>
+Message-ID: <CAP35+gF4Zuh343uTYEpUy7MzJb6LZ73oKWuWQi4UretPKt48UA@mail.gmail.com>
+
+Hi Bruce, I am really sorry for late answer...
+
+As far as I know, if you change the extension options for a shot, there is
+no revision needed.
+
+All you need to do is to change extend options after entire centerline is
+loaded. Instead of revise, you should use "centerline" command.
+
+In your case:
+
+            centerline
+
+   extend left 1.7
+
+   extend right 3.17
+
+   extend hide 3.21 #3.22
+
+endcenterline
+
+If you do it from "upper" survey context, you may use -station-names
+<prefix> <suffix> centerline option.
+
+OK, I have not tried this :) But I believe, it should work.
+
+S.
+
+
+
+On 9 February 2014 08:55, Bruce <bruce at tomo.co.nz> wrote:
+
+>     Michael and I have held off venturing into extended elevations for
+> many years, but it seems that now might be the time.  Have been browsing
+> the last 7 years of forum posts on this, and so it is with some trepidation...
+>
+>
+>
+> We have a cave system that now has a variety of often travelled circuits
+> and through trips, and so we envisage having perhaps two or three or more
+> extended elevation projections (maps/scraps) as route guides.  ie  -proj
+> extended:1 -proj extended:2 -proj extended:3 etc.  A number of the passages
+> will be included in more than one map, and the nature and location of the
+> 'extend xxx' statements in these common passages will likely be different
+> for each projection/map.  At the very least, we do not want the existence
+> of an extended drawing for one survey prejudicing the creation of a
+> completely different extended drawing for the same survey (in keeping with
+> the Therion principle of do it once, use it many times).
+>
+>
+>
+> My long time (but untested) idea for this is to keep all the surveys with
+> the default 'extend right', and then at the time of compiling, include a
+> file full of revise statements to tweak he various surveys to extend left,
+> right, ignore etc to suit the particular extended drawing to be compiled.
+>
+>
+>
+> I have a simple one survey cave that I thought I would test this idea on,
+> and it seems already my idea is unravelling.
+>
+>
+>
+> I had hoped to use a revise block for each survey as below to insert the
+> required extend statements at compile time.  Unfortunately I see that I can
+> amend the survey properties (in this case the title), but not the
+> stations/shots.
+>
+>
+>
+>   revise hunters at HuntersCave -title "Hunters Cave - Revised title"
+>
+>   #above single line works, but multiline as below causes error.  unknown
+> command - extend
+>
+>
+>
+>             extend left 1.7
+>
+>             extend right 3.17
+>
+>             extend hide 3.21 #3.22
+>
+>   endrevise
+>
+>
+>
+> Then I thought perhaps I could use one revise statement per station/shot;
+>
+>
+>
+> revise 1.7 at hunters.HuntersCave extend left
+>
+>
+>
+> but this brings up a therion error -- INDEXHunters.th [49] -- object does
+> not exist -- 1.7 at hunters.HuntersCave
+>
+>
+>
+> I can verify the station exists and is named as such, because it is
+> labelled that way in the pdf output and the aven 3d model
+>
+>
+>
+> So, is there a trick with the revise syntax for surveys or stations that I
+> have missed?  Or am I trying to stretch it's capabilities too much?
+>
+> Or is there another way to manage multiple extended survey network shapes
+> for various extended drawing projections, rather than having the extended
+> survey shape fixed by the original survey definition?
+>
+>
+>
+> There are about 170 surveys in the real project and growing, so we would
+> rather not keep two sets of files or manually edit them each time!
+>
+>
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140220/82cb9240/attachment.htm>
+
+From martinsluka at mac.com  Sat Feb 22 11:55:06 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 22 Feb 2014 11:55:06 +0100
+Subject: [Therion] PDF preview for MacOS X :)
+Message-ID: <D10DBFD9-C781-481D-AB23-47CCA526A36E@mac.com>
+
+The best previewer of PDFs with live preview for MacOS X is the simples one - Quick Look - just press Spacebar when appropriated PDF is highlighted.
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140222/e08cb587/attachment.htm>
+
+From lists at group-s.sk  Sun Feb 23 09:09:25 2014
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sun, 23 Feb 2014 09:09:25 +0100
+Subject: [Therion] 5.3.14
+Message-ID: <CAP35+gGzC=Dk1Gq3xpgNYSL870U0e8ZTRb8j8kkMJhHt_-ra5w@mail.gmail.com>
+
+Hi everybody,
+
+yesterday I have updated xtherion a little bit. "Edit->Hide inactive
+scraps" should work now as well as right clicking on point or line invokes
+context menu.
+
+If you have some idea, what else should go to context menu or how items
+there should be arranged, please let me know.
+
+For windows users: I have upgraded bundled TclTk to 8.6 (in fact, only 8.5
+features were needed), but I had to compile it my self. I hope, there will
+be no major issues.
+
+Regards, S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140223/5f0c4e62/attachment.htm>
+
+From wookey at wookware.org  Mon Feb 24 04:19:41 2014
+From: wookey at wookware.org (Wookey)
+Date: Mon, 24 Feb 2014 03:19:41 +0000
+Subject: [Therion] 5.3.14
+In-Reply-To: <CAP35+gGzC=Dk1Gq3xpgNYSL870U0e8ZTRb8j8kkMJhHt_-ra5w@mail.gmail.com>
+References: <CAP35+gGzC=Dk1Gq3xpgNYSL870U0e8ZTRb8j8kkMJhHt_-ra5w@mail.gmail.com>
+Message-ID: <20140224031941.GH18326@stoneboat.aleph1.co.uk>
+
++++ Stacho Mudrak [2014-02-23 09:09 +0100]:
+>    Hi everybody,
+>    yesterday I have updated xtherion a little bit. "Edit->Hide inactive
+>    scraps" should work now as well as right clicking on point or line invokes
+>    context menu.�
+
+OK. new version uploaded to Debian unstable: 
+https://buildd.debian.org/status/package.php?p=therion
+
+File bugs or grumble here if you find problems.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From markus.boldt at gmx.net  Tue Feb 25 13:29:04 2014
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Tue, 25 Feb 2014 13:29:04 +0100
+Subject: [Therion] Wish84
+Message-ID: <000901cf3225$2c2bcb00$84836100$@gmx.net>
+
+Hi, 
+
+what I want to ask is: 
+
+since I use Win7, every time I start Therion first there comes a message
+that WISH84.EXE should start. And I see, I must allow it, otherwise therion
+don`t starts. What is that? And is it possible, if it must be, that there is
+an approach that therion starts without that message? 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140225/f334f4b4/attachment.htm>
+
+From wookey at wookware.org  Tue Feb 25 13:36:25 2014
+From: wookey at wookware.org (Wookey)
+Date: Tue, 25 Feb 2014 12:36:25 +0000
+Subject: [Therion] Wish84
+In-Reply-To: <000901cf3225$2c2bcb00$84836100$@gmx.net>
+References: <000901cf3225$2c2bcb00$84836100$@gmx.net>
+Message-ID: <20140225123625.GW18326@stoneboat.aleph1.co.uk>
+
++++ Markus Boldt [2014-02-25 13:29 +0100]:
+>    Hi,
+> 
+>    what I want to ask is:
+> 
+>    since I use Win7, every time I start Therion first there comes a message
+>    that WISH84.EXE should start. And I see, I must allow it, otherwise
+>    therion don`t starts. What is that? 
+
+It's the tcl shell/interpreter. Presumably for the now rather old v8.4
+
+>    And is it possible, if it must be,
+>    that there is an approach that therion starts without that message?
+
+This I have no idea about. Sorry. I guess there is some way of telling
+windows that this program is trusted and it should stop asking you.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From drfootleg at gmail.com  Tue Feb 25 13:38:29 2014
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 25 Feb 2014 12:38:29 +0000
+Subject: [Therion] Wish84
+In-Reply-To: <000901cf3225$2c2bcb00$84836100$@gmx.net>
+References: <000901cf3225$2c2bcb00$84836100$@gmx.net>
+Message-ID: <CAJkGg4nCHN1tqws1oE+nhViKP2vpzwPbz49eAGQ=++0YJBPzog@mail.gmail.com>
+
+I have been using Therion on Windows 7 over several recent versions
+including the very recent release and not seen this problem. I am running
+under a user account which has administrator privileges which might make a
+difference?
+
+Footleg
+
+
+On 25 February 2014 12:29, Markus Boldt <markus.boldt at gmx.net> wrote:
+
+> Hi,
+>
+> what I want to ask is:
+>
+> since I use Win7, every time I start Therion first there comes a message
+> that WISH84.EXE should start. And I see, I must allow it, otherwise therion
+> don`t starts. What is that? And is it possible, if it must be, that there
+> is an approach that therion starts without that message?
+>
+> Markus
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140225/6deb42e6/attachment.htm>
+
+From chojnacki.tomasz at gmail.com  Tue Feb 25 19:11:01 2014
+From: chojnacki.tomasz at gmail.com (Tomek Chojnacki)
+Date: Tue, 25 Feb 2014 19:11:01 +0100
+Subject: [Therion] th2 files don't change after loop closure
+Message-ID: <CACoRp2jZDVn6ftSnEqqSkfMd0DYFNMZJHKiJ0326BBNFr8=upQ@mail.gmail.com>
+
+Hi,
+
+After I closed a loop in a cave the background image (centerline from
+xvi file) changed, but all "drawings" (survey station points and walls
+lines) stayed in place.
+Does anyone have an idea why it happens and how I can change it?
+
+Thx in advance,
+Tomek
+
+
+From martinsluka at mac.com  Tue Feb 25 20:42:30 2014
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 25 Feb 2014 20:42:30 +0100
+Subject: [Therion] th2 files don't change after loop closure
+In-Reply-To: <CACoRp2jZDVn6ftSnEqqSkfMd0DYFNMZJHKiJ0326BBNFr8=upQ@mail.gmail.com>
+References: <CACoRp2jZDVn6ftSnEqqSkfMd0DYFNMZJHKiJ0326BBNFr8=upQ@mail.gmail.com>
+Message-ID: <F790B1C2-A8C8-4FEA-B8C6-3C43EA9B97A2@mac.com>
+
+It is normal behaviour. Your drawings will never change, only in process of map generation they will be "morfed" according the actual position of stations.
+
+m.
+
+
+
+Feb 25, 2014 v 7:11 PM, Tomek Chojnacki <chojnacki.tomasz at gmail.com>:
+
+> After I closed a loop in a cave the background image (centerline from
+> xvi file) changed, but all "drawings" (survey station points and walls
+> lines) stayed in place.
+> Does anyone have an idea why it happens and how I can change it?
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140225/b202e064/attachment.htm>
+
+From drfootleg at gmail.com  Wed Feb 26 15:40:46 2014
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 26 Feb 2014 14:40:46 +0000
+Subject: [Therion] th2 files don't change after loop closure
+In-Reply-To: <CACoRp2jZDVn6ftSnEqqSkfMd0DYFNMZJHKiJ0326BBNFr8=upQ@mail.gmail.com>
+References: <CACoRp2jZDVn6ftSnEqqSkfMd0DYFNMZJHKiJ0326BBNFr8=upQ@mail.gmail.com>
+Message-ID: <CAJkGg4nO-j9UVz=6C_d1et4rqCcZ71Vb94ZV8h8gQywSaefb0w@mail.gmail.com>
+
+The lines and points in your drawing are positioned as you drew them. If
+you change the xvi file or background image then you will see that changed
+in the drawing editor, but it will not move your drawn lines and points to
+match in the editor. Only the rendered output from therion will reflect the
+changes to the centreline.
+
+If you really want to edit the drawing based on the changed centreline when
+you need to edit the drawing yourself. But this is not necessary unless the
+distortion in your output therion rendered maps to too bad to look right.
+Usually you would keep the original xvi file you drew against for that
+drawing and let Therion distort the survey to match the updated centreline
+when you render the maps.
+
+Footleg
+
+
+On 25 February 2014 18:11, Tomek Chojnacki <chojnacki.tomasz at gmail.com>wrote:
+
+> Hi,
+>
+> After I closed a loop in a cave the background image (centerline from
+> xvi file) changed, but all "drawings" (survey station points and walls
+> lines) stayed in place.
+> Does anyone have an idea why it happens and how I can change it?
+>
+> Thx in advance,
+> Tomek
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20140226/6a387088/attachment.htm>
+

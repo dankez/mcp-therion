@@ -1,0 +1,1668 @@
+From torsten.schnitter at netcologne.de  Mon Mar  2 14:49:19 2015
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Mon, 2 Mar 2015 14:49:19 +0100 (CET)
+Subject: [Therion] XVI export with map selected is not working
+Message-ID: <16058343.13192.1425304159219.JavaMail.open-xchange@cc-app2.netcologne.de>
+
+Hi all
+
+I'm using Therion 5.3.16 on Windows.
+I have a problem with exporting the xvi-files.
+
+In the documentation it's written that you can have maps consisting of surveys.
+And so I did.
+I built a map with projection plan containing just surveys (some surveylines).
+In the config-file I selected this map and exportet a xvi-file.
+But the output of the xvi-file contains all survey lines and not just the few
+inserted into the selected map.
+(If I select these lines in the config file instead of the map it's working as
+expected and the xvi-file contains just selected lines)
+
+So what's wrong, is it a bug?
+
+Second question:
+I do have some splay stations within some surveylines.
+Is it possible to export a xvi-file without this splay stations?
+(e.g. I'm using splay stations for resurveyed points an I do not want to have
+these in the xvi-files but want to have them in the survey-files.)
+
+Third question:
+Is it possible to plot left and right information to the output if I select
+surveylines for pdf output?
+I want to have a pdf file like the xvi-file. This may help for sketching the
+cave as you can print it on paper and use it as a template.
+
+Thanks for your help.
+cheers,
+Torsten
+
+
+From v_su at inbox.ru  Mon Mar  2 15:23:16 2015
+From: v_su at inbox.ru (Vasily Vl. Suhachev)
+Date: Mon, 02 Mar 2015 21:23:16 +0700
+Subject: [Therion] XVI export with map selected is not working
+In-Reply-To: <16058343.13192.1425304159219.JavaMail.open-xchange@cc-app2.netcologne.de>
+References: <16058343.13192.1425304159219.JavaMail.open-xchange@cc-app2.netcologne.de>
+Message-ID: <54F47254.7000608@inbox.ru>
+
+Hello
+
+02.03.2015 20:49, Torsten Schnitter пишет:
+> So what's wrong, is it a bug?
+No. It is not clear behavior of survey selecting. By default all surveys 
+is selected. You need unselect it all before selecting somthing special.
+
+Example:
+
+unselect cave
+select cave.part1
+select cave.part2
+
+export ...
+
+> I do have some splay stations within some surveylines.
+> Is it possible to export a xvi-file without this splay stations?
+> (e.g. I'm using splay stations for resurveyed points an I do not want to have
+> these in the xvi-files but want to have them in the survey-files.)
+Move them to dedicated namespace and filter it out as at first questuion
+
+> Third question:
+> Is it possible to plot left and right information to the output if I select
+> surveylines for pdf output?
+> I want to have a pdf file like the xvi-file. This may help for sketching the
+> cave as you can print it on paper and use it as a template.
+>
+Its possible with set colors with thconfig layout. See attached file
+
+Example:
+
+export map -o mycave.pdf -proj plan  -layout hand_draw_stations_on 
+-layout hand_draw_on
+
+or
+
+export map -o mycave.pdf -proj plan  -layout hand_draw_on
+
+
+
+-- 
+   WBR, Vasily
+
+-------------- next part --------------
+encoding  utf-8
+
+layout hand_draw_on
+  map-header 0 0 off
+  grid bottom
+  grid-size 1 1 1 m
+  grid-coords off
+  color map-fg 0
+  transparency on
+  opacity 10
+  symbol-hide point station
+  symbol-color line survey [0 0 100]
+endlayout
+
+layout hand_draw_stations_on
+  symbol-show point station
+  symbol-color point station:temporary [100 0 0]
+  symbol-assign point station:temporary SKBB
+  base-scale 1 50
+  debug station-names
+
+  code metapost
+    fonts_setup(2,2,2,2,2);
+  endcode
+endlayout
+
+layout hand_draw_atlas
+  overlap 0 cm
+endlayout
+
+
+From torsten.schnitter at netcologne.de  Tue Mar  3 20:30:37 2015
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 3 Mar 2015 20:30:37 +0100 (CET)
+Subject: [Therion] XVI export with map selected is not working
+In-Reply-To: <54F47254.7000608@inbox.ru>
+References: <16058343.13192.1425304159219.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<54F47254.7000608@inbox.ru>
+Message-ID: <1272649302.861.1425411037368.JavaMail.open-xchange@cc-app1.netcologne.de>
+
+Hi
+
+Thanks Vasily for your infos.
+
+Concerning question three this did work.
+So I already got what I wanted to get but didn't recognized it because the LRUD
+infos where with white colour on a white background. *gnnn*
+Giving a colour to the map foreground or to the background is a good idea then.
+;-)
+
+Concerning question one it does not work with your help. I'm sorry.
+Normally unselect is not necessary if you use a select statement for the first
+time.
+In this case the default is unselect all before selecting this specific part.
+But I gave it a try and it didn't work either.
+With unselect all and then selecting my map (consisting only of surveys) the
+output was totally empty.
+But if I replace a survey with a scrap inside this map everything is working as
+expected.
+
+To be more detailed I'm trying to do the following:
+(I left the namespaces to keep it simple)
+map xyz -proj plan
+  survey1
+  survey2
+endmap
+
+select map xyz
+
+export map -fmt pdf -proj plan -o ....pdf
+
+But this doesn't work.
+But if I do the same without using a map:
+(this is not really an option. much to error-prone)
+
+select survey1
+select survey2
+export map -fmt ....
+
+Then I get what I want to have.
+Anybody any idea what I'm doing wrong?
+
+Concerning question two:
+Are there any plans for future releases to have a option for xvi exports like:
+–disable splay-shots ?
+
+Thanks,
+Torsten
+
+> "Vasily Vl. Suhachev" <v_su at inbox.ru> hat am 2. März 2015 um 15:23
+> geschrieben:
+> 
+> 
+> Hello
+> 
+> 02.03.2015 20:49, Torsten Schnitter пишет:
+> > So what's wrong, is it a bug?
+> No. It is not clear behavior of survey selecting. By default all surveys 
+> is selected. You need unselect it all before selecting somthing special.
+> 
+> Example:
+> 
+> unselect cave
+> select cave.part1
+> select cave.part2
+> 
+> export ...
+> 
+> > I do have some splay stations within some surveylines.
+> > Is it possible to export a xvi-file without this splay stations?
+> > (e.g. I'm using splay stations for resurveyed points an I do not want to
+> > have
+> > these in the xvi-files but want to have them in the survey-files.)
+> Move them to dedicated namespace and filter it out as at first questuion
+> 
+> > Third question:
+> > Is it possible to plot left and right information to the output if I select
+> > surveylines for pdf output?
+> > I want to have a pdf file like the xvi-file. This may help for sketching the
+> > cave as you can print it on paper and use it as a template.
+> >
+> Its possible with set colors with thconfig layout. See attached file
+> 
+> Example:
+> 
+> export map -o mycave.pdf -proj plan  -layout hand_draw_stations_on 
+> -layout hand_draw_on
+> 
+> or
+> 
+> export map -o mycave.pdf -proj plan  -layout hand_draw_on
+> 
+> 
+> 
+> -- 
+>    WBR, Vasily
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From markus.boldt at gmx.net  Wed Mar  4 21:31:19 2015
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Wed, 4 Mar 2015 21:31:19 +0100
+Subject: [Therion] german expression for depth-legend
+Message-ID: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+
+Hello, 
+
+if I let make a legend for the depth by color (colour map-fg altitude) the
+title of that legend is Höhe des Titelfeldes. That is nonsense for me. Is
+it possible to change that? May be with some TEX or METAPOST? 
+
+
+
+In the wiki I have found how it is possible to make changes by myself. But
+in my installation (5.3.16/Win7) is no directory named therion/thlang ? AND
+I thing I`am too stupid for that
+..
+
+Many thanks for an answer 
+
+Greetings 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150304/7eba7592/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 2294 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150304/7eba7592/attachment.png>
+
+From bruce at tomo.co.nz  Thu Mar  5 07:07:10 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 5 Mar 2015 19:07:10 +1300
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+Message-ID: <9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+
+Markus
+
+Top of page 49 in the Therion Book describes, but you need to download the source files to decode what it means.
+
+ 
+
+The part of texts.txt that is relevant is;
+
+therion: title color-legend-altitude
+
+bg: Височинна скала
+
+cz: Nadmořské výšky
+
+de: Höhe des Titelfeldes
+
+el: Υψομετρικά
+
+en: Altitudes
+
+es: color (altitud)
+
+fr: Altitudes
+
+it: Profondità
+
+mi: Teitei, Tiketike
+
+pl: wysokości npm
+
+pt: Altitudes
+
+ru: Высотная шкала
+
+sk: Nadmorské výšky
+
+sq: titulli ngjyra-permbajtja-lartesia mbidetare
+
+ 
+
+So you want to add a statement to your th-config file (OUTSIDE of a layout block) something like this…
+
+ 
+
+text de "title color-legend-altitude" "Markus’ version of Höhe des Titelfeldes"
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Markus Boldt
+Sent: Thursday, 5 March 2015 9:31 a.m.
+To: therion at speleo.sk
+Subject: [Therion] german expression for depth-legend
+
+ 
+
+Hello, 
+
+if I let make a legend for the depth by color (colour map-fg altitude) the title of that legend is „Höhe des Titelfeldes“. That is nonsense for me. Is it possible to change that? May be with some TEX or METAPOST? 
+
+
+
+In the wiki I have found how it is possible to make changes by myself. But in my installation (5.3.16/Win7) is no directory named therion/thlang ? AND I thing I`am too stupid for that…..
+
+Many thanks for an answer 
+
+Greetings 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150305/ae9f23b1/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: image/jpeg
+Size: 4989 bytes
+Desc: image001.jpg
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150305/ae9f23b1/attachment.jpg>
+
+From markus.boldt at gmx.net  Thu Mar  5 18:04:09 2015
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Thu, 5 Mar 2015 18:04:09 +0100
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+Message-ID: <001901d05766$66857f50$33907df0$@gmx.net>
+
+Dear Bruce, 
+
+thank you very much for your very fast answer. It is working!! Nothing else I have thought J. It is a thing, if a pro does something or if only a (stupid) user is working J. 
+
+It would be a fine thing if “someone” would change the german expression to simply “Höhe” (Height) or better “Höhe (NN)”. But that brings me to the question: What happens if there are a cave deeper than 0m (NHN)? Get I a minus before the numbers? 
+
+Greetings
+
+Markus 
+
+ 
+
+ 
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Bruce
+Gesendet: Donnerstag, 5. März 2015 07:07
+An: 'List for Therion users'
+Betreff: Re: [Therion] german expression for depth-legend
+
+ 
+
+Markus
+
+Top of page 49 in the Therion Book describes, but you need to download the source files to decode what it means.
+
+ 
+
+The part of texts.txt that is relevant is;
+
+therion: title color-legend-altitude
+
+bg: Височинна скала
+
+cz: Nadmořské výšky
+
+de: Höhe des Titelfeldes
+
+el: Υψομετρικά
+
+en: Altitudes
+
+es: color (altitud)
+
+fr: Altitudes
+
+it: Profondità
+
+mi: Teitei, Tiketike
+
+pl: wysokości npm
+
+pt: Altitudes
+
+ru: Высотная шкала
+
+sk: Nadmorské výšky
+
+sq: titulli ngjyra-permbajtja-lartesia mbidetare
+
+ 
+
+So you want to add a statement to your th-config file (OUTSIDE of a layout block) something like this…
+
+ 
+
+text de "title color-legend-altitude" "Markus’ version of Höhe des Titelfeldes"
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Markus Boldt
+Sent: Thursday, 5 March 2015 9:31 a.m.
+To: therion at speleo.sk
+Subject: [Therion] german expression for depth-legend
+
+ 
+
+Hello, 
+
+if I let make a legend for the depth by color (colour map-fg altitude) the title of that legend is „Höhe des Titelfeldes“. That is nonsense for me. Is it possible to change that? May be with some TEX or METAPOST? 
+
+
+
+In the wiki I have found how it is possible to make changes by myself. But in my installation (5.3.16/Win7) is no directory named therion/thlang ? AND I thing I`am too stupid for that…..
+
+Many thanks for an answer 
+
+Greetings 
+
+Markus 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150305/9347e470/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.jpg
+Type: application/octet-stream
+Size: 4989 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150305/9347e470/attachment.obj>
+
+From wookey at wookware.org  Thu Mar  5 18:48:25 2015
+From: wookey at wookware.org (Wookey)
+Date: Thu, 5 Mar 2015 17:48:25 +0000
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <001901d05766$66857f50$33907df0$@gmx.net>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+Message-ID: <20150305174825.GL4861@stoneboat.aleph1.co.uk>
+
++++ Markus Boldt [2015-03-05 18:04 +0100]:
+>    Dear Bruce,
+> 
+>    thank you very much for your very fast answer. It is working!! Nothing
+>    else I have thought J. It is a thing, if a pro does something or if only a
+>    (stupid) user is working J.
+> 
+>    It would be a fine thing if “someone” would change the german expression
+>    to simply “Höhe” (Height) or better “Höhe (NN)”. 
+
+I've fixed this in the Debian version. And will upload shortly.
+
+BTW isn't the spanish version also wrong?
+It says:
+color (altitud)
+I reckon it should just be 
+Altitud
+same for the next item "color-legend-map"
+color (mapa)  -> Mapa
+
+I think the translator has misunderstood.
+
+Any spanish speakers/users care to confirm?
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Fri Mar  6 09:55:21 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 6 Mar 2015 21:55:21 +1300
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <001901d05766$66857f50$33907df0$@gmx.net>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net><9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+Message-ID: <441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+
+Not stupid Markus. Took me years to figure out how to change Therion’s ‘text’s.  Then I wondered why it took me so long.
+
+The cave depth that Therion reports is always positive, regardless of whether you have surveyed upwards or surveyed downwards.
+
+Bruce
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Markus Boldt
+Sent: Friday, 6 March 2015 6:04 a.m.
+To: 'List for Therion users'
+Subject: Re: [Therion] german expression for depth-legend
+
+ 
+
+Dear Bruce, 
+
+thank you very much for your very fast answer. It is working!! … But that brings me to the question: What happens if there are a cave deeper than 0m (NHN)? Get I a minus before the numbers? 
+
+Greetings
+
+Markus 
+
+ 
+
+ 
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Bruce
+Gesendet: Donnerstag, 5. März 2015 07:07
+An: 'List for Therion users'
+Betreff: Re: [Therion] german expression for depth-legend
+
+ 
+
+Markus
+
+Top of page 49 in the Therion Book describes, but you need to download the source files to decode what it means.
+
+ 
+
+The part of texts.txt that is relevant is;
+
+therion: title color-legend-altitude
+
+bg: Височинна скала
+
+cz: Nadmořské výšky
+
+de: Höhe des Titelfeldes
+
+el: Υψομετρικά
+
+en: Altitudes
+
+es: color (altitud)
+
+fr: Altitudes
+
+it: Profondità
+
+mi: Teitei, Tiketike
+
+pl: wysokości npm
+
+pt: Altitudes
+
+ru: Высотная шкала
+
+sk: Nadmorské výšky
+
+sq: titulli ngjyra-permbajtja-lartesia mbidetare
+
+ 
+
+So you want to add a statement to your th-config file (OUTSIDE of a layout block) something like this…
+
+ 
+
+text de "title color-legend-altitude" "Markus’ version of Höhe des Titelfeldes"
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/56a177a6/attachment.htm>
+
+From martinsluka at mac.com  Fri Mar  6 10:09:23 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 06 Mar 2015 10:09:23 +0100
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+Message-ID: <77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+
+
+> 6. 3. 2015 v 9:55, Bruce <bruce at tomo.co.nz>:
+> 
+> The cave depth that Therion reports is always positive, regardless of whether you have surveyed upwards or surveyed downwards
+
+Have you flagged the entrance?
+
+m
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/64c2d0d0/attachment.htm>
+
+From markus.boldt at ratiopharm.de  Fri Mar  6 10:44:38 2015
+From: markus.boldt at ratiopharm.de (Markus Boldt)
+Date: Fri, 6 Mar 2015 11:44:38 +0200
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+Message-ID: <0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+
+Yes, I have. With a signature from Therion AND with the Altitude in fix-command. Why you are asking? Only for Info, or is there an important Information.
+Greetings
+Markus
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka (External)
+Gesendet: Freitag, 6. März 2015 10:09
+An: List for Therion users
+Betreff: Re: [Therion] german expression for depth-legend
+
+
+6. 3. 2015 v 9:55, Bruce <bruce at tomo.co.nz<mailto:bruce at tomo.co.nz>>:
+
+The cave depth that Therion reports is always positive, regardless of whether you have surveyed upwards or surveyed downwards
+
+Have you flagged the entrance?
+
+m
+
+This message is intended solely for the designated recipient(s). It may contain confidential or proprietary information and may be subject to attorney-client privilege or other confidentiality protections. If you are not a designated recipient you may not review, copy or distribute this message. If you receive this in error, please notify the sender by reply e-mail and delete this message. Thank you.
+
+
+Diese Nachricht ist nur für vorgesehene Empfänger bestimmt. Die Nachricht kann vertrauliche oder persönliche Informationen enthalten und kann datenschutzrechtlichen Bestimmungen unterliegen. Wenn Sie kein vorgesehener Empfänger dieser Nachricht sind, ist es Ihnen untersagt, die darin enthaltenen Informationen einzusehen, zu vervielfältigen und zu veröffentlichen. Sollten Sie diese Nachricht versehentlich erhalten, bitten wir Sie, den Sender zu informieren, indem Sie auf diese Nachricht antworten und die Nachricht dann löschen. Vielen Dank.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/2f0a5dbf/attachment.htm>
+
+From martinsluka at mac.com  Fri Mar  6 17:05:13 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 06 Mar 2015 17:05:13 +0100
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+	<0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+Message-ID: <FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+
+
+> 6. 3. 2015 v 10:44, Markus Boldt <markus.boldt at ratiopharm.de>:
+> 
+> Yes, I have. With a signature from Therion AND with the Altitude in fix-command. Why you are asking? Only for Info, or is there an important Information. 
+> 
+
+Hi,
+
+if there isn’t entrance definition Therion calculates altitude difference from bottom most or from upper most station.
+
+m.s.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/bd8733bf/attachment.htm>
+
+From markus.boldt at gmx.net  Fri Mar  6 17:39:28 2015
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 6 Mar 2015 17:39:28 +0100
+Subject: [Therion] german expression for depth-legend
+In-Reply-To: <FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>	<001901d05766$66857f50$33907df0$@gmx.net>	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>	<0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+	<FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+Message-ID: <003701d0582c$1e121050$5a3630f0$@gmx.net>
+
+Hi, 
+
+ah, yes. Thanks! for that Information. 
+
+Markus 
+
+ 
+
+ 
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Martin Sluka
+Gesendet: Freitag, 6. März 2015 17:05
+An: List for Therion users
+Betreff: Re: [Therion] german expression for depth-legend
+
+ 
+
+ 
+
+6. 3. 2015 v 10:44, Markus Boldt <markus.boldt at ratiopharm.de>:
+
+ 
+
+Yes, I have. With a signature from Therion AND with the Altitude in fix-command. Why you are asking? Only for Info, or is there an important Information. 
+
+ 
+
+ 
+
+Hi,
+
+ 
+
+if there isn’t entrance definition Therion calculates altitude difference from bottom most or from upper most station.
+
+ 
+
+m.s.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/7bc40b06/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Mar  6 21:25:35 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 7 Mar 2015 09:25:35 +1300
+Subject: [Therion] cave depth
+In-Reply-To: <FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net><9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN><001901d05766$66857f50$33907df0$@gmx.net><441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN><77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com><0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+	<FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+Message-ID: <A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+
+>if there isn't entrance definition Therion calculates altitude difference
+from bottom most or from upper most station.
+
+ 
+
+????? 
+
+And what if there is an entrance defined?  Or many entrances at various
+altitudes?  Or many caves defined for that matter?  What does Therion do?
+(I have not often checked, but any anomalies I found I assumed were my
+mistakes).
+
+ 
+
+Surely the best estimate Therion can make of cave depth is always the
+altitude difference between the bottom-most and top-most station of the
+caves selected for export?
+
+(ignoring for now niceties of splays or up-down dimensions)
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150307/d75970c7/attachment.htm>
+
+From martinsluka at mac.com  Fri Mar  6 21:54:38 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 06 Mar 2015 21:54:38 +0100
+Subject: [Therion] cave depth
+In-Reply-To: <A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+	<0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+	<FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+	<A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+Message-ID: <0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com>
+
+And from where poor Therion should  recognize what is the entrance of cave? Station 1, or station 15, or … Any station which ends a branch could be entrance theoretically.
+
+m.
+
+
+> 6. 3. 2015 v 21:25, Bruce <bruce at tomo.co.nz>:
+> 
+> >if there isn’t entrance definition Therion calculates altitude difference from bottom most or from upper most station.
+>  
+> ????? 
+> And what if there is an entrance defined?  Or many entrances at various altitudes?  Or many caves defined for that matter?  What does Therion do?  (I have not often checked, but any anomalies I found I assumed were my mistakes).
+>  
+> Surely the best estimate Therion can make of cave depth is always the altitude difference between the bottom-most and top-most station of the caves selected for export?
+> (ignoring for now niceties of splays or up-down dimensions)
+>  
+> Bruce
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150306/c2cf6d2c/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Mar  6 22:31:42 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 7 Mar 2015 10:31:42 +1300
+Subject: [Therion] cave depth
+In-Reply-To: <0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net><9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN><001901d05766$66857f50$33907df0$@gmx.net><441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN><77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com><0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp><FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com><A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+	<0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com>
+Message-ID: <5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+
+Hi Martin
+
+My point was, what relevance does an entrance have to the depth of a cave
+(from Therion's perspective)?
+
+Entrances may occur anywhere in underground survey network, at end of branch
+or mid branch (hole in roof of shallow cave).  Software should only take
+survey network as being of relevance to the depth calculation.  The flagging
+of entrances (or not) is quite an independent concept that should not alter
+the way depth is calculated.
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150307/54a7868e/attachment.htm>
+
+From wookey at wookware.org  Fri Mar  6 22:36:57 2015
+From: wookey at wookware.org (Wookey)
+Date: Fri, 6 Mar 2015 21:36:57 +0000
+Subject: [Therion] cave depth
+In-Reply-To: <5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+	<0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+	<FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+	<A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+	<0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com>
+	<5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+Message-ID: <20150306213657.GW4861@stoneboat.aleph1.co.uk>
+
++++ Bruce [2015-03-07 10:31 +1300]:
+>    Hi Martin
+> 
+>    My point was, what relevance does an entrance have to the depth of a cave
+>    (from Therion’s perspective)?
+> 
+>    Entrances may occur anywhere in underground survey network, at end of
+>    branch or mid branch (hole in roof of shallow cave).  Software should only
+>    take survey network as being of relevance to the depth calculation.  The
+>    flagging of entrances (or not) is quite an independent concept that should
+>    not alter the way depth is calculated.
+
+Well the depth could become +15, -230, rather than just 245m if there
+is one entrance 15m below the highest point. You may or may not prefer
+that - just saying that they could be related in that way.
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Fri Mar  6 23:02:59 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 7 Mar 2015 11:02:59 +1300
+Subject: [Therion] cave depth
+In-Reply-To: <20150306213657.GW4861@stoneboat.aleph1.co.uk>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net><9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN><001901d05766$66857f50$33907df0$@gmx.net><441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN><77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com><0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp><FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com><A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN><0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com><5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+	<20150306213657.GW4861@stoneboat.aleph1.co.uk>
+Message-ID: <C4938EDD4B694F3D90F8A1B9AC3E2939@JUICEBRAIN>
+
+> Well the depth could become +15, -230, rather than just 245m if there
+is one entrance 15m below the highest point. You may or may not prefer
+that - just saying that they could be related in that way.
+
+Yes I agree, there are other ways of thinking about definition of cave
+depth, but not yet able or likely to be automated using Therion.  Although
+the recent \cave[max|min]z variables are a step in allowing users to
+customise in that direction.
+
+Bruce
+
+
+
+From bruce at tomo.co.nz  Fri Mar  6 23:29:39 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 7 Mar 2015 11:29:39 +1300
+Subject: [Therion] cave depth
+In-Reply-To: <C4938EDD4B694F3D90F8A1B9AC3E2939@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net><9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN><001901d05766$66857f50$33907df0$@gmx.net><441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN><77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com><0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp><FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com><A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN><0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com><5076926CA60E43498A1131D9314255BA@JUICEBRAIN><20150306213657.GW4861@stoneboat.aleph1.co.uk>
+	<C4938EDD4B694F3D90F8A1B9AC3E2939@JUICEBRAIN>
+Message-ID: <CD4BD78BFEA041AFA6C12DB218D602E5@JUICEBRAIN>
+
+I had a thought!
+Exported cave lists already report (among other things) station comments
+with flag entrance set against the elevation, and grouped by cave.
+
+I have already experimented with redefining the map header so that depth is
+reported like;
+
+Length: 	1232m
+Depth: 	126m, from altitude 100m to 226m
+
+What would it take to make the station comments for flagged entrances
+available in the map-headers so that we could add entrance station comments
+and elevations?
+
+Like this?
+
+Length: 	1232m
+Depth: 	126m, from altitude 100m to 226m
+Middle Earth Entrance 	202m
+Perseverance Cave 	186m
+Hobbit Hole Entrance 	150m
+
+Bruce
+
+
+
+From martinsluka at mac.com  Sat Mar  7 12:48:37 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 07 Mar 2015 12:48:37 +0100
+Subject: [Therion] cave depth
+In-Reply-To: <5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+References: <002b01d056ba$2d34df90$879e9eb0$@gmx.net>
+	<9B8A33222AC748659BE5BD3C15DFAA4C@JUICEBRAIN>
+	<001901d05766$66857f50$33907df0$@gmx.net>
+	<441C40BCEA534A2CBD2BCDDAF9F05BDD@JUICEBRAIN>
+	<77CFE762-9C44-480D-A5E2-0547B0649DFE@mac.com>
+	<0182963524C8C84B992DDC42886E7F0C29995FA5B1@PTVCCR04.IL.Teva.Corp>
+	<FF1618C4-3F97-4D07-9CAE-FBC3D39940F0@mac.com>
+	<A2EF40626A22434FAD0D64057EF913A1@JUICEBRAIN>
+	<0170887C-7075-4DAA-8448-6FD05CBAB50C@mac.com>
+	<5076926CA60E43498A1131D9314255BA@JUICEBRAIN>
+Message-ID: <56A78687-2036-47C4-A88A-9617667B58AC@mac.com>
+
+
+> 6. 3. 2015 v 22:31, Bruce <bruce at tomo.co.nz>:
+> 
+> My point was, what relevance does an entrance have to the depth of a cave (from Therion’s perspective)?
+
+It is important in case of extended elevation too.
+
+m.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150307/7c13968a/attachment.htm>
+
+From herich at speleodd.sk  Mon Mar 16 14:19:23 2015
+From: herich at speleodd.sk (herich)
+Date: Mon, 16 Mar 2015 14:19:23 +0100
+Subject: [Therion] PDA
+Message-ID: <d9072fe64872ca1a3eb72eb693f729ba@mail.speleodd.sk>
+
+Hi,
+does anyone know if the PocketTopo works with OS Windows Embedded 
+Handheld 6.5.3 ?
+Thank you
+Palo
+
+
+From bgee at campercaver.net  Sun Mar 22 22:47:31 2015
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 22 Mar 2015 16:47:31 -0500
+Subject: [Therion] How to create KML files
+Message-ID: <2511028.zuSCUVkIvE@main2.billgee.local>
+
+Hello everyone -
+
+I am trying to create a KML file.  Therion throws an error:
+
+"therion: warning -- data not georeferenced -- unable to export KML file"
+
+I think this is because I have not included latitude/longitude information.  
+My question is ...  How is latitude and longitude specified?
+
+Reading through the Therion book, it seems it is done in the "cs" statement 
+within the centerline.  However, the syntax is not clear.   Are there any 
+examples that show how it is done?
+
+Thanks - Bill Gee
+
+
+From henry at hbennett.com  Sun Mar 22 23:04:42 2015
+From: henry at hbennett.com (Henry Bennett)
+Date: Sun, 22 Mar 2015 22:04:42 -0000
+Subject: [Therion] How to create KML files
+In-Reply-To: <2511028.zuSCUVkIvE@main2.billgee.local>
+References: <2511028.zuSCUVkIvE@main2.billgee.local>
+Message-ID: <03a001d064ec$335da920$9a18fb60$@hbennett.com>
+
+Use Fix
+
+http://therion.speleo.sk/wiki/doku.php/tbe:wiki2?s[]=fix&s[]=entrance
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bill Gee
+Sent: 22 March 2015 21:48
+To: Therion Mail List
+Subject: [Therion] How to create KML files
+
+Hello everyone -
+
+I am trying to create a KML file.  Therion throws an error:
+
+"therion: warning -- data not georeferenced -- unable to export KML file"
+
+I think this is because I have not included latitude/longitude information.
+
+My question is ...  How is latitude and longitude specified?
+
+Reading through the Therion book, it seems it is done in the "cs" statement 
+within the centerline.  However, the syntax is not clear.   Are there any 
+examples that show how it is done?
+
+Thanks - Bill Gee
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From caver.adam at outlook.com  Sun Mar 22 23:25:29 2015
+From: caver.adam at outlook.com (Adam Sampson)
+Date: Sun, 22 Mar 2015 18:25:29 -0400
+Subject: [Therion] How to create KML files
+In-Reply-To: <03a001d064ec$335da920$9a18fb60$@hbennett.com>
+References: <2511028.zuSCUVkIvE@main2.billgee.local>
+	<03a001d064ec$335da920$9a18fb60$@hbennett.com>
+Message-ID: <BAY404-EAS2733DAF6E43CEF6B16DD517980C0@phx.gbl>
+
+Data modified to obscure cave location, but this should work. The long/lat order is the same as you put in your cs statement. The "200" is elevation in meters. I'm pretty sure it's optional. 
+
+# Tie the Survey to a GPS point at the entrance.
+cs long-lat
+fix 0 -86:10.100 37:40.100 200
+station 0 "My Entrance." entrance
+
+
+On Mar 22, 2015, at 6:10 PM, Henry Bennett <henry at hbennett.com> wrote:
+
+Use Fix
+
+http://therion.speleo.sk/wiki/doku.php/tbe:wiki2?s[]=fix&s[]=entrance
+
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Bill Gee
+Sent: 22 March 2015 21:48
+To: Therion Mail List
+Subject: [Therion] How to create KML files
+
+Hello everyone -
+
+I am trying to create a KML file.  Therion throws an error:
+
+"therion: warning -- data not georeferenced -- unable to export KML file"
+
+I think this is because I have not included latitude/longitude information.
+
+My question is ...  How is latitude and longitude specified?
+
+Reading through the Therion book, it seems it is done in the "cs" statement 
+within the centerline.  However, the syntax is not clear.   Are there any 
+examples that show how it is done?
+
+Thanks - Bill Gee
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From olly at survex.com  Mon Mar 23 00:14:44 2015
+From: olly at survex.com (Olly Betts)
+Date: Sun, 22 Mar 2015 23:14:44 +0000
+Subject: [Therion] How to create KML files
+In-Reply-To: <03a001d064ec$335da920$9a18fb60$@hbennett.com>
+References: <2511028.zuSCUVkIvE@main2.billgee.local>
+	<03a001d064ec$335da920$9a18fb60$@hbennett.com>
+Message-ID: <20150322231444.GF16180@survex.com>
+
+On Sun, Mar 22, 2015 at 10:04:42PM -0000, Henry Bennett wrote:
+> Bill Gee writes:
+> > "therion: warning -- data not georeferenced -- unable to export KML file"
+> > 
+> > I think this is because I have not included latitude/longitude information.
+> > 
+> > My question is ...  How is latitude and longitude specified?
+> > 
+> > Reading through the Therion book, it seems it is done in the "cs" statement 
+> > within the centerline.  However, the syntax is not clear.   Are there any 
+> > examples that show how it is done?
+
+> Use Fix
+> 
+> http://therion.speleo.sk/wiki/doku.php/tbe:wiki2?s[]=fix&s[]=entrance
+
+You need to both specify a coordinate system with "cs" *and* use "fix"
+to locate at least one station in that coordinate system, e.g.:
+
+cs long-lat
+fix entrance -77.0365 38.8977 30
+
+That assumes datum WGS84 (which is what your GPS probably gives you by
+default).
+
+You can't use lat/long as the output coordinate system, as that needs to
+use length units.  I don't know off-hand if therion picks a suitable
+one for you - if not, you'll need to specify a suitable output
+coordinate system in your config file - e.g. 'cs utm<NN>' where <NN> is
+the UTM zone you are in.
+
+Cheers,
+    Olly
+
+
+From bgee at campercaver.net  Mon Mar 23 00:30:29 2015
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 22 Mar 2015 18:30:29 -0500
+Subject: [Therion] How to create KML files
+In-Reply-To: <20150322231444.GF16180@survex.com>
+References: <2511028.zuSCUVkIvE@main2.billgee.local>
+	<03a001d064ec$335da920$9a18fb60$@hbennett.com>
+	<20150322231444.GF16180@survex.com>
+Message-ID: <1461982.hi7xicFX6A@main2.billgee.local>
+
+Thanks Olly, Henry and Adam -
+
+This was enough information for me to get a KML file out of Therion.  I sent it 
+off to someone else to verify that it lands in about the right place.  Google 
+Earth has a Linux version, but it is badly supported and very buggy.  
+
+Now that I know the secret incantation, I can change to UTM if needed.  The 
+cave in question is probably in zone 15.  The border between zone 14 and 15 
+runs right down the middle of Missouri which causes us no end of difficulty.  
+The readings for this cave were not done by me.
+
+And one point to verify ...  Therion DOES require elevation.  I tried it 
+without and it complained.
+
+Regards - Bill Gee
+
+
+
+On Sunday, March 22, 2015 23:14:44 Olly Betts wrote:
+> On Sun, Mar 22, 2015 at 10:04:42PM -0000, Henry Bennett wrote:
+> > Bill Gee writes:
+> > > "therion: warning -- data not georeferenced -- unable to export KML
+> > > file"
+> > > 
+> > > I think this is because I have not included latitude/longitude
+> > > information.
+> > > 
+> > > My question is ...  How is latitude and longitude specified?
+> > > 
+> > > Reading through the Therion book, it seems it is done in the "cs"
+> > > statement
+> > > within the centerline.  However, the syntax is not clear.   Are there
+> > > any
+> > > examples that show how it is done?
+> > 
+> > Use Fix
+> > 
+> > http://therion.speleo.sk/wiki/doku.php/tbe:wiki2?s[]=fix&s[]=entrance
+> 
+> You need to both specify a coordinate system with "cs" *and* use "fix"
+> to locate at least one station in that coordinate system, e.g.:
+> 
+> cs long-lat
+> fix entrance -77.0365 38.8977 30
+> 
+> That assumes datum WGS84 (which is what your GPS probably gives you by
+> default).
+> 
+> You can't use lat/long as the output coordinate system, as that needs to
+> use length units.  I don't know off-hand if therion picks a suitable
+> one for you - if not, you'll need to specify a suitable output
+> coordinate system in your config file - e.g. 'cs utm<NN>' where <NN> is
+> the UTM zone you are in.
+> 
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Sun Mar 29 00:44:08 2015
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 29 Mar 2015 12:44:08 +1300
+Subject: [Therion] -map-level with export map
+Message-ID: <698244FE49CD47E9AD610F39D4A49E41@JUICEBRAIN>
+
+I would like a pdf map, that contains all the submaps on their own layers, and with offsets and previews visible.
+
+ 
+
+I have been trying to make sense of –map-level as it relates to exporting map outputs, and referring to the Therion Book.
+
+• map-level <number> ◃ valid only when a map is selected. Determines the level at
+
+which map expansion for atlas export is stopped. By default 0 is used; if ‘basic’ is
+
+specified, expansion is done up to the basic maps. Note: Map previews are displayed
+
+only as specified in maps in the current map-level.
+
+ 
+
+So as documented it seems to apply only to atlas exports, however as discussed previously on this forum it is useful in map exports as it can place each submap on it’s own layer in the resulting pdf file.  This is what I would like to achieve, however doing so has the disadvantage of hiding offset passages (and their previews).  The preview hiding is hinted at in the Therion Book, but not the offset hiding.
+
+ 
+
+So experimenting…
+
+ 
+
+select SpanishParrotPlanMap     -map-level 0 
+
+…selects only the top level map for export and results in a pdf with 3 layers, preview above, SpanishParrotPlanMap and preview below.  Because I have specified an offset below in one of the sub-maps, the preview below layer contains the shaded passage shape, and the map-connection points are displayed in the SpanishParrotPlanMap layer.
+
+ 
+
+This seems to be exactly the same as the default behaviour resulting from…
+
+select SpanishParrotPlanMap     #ie no map-level specified.
+
+ 
+
+The above are the pdf map characteristics I want, but in addition, sometimes, I want a layer for each submap.
+
+ 
+
+select SpanishParrotPlanMap     -map-level 1
+
+… should perhaps achieve what I want, but I find I have no offset and no preview below.  I do however have a layer for each submap as well as empty layers for preview above and below.
+
+ 
+
+So lets try selecting both flavours of the map…
+
+select SpanishParrotPlanMap     -map-level 0
+
+select SpanishParrotPlanMap     -map-level 1
+
+ 
+
+Some improvement. I have an offset, and map and submap layers in the pdf, ordered according to the order of my select statements.  BUT the preview layer is empty and the map-connection point dashed lines to not display.
+
+ 
+
+Other variants I tried…
+
+select SpanishParrotPlanMap     -map-level 1 -map-level 0 
+
+…this only creates output based on the last –map-level statement.  So it should probably throw a warning or error.
+
+select SpanishParrotPlanMap     -map-level 0, 1 # causes error
+
+select SpanishParrotPlanMap     -map-level 0 1 # causes error
+
+select SpanishParrotPlanMap     -map-level [0 1] # causes error
+
+ 
+
+So is there a way to specify the creation of a pdf layer for each submap, while retaining the preview, offset and map-connection visibility?
+
+ 
+
+ 
+
+As an aside, in 2011 I requested an easy toggle for offsets. http://article.gmane.org/gmane.comp.gis.therion/2759/match=offset
+
+ 
+
+It would seem that the current behaviour of –map-level can be used to achieve this for exported maps.  Not sure how it affects exported atlas, but I’m not going to worry about that until another day.
+
+ 
+
+Bruce
+
+ 
+
+I 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20150329/f9c64305/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Mon Mar 30 14:35:08 2015
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Mon, 30 Mar 2015 14:35:08 +0200 (CEST)
+Subject: [Therion] XVI Export with select map
+Message-ID: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+
+Hi all
+
+Some time ago I asked a question on this list but didn't get a solution.
+So I would like to try again. Or does nobody else have this problem?
+
+Qustion/problem is:
+
+I'm using Therion 5.3.16 on Windows.
+I have a problem with exporting the xvi-files.
+
+In the documentation it's written that you can have maps consisting of surveys.
+And so I did.
+I built a map with projection plan containing just surveys (some surveylines).
+In the config-file I selected this map and exportet a xvi-file.
+But the output of the xvi-file contains all survey lines and not just the few
+inserted into the selected map.
+(If I select these lines in the config file instead of the map it's working as
+expected and the xvi-file contains just selected lines)
+
+Map was defined within "survey-abc" like:
+map xyz -proj plan
+  line1 at survey-x
+  line2 at survey-y
+endmap
+
+I used "select map xyz at survey-abc" and "export ...xvi..."
+Any help?
+
+cheers,
+Torsten
+
+
+From martinsluka at mac.com  Tue Mar 31 14:54:03 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 Mar 2015 14:54:03 +0200
+Subject: [Therion] XVI Export with select map
+In-Reply-To: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+References: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+Message-ID: <EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+
+
+> 30. 3. 2015 v 14:35, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+> 
+> (If I select these lines in the config file instead of the map it's working as
+> expected and the xvi-file contains just selected lines)
+
+Thorsten, this is feature and not bug.
+
+If you don’t specify which map to use for export, Therion will use all available data.
+
+You may define many different maps for your data set, but you MUST specify to Therion, which one to use by command „select“
+
+m.s.
+
+
+
+
+From torsten.schnitter at netcologne.de  Tue Mar 31 15:10:19 2015
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 31 Mar 2015 15:10:19 +0200 (CEST)
+Subject: [Therion] XVI Export with select map
+In-Reply-To: <EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+References: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+Message-ID: <1349807322.25927.1427807419062.JavaMail.open-xchange@cc-app2.netcologne.de>
+
+Hi Martin
+
+I did specify a map and selected this map for the export.
+But the export does contain all surveys and not only the survey I specified in
+the map.
+
+Torsten
+
+> Martin Sluka <martinsluka at mac.com> hat am 31. März 2015 um 14:54 geschrieben:
+> 
+> 
+> 
+> > 30. 3. 2015 v 14:35, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+> > 
+> > (If I select these lines in the config file instead of the map it's working
+> > as
+> > expected and the xvi-file contains just selected lines)
+> 
+> Thorsten, this is feature and not bug.
+> 
+> If you don’t specify which map to use for export, Therion will use all
+> available data.
+> 
+> You may define many different maps for your data set, but you MUST specify to
+> Therion, which one to use by command „select“
+> 
+> m.s.
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Tue Mar 31 15:32:51 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 Mar 2015 15:32:51 +0200
+Subject: [Therion] XVI Export with select map
+In-Reply-To: <1349807322.25927.1427807419062.JavaMail.open-xchange@cc-app2.netcologne.de>
+References: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+	<1349807322.25927.1427807419062.JavaMail.open-xchange@cc-app2.netcologne.de>
+Message-ID: <86E431FC-B19A-4A31-86F3-7A73EF4685BC@mac.com>
+
+Sorry, but I don’t understand this
+
+(If I select these lines in the config file instead of the map it's working as
+expected and the xvi-file contains just selected lines)
+
+m.
+
+
+> 31. 3. 2015 v 15:10, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+> 
+> Hi Martin
+> 
+> I did specify a map and selected this map for the export.
+> But the export does contain all surveys and not only the survey I specified in
+> the map.
+> 
+> Torsten
+> 
+>> Martin Sluka <martinsluka at mac.com> hat am 31. März 2015 um 14:54 geschrieben:
+>> 
+>> 
+>> 
+>>> 30. 3. 2015 v 14:35, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+>>> 
+>>> (If I select these lines in the config file instead of the map it's working
+>>> as
+>>> expected and the xvi-file contains just selected lines)
+>> 
+>> Thorsten, this is feature and not bug.
+>> 
+>> If you don’t specify which map to use for export, Therion will use all
+>> available data.
+>> 
+>> You may define many different maps for your data set, but you MUST specify to
+>> Therion, which one to use by command „select“
+>> 
+>> m.s.
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From torsten.schnitter at netcologne.de  Tue Mar 31 15:58:41 2015
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 31 Mar 2015 15:58:41 +0200 (CEST)
+Subject: [Therion] XVI Export with select map
+In-Reply-To: <86E431FC-B19A-4A31-86F3-7A73EF4685BC@mac.com>
+References: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+	<1349807322.25927.1427807419062.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<86E431FC-B19A-4A31-86F3-7A73EF4685BC@mac.com>
+Message-ID: <423135255.26272.1427810321742.JavaMail.open-xchange@cc-app2.netcologne.de>
+
+Hi Martin
+
+I do have a map defined in a .th-file like:
+
+map abc
+  survey-a at subsurvey-1
+  survey-b at subsurvey-2
+endmap
+
+(survey-a and survey-b contain line data)
+
+Inside the config-file I use statements:
+select abc
+export map -fmt xvi ...
+
+This export does contain all surveydata a not only survey-a and survey-b.
+
+But if i use inside the config-file instead:
+select survey-a at subsurvey-1
+select survey-b at subsurvey-2
+export map -fmt xvi ...
+
+This export does only contain survey-a and survey-b (as also expected when
+select abc).
+
+Do you understand now?
+Torsten
+
+> Martin Sluka <martinsluka at mac.com> hat am 31. März 2015 um 15:32 geschrieben:
+> 
+> 
+> Sorry, but I don’t understand this
+> 
+> (If I select these lines in the config file instead of the map it's working as
+> expected and the xvi-file contains just selected lines)
+> 
+> m.
+> 
+> 
+> > 31. 3. 2015 v 15:10, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+> > 
+> > Hi Martin
+> > 
+> > I did specify a map and selected this map for the export.
+> > But the export does contain all surveys and not only the survey I specified
+> > in
+> > the map.
+> > 
+> > Torsten
+> > 
+> >> Martin Sluka <martinsluka at mac.com> hat am 31. März 2015 um 14:54
+> >> geschrieben:
+> >> 
+> >> 
+> >> 
+> >>> 30. 3. 2015 v 14:35, Torsten Schnitter <torsten.schnitter at netcologne.de>:
+> >>> 
+> >>> (If I select these lines in the config file instead of the map it's
+> >>> working
+> >>> as
+> >>> expected and the xvi-file contains just selected lines)
+> >> 
+> >> Thorsten, this is feature and not bug.
+> >> 
+> >> If you don’t specify which map to use for export, Therion will use all
+> >> available data.
+> >> 
+> >> You may define many different maps for your data set, but you MUST specify
+> >> to
+> >> Therion, which one to use by command „select“
+> >> 
+> >> m.s.
+> >> 
+> >> 
+> >> _______________________________________________
+> >> Therion mailing list
+> >> Therion at speleo.sk
+> >> http://mailman.speleo.sk/mailman/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Tue Mar 31 16:16:08 2015
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 31 Mar 2015 16:16:08 +0200
+Subject: [Therion] XVI Export with select map
+In-Reply-To: <423135255.26272.1427810321742.JavaMail.open-xchange@cc-app2.netcologne.de>
+References: <741601840.19283.1427718908092.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<EF4BB496-5E65-48FD-9C92-B1BD87FD2A6C@mac.com>
+	<1349807322.25927.1427807419062.JavaMail.open-xchange@cc-app2.netcologne.de>
+	<86E431FC-B19A-4A31-86F3-7A73EF4685BC@mac.com>
+	<423135255.26272.1427810321742.JavaMail.open-xchange@cc-app2.netcologne.de>
+Message-ID: <9EF6A8CB-54C2-48AB-B800-D7F9682CCA96@mac.com>
+
+OK, I understand now.
+
+It looks as nice trick.
+
+As I remembered I spoke with Stacho about this problem with generation of xvi files some times ago.
+
+Thanks
+
+Martin
+
+> I do have a map defined in a .th-file like:
+> 
+> map abc
+>  survey-a at subsurvey-1
+>  survey-b at subsurvey-2
+> endmap
+> 
+> (survey-a and survey-b contain line data)
+> 
+> Inside the config-file I use statements:
+> select abc
+> export map -fmt xvi ...
+> 
+> This export does contain all surveydata a not only survey-a and survey-b.
+> 
+> But if i use inside the config-file instead:
+> select survey-a at subsurvey-1
+> select survey-b at subsurvey-2
+> export map -fmt xvi ...
+> 
+> This export does only contain survey-a and survey-b (as also expected when
+> select abc).
+
+

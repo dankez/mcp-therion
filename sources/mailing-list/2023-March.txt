@@ -1,0 +1,2564 @@
+From davleb at yahoo.fr  Mon Mar 13 11:22:18 2023
+From: davleb at yahoo.fr (david Le berre)
+Date: Mon, 13 Mar 2023 10:22:18 +0000 (UTC)
+Subject: [Therion] Remove little text in global export  &   offseted map
+In-Reply-To: <2014684943.941613.1657382443645@mail.yahoo.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+Message-ID: <1320188920.1821341.1678702938457@mail.yahoo.com>
+
+ Dear All
+
+1- scale & Export:
+Little issue, I think already answerred but can not find it back!
+My survey is quite huge and I need to export different scalesIn the biggest I would like to remove all little object and particularly text from the export to make it more understandable.
+I use all scale of text xs,s,m,l,xl 3,5 .....With the option HIDEN or SHOW I only manage to remove all or nothing.Any way to remove only text which scale is < to l ?
+2- Offseted map:
+this topic is known but I would like to know if there were some progress?
+Some under-level of offsetted map refers directly to the initial shadow when using connection map point.
+MAPMAP-1 okMAP-2 ok if based on scrapMAP-2 ko if refering to a mapMAP-3 ok
+Thanks in advance for your help
+
+David
+
+
+
+
+  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230313/d753159f/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Mar 13 11:37:06 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 13 Mar 2023 10:37:06 +0000
+Subject: [Therion] Remove little text in global export & offseted map
+In-Reply-To: <1320188920.1821341.1678702938457@mail.yahoo.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+Message-ID: <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+
+Hi David,
+
+> My survey is quite huge and I need to export different scales
+> In the biggest I would like to remove all little object and particularly
+> text from the export to make it more understandable.
+
+Yes, but also no:
+https://therion.speleo.sk/wiki/templates#setup_a_default_standard_layout
+
+layoutstandards.txt has some metapost code that can hide small text
+labels. *BUT* the way it works is to physically measure the size of the
+text label. So if - for example - you have something like this:
+
+point 740.0 918.5 label -scale xl -text [foo<br>bar] -align left
+
+The linebreak in there makes the rendered text block taller than one
+line of text would be. The metapost code does not understand that, so it
+assumes it must be a large text size, and it allows it to render.
+
+(Yes, it would be possible to make the code check only the first text
+character, but that is not as easy as you might think, since the first
+character can be a linebreak, or formatting.)
+
+You can also use this layout option:
+min-symbol-scale M
+but that affects all symbols at once, and you need to remember that all
+lines have a default size, even if you did not explicitly set one!
+
+Therion really, really needs to have a setting like this:
+min-symbol-scale point label M
+* wishes *
+
+> *2- Offseted map:*
+> 
+> this topic is known but I would like to know if there were some progress?
+> 
+> Some under-level of offsetted map refers directly to the initial shadow
+> when using connection map point.
+
+Sorry, I do not understand this question, could you perhaps explain in
+more detail?
+
+Cheers,
+
+Tarquin
+
+From davleb at yahoo.fr  Mon Mar 13 15:11:49 2023
+From: davleb at yahoo.fr (david Le berre)
+Date: Mon, 13 Mar 2023 14:11:49 +0000 (UTC)
+Subject: [Therion] Remove little text in global export & offseted map
+In-Reply-To: <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+Message-ID: <1403423685.2124641.1678716709285@mail.yahoo.com>
+
+ Dear Tarquin
+Thanks a lot for your answersmin-symbol-scale m? => works well eventhough as you mentionned wall disapearred ! fortunatly I have colored surfaces everywhere and except cross-over section that I will re-scale manually the rest is really correct!
+
+I try to be more clear on my second topic, the problem is that the connection arrow between offsetted map sometimes skipped the N+1 map to be connected directly to the N+2 map:
+Exemple:1 - (level N+2) Global map: MAP 1?
+2- (level N+1) offsetted network below from MAP1= MAP2? ? => map connection point arrow of MAP2 goes from its shadow on MAP1 to MAP2? => ok
+3-? (level N) offsetted network below from MAP2= MAP3
+? ? 2 cases:
+
+? ? 3.1 MAP3 is built by scrap? ?S1 S2 etc....
+? ? => ok map connection point arrow goes from MAP3 to its shadow on MAP2 and then idem from MAP2 to MAP1 => clean
+
+? ? 3.2 MAP3 is built by other MAP (level N-1)
+? ? => Ko map connection point arrow goes directly to shadows on MAP1 skipping its shadow on MAP2? ?I hope it is more clear, if not I'll send you tonight a better description with picture. the problem is that in case there are several map to offset the rendering at the end is unclear except if you keep all your rmap at the level 1 (ex level of MAP2) but in that case you can not follow easely the real path in your cave.
+Not sure it is better :)David?
+
+
+.
+
+
+
+
+?
+
+
+
+    Le lundi 13 mars 2023 ? 11:56:31 UTC+1, Tarquin Wilton-Jones via Therion <therion at speleo.sk> a ?crit :  
+ 
+ Hi David,
+
+> My survey is quite huge and I need to export different scales
+> In the biggest I would like to remove all little object and particularly
+> text from the export to make it more understandable.
+
+Yes, but also no:
+https://therion.speleo.sk/wiki/templates#setup_a_default_standard_layout
+
+layoutstandards.txt has some metapost code that can hide small text
+labels. *BUT* the way it works is to physically measure the size of the
+text label. So if - for example - you have something like this:
+
+point 740.0 918.5 label -scale xl -text [foo<br>bar] -align left
+
+The linebreak in there makes the rendered text block taller than one
+line of text would be. The metapost code does not understand that, so it
+assumes it must be a large text size, and it allows it to render.
+
+(Yes, it would be possible to make the code check only the first text
+character, but that is not as easy as you might think, since the first
+character can be a linebreak, or formatting.)
+
+You can also use this layout option:
+min-symbol-scale M
+but that affects all symbols at once, and you need to remember that all
+lines have a default size, even if you did not explicitly set one!
+
+Therion really, really needs to have a setting like this:
+min-symbol-scale point label M
+* wishes *
+
+> *2- Offseted map:*
+> 
+> this topic is known but I would like to know if there were some progress?
+> 
+> Some under-level of offsetted map refers directly to the initial shadow
+> when using connection map point.
+
+Sorry, I do not understand this question, could you perhaps explain in
+more detail?
+
+Cheers,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230313/712da04d/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Mar 13 19:44:59 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 14 Mar 2023 07:44:59 +1300
+Subject: [Therion] Remove little text in global export & offseted map
+In-Reply-To: <1403423685.2124641.1678716709285@mail.yahoo.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+Message-ID: <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+
+David, Tarquin
+
+I think we discussed the map-connection offsets last year, without real resolution.
+
+I couldn?t find them in the mail-archive just now, so I?ll send my posts again in the hope that they describe the problem and present results of some experimentation that defines somewhat the parameters of the problem.
+
+Stand by.
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of david Le berre via Therion
+Sent: Tuesday, 14 March 2023 03:12
+To: therion at speleo.sk
+Cc: david Le berre <davleb at yahoo.fr>
+Subject: Re: [Therion] Remove little text in global export & offseted map
+
+ 
+
+Dear Tarquin
+
+ 
+
+Thanks a lot for your answers
+
+min-symbol-scale m  => works well eventhough as you mentionned wall disapearred ! fortunatly I have colored surfaces everywhere and except cross-over section that I will re-scale manually the rest is really correct!
+
+ 
+
+I try to be more clear on my second topic, the problem is that the connection arrow between offsetted map sometimes skipped the N+1 map to be connected directly to the N+2 map:
+
+ 
+
+Exemple:
+
+1 - (level N+2) Global map: MAP 1 
+
+ 
+
+2- (level N+1) offsetted network below from MAP1= MAP2
+
+    => map connection point arrow of MAP2 goes from its shadow on MAP1 to MAP2  => ok
+
+ 
+
+3-  (level N) offsetted network below from MAP2= MAP3
+
+ 
+
+    2 cases:
+
+ 
+
+    3.1 MAP3 is built by scrap   S1 S2 etc....
+
+    => ok map connection point arrow goes from MAP3 to its shadow on MAP2 and then idem from MAP2 to MAP1 => clean
+
+ 
+
+    3.2 MAP3 is built by other MAP (level N-1)
+
+    => Ko map connection point arrow goes directly to shadows on MAP1 skipping its shadow on MAP2
+
+   
+
+I hope it is more clear, if not I'll send you tonight a better description with picture. the problem is that in case there are several map to offset the rendering at the end is unclear except if you keep all your rmap at the level 1 (ex level of MAP2) but in that case you can not follow easely the real path in your cave.
+
+ 
+
+Not sure it is better :)
+
+David 
+
+ 
+
+ 
+
+ 
+
+.
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Le lundi 13 mars 2023 ? 11:56:31 UTC+1, Tarquin Wilton-Jones via Therion <therion at speleo.sk <mailto:therion at speleo.sk> > a ?crit : 
+
+ 
+
+ 
+
+Hi David,
+
+ 
+
+> My survey is quite huge and I need to export different scales
+
+> In the biggest I would like to remove all little object and particularly
+
+> text from the export to make it more understandable.
+
+ 
+
+Yes, but also no:
+
+https://therion.speleo.sk/wiki/templates#setup_a_default_standard_layout
+
+ 
+
+layoutstandards.txt has some metapost code that can hide small text
+
+labels. *BUT* the way it works is to physically measure the size of the
+
+text label. So if - for example - you have something like this:
+
+ 
+
+point 740.0 918.5 label -scale xl -text [foo<br>bar] -align left
+
+ 
+
+The linebreak in there makes the rendered text block taller than one
+
+line of text would be. The metapost code does not understand that, so it
+
+assumes it must be a large text size, and it allows it to render.
+
+ 
+
+(Yes, it would be possible to make the code check only the first text
+
+character, but that is not as easy as you might think, since the first
+
+character can be a linebreak, or formatting.)
+
+ 
+
+You can also use this layout option:
+
+min-symbol-scale M
+
+but that affects all symbols at once, and you need to remember that all
+
+lines have a default size, even if you did not explicitly set one!
+
+ 
+
+Therion really, really needs to have a setting like this:
+
+min-symbol-scale point label M
+
+* wishes *
+
+ 
+
+> *2- Offseted map:*
+
+> 
+
+> this topic is known but I would like to know if there were some progress?
+
+> 
+
+> Some under-level of offsetted map refers directly to the initial shadow
+
+> when using connection map point.
+
+ 
+
+Sorry, I do not understand this question, could you perhaps explain in
+
+more detail?
+
+ 
+
+Cheers,
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/25fe26ac/attachment-0001.htm>
+
+From bruce at tomo.co.nz  Mon Mar 13 19:46:08 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 14 Mar 2023 07:46:08 +1300
+Subject: [Therion] 1 map-connection issue - Offset tests SAMD-ITF-IS example
+Message-ID: <001f01d955dc$145e49f0$3d1addd0$@tomo.co.nz>
+
+ 
+
+ 
+
+From: Bruce Mutton <bruce at tomo.co.nz> 
+Sent: Monday, 11 July 2022 10:16
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: map-connection issue - Offset tests SAMD-ITF-IS example
+
+ 
+
+Tarquin, David
+
+The results of our little quiz made me uneasy, so I found an old test
+project that I believe is structured like Tarquin's, a pattern I call 'scrap
+and map definitions - inside trip file - inside survey' SAMD-ITF-IS.
+
+The outcome I feared (due to my large collection of projects structured
+differently) is that map-connections with multi-level offsets would work
+just fine with SAMD-ITF-IS.
+
+ 
+
+That has not been the case, I have the same (I think) behaviour with this
+test project as I have with my other projects.  So perhaps a degree of
+relief but still a mystery to resolve.  With my test project:
+
+*	Offsets work OK.
+*	Offsets of offsets (level 2 offsets) work just fine so long as the
+most deeply nested offset map is comprised of scraps (and not maps).
+*	Offsets of offsets (level 2 offsets) do not work (connection
+emanates from grandparent, not the parent) if the most deeply nested offset
+map is comprised of maps (a necessary prerequisite when preparing for the
+third level of offsetting).
+*	Offsets of offsets of offsets (level 3 offsets) map-connections
+correctly emanate from their parent level 2 offset map, but the level 2
+map-connection continues to incorrectly emanate from its grandparent.
+
+ 
+
+I have not progressed this to a fourth level, brain is starting to hurt and
+I ran out of scraps associated with the particular sub-survey that I picked
+on.
+
+Re-reading Tarquin's last email mentioning sub-sub-sub-surveys, I wonder if
+we are at cross purposes a little (or Tarquin is using 'survey' loosely to
+refer also to maps).  In my example below (which I think is structured like
+Tarquin's) there are two surveys (1 and 2) and a parent cave survey that
+contains those two surveys, so only two levels of survey.  However I have
+created three levels of map which offset correctly.  When I create a fourth
+level of map in preparation for 3 levels of offset, the map-connection
+breaks.
+
+ 
+
+The code examples below show only to the level 2 and level 3 offset maps,
+and these are the maps on the left hand side of the diagrams, as annotated. 
+
+ 
+
+Offset of offset is OK like this
+
+map 1-BottomUpPlan-Bottom  \
+
+    -projection plan
+
+  1-BottomUpPlan-s2
+
+    break  
+
+  1-BottomUpPlan-s1 #bottom terminal chamber
+
+endmap 1-BottomUpPlan-Bottom
+
+
+
+ 
+
+Offset of offset is not OK when same as above but map-of-scraps is split
+into map-of-maps that references maps-of-scraps
+
+ 
+
+##Setup for OffsetLevel 3
+
+map 1-BottomUpPlan-Bottom  \
+
+    -projection plan
+
+  1-BottomUpPlan-B2
+
+    # break  
+
+  1-BottomUpPlan-B1
+
+endmap 1-BottomUpPlan-Bottom
+
+ 
+
+map 1-BottomUpPlan-B2  \
+
+    -projection plan
+
+  1-BottomUpPlan-s2
+
+endmap 1-BottomUpPlan-B2
+
+ 
+
+map 1-BottomUpPlan-B1  \
+
+    -projection plan
+
+  1-BottomUpPlan-s1 #bottom terminal chamber
+
+endmap 1-BottomUpPlan-B1
+
+
+
+ 
+
+ 
+
+Offset of offset of offset is OK BUT its parent is not (as above)
+
+##Setup for OffsetLevel 3
+
+map 1-BottomUpPlan-Bottom  \
+
+    -projection plan
+
+  1-BottomUpPlan-B2
+
+    # break  
+
+  1-BottomUpPlan-B1 [0 10] below #OffsetLevel 3
+
+endmap 1-BottomUpPlan-Bottom
+
+ 
+
+map 1-BottomUpPlan-B2  \
+
+    -projection plan
+
+  1-BottomUpPlan-s2
+
+endmap 1-BottomUpPlan-B2
+
+ 
+
+map 1-BottomUpPlan-B1  \
+
+    -projection plan
+
+  1-BottomUpPlan-s1 #bottom terminal chamber
+
+endmap 1-BottomUpPlan-B1
+
+ 
+
+ 
+
+
+
+ 
+
+For what it is worth, here is the overall survey file, consistent with my
+SAMD-ITF-IS pattern:
+
+ 
+
+survey Cave
+
+map CavePlan   -projection plan
+
+  2-EntrancePlan at 2 
+
+  1-BottomUpPlan at 1 [0 -20] below #OffsetLevel 1
+
+endmap CavePlan   
+
+ 
+
+input 1-BottomUp.th
+
+input 2-Entrance.th
+
+ 
+
+centreline
+
+equate 1.4 at 1 <mailto:1.4 at 1>  1.4 at 2 <mailto:1.4 at 2>  
+
+endcentreline
+
+endsurvey Cave
+
+ 
+
+So Tarquin, Can you pick any fundamnetal differences? Are we doing the same
+things? Are we talking about the same things?
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 38009 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 69837 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 42937 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 65989 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0009.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 46815 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0010.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 79376 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/4afee35d/attachment-0011.png>
+
+From bruce at tomo.co.nz  Mon Mar 13 19:46:59 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 14 Mar 2023 07:46:59 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset
+ tests SAMD-ITF-IS example
+Message-ID: <002501d955dc$3286ee50$9794caf0$@tomo.co.nz>
+
+ 
+
+ 
+
+From: Bruce Mutton <bruce at tomo.co.nz> 
+Sent: Monday, 11 July 2022 15:02
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Map-connection issue - Going to four levels - Offset tests
+SAMD-ITF-IS example
+
+ 
+
+I managed to squeeze five levels of maps out of my example, going to 4
+levels of offset (offset of offset of offset of offset).
+
+ 
+
+All of the offsets are correctly made, relative to their parent maps.
+
+However the line created by point map-connection is only correctly
+originating from its parent map at the most deeply nested level of offset
+and at the 1st level offset.  At all other offset levels, the map-connection
+line reverts to originating from the top-level map, and not from its direct
+parent.
+
+ 
+
+In the marked up diagram below:
+
+*	#1, #2 indicates the offset level
+*	The squares indicate the scope of the various maps subordinate to
+the main map
+*	The extreme left (green) and right (yellow- almost) map-connection
+lines correctly originate from their parent maps
+*	The map-connection lines highlighted pink and blue originate from
+the main map, and not from their parent map, even though the offset is
+correctly made from the parent.  The recti-linear lines I have sketched show
+where I expect the map-connection lines to be drawn.
+
+ 
+
+ 
+
+
+
+ 
+
+For comparison https://therion.speleo.sk/wiki/mapconnectors?s[]=connection
+<https://therion.speleo.sk/wiki/mapconnectors?s%5b%5d=connection>  describes
+offsets 2 levels deep, and as I have found and on that wiki page, 2 levels
+deep behaves as it should.  It is only once we get to 3 levels of offset
+that the behaviour deviates and becomes problematic.
+
+ 
+
+So the pattern is clearer, and I am becoming more confident it is a bug. 
+
+Why a bug?  
+
+*	Because at 2 levels of offset the effective behaviour is that each
+map-connection line originates from its direct parent.
+*	And at 3 and 4 levels of offset, the effective behaviour is that the
+only the most deeply nested and the 1st level of offset map-connections
+originate from their direct parent.  The intermediary level offset
+map-connections originate from the main map location and not from their
+direct parent.
+
+ 
+
+So maybe it is a problem with the definition of point map-connection, or the
+way that the origin and destination locations are parsed to the
+map-connection lines?
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/524716c1/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 141247 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/524716c1/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 629072 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/524716c1/attachment-0003.png>
+
+From bruce at tomo.co.nz  Mon Mar 13 19:47:34 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 14 Mar 2023 07:47:34 +1300
+Subject: [Therion] 3 Map-connection issue - effect of map-level
+Message-ID: <002b01d955dc$4691b2e0$d3b518a0$@tomo.co.nz>
+
+ 
+
+ 
+
+From: Bruce Mutton <bruce at tomo.co.nz> 
+Sent: Tuesday, 12 July 2022 21:08
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Map-connection issue - effect of map-level
+
+ 
+
+And noting that map-level progressively chops out the offsets, starting with
+the level-1 offset.
+
+Undocumented feature for export of maps?
+
+At least it does not change the map-connection line behaviour.
+
+ 
+
+export map -projection plan  \
+
+  -layout LayoutMapThisCave       \
+
+  -layout LayoutMapThisCavePlan   \
+
+  -output ../Output/PlanMap.pdf
+
+ 
+
+select PlanMap at Cave -map-level 0 
+
+
+
+ 
+
+select PlanMap at Cave -map-level 1
+
+
+
+ 
+
+select PlanMap at Cave -map-level 2
+
+
+
+select PlanMap at Cave -map-level 3
+
+
+
+select PlanMap at Cave -map-level 4 (and -map-level basic and -map-level 5 etc)
+
+
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 83978 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 67324 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 60835 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 62610 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 55104 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230314/a4c4d4c8/attachment-0009.png>
+
+From martinsluka at mac.com  Wed Mar 15 11:08:04 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 15 Mar 2023 11:08:04 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+Message-ID: <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+
+Just a sample. Colorised by altitude.
+
+M.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/d135a3d0/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: xxxxx.png
+Type: image/png
+Size: 660866 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/d135a3d0/attachment-0001.png>
+
+From davleb at yahoo.fr  Wed Mar 15 12:37:06 2023
+From: davleb at yahoo.fr (david Le berre)
+Date: Wed, 15 Mar 2023 11:37:06 +0000 (UTC)
+Subject: [Therion] =?utf-8?q?Re=C2=A0=3A__3_Map-connection_issue_-_effect?=
+ =?utf-8?q?_of_map-level?=
+In-Reply-To: <002b01d955dc$4691b2e0$d3b518a0$@tomo.co.nz>
+References: <002b01d955dc$4691b2e0$d3b518a0$@tomo.co.nz>
+Message-ID: <36015681.546629.1678880227562@mail.yahoo.com>
+
+Dear tarquin and Bruce
+Thks a lot?for your answer that seems?to confirm th? bug, i saw th? same Behavior as Bruce discribed with acuracy?in my project.I will remove th? connection point on th? faulty level replaced?by an arrow line. Less clean but more logical.
+Tks and byeDavid?
+
+
+Envoy? depuis Yahoo?Mail pour iPhone
+
+
+Le lundi, mars 13, 2023, 8:03 PM, Bruce Mutton <bruce at tomo.co.nz> a ?crit?:
+
+<!--#yiv7466654965 filtered {}#yiv7466654965 filtered {}#yiv7466654965 filtered {}#yiv7466654965 p.yiv7466654965MsoNormal, #yiv7466654965 li.yiv7466654965MsoNormal, #yiv7466654965 div.yiv7466654965MsoNormal {margin:0cm;font-size:11.0pt;font-family:"Calibri", sans-serif;}#yiv7466654965 span.yiv7466654965EmailStyle19 {font-family:"Calibri", sans-serif;color:windowtext;}#yiv7466654965 .yiv7466654965MsoChpDefault {font-size:10.0pt;}#yiv7466654965 filtered {}#yiv7466654965 div.yiv7466654965WordSection1 {}-->
+?
+
+ ?
+
+From: Bruce Mutton <bruce at tomo.co.nz> 
+Sent: Tuesday, 12 July 2022 21:08
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Map-connection issue - effect of map-level
+
+ ?
+
+And noting that map-level progressively chops out the offsets, starting with the level-1 offset.
+
+Undocumented feature for export of maps?
+
+At least it does not change the map-connection line behaviour.
+
+ ?
+
+export map -projection plan? \
+
+? -layout LayoutMapThisCave?????? \
+
+? -layout LayoutMapThisCavePlan?? \
+
+? -output ../Output/PlanMap.pdf
+
+ ?
+
+select PlanMap at Cave -map-level 0 
+
+
+
+ ?
+
+select PlanMap at Cave -map-level 1
+
+
+
+ ?
+
+select PlanMap at Cave -map-level 2
+
+
+
+select PlanMap at Cave -map-level 3
+
+
+
+select PlanMap at Cave -map-level 4 (and -map-level basic and -map-level 5 etc)
+
+
+
+ ?
+
+Bruce
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image007.png
+Type: image/png
+Size: 55104 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 83978 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 67324 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 60835 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image005.png
+Type: image/png
+Size: 62610 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230315/dc3e2f87/attachment-0009.png>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Mar 15 12:50:55 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 15 Mar 2023 11:50:55 +0000
+Subject: [Therion] 
+ =?utf-8?q?Re=C2=A0=3A_3_Map-connection_issue_-_effect_?=
+ =?utf-8?q?of_map-level?=
+In-Reply-To: <36015681.546629.1678880227562@mail.yahoo.com>
+References: <002b01d955dc$4691b2e0$d3b518a0$@tomo.co.nz>
+ <36015681.546629.1678880227562@mail.yahoo.com>
+Message-ID: <26863bc4-e0db-506f-dec1-13539163c8be@ntlworld.com>
+
+Hi David
+
+> Thks a lot?for your answer that seems?to confirm th? bug, i saw th? same
+> Behavior as Bruce discribed with acuracy?in my project.
+> I will remove th? connection point on th? faulty level replaced?by an
+> arrow line. Less clean but more logical.
+
+As I said in my previous emails (our different thread "Map connection
+issue" from 2 years ago), I only ever use 2 levels, and it works
+perfectly.  And it also worked when I tried to expand it into more
+levels. We discussed what I do there, that made it work correctly:
+https://www.mail-archive.com/therion at speleo.sk/msg08912.html
+
+I thought Bruce prepared some samples that made it go wrong, so that a
+bug could be filed.
+
+Cheers,
+
+Tarquin
+
+From bruce at tomo.co.nz  Wed Mar 15 19:56:34 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 16 Mar 2023 07:56:34 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset
+ tests SAMD-ITF-IS example
+In-Reply-To: <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+Message-ID: <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+
+Interesting Martin
+
+Your example mostly demonstrates one level of offset, but it goes to two
+levels bottom-left (to blue to purple), and apparently three levels at the
+bottom (to green to blue to dark blue).  However looking closely it seems
+that the map-connection line to blue goes directly from yellow (ie not from
+green).  If this is the case there are two scenarios: 
+
+
+
+Scenario 1 - based on the map-connection line I have highlighted, both the
+green and blue are first-level offsets.  I may be mistaken as the image is
+not sufficiently clear.
+
+If it is two levels of offset, then that is not sufficient to trigger the
+'bug' David and I have described.
+
+If it is three levels of offset, then you have somehow managed to avoid the
+'bug' and the map-connection lines/points are coincidentally on the same
+alignment.
+
+ 
+
+Scenario 2 - is that this example demonstrates the 'bug' described, if not
+particularly clearly.  My synopsis of the bug was "the line created by point
+map-connection is only correctly originating from its parent map at the most
+deeply nested level of offset and at the 1st level offset.  At all other
+(intermediate) offset levels, the map-connection line reverts to originating
+from the top-level map, and not from its direct parent."
+
+ 
+
+So Martin, if you could perhaps clarify.  I suggest adding a horizontal
+component to the light blue map in my snip above, and confirming whether the
+map offsets are two or three level.
+
+If it is two level, it does not test the bug. If it is three level and there
+is no 'bug', the map connection line, blue to dark blue, should radiate from
+blue and not from yellow.
+
+ 
+
+Tarquin
+
+I'll respond to your message later - off to work now!
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via
+Therion
+Sent: Wednesday, 15 March 2023 23:08
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels -
+Offset tests SAMD-ITF-IS example
+
+ 
+
+Just a sample. Colorised by altitude.
+
+ 
+
+M.
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230316/7997aaaf/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 660866 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230316/7997aaaf/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 160465 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230316/7997aaaf/attachment-0003.png>
+
+From martinsluka at mac.com  Thu Mar 16 10:32:39 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 16 Mar 2023 10:32:39 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+Message-ID: <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+
+Definition of that map:
+
+map modrovska_plan.map -title "Modrovsk? jasky?a"
+  modrovska_s01.map
+  modrovska_s03.map
+  break
+  modrovska_s30.map
+ 
+  modrovska_s12-21.map [-18 10 m] below
+  break
+  modrovska_s27.map #Mostov? sie?
+  break
+  modrovska_s26.map [10 -5 m] below
+  modrovska_s16.map [25 10 m] below
+  break
+  modrovska_s11-20.map [-7 -5 m] below
+  break
+  modrovska_s19-24-25.map [0 -10 m] below
+  modrovska_s13.map [-10 5 m] below
+  modrovska_s28.map [-2 -9 m] below
+  break
+  modrovska_s14.map [14 -3 m] below
+  break
+  modrovska_s15.map [1 -22 m] below
+  modrovska_s22.map [-20 0 m] below
+endmap
+
+> 15. 3. 2023 v 19:56, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Interesting Martin
+> Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+> <image002.png>
+> Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+> If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+> If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+>  
+> Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+>  
+> So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+> If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+>  
+> Tarquin
+> I?ll respond to your message later ? off to work now!
+>  
+> Thanks
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Wednesday, 15 March 2023 23:08
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Just a sample. Colorised by altitude.
+>  
+> M.
+>  
+> <image001.png>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230316/9a88e589/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Mar 19 00:53:01 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 19 Mar 2023 12:53:01 +1300
+Subject: [Therion] 3 Map-connection issue - effect of map-level
+In-Reply-To: <26863bc4-e0db-506f-dec1-13539163c8be@ntlworld.com>
+References: <002b01d955dc$4691b2e0$d3b518a0$@tomo.co.nz>
+ <36015681.546629.1678880227562@mail.yahoo.com>
+ <26863bc4-e0db-506f-dec1-13539163c8be@ntlworld.com>
+Message-ID: <000201d959f4$c728ea60$557abf20$@tomo.co.nz>
+
+Hi Tarquin
+
+Yes, I added a lot of tedious detail to https://github.com/therion/therion/issues/412 some time ago.
+
+I suggest ignoring most of the information I posted in there and skipping right to the last post I made on 11 July 2022.
+
+The images from that particular example are from a project that is modelled directly on what I understand is the typical UK usage of Therion, as resulting from TopParser and SexyTopo exports - that first level maps are defined directly in the corresponding survey.
+
+The images in my earlier posts (Laghu) are from a project modelled on my so far preferred paradigm, where first level maps are defined outside of the corresponding survey, but are subsequently included in the parent (ie whole cave) survey.
+
+The behaviour I observe with respect to this matter is identical for both Therion project configurations.
+
+ 
+
+I?d probably need to see some actual map definition examples and resulting outputs, Tarquin, each having map-connection points/lines in each sub-map so that I can understand how you have made it work (or not)   ;?)
+
+ 
+
+For starters, lets see if Martin S can provide a bit more detail on his example.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Thursday, 16 March 2023 00:51
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Re : 3 Map-connection issue - effect of map-level
+
+ 
+
+Hi David
+
+ 
+
+> Thks a lot for your answer that seems to confirm th? bug, i saw th? 
+
+> same Behavior as Bruce discribed with acuracy in my project.
+
+> I will remove th? connection point on th? faulty level replaced by an 
+
+> arrow line. Less clean but more logical.
+
+ 
+
+As I said in my previous emails (our different thread "Map connection issue" from 2 years ago), I only ever use 2 levels, and it works perfectly.  And it also worked when I tried to expand it into more levels. We discussed what I do there, that made it work correctly:
+
+ <https://www.mail-archive.com/therion at speleo.sk/msg08912.html> https://www.mail-archive.com/therion at speleo.sk/msg08912.html 
+
+ 
+
+I thought Bruce prepared some samples that made it go wrong, so that a bug could be filed.
+
+ 
+
+Cheers,
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230319/141519c4/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Mar 19 00:53:01 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 19 Mar 2023 12:53:01 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset
+ tests SAMD-ITF-IS example
+In-Reply-To: <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+Message-ID: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+
+Thanks Martin
+
+The definition shows just first level offsets. Taken together with the submap naming and the image of the map itself, I deduce that:
+
+- map s11-20 contains a second level offset.
+
+- map s19-24-25 contains a second and third level offset.  This is the one that I am unsure as to whether or not it displays the bug I have proposed.  Hopefully I have identified them correctly in the image below.
+
+- none of the other maps include an offset. modrovska_s12-21.map seems to include two maps, but they have not been offset from each other.
+
+ 
+
+
+
+ 
+
+1.	Can you supply the map definitions for modrovska_s19-24-25.map, and any submaps it might contain, down to scrap level?
+2.	Can you change the offsets for the submaps below modrovska_s19-24-25.map so they do not line up with each other? 
+
+I am suspicious that the map-connection line that I have highlighted in light blue shows that the bug I describe is present in your example.  ie The intermediate offset level (light blue map) map-connection line reverts to originating from the top-level map, and not from its direct parent.  But I cannot be sure without the above two bits of information.
+
+ 
+
+Also, another variable.  I presume from our correspondence over the years that it is likely that this dataset maintains complete separation of maps from surveys.  ie There are no survey objects that have map objects defined within them.
+
+That will be interesting regardless of whether this dataset manifests this ?bug? or not.
+
+ 
+
+Thanks for your effort.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via Therion
+Sent: Thursday, 16 March 2023 22:33
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Definition of that map:
+
+ 
+
+map modrovska_plan.map -title "Modrovsk? jasky?a"
+
+  modrovska_s01.map
+
+  modrovska_s03.map
+
+  break
+
+  modrovska_s30.map
+
+ 
+
+  modrovska_s12-21.map [-18 10 m] below
+
+  break
+
+  modrovska_s27.map #Mostov? sie?
+
+  break
+
+  modrovska_s26.map [10 -5 m] below
+
+  modrovska_s16.map [25 10 m] below
+
+  break
+
+  modrovska_s11-20.map [-7 -5 m] below
+
+  break
+
+  modrovska_s19-24-25.map [0 -10 m] below
+
+  modrovska_s13.map [-10 5 m] below
+
+  modrovska_s28.map [-2 -9 m] below
+
+  break
+
+  modrovska_s14.map [14 -3 m] below
+
+  break
+
+  modrovska_s15.map [1 -22 m] below
+
+  modrovska_s22.map [-20 0 m] below
+
+endmap
+
+ 
+
+15. 3. 2023 v 19:56, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> >:
+
+ 
+
+Interesting Martin
+
+Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+
+<image002.png>
+
+Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+
+If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+
+If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+
+ 
+
+Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+
+ 
+
+So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+
+If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+
+ 
+
+Tarquin
+
+I?ll respond to your message later ? off to work now!
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Martin Sluka via Therion
+Sent: Wednesday, 15 March 2023 23:08
+To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com> >
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Just a sample. Colorised by altitude.
+
+ 
+
+M.
+
+ 
+
+<image001.png>
+
+_______________________________________________
+Therion mailing list
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230319/f88336ad/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.jpg
+Type: image/jpeg
+Size: 18950 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230319/f88336ad/attachment-0001.jpg>
+
+From martinsluka at mac.com  Sun Mar 19 08:37:10 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 19 Mar 2023 08:37:10 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+References: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+Message-ID: <E457ACF8-85A5-4B49-B284-03B1B1076FE2@mac.com>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230319/eb13f9e0/attachment.htm>
+
+From martinsluka at mac.com  Sun Mar 19 08:42:03 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 19 Mar 2023 08:42:03 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+References: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+Message-ID: <CFB4CF8A-AE7F-45C3-B444-2CAB39492CC5@mac.com>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230319/3ac45aa4/attachment-0001.htm>
+
+From martinsluka at mac.com  Thu Mar 23 08:31:55 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Mar 2023 08:31:55 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+Message-ID: <08DB7FC0-9DC1-4E58-880B-AE8A8971F83E@mac.com>
+
+Hi, 
+
+I used the offset only to generate final map. 
+
+Definitions of particular maps is very simple:
+
+map modrovska_s01.map
+  modrovska_s01
+endmap
+
+ map modrovska_s08.map
+  modrovska_s08
+endmap
+
+map modrovska_s03.map
+  modrovska_s03
+endmap
+
+map modrovska_s10.map
+  modrovska_s10
+endmap
+
+map modrovska_s11.map
+  modrovska_s11
+endmap
+
+map modrovska_s12.map
+  modrovska_s12
+endmap
+
+map modrovska_s12-21.map
+  modrovska_s12.map
+  modrovska_s21.map
+endmap
+
+map modrovska_s13.map
+  modrovska_s13
+endmap
+
+map modrovska_s14.map
+    modrovska_s14
+    break
+    modrovska_s14a
+endmap
+
+map modrovska_s15.map
+  modrovska_s15
+endmap
+
+map modrovska_s16.map
+  modrovska_s16
+endmap
+
+map modrovska_s19.map
+  modrovska_s19
+endmap
+
+map modrovska_s19-24-25.map
+  modrovska_s19.map
+  break
+  modrovska_s24-25.map [0 -8 m] below
+endmap
+
+map modrovska_s20.map
+  modrovska_s20
+endmap
+
+map modrovska_s11-20.map
+  modrovska_s11.map
+  break
+  modrovska_s20.map [-3 -3 m]  below
+endmap
+
+map modrovska_s21.map
+  modrovska_s21
+  break
+  modrovska_s21a
+  modrovska_s21b
+endmap
+
+map modrovska_s22.map 
+  modrovska_s22
+endmap
+
+map modrovska_s24.map
+  modrovska_s24
+endmap
+
+map modrovska_s24-25.map
+  modrovska_s25.map
+  break
+  modrovska_s24.map [0 -7 m] below
+endmap
+
+map modrovska_s25.map
+  modrovska_s25
+endmap
+
+map modrovska_s26.map
+  modrovska_s26
+endmap
+
+map modrovska_s27.map
+  modrovska_s27
+endmap
+
+map modrovska_s28.map
+  modrovska_s28
+endmap
+
+map modrovska_s30.map
+  modrovska_s30a
+  break
+  modrovska_s30
+endmap
+
+
+Martin
+
+> 
+> Interesting Martin
+> Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+> <image002.png>
+> Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+> If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+> If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+>  
+> Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+>  
+> So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+> If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+>  
+> Tarquin
+> I?ll respond to your message later ? off to work now!
+>  
+> Thanks
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Wednesday, 15 March 2023 23:08
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Just a sample. Colorised by altitude.
+>  
+> M.
+>  
+> <image001.png>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/c27e96eb/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Mar 23 09:24:26 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 23 Mar 2023 21:24:26 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+Message-ID: <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+
+Thanks for the map definitions Martin
+
+Highlighting the relevant parts of the definitions, I think they define three levels of offsets, green, blue, dark blue respectively?
+
+ 
+
+Top level map with first level offset
+
+map modrovska_plan.map -title "Modrovsk? jasky?a"
+
+?
+
+  modrovska_s19-24-25.map [0 -10 m] below
+
+?
+
+endmap
+
+Next level map with second level offset (offset of offset)
+
+map modrovska_s19-24-25.map
+
+?
+
+  modrovska_s24-25.map [0 -8 m] below
+
+endmap
+
+Next level map with third level offset (offset of offset of offset)
+
+map modrovska_s24-25.map
+
+?
+
+  modrovska_s24.map [0 -7 m] below
+
+endmap
+
+ 
+
+To test the map-connection lines for the intermediate (second level) offset, could you compile the project with an offset of -8 -8 m, like this?
+
+map modrovska_s19-24-25.map
+
+?
+
+  modrovska_s24-25.map [-8 -8 m] below
+
+endmap
+
+ 
+
+The resulting output should look something like this rough markup.
+
+
+
+ 
+
+The red map-connection lines are correct lines I believe.
+
+If there is a map connection line like the orange line, then I believe the bug affects this dataset in the same way it affects my datasets.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via Therion
+Sent: Thursday, 23 March 2023 20:32
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Hi, 
+
+ 
+
+I used the offset only to generate final map. 
+
+ 
+
+Definitions of particular maps is very simple:
+
+<snipped>
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Sunday, 19 March 2023 12:53
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Thanks Martin
+
+The definition shows just first level offsets. Taken together with the submap naming and the image of the map itself, I deduce that:
+
+- map s11-20 contains a second level offset.
+
+- map s19-24-25 contains a second and third level offset.  This is the one that I am unsure as to whether or not it displays the bug I have proposed.  Hopefully I have identified them correctly in the image below.
+
+- none of the other maps include an offset. modrovska_s12-21.map seems to include two maps, but they have not been offset from each other.
+
+ 
+
+
+
+ 
+
+1.	Can you supply the map definitions for modrovska_s19-24-25.map, and any submaps it might contain, down to scrap level?
+2.	Can you change the offsets for the submaps below modrovska_s19-24-25.map so they do not line up with each other? 
+
+I am suspicious that the map-connection line that I have highlighted in light blue shows that the bug I describe is present in your example.  ie The intermediate offset level (light blue map) map-connection line reverts to originating from the top-level map, and not from its direct parent.  But I cannot be sure without the above two bits of information.
+
+ 
+
+Also, another variable.  I presume from our correspondence over the years that it is likely that this dataset maintains complete separation of maps from surveys.  ie There are no survey objects that have map objects defined within them.
+
+That will be interesting regardless of whether this dataset manifests this ?bug? or not.
+
+ 
+
+Thanks for your effort.
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Martin Sluka via Therion
+Sent: Thursday, 16 March 2023 22:33
+To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com> >
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Definition of that map:
+
+ 
+
+map modrovska_plan.map -title "Modrovsk? jasky?a"
+
+  modrovska_s01.map
+
+  modrovska_s03.map
+
+  break
+
+  modrovska_s30.map
+
+ 
+
+  modrovska_s12-21.map [-18 10 m] below
+
+  break
+
+  modrovska_s27.map #Mostov? sie?
+
+  break
+
+  modrovska_s26.map [10 -5 m] below
+
+  modrovska_s16.map [25 10 m] below
+
+  break
+
+  modrovska_s11-20.map [-7 -5 m] below
+
+  break
+
+  modrovska_s19-24-25.map [0 -10 m] below
+
+  modrovska_s13.map [-10 5 m] below
+
+  modrovska_s28.map [-2 -9 m] below
+
+  break
+
+  modrovska_s14.map [14 -3 m] below
+
+  break
+
+  modrovska_s15.map [1 -22 m] below
+
+  modrovska_s22.map [-20 0 m] below
+
+endmap
+
+ 
+
+15. 3. 2023 v 19:56, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> >:
+
+ 
+
+Interesting Martin
+
+Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+
+<image002.png>
+
+Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+
+If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+
+If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+
+ 
+
+Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+
+ 
+
+So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+
+If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+
+ 
+
+Tarquin
+
+I?ll respond to your message later ? off to work now!
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk> > On Behalf Of Martin Sluka via Therion
+Sent: Wednesday, 15 March 2023 23:08
+To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk> >
+Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com> >
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+Just a sample. Colorised by altitude.
+
+ 
+
+M.
+
+ 
+
+<image001.png>
+
+_______________________________________________
+Therion mailing list
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/596679be/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 415339 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/596679be/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.jpg
+Type: image/jpeg
+Size: 18890 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/596679be/attachment-0001.jpg>
+
+From martinsluka at mac.com  Thu Mar 23 09:34:44 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Mar 2023 09:34:44 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+ <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+Message-ID: <0FC78402-24AB-4302-BEB2-B670A0788207@mac.com>
+
+
+> 23. 3. 2023 v 9:24, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Thanks for the map definitions Martin
+> Highlighting the relevant parts of the definitions, I think they define three levels of offsets, green, blue, dark blue respectively?
+>  
+> Top level map with first level offset
+> map modrovska_plan.map -title "Modrovsk? jasky?a"
+> ?
+>   modrovska_s19-24-25.map [0 -10 m] below
+> ?
+> endmap
+> Next level map with second level offset (offset of offset)
+> map modrovska_s19-24-25.map
+> ?
+>   modrovska_s24-25.map [0 -8 m] below
+> endmap
+> Next level map with third level offset (offset of offset of offset)
+> map modrovska_s24-25.map
+> ?
+>   modrovska_s24.map [0 -7 m] below
+> endmap
+>  
+> To test the map-connection lines for the intermediate (second level) offset, could you compile the project with an offset of -8 -8 m, like this?
+> map modrovska_s19-24-25.map
+> ?
+>   modrovska_s24-25.map [-8 -8 m] below
+> endmap
+>  
+> The resulting output should look something like this rough markup.
+> <image002.png>
+>  
+> The red map-connection lines are correct lines I believe.
+> If there is a map connection line like the orange line, then I believe the bug affects this dataset in the same way it affects my datasets.
+>  
+> Bruce
+>  
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Thursday, 23 March 2023 20:32
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Hi, 
+>  
+> I used the offset only to generate final map. 
+>  
+> Definitions of particular maps is very simple:
+> <snipped>
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Bruce Mutton
+> Sent: Sunday, 19 March 2023 12:53
+> To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Thanks Martin
+> The definition shows just first level offsets. Taken together with the submap naming and the image of the map itself, I deduce that:
+> - map s11-20 contains a second level offset.
+> - map s19-24-25 contains a second and third level offset.  This is the one that I am unsure as to whether or not it displays the bug I have proposed.  Hopefully I have identified them correctly in the image below.
+> - none of the other maps include an offset. modrovska_s12-21.map seems to include two maps, but they have not been offset from each other.
+>  
+> <image006.jpg>
+>  
+> Can you supply the map definitions for modrovska_s19-24-25.map, and any submaps it might contain, down to scrap level?
+> Can you change the offsets for the submaps below modrovska_s19-24-25.map so they do not line up with each other? 
+> I am suspicious that the map-connection line that I have highlighted in light blue shows that the bug I describe is present in your example.  ie The intermediate offset level (light blue map) map-connection line reverts to originating from the top-level map, and not from its direct parent.  But I cannot be sure without the above two bits of information.
+>  
+> Also, another variable.  I presume from our correspondence over the years that it is likely that this dataset maintains complete separation of maps from surveys.  ie There are no survey objects that have map objects defined within them.
+> That will be interesting regardless of whether this dataset manifests this ?bug? or not.
+>  
+> Thanks for your effort.
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Thursday, 16 March 2023 22:33
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Definition of that map:
+>  
+> map modrovska_plan.map -title "Modrovsk? jasky?a"
+>   modrovska_s01.map
+>   modrovska_s03.map
+>   break
+>   modrovska_s30.map
+>  
+>   modrovska_s12-21.map [-18 10 m] below
+>   break
+>   modrovska_s27.map #Mostov? sie?
+>   break
+>   modrovska_s26.map [10 -5 m] below
+>   modrovska_s16.map [25 10 m] below
+>   break
+>   modrovska_s11-20.map [-7 -5 m] below
+>   break
+>   modrovska_s19-24-25.map [0 -10 m] below
+>   modrovska_s13.map [-10 5 m] below
+>   modrovska_s28.map [-2 -9 m] below
+>   break
+>   modrovska_s14.map [14 -3 m] below
+>   break
+>   modrovska_s15.map [1 -22 m] below
+>   modrovska_s22.map [-20 0 m] below
+> endmap
+>  
+>> 15. 3. 2023 v 19:56, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz>>:
+>>  
+>> Interesting Martin
+>> Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+>> <image002.png>
+>> Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+>> If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+>> If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+>>  
+>> Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+>>  
+>> So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+>> If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+>>  
+>> Tarquin
+>> I?ll respond to your message later ? off to work now!
+>>  
+>> Thanks
+>> Bruce
+>>  
+>> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+>> Sent: Wednesday, 15 March 2023 23:08
+>> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+>> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+>> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>>  
+>> Just a sample. Colorised by altitude.
+>>  
+>> M.
+>>  
+>> <image001.png>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/16bcf96d/attachment-0002.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: modrovska_plan_rozdeleny_color_230323.pdf
+Type: application/pdf
+Size: 3646374 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/16bcf96d/attachment-0001.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/16bcf96d/attachment-0003.htm>
+
+From martinsluka at mac.com  Thu Mar 23 14:54:30 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Mar 2023 14:54:30 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+ <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+Message-ID: <243A0C2A-D9A8-4101-89CC-6F2DD662D1A3@mac.com>
+
+I?m sorry, this is correct output with [-8 -8m ]:
+
+
+
+> 23. 3. 2023 v 9:24, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Thanks for the map definitions Martin
+> Highlighting the relevant parts of the definitions, I think they define three levels of offsets, green, blue, dark blue respectively?
+>  
+> Top level map with first level offset
+> map modrovska_plan.map -title "Modrovsk? jasky?a"
+> ?
+>   modrovska_s19-24-25.map [0 -10 m] below
+
+> endmap
+> Next level map with second level offset (offset of offset)
+> map modrovska_s19-24-25.map
+> ?
+>   modrovska_s24-25.map [0 -8 m] below
+> endmap
+> Next level map with third level offset (offset of offset of offset)
+> map modrovska_s24-25.map
+> ?
+>   modrovska_s24.map [0 -7 m] below
+> endmap
+>  
+> To test the map-connection lines for the intermediate (second level) offset, could you compile the project with an offset of -8 -8 m, like this?
+> map modrovska_s19-24-25.map
+> ?
+>   modrovska_s24-25.map [-8 -8 m] below
+> endmap
+>  
+> The resulting output should look something like this rough markup.
+> <image002.png>
+>  
+> The red map-connection lines are correct lines I believe.
+> If there is a map connection line like the orange line, then I believe the bug affects this dataset in the same way it affects my datasets.
+>  
+> Bruce
+>  
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Thursday, 23 March 2023 20:32
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Hi, 
+>  
+> I used the offset only to generate final map. 
+>  
+> Definitions of particular maps is very simple:
+> <snipped>
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Bruce Mutton
+> Sent: Sunday, 19 March 2023 12:53
+> To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Thanks Martin
+> The definition shows just first level offsets. Taken together with the submap naming and the image of the map itself, I deduce that:
+> - map s11-20 contains a second level offset.
+> - map s19-24-25 contains a second and third level offset.  This is the one that I am unsure as to whether or not it displays the bug I have proposed.  Hopefully I have identified them correctly in the image below.
+> - none of the other maps include an offset. modrovska_s12-21.map seems to include two maps, but they have not been offset from each other.
+>  
+> <image006.jpg>
+>  
+> Can you supply the map definitions for modrovska_s19-24-25.map, and any submaps it might contain, down to scrap level?
+> Can you change the offsets for the submaps below modrovska_s19-24-25.map so they do not line up with each other? 
+> I am suspicious that the map-connection line that I have highlighted in light blue shows that the bug I describe is present in your example.  ie The intermediate offset level (light blue map) map-connection line reverts to originating from the top-level map, and not from its direct parent.  But I cannot be sure without the above two bits of information.
+>  
+> Also, another variable.  I presume from our correspondence over the years that it is likely that this dataset maintains complete separation of maps from surveys.  ie There are no survey objects that have map objects defined within them.
+> That will be interesting regardless of whether this dataset manifests this ?bug? or not.
+>  
+> Thanks for your effort.
+> Bruce
+>  
+> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+> Sent: Thursday, 16 March 2023 22:33
+> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>  
+> Definition of that map:
+>  
+> map modrovska_plan.map -title "Modrovsk? jasky?a"
+>   modrovska_s01.map
+>   modrovska_s03.map
+>   break
+>   modrovska_s30.map
+>  
+>   modrovska_s12-21.map [-18 10 m] below
+>   break
+>   modrovska_s27.map #Mostov? sie?
+>   break
+>   modrovska_s26.map [10 -5 m] below
+>   modrovska_s16.map [25 10 m] below
+>   break
+>   modrovska_s11-20.map [-7 -5 m] below
+>   break
+>   modrovska_s19-24-25.map [0 -10 m] below
+>   modrovska_s13.map [-10 5 m] below
+>   modrovska_s28.map [-2 -9 m] below
+>   break
+>   modrovska_s14.map [14 -3 m] below
+>   break
+>   modrovska_s15.map [1 -22 m] below
+>   modrovska_s22.map [-20 0 m] below
+> endmap
+>  
+>> 15. 3. 2023 v 19:56, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz>>:
+>>  
+>> Interesting Martin
+>> Your example mostly demonstrates one level of offset, but it goes to two levels bottom-left (to blue to purple), and apparently three levels at the bottom (to green to blue to dark blue).  However looking closely it seems that the map-connection line to blue goes directly from yellow (ie not from green).  If this is the case there are two scenarios: 
+>> <image002.png>
+>> Scenario 1 - based on the map-connection line I have highlighted, both the green and blue are first-level offsets.  I may be mistaken as the image is not sufficiently clear.
+>> If it is two levels of offset, then that is not sufficient to trigger the ?bug? David and I have described.
+>> If it is three levels of offset, then you have somehow managed to avoid the ?bug? and the map-connection lines/points are coincidentally on the same alignment.
+>>  
+>> Scenario 2 ? is that this example demonstrates the ?bug? described, if not particularly clearly.  My synopsis of the bug was ?the line created by point map-connection is only correctly originating from its parent map at the most deeply nested level of offset and at the 1st level offset.  At all other (intermediate) offset levels, the map-connection line reverts to originating from the top-level map, and not from its direct parent.?
+>>  
+>> So Martin, if you could perhaps clarify.  I suggest adding a horizontal component to the light blue map in my snip above, and confirming whether the map offsets are two or three level.
+>> If it is two level, it does not test the bug. If it is three level and there is no ?bug?, the map connection line, blue to dark blue, should radiate from blue and not from yellow.
+>>  
+>> Tarquin
+>> I?ll respond to your message later ? off to work now!
+>>  
+>> Thanks
+>> Bruce
+>>  
+>> From: Therion <therion-bounces at speleo.sk <mailto:therion-bounces at speleo.sk>> On Behalf Of Martin Sluka via Therion
+>> Sent: Wednesday, 15 March 2023 23:08
+>> To: List for Therion users <therion at speleo.sk <mailto:therion at speleo.sk>>
+>> Cc: Martin Sluka <martinsluka at mac.com <mailto:martinsluka at mac.com>>
+>> Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+>>  
+>> Just a sample. Colorised by altitude.
+>>  
+>> M.
+>>  
+>> <image001.png>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/b41857f2/attachment-0002.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: modrovska_plan_rozdeleny_color_230323.pdf
+Type: application/pdf
+Size: 3531666 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/b41857f2/attachment-0001.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/b41857f2/attachment-0003.htm>
+
+From bruce at tomo.co.nz  Thu Mar 23 20:13:07 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 24 Mar 2023 08:13:07 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset
+ tests SAMD-ITF-IS example
+In-Reply-To: <243A0C2A-D9A8-4101-89CC-6F2DD662D1A3@mac.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+ <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+ <243A0C2A-D9A8-4101-89CC-6F2DD662D1A3@mac.com>
+Message-ID: <000001d95dbb$81b8a6d0$8529f470$@tomo.co.nz>
+
+Thanks Martin
+
+I believe the map connection on the intermediate offset map is pointing, incorrectly, to its grandparent map, and not to its parent map.
+
+The -8 -8 map connection line should point up to the right at 45 degrees, from station 26 to station 25.
+
+
+
+While the intermediate map-connection is wrong, the first and last map-connections and all of the map offsets themselves are correctly made.
+
+ 
+
+One more question.
+
+I presume you have strict separation of surveys and maps in this dataset, as demonstrated here https://therion.speleo.sk/wiki/faq#how_to_arrange_the_maps and https://therion.speleo.sk/wiki/s_m ?
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via Therion
+Sent: Friday, 24 March 2023 02:55
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels - Offset tests SAMD-ITF-IS example
+
+ 
+
+I?m sorry, this is correct output with [-8 -8m ]:
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230324/8df28da0/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image003.png
+Type: image/png
+Size: 173668 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230324/8df28da0/attachment-0001.png>
+
+From martinsluka at mac.com  Thu Mar 23 20:27:40 2023
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 23 Mar 2023 20:27:40 +0100
+Subject: [Therion] 2 Map-connection issue - Going to four levels -
+ Offset tests SAMD-ITF-IS example
+In-Reply-To: <000001d95dbb$81b8a6d0$8529f470$@tomo.co.nz>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+ <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+ <243A0C2A-D9A8-4101-89CC-6F2DD662D1A3@mac.com>
+ <000001d95dbb$81b8a6d0$8529f470$@tomo.co.nz>
+Message-ID: <B5C1A5EB-6244-4331-926A-63C351A126FC@mac.com>
+
+
+> 23. 3. 2023 v 20:13, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> One more question.
+> I presume you have strict separation of surveys and maps in this dataset, as demonstrated here https://therion.speleo.sk/wiki/faq#how_to_arrange_the_maps <https://therion.speleo.sk/wiki/faq#how_to_arrange_the_maps> and https://therion.speleo.sk/wiki/s_m <https://therion.speleo.sk/wiki/s_m> ?
+> 
+
+I use it as preferred method. 
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230323/fcaa2dd3/attachment.htm>
+
+From bruce at tomo.co.nz  Thu Mar 23 21:31:02 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 24 Mar 2023 09:31:02 +1300
+Subject: [Therion] 2 Map-connection issue - Going to four levels - Offset
+ tests SAMD-ITF-IS example
+In-Reply-To: <B5C1A5EB-6244-4331-926A-63C351A126FC@mac.com>
+References: <2014684943.941613.1657382443645.ref@mail.yahoo.com>
+ <2014684943.941613.1657382443645@mail.yahoo.com>
+ <1320188920.1821341.1678702938457@mail.yahoo.com>
+ <83fc27dd-a6e2-98b4-7fb3-66c4e046e511@ntlworld.com>
+ <1403423685.2124641.1678716709285@mail.yahoo.com>
+ <001a01d955db$eb3ad340$c1b079c0$@tomo.co.nz>
+ <15663CCA-AB50-44DE-9ADF-5C5D755B713E@mac.com>
+ <000001d9576f$de41a250$9ac4e6f0$@tomo.co.nz>
+ <C8AC8E36-FE71-4796-872C-5FF81E677164@mac.com>
+ <000701d959f4$c74488b0$55cd9a10$@tomo.co.nz>
+ <003201d95d60$e2464580$a6d2d080$@tomo.co.nz>
+ <243A0C2A-D9A8-4101-89CC-6F2DD662D1A3@mac.com>
+ <000001d95dbb$81b8a6d0$8529f470$@tomo.co.nz>
+ <B5C1A5EB-6244-4331-926A-63C351A126FC@mac.com>
+Message-ID: <000701d95dc6$6442afa0$2cc80ee0$@tomo.co.nz>
+
+Thanks Martin
+
+So we now have confirmation of the same inconsistent map-connection
+behaviour, relative to offset level, across three different ways of managing
+surveys and maps:
+
+*	Separate surveys and maps (Martin's example, Therion best practice)
+*	Maps defined in surveys (My example from 2022, TopParser, Sexy Topo
+approach)
+*	Maps defined separate to surveys, but then included in next-level
+surveys (My usual practice)
+
+ 
+
+Suggests to me that the inconsistent map-connection behaviour is not related
+to how surveys and maps are managed, but is rather a built-in characteristic
+of Therion behaviour.
+
+Tarquin mentioned that he could not replicate this inconsistent behaviour.
+Now that we have teased out the problem some more, can you confirm that you
+were testing the same issue Tarquin?
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Martin Sluka via
+Therion
+Sent: Friday, 24 March 2023 08:28
+To: List for Therion users <therion at speleo.sk>
+Cc: Martin Sluka <martinsluka at mac.com>
+Subject: Re: [Therion] 2 Map-connection issue - Going to four levels -
+Offset tests SAMD-ITF-IS example
+
+ 
+
+ 
+
+23. 3. 2023 v 20:13, Bruce Mutton <bruce at tomo.co.nz
+<mailto:bruce at tomo.co.nz> >:
+
+ 
+
+One more question.
+
+I presume you have strict separation of surveys and maps in this dataset, as
+demonstrated here
+<https://therion.speleo.sk/wiki/faq#how_to_arrange_the_maps>
+https://therion.speleo.sk/wiki/faq#how_to_arrange_the_maps and
+<https://therion.speleo.sk/wiki/s_m> https://therion.speleo.sk/wiki/s_m ?
+
+ 
+
+ 
+
+I use it as preferred method. 
+
+ 
+
+Martin
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230324/618a1a0e/attachment.htm>
+

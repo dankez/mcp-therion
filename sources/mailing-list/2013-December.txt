@@ -1,0 +1,3731 @@
+From olly at survex.com  Mon Dec  2 00:02:09 2013
+From: olly at survex.com (Olly Betts)
+Date: Sun, 1 Dec 2013 23:02:09 +0000
+Subject: [Therion] equate to non-existant station does not raise error
+In-Reply-To: <963E646B6B4B48ABBE61FD009048F507@JUICEBRAIN>
+References: <2E389A98C1AF4308821E111036C0B88F@JUICEBRAIN>
+	<CAJkGg4=HVb_QUqpFxcWmv28c4V0rE4f0QFGmjkbq6Vi_GEJCrA@mail.gmail.com>
+	<CAJkGg4k+rEr+o=AEBokxSbxj9kKm_Ok_CLJnrUHJMc6EJTAT=Q@mail.gmail.com>
+	<963E646B6B4B48ABBE61FD009048F507@JUICEBRAIN>
+Message-ID: <20131201230208.GT32486@survex.com>
+
+On Sun, Dec 01, 2013 at 07:52:32AM +1300, Bruce wrote:
+> My inference from warnings I get on other occasions is that Survex reports
+> fixed stations that are not connected to any survey leg.  I have many of
+> these in other files - gps locations of surface features for example.
+
+Yes, Survex will warn about a fixed point which isn't connected to
+anything, unless you specify the fix to be a 'reference', e.g.:
+
+*fix big_doline reference 10485 83132 1600
+
+> I imagine the 'equate' part of the processing is different, and in any case
+> neither Survex nor Therion are reporting the anomaly when Therion is run.
+
+Survex treats an equate much like any other survey leg for these
+purposes, so if you try to equate two points which aren't otherwise
+referred to, you'll get an error, e.g.:
+
+The following survey stations are not attached to a fixed point:
+a.4
+
+> This is different, and I believe it should be reported by Therion as either
+> a warning or perhaps preferably should stop execution.  When equates are
+> defined, I would have expected that it would be required that all equated
+> stations have been defined elsewhere, and if they are not, it should be an
+> exception that should raise and exception or at least a warning.
+
+If at least one of the stations in a *equate command is used elsewhere,
+it's OK to "create" stations with a *equate.  This provides a way to
+create a nice alias for a station, e.g.:
+
+*equate 4 tip_of_cairn_at_junction
+
+Making this an error would break existing datasets, and adding a warning
+would be unhelpful, unless we also provided a good way to suppress it.
+
+But in your original example, you're linking to a non-existent station
+in a different survey (if I follow the therion syntax correctly), and
+the equivalent situation gets a warning from Survex:
+
+badequate.svx:1: warning: Station "kb.kb51_29" referred to just once, with an explicit prefix - typo?
+
+I think we made this a warning rather than an error because it makes
+processing subsections of a large survey (e.g. a single cave) easier.
+
+Cheers,
+    Olly
+
+
+From wookey at wookware.org  Mon Dec  2 10:58:05 2013
+From: wookey at wookware.org (Wookey)
+Date: Mon, 2 Dec 2013 09:58:05 +0000
+Subject: [Therion] equate to non-existant station does not raise error
+In-Reply-To: <20131201230208.GT32486@survex.com>
+References: <2E389A98C1AF4308821E111036C0B88F@JUICEBRAIN>
+	<CAJkGg4=HVb_QUqpFxcWmv28c4V0rE4f0QFGmjkbq6Vi_GEJCrA@mail.gmail.com>
+	<CAJkGg4k+rEr+o=AEBokxSbxj9kKm_Ok_CLJnrUHJMc6EJTAT=Q@mail.gmail.com>
+	<963E646B6B4B48ABBE61FD009048F507@JUICEBRAIN>
+	<20131201230208.GT32486@survex.com>
+Message-ID: <20131202095805.GG1854@stoneboat.aleph1.co.uk>
+
++++ Olly Betts [2013-12-01 23:02 +0000]:
+> But in your original example, you're linking to a non-existent station
+> in a different survey (if I follow the therion syntax correctly), and
+> the equivalent situation gets a warning from Survex:
+> 
+> badequate.svx:1: warning: Station "kb.kb51_29" referred to just once, with an explicit prefix - typo?
+> 
+> I think we made this a warning rather than an error because it makes
+> processing subsections of a large survey (e.g. a single cave) easier.
+
+Yes, we did.
+
+And that's still useful functionality, although the need for processing
+small sections is much reduced these days. Consideration could be given
+to whether it would now be appropriate to declare that the smallest
+section of processing is now 'a system', and provide better visibility
+controls for viewing subsections. (and if you want to process smaller
+sections in isolation you'll have to make efforts to include 'stub' or
+reference connection points to avoid errors). There are both pros and
+cons to this and some thought would be needed on where the balance lies.
+
+Does therion process subsections using survex, or collect it all up into
+a complete dataset and proces that?
+
+Presumably bruce's problem is solved simply by better visibility of the
+existing warning, which shouldn't be hard?
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From Xavier.Pennec at inria.fr  Mon Dec  2 12:58:08 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Mon, 02 Dec 2013 12:58:08 +0100
+Subject: [Therion] equate to non-existant station does not raise error
+In-Reply-To: <20131202095805.GG1854@stoneboat.aleph1.co.uk>
+References: <2E389A98C1AF4308821E111036C0B88F@JUICEBRAIN>
+	<CAJkGg4=HVb_QUqpFxcWmv28c4V0rE4f0QFGmjkbq6Vi_GEJCrA@mail.gmail.com>
+	<CAJkGg4k+rEr+o=AEBokxSbxj9kKm_Ok_CLJnrUHJMc6EJTAT=Q@mail.gmail.com>
+	<963E646B6B4B48ABBE61FD009048F507@JUICEBRAIN>
+	<20131201230208.GT32486@survex.com>
+	<20131202095805.GG1854@stoneboat.aleph1.co.uk>
+Message-ID: <529C75D0.8030007@inria.fr>
+
+I had the same problem as Bruce several times: an error in the name of 
+an equate was unnoticed and it took me a long time before I noticed it. 
+In parallel, I used a lot the the "equate to undefined" feature to 
+compile small subsections of a large survey and I find it very useful. 
+However, for the same survey subsections, the nightmare is to verify 
+that all equates  are correctly taken into account when considered in 
+the large survey, since the warning are hidden in the (potentially very 
+long) list of unused fixed points.
+
+Keeping the meaning of equate as it is right now (i.e. create a synonym 
+if one of the stations is not defined) is of course necessary for 
+compatibility with previous surveys. However, one could imagine to 
+create a more constrained command (e.g. equate* like in latex?) whose 
+meaning would be a zero length shot between two existing stations and a 
+error if one of them is undefined.  It could also make sense to have an 
+option in therion to force the interpretation of equate as equate* for 
+debugging.
+
+Xavier
+
+
+Le 02/12/2013 10:58, Wookey a écrit :
+> +++ Olly Betts [2013-12-01 23:02 +0000]:
+>> But in your original example, you're linking to a non-existent station
+>> in a different survey (if I follow the therion syntax correctly), and
+>> the equivalent situation gets a warning from Survex:
+>>
+>> badequate.svx:1: warning: Station "kb.kb51_29" referred to just once, with an explicit prefix - typo?
+>>
+>> I think we made this a warning rather than an error because it makes
+>> processing subsections of a large survey (e.g. a single cave) easier.
+> Yes, we did.
+>
+> And that's still useful functionality, although the need for processing
+> small sections is much reduced these days. Consideration could be given
+> to whether it would now be appropriate to declare that the smallest
+> section of processing is now 'a system', and provide better visibility
+> controls for viewing subsections. (and if you want to process smaller
+> sections in isolation you'll have to make efforts to include 'stub' or
+> reference connection points to avoid errors). There are both pros and
+> cons to this and some thought would be needed on where the balance lies.
+>
+> Does therion process subsections using survex, or collect it all up into
+> a complete dataset and proces that?
+>
+> Presumably bruce's problem is solved simply by better visibility of the
+> existing warning, which shouldn't be hard?
+>
+> Wookey
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+
+
+From bruce at tomo.co.nz  Wed Dec  4 08:26:51 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 4 Dec 2013 20:26:51 +1300
+Subject: [Therion] Therion et al on Win 7 or 8.1
+Message-ID: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+
+I'm staring down the barrel of having to migrate away from Windows XP.
+
+ 
+
+To help me get started on the decision making process, are there any tales
+of terror or reassurance from the Therion family of application users with
+Win7 or Win8.1?
+
+ 
+
+To name a few applications that need to integrate well,  a text editor (in
+my case Notepad++), Therion, Survex, PocketTopo, Topparser and Foxit or
+Adobe pdf readers.
+
+ 
+
+For example Michael had (has?) a problem where Win7 will not open thconfig
+files from the os explorer window, whereas windows xp works fine.  I think
+it gets stuck with wish84 as I mentioned on
+http://therion.speleo.sk/wiki/doku.php/windows
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/07678c59/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Wed Dec  4 09:28:22 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Wed, 04 Dec 2013 09:28:22 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+Message-ID: <529EE7A6.9010106@inria.fr>
+
+Hi Bruce,
+
+I am running Notepad++, Therion, Survex, PocketTopo, Topparser and Adobe 
+readers in Win7 without problem.
+It took me a while to find a workaround the problem with the config file 
+but I finally found out that renaming the config file with a th 
+extension (e.g. mycave.thconfig -> mycave_thconfig.th) was the solution 
+as xtherion recognizes it as a config file and opens it automatically in 
+the right config window.
+
+I have no clue about Win8.1.
+
+Xavier
+
+
+Le 04/12/2013 08:26, Bruce a écrit :
+>
+> I'm staring down the barrel of having to migrate away from Windows XP.
+>
+> To help me get started on the decision making process, are there any 
+> tales of terror or reassurance from the Therion family of application 
+> users with Win7 or Win8.1?
+>
+> To name a few applications that need to integrate well,  a text editor 
+> (in my case Notepad++), Therion, Survex, PocketTopo, Topparser and 
+> Foxit or Adobe pdf readers.
+>
+> For example Michael had (has?) a problem where Win7 will not open 
+> thconfig files from the os explorer window, whereas windows xp works 
+> fine.  I think it gets stuck with wish84 as I mentioned on 
+> http://therion.speleo.sk/wiki/doku.php/windows
+>
+> Bruce
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/6d26e395/attachment.htm>
+
+From martinsluka at mac.com  Wed Dec  4 10:05:28 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 04 Dec 2013 10:05:28 +0100
+Subject: [Therion] -- Re:  Therion et al on Win 7 or 8.1
+In-Reply-To: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+Message-ID: <71BC2661-054E-4B00-B107-DA342B8CDC5E@mac.com>
+
+
+Dec 4, 2013 v 8:26 AM, Bruce <bruce at tomo.co.nz>:
+
+> I’m staring down the barrel of having to migrate away from Windows XP.
+
+
+My condolences.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/e8f0e7bf/attachment.htm>
+
+From drfootleg at gmail.com  Wed Dec  4 11:07:48 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 4 Dec 2013 10:07:48 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+Message-ID: <CAJkGg4=OkuD4b9CfE=GB95p1bx74xPg_dc8vFD9Ds0Y+cFe=xg@mail.gmail.com>
+
+I have been using most of those applications on Windows 7 on both 32bit and
+64bit machines with no problems for several years. My recent upgrade of a
+laptop to Windows 8 resulted in me being unable to run either Aven (the
+Survex model viewer) or Loch. But the recent free upgrade to Windows 8.1
+fixed both those issues for me (an some other graphics rendering
+applications which had the same issue of crashing on launch). So now I am
+seeing no issues with any of these applications on Windows 8.1 (32 bit) on
+the laptop.
+
+Footleg
+
+
+On 4 December 2013 07:26, Bruce <bruce at tomo.co.nz> wrote:
+
+>  I’m staring down the barrel of having to migrate away from Windows XP.
+>
+>
+>
+> To help me get started on the decision making process, are there any tales
+> of terror or reassurance from the Therion family of application users with
+> Win7 or Win8.1?
+>
+>
+>
+> To name a few applications that need to integrate well,  a text editor (in
+> my case Notepad++), Therion, Survex, PocketTopo, Topparser and Foxit or
+> Adobe pdf readers.
+>
+>
+>
+> For example Michael had (has?) a problem where Win7 will not open thconfig
+> files from the os explorer window, whereas windows xp works fine.  I think
+> it gets stuck with wish84 as I mentioned on
+> http://therion.speleo.sk/wiki/doku.php/windows
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/524536e9/attachment.htm>
+
+From drfootleg at gmail.com  Wed Dec  4 11:11:15 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 4 Dec 2013 10:11:15 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <CAJkGg4=OkuD4b9CfE=GB95p1bx74xPg_dc8vFD9Ds0Y+cFe=xg@mail.gmail.com>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<CAJkGg4=OkuD4b9CfE=GB95p1bx74xPg_dc8vFD9Ds0Y+cFe=xg@mail.gmail.com>
+Message-ID: <CAJkGg4=6kdQSLrH2iqC39FbC2wGFGxdEtZ_-vTxi673oOu3CAA@mail.gmail.com>
+
+I should add that I use the Sumatra PDF reader on Windows as it is the only
+PDF reader I have found on Windows which correctly renders my Therion
+generated PDFs without locking the file. So I can recompile my projects
+without needing to close the PDF viewer and the PDF is refreshed in the
+Sumatra window automatically, making for a much smoother workflow.
+
+Footleg
+
+
+On 4 December 2013 10:07, Footleg <drfootleg at gmail.com> wrote:
+
+> I have been using most of those applications on Windows 7 on both 32bit
+> and 64bit machines with no problems for several years. My recent upgrade of
+> a laptop to Windows 8 resulted in me being unable to run either Aven (the
+> Survex model viewer) or Loch. But the recent free upgrade to Windows 8.1
+> fixed both those issues for me (an some other graphics rendering
+> applications which had the same issue of crashing on launch). So now I am
+> seeing no issues with any of these applications on Windows 8.1 (32 bit) on
+> the laptop.
+>
+> Footleg
+>
+>
+> On 4 December 2013 07:26, Bruce <bruce at tomo.co.nz> wrote:
+>
+>>  I’m staring down the barrel of having to migrate away from Windows XP.
+>>
+>>
+>>
+>> To help me get started on the decision making process, are there any
+>> tales of terror or reassurance from the Therion family of application users
+>> with Win7 or Win8.1?
+>>
+>>
+>>
+>> To name a few applications that need to integrate well,  a text editor
+>> (in my case Notepad++), Therion, Survex, PocketTopo, Topparser and Foxit or
+>> Adobe pdf readers.
+>>
+>>
+>>
+>> For example Michael had (has?) a problem where Win7 will not open
+>> thconfig files from the os explorer window, whereas windows xp works fine.
+>> I think it gets stuck with wish84 as I mentioned on
+>> http://therion.speleo.sk/wiki/doku.php/windows
+>>
+>>
+>>
+>> Bruce
+>>
+>>
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/83d6ff11/attachment.htm>
+
+From wookey at wookware.org  Wed Dec  4 11:50:43 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 4 Dec 2013 10:50:43 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+Message-ID: <20131204105043.GU1854@stoneboat.aleph1.co.uk>
+
++++ Bruce [2013-12-04 20:26 +1300]:
+>    I’m staring down the barrel of having to migrate away from Windows XP.
+> 
+>     
+> 
+>    To help me get started on the decision making process, are there any tales
+>    of terror or reassurance from the Therion family of application users with
+>    Win7 or Win8.1?
+
+I shall just point out that world's best-maintained cave-surveying
+operating system is (IMHO) Debian, so if you have to change OS you should at
+least consider that one.
+
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Wed Dec  4 11:52:32 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 4 Dec 2013 10:52:32 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <CAJkGg4=6kdQSLrH2iqC39FbC2wGFGxdEtZ_-vTxi673oOu3CAA@mail.gmail.com>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<CAJkGg4=OkuD4b9CfE=GB95p1bx74xPg_dc8vFD9Ds0Y+cFe=xg@mail.gmail.com>
+	<CAJkGg4=6kdQSLrH2iqC39FbC2wGFGxdEtZ_-vTxi673oOu3CAA@mail.gmail.com>
+Message-ID: <20131204105231.GV1854@stoneboat.aleph1.co.uk>
+
++++ Footleg [2013-12-04 10:11 +0000]:
+>    I should add that I use the Sumatra PDF reader on Windows as it is the
+>    only PDF reader I have found on Windows which correctly renders my Therion
+>    generated PDFs without locking the file. So I can recompile my projects
+>    without needing to close the PDF viewer and the PDF is refreshed in the
+>    Sumatra window automatically, making for a much smoother workflow.
+>    Footleg
+
+Did you try evince? That solves the Adobe locking problem, and I didn't
+see rendering issues, but I've not used it seriously.
+
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From graham.mullan at coly.org.uk  Wed Dec  4 11:45:47 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Wed, 4 Dec 2013 10:45:47 -0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <mailman.138.1386150919.2919.therion@speleo.sk>
+References: <mailman.138.1386150919.2919.therion@speleo.sk>
+Message-ID: <0783A86A1BEB452B838E0E9856091B34@GrahamsMainPC>
+
+I have been running Notepad++, Therion, Survex, PocketTopo, Topparser and
+Adobe pdf readers on W7 for several years.
+
+The only problems I have had are with Aven & that's down to that program not
+W7. I have never had a problem with Xtherion not recognising thconfig files
+without a name extension. 
+
+I have run all of them under W8 as well, without issues, but haven't done so
+since the W8.1 free upgrade happened last week, so I'll not comment on that.
+
+Graham
+
+
+
+From wookey at wookware.org  Wed Dec  4 12:01:54 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 4 Dec 2013 11:01:54 +0000
+Subject: [Therion] FW:  Duff address
+In-Reply-To: <7F2C8161C65D4AAB9A74CFC895B84589@JUICEBRAIN>
+References: <7F2C8161C65D4AAB9A74CFC895B84589@JUICEBRAIN>
+Message-ID: <20131204110154.GW1854@stoneboat.aleph1.co.uk>
+
++++ Bruce [2013-10-12 09:02 +1300]:
+> 
+> >>Every message to the list (that I send, and I presume it's the same
+> >>for everyone else), gets this bounce.
+> 
+> >Nope.  I have never received this
+> 
+> Cancel that. I did just now!!
+> "Your message was addressed to a nonexistent recipient."
+> 	for <jranaya at rentec.com>; Fri, 11 Oct 2013 15:56:32 -0400
+
+Who maintains the therion mailing list? This dead address
+<jranaya at rentec.com> is still sending bounces to anyone mailing the
+list.
+
+Please remove it.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From drfootleg at gmail.com  Wed Dec  4 12:13:20 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Wed, 4 Dec 2013 11:13:20 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <20131204105231.GV1854@stoneboat.aleph1.co.uk>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<CAJkGg4=OkuD4b9CfE=GB95p1bx74xPg_dc8vFD9Ds0Y+cFe=xg@mail.gmail.com>
+	<CAJkGg4=6kdQSLrH2iqC39FbC2wGFGxdEtZ_-vTxi673oOu3CAA@mail.gmail.com>
+	<20131204105231.GV1854@stoneboat.aleph1.co.uk>
+Message-ID: <CAJkGg4mYhZPqV1AdTtVGvEW54Af344=uAbVHJSZnDG2SDY+oaA@mail.gmail.com>
+
+I did try evince. I think it was the one which struggled to render what I
+wanted (limited zoom). Foxit locked files on Windows, but I don't think it
+does on Linux?
+
+Footleg
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/cff5fded/attachment.htm>
+
+From lada at blazcata.cz  Wed Dec  4 12:33:24 2013
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Wed, 4 Dec 2013 12:33:24 +0100
+Subject: [Therion] FW: Duff address
+In-Reply-To: <20131204110154.GW1854@stoneboat.aleph1.co.uk>
+References: <7F2C8161C65D4AAB9A74CFC895B84589@JUICEBRAIN>
+	<20131204110154.GW1854@stoneboat.aleph1.co.uk>
+Message-ID: <CANkn7RdFb1cMNc_Hq75QU_ihma9R7FPVbsDKQC9S-=KsM_m28g@mail.gmail.com>
+
+Hi, sorry, address removed. L.
+
+
+2013/12/4 Wookey <wookey at wookware.org>
+
+> +++ Bruce [2013-10-12 09:02 +1300]:
+> >
+> > >>Every message to the list (that I send, and I presume it's the same
+> > >>for everyone else), gets this bounce.
+> >
+> > >Nope.  I have never received this
+> >
+> > Cancel that. I did just now!!
+> > "Your message was addressed to a nonexistent recipient."
+> >       for <jranaya at rentec.com>; Fri, 11 Oct 2013 15:56:32 -0400
+>
+> Who maintains the therion mailing list? This dead address
+> <jranaya at rentec.com> is still sending bounces to anyone mailing the
+> list.
+>
+> Please remove it.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/1f58a970/attachment.htm>
+
+From graham.mullan at coly.org.uk  Wed Dec  4 13:58:29 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Wed, 4 Dec 2013 12:58:29 -0000
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <mailman.1.1386154802.2345.therion@speleo.sk>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+Message-ID: <0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+
+Wookey wrote:
+I shall just point out that world's best-maintained cave-surveying operating
+system is (IMHO) Debian, so if you have to change OS you should at least
+consider that one.
+
+
+If cave surveying was all that I did, I would, but it isn't, so I can't.
+
+Graham
+
+
+
+From lada at blazcata.cz  Wed Dec  4 14:22:18 2013
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Wed, 4 Dec 2013 14:22:18 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+	<0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+Message-ID: <CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+
+Even Windows are not my primary OS I can say that Win7 is much much better
+system than WinXP. It is actually probably the best OS from Microsoft not
+crippled by Modern (Metro) = Win 8.x. I have only positive experience with
+Win7 32/64bit and therion stuff. I am big fan of free software and
+GNU/Linux but it is still not 100% alternative to Windows/OS X on desktop.
+L.
+
+
+2013/12/4 Graham Mullan <graham.mullan at coly.org.uk>
+
+> Wookey wrote:
+> I shall just point out that world's best-maintained cave-surveying
+> operating
+> system is (IMHO) Debian, so if you have to change OS you should at least
+> consider that one.
+>
+>
+> If cave surveying was all that I did, I would, but it isn't, so I can't.
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131204/4b80b031/attachment.htm>
+
+From wookey at wookware.org  Wed Dec  4 23:43:03 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 4 Dec 2013 22:43:03 +0000
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+	<0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+	<CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+Message-ID: <20131204224302.GZ1854@stoneboat.aleph1.co.uk>
+
++++ Ladislav Blažek [2013-12-04 14:22 +0100]:
+>    I am big fan of free software and
+>    GNU/Linux but it is still not 100% alternative to Windows/OS X on desktop.
+
+Which aspect do you find 'not 100%'?
+
+Clearly this can be true if you have to use some particular windows-only
+application (In my case I can only file expenses at work with IE due to
+a crappy 3rd-party website design, and have had reason to run a windows
+app once every couple of years for some reason or another - such as
+demoing tortoisesvn use in a windows environment for cavers at hidden
+earth this year, and running pockettopo)
+
+But wine and virtual machines (virtualbox) take care of this nicely.
+
+The point being that my life is a great deal more civilised running
+GNU/Linux daily and digging out an instance of Windows occaisionally
+when needed, than it would be the other way round. Obviously others
+might make different choices, and I don't want to overdo the
+prosletysing, but just wanted make clear that I can't agree with the
+idea that it's not a viable alternative desktop OS.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Thu Dec  5 06:31:45 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 5 Dec 2013 18:31:45 +1300
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <20131204105043.GU1854@stoneboat.aleph1.co.uk>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<20131204105043.GU1854@stoneboat.aleph1.co.uk>
+Message-ID: <1EABBC1F8A954D6E8BEC2F3ABCD30E2C@JUICEBRAIN>
+
+ 
+
+A good response then, thank you all very much...
+
+even though I could hear the disguised sneer in the Mac user's comment! ;)
+
+ 
+
+It seems that Win7, 8.1 and Debian are all contenders for a Therion user.
+
+ 
+
+This may be getting off topic...
+
+ 
+
+My needs are;
+
+-low risk, I cannot afford an interruption that requires me to focus my
+whole attention before 'life as usual' can resume,
+
+ 
+
+-resistance to change, I have many spreadsheets with embedded VBA that run
+only on Excel 2000-2003 for Windows (and some other apps) (thanks to my
+misplaced trust in Microsoft's forward compatibility). I need to dump my
+existing XP environment 'exactly as is' into a virtual machine,
+
+ 
+
+-low intensity, a migration that enables me to trickle my many applications
+to the new os at my leisure over time (unless it can do it automatically in
+one go),
+
+ 
+
+-for the developing artist in the family; to run the latest wacom drawing
+tablets (which XP does not)
+
+ 
+
+ 
+
+While the Windows options might seem to be the natural choice for a Windows
+user of 20 years, my testing of the waters to date suggests that Debian may
+not be much more of a shock than the new Windows.  Apart from my legacy of
+Windows knowledge, and data that depends on Windows apps I would go there in
+a moment. I just lack the time to do a lot of relearning and a local Debian
+mentor I think.
+
+ 
+
+I am a bit worried though, about the amount of time it took Therion 5.3.11
+to turn up in Debian!
+
+ 
+
+I'd like to 'upgrade in place' on the same machine, but I think that
+violates my first point above, so I guess I'm up for a new computer, at
+least for the duration of the migration.
+
+ 
+
+Wookey, can Wine or Virtualbox receive an intact XP system? It seems to me
+it requires a fresh reinstall of Windows and all the apps?
+
+ 
+
+Currently I'm hunting around for solutions like zinstall, but any
+suggestions welcomed.
+
+ 
+
+Bruce
+
+ 
+
+PS - I see two Notepad++ users - is that coincidence because it is good
+software? Or because of the entry in the Therion wiki?
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131205/2dc326d1/attachment.htm>
+
+From martinsluka at mac.com  Thu Dec  5 08:03:58 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 05 Dec 2013 08:03:58 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <1EABBC1F8A954D6E8BEC2F3ABCD30E2C@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<20131204105043.GU1854@stoneboat.aleph1.co.uk>
+	<1EABBC1F8A954D6E8BEC2F3ABCD30E2C@JUICEBRAIN>
+Message-ID: <C1086DAC-D027-4EF3-AC8A-EFA69DF5382C@mac.com>
+
+Bruce, it was comment of user of XP which had to start use W7 and tested a bit W8. :/
+
+Odesláno z iPhonu
+
+5. 12. 2013 v 6:31, Bruce <bruce at tomo.co.nz>:
+
+>  
+> A good response then, thank you all very much...
+> even though I could hear the disguised sneer in the Mac user's comment! ;)
+>  
+> It seems that Win7, 8.1 and Debian are all contenders for a Therion user.
+>  
+> This may be getting off topic...
+>  
+> My needs are;
+> -low risk, I cannot afford an interruption that requires me to focus my whole attention before 'life as usual' can resume,
+>  
+> -resistance to change, I have many spreadsheets with embedded VBA that run only on Excel 2000-2003 for Windows (and some other apps) (thanks to my misplaced trust in Microsoft's forward compatibility). I need to dump my existing XP environment 'exactly as is' into a virtual machine,
+>  
+> -low intensity, a migration that enables me to trickle my many applications to the new os at my leisure over time (unless it can do it automatically in one go),
+>  
+> -for the developing artist in the family; to run the latest wacom drawing tablets (which XP does not)
+>  
+>  
+> While the Windows options might seem to be the natural choice for a Windows user of 20 years, my testing of the waters to date suggests that Debian may not be much more of a shock than the new Windows.  Apart from my legacy of Windows knowledge, and data that depends on Windows apps I would go there in a moment. I just lack the time to do a lot of relearning and a local Debian mentor I think.
+>  
+> I am a bit worried though, about the amount of time it took Therion 5.3.11 to turn up in Debian!
+>  
+> I'd like to 'upgrade in place' on the same machine, but I think that violates my first point above, so I guess I'm up for a new computer, at least for the duration of the migration.
+>  
+> Wookey, can Wine or Virtualbox receive an intact XP system? It seems to me it requires a fresh reinstall of Windows and all the apps?
+>  
+> Currently I'm hunting around for solutions like zinstall, but any suggestions welcomed.
+>  
+> Bruce
+>  
+> PS - I see two Notepad++ users - is that coincidence because it is good software? Or because of the entry in the Therion wiki?
+>  
+>  
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131205/481d02f7/attachment.htm>
+
+From graham.mullan at coly.org.uk  Thu Dec  5 08:32:14 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Thu, 5 Dec 2013 07:32:14 -0000
+Subject: [Therion] Therion Digest, Vol 96, Issue 6
+In-Reply-To: <mailman.140.1386225553.2919.therion@speleo.sk>
+References: <mailman.140.1386225553.2919.therion@speleo.sk>
+Message-ID: <FC627AFD457748AB9DCFE5C2C52E894C@GrahamsMainPC>
+
+> Bruce wrote
+>  
+> PS - I see two Notepad++ users - is that coincidence because it is good
+software? Or because of the entry in the Therion wiki?
+>  
+In my case, I was introduced to it for coding html. It's brilliant for that.
+
+But, yes, this is now OT
+
+Graham
+
+
+
+From bruce at tomo.co.nz  Thu Dec  5 08:58:02 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 5 Dec 2013 20:58:02 +1300
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <C1086DAC-D027-4EF3-AC8A-EFA69DF5382C@mac.com>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN><20131204105043.GU1854@stoneboat.aleph1.co.uk><1EABBC1F8A954D6E8BEC2F3ABCD30E2C@JUICEBRAIN>
+	<C1086DAC-D027-4EF3-AC8A-EFA69DF5382C@mac.com>
+Message-ID: <FA28AD146B9E4960A630E0C293A62A30@JUICEBRAIN>
+
+>Bruce, it was comment of user of XP which had to start use W7 and tested a
+bit W8. :/
+
+ 
+
+Oops, that should have been suspected Mac user's comment then.
+
+Apologies and condolences accepted.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131205/5e8fa8d6/attachment.htm>
+
+From lada at blazcata.cz  Thu Dec  5 09:53:01 2013
+From: lada at blazcata.cz (=?UTF-8?Q?Ladislav_Bla=C5=BEek?=)
+Date: Thu, 5 Dec 2013 09:53:01 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <20131204224302.GZ1854@stoneboat.aleph1.co.uk>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+	<0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+	<CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+	<20131204224302.GZ1854@stoneboat.aleph1.co.uk>
+Message-ID: <CANkn7Rcm8WJdRrCDRdJ4G2LVq6pktPXp_9GHLjtpD7vgo1U1KA@mail.gmail.com>
+
+<flame>
+
+- I don't want to run another virtualized OS (and mess with data sharing)
+on my PC just because of few apps.
+- wine is not stable option for quite lot of apps
+- IMHO Linux distro is not alternative for (just few examples):
+    - advanced photographer - there is not OSS alternative to Adobe
+Lightroom/Aperture which is stable, has reasonable GUI, process RAW files
+in the same quality and support complete workflow. And yes I know/used
+GIMP, Darktable, RawTherapee, DigiKam etc. Also support for color profiles
+is quite complicated.
+    - video hobbist - show me usable alternative for video editing
+(iMovie). OSS alternatives are buggy or with terrible UI. I know, that
+there are professional grade and utterly complicated apps like Cinelerra.
+    - CAD/CAM
+
+GNU/Linux at the other hand is excellent option in case:
+- you are developer, sysadmin
+- you need internet/office pc
+- you need HTPC for your living room
+- you need server
+- you have dedicated computer just for Therion stuff :-)
+
+</flame>
+
+@Bruce, Debian is great but I think Windows7 is the best system for you -
+solid/stable/supported and without UI experiments (Metro).
+
+L.
+
+
+2013/12/4 Wookey <wookey at wookware.org>
+
+> +++ Ladislav Blažek [2013-12-04 14:22 +0100]:
+> >    I am big fan of free software and
+> >    GNU/Linux but it is still not 100% alternative to Windows/OS X on
+> desktop.
+>
+> Which aspect do you find 'not 100%'?
+>
+> Clearly this can be true if you have to use some particular windows-only
+> application (In my case I can only file expenses at work with IE due to
+> a crappy 3rd-party website design, and have had reason to run a windows
+> app once every couple of years for some reason or another - such as
+> demoing tortoisesvn use in a windows environment for cavers at hidden
+> earth this year, and running pockettopo)
+>
+> But wine and virtual machines (virtualbox) take care of this nicely.
+>
+> The point being that my life is a great deal more civilised running
+> GNU/Linux daily and digging out an instance of Windows occaisionally
+> when needed, than it would be the other way round. Obviously others
+> might make different choices, and I don't want to overdo the
+> prosletysing, but just wanted make clear that I can't agree with the
+> idea that it's not a viable alternative desktop OS.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131205/adefa367/attachment.htm>
+
+From martinsluka at mac.com  Sat Dec  7 19:21:08 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 07 Dec 2013 19:21:08 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1
+In-Reply-To: <FA28AD146B9E4960A630E0C293A62A30@JUICEBRAIN>
+References: <26C1CF28EDF74B68BFC65A038100B7AC@JUICEBRAIN>
+	<20131204105043.GU1854@stoneboat.aleph1.co.uk>
+	<1EABBC1F8A954D6E8BEC2F3ABCD30E2C@JUICEBRAIN>
+	<C1086DAC-D027-4EF3-AC8A-EFA69DF5382C@mac.com>
+	<FA28AD146B9E4960A630E0C293A62A30@JUICEBRAIN>
+Message-ID: <0719DC9D-BEAC-4748-A066-2A5A0BD27B3C@mac.com>
+
+:)
+
+m.
+
+
+Dec 5, 2013 v 8:58 AM, Bruce <bruce at tomo.co.nz>:
+
+> Apologies and condolences accepted.
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131207/4e76e6e3/attachment.htm>
+
+From martinsluka at mac.com  Sat Dec  7 19:31:29 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 07 Dec 2013 19:31:29 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <CANkn7Rcm8WJdRrCDRdJ4G2LVq6pktPXp_9GHLjtpD7vgo1U1KA@mail.gmail.com>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+	<0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+	<CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+	<20131204224302.GZ1854@stoneboat.aleph1.co.uk>
+	<CANkn7Rcm8WJdRrCDRdJ4G2LVq6pktPXp_9GHLjtpD7vgo1U1KA@mail.gmail.com>
+Message-ID: <2033165D-2BFA-435F-89E2-BD265C459A67@mac.com>
+
+I thought the W7 should be much better than XP. BUT: I had to do a dirty job with one virus in command line (terminal). And what was running in XP didn't run in W7: simple dir -a. The help wrote that switch -a should generate list of all files in directory. But it DOESN'T .
+W8 is much more funny: the terminal is starting in default window size and font size. It means something as bigger postage stamp on recent monitors. And dir -a doesn't work either. Instead is dir /a. F….. M$!
+
+m. 
+
+Dec 5, 2013 v 9:53 AM, Ladislav Blažek <lada at blazcata.cz>:
+
+> @Bruce, Debian is great but I think Windows7 is the best system for you - solid/stable/supported and without UI experiments (Metro).
+> 
+
+
+
+
+From lada at blazcata.cz  Sat Dec  7 19:57:51 2013
+From: lada at blazcata.cz (lada at blazcata.cz)
+Date: Sat, 7 Dec 2013 19:57:51 +0100
+Subject: [Therion] Therion et al on Win 7 or 8.1 (Wookey)
+In-Reply-To: <2033165D-2BFA-435F-89E2-BD265C459A67@mac.com>
+References: <mailman.1.1386154802.2345.therion@speleo.sk>
+	<0EA00D6CB7E34B5A86675FBF59F13B81@GrahamsMainPC>
+	<CANkn7Rc9n0VigY-i5AGkLLvz5WESstCE27AOUvNO-+xCQHUN0Q@mail.gmail.com>
+	<20131204224302.GZ1854@stoneboat.aleph1.co.uk>
+	<CANkn7Rcm8WJdRrCDRdJ4G2LVq6pktPXp_9GHLjtpD7vgo1U1KA@mail.gmail.com>
+	<2033165D-2BFA-435F-89E2-BD265C459A67@mac.com>
+Message-ID: <E7A23BDC-2ABD-4737-8AF3-BB8899A538A0@blazcata.cz>
+
+https://xkcd.com/1168/ :-)
+
+\Ladislav
+
+7. 12. 2013 v 19:31, Martin Sluka <martinsluka at mac.com>:
+
+> I thought the W7 should be much better than XP. BUT: I had to do a dirty job with one virus in command line (terminal). And what was running in XP didn't run in W7: simple dir -a. The help wrote that switch -a should generate list of all files in directory. But it DOESN'T .
+> W8 is much more funny: the terminal is starting in default window size and font size. It means something as bigger postage stamp on recent monitors. And dir -a doesn't work either. Instead is dir /a. F….. M$!
+> 
+> m. 
+> 
+> Dec 5, 2013 v 9:53 AM, Ladislav Blažek <lada at blazcata.cz>:
+> 
+>> @Bruce, Debian is great but I think Windows7 is the best system for you - solid/stable/supported and without UI experiments (Metro).
+>> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From marco_corvi at yahoo.com  Thu Dec 12 12:52:53 2013
+From: marco_corvi at yahoo.com (Marco Corvi)
+Date: Thu, 12 Dec 2013 03:52:53 -0800 (PST)
+Subject: [Therion] splays
+Message-ID: <1386849173.42900.BPMail_high_noncarrier@web142405.mail.bf1.yahoo.com>
+
+
+i would like that splays in pdf having only the centerline ( no scraps ), are drawn with different color than legs.
+any suggestion ?
+( besides fiddling with the sources )
+thanks, marco
+
+
+From erik at speleo.tv  Fri Dec 13 13:55:05 2013
+From: erik at speleo.tv (Erik VdBroeck)
+Date: Fri, 13 Dec 2013 13:55:05 +0100
+Subject: [Therion] splays
+In-Reply-To: <1386849173.42900.BPMail_high_noncarrier@web142405.mail.bf1.yahoo.com>
+Message-ID: <20131213125237.D7BBE7000104@msfrf2313.sfr.fr>
+
+I agree with Marco about the colour of splays in different colours than the
+legs. How can we achieve this? 
+erik
+
+-----Original Message-----
+From: Marco Corvi [mailto:marco_corvi at yahoo.com] 
+Sent: jeudi 12 décembre 2013 12:53
+To: therion at speleo.sk
+Subject: [Therion] splays
+
+
+i would like that splays in pdf having only the centerline ( no scraps ),
+are drawn with different color than legs.
+any suggestion ?
+( besides fiddling with the sources )
+thanks, marco
+
+
+
+From graham.mullan at coly.org.uk  Fri Dec 13 16:12:39 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Fri, 13 Dec 2013 16:12:39 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <mailman.1.1386932401.30774.therion@speleo.sk>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+Message-ID: <A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+
+I have just noticed that Adobe Acrobat and the (unnamed) pdf viewer
+currently opening from Firefox on this machine render coloured files very
+differently. It's not just that the tones are different, but, for example,
+in Acrobat boulders and the passage containing them are the same shade. In
+the other viewer the boulders render a darker tone than the remainder of the
+passage. Same goes for calcite flows, though not, seemingly, for sand.
+
+Graham
+
+
+
+From bruce at tomo.co.nz  Fri Dec 13 21:16:23 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 14 Dec 2013 09:16:23 +1300
+Subject: [Therion] PDF display
+In-Reply-To: <A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+Message-ID: <EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+
+
+>I have just noticed that Adobe Acrobat and the (unnamed) pdf viewer
+currently opening from Firefox on this machine render coloured files very
+differently. It's not just that the tones are different, but, for example,
+in Acrobat boulders and the passage containing them are the same shade. In
+the other viewer the boulders render a darker tone than the remainder of the
+passage. Same goes for calcite flows, though not, seemingly, for sand.
+
+
+Yes, see this page
+http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+endering_differences_between_pdf_viewers and the commentary above it.
+
+Bruce
+
+
+
+From drfootleg at gmail.com  Sat Dec 14 21:48:14 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sat, 14 Dec 2013 20:48:14 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+Message-ID: <CAJkGg4=cg-J4XV0eELH0s3TSoC9wAQsZi0SjvmAUzSGjhJmrhg@mail.gmail.com>
+
+I am almost certain that this is one pdf reader rendering transparency, and
+one cannot handle it. The boulders are partly transparent in the Therion
+generated pdf, so in the reader which can render this, they will appear
+darker due to the passage background colour showing through from underneath
+them. Try drawing a border line though the area of boulders but under them
+in the scrap ordering. I bet one pdf will show the line under the boulders
+and the other will not.
+
+Footleg
+On 13 Dec 2013 15:12, "Graham Mullan" <graham.mullan at coly.org.uk> wrote:
+
+> I have just noticed that Adobe Acrobat and the (unnamed) pdf viewer
+> currently opening from Firefox on this machine render coloured files very
+> differently. It's not just that the tones are different, but, for example,
+> in Acrobat boulders and the passage containing them are the same shade. In
+> the other viewer the boulders render a darker tone than the remainder of
+> the
+> passage. Same goes for calcite flows, though not, seemingly, for sand.
+>
+> Graham
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131214/c699b3be/attachment.htm>
+
+From martinsluka at mac.com  Sat Dec 14 22:28:50 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 14 Dec 2013 22:28:50 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <CAJkGg4=cg-J4XV0eELH0s3TSoC9wAQsZi0SjvmAUzSGjhJmrhg@mail.gmail.com>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<CAJkGg4=cg-J4XV0eELH0s3TSoC9wAQsZi0SjvmAUzSGjhJmrhg@mail.gmail.com>
+Message-ID: <978A7411-8D05-4E32-859F-BEC209BF1B7D@mac.com>
+
+Footleg, read, please, that f… wiki first  :). There is exact analysis of this problem and it is bug (reported) in Apple PDF rendering engine. PDF viewers which use this engine render PDFs generated by Therion incorrectly.
+
+m.
+
+
+Dec 14, 2013 v 9:48 PM, Footleg <drfootleg at gmail.com>:
+
+> I bet one pdf will show the line under the boulders and the other will not.
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131214/c8743f6f/attachment.htm>
+
+From drfootleg at gmail.com  Sat Dec 14 23:45:05 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sat, 14 Dec 2013 22:45:05 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <978A7411-8D05-4E32-859F-BEC209BF1B7D@mac.com>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<CAJkGg4=cg-J4XV0eELH0s3TSoC9wAQsZi0SjvmAUzSGjhJmrhg@mail.gmail.com>
+	<978A7411-8D05-4E32-859F-BEC209BF1B7D@mac.com>
+Message-ID: <CAJkGg4mcFFZ42yYDm6fzC=BMMWK7Rou17LZHAt6-AGYh87z-1w@mail.gmail.com>
+
+Thanks Martin,
+
+I sent my earlier reply from my phone which had not picked up Bruce's reply
+at that time. So I did not know the question had been answered. Interesting
+info about that PDF reader bug. I had not seen that before. The example
+renderings on the wiki from various readers were generated and put on the
+wiki by me, so I knew how things looked. I just did not know why the Adobe
+Reader rendered them like that before.
+
+Footleg
+
+
+On 14 December 2013 21:28, Martin Sluka <martinsluka at mac.com> wrote:
+
+> Footleg, read, please, that f… wiki first  :). There is exact analysis of
+> this problem and it is bug (reported) in Apple PDF rendering engine. PDF
+> viewers which use this engine render PDFs generated by Therion incorrectly.
+>
+> m.
+>
+>
+> Dec 14, 2013 v 9:48 PM, Footleg <drfootleg at gmail.com>:
+>
+> I bet one pdf will show the line under the boulders and the other will not.
+>
+>
+> Martin Sluka - Studio Sluka
+>
+> prodej Hahnemühle DFA
+> tisk fotografií, reprodukcí a volné tvorby
+>
+> Na Rovnosti 2692/21
+> 130 00 Praha 3
+> tel.: +420 603513640
+> mail: martinsluka at mac.com
+> web: http://www.piezografie.cz
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131214/6a91788f/attachment.htm>
+
+From wookey at wookware.org  Sun Dec 15 12:58:58 2013
+From: wookey at wookware.org (Wookey)
+Date: Sun, 15 Dec 2013 11:58:58 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+Message-ID: <20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+
++++ Bruce [2013-12-14 09:16 +1300]:
+> 
+> >I have just noticed that Adobe Acrobat and the (unnamed) pdf viewer
+> currently opening from Firefox on this machine render coloured files very
+> differently. It's not just that the tones are different, but, for example,
+> in Acrobat boulders and the passage containing them are the same shade. In
+> the other viewer the boulders render a darker tone than the remainder of the
+> passage. Same goes for calcite flows, though not, seemingly, for sand.
+> 
+> 
+> Yes, see this page
+> http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+> endering_differences_between_pdf_viewers and the commentary above it.
+
+Bruce - that's a very handy page. But it's missing the test therion
+source you used to do the test. If you could add that, then others could
+do other tests, on later versions, and on linux viewers, for example.
+
+At least in linux world (but probably on other OSes too) there is a
+fairly small number of underlying PDF rendering engines (2 or 3) with a
+lot of differet UIs wrapped round them. I would be interested to try the
+above on  all the Debian PDF viewers, which will probably a) show which
+engine they are using and b) help track down bugs.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Sun Dec 15 20:30:18 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 16 Dec 2013 08:30:18 +1300
+Subject: [Therion] PDF display
+In-Reply-To: <20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+References: <mailman.1.1386932401.30774.therion@speleo.sk><A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC><EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+	<20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+Message-ID: <5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+
+http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+> endering_differences_between_pdf_viewers and the commentary above it.
+
+> Bruce - that's a very handy page. But it's missing the test therion
+source you used to do the test. If you could add that, then others could
+do other tests, on later versions, and on linux viewers, for example.
+
+
+Wooky, I think those are Footleg's examples.
+
+I put a complete sample dataset in 
+http://therion.speleo.sk/wiki/doku.php/examples#all_areas_all_symbol_sets
+some time ago. An example attached.
+
+It shows all areas (as at Nov 2012) overlaid with each other and various
+lines and symbols in each of the symbol sets - and labelled as well.  It
+also indicates the drawing order.
+
+It is messier than Footleg's example, but perhaps more comprehensive.
+
+Bruce
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: AreasPlanMap-BCRA.pdf
+Type: application/pdf
+Size: 256070 bytes
+Desc: AreasPlanMap-BCRA.pdf
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131216/af566f2b/attachment.pdf>
+
+From drfootleg at gmail.com  Sun Dec 15 22:29:59 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sun, 15 Dec 2013 21:29:59 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+	<20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+	<5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+Message-ID: <CAJkGg4mPd8YBRQRp6Ok26AVXQcHL3VckUMvx052JmXY9F_MrjA@mail.gmail.com>
+
+And as for the Therion source I used to render these, it would have been
+whatever the current Windows executable was current at the date I put them
+onto the wiki (the wiki history should be able to tell you that). Not that
+I think it will make any difference between most recent builds of Therion.
+It was the differences in the PDF viewers which the renders illustrate,
+rather than differences in Therion builds. I would expect the current
+latest release of Therion renders exactly the same PDFs.
+
+Footleg
+
+
+On 15 December 2013 19:30, Bruce <bruce at tomo.co.nz> wrote:
+
+>
+> http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+> > endering_differences_between_pdf_viewers and the commentary above it.
+>
+> > Bruce - that's a very handy page. But it's missing the test therion
+> source you used to do the test. If you could add that, then others could
+> do other tests, on later versions, and on linux viewers, for example.
+>
+>
+> Wooky, I think those are Footleg's examples.
+>
+> I put a complete sample dataset in
+> http://therion.speleo.sk/wiki/doku.php/examples#all_areas_all_symbol_sets
+> some time ago. An example attached.
+>
+> It shows all areas (as at Nov 2012) overlaid with each other and various
+> lines and symbols in each of the symbol sets - and labelled as well.  It
+> also indicates the drawing order.
+>
+> It is messier than Footleg's example, but perhaps more comprehensive.
+>
+> Bruce
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131215/49f8a9f8/attachment.htm>
+
+From graham.mullan at coly.org.uk  Sun Dec 15 22:46:48 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Sun, 15 Dec 2013 22:46:48 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <mailman.143.1387134338.2919.therion@speleo.sk>
+References: <mailman.143.1387134338.2919.therion@speleo.sk>
+Message-ID: <E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+
+It's strange, but I thought that the whole point of pdf was that the
+document would present in identical fashion across displays and platforms.
+Has anyone tried printing from different rendering engines & seeing in what
+ways the results differ?
+
+Screen display is all very well, but if you are having printing done,
+especially by a print shop whose software you have no control over, how do
+you know what the results are going to look like before you have coughed up
+the (frequently not inconsiderable) price.
+
+What I do know is that if I export to jpg from, Acrobat then the results do
+seem to look the same as the Acrobat rendition & those are what get
+incorporated into journals. But for A1 or A0 posters I give pdf files to the
+print shop. As yet, as far as memory tells me (I have none to hand) they
+look like the Acrobat rendition, but others may have different experiences
+to me.
+
+Graham
+
+
+
+From wookey at wookware.org  Sun Dec 15 22:54:06 2013
+From: wookey at wookware.org (Wookey)
+Date: Sun, 15 Dec 2013 21:54:06 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <CAJkGg4mPd8YBRQRp6Ok26AVXQcHL3VckUMvx052JmXY9F_MrjA@mail.gmail.com>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+	<20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+	<5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+	<CAJkGg4mPd8YBRQRp6Ok26AVXQcHL3VckUMvx052JmXY9F_MrjA@mail.gmail.com>
+Message-ID: <20131215215406.GD1854@stoneboat.aleph1.co.uk>
+
+[bloody top-posters - rearranging to make sense]
+
+Footleg [2013-12-15 21:29 +0000] wrote:
+> Wookey wrote:
+>> On 15 December 2013 19:30, Bruce <[1]bruce at tomo.co.nz> wrote:
+> 
+>>> [2]http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+>>> endering_differences_between_pdf_viewers and the commentary above it.
+>>
+>> Bruce - that's a very handy page. But it's missing the test therion
+>> source you used to do the test.
+>
+>    And as for the Therion source I used to render these, it would have been
+>    whatever the current Windows executable was current at the date I put them
+>    onto the wiki (the wiki history should be able to tell you that). 
+
+You misunderstand. I don't mean the source code for there therion
+program, I mean the .th/th2/thconfig source used to generate the images.
+That's the bit that would make it easy for someone else to run the same
+tests.
+ 
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From drfootleg at gmail.com  Sun Dec 15 23:57:55 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Sun, 15 Dec 2013 22:57:55 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <20131215215406.GD1854@stoneboat.aleph1.co.uk>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+	<20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+	<5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+	<CAJkGg4mPd8YBRQRp6Ok26AVXQcHL3VckUMvx052JmXY9F_MrjA@mail.gmail.com>
+	<20131215215406.GD1854@stoneboat.aleph1.co.uk>
+Message-ID: <CAJkGg4n7SLSkzBC2SK95wik-Pf=NZGdz+4XSBTwjYc-bhnZPig@mail.gmail.com>
+
+Ah, that makes much more sense. I'll see if I can find the once from my
+examples. They will be somewhere as I never delete anything!
+
+Footleg
+
+
+On 15 December 2013 21:54, Wookey <wookey at wookware.org> wrote:
+
+> [bloody top-posters - rearranging to make sense]
+>
+> Footleg [2013-12-15 21:29 +0000] wrote:
+> > Wookey wrote:
+> >> On 15 December 2013 19:30, Bruce <[1]bruce at tomo.co.nz> wrote:
+> >
+> >>> [2]
+> http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+> >>> endering_differences_between_pdf_viewers and the commentary above it.
+> >>
+> >> Bruce - that's a very handy page. But it's missing the test therion
+> >> source you used to do the test.
+> >
+> >    And as for the Therion source I used to render these, it would have
+> been
+> >    whatever the current Windows executable was current at the date I put
+> them
+> >    onto the wiki (the wiki history should be able to tell you that).
+>
+> You misunderstand. I don't mean the source code for there therion
+> program, I mean the .th/th2/thconfig source used to generate the images.
+> That's the bit that would make it easy for someone else to run the same
+> tests.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131215/2bb00f14/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Dec 16 05:56:11 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 16 Dec 2013 17:56:11 +1300
+Subject: [Therion]  PDF display
+In-Reply-To: <E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+References: <mailman.143.1387134338.2919.therion@speleo.sk>
+	<E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+Message-ID: <2C4AC91C2195496083125645A5A2F805@JUICEBRAIN>
+
+> But for A1 or A0 posters I give pdf files to the
+> print shop. As yet, as far as memory tells me (I have none to hand) they
+> look like the Acrobat rendition, but others may have different experiences
+> to me.
+
+It is usual for me to have difficulty with print shops having subtle
+problems with printing maps - areas in particular.  Even when they display
+OK on screen.  Adobe Illustrator I think is what they use.  A solution I
+have used for small files is to convert to jpg.  Large files crash any
+converter I have, so no overall solution other than to live in hope...
+
+Bruce
+
+
+
+From markus.boldt at gmx.net  Mon Dec 16 08:52:56 2013
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Mon, 16 Dec 2013 08:52:56 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+Message-ID: <0MVsUW-1W3UWj3UTI-00X6pn@mail.gmx.com>
+
+Every time i want to print something in a "shop", I ask my printer witch
+Printer-profile he will use. May be "Forga" for example. Then I save my File
+from Adobe Indesign or Acrobat with this profile. And I will have no
+problems with the colors - normaly... 
+Merry Christmas and a happy new year to all
+Greetings 
+Markus
+
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag
+von Graham Mullan
+Gesendet: Sonntag, 15. Dezember 2013 22:47
+An: therion at speleo.sk
+Betreff: Re: [Therion] PDF display
+
+It's strange, but I thought that the whole point of pdf was that the
+document would present in identical fashion across displays and platforms.
+Has anyone tried printing from different rendering engines & seeing in what
+ways the results differ?
+
+Screen display is all very well, but if you are having printing done,
+especially by a print shop whose software you have no control over, how do
+you know what the results are going to look like before you have coughed up
+the (frequently not inconsiderable) price.
+
+What I do know is that if I export to jpg from, Acrobat then the results do
+seem to look the same as the Acrobat rendition & those are what get
+incorporated into journals. But for A1 or A0 posters I give pdf files to the
+print shop. As yet, as far as memory tells me (I have none to hand) they
+look like the Acrobat rendition, but others may have different experiences
+to me.
+
+Graham
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Mon Dec 16 10:15:15 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 16 Dec 2013 10:15:15 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <2C4AC91C2195496083125645A5A2F805@JUICEBRAIN>
+References: <mailman.143.1387134338.2919.therion@speleo.sk>
+	<E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+	<2C4AC91C2195496083125645A5A2F805@JUICEBRAIN>
+Message-ID: <CDA3A48E-1D3E-408E-984F-BE4E944FA84E@mac.com>
+
+Photoshop - raster to image. I use it for years. 
+
+Resolution depends on printer you will use: Canon and HP 300/600 dpi, Epson 360 dpi. Both for final size!. The reason is print in native resolution of printing head and don't make interpolations.
+
+m.
+
+
+Dec 16, 2013 v 5:56 AM, Bruce <bruce at tomo.co.nz>:
+
+>> But for A1 or A0 posters I give pdf files to the
+>> print shop. As yet, as far as memory tells me (I have none to hand) they
+>> look like the Acrobat rendition, but others may have different experiences
+>> to me.
+> 
+> It is usual for me to have difficulty with print shops having subtle
+> problems with printing maps - areas in particular.  Even when they display
+> OK on screen.  Adobe Illustrator I think is what they use.  A solution I
+> have used for small files is to convert to jpg.  Large files crash any
+> converter I have, so no overall solution other than to live in hope...
+> 
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131216/d4b8b96f/attachment.htm>
+
+From martinsluka at mac.com  Mon Dec 16 10:23:08 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 16 Dec 2013 10:23:08 +0100
+Subject: [Therion] PDF display
+In-Reply-To: <2C4AC91C2195496083125645A5A2F805@JUICEBRAIN>
+References: <mailman.143.1387134338.2919.therion@speleo.sk>
+	<E2B30D79B13C43F9893507F058D72D2D@GrahamsColyPC>
+	<2C4AC91C2195496083125645A5A2F805@JUICEBRAIN>
+Message-ID: <9207E811-9441-4804-A438-38BF4A92AB6D@mac.com>
+
+One thing more:
+
+I save rendered files as TIFF without compression. The reasons are - there is no problem to manipulate with gigabyte files today, the RIP (program to print) must raster the vector format or decompress the JPG file. TIFF file is more fast. To add appropriate ICC profile is necessary too. Many RIPs are able to work with RGB images without any problem, but use the sRGB rather than Adobe RGB.
+
+m.
+
+Dec 16, 2013 v 5:56 AM, Bruce <bruce at tomo.co.nz>:
+
+>> But for A1 or A0 posters I give pdf files to the
+>> print shop. As yet, as far as memory tells me (I have none to hand) they
+>> look like the Acrobat rendition, but others may have different experiences
+>> to me.
+> 
+> It is usual for me to have difficulty with print shops having subtle
+> problems with printing maps - areas in particular.  Even when they display
+> OK on screen.  Adobe Illustrator I think is what they use.  A solution I
+> have used for small files is to convert to jpg.  Large files crash any
+> converter I have, so no overall solution other than to live in hope...
+> 
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131216/d9228b8b/attachment.htm>
+
+From drfootleg at gmail.com  Mon Dec 16 14:46:24 2013
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 16 Dec 2013 13:46:24 +0000
+Subject: [Therion] PDF display
+In-Reply-To: <CAJkGg4n7SLSkzBC2SK95wik-Pf=NZGdz+4XSBTwjYc-bhnZPig@mail.gmail.com>
+References: <mailman.1.1386932401.30774.therion@speleo.sk>
+	<A1B8F6AC66634B419202239AD7B0C569@GrahamsColyPC>
+	<EB0C2D81C7894908A52D650FC1E01D04@JUICEBRAIN>
+	<20131215115856.GZ1854@stoneboat.aleph1.co.uk>
+	<5ED421E692CC4289809D6AE049C0653E@JUICEBRAIN>
+	<CAJkGg4mPd8YBRQRp6Ok26AVXQcHL3VckUMvx052JmXY9F_MrjA@mail.gmail.com>
+	<20131215215406.GD1854@stoneboat.aleph1.co.uk>
+	<CAJkGg4n7SLSkzBC2SK95wik-Pf=NZGdz+4XSBTwjYc-bhnZPig@mail.gmail.com>
+Message-ID: <CAJkGg4nDra7SFFuggudzQ=vQ29RBeyWorom1h6YcYZCGZNO5Dw@mail.gmail.com>
+
+I see now why I did not upload the example source before. It was using a
+compiled Survex .3d file as the source of the survey station positions.
+
+I have sorted that out now, with the required fragment of the cave used in
+the example now included in the .th file. The example source project for my
+overlapping areas is now in a zip file linked from the end of that section
+on the wiki:
+http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_rendering_differences_between_pdf_viewers
+
+Footleg
+
+
+
+On 15 December 2013 22:57, Footleg <drfootleg at gmail.com> wrote:
+
+> Ah, that makes much more sense. I'll see if I can find the once from my
+> examples. They will be somewhere as I never delete anything!
+>
+> Footleg
+>
+>
+> On 15 December 2013 21:54, Wookey <wookey at wookware.org> wrote:
+>
+>> [bloody top-posters - rearranging to make sense]
+>>
+>> Footleg [2013-12-15 21:29 +0000] wrote:
+>> > Wookey wrote:
+>> >> On 15 December 2013 19:30, Bruce <[1]bruce at tomo.co.nz> wrote:
+>> >
+>> >>> [2]
+>> http://therion.speleo.sk/wiki/doku.php/contrib:externalviewers#examples_of_r
+>> >>> endering_differences_between_pdf_viewers and the commentary above it.
+>> >>
+>> >> Bruce - that's a very handy page. But it's missing the test therion
+>> >> source you used to do the test.
+>> >
+>> >    And as for the Therion source I used to render these, it would have
+>> been
+>> >    whatever the current Windows executable was current at the date I
+>> put them
+>> >    onto the wiki (the wiki history should be able to tell you that).
+>>
+>> You misunderstand. I don't mean the source code for there therion
+>> program, I mean the .th/th2/thconfig source used to generate the images.
+>> That's the bit that would make it easy for someone else to run the same
+>> tests.
+>>
+>> Wookey
+>> --
+>> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+>> http://wookware.org/
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131216/7d1ed06a/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Dec 22 01:35:25 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 22 Dec 2013 13:35:25 +1300
+Subject: [Therion] fixed point std error causes extreme survey network
+	distortion
+Message-ID: <305BEB3C9A2A4F49ADE1BAE2C6A77A91@JUICEBRAIN>
+
+I got some unexpected results recently when I added some very rough gps
+coordinates to my survey for a cave that has three entrances.  Because they
+are approximate I added some estimates of standard errors as below, so that
+I could get Therion to factor the relative accuracy into the loop closure.
+
+ 
+
+   fix 12 at 01    1562372 5439558 992    20 20 20  # entrance
+
+   fix 0 at 10      1562117 5440239 1080  5  5   20  # another entrance
+
+   fix 120 at 05  1562124 5439500 1020  10 10 10  #entrance three
+
+ 
+
+With any ONE of the entrances fixed as above, the cave plots accurately - I
+can verify this in Google Earth.
+
+As soon as I have any two or more entrances fixed, then the cave distorts
+significantly, and the entrances are stretched some hundreds of metres away
+from the centroid of the cave.  Also quite often getting 'scrap exceeding
+maximal scale' errors if I output to pdf.
+
+ 
+
+I checked this was not just a feature of that dataset by mocking up a
+similar situation in two other datasets, and got similar results.
+
+ 
+
+The work around seems to be to avoid using the standard errors;
+
+ 
+
+   fix 12 at 01    1562372 5439558 992    #20 20 20   entrance
+
+   fix 0 at 10      1562117 5440239 1080  #5  5   20   another entrance
+
+   fix 120 at 05  1562124 5439500 1020  #10 10 10  entrance three
+
+ 
+
+but this then results in each gps location receiving equal weighting.
+
+I think I might have noticed this problem a few years ago, and gave up on
+trying to sort it out because I wasn't able to identify the characteristics
+of the problem well enough.
+
+ 
+
+Anyone else having problems like this?
+
+Or identify a reason why what I am trying to do is not possible?
+
+Or is it a bug?
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131222/f946d40e/attachment.htm>
+
+From Xavier.Pennec at inria.fr  Sun Dec 22 09:51:45 2013
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Sun, 22 Dec 2013 09:51:45 +0100
+Subject: [Therion] fixed point std error causes extreme survey network
+ distortion
+In-Reply-To: <305BEB3C9A2A4F49ADE1BAE2C6A77A91@JUICEBRAIN>
+References: <305BEB3C9A2A4F49ADE1BAE2C6A77A91@JUICEBRAIN>
+Message-ID: <52B6A821.3080705@inria.fr>
+
+Hi Bruce,
+
+I have hundreds of fixed points with different accuarcy and never 
+noticed the effect you are describing. However, I am not fixing directly 
+the coordinates of stations of my survey. I always create independant 
+fixed points and then equate them to the survey stations. In your case, 
+this would give something like:
+
+    fix GPS_12   1562372 5439558 992    20 20 20  # entrance
+    equate GPS_12 12 at 01
+    fix GPS_0      1562117 5440239 1080  5  5   20  # another entrance
+    equate GPS_0 0 at 10
+    fix GPS_120  1562124 5439500 1020  10 10 10  #entrance three
+    equate GPS_120 120 at 05
+
+An advantage of this strategy is that I can comment all the equates but 
+one to start with and verify with Aven on the 3d file where are the GPS 
+points located with respect to the cave survey. That way, I can spot the 
+outliers in the GPS points (or the errors in their retranscription) and 
+iteratively validate the equates.
+
+Xavier
+
+PS: between us, I would not qualify your gps stddev below as very rough. 
+A stddev of 5 meters about the smallest I use when I get long GPS 
+averages (more than 30 minutes) with one of the a differential satellites.
+
+
+
+
+
+Le 22/12/2013 01:35, Bruce a écrit :
+>
+> I got some unexpected results recently when I added some very rough 
+> gps coordinates to my survey for a cave that has three entrances. 
+> Because they are approximate I added some estimates of standard errors 
+> as below, so that I could get Therion to factor the relative accuracy 
+> into the loop closure.
+>
+>    fix 12 at 01  1562372 5439558 992    20 20 20  # entrance
+>
+>    fix 0 at 10      1562117 5440239 1080  5  5   20  # another entrance
+>
+>    fix 120 at 05  1562124 5439500 1020  10 10 10  #entrance three
+>
+> With any ONE of the entrances fixed as above, the cave plots 
+> accurately -- I can verify this in Google Earth.
+>
+> As soon as I have any two or more entrances fixed, then the cave 
+> distorts significantly, and the entrances are stretched some hundreds 
+> of metres away from the centroid of the cave. Also quite often getting 
+> 'scrap exceeding maximal scale' errors if I output to pdf.
+>
+> I checked this was not just a feature of that dataset by mocking up a 
+> similar situation in two other datasets, and got similar results.
+>
+> The work around seems to be to avoid using the standard errors;
+>
+>    fix 12 at 01  1562372 5439558 992    #20 20 20   entrance
+>
+>    fix 0 at 10      1562117 5440239 1080  #5  5   20   another entrance
+>
+>    fix 120 at 05  1562124 5439500 1020  #10 10 10  entrance three
+>
+> but this then results in each gps location receiving equal weighting.
+>
+> I think I might have noticed this problem a few years ago, and gave up 
+> on trying to sort it out because I wasn't able to identify the 
+> characteristics of the problem well enough.
+>
+> Anyone else having problems like this?
+>
+> Or identify a reason why what I am trying to do is not possible?
+>
+> Or is it a bug?
+>
+> Bruce
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131222/12c72271/attachment.htm>
+
+From martinsluka at mac.com  Sun Dec 22 23:26:45 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 22 Dec 2013 23:26:45 +0100
+Subject: [Therion] 5.3.12
+Message-ID: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+
+Exactly after one year! 
+
+Martin Sluka
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131222/18ef2692/attachment.htm>
+
+From lists at group-s.sk  Sun Dec 22 23:36:35 2013
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sun, 22 Dec 2013 23:36:35 +0100
+Subject: [Therion] splays
+In-Reply-To: <20131213125237.D7BBE7000104@msfrf2313.sfr.fr>
+References: <1386849173.42900.BPMail_high_noncarrier@web142405.mail.bf1.yahoo.com>
+	<20131213125237.D7BBE7000104@msfrf2313.sfr.fr>
+Message-ID: <CAP35+gHBXdx2yDekm3wcSTP5pEt5pC7WnmKT=GpFFh45fi=r+A@mail.gmail.com>
+
+In the latest version (5.3.12) released today, there is at least metapost
+attribute you can use to color splay shots.
+
+Just redefine l_survey_cave symbol in layout, e.g. 50% gray like this:
+
+code metapost
+  def l_survey_cave (expr P) =
+    T:=identity;
+    pickup PenC;
+    if ATTR__shotflag_splay:
+      thdraw P withcolor (0.5,0.5,0.5);
+    else:
+      thdraw P;
+    fi;
+  enddef;
+endcode
+
+S.
+
+
+On 13 December 2013 13:55, Erik VdBroeck <erik at speleo.tv> wrote:
+
+> I agree with Marco about the colour of splays in different colours than the
+> legs. How can we achieve this?
+> erik
+>
+> -----Original Message-----
+> From: Marco Corvi [mailto:marco_corvi at yahoo.com]
+> Sent: jeudi 12 décembre 2013 12:53
+> To: therion at speleo.sk
+> Subject: [Therion] splays
+>
+>
+> i would like that splays in pdf having only the centerline ( no scraps ),
+> are drawn with different color than legs.
+> any suggestion ?
+> ( besides fiddling with the sources )
+> thanks, marco
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131222/d8b32fc9/attachment.htm>
+
+From wookey at wookware.org  Tue Dec 24 04:41:48 2013
+From: wookey at wookware.org (Wookey)
+Date: Tue, 24 Dec 2013 03:41:48 +0000
+Subject: [Therion] 5.3.12
+In-Reply-To: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+Message-ID: <20131224034148.GE22290@stoneboat.aleph1.co.uk>
+
++++ Martin Sluka [2013-12-22 23:26 +0100]:
+>    Exactly after one year! 
+>    Martin Sluka
+
+Nice!
+
+And some of the bugs I have patches for are fixed. Great.
+
+A few observations about the source tarball:
+
+1) There is a thTMPDIR in samples/areas/ which I don;t think should be there.
+
+2) I think someone changed their editor settings. Many of the C++
+changes have the new lines TAB-indented amongst existing space-indented
+code, which, at least on my editor, comes out all wrong (and is
+generally bad practice for exactly this reason). Looks like the editor
+was set to TAB=2spaces.
+I'll fix all that up in the debian package and send a patch.
+
+3) output files are shipped in the samples dirs:
+q-marks/map.xvi
+survex/create/create.3d
+survex/ignore/ignore.3d
+survex/use/use/3d
+survex/cave.3d
+
+I don't think that's really right either, although it doesn't break anything
+
+4) There are a pile of bugs the debian patches fix which remain unfixed in 5.3.12:
+compiler warnings and code cleanup (mostly unused variables):
+* (fix-icon-compiler-warnings)
+* (fix-compiler-warnings.patch)
+
+The update to understand survex v8 .3d files (with splays) (update-survex-img-parser-to-v8.patch)
+
+Some files missed by the clean target
+
+The extensionless files fix (90load-extensionless-files.patch)
+
+The fix to avoid segfaulting if the language file is missing (82-nolang-segfault-fix.patch)
+
+samples encoding, and clean fixes
+
+'hardening' fix: (hardening-flags-fix.patch)
+
+Did you look at some of those and decide not to include them? Mostly I thnk they are uncontroversial.
+
+
+Anywa, I have updated all the patches and will build and test.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From wookey at wookware.org  Tue Dec 24 05:21:22 2013
+From: wookey at wookware.org (Wookey)
+Date: Tue, 24 Dec 2013 04:21:22 +0000
+Subject: [Therion] 5.3.12
+In-Reply-To: <20131224034148.GE22290@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+Message-ID: <20131224042122.GF22290@stoneboat.aleph1.co.uk>
+
++++ Wookey [2013-12-24 03:41 +0000]:
+> +++ Martin Sluka [2013-12-22 23:26 +0100]:
+> >    Exactly after one year! 
+
+> A few observations about the source tarball:
+> 
+
+> 3) output files are shipped in the samples dirs:
+> q-marks/map.xvi
+> survex/create/create.3d
+> survex/ignore/ignore.3d
+> survex/use/use/3d
+> survex/cave.3d
+
+Actually the .3ds are supposed to be there - ignore that, (but the xvi isn't) :-)
+
+> Anyway, I have updated all the patches and will build and test.
+
+OK. amd64 packages for wheezy (Debian stable) are at:
+http://wookware.org/software/repo/
+
+Please test them.
+
+Do we believe that http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+is fixed in 5.3.12?
+
+Trying an unstable build next.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Tue Dec 24 08:48:53 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 24 Dec 2013 20:48:53 +1300
+Subject: [Therion] fixed point std error causes extreme survey network
+	distortion
+In-Reply-To: <52B6A821.3080705@inria.fr>
+References: <305BEB3C9A2A4F49ADE1BAE2C6A77A91@JUICEBRAIN>
+	<52B6A821.3080705@inria.fr>
+Message-ID: <5D7FC5CF4298464FB4B83F19630BF8EF@JUICEBRAIN>
+
+Hi Xavier
+
+I tried your approach and like it a lot.
+
+Unfortunately I get the same result; 
+
+-specified std errors result in gross distortion,
+
+-no std errors give accurate survey plot (but forced to specified gps
+location without accounting for its inaccuracy)
+
+ 
+
+Other ideas?
+
+Perhaps its time to try 5.3.12
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Xavier Pennec
+Sent: Sunday, 22 December 2013 9:52 p.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] fixed point std error causes extreme survey network
+distortion
+
+ 
+
+Hi Bruce,
+
+I have hundreds of fixed points with different accuarcy and never noticed
+the effect you are describing. However, I am not fixing directly the
+coordinates of stations of my survey. I always create independant fixed
+points and then equate them to the survey stations. In your case, this would
+give something like:
+
+   fix GPS_12   1562372 5439558 992    20 20 20  # entrance
+   equate GPS_12 12 at 01
+   fix GPS_0      1562117 5440239 1080  5  5   20  # another entrance
+   equate GPS_0 0 at 10
+   fix GPS_120  1562124 5439500 1020  10 10 10  #entrance three
+   equate GPS_120 120 at 05
+
+An advantage of this strategy is that I can comment all the equates but one
+to start with and verify with Aven on the 3d file where are the GPS points
+located with respect to the cave survey. That way, I can spot the outliers
+in the GPS points (or the errors in their retranscription) and iteratively
+validate the equates.
+
+Xavier
+
+PS: between us, I would not qualify your gps stddev below as very rough. A
+stddev of 5 meters about the smallest I use when I get long GPS averages
+(more than 30 minutes) with one of the a differential satellites. 
+
+
+
+
+Le 22/12/2013 01:35, Bruce a écrit :
+
+I got some unexpected results recently when I added some very rough gps
+coordinates to my survey for a cave that has three entrances.  Because they
+are approximate I added some estimates of standard errors as below, so that
+I could get Therion to factor the relative accuracy into the loop closure.
+
+ 
+
+   fix 12 at 01    1562372 5439558 992    20 20 20  # entrance
+
+   fix 0 at 10      1562117 5440239 1080  5  5   20  # another entrance
+
+   fix 120 at 05  1562124 5439500 1020  10 10 10  #entrance three
+
+ 
+
+With any ONE of the entrances fixed as above, the cave plots accurately  I
+can verify this in Google Earth.
+
+As soon as I have any two or more entrances fixed, then the cave distorts
+significantly, and the entrances are stretched some hundreds of metres away
+from the centroid of the cave.  Also quite often getting scrap exceeding
+maximal scale errors if I output to pdf.
+
+ 
+
+I checked this was not just a feature of that dataset by mocking up a
+similar situation in two other datasets, and got similar results.
+
+ 
+
+The work around seems to be to avoid using the standard errors;
+
+ 
+
+   fix 12 at 01    1562372 5439558 992    #20 20 20   entrance
+
+   fix 0 at 10      1562117 5440239 1080  #5  5   20   another entrance
+
+   fix 120 at 05  1562124 5439500 1020  #10 10 10  entrance three
+
+ 
+
+but this then results in each gps location receiving equal weighting.
+
+I think I might have noticed this problem a few years ago, and gave up on
+trying to sort it out because I wasnt able to identify the characteristics
+of the problem well enough.
+
+ 
+
+Anyone else having problems like this?
+
+Or identify a reason why what I am trying to do is not possible?
+
+Or is it a bug?
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/527bbe86/attachment.htm>
+
+From christian.sandrini at me.com  Tue Dec 24 10:30:15 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Tue, 24 Dec 2013 10:30:15 +0100
+Subject: [Therion] Building therion for HomeBrew
+Message-ID: <7D7DB236-EBDD-4B08-9D37-EC788FCEE1E8@me.com>
+
+Hi 
+
+I am building therion for HomeBrew Mac so it is a bit easier for every mac user.
+Is it possible to specify a prefix when compiling? I only have the option make config-macosx but I should be able to specify where the binaries are going to be copied. As per HomeBrew rules they all have to sit in their own subdirectory and just link to binaries to /usr/bin.
+
+a make config-macosx —prefix= would be ideal
+
+Thanks
+Chris
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/29ca45fd/attachment.sig>
+
+From martinsluka at mac.com  Tue Dec 24 12:58:37 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 24 Dec 2013 12:58:37 +0100
+Subject: [Therion] Building therion for HomeBrew
+In-Reply-To: <7D7DB236-EBDD-4B08-9D37-EC788FCEE1E8@me.com>
+References: <7D7DB236-EBDD-4B08-9D37-EC788FCEE1E8@me.com>
+Message-ID: <6C4E5024-DDE1-4057-A83B-62C30131155E@mac.com>
+
+I hope there is no any problem if they will be there
+
+m.
+
+
+Dec 24, 2013 v 10:30 AM, Christian Sandrini <christian.sandrini at me.com>:
+
+> As per HomeBrew rules they all have to sit in their own subdirectory and just link to binaries to /usr/bin.
+
+Martin Sluka - Studio Sluka
+
+prodej Hahnemühle DFA 
+tisk fotografií, reprodukcí a volné tvorby
+
+Na Rovnosti 2692/21
+130 00 Praha 3
+tel.: +420 603513640
+mail: martinsluka at mac.com
+web: http://www.piezografie.cz
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/bb560d48/attachment.htm>
+
+From martinsluka at mac.com  Tue Dec 24 13:00:00 2013
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 24 Dec 2013 13:00:00 +0100
+Subject: [Therion] new DISTO X2 boards available
+Message-ID: <E8D39564-2B65-449D-A437-7D67799854E3@mac.com>
+
+Check: paperless.bheeb.ch
+
+The best Christmas present, I think.
+
+Martin
+
+
+
+
+
+
+
+From christian.sandrini at me.com  Tue Dec 24 13:02:07 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Tue, 24 Dec 2013 13:02:07 +0100
+Subject: [Therion] Building therion for HomeBrew
+In-Reply-To: <6C4E5024-DDE1-4057-A83B-62C30131155E@mac.com>
+References: <7D7DB236-EBDD-4B08-9D37-EC788FCEE1E8@me.com>
+	<6C4E5024-DDE1-4057-A83B-62C30131155E@mac.com>
+Message-ID: <159243DA-C9CD-4983-86F0-D27AB1738821@me.com>
+
+Hi Martin
+
+As long as they are symlinked correctly it should not cause any problems. Unless every path was hardcoded.
+
+
+On 24 Dec 2013, at 12:58, Martin Sluka <martinsluka at mac.com> wrote:
+
+> I hope there is no any problem if they will be there
+> 
+> m.
+> 
+> 
+> Dec 24, 2013 v 10:30 AM, Christian Sandrini <christian.sandrini at me.com>:
+> 
+>> As per HomeBrew rules they all have to sit in their own subdirectory and just link to binaries to /usr/bin.
+> 
+> Martin Sluka - Studio Sluka
+> 
+> prodej Hahnemühle DFA 
+> tisk fotografií, reprodukcí a volné tvorby
+> 
+> Na Rovnosti 2692/21
+> 130 00 Praha 3
+> tel.: +420 603513640
+> mail: martinsluka at mac.com
+> web: http://www.piezografie.cz
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/ffd107de/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/ffd107de/attachment.sig>
+
+From christian.sandrini at me.com  Tue Dec 24 19:45:12 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Tue, 24 Dec 2013 19:45:12 +0100
+Subject: [Therion] Building therion for HomeBrew
+In-Reply-To: <159243DA-C9CD-4983-86F0-D27AB1738821@me.com>
+References: <7D7DB236-EBDD-4B08-9D37-EC788FCEE1E8@me.com>
+	<6C4E5024-DDE1-4057-A83B-62C30131155E@mac.com>
+	<159243DA-C9CD-4983-86F0-D27AB1738821@me.com>
+Message-ID: <9DD959CC-573F-4DD1-AF64-F82F97A14AD7@me.com>
+
+I just submitted a pull request for HomeBrew with the new therion formula. For the ones that can not wait you can also clone my git repository
+
+- Install HomeBrew
+- cd /usr/local
+- git remote add chris https://github.com/un1x86/homebrew
+- git pull chris therion
+- git checkout therion
+- brew install therion 
+
+should do the trick. You still need to install MacTex beforehand though.
+
+I tested it on Mavericks.
+
+Or wait until it has been pushed into the normal HomeBrew branch.
+
+cheers and marry x-mas
+Chris
+
+
+
+On 24 Dec 2013, at 13:02, Christian Sandrini <christian.sandrini at me.com> wrote:
+
+> Hi Martin
+> 
+> As long as they are symlinked correctly it should not cause any problems. Unless every path was hardcoded.
+> 
+> 
+> On 24 Dec 2013, at 12:58, Martin Sluka <martinsluka at mac.com> wrote:
+> 
+>> I hope there is no any problem if they will be there
+>> 
+>> m.
+>> 
+>> 
+>> Dec 24, 2013 v 10:30 AM, Christian Sandrini <christian.sandrini at me.com>:
+>> 
+>>> As per HomeBrew rules they all have to sit in their own subdirectory and just link to binaries to /usr/bin.
+>> 
+>> Martin Sluka - Studio Sluka
+>> 
+>> prodej Hahnemühle DFA 
+>> tisk fotografií, reprodukcí a volné tvorby
+>> 
+>> Na Rovnosti 2692/21
+>> 130 00 Praha 3
+>> tel.: +420 603513640
+>> mail: martinsluka at mac.com
+>> web: http://www.piezografie.cz
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/eec5a3fa/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131224/eec5a3fa/attachment.sig>
+
+From wookey at wookware.org  Wed Dec 25 01:34:51 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 25 Dec 2013 00:34:51 +0000
+Subject: [Therion] 5.3.12
+In-Reply-To: <20131224034148.GE22290@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+Message-ID: <20131225003451.GI22290@stoneboat.aleph1.co.uk>
+
++++ Wookey [2013-12-24 03:41 +0000]:
+
+> 2) I think someone changed their editor settings. Many of the C++
+> changes have the new lines TAB-indented amongst existing space-indented
+> code, which, at least on my editor, comes out all wrong (and is
+> generally bad practice for exactly this reason). Looks like the editor
+> was set to TAB=2spaces.
+> I'll fix all that up in the debian package and send a patch.
+
+Patch to fix up all the 'TAB should be 2 spaces' untidiness introduced in 5.3.12. attached
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-5.3.12-whitespace.patch
+Type: text/x-diff
+Size: 10015 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131225/581da56d/attachment.patch>
+
+From wookey at wookware.org  Wed Dec 25 02:59:49 2013
+From: wookey at wookware.org (Wookey)
+Date: Wed, 25 Dec 2013 01:59:49 +0000
+Subject: [Therion] 5.3.12
+In-Reply-To: <20131224042122.GF22290@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+Message-ID: <20131225015946.GK22290@stoneboat.aleph1.co.uk>
+
++++ Wookey [2013-12-24 04:21 +0000]:
+> OK. amd64 packages for wheezy (Debian stable) are at:
+> http://wookware.org/software/repo/
+> 
+> Please test them.
+
+I tested them here and they worked for some basic smoke tests. There
+seems to be an issue with loading lox files from the 'recently used'
+menu ('Error reading file'), but it works OK from the filer pointing at
+the actual file.
+
+> Do we believe that http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+> is fixed in 5.3.12?
+
+I've tried to reproduce this with therion 5.3.10, 5.3.11 and 5.3.12 and
+have failed. Can anyone else reproduce it, and/or confirm it fixed with
+5.3.11 or 5.3.12?
+
+
+Just uploaded 5.3.12-1 to Debian unstable.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From christian.sandrini at me.com  Wed Dec 25 14:59:28 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Wed, 25 Dec 2013 14:59:28 +0100
+Subject: [Therion] Therion with VTK6
+Message-ID: <0BB41758-8639-4B61-A320-34DD92D8AB34@me.com>
+
+Has anyone tried Therion using VTK6?
+
+best
+Chris
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131225/ec92c3ce/attachment.sig>
+
+From christian.sandrini at me.com  Wed Dec 25 17:02:51 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Wed, 25 Dec 2013 17:02:51 +0100
+Subject: [Therion] Therion with VTK6
+In-Reply-To: <0BB41758-8639-4B61-A320-34DD92D8AB34@me.com>
+References: <0BB41758-8639-4B61-A320-34DD92D8AB34@me.com>
+Message-ID: <0DE358C6-E31C-4E33-9C2D-C57C0D01D46B@me.com>
+
+Does not seem so
+
+lxData.cxx:543:28: error: no member named 'SetInput' in 'vtkPolyDataNormals'; did you mean 'GetInput'?
+  this->scrapWallsNormals->SetInput(this->scrapWalls);
+                           ^~~~~~~~
+                           GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:543:37: error: too many arguments to function call, expected 0, have 1
+  this->scrapWallsNormals->SetInput(this->scrapWalls);
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:550:19: error: no member named 'AddInput' in 'vtkAppendPolyData'
+  this->allWalls->AddInput(this->scrapWallsNormals->GetOutput());
+  ~~~~~~~~~~~~~~  ^
+lxData.cxx:551:19: error: no member named 'AddInput' in 'vtkAppendPolyData'
+  this->allWalls->AddInput(this->lrudWalls);
+  ~~~~~~~~~~~~~~  ^
+lxData.cxx:553:27: error: no member named 'SetInput' in 'vtkTriangleFilter'; did you mean 'GetInput'?
+  this->allWallsTriangle->SetInput(this->allWalls->GetOutput());
+                          ^~~~~~~~
+                          GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:553:36: error: too many arguments to function call, expected 0, have 1
+  this->allWallsTriangle->SetInput(this->allWalls->GetOutput());
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:554:25: error: no member named 'SetInput' in 'vtkDepthSortPolyData'; did you mean 'GetInput'?
+  this->allWallsSorted->SetInput(this->allWallsTriangle->GetOutput());
+                        ^~~~~~~~
+                        GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:554:34: error: too many arguments to function call, expected 0, have 1
+  this->allWallsSorted->SetInput(this->allWallsTriangle->GetOutput());
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:556:27: error: no member named 'SetInput' in 'vtkStripper'; did you mean 'GetInput'?
+  this->allWallsStripped->SetInput(this->allWallsTriangle->GetOutput());
+                          ^~~~~~~~
+                          GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:556:36: error: too many arguments to function call, expected 0, have 1
+  this->allWallsStripped->SetInput(this->allWallsTriangle->GetOutput());
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:559:24: error: no member named 'SetInput' in 'vtkPolyDataNormals'; did you mean 'GetInput'?
+        this->surfaceNormals->SetInput(this->surface);
+                              ^~~~~~~~
+                              GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:559:33: error: too many arguments to function call, expected 0, have 1
+        this->surfaceNormals->SetInput(this->surface);
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:562:26: error: no member named 'SetInput' in 'vtkTriangleFilter'; did you mean 'GetInput'?
+  this->surfaceTriangle->SetInput(this->surfaceNormals->GetOutput());
+                         ^~~~~~~~
+                         GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:562:35: error: too many arguments to function call, expected 0, have 1
+  this->surfaceTriangle->SetInput(this->surfaceNormals->GetOutput());
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:563:24: error: no member named 'SetInput' in 'vtkDepthSortPolyData'; did you mean 'GetInput'?
+  this->surfaceSorted->SetInput(this->surfaceTriangle->GetOutput());
+                       ^~~~~~~~
+                       GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:18: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+                 ^
+lxData.cxx:563:33: error: too many arguments to function call, expected 0, have 1
+  this->surfaceSorted->SetInput(this->surfaceTriangle->GetOutput());
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataAlgorithm.h:59:3: note: 'GetInput' declared here
+  vtkDataObject* GetInput();
+  ^
+lxData.cxx:585:6: error: no member named 'SetInput' in 'vtkPolyDataWriter'; did you mean 'GetInput'?
+  w->SetInput(this->allWallsStripped->GetOutput());
+     ^~~~~~~~
+     GetInput
+/usr/local/include/vtk-6.0/vtkPolyDataWriter.h:39:16: note: 'GetInput' declared here
+  vtkPolyData* GetInput();
+               ^
+lxData.cxx:585:15: error: too many arguments to function call, expected 0, have 1
+  w->SetInput(this->allWallsStripped->GetOutput());
+  ~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/local/include/vtk-6.0/vtkPolyDataWriter.h:39:3: note: 'GetInput' declared here
+  vtkPolyData* GetInput();
+  ^
+18 errors generated.
+On 25 Dec 2013, at 14:59, Christian Sandrini <christian.sandrini at me.com> wrote:
+
+> Has anyone tried Therion using VTK6?
+> 
+> best
+> Chris
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131225/ead96916/attachment.sig>
+
+From cawa.sorix at gmail.com  Wed Dec 25 17:25:13 2013
+From: cawa.sorix at gmail.com (cawa sorix)
+Date: Wed, 25 Dec 2013 17:25:13 +0100
+Subject: [Therion] 5.3.12
+In-Reply-To: <20131225015946.GK22290@stoneboat.aleph1.co.uk>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+	<20131225015946.GK22290@stoneboat.aleph1.co.uk>
+Message-ID: <CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+
+Hello,
+
+> I tested them here and they worked for some basic smoke tests. There
+> seems to be an issue with loading lox files from the 'recently used'
+> menu ('Error reading file'), but it works OK from the filer pointing at
+> the actual file.
+
+I build the new verision on debian stable it works fine, I can't
+reproduce the 'recently used', it works for me.
+
+>> Do we believe that
+>> http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+>> is fixed in 5.3.12?
+
+I updated my Sid and I have this bug with 5.3.12 same as 5.3.11
+
+To reproduce it you have to use an existing th2 file with a link to an
+existing image, you can open it on stable debian version but on Sid,
+the background image is not visible and when you try to add an image
+it crash. :'(
+
+C.S.
+
+2013/12/25, Wookey <wookey at wookware.org>:
+> +++ Wookey [2013-12-24 04:21 +0000]:
+>> OK. amd64 packages for wheezy (Debian stable) are at:
+>> http://wookware.org/software/repo/
+>>
+>> Please test them.
+>
+> I tested them here and they worked for some basic smoke tests. There
+> seems to be an issue with loading lox files from the 'recently used'
+> menu ('Error reading file'), but it works OK from the filer pointing at
+> the actual file.
+>
+>> Do we believe that
+>> http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+>> is fixed in 5.3.12?
+>
+> I've tried to reproduce this with therion 5.3.10, 5.3.11 and 5.3.12 and
+> have failed. Can anyone else reproduce it, and/or confirm it fixed with
+> 5.3.11 or 5.3.12?
+
+
+
+>
+>
+> Just uploaded 5.3.12-1 to Debian unstable.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From bruce at tomo.co.nz  Thu Dec 26 03:48:31 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Thu, 26 Dec 2013 15:48:31 +1300
+Subject: [Therion] equate to non-existant station does not raise error
+Message-ID: <EE93CA2399E14994B4B483E58744D445@JUICEBRAIN>
+
+>If a typing error is made in a station equate statement, no error is
+raised.
+ 
+> Presumably Bruce's problem is solved simply by better visibility of the
+> existing warning,.?
+
+ 
+
+Yep, looks like 5.3.12 has solved this problem, some obscure loop closures
+need some scrutiny on my part (or are those yours Michael?)  Glad there are
+only 4 of them!
+
+ 
+
+warning -- INDEXMiddleEarth.th [289] -- equate used to define new station
+(DF4.46 at df)
+
+warning -- INDEXMiddleEarth.th [313] -- equate used to define new station
+(YG6.25 at yk)
+
+warning -- INDEXMiddleEarth.th [321] -- equate used to define new station
+(YQ3.15 at yq)
+
+warning -- INDEXMiddleEarth.th [517] -- equate used to define new station
+(dj27.4 at dj)
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131226/31b936e0/attachment.htm>
+
+From graham.mullan at coly.org.uk  Thu Dec 26 22:19:19 2013
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Thu, 26 Dec 2013 22:19:19 +0100
+Subject: [Therion] vertical magnitude
+Message-ID: <340FA29749D1466986AD432213787976@GrahamsColyPC>
+
+Someone has just suggested that a facility to exaggerate the vertical
+magnitude when vieweing elevations might be useful. I agree & know that such
+a distortion has been used in diagrams in many papers over the years. Is
+there any possibility of putting this on the 'wants' list?
+ 
+
+Graham
+
+--
+
+graham.mullan at coly.org.uk
+
+ 
+
+In the UK 0117 9502556 or 07887 637064
+
+France from the UK 0844 2327803
+
+In France 05 53 51 19 15 or 06 02 53 37 81
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131226/75b01ae6/attachment.htm>
+
+From wookey at wookware.org  Fri Dec 27 02:37:44 2013
+From: wookey at wookware.org (Wookey)
+Date: Fri, 27 Dec 2013 01:37:44 +0000
+Subject: [Therion] Background images and insert images not working
+In-Reply-To: <CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+References: <8B5D04AC-6FF7-44D2-B5D2-53CFD3063C68@mac.com>
+	<20131224034148.GE22290@stoneboat.aleph1.co.uk>
+	<20131224042122.GF22290@stoneboat.aleph1.co.uk>
+	<20131225015946.GK22290@stoneboat.aleph1.co.uk>
+	<CA+y_9U2mCKCmfSa90CjJjoQORK9L4Ns3bUsLCQ_rA87jozUTTA@mail.gmail.com>
+Message-ID: <20131227013744.GU22290@stoneboat.aleph1.co.uk>
+
++++ cawa sorix [2013-12-25 17:25 +0100]:
+> >> Do we believe that
+> >> http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718294
+> >> is fixed in 5.3.12?
+> 
+> I updated my Sid and I have this bug with 5.3.12 same as 5.3.11
+> 
+> To reproduce it you have to use an existing th2 file with a link to an
+> existing image, you can open it on stable debian version but on Sid,
+> the background image is not visible and when you try to add an image
+> it crash. :'(
+
+Aha - it hapens on jessie and sid, but not wheezy. OK. I can reproduce now. Cheers Cawa.
+
+Something to do with the libtk-img package perhaps, as that's
+responsible for adding tck/tk png support. It's installed.
+http://packages.qa.debian.org/libt/libtk-img.html shows that it changed
+from 1.3 to 1.4  between stale (wheezy) and testing (jessie), which sugests that 1.3 works and 1.4 doesn't.
+SImply reverting to v1.3 doesn't fix it, but maybe it's need to be rebuilt agianst the corresponding headers too?
+
+So trying to insert background in a new (empty) .th2 file gives:
+ag "command" doesn't match any items
+tag "command" doesn't match any items
+    while executing
+"$xth(me,can) lower $xth(me,imgs,$imgx,image) command"
+    (procedure "xth_me_image_insert" line 201)
+    invoked from within
+"xth_me_image_insert $xth(ctrl,me,images,newposx) $xth(ctrl,me,images,newposy) {} 0 {}"
+    ("uplevel" body line 4)
+    invoked from within
+"uplevel \#0 $cmd"
+    (procedure "Button::_release" line 23)
+    invoked from within
+"Button::_release .xth.me.af.ctrl.cf11.f.ic.insp"
+    (command bound to event).
+
+Taking a file that should have an image already such as  initially
+doesn't show the background image, but adding a second one makes it 
+appear in the list in the UI twice, and the just-inserted one displays
+correctly.
+
+Closing the file now cuases this error:
+an't unset "xth(me,imgs,0,name)": no such element in array
+can't unset "xth(me,imgs,0,name)": no such element in array
+    while executing
+xth_me_image_destroy_all"
+    (procedure "xth_me_destroy_file" line 13)
+    invoked from within
+"xth_me_destroy_file"
+    (procedure "xth_me_close_file" line 12)
+    invoked from within
+"xth_me_close_file"
+    invoked from within
+".xth.#xth#me#menu.#xth#me#menu#file invoke active"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel #0 [list $w invoke active]"
+    (procedure "tk::MenuInvoke" line 50)
+    invoked from within
+"tk::MenuInvoke .xth.#xth#me#menu.#xth#me#menu#file 1"
+    (command bound to event)
+
+This looks to me like the image file is not 'initialised' somehow until a second one is read in.
+
+I don;t have much idea how this works, so will send thisin in the hope that someone who speaks tcl/tk can see what's up.
+
+Wookey
+
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From bruce at tomo.co.nz  Fri Dec 27 08:18:18 2013
+From: bruce at tomo.co.nz (Bruce)
+Date: Fri, 27 Dec 2013 20:18:18 +1300
+Subject: [Therion] fixed point std error causes extreme survey network
+	distortion
+Message-ID: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+
+Below a conversation transcript that I took briefly off forum, but now
+time to post it I think.
+
+ 
+
+You can read from the bottom of the transcript below if you are interested.
+
+ 
+
+Briefly in summary, it seems to me that since 5.3.5 or earlier, therion loop
+closure results in grossly distorted outputs IF there are two or more fixed
+stations AND (only?) for the stations that have standard errors specified
+AND there are survey networks connecting those fixed stations.  Specifying
+Survex loop closure bypassed this problem.
+
+ 
+
+Since I installed Survex 1.2.8 a few weeks agoi, my machine has been giving;
+
+C:\Program Files\Therion\therion.exe: warning -- can't open cavern output
+
+when survex loop closure is specified, and I suspect this is causing Therion
+to revert to therion loop closure and hence the distortion problem has been
+manifesting again if I specify std errors.  You can see samples of  my
+therion.log files in the attached dataset.
+
+Xavier is using Survex 1.2.6 and his log files, which do not have this
+problem, are attached separately.
+
+ 
+
+If you are interested you can experiment with the fixed station statements
+in the INDEX file in the attached dataset to see what effect various
+adjustments have.  You might also have to adjust the loop-closure statement
+in therion.ini.
+
+ 
+
+So two things to fix; Therions loop closures and Survex 1.2.8 integration
+with Therion.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+  _____  
+
+From: Bruce [mailto:bruce at tomo.co.nz] 
+Sent: Friday, 27 December 2013 8:47 a.m.
+To: 'Xavier Pennec'
+Subject: fixed point std error causes extreme survey network distortion
+
+ 
+
+As commented below.
+
+Bruce
+
+  _____  
+
+From: Xavier Pennec [mailto:Xavier.Pennec at inria.fr] 
+Sent: Friday, 27 December 2013 12:48 a.m.
+To: Bruce Mutton
+Subject: Re: fixed point std error causes extreme survey network distortion
+
+ 
+
+Hi Bruce,
+
+I just compiled as is and did not get any distortion. However, I have survex
+installed: I vaguely remember having some problems using the therion
+loop-closure algorithm with some uncertainty on the fixed points a long time
+ago (actually problems when survex is not installed, which amounts to using
+the therion loop-closure engine).  Way back in time this was the reason I
+first installed Survex  I had similar problem with elevations (this one
+seems mainly a plan problem however)
+
+And then later I had this problem that I posted on the forum
+
+http://article.gmane.org/gmane.comp.gis.therion/2378/match=loop+closure
+
+Indeed, activating therion loop closure (using "loop-closure therion" in the
+therion.ini file) distorts the cave 
+. This might be a side effect of the
+loop-closure problem that you reported in 2010 (link above) and which is
+still unsolved apparently. Based on past experience this is what I was
+expecting, but my current therion.ini is default and therion.log reports
+survex activity, so it seems for me both survex and therion loop closures
+are now giving me this effect (5.3.11 and 5.3.12 it seems).  I have tried
+editing therion.ini to explicitly force both types of loop closure, and the
+log file reflects what I specify, but the output is always distorted when
+there are two or more fixed points and at least one has std errors
+specified.
+
+With therion loop-closure, I get as well with my data some "scraps too
+large" errors to produce the pdf output. Same (but also for Survex closure
+for me)
+
+Thus, we can conclude to a bug in therion loop-closure. (Historically I
+agree, but I am perplexed as to why I now get it with Survex loop closure as
+well.  I have searched my machine and cannot find any rogue therion.ini
+files that might be causing the problem.  The log file reports the correct
+initialization file.  Perhaps there is a clue in the log file entry
+C:\Program Files\Therion\therion.exe: warning -- can't open cavern output
+Maybe this is causing my machine to revert back to therion loop closure in
+all cases?)
+
+
+
+
+Xavier
+
+Le 26/12/2013 02:48, Bruce a écrit :
+
+Hi Xavier
+
+
+
+
+ 
+
+Ive managed to replicate the problem Ive been having with standard errors
+on fixed points in this small dataset.  It is a cave survey I have been
+using as a training exercise with prospective Therion users  and
+consequently not finished, and has some strange things in it.  
+
+
+ 
+
+Interested to see if you get the same problems I am getting.
+
+The dataset as attached manifests the problem.  I have noticed that if std
+errors are specified for a particular fixed station, and if the loop
+closure required is not almost exactly zero, then that particular fixed
+point is displaced significantly from what it should be.
+
+ 
+
+You can experiment with this at the start of the file INDEXHunters.th
+
+If you comment out the second fix statement you can see what the cave should
+look like.
+
+(oriented roughly east-west) 
+
+If you compile the attached as is and you get an output that looks like
+this, then you are not experiencing my problem.  When I compile the
+attached, the western entrance is shifted some 300m to the north so that the
+cave is oriented roughly north south.  Not sure, but the problem seems to be
+related to loop closure in north-south direction but not east-west.  I
+think I may have had a similar effect in the vertical direction years ago,
+and installing Survex (changing loop closure algorithm) fixed it.
+
+ 
+
+Open the Hunters3DModel.3d and turn on fixed points, entrances and surface
+surveys to get an overview of the structure of the survey.
+
+ 
+
+Anyway, what happens for you?  Distortion or not?
+
+Is there anything different in my dataset arrangement that might be causing
+this? (ie My map definitions in hunters.th are outside of the survey
+definition).
+
+ 
+
+Thanks for any insights you might have.
+
+Bruce
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131227/7af997b9/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: th_HuntersLoopTest.zip
+Type: application/x-zip-compressed
+Size: 235672 bytes
+Desc: th_HuntersLoopTest.zip
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131227/7af997b9/attachment.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion_with_Therion_loop-closure-Xavier.log
+Type: application/octet-stream
+Size: 4742 bytes
+Desc: therion_with_Therion_loop-closure-Xavier.log
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131227/7af997b9/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion_withSurvex-Xavier.log
+Type: application/octet-stream
+Size: 6704 bytes
+Desc: therion_withSurvex-Xavier.log
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131227/7af997b9/attachment-0001.obj>
+
+From olly at survex.com  Fri Dec 27 22:06:22 2013
+From: olly at survex.com (Olly Betts)
+Date: Fri, 27 Dec 2013 21:06:22 +0000
+Subject: [Therion] fixed point std error causes extreme survey network
+ distortion
+In-Reply-To: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+References: <414FE3E0F45147609B2B767B42C8E158@JUICEBRAIN>
+Message-ID: <20131227210622.GL14490@survex.com>
+
+On Fri, Dec 27, 2013 at 08:18:18PM +1300, Bruce wrote:
+> Since I installed Survex 1.2.8 a few weeks agoi, my machine has been giving;
+> 
+> C:\Program Files\Therion\therion.exe: warning -- can't open cavern output
+> 
+> when survex loop closure is specified, and I suspect this is causing Therion
+> to revert to therion loop closure and hence the distortion problem has been
+> manifesting again if I specify std errors.  You can see samples of  my
+> therion.log files in the attached dataset.
+> 
+> Xavier is using Survex 1.2.6 and his log files, which do not have this
+> problem, are attached separately.
+
+Survex 1.2.7 introduced a new 3d format version (v8), but it looks like
+therion 5.3.12 wasn't updated to understand this.
+
+Copying over img.h and img.c from the latest Survex sources to therion
+and rebuilding should fix this.  Or making therion run cavern with the
+-v7 option.  Or just installing Survex 1.2.6 until someone updates
+therion.
+
+Cheers,
+    Olly
+
+
+From dave at daveclucas.com  Sun Dec 29 10:39:11 2013
+From: dave at daveclucas.com (Dave Clucas)
+Date: Sun, 29 Dec 2013 09:39:11 +0000
+Subject: [Therion] Building therion for HomeBrew (Christian Sandrini)
+Message-ID: <18093783-DADB-4AC9-8184-890841AF583C@daveclucas.com>
+
+I got as far as checkout and then got this error.
+
+mycavesmba11-2:local daveclucas$ git checkout therion
+error: pathspec 'therion' did not match any file(s) known to git.
+
+I tried to pull the files again with this result
+
+mycavesmba11-2:local daveclucas$ git pull chris therion
+From https://github.com/un1x86/homebrew
+ * branch            therion    -> FETCH_HEAD
+Already up-to-date.
+ 
+
+Dave Clucas
+daveclucas.com
+mycaves.org.
+daveclucas at icloud.com
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/5efb4628/attachment.htm>
+
+From christian.sandrini at me.com  Sun Dec 29 11:22:28 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Sun, 29 Dec 2013 11:22:28 +0100
+Subject: [Therion] Building therion for HomeBrew (Christian Sandrini)
+In-Reply-To: <18093783-DADB-4AC9-8184-890841AF583C@daveclucas.com>
+References: <18093783-DADB-4AC9-8184-890841AF583C@daveclucas.com>
+Message-ID: <4350B36F-E94E-4D6F-8093-2E19D68F04ED@me.com>
+
+Hi Dave
+
+It is actually a bit easier. Before installing just make sure that you did the following steps:
+
+- brew update
+- brew doctor
+
+And there is no error. Also make sure you have MacTex installed. Then you can just do the following.
+
+# brew install https://raw.github.com/un1x86/homebrew/therion/Library/Formula/therion.rb
+
+This should install therion.
+
+let me know if it works.
+
+best
+Chris
+
+On 29 Dec 2013, at 10:39, Dave Clucas <dave at daveclucas.com> wrote:
+
+> I got as far as checkout and then got this error.
+> 
+> mycavesmba11-2:local daveclucas$ git checkout therion
+> error: pathspec 'therion' did not match any file(s) known to git.
+> 
+> I tried to pull the files again with this result
+> 
+> mycavesmba11-2:local daveclucas$ git pull chris therion
+> From https://github.com/un1x86/homebrew
+>  * branch            therion    -> FETCH_HEAD
+> Already up-to-date.
+>  
+> 
+> Dave Clucas
+> daveclucas.com
+> mycaves.org.
+> daveclucas at icloud.com
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/b5abfba4/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/b5abfba4/attachment.sig>
+
+From dave at daveclucas.com  Sun Dec 29 17:48:29 2013
+From: dave at daveclucas.com (Dave Clucas)
+Date: Sun, 29 Dec 2013 16:48:29 +0000
+Subject: [Therion] Building therion for HomeBrew
+Message-ID: <0BEFF312-6957-459A-BD08-9EC633FEDAC9@daveclucas.com>
+
+mycavesmba11:~ daveclucas$ brew install https://raw.github.com/un1x86/homebrew/therion/Library/Formula/therion.rb
+######################################################################## 100.0%
+Error: No available formula for vtk5 
+Searching taps...
+homebrew/versions/vtk5
+
+Dave Clucas
+daveclucas.com
+mycaves.org.
+daveclucas at icloud.com
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/722a88ff/attachment.htm>
+
+From christian.sandrini at me.com  Sun Dec 29 20:51:13 2013
+From: christian.sandrini at me.com (Christian Sandrini)
+Date: Sun, 29 Dec 2013 20:51:13 +0100
+Subject: [Therion] Building therion for HomeBrew
+In-Reply-To: <0BEFF312-6957-459A-BD08-9EC633FEDAC9@daveclucas.com>
+References: <0BEFF312-6957-459A-BD08-9EC633FEDAC9@daveclucas.com>
+Message-ID: <8C4AB9B1-7CAE-4DC1-B816-DE56904744A3@me.com>
+
+That is weird. Apparently it does not find vtk5.
+Probably you need to install vtk5 first.
+
+# brew install homebrew/versions/vtk5
+
+I will try to include that.
+
+best
+Chris
+
+
+On 29 Dec 2013, at 17:48, Dave Clucas <dave at daveclucas.com> wrote:
+
+> mycavesmba11:~ daveclucas$ brew install https://raw.github.com/un1x86/homebrew/therion/Library/Formula/therion.rb
+> ######################################################################## 100.0%
+> Error: No available formula for vtk5 
+> Searching taps...
+> homebrew/versions/vtk5
+> 
+> Dave Clucas
+> daveclucas.com
+> mycaves.org.
+> daveclucas at icloud.com
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/5515ed11/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 496 bytes
+Desc: Message signed with OpenPGP using GPGMail
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20131229/5515ed11/attachment.sig>
+
+From bgee at campercaver.net  Sun Dec 29 22:04:08 2013
+From: bgee at campercaver.net (Bill Gee)
+Date: Sun, 29 Dec 2013 15:04:08 -0600
+Subject: [Therion] Compiling Therion without Loch
+In-Reply-To: <20131017162143.GF8394@stoneboat.aleph1.co.uk>
+References: <2073507.iRcUb28rEA@main2> <2779503.hvWuFyYUDG@main2>
+	<20131017162143.GF8394@stoneboat.aleph1.co.uk>
+Message-ID: <1860644.OiArj3MrqP@main2>
+
+Hello everyone - 
+
+It has been a couple of months.  With the release of version 5.3.12 I dug into 
+this problem in greater depth.  Net result - I can get Therion to compile but 
+Loch is still no-go.  Details below.  I don't use Loch, so not having it is 
+not a problem for me.
+
+The target system is Fedora 20, 64-bit.  I installed it as a clean, fresh 
+system.  It is not an upgrade.
+
+One thing I found with Fedora 20 is that vtk-devel cannot be installed.   When 
+I try to "yum install vtk-devel" I get a raft of errors that ends like this:
+
+--> Processing Conflict: community-mysql-5.5.34-1.fc20.x86_64 conflicts
+--> mariadb
+--> Processing Conflict: 1:mariadb-5.5.34-2.fc20.x86_64 conflicts
+--> community-mysql
+--> Finished Dependency Resolution
+Error: mariadb conflicts with community-mysql-5.5.34-1.fc20.x86_64
+Error: community-mysql conflicts with 1:mariadb-5.5.34-2.fc20.x86_64
+
+There is also a long list of dependencies that includes PostGreSQL and what 
+looks like 50 or 60 Python and TCL libraries.  It's a mess!!!
+
+Here is what I changed to make Therion compile.
+
+1) In file "makeinstall.tcl" ...  Comment out line 55.
+
+2) In file "Makefile" ...  Change line 122 to read
+
+	all: therion doc xtherion/xtherion
+
+3) In file "Makefile" ...  Comment out lines 30, 173, 174, 190, 229, 233, 237, 
+241, 245, 249
+
+The next thing I will do is try this on some systems that are upgraded from 
+Fedora 19 to 20.
+
+Regards - Bill Gee
+
+
+
+
+
+
+On Thursday, October 17, 2013 17:21:43 Wookey wrote:
+> +++ Bill Gee [2013-10-08 19:42 -0500]:
+> > Hi Wookey -
+> > 
+> > It is kind of a strange situation for me.  I earn a good living as a
+> > software packager for Windows applications.  I can turn MSI files
+> > inside-out.  But RPMs??  I have no clue where to even start!
+> 
+> Right well, maybe you can help with the windows packaging (although we do it
+> using Linux tools).
+> > Of course, if I were to take on RPM packaging, I still have to get Therion
+> > to compile.
+> > 
+> > Fedora 17 is over a year old.  They are up to 19, and I expect to see 20
+> > before the end of the year.  Still, it's not THAT old.
+> > 
+> > On that subject - Fedora package names are quite different from Debian.
+> 
+> Yes, that's often the case. There is a different set of conventions.
+> 
+> > I ran
+> > some queries on my system to see what is installed.  Here is what it
+> > shows.  I think this covers everything you mentioned.
+> > ================
+> > 
+> > [bgee at main2 ~]$ rpm -qa | grep -i wx
+> > wxGTK-devel-2.8.12-4.fc17.x86_64
+> > wxPython-2.8.12.0-2.fc17.x86_64
+> > wxBase-2.8.12-4.fc17.x86_64
+> > wxGTK-2.8.12-4.fc17.x86_64
+> > wxGTK-media-2.8.12-4.fc17.x86_64
+> > wxGTK-gl-2.8.12-4.fc17.x86_64
+> > [bgee at main2 ~]$ rpm -qa | grep -i mesa
+> > mesa-libGL-devel-8.0.4-1.fc17.x86_64
+> > mesa-libOSMesa-devel-8.0.4-1.fc17.x86_64
+> > mesa-libglapi-8.0.4-1.fc17.x86_64
+> > mesa-libxatracker-8.0.4-1.fc17.x86_64
+> > mesa-libOSMesa-8.0.4-1.fc17.x86_64
+> > mesa-dri-filesystem-8.0.4-1.fc17.x86_64
+> > mesa-libGLU-8.0.4-1.fc17.x86_64
+> > mesa-dri-drivers-8.0.4-1.fc17.x86_64
+> > mesa-libgbm-8.0.4-1.fc17.x86_64
+> > mesa-libEGL-8.0.4-1.fc17.x86_64
+> > mesa-libGLU-devel-8.0.4-1.fc17.x86_64
+> > mesa-libGLES-8.0.4-1.fc17.x86_64
+> > mesa-libGL-8.0.4-1.fc17.x86_64
+> > [bgee at main2 ~]$ rpm -qa | grep -i freetype
+> > freetype-2.4.8-4.fc17.x86_64
+> > freetype-2.4.8-4.fc17.i686
+> > freetype-devel-2.4.8-4.fc17.x86_64
+> > [bgee at main2 ~]$ rpm -qa | grep -i vtk
+> > vtk-tcl-5.8.0-6.fc17.x86_64
+> > vtk-5.8.0-6.fc17.x86_64
+> > vtk-python-5.8.0-6.fc17.x86_64
+> > vtk-devel-5.8.0-6.fc17.x86_64
+> > vtk-qt-5.8.0-6.fc17.x86_64
+> > vtk-java-5.8.0-6.fc17.x86_64
+> > [bgee at main2 ~]$
+> > 
+> > =====================
+> > 
+> > I assume xTherion needs vtk
+> 
+> No. Loch needs vtk and wx
+> 
+> xtherion needs tcl and tk
+> 
+> ....  If vtk were the problem, then I would expect
+> 
+> > the Therion compiles to fail too.  It runs through xTherion without error.
+> >  It only fails when it gets to Loch.
+> 
+> Exactly. Look at the difference between the top-level Makefile and the
+> loch/Makefile.
+> 
+> You can see a working (debian) build-log here, which might help:
+> https://buildd.debian.org/status/fetch.php?pkg=therion&arch=i386&ver=5.3.11-> 2&stamp=1381462995
+> 
+> 
+> Wookey
+
+
+
+
+
+From lada at blazcata.cz  Mon Dec 30 08:35:56 2013
+From: lada at blazcata.cz (lada at blazcata.cz)
+Date: Mon, 30 Dec 2013 08:35:56 +0100
+Subject: [Therion] Compiling Therion without Loch
+In-Reply-To: <1860644.OiArj3MrqP@main2>
+References: <2073507.iRcUb28rEA@main2> <2779503.hvWuFyYUDG@main2>
+	<20131017162143.GF8394@stoneboat.aleph1.co.uk>
+	<1860644.OiArj3MrqP@main2>
+Message-ID: <FEAED718-77E2-42A4-99D1-71A65D699ACA@blazcata.cz>
+
+Hi, you definitely need vtk-devel to be able to compile Loch. But vtk-devel depends on mysql-devel which condlicts with mariadb. MariaDB is for of MySQL. Try to uninstall (if possible) mariadb + mariadb devel package and try again
+
+\Ladislav
+
+29. 12. 2013 v 22:04, Bill Gee <bgee at campercaver.net>:
+
+> Hello everyone - 
+> 
+> It has been a couple of months.  With the release of version 5.3.12 I dug into 
+> this problem in greater depth.  Net result - I can get Therion to compile but 
+> Loch is still no-go.  Details below.  I don't use Loch, so not having it is 
+> not a problem for me.
+> 
+> The target system is Fedora 20, 64-bit.  I installed it as a clean, fresh 
+> system.  It is not an upgrade.
+> 
+> One thing I found with Fedora 20 is that vtk-devel cannot be installed.   When 
+> I try to "yum install vtk-devel" I get a raft of errors that ends like this:
+> 
+> --> Processing Conflict: community-mysql-5.5.34-1.fc20.x86_64 conflicts
+> --> mariadb
+> --> Processing Conflict: 1:mariadb-5.5.34-2.fc20.x86_64 conflicts
+> --> community-mysql
+> --> Finished Dependency Resolution
+> Error: mariadb conflicts with community-mysql-5.5.34-1.fc20.x86_64
+> Error: community-mysql conflicts with 1:mariadb-5.5.34-2.fc20.x86_64
+> 
+> There is also a long list of dependencies that includes PostGreSQL and what 
+> looks like 50 or 60 Python and TCL libraries.  It's a mess!!!
+> 
+> Here is what I changed to make Therion compile.
+> 
+> 1) In file "makeinstall.tcl" ...  Comment out line 55.
+> 
+> 2) In file "Makefile" ...  Change line 122 to read
+> 
+>    all: therion doc xtherion/xtherion
+> 
+> 3) In file "Makefile" ...  Comment out lines 30, 173, 174, 190, 229, 233, 237, 
+> 241, 245, 249
+> 
+> The next thing I will do is try this on some systems that are upgraded from 
+> Fedora 19 to 20.
+> 
+> Regards - Bill Gee
+> 
+> 
+> 
+> 
+> 
+> 
+>> On Thursday, October 17, 2013 17:21:43 Wookey wrote:
+>> +++ Bill Gee [2013-10-08 19:42 -0500]:
+>>> Hi Wookey -
+>>> 
+>>> It is kind of a strange situation for me.  I earn a good living as a
+>>> software packager for Windows applications.  I can turn MSI files
+>>> inside-out.  But RPMs??  I have no clue where to even start!
+>> 
+>> Right well, maybe you can help with the windows packaging (although we do it
+>> using Linux tools).
+>>> Of course, if I were to take on RPM packaging, I still have to get Therion
+>>> to compile.
+>>> 
+>>> Fedora 17 is over a year old.  They are up to 19, and I expect to see 20
+>>> before the end of the year.  Still, it's not THAT old.
+>>> 
+>>> On that subject - Fedora package names are quite different from Debian.
+>> 
+>> Yes, that's often the case. There is a different set of conventions.
+>> 
+>>> I ran
+>>> some queries on my system to see what is installed.  Here is what it
+>>> shows.  I think this covers everything you mentioned.
+>>> ================
+>>> 
+>>> [bgee at main2 ~]$ rpm -qa | grep -i wx
+>>> wxGTK-devel-2.8.12-4.fc17.x86_64
+>>> wxPython-2.8.12.0-2.fc17.x86_64
+>>> wxBase-2.8.12-4.fc17.x86_64
+>>> wxGTK-2.8.12-4.fc17.x86_64
+>>> wxGTK-media-2.8.12-4.fc17.x86_64
+>>> wxGTK-gl-2.8.12-4.fc17.x86_64
+>>> [bgee at main2 ~]$ rpm -qa | grep -i mesa
+>>> mesa-libGL-devel-8.0.4-1.fc17.x86_64
+>>> mesa-libOSMesa-devel-8.0.4-1.fc17.x86_64
+>>> mesa-libglapi-8.0.4-1.fc17.x86_64
+>>> mesa-libxatracker-8.0.4-1.fc17.x86_64
+>>> mesa-libOSMesa-8.0.4-1.fc17.x86_64
+>>> mesa-dri-filesystem-8.0.4-1.fc17.x86_64
+>>> mesa-libGLU-8.0.4-1.fc17.x86_64
+>>> mesa-dri-drivers-8.0.4-1.fc17.x86_64
+>>> mesa-libgbm-8.0.4-1.fc17.x86_64
+>>> mesa-libEGL-8.0.4-1.fc17.x86_64
+>>> mesa-libGLU-devel-8.0.4-1.fc17.x86_64
+>>> mesa-libGLES-8.0.4-1.fc17.x86_64
+>>> mesa-libGL-8.0.4-1.fc17.x86_64
+>>> [bgee at main2 ~]$ rpm -qa | grep -i freetype
+>>> freetype-2.4.8-4.fc17.x86_64
+>>> freetype-2.4.8-4.fc17.i686
+>>> freetype-devel-2.4.8-4.fc17.x86_64
+>>> [bgee at main2 ~]$ rpm -qa | grep -i vtk
+>>> vtk-tcl-5.8.0-6.fc17.x86_64
+>>> vtk-5.8.0-6.fc17.x86_64
+>>> vtk-python-5.8.0-6.fc17.x86_64
+>>> vtk-devel-5.8.0-6.fc17.x86_64
+>>> vtk-qt-5.8.0-6.fc17.x86_64
+>>> vtk-java-5.8.0-6.fc17.x86_64
+>>> [bgee at main2 ~]$
+>>> 
+>>> =====================
+>>> 
+>>> I assume xTherion needs vtk
+>> 
+>> No. Loch needs vtk and wx
+>> 
+>> xtherion needs tcl and tk
+>> 
+>> ....  If vtk were the problem, then I would expect
+>> 
+>>> the Therion compiles to fail too.  It runs through xTherion without error.
+>>> It only fails when it gets to Loch.
+>> 
+>> Exactly. Look at the difference between the top-level Makefile and the
+>> loch/Makefile.
+>> 
+>> You can see a working (debian) build-log here, which might help:
+>> https://buildd.debian.org/status/fetch.php?pkg=therion&arch=i386&ver=5.3.11-> 2&stamp=1381462995
+>> 
+>> 
+>> Wookey
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+

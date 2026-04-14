@@ -1,0 +1,250 @@
+From bruce at tomo.co.nz  Sun May 18 07:34:48 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 18 May 2025 17:34:48 +1200
+Subject: [Therion] Length of cave reported too much by factor of 150 times
+Message-ID: <000801dbc7b6$94409f80$bcc1de80$@tomo.co.nz>
+
+Somewhere between Therion 6.3.1 and 6.3.4 my cave model grew from about 38
+km in length to 5,727 km in length.
+
+The shorter distance is more likely to be correct!
+
+ 
+
+I presume it is a Therion bug rather than a bug in my data input.
+
+I have described it a little more in
+https://github.com/therion/therion/issues/663 
+
+ 
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/2e2d6fb7/attachment.htm>
+
+From bruce at tomo.co.nz  Sun May 18 10:44:49 2025
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 18 May 2025 20:44:49 +1200
+Subject: [Therion] Map previews override passage offset previews in
+ subsequently selected passages
+Message-ID: <001601dbc7d1$1f7cda90$5e768fb0$@tomo.co.nz>
+
+The scenario:
+
+I have a large cave, and so to gain better control of extent of pages for
+export than is possible using atlas, I define and export sub-maps.  Each
+submap (of maps) is a logical grouping of passages in part of the cave, each
+submap either linearly placed one after the other, or above and below other
+groupings of passages.
+
+ie map AllofCave
+
+              map Submap1
+
+              map submap2
+
+              map submap3 etc
+
+endmap AllofCave
+
+Each of these submaps contains small local maps that are offset and
+previewed above and or below.  ie a short bit of passage here and there.
+
+ 
+
+To facilitate flexibility of map production, the thconfig selections are
+grouped and mostly commented like this.
+
+              # select AllofCave
+
+              select Submap1
+
+              select Submap2
+
+              # select Submap3 etc
+
+In order that each of these submaps can be presented as a stand-alone output
+showing its relationship with the neighbouring submaps, or even all of the
+cave, each submap contains previews of its neighbouring submaps.
+
+ie
+
+map Submap1
+
+              preview above Submap2
+
+              preview above Submap3
+
+              <other 'map of maps' specified to define this part of cave>
+
+              <including small local map [offset] above or below>
+
+endmap Submap1
+
+ 
+
+map Submap2
+
+              preview above (or below) Submap1
+
+              preview above Submap3
+
+              <other 'map of maps' specified to define this part of cave>
+
+              <including small local map [offset] above or below>
+
+endmap Submap2
+
+ 
+
+Usually in the thconfig, one of the selects is uncommented at a time, but in
+parts of the cave and for some end uses, two or three submap selects are
+uncommented, as with Submap1 and Submap2 above.  This is when the problem
+arises.
+
+ 
+
+The problem:
+
+Having two or more selects for the same projection breaks the previews of
+the small offset sections of passage in the second and subsequently selected
+submaps.
+
+ie 
+
+
+
+ 
+
+Submap1 and Submap3 previews are correct, but all of Submap2 offset previews
+forced to above by the preview spec in Submap1
+
+ 
+
+
+
+The order of selecting Submap1 and Submap2 has been swapped, so you can see
+previews in the top part of the image are now correct, but the previews in
+the bottom part of the image are incorrect.
+
+ 
+
+ 
+
+Possible Workaround:
+
+Use only ONE select (for each projection) by collecting all of the maps you
+want to 'select' into a new map.  The disadvantage of this is that one must
+pre-empt all combinations of submaps into yet more maps.  But anyway, lets
+try it.
+
+
+
+ 
+
+Now the individual passage offset previews are correctly rendered in all of
+the submaps (Submap1 and Submap2), except that the other submap previews
+(Submap3 etc) are not rendered at all.  So that did not work.
+
+ 
+
+Trying adding -map-level 1 to the select for the new map gives some insight,
+but not a solution.
+
+
+
+.because now the behaviour is the same as if I had uncommented multiple
+selects in the thconfig file and not defined a new map at all.
+
+ 
+
+The workaround/solution I came up with:
+
+The submap previews in the submaps specified after the first one will be
+ignored (somehow they are in a different map-level, but the first one is
+not), so any submap previews that are wanted must be specified directly in
+the new map.
+
+ie
+
+map newMap
+
+              preview above Submap3
+
+              Submap1           
+
+              Submap2
+
+endmap newMap
+
+ 
+
+Now all of the offset previews and submap previews are displayed as they
+'should' be displayed.
+
+
+
+ 
+
+Question:
+
+The Therion Book on page 50 seems to hint at the workaround/solution I
+eventually came up with.
+
+Why can the above output not be achieved by specifying multiple selects in
+the thconfig?  Or can it be achieved?  It would be a simpler solution than
+having to define a map for each of the many combinations of submaps that
+users might want to produce.
+
+ 
+
+I realise I don't understand 'map-level' very well.  Does anyone have any
+insights beyond what is written in the Therion Book and in the wiki?
+
+ 
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 716367 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0005.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image004.png
+Type: image/png
+Size: 666775 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0006.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image006.png
+Type: image/png
+Size: 590235 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0007.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image012.png
+Type: image/png
+Size: 594977 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0008.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image015.png
+Type: image/png
+Size: 836499 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20250518/74ca3d5b/attachment-0009.png>
+

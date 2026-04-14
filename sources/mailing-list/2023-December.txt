@@ -1,0 +1,535 @@
+From rsev at pm.me  Fri Dec  1 23:37:51 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Fri, 01 Dec 2023 22:37:51 +0000
+Subject: [Therion] using Survex files in Therion
+Message-ID: <yGwU3sNxKH00aBeDDuBKVt8FvnriHB7kAKEvWk6Qo3O7jUZgLBOTRYOoSpVGfpJcv-oM32HJ4mH6RKbTBg_fw2Np4N9lcw7BOR70bS6oqpI=@pm.me>
+
+Hi,
+
+I am trying to use survex 3d files in Therion. AFAICT, 3d files don't include the extra info that a svx file accepts like team, export, etc, only the actual centerline.
+
+How can I set, for example, the team responsable for the centerline if I am importing a 3d file?
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231201/7c4e2166/attachment.htm>
+
+From rsev at pm.me  Mon Dec  4 15:12:43 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 04 Dec 2023 14:12:43 +0000
+Subject: [Therion] using Survex files in Therion
+In-Reply-To: <yGwU3sNxKH00aBeDDuBKVt8FvnriHB7kAKEvWk6Qo3O7jUZgLBOTRYOoSpVGfpJcv-oM32HJ4mH6RKbTBg_fw2Np4N9lcw7BOR70bS6oqpI=@pm.me>
+References: <yGwU3sNxKH00aBeDDuBKVt8FvnriHB7kAKEvWk6Qo3O7jUZgLBOTRYOoSpVGfpJcv-oM32HJ4mH6RKbTBg_fw2Np4N9lcw7BOR70bS6oqpI=@pm.me>
+Message-ID: <fElefKphA9ZVii_K08YDKPfktEWAK2LrG7y3SvJwWYXlT6Jn1Pn1TG67D_qXey9WozF7HVHq3SNYIGC55ecu3XRSjsKVbOzIa9hiW-OFqV8=@pm.me>
+
+I wonder if Survex 3d files shouldn't be treated in Therion as the "data" part of a "centreline". This way, we would be able to set all centreline properties for 3d files.
+
+Rodrigo
+
+On Friday, December 1st, 2023 at 7:37 PM, Rodrigo Severo <rsev at pm.me> wrote:
+
+> Hi,
+>
+> I am trying to use survex 3d files in Therion. AFAICT, 3d files don't include the extra info that a svx file accepts like team, export, etc, only the actual centerline.
+>
+> How can I set, for example, the team responsable for the centerline if I am importing a 3d file?
+>
+> Regards,
+>
+> Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231204/3c969e36/attachment.htm>
+
+From drfootleg at gmail.com  Tue Dec  5 12:43:11 2023
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 5 Dec 2023 11:43:11 +0000
+Subject: [Therion] using Survex files in Therion
+In-Reply-To: <fElefKphA9ZVii_K08YDKPfktEWAK2LrG7y3SvJwWYXlT6Jn1Pn1TG67D_qXey9WozF7HVHq3SNYIGC55ecu3XRSjsKVbOzIa9hiW-OFqV8=@pm.me>
+References: <yGwU3sNxKH00aBeDDuBKVt8FvnriHB7kAKEvWk6Qo3O7jUZgLBOTRYOoSpVGfpJcv-oM32HJ4mH6RKbTBg_fw2Np4N9lcw7BOR70bS6oqpI=@pm.me>
+ <fElefKphA9ZVii_K08YDKPfktEWAK2LrG7y3SvJwWYXlT6Jn1Pn1TG67D_qXey9WozF7HVHq3SNYIGC55ecu3XRSjsKVbOzIa9hiW-OFqV8=@pm.me>
+Message-ID: <CAJkGg4nBBwYfrARNeZC74Cq+fLH-s_rzOeVbPqfBd29e_ZNvvQ@mail.gmail.com>
+
+I use this for one of my larger projects. This is the data structure I use:
+
+encoding  utf-8
+# This file defines the survey data (imported from a Survex 3d file) and
+imports
+# the master map for the survey. Rendering this file will give a complete
+survey
+# for the Riano part of the system.
+
+survey Riano
+
+survey 4ValleysCL
+import 0105_therion.3d -surveys use -cs EPSG:25830
+endsurvey
+
+centreline
+#This centreline data block enables team names and dates
+#to be incorporated into the map headers, and allows the
+#elevation range used to colour the maps by altitude to be
+#pinned to specific ranges
+
+cs EPSG:25830
+
+copyright 2018 "Matienzo Caving Expeditions"
+
+#Date ranges for survey trips
+date 1974.08.01 #Earliest date (estimated)
+date 2018.04.01 #Latest date
+
+#Survey teams
+team "Paul_'Footleg' Fretwell"
+team "Paul Dold"
+
+explo-date 1974.08.01 #Earliest date (estimated)
+explo-date 2018.04.01 #Latest date
+explo-team "Joe Caver"
+
+endcentreline
+
+input RianoPlan_SomeDrawing.th2
+input RianoPlan_MainUpstream.th2
+
+join Riano_EntranceSP1 Riano_EntranceMazeSP1
+join Riano_EntranceSP1 Riano_EntranceInletSP1
+
+map RianoEntranceSeries -title "Riano Entrance Series"
+ GreyRiftNorthExtnSP3
+break
+ Riano_EntranceMazeSP1
+ Riano_EntranceSP1
+ Riano_EntranceInletSP1
+endmap
+
+endsurvey
+
+On Mon, Dec 4, 2023 at 2:13?PM Rodrigo Severo via Therion <therion at speleo.sk>
+wrote:
+
+> I wonder if Survex 3d files shouldn't be treated in Therion as the "data"
+> part of a "centreline". This way, we would be able to set all centreline
+> properties for 3d files.
+>
+>
+> Rodrigo
+>
+>
+> On Friday, December 1st, 2023 at 7:37 PM, Rodrigo Severo <rsev at pm.me>
+> wrote:
+>
+> Hi,
+>
+>
+> I am trying to use survex 3d files in Therion. AFAICT, 3d files don't
+> include the extra info that a svx file accepts like team, export, etc, only
+> the actual centerline.
+>
+> How can I set, for example, the team responsable for the centerline if I
+> am importing a 3d file?
+>
+>
+> Regards,
+>
+> Rodrigo Severo
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231205/8146c42d/attachment.htm>
+
+From julian at goatchurch.org.uk  Mon Dec 11 15:08:19 2023
+From: julian at goatchurch.org.uk (Julian Todd)
+Date: Mon, 11 Dec 2023 14:08:19 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+Message-ID: <CABPnL=WoT7SGLSd8O=pMNoGVuAq+4a-QeaUAvA5H8nyRZb0e7Q@mail.gmail.com>
+
+If you can export your file as a las/laz file (or it also takes
+PolyCam's zip file of a laz file),
+then I have a place where you can preview it using the potree.org
+software.   https://las.nix.how/
+
+Try using the shortcode: c0987  to see a scan that was made underwater
+using photogrammetry.
+
+The potree software converts the pointcloud into streamed data, so it
+doesn't matter how
+massive your starting scan is as it only loads a limited amount.
+
+This is used as the starting point for tunnelvr, should you choose to
+use it for tracing
+
+up your scan into a 3D map representation.
+
+Julian.
+
+
+
+On Wed, 29 Nov 2023 at 13:28, Bill Gee <bgee at campercaver.net> wrote:
+
+> Hello everyone -
+>
+> This is probably more of a general practices question than something
+> specific to Therion.  Among the group there is likely to be some
+> experience with this.  I hope at minimum someone can guide me to a place
+> for further learning.
+>
+> A few years ago Apple released a very high-end smartphone which has a
+> LIDAR feature (iPhone 12 Pro).  There are a few more models now which
+> have it.  I have heard of some people using this to create cave maps.
+> There is much I do not understand.
+>
+> Has anyone in the group taken the point cloud from an Apple LIDAR scan
+> and turned it into a Therion cave map?  If so, I am very interested in
+> the details of the process.
+>
+> The biggest issue I see is this:  How does the iPhone know where it is?
+> There is no GPS in a cave.  GPS is not accurate enough even if it did
+> work.  Inertial navigation also has big problems dealing with a cave
+> environment.
+>
+> There are many other issues, but I think that is the big one.
+>
+> Thanks!
+>
+> --
+> ===============
+> Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231211/0d545eb1/attachment.htm>
+
+From thorirmar at gmail.com  Tue Dec 12 13:15:59 2023
+From: thorirmar at gmail.com (=?UTF-8?B?w57Ds3JpciBNw6FyIErDs25zc29u?=)
+Date: Tue, 12 Dec 2023 12:15:59 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <CABPnL=WoT7SGLSd8O=pMNoGVuAq+4a-QeaUAvA5H8nyRZb0e7Q@mail.gmail.com>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <CABPnL=WoT7SGLSd8O=pMNoGVuAq+4a-QeaUAvA5H8nyRZb0e7Q@mail.gmail.com>
+Message-ID: <CALTmSsKQCRV9x9vYeS2LzvLDwdXpAVQujMQLpJUU+cwQMGHJrQ@mail.gmail.com>
+
+We have been experimenting with using the iphone's 3d sensors (it uses a
+combination of structured light and lidar for it's 3d sensing) in the lava
+tubes in Iceland and have found it to be vastly superior to using the disto
+alone. This is partially due to how strongly magnetic the lava is (magnetic
+anomalies of 10s of degrees are very common).  In addition to the lidar and
+the structured light sensors, the iPhone uses its magnetic sensors and
+accelerometers, this helps it create an accurate model but does also cause
+some issues. While the addition of the accelerometers and 3d sensors do
+really help, the magnetic anomalies do still sometimes cause us some
+issues, the models tend to tear and become inaccurate when we encounter
+those. In tight passages it is also very easy to bump the phone against the
+floor or ceiling and due to the accelerometers this always messes up the
+map. To mediate this, we try to keep our scans to no more than 20 minutes
+at a time  when surveying in difficult sections and stitch them together
+afterwards. This prevents us from having to repeat large and difficult
+scans, but does add some extra work at the computer.
+
+In addition to giving a much more detailed model of the cave than one would
+get with the disto the survey also goes much faster. We have easily halved
+the survey time in addition to removing much of the frustrations of the
+previous methods using the disto x (although it does introduce some new
+frustrations of its own).
+
+We have not experimented with creating maps in Therion from iphone
+generated 3d models. None of us has prior experience with working with 3d
+models so that alone has been a quite steep learning curve with still some
+way to go, and on top of that we have only limited experience using
+Therion, so that is another learning curve we have to scale. I have
+experimented with using Jari Arkko's cave-outliner (
+https://github.com/jariarkko/cave-outliner) to generate outlines and
+cross-sections and used Inkscape to add details.
+
+Here is an example of a scan from a survey expedition last summer:
+https://poly.cam/capture/9A259EC8-3C88-446A-9023-0E589588821C - Can take up
+to a minute to load, so be patient.
+https://map.is/base/@419189,311927,z14,0 -  Aerial photo of the cave's
+unique location within the main crater (shared freely online as the whole
+island is closed to the public and has a *very *strict access control, only
+allowing a single scientific exploration per year).
+
+This year's expedition was recorded and included in a documentary
+celebrating the islands 60 year anniversary. It is available online here
+(only available in Icelandic, sadly):
+https://www.ruv.is/sjonvarp/spila/surtsey/35251/ag5o1h - The cave section
+starts at 49:30 and the iPhone lidar can be seen in action at about 52:50
+
+Best regards,
+??rir M?r
+
+On Mon, Dec 11, 2023 at 2:08?PM Julian Todd <julian at goatchurch.org.uk>
+wrote:
+
+> If you can export your file as a las/laz file (or it also takes PolyCam's zip file of a laz file),
+> then I have a place where you can preview it using the potree.org software.   https://las.nix.how/
+>
+> Try using the shortcode: c0987  to see a scan that was made underwater using photogrammetry.
+>
+> The potree software converts the pointcloud into streamed data, so it doesn't matter how
+> massive your starting scan is as it only loads a limited amount.
+>
+> This is used as the starting point for tunnelvr, should you choose to use it for tracing
+>
+> up your scan into a 3D map representation.
+>
+> Julian.
+>
+>
+>
+> On Wed, 29 Nov 2023 at 13:28, Bill Gee <bgee at campercaver.net> wrote:
+>
+>> Hello everyone -
+>>
+>> This is probably more of a general practices question than something
+>> specific to Therion.  Among the group there is likely to be some
+>> experience with this.  I hope at minimum someone can guide me to a place
+>> for further learning.
+>>
+>> A few years ago Apple released a very high-end smartphone which has a
+>> LIDAR feature (iPhone 12 Pro).  There are a few more models now which
+>> have it.  I have heard of some people using this to create cave maps.
+>> There is much I do not understand.
+>>
+>> Has anyone in the group taken the point cloud from an Apple LIDAR scan
+>> and turned it into a Therion cave map?  If so, I am very interested in
+>> the details of the process.
+>>
+>> The biggest issue I see is this:  How does the iPhone know where it is?
+>> There is no GPS in a cave.  GPS is not accurate enough even if it did
+>> work.  Inertial navigation also has big problems dealing with a cave
+>> environment.
+>>
+>> There are many other issues, but I think that is the big one.
+>>
+>> Thanks!
+>>
+>> --
+>> ===============
+>> Bill Gee
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+>> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231212/106ec486/attachment.htm>
+
+From therion at speleo.sk  Thu Dec 21 16:20:02 2023
+From: therion at speleo.sk (Therion)
+Date: Thu, 21 Dec 2023 16:20:02 +0100 (CET)
+Subject: [Therion] new Therion 6.2.0
+Message-ID: <20231221152002.BF75260148@mail.speleo.sk>
+
+Hi, there is a new release 6.2.0 of Therion.
+Check https://github.com/therion/therion/releases/tag/v6.2.0 for more details.
+
+Best regards,
+Therion team
+
+From bgee at campercaver.net  Thu Dec 21 17:22:56 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 21 Dec 2023 10:22:56 -0600
+Subject: [Therion] New package needed - Therion 6.2.0 on Fedora 39
+Message-ID: <cbd97b7d-44ce-4673-8825-39b7025d9099@campercaver.net>
+
+I jumped on this quick!  :-)  And ran into a problem.  This happens when 
+running cmake.  The solution was to install catch2-devel using DNF. 
+Note that there is also a package called "catch22-devel" which I did not 
+install.
+
+After installing catch2-devel, the compile and install proceeded with no 
+problems.
+
+===============
+-- Checking for module 'proj'
+--   Found proj, version 9.2.1
+CMake Error at cmake/Catch2.cmake:17 (find_package):
+   By not providing "FindCatch2.cmake" in CMAKE_MODULE_PATH this project has
+   asked CMake to find a package configuration file provided by 
+"Catch2", but
+   CMake did not find one.
+
+   Could not find a package configuration file provided by "Catch2" with any
+   of the following names:
+
+     Catch2Config.cmake
+     catch2-config.cmake
+
+   Add the installation prefix of "Catch2" to CMAKE_PREFIX_PATH or set
+   "Catch2_DIR" to a directory containing one of the above files.  If 
+"Catch2"
+   provides a separate development package or SDK, be sure it has been
+   installed.
+Call Stack (most recent call first):
+   cmake/Dependencies.cmake:14 (include)
+   CMakeLists.txt:18 (include)
+
+
+-- Configuring incomplete, errors occurred!
+bgee at main2:~/Installs/therion-6.2.0/build$
+==============================
+
+
+
+
+-- 
+===============
+Bill Gee
+
+From armchair.caver.nz at gmail.com  Sun Dec 31 03:17:27 2023
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Sun, 31 Dec 2023 15:17:27 +1300
+Subject: [Therion] Change altitude colours
+Message-ID: <CAG1=ZB_aDbFHJrMOx+Ffh9dVkjB-KGOAAjW4OwbZQmNf4wgFvg@mail.gmail.com>
+
+When using:
+
+*colour map-fg altitude*
+
+... is it possible to change the default colours used? I could see notes
+about setting this scrap by scrap, but not for the automatic graduation of
+altitude colours.
+
+Thanks
+Paul Rowe
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231231/9ed024fa/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Dec 31 08:26:16 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 31 Dec 2023 07:26:16 +0000
+Subject: [Therion] Change altitude colours
+In-Reply-To: <CAG1=ZB_aDbFHJrMOx+Ffh9dVkjB-KGOAAjW4OwbZQmNf4wgFvg@mail.gmail.com>
+References: <CAG1=ZB_aDbFHJrMOx+Ffh9dVkjB-KGOAAjW4OwbZQmNf4wgFvg@mail.gmail.com>
+Message-ID: <7a6f567a-90aa-4688-8dc3-d90a49454ad4@ntlworld.com>
+
+Hi Paul,
+
+> /colour map-fg altitude/
+
+Yes indeed, you can use a lookup table.
+
+https://therion.speleo.sk/wiki/examples#colour_palette_scales_-_lookups
+https://www.mail-archive.com/therion at speleo.sk/msg06798.html
+
+Lookup tables allow you to do specific colouring by maps, or altitude.
+
+I have never tried to use it with smooth colouring though, so have no 
+idea how it interacts with that setting. I have only ever used it with:
+smooth-shading off
+
+Enjoy :)
+
+Tarquin
+
+From bruce at tomo.co.nz  Sun Dec 31 21:05:45 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 1 Jan 2024 09:05:45 +1300
+Subject: [Therion] Change altitude colours
+In-Reply-To: <7a6f567a-90aa-4688-8dc3-d90a49454ad4@ntlworld.com>
+References: <CAG1=ZB_aDbFHJrMOx+Ffh9dVkjB-KGOAAjW4OwbZQmNf4wgFvg@mail.gmail.com>
+ <7a6f567a-90aa-4688-8dc3-d90a49454ad4@ntlworld.com>
+Message-ID: <000901da3c24$bf3ff560$3dbfe020$@tomo.co.nz>
+
+Try also
+
+layout
+
+  colour-legend <smooth (=on)/discrete/off>  #specifies whether the legend
+colours are presented as a smoothed vertical band or discrete boxes (smooth
+applies to altitudes and dates only I think)
+
+  smooth-shading <off/quick> #specifies whether each scrap is rendered as a
+single colour or smoothed in accordance with the altitude/date value at each
+survey station)
+
+endlayout
+
+Bruce
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones
+via Therion
+Sent: Sunday, 31 December 2023 20:26
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Change altitude colours
+
+ 
+
+Hi Paul,
+
+ 
+
+> /colour map-fg altitude/
+
+ 
+
+Yes indeed, you can use a lookup table.
+
+ 
+
+ <https://therion.speleo.sk/wiki/examples#colour_palette_scales_-_lookups>
+https://therion.speleo.sk/wiki/examples#colour_palette_scales_-_lookups
+
+ <https://www.mail-archive.com/therion at speleo.sk/msg06798.html>
+https://www.mail-archive.com/therion at speleo.sk/msg06798.html
+
+ 
+
+Lookup tables allow you to do specific colouring by maps, or altitude.
+
+ 
+
+I have never tried to use it with smooth colouring though, so have no idea
+how it interacts with that setting. I have only ever used it with:
+
+smooth-shading off
+
+ 
+
+Enjoy :)
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion>
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240101/5355aeb5/attachment.htm>
+

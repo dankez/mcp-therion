@@ -1,0 +1,1910 @@
+From beni at hallinger.org  Mon Mar  1 19:05:14 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 1 Mar 2021 19:05:14 +0100
+Subject: [Therion] therionsurface2survex can flip grids now
+Message-ID: <464D80FD-379B-434A-BC27-D1E2F5C2EEFC@hallinger.org>
+
+Hello, 
+as some of you already know, the therionsurface2survex tool can generate surface meshes for aven out of therion surface or gdal grids. This allows for example to display a 3d-grid in loch and aven, and to take measures between cave and surface in aven.
+
+Today i enhanced the tool so it can understand the grid-flip command: https://github.com/hbeni/therionsurface2survex/issues/2#issuecomment-787776692
+Also negative step size in gdal headers yield flipped grids.
+
+It would be cool if some people here could test it with real datasets :)
+The test case does what i would expect, but I’m not sure i fully understood the input data and its implications.
+Before i merge the feature, i would be much more confident by test results from more proficient people than me.
+
+Thanks and greetings!
+Beni
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210301/5040f0e4/attachment.htm>
+
+From dropstone at gmx.de  Fri Mar  5 21:10:36 2021
+From: dropstone at gmx.de (Axel)
+Date: Fri, 5 Mar 2021 21:10:36 +0100
+Subject: [Therion] Join 3 scraps from different maps
+Message-ID: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210305/ad1c39e9/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Mar  5 21:35:30 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 6 Mar 2021 09:35:30 +1300
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+Message-ID: <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+
+Interesting behaviour Axel
+
+I have never had any problems joining using the end keyword or to the last point in a line, and don’t happen to have noticed anything like this that has broken with recent years releases.
+
+>From your description I think I use a similar folder and therion data structure, and usually a simple join scrap1 at surveyA scrap2 at surveyB is sufficient unless there is some complexity.  Seems like you tried this approach.  I don’t have any insights.
+
+Out of interest are you joining the three scraps at the exact same location (three way junction) or are they just three scraps in a sequential line as you traverse along a single passage?
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Axel
+Sent: Saturday, 6 March 2021 09:11
+To: therion at speleo.sk
+Subject: [Therion] Join 3 scraps from different maps
+
+ 
+
+good evening all,
+
+ 
+
+just encountered a strange behaviour with join an need some advice:
+
+The structure of the cave is nested: The main folder contais a th-file and sub-folders of different areas with its own th-files.
+
+In one of those subfolders I joined 2 scraps in a map, all good. Now I need to join at this position another scrap from a different subfolder in the main th-file.
+
+As far as I remembered, I simply join that in the main th-file with one of the 2 scraps from the other folder. However, it does not join the new scrap (simply igores the comand by the look of it). Log files seem to show no error and the compiler also says OK.
+I gave the lines id's and tried to join them directly, the sub-map behaves like expected but the main-map still ignores the comand. I thought maybe Therion has a problem with the :end annotation and played around with the points. It turns out, that I can join the lines at every point exept the last one (eg.: first line: point 0/ second line: (has 8 points) 0-7, no problem, 8 or end is ignored).
+
+Now am I too stupid and that was all the time like that without me noticing, or is that a bug?
+
+ 
+
+Am using the latest stable release 5.7.7 (2021.02.06)...
+
+ 
+
+thanks a lot,
+
+Axel
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210306/fb8f713c/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri Mar  5 21:52:59 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 5 Mar 2021 20:52:59 +0000
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+Message-ID: <aef1235c-5956-defe-a18e-f449cf980187@ntlworld.com>
+
+> In one of those subfolders I joined 2 scraps in a map, all good. Now I
+> need to join at this position another scrap from a different subfolder
+
+"at this position"
+
+You cannot join 3 scraps at the same place using automatic scrap joins,
+since there is no "open end" for it to join the third scrap to after it
+has joined the first 2 scraps.
+
+In this case, I would be joining the lines instead of the scraps. With a
+line join, you can join as many lines as you want at the same time.
+
+Give each wall an ID if it needs to be included in the join, then
+join lineid at survey1:0 otherlineid at survey2:end thirdlineid at survey3:0
+
+Each connection set must be in a single command. Use "0" or "end" (or
+the specific point number) depending on which end of the lines are being
+joined where.
+
+(Alternatively, if you want to make maintenance difficult for yourself,
+you can give the individual linepoints their own ID and join those.)
+
+Hope this clarifies things for you. Please let me know if I
+misunderstood your use-case.
+
+Cheers,
+
+Tarquin
+
+From dropstone at gmx.de  Fri Mar  5 22:12:41 2021
+From: dropstone at gmx.de (Axel)
+Date: Fri, 5 Mar 2021 22:12:41 +0100
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+ <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+Message-ID: <trinity-282dd237-ed09-4c51-80a5-ae06c4e4ea9f-1614978761029@3c-app-gmx-bs76>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210305/0a407610/attachment-0001.htm>
+
+From martinsluka at me.com  Fri Mar  5 22:27:45 2021
+From: martinsluka at me.com (Martin Sluka)
+Date: Fri, 5 Mar 2021 22:27:45 +0100
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <trinity-282dd237-ed09-4c51-80a5-ae06c4e4ea9f-1614978761029@3c-app-gmx-bs76>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+ <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+ <trinity-282dd237-ed09-4c51-80a5-ae06c4e4ea9f-1614978761029@3c-app-gmx-bs76>
+Message-ID: <35003268-9CFE-443A-B291-20B1F13F8771@me.com>
+
+What about to joint them in survey above all of particular surveys? Just follow name space convention.
+
+Martin S.
+
+> 5. 3. 2021 v 22:12, Axel <dropstone at gmx.de>:
+> 
+> hi,
+>  
+> exactly what I tried :)
+>  
+> It is a three way junction, but knowing that this is impossible I thougt to remember that this should work with line-joins (thats why I went down that alley).
+> Map1 is a broad passage with a floor step(climb) in the middle. this is where the scraps join. As I need to use 'above' on one of the scraps I need that split.
+> The passage continues below the floor-step which is the scrap from map2. As it is, putting them together in one map is not possible as I can't change the data-structure.
+> 
+> Benni suggested that it might be a problem of the id's which contain a dot (eg. 123p1.2-w1) but we tried to change the id's with no success...
+> Also tried to define a map in the main-th-file with the three scraps and joined the lines there. But that doesn't change behaviour (supposely as the 2 scraps from map1 are still joined in the subfolder-1-file).
+>  
+> It might be as simple as it is not possible to do so, but then that would be odd as I guess others might stumble over that problem as well?
+>  
+> Axel
+>  
+> Gesendet: Freitag, 05. März 2021 um 21:35 Uhr
+> Von: "Bruce Mutton" <bruce at tomo.co.nz>
+> An: "'List for Therion users'" <therion at speleo.sk>
+> Betreff: [Therion] Join 3 scraps from different maps
+> Interesting behaviour Axel
+> 
+> I have never had any problems joining using the end keyword or to the last point in a line, and don’t happen to have noticed anything like this that has broken with recent years releases.
+> 
+> From your description I think I use a similar folder and therion data structure, and usually a simple join scrap1 at surveyA scrap2 at surveyB is sufficient unless there is some complexity.  Seems like you tried this approach.  I don’t have any insights.
+> 
+> Out of interest are you joining the three scraps at the exact same location (three way junction) or are they just three scraps in a sequential line as you traverse along a single passage?
+> 
+> Bruce
+> 
+>  
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Axel
+> Sent: Saturday, 6 March 2021 09:11
+> To: therion at speleo.sk
+> Subject: [Therion] Join 3 scraps from different maps
+> 
+>  
+> good evening all,
+> 
+>  
+> just encountered a strange behaviour with join an need some advice:
+> 
+> The structure of the cave is nested: The main folder contais a th-file and sub-folders of different areas with its own th-files.
+> 
+> In one of those subfolders I joined 2 scraps in a map, all good. Now I need to join at this position another scrap from a different subfolder in the main th-file.
+> 
+> As far as I remembered, I simply join that in the main th-file with one of the 2 scraps from the other folder. However, it does not join the new scrap (simply igores the comand by the look of it). Log files seem to show no error and the compiler also says OK.
+> I gave the lines id's and tried to join them directly, the sub-map behaves like expected but the main-map still ignores the comand. I thought maybe Therion has a problem with the :end annotation and played around with the points. It turns out, that I can join the lines at every point exept the last one (eg.: first line: point 0/ second line: (has 8 points) 0-7, no problem, 8 or end is ignored).
+> 
+> Now am I too stupid and that was all the time like that without me noticing, or is that a bug?
+> 
+>  
+> Am using the latest stable release 5.7.7 (2021.02.06)...
+> 
+>  
+> thanks a lot,
+> 
+> Axel
+> 
+> _______________________________________________ Therion mailing list Therion at speleo.sk https://mailman.speleo.sk/listinfo/therion <https://mailman.speleo.sk/listinfo/therion>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210305/fbe2cf39/attachment.htm>
+
+From dropstone at gmx.de  Fri Mar  5 22:34:08 2021
+From: dropstone at gmx.de (Axel)
+Date: Fri, 5 Mar 2021 22:34:08 +0100
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <35003268-9CFE-443A-B291-20B1F13F8771@me.com>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+ <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+ <trinity-282dd237-ed09-4c51-80a5-ae06c4e4ea9f-1614978761029@3c-app-gmx-bs76>
+ <35003268-9CFE-443A-B291-20B1F13F8771@me.com>
+Message-ID: <trinity-abdbaa75-efea-4a4c-9764-08ab417c16e3-1614980048373@3c-app-gmx-bs76>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210305/8593ee0c/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Fri Mar  5 23:46:12 2021
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 5 Mar 2021 22:46:12 +0000
+Subject: [Therion] Join 3 scraps from different maps
+In-Reply-To: <trinity-abdbaa75-efea-4a4c-9764-08ab417c16e3-1614980048373@3c-app-gmx-bs76>
+References: <trinity-09a307fd-9e5e-40be-a38c-f9cd5b4408d2-1614975036842@3c-app-gmx-bap77>
+ <000601d711ff$175443d0$45fccb70$@tomo.co.nz>
+ <trinity-282dd237-ed09-4c51-80a5-ae06c4e4ea9f-1614978761029@3c-app-gmx-bs76>
+ <35003268-9CFE-443A-B291-20B1F13F8771@me.com>
+ <trinity-abdbaa75-efea-4a4c-9764-08ab417c16e3-1614980048373@3c-app-gmx-bs76>
+Message-ID: <1f2a3fe8-320e-5427-74d5-ab2fb385b2cb@ntlworld.com>
+
+> Instead of joining first the 2 lines of the scrap1.1 and scrap1.2 from
+> map1 in th-file1 and then join the 2 lines from scrap1.2 and scrap2.1 in
+> the main-th-file I just joined the 3 lines in the main-th file.
+
+A quick quote from the Therion book:
+"
+When joining more than two points or lines, use one join command for all
+of them, not a sequence of join commands for pairs.
+E.g. use join a b c, not join a b followed by join b c.
+"
+
+Each point/linepoint can only be referenced in a single join command.
+Subsequent attempts to use that point/linepoint will be ignored (as you
+found out).
+
+> I thought this might be ignored if I only output map1, but the 2 scraps
+> are joined correctly.
+
+When you select a subset of your survey, it still processes the entire
+survey data, and all scraps for the specific projection, and processes
+all the joins correctly. It only *draws* the parts you select, but it
+has to process the rest anyway, so that it can pull the lines into the
+correct shapes (applying error correction, loop closure warping of
+drawings, etc.).
+
+If it didn't work that way, then when you rendered a subset of the map,
+the now-disconnected scraps might be rendered differently than when you
+render the entire survey, which would be undesirable.
+
+In other words, as you found out; don't worry about where your joins are
+specified in the data hierarchy, they will always be used correctly,
+even when you are only selecting a subset of the survey below them.
+
+From bruce at tomo.co.nz  Mon Mar  8 05:57:58 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 8 Mar 2021 17:57:58 +1300
+Subject: [Therion] export model kml causes untrapped error
+Message-ID: <000001d713d7$9e145cf0$da3d16d0$@tomo.co.nz>
+
+Good afternoon or morning
+
+I have a situation that I suspect might stem from user error, because it
+affects only one project, the data is a little messy, and there are 30 m
+miscloses involved, although Therion is good at dealing with such things, so
+maybe that is not significant.
+
+My other suspect is the kml model generation code, because that is
+apparently the only thing that falls over.  This has been, for this project
+only, a problem for many years, and through many versions of Therion,
+although it is likely that there was an old version that compiled it OK.  I
+have tried it on yesterday's version 3e14a09 and the behaviour is the same.
+
+ 
+
+It is a large project involving many caves, some groups of caves, and then a
+master cave at three different folder levels.  I've tracked the issue down
+to one cave, and if it is removed (and the station equates joining the other
+centrelines are broken [of course]) the problem goes away.  The export model
+kml at all folder levels involving this cave will cause an untrapped error
+if it is present with other caves.  The problem cave will however produce a
+perfect kml model if it is compiled stand alone.
+
+ 
+
+It is notable that the problem only ever manifests with export model kml.  I
+can produce lists, loch and 3d models.  Every type of export map plan and
+elevation pdf and kml output is also fine.
+
+If loop-closure survex is set, I get a truncated XTherion transcript and a
+therion.log that truncates midstream.
+
+If loop-closure therion is set, I get no XTherion transcript, and a zero
+length therion.log file.
+
+ 
+
+Similar to the log files, the kml files appear to be truncated midstream,
+one or two hundred lines in.
+
+I have checked the coordinates at the point where the kml truncates, so that
+I could focus on that particular survey and leg.  There is nothing untoward
+there, however I suspect that the cause of the crash is not necessarily
+right at the last station written.  The log and kml truncations are fairly
+consistent however, but not always the same if I make adjustments to the
+input data.
+
+ 
+
+Any insights out there?
+
+Anyone else had similar behaviour?
+
+ 
+
+I have copied some short extracts below.
+
+ 
+
+Bruce
+
+ 
+
+eg
+
+XTHERION TRANSCRIPT and THERION.LOG with LOOP CLOSURE SURVEX
+
+.
+
+selecting export objects ... done
+
+writing ./Output/GLSM_SystemSurveys.html ... done
+
+writing ./Output/GLSM_SystemContinuations.html ... 
+
+processing projection plan ... done
+
+average distortion: 1.12%
+
+ 
+
+processing projection elevation ... done
+
+average distortion: 5.40%
+
+done
+
+writing ./Output/GLSM_SystemCaves.html ... done
+
+writing ./Outp
+
+ 
+
+KML MODEL with LOOP CLOSURE SURVEX
+
+.
+
+name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump GreenLink
+Cave]]></name>
+
+<Placemark>
+
+<name>M10</name>
+
+<styleUrl>#ThSurveyLine</styleUrl>
+
+<MultiGeometry>
+
+<LineString><coordinates>
+
+              172.88735579937293,-40.99769937251387,639.02999999999997
+172.88728319623294,-40.99774299151084,637.23000000000002
+172.88716109616212,-40.99773710678338,637.76999999999998
+172.88714596870241,-40.99782276033864,637.94000000000005
+172.88705675083290,-40.99784789603311,638.0
+
+ 
+
+ 
+
+KML MODEL with LOOP CLOSURE THERION
+
+.
+
+<Folder>
+
+<name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump GreenLink
+Cave]]></name>
+
+<Placemark>
+
+<name>M10</name>
+
+<styleUrl>#ThSurveyLine</styleUrl>
+
+<MultiGeometry>
+
+<LineString><coordinates>
+
+              172.88736168357167,-40.99769608966369,638.91567858257895
+172.88728901384377,-40.99773967188410,637.11607014782805
+172.88716696109856,-40.99773379656759,637.65513049713036
+172.88715179697692,-40.99781949576298,637.82267359892830
+172.88706263582006,-40.99784457013876,637.9
+
+ 
+
+END
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210308/f16555a2/attachment.htm>
+
+From lists at group-s.sk  Mon Mar  8 21:36:59 2021
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 8 Mar 2021 21:36:59 +0100
+Subject: [Therion] export model kml causes untrapped error
+In-Reply-To: <000001d713d7$9e145cf0$da3d16d0$@tomo.co.nz>
+References: <000001d713d7$9e145cf0$da3d16d0$@tomo.co.nz>
+Message-ID: <CAP35+gF-VKg6auMHE_2RnE6sCLbouvtnpPdgbvAxHi5BghnDaA@mail.gmail.com>
+
+Hi Bruce,
+
+could you please try f18c718? I had a similar issue with my dataset.
+
+S.
+
+
+On Mon, 8 Mar 2021 at 05:58, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+> Good afternoon or morning
+>
+> I have a situation that I suspect might stem from user error, because it
+> affects only one project, the data is a little messy, and there are 30 m
+> miscloses involved, although Therion is good at dealing with such things,
+> so maybe that is not significant.
+>
+> My other suspect is the kml model generation code, because that is
+> apparently the only thing that falls over.  This has been, for this project
+> only, a problem for many years, and through many versions of Therion,
+> although it is likely that there was an old version that compiled it OK.  I
+> have tried it on yesterday’s version 3e14a09 and the behaviour is the same.
+>
+>
+>
+> It is a large project involving many caves, some groups of caves, and then
+> a master cave at three different folder levels.  I’ve tracked the issue
+> down to one cave, and if it is removed (and the station equates joining the
+> other centrelines are broken [of course]) the problem goes away.  The
+> export model kml at all folder levels involving this cave will cause an
+> untrapped error if it is present with other caves.  The problem cave will
+> however produce a perfect kml model if it is compiled stand alone.
+>
+>
+>
+> It is notable that the problem only ever manifests with export model kml.
+> I can produce lists, loch and 3d models.  Every type of export map plan and
+> elevation pdf and kml output is also fine.
+>
+> If loop-closure survex is set, I get a truncated XTherion transcript and a
+> therion.log that truncates midstream.
+>
+> If loop-closure therion is set, I get no XTherion transcript, and a zero
+> length therion.log file.
+>
+>
+>
+> Similar to the log files, the kml files appear to be truncated midstream,
+> one or two hundred lines in.
+>
+> I have checked the coordinates at the point where the kml truncates, so
+> that I could focus on that particular survey and leg.  There is nothing
+> untoward there, however I suspect that the cause of the crash is not
+> necessarily right at the last station written.  The log and kml truncations
+> are fairly consistent however, but not always the same if I make
+> adjustments to the input data.
+>
+>
+>
+> Any insights out there?
+>
+> Anyone else had similar behaviour?
+>
+>
+>
+> I have copied some short extracts below.
+>
+>
+>
+> Bruce
+>
+>
+>
+> eg
+>
+> XTHERION TRANSCRIPT and THERION.LOG with LOOP CLOSURE SURVEX
+>
+> …
+>
+> selecting export objects ... done
+>
+> writing ./Output/GLSM_SystemSurveys.html ... done
+>
+> writing ./Output/GLSM_SystemContinuations.html ...
+>
+> processing projection plan ... done
+>
+> average distortion: 1.12%
+>
+>
+>
+> processing projection elevation ... done
+>
+> average distortion: 5.40%
+>
+> done
+>
+> writing ./Output/GLSM_SystemCaves.html ... done
+>
+> writing ./Outp
+>
+>
+>
+> KML MODEL with LOOP CLOSURE SURVEX
+>
+> …
+>
+> name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump GreenLink
+> Cave]]></name>
+>
+> <Placemark>
+>
+> <name>M10</name>
+>
+> <styleUrl>#ThSurveyLine</styleUrl>
+>
+> <MultiGeometry>
+>
+> <LineString><coordinates>
+>
+>               172.88735579937293,-40.99769937251387,639.02999999999997
+>               172.88728319623294,-40.99774299151084,637.23000000000002
+>               172.88716109616212,-40.99773710678338,637.76999999999998
+>               172.88714596870241,-40.99782276033864,637.94000000000005
+>               172.88705675083290,-40.99784789603311,638.0
+>
+>
+>
+>
+>
+> KML MODEL with LOOP CLOSURE THERION
+>
+> …
+>
+> <Folder>
+>
+> <name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump
+> GreenLink Cave]]></name>
+>
+> <Placemark>
+>
+> <name>M10</name>
+>
+> <styleUrl>#ThSurveyLine</styleUrl>
+>
+> <MultiGeometry>
+>
+> <LineString><coordinates>
+>
+>               172.88736168357167,-40.99769608966369,638.91567858257895
+>               172.88728901384377,-40.99773967188410,637.11607014782805
+>               172.88716696109856,-40.99773379656759,637.65513049713036
+>               172.88715179697692,-40.99781949576298,637.82267359892830
+>               172.88706263582006,-40.99784457013876,637.9
+>
+>
+>
+> END
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210308/696c4c81/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Mar  9 06:43:12 2021
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 9 Mar 2021 18:43:12 +1300
+Subject: [Therion] export model kml causes untrapped error
+In-Reply-To: <CAP35+gF-VKg6auMHE_2RnE6sCLbouvtnpPdgbvAxHi5BghnDaA@mail.gmail.com>
+References: <000001d713d7$9e145cf0$da3d16d0$@tomo.co.nz>
+ <CAP35+gF-VKg6auMHE_2RnE6sCLbouvtnpPdgbvAxHi5BghnDaA@mail.gmail.com>
+Message-ID: <000201d714a7$19fcf0a0$4df6d1e0$@tomo.co.nz>
+
+Thanks Stacho
+
+Tried out   <https://github.com/therion/therion/tree/c43b32a> c43b32a, the next one in the sequence, and it seems to behave perfectly.
+
+Thankyou very much, problem solved.
+
+ 
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Stacho Mudrak
+Sent: Tuesday, 9 March 2021 09:37
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] export model kml causes untrapped error
+
+ 
+
+Hi Bruce,
+
+ 
+
+could you please try f18c718? I had a similar issue with my dataset.
+
+ 
+
+S.
+
+ 
+
+ 
+
+On Mon, 8 Mar 2021 at 05:58, Bruce Mutton <bruce at tomo.co.nz <mailto:bruce at tomo.co.nz> > wrote:
+
+Good afternoon or morning
+
+I have a situation that I suspect might stem from user error, because it affects only one project, the data is a little messy, and there are 30 m miscloses involved, although Therion is good at dealing with such things, so maybe that is not significant.
+
+My other suspect is the kml model generation code, because that is apparently the only thing that falls over.  This has been, for this project only, a problem for many years, and through many versions of Therion, although it is likely that there was an old version that compiled it OK.  I have tried it on yesterday’s version 3e14a09 and the behaviour is the same.
+
+ 
+
+It is a large project involving many caves, some groups of caves, and then a master cave at three different folder levels.  I’ve tracked the issue down to one cave, and if it is removed (and the station equates joining the other centrelines are broken [of course]) the problem goes away.  The export model kml at all folder levels involving this cave will cause an untrapped error if it is present with other caves.  The problem cave will however produce a perfect kml model if it is compiled stand alone.
+
+ 
+
+It is notable that the problem only ever manifests with export model kml.  I can produce lists, loch and 3d models.  Every type of export map plan and elevation pdf and kml output is also fine.
+
+If loop-closure survex is set, I get a truncated XTherion transcript and a therion.log that truncates midstream.
+
+If loop-closure therion is set, I get no XTherion transcript, and a zero length therion.log file.
+
+ 
+
+Similar to the log files, the kml files appear to be truncated midstream, one or two hundred lines in.
+
+I have checked the coordinates at the point where the kml truncates, so that I could focus on that particular survey and leg.  There is nothing untoward there, however I suspect that the cause of the crash is not necessarily right at the last station written.  The log and kml truncations are fairly consistent however, but not always the same if I make adjustments to the input data.
+
+ 
+
+Any insights out there?
+
+Anyone else had similar behaviour?
+
+ 
+
+I have copied some short extracts below.
+
+ 
+
+Bruce
+
+ 
+
+eg
+
+XTHERION TRANSCRIPT and THERION.LOG with LOOP CLOSURE SURVEX
+
+…
+
+selecting export objects ... done
+
+writing ./Output/GLSM_SystemSurveys.html ... done
+
+writing ./Output/GLSM_SystemContinuations.html ... 
+
+processing projection plan ... done
+
+average distortion: 1.12%
+
+ 
+
+processing projection elevation ... done
+
+average distortion: 5.40%
+
+done
+
+writing ./Output/GLSM_SystemCaves.html ... done
+
+writing ./Outp
+
+ 
+
+KML MODEL with LOOP CLOSURE SURVEX
+
+…
+
+name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump GreenLink Cave]]></name>
+
+<Placemark>
+
+<name>M10</name>
+
+<styleUrl>#ThSurveyLine</styleUrl>
+
+<MultiGeometry>
+
+<LineString><coordinates>
+
+              172.88735579937293,-40.99769937251387,639.02999999999997               172.88728319623294,-40.99774299151084,637.23000000000002               172.88716109616212,-40.99773710678338,637.76999999999998               172.88714596870241,-40.99782276033864,637.94000000000005               172.88705675083290,-40.99784789603311,638.0
+
+ 
+
+ 
+
+KML MODEL with LOOP CLOSURE THERION
+
+…
+
+<Folder>
+
+<name><![CDATA[Survey J2 Mainstream Flush Corner to Upstream Sump GreenLink Cave]]></name>
+
+<Placemark>
+
+<name>M10</name>
+
+<styleUrl>#ThSurveyLine</styleUrl>
+
+<MultiGeometry>
+
+<LineString><coordinates>
+
+              172.88736168357167,-40.99769608966369,638.91567858257895               172.88728901384377,-40.99773967188410,637.11607014782805               172.88716696109856,-40.99773379656759,637.65513049713036               172.88715179697692,-40.99781949576298,637.82267359892830               172.88706263582006,-40.99784457013876,637.9
+
+ 
+
+END
+
+ 
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210309/ddc89840/attachment-0001.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Tue Mar  9 11:41:29 2021
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Tue, 9 Mar 2021 11:41:29 +0100
+Subject: [Therion] Symbol-hide and user defined symbols ?
+Message-ID: <CF67F62C-A659-46EF-B327-F4FB237F52D4@univ-grenoble-alpes.fr>
+
+Hello,
+
+For my Therion’s projects, I wrote a global config file (Config.thc) where I defined all the user defined symbols. In my thconfigs, I call this config file at the beginning of the file with input config.thc. In the layouts, I call the layouts of the config.thc that I want to use with for instance copy drawingconfig.
+
+In one of my thconfig, I would like to hide some of these symbols that I have defined in the config file and drawn in a survey. For that, I used in a layout, for instance, symbol-hide point u:symbol_plan (in my config.thc in the layout drawingconfig, I defined the point p_u_symbol_plan as proposed by Juraj Halama).
+
+When I compile (with c43b32a), it crashes with this error : -- unknown symbol specification -- point u:symbol_plan
+
+Is it because symbol-hide cannot take in account user defined symbols ?
+Is it because I misunderstood the syntax of this command for user defined symbols ?
+Is-it a bug ? 
+
+Cheers,
+
+Xavier
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210309/40c07cc4/attachment.htm>
+
+From beni at hallinger.org  Tue Mar  9 12:00:24 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 09 Mar 2021 12:00:24 +0100
+Subject: [Therion] Symbol-hide and user defined symbols ?
+In-Reply-To: <CF67F62C-A659-46EF-B327-F4FB237F52D4@univ-grenoble-alpes.fr>
+References: <CF67F62C-A659-46EF-B327-F4FB237F52D4@univ-grenoble-alpes.fr>
+Message-ID: <be48deccc90eea6547bbfcd0135b91dd@hallinger.org>
+
+See here: https://github.com/therion/therion/issues/239
+
+Am 2021-03-09 11:41, schrieb Xavier Robert:
+> Hello,
+> 
+> For my Therion’s projects, I wrote a global config file (Config.thc)
+> where I defined all the user defined symbols. In my thconfigs, I call
+> this config file at the beginning of the file with input config.thc.
+> In the layouts, I call the layouts of the config.thc that I want to
+> use with for instance copy drawingconfig.
+> 
+> In one of my thconfig, I would like to hide some of these symbols that
+> I have defined in the config file and drawn in a survey. For that, I
+> used in a layout, for instance, symbol-hide point u:symbol_plan (in my
+> config.thc in the layout drawingconfig, I defined the point
+> p_u_symbol_plan as proposed by Juraj Halama).
+> 
+> When I compile (with c43b32a), it crashes with this error : -- unknown
+> symbol specification -- point u:symbol_plan
+> 
+> Is it because symbol-hide cannot take in account user defined symbols
+> ?
+> Is it because I misunderstood the syntax of this command for user
+> defined symbols ?
+> Is-it a bug ?
+> 
+> Cheers,
+> 
+> Xavier
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From xavier.robert at univ-grenoble-alpes.fr  Tue Mar  9 12:14:51 2021
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Tue, 9 Mar 2021 12:14:51 +0100
+Subject: [Therion] Symbol-hide and user defined symbols ?
+In-Reply-To: <be48deccc90eea6547bbfcd0135b91dd@hallinger.org>
+References: <CF67F62C-A659-46EF-B327-F4FB237F52D4@univ-grenoble-alpes.fr>
+ <be48deccc90eea6547bbfcd0135b91dd@hallinger.org>
+Message-ID: <B141D098-DFF3-4A3C-8D34-773226958659@univ-grenoble-alpes.fr>
+
+Hi,
+
+Thanks Beni… I haven’t seen that this issue was already raised, I will wait for a fix ;-) 
+
+Indeed, I am using quite a lot of user symbols (point/line/area), and I do not want to hide them all !
+
+Cheers,
+
+Xavier
+
+> Le 9 mars 2021 à 12:00, Benedikt Hallinger <beni at hallinger.org> a écrit :
+> 
+> See here: https://github.com/therion/therion/issues/239
+> 
+> Am 2021-03-09 11:41, schrieb Xavier Robert:
+>> Hello,
+>> For my Therion’s projects, I wrote a global config file (Config.thc)
+>> where I defined all the user defined symbols. In my thconfigs, I call
+>> this config file at the beginning of the file with input config.thc.
+>> In the layouts, I call the layouts of the config.thc that I want to
+>> use with for instance copy drawingconfig.
+>> In one of my thconfig, I would like to hide some of these symbols that
+>> I have defined in the config file and drawn in a survey. For that, I
+>> used in a layout, for instance, symbol-hide point u:symbol_plan (in my
+>> config.thc in the layout drawingconfig, I defined the point
+>> p_u_symbol_plan as proposed by Juraj Halama).
+>> When I compile (with c43b32a), it crashes with this error : -- unknown
+>> symbol specification -- point u:symbol_plan
+>> Is it because symbol-hide cannot take in account user defined symbols
+>> ?
+>> Is it because I misunderstood the syntax of this command for user
+>> defined symbols ?
+>> Is-it a bug ?
+>> Cheers,
+>> Xavier
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+
+
+From beni at hallinger.org  Tue Mar  9 12:20:01 2021
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Tue, 09 Mar 2021 12:20:01 +0100
+Subject: [Therion] Symbol-hide and user defined symbols ?
+In-Reply-To: <B141D098-DFF3-4A3C-8D34-773226958659@univ-grenoble-alpes.fr>
+References: <CF67F62C-A659-46EF-B327-F4FB237F52D4@univ-grenoble-alpes.fr>
+ <be48deccc90eea6547bbfcd0135b91dd@hallinger.org>
+ <B141D098-DFF3-4A3C-8D34-773226958659@univ-grenoble-alpes.fr>
+Message-ID: <0b8fb12bf022d53e499f4a2329f3df2f@hallinger.org>
+
+Me too! :)
+
+Am 2021-03-09 12:14, schrieb Xavier Robert:
+> Hi,
+> 
+> Thanks Beni… I haven’t seen that this issue was already raised, I will
+> wait for a fix ;-)
+> 
+> Indeed, I am using quite a lot of user symbols (point/line/area), and
+> I do not want to hide them all !
+> 
+> Cheers,
+> 
+> Xavier
+> 
+>> Le 9 mars 2021 à 12:00, Benedikt Hallinger <beni at hallinger.org> a 
+>> écrit :
+>> 
+>> See here: https://github.com/therion/therion/issues/239
+>> 
+>> Am 2021-03-09 11:41, schrieb Xavier Robert:
+>>> Hello,
+>>> For my Therion’s projects, I wrote a global config file (Config.thc)
+>>> where I defined all the user defined symbols. In my thconfigs, I call
+>>> this config file at the beginning of the file with input config.thc.
+>>> In the layouts, I call the layouts of the config.thc that I want to
+>>> use with for instance copy drawingconfig.
+>>> In one of my thconfig, I would like to hide some of these symbols 
+>>> that
+>>> I have defined in the config file and drawn in a survey. For that, I
+>>> used in a layout, for instance, symbol-hide point u:symbol_plan (in 
+>>> my
+>>> config.thc in the layout drawingconfig, I defined the point
+>>> p_u_symbol_plan as proposed by Juraj Halama).
+>>> When I compile (with c43b32a), it crashes with this error : -- 
+>>> unknown
+>>> symbol specification -- point u:symbol_plan
+>>> Is it because symbol-hide cannot take in account user defined symbols
+>>> ?
+>>> Is it because I misunderstood the syntax of this command for user
+>>> defined symbols ?
+>>> Is-it a bug ?
+>>> Cheers,
+>>> Xavier
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From henry at hbennett.com  Sat Mar 13 14:39:07 2021
+From: henry at hbennett.com (Henry Bennett)
+Date: Sat, 13 Mar 2021 13:39:07 +0000
+Subject: [Therion] "\legendbox" "\loadpicture" and absolute paths
+In-Reply-To: <CALPsdStVNsqGy8d8-dBmOKRJb0Uj3oNv0aufnidT+JgKZ1UdFQ@mail.gmail.com>
+References: <000701d0309e$f7a18c70$e6e4a550$@tpg.com.au>
+ <CALPsdStVNsqGy8d8-dBmOKRJb0Uj3oNv0aufnidT+JgKZ1UdFQ@mail.gmail.com>
+Message-ID: <CAL=o7FiEi4HmRqYVzn_v0uvKb-vVc0p4NAv=pB4CbnP2mmetJg@mail.gmail.com>
+
+Hi Martin,
+
+Using the dev Windows version Therion 5.5.7+67fffb0 (2021-02-22) I'm still
+only able to use absolute paths.  Is this a Windows only issue?
+
+I've also tried using the \savepath method (from thbook) below with no
+success.
+
+\savepath{mypath1}{../data/picture.png}
+\def\maplayout{
+\legendbox{100}{80}{NW}{\loadpicture{mypath1}}
+}
+
+Thanks for looking at this.
+
+Regards, Henry Bennett
+
+
+On Sun, Feb 7, 2021 at 6:07 PM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> On Thu, Jan 15, 2015 at 9:59 AM rowena <rowena_l at tpg.com.au> wrote:
+>
+> > I am using the “\loadpicture” capability in “\legendbox” constructs to
+> include map sections, elevations, etc.
+> > It all works nicely on my PC where I am using relative paths to the pdf
+> files.
+> > My club has a desire to archive the map data for posterity – ie if my pc
+> dies or I go walkabout, the map data should still be available so that
+> others can add to the maps as they are extended.
+> > I would prefer to have  the images included using relative pathnames,
+> rather than absolute pathnames, so that future explorers can download the
+> map data and extend it, without having to duplicate my file hierarchy.
+> >
+> > How can I include relative paths in the \loadpicture  functionality?
+>
+> Hi,
+>
+> it took some time, but now \loadpicture supports both relative and
+> absolute paths. Check out the devel branch (not yet merged to master):
+>
+> Source: https://github.com/therion/therion/tree/devel
+> Windows installer:
+>
+> https://github.com/therion/therion/actions?query=workflow%3AInstaller+branch%3Adevel
+>
+> Best wishes
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210313/8fbd8dda/attachment.htm>
+
+From m.budaj at gmail.com  Sat Mar 13 17:54:50 2021
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Sat, 13 Mar 2021 17:54:50 +0100
+Subject: [Therion] "\legendbox" "\loadpicture" and absolute paths
+In-Reply-To: <CAL=o7FiEi4HmRqYVzn_v0uvKb-vVc0p4NAv=pB4CbnP2mmetJg@mail.gmail.com>
+References: <000701d0309e$f7a18c70$e6e4a550$@tpg.com.au>
+ <CALPsdStVNsqGy8d8-dBmOKRJb0Uj3oNv0aufnidT+JgKZ1UdFQ@mail.gmail.com>
+ <CAL=o7FiEi4HmRqYVzn_v0uvKb-vVc0p4NAv=pB4CbnP2mmetJg@mail.gmail.com>
+Message-ID: <CALPsdSs3D5CY_d_0BDESsNd7ZDLAPZPFZe0Rx63A8MzF+iJgVA@mail.gmail.com>
+
+Hi,
+
+\savepath has been implemented on February 27; your therion version is
+older. If you'll have problems also with the current version of therion,
+please send me your layout definition and the log file produced by therion.
+
+Best regards
+Martin
+
+On Sat, Mar 13, 2021 at 2:57 PM Henry Bennett <henry at hbennett.com> wrote:
+
+> Hi Martin,
+>
+> Using the dev Windows version Therion 5.5.7+67fffb0 (2021-02-22) I'm still
+> only able to use absolute paths.  Is this a Windows only issue?
+>
+> I've also tried using the \savepath method (from thbook) below with no
+> success.
+>
+> \savepath{mypath1}{../data/picture.png}
+> \def\maplayout{
+> \legendbox{100}{80}{NW}{\loadpicture{mypath1}}
+> }
+>
+> Thanks for looking at this.
+>
+> Regards, Henry Bennett
+>
+>
+> On Sun, Feb 7, 2021 at 6:07 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>
+>> On Thu, Jan 15, 2015 at 9:59 AM rowena <rowena_l at tpg.com.au> wrote:
+>>
+>> > I am using the “\loadpicture” capability in “\legendbox” constructs to
+>> include map sections, elevations, etc.
+>> > It all works nicely on my PC where I am using relative paths to the pdf
+>> files.
+>> > My club has a desire to archive the map data for posterity – ie if my
+>> pc dies or I go walkabout, the map data should still be available so that
+>> others can add to the maps as they are extended.
+>> > I would prefer to have  the images included using relative pathnames,
+>> rather than absolute pathnames, so that future explorers can download the
+>> map data and extend it, without having to duplicate my file hierarchy.
+>> >
+>> > How can I include relative paths in the \loadpicture  functionality?
+>>
+>> Hi,
+>>
+>> it took some time, but now \loadpicture supports both relative and
+>> absolute paths. Check out the devel branch (not yet merged to master):
+>>
+>> Source: https://github.com/therion/therion/tree/devel
+>> Windows installer:
+>>
+>> https://github.com/therion/therion/actions?query=workflow%3AInstaller+branch%3Adevel
+>>
+>> Best wishes
+>> Martin
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210313/ae6a9342/attachment.htm>
+
+From henry at hbennett.com  Sun Mar 14 13:13:53 2021
+From: henry at hbennett.com (Henry Bennett)
+Date: Sun, 14 Mar 2021 12:13:53 +0000
+Subject: [Therion] "\legendbox" "\loadpicture" and absolute paths
+In-Reply-To: <CALPsdSs3D5CY_d_0BDESsNd7ZDLAPZPFZe0Rx63A8MzF+iJgVA@mail.gmail.com>
+References: <000701d0309e$f7a18c70$e6e4a550$@tpg.com.au>
+ <CALPsdStVNsqGy8d8-dBmOKRJb0Uj3oNv0aufnidT+JgKZ1UdFQ@mail.gmail.com>
+ <CAL=o7FiEi4HmRqYVzn_v0uvKb-vVc0p4NAv=pB4CbnP2mmetJg@mail.gmail.com>
+ <CALPsdSs3D5CY_d_0BDESsNd7ZDLAPZPFZe0Rx63A8MzF+iJgVA@mail.gmail.com>
+Message-ID: <CAL=o7FiPmBFmpsWw5hPkgsPKT-4tWMtdbxWfyQK1tcNvo1rT+w@mail.gmail.com>
+
+Thank you.  I can confirm that this works with the latest dev build under
+Windows.
+
+I had thought this was introduced in an early dev build after the mail
+earlier in February.  My bad.
+
+Keep up the good work,  regards,
+
+Henry
+
+On Sat, Mar 13, 2021 at 4:54 PM Martin Budaj <m.budaj at gmail.com> wrote:
+
+> Hi,
+>
+> \savepath has been implemented on February 27; your therion version is
+> older. If you'll have problems also with the current version of therion,
+> please send me your layout definition and the log file produced by therion.
+>
+> Best regards
+> Martin
+>
+> On Sat, Mar 13, 2021 at 2:57 PM Henry Bennett <henry at hbennett.com> wrote:
+>
+>> Hi Martin,
+>>
+>> Using the dev Windows version Therion 5.5.7+67fffb0 (2021-02-22) I'm
+>> still only able to use absolute paths.  Is this a Windows only issue?
+>>
+>> I've also tried using the \savepath method (from thbook) below with no
+>> success.
+>>
+>> \savepath{mypath1}{../data/picture.png}
+>> \def\maplayout{
+>> \legendbox{100}{80}{NW}{\loadpicture{mypath1}}
+>> }
+>>
+>> Thanks for looking at this.
+>>
+>> Regards, Henry Bennett
+>>
+>>
+>> On Sun, Feb 7, 2021 at 6:07 PM Martin Budaj <m.budaj at gmail.com> wrote:
+>>
+>>> On Thu, Jan 15, 2015 at 9:59 AM rowena <rowena_l at tpg.com.au> wrote:
+>>>
+>>> > I am using the “\loadpicture” capability in “\legendbox” constructs
+>>> to  include map sections, elevations, etc.
+>>> > It all works nicely on my PC where I am using relative paths to the
+>>> pdf files.
+>>> > My club has a desire to archive the map data for posterity – ie if my
+>>> pc dies or I go walkabout, the map data should still be available so that
+>>> others can add to the maps as they are extended.
+>>> > I would prefer to have  the images included using relative pathnames,
+>>> rather than absolute pathnames, so that future explorers can download the
+>>> map data and extend it, without having to duplicate my file hierarchy.
+>>> >
+>>> > How can I include relative paths in the \loadpicture  functionality?
+>>>
+>>> Hi,
+>>>
+>>> it took some time, but now \loadpicture supports both relative and
+>>> absolute paths. Check out the devel branch (not yet merged to master):
+>>>
+>>> Source: https://github.com/therion/therion/tree/devel
+>>> Windows installer:
+>>>
+>>> https://github.com/therion/therion/actions?query=workflow%3AInstaller+branch%3Adevel
+>>>
+>>> Best wishes
+>>> Martin
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> https://mailman.speleo.sk/listinfo/therion
+>>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210314/53e97053/attachment.htm>
+
+From alastairgott at gmail.com  Mon Mar 15 15:45:06 2021
+From: alastairgott at gmail.com (Alastair Gott)
+Date: Mon, 15 Mar 2021 14:45:06 +0000
+Subject: [Therion] compass correction Re: Strange Therion/survex disparity
+In-Reply-To: <CAAJF8V_Xh4U4--5ryJiBE9UeeqcHuT46a4sei8eWxkT-Og9eqQ@mail.gmail.com>
+References: <CAAJF8V-YOX2zUZkNEwffH38psxu6b8LC94EeyrTBeSSe6=WG9g@mail.gmail.com>
+ <02163bc3-9dcf-4f5f-aa78-e42b59ba0ba7@ntlworld.com>
+ <a8ec62550c8d170191c530a188ffb6f1@wotcc.org.uk>
+ <CAAJF8V_Xh4U4--5ryJiBE9UeeqcHuT46a4sei8eWxkT-Og9eqQ@mail.gmail.com>
+Message-ID: <F3452D55-8A49-4771-B9E5-E6D60A23A0F0@gmail.com>
+
+Hi therion people,
+
+I’m working on the dataset again with my friend.
+
+We’ve found that the survex model uses a compass calibration in some places and are trying to work out if this needs transposing across to the therion model.
+ But in the process I have found out that when we give therion a compass reading it’s always taking off 0.9 to 1 degree from the reading given in the .th data.
+
+I’ve just run changes to entrance-boulder in both therion and survex. Below results just for first leg 1-2
+
+No date+compass calib= 133.6 deg survex// 132.6 deg therion
+Date + no compass calib=131.0 deg survex// 130.1 deg therion
+No date+no compass calib=131 deg survex// 130deg therion
+Date + compass calib=133.6 deg survex// 132.7 deg therion
+
+So clearly therion is correcting the data 1[] 2[] 13.4[] 131[] 10.0
+By always taking one degree off the compass irrespective of what we tell it.
+
+(For information: When calibration used survex= *calibrate compass -2.65 // therion= calibrate compass 357.35)
+
+Does anyone have any ideas where therion is pulling this 1 degree correction from?
+
+
+Regards,
+Alastair Gott.
+
+> On 26 Feb 2021, at 07:43, A Gott <alastairgott at gmail.com> wrote:
+> 
+> HI Tarquin and Andrew,
+> 
+> Many thanks for that, We were just lost, I think we'll be able to pick it up from here with your helpful guidance. Should just be a case of looking through the .th files and looking for all the 90's
+> 
+> I hope you are both well.
+> 
+> Al.
+> 
+>> On Fri, 26 Feb 2021 at 07:33, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+>> 
+>> > DOWN has been mis-converted into +90 rather than -90, when converting
+>> > from Survex format to Therion format.
+>> > Survex:
+>> > 2213  2212    B       3.49    -       DOWN
+>> > Therion:
+>> > 2213  2212    3.49  311  90
+>> > I'm guessing that error may turn up elsewhere. consort_climax looks
+>> > similarly wrong.
+>> As a point to note -90 and Down at treated differently for clino 
+>> correction, they can be treated ed the same
+>> 
+>>  From the survex manual
+>> 
+>>      "*infer plumbs on" tells cavern to interpret gradients of +/- 90 
+>> degrees as UP/DOWN (so it will not apply the clino correction to them). 
+>> This is useful when the data has not been converted to have UP and DOWN
+>> 
+>> Andrew
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210315/e731daed/attachment.htm>
+
+From andrew at wotcc.org.uk  Mon Mar 15 17:53:44 2021
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Mon, 15 Mar 2021 16:53:44 +0000
+Subject: [Therion] compass correction Re: Strange Therion/survex
+ disparity
+In-Reply-To: <F3452D55-8A49-4771-B9E5-E6D60A23A0F0@gmail.com>
+References: <CAAJF8V-YOX2zUZkNEwffH38psxu6b8LC94EeyrTBeSSe6=WG9g@mail.gmail.com>
+ <02163bc3-9dcf-4f5f-aa78-e42b59ba0ba7@ntlworld.com>
+ <a8ec62550c8d170191c530a188ffb6f1@wotcc.org.uk>
+ <CAAJF8V_Xh4U4--5ryJiBE9UeeqcHuT46a4sei8eWxkT-Og9eqQ@mail.gmail.com>
+ <F3452D55-8A49-4771-B9E5-E6D60A23A0F0@gmail.com>
+Message-ID: <6dfdf7ab-b674-16d8-442c-b6c6f18846fd@wotcc.org.uk>
+
+First when you say calibration, you do mean calibration not declination,
+(or calibrate declination, which is an older form of declination) which
+have slightly different functions?
+There is more about these in the documentation, which can be useful when
+dealing with old data sets.
+
+I started a quick test hoping this would only take 5 mins, but got no
+where, but found something interesting, I have run out of time, not read
+the manual etc, so just putting this up as it could be useful
+
+I produced two files identical except in the annoying format
+differences. See below
+
+I was expecting to see some difference between the 1980 and 220 as the
+declination has moved about 3° I was interested to see what happened to
+the no date one.
+
+However, the answer was nothing happened everything came out the same,
+with not adjustment, both in survex and therion. I noticed I didn't get
+a list of declinations, so ran one of my older files, and it was there
+
+geomag declinations (deg):
+  2010.1.1  -2.6622
+  2011.1.1  -2.4922
+
+So at some point I knew what I was doing, but now I don't, but there are
+no errors and no way to tell its not working!
+
+Now I think that the problem with Therion is it is doing something weird
+with the date.
+
+Happily accepts
+date 9999999
+or
+date 999.11
+Not happy with
+date 99.99999 invalid date month
+
+Goodness know how it is interpreting those
+
+Survex give a sensible error message about the dates that can be use.
+
+Andrew
+
+
+Therion 5.5.7
+
+survey all
+
+
+equate 1 at 2020 1 at nodate 1 at 1980
+
+survey 2020
+centerline
+cs OSGB:ST
+date 2020
+data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+survey nodate
+centerline
+cs OSGB:ST
+data normal from to tape compass clino
+
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+survey 1980
+centerline
+cs OSGB:ST
+
+date 1980
+data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+endsurvey
+
+
+Survex
+
+*Begin all
+
+*Equate 2020.1 nodate.1 1980.1
+
+*Begin 2020
+*cs OSGB:ST
+*date 2020
+*Data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+
+*End 2020
+
+*Begin nodate
+
+*Data normal from to tape compass clino
+*cs OSGB:ST
+
+1 2 15 90 0
+2 3 10 180 0
+
+*End nodate
+
+*Begin 1980
+*cs OSGB:ST
+*Date 1980
+*Data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+
+*End 1980
+
+*End all
+
+On 15/03/2021 14:45, Alastair Gott wrote:
+> Hi therion people,
+> 
+> I’m working on the dataset again with my friend.
+> 
+> We’ve found that the survex model uses a compass calibration in some
+> places and are trying to work out if this needs transposing across to
+> the therion model.
+>  But in the process I have found out that when we give therion a compass
+> reading it’s always taking off 0.9 to 1 degree from the reading given in
+> the .th data.
+> 
+> I’ve just run changes to entrance-boulder in both therion and survex.
+> Below results just for first leg 1-2
+> 
+> No date+compass calib= 133.6 deg survex// 132.6 deg therion
+> Date + no compass calib=131.0 deg survex// 130.1 deg therion
+> No date+no compass calib=131 deg survex// 130deg therion
+> Date + compass calib=133.6 deg survex// 132.7 deg therion
+> 
+> So clearly therion is correcting the data 1[] 2[] 13.4[] 131[] 10.0
+> By always taking one degree off the compass irrespective of what we tell it.
+> 
+> (For information: When calibration used survex= *calibrate compass -2.65
+> // therion= calibrate compass 357.35)
+> 
+> Does anyone have any ideas where therion is pulling this 1 degree
+> correction from?
+> 
+> 
+> Regards,
+> Alastair Gott.
+> 
+> On 26 Feb 2021, at 07:43, A Gott <alastairgott at gmail.com
+> <mailto:alastairgott at gmail.com>> wrote:
+> 
+>> HI Tarquin and Andrew,
+>>
+>> Many thanks for that, We were just lost, I think we'll be able to pick
+>> it up from here with your helpful guidance. Should just be a case of
+>> looking through the .th files and looking for all the 90's
+>>
+>> I hope you are both well.
+>>
+>> Al.
+>>
+>> On Fri, 26 Feb 2021 at 07:33, Andrew Atkinson <andrew at wotcc.org.uk
+>> <mailto:andrew at wotcc.org.uk>> wrote:
+>>
+>>
+>>     > DOWN has been mis-converted into +90 rather than -90, when
+>>     converting
+>>     > from Survex format to Therion format.
+>>     > Survex:
+>>     > 2213  2212    B       3.49    -       DOWN
+>>     > Therion:
+>>     > 2213  2212    3.49  311  90
+>>     > I'm guessing that error may turn up elsewhere. consort_climax looks
+>>     > similarly wrong.
+>>     As a point to note -90 and Down at treated differently for clino
+>>     correction, they can be treated ed the same
+>>
+>>      From the survex manual
+>>
+>>          "*infer plumbs on" tells cavern to interpret gradients of +/- 90
+>>     degrees as UP/DOWN (so it will not apply the clino correction to
+>>     them).
+>>     This is useful when the data has not been converted to have UP and
+>>     DOWN
+>>
+>>     Andrew
+>>     _______________________________________________
+>>     Therion mailing list
+>>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>     https://mailman.speleo.sk/listinfo/therion
+>>     <https://mailman.speleo.sk/listinfo/therion>
+>>
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+
+From alastairgott at hotmail.com  Mon Mar 15 18:50:18 2021
+From: alastairgott at hotmail.com (alastair gott)
+Date: Mon, 15 Mar 2021 17:50:18 +0000
+Subject: [Therion] compass correction Re: Strange Therion/survex
+ disparity
+In-Reply-To: <6dfdf7ab-b674-16d8-442c-b6c6f18846fd@wotcc.org.uk>
+References: <CAAJF8V-YOX2zUZkNEwffH38psxu6b8LC94EeyrTBeSSe6=WG9g@mail.gmail.com>
+ <02163bc3-9dcf-4f5f-aa78-e42b59ba0ba7@ntlworld.com>
+ <a8ec62550c8d170191c530a188ffb6f1@wotcc.org.uk>
+ <CAAJF8V_Xh4U4--5ryJiBE9UeeqcHuT46a4sei8eWxkT-Og9eqQ@mail.gmail.com>
+ <F3452D55-8A49-4771-B9E5-E6D60A23A0F0@gmail.com>,
+ <6dfdf7ab-b674-16d8-442c-b6c6f18846fd@wotcc.org.uk>
+Message-ID: <DB3PR0302MB3209D08057176ABC096E120BD66C9@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+
+Hi Andrew,
+
+I'm afraid I there is no answer as to whether I mean calibration, declination or calibrate declination.
+
+ As the survex model has the *calibrate compass -2.65 already in it, and I don't know whether this is because they knew the compass was out, or whether they corrected for the declination in the survex model when the data was put in.
+
+ When I refer to the calibration in Therion, I've just applied the same function calibrate compass 357.3
+
+I was hoping that running the comparison between therion and survex on the first leg of the survey, I could work out by trial and error what I should do to make the data the same. I'm happy to apply a fix to all the .th files, to ensure that the models align, but this doesn't seem like the therion way given that the underlying data is the same.
+
+PS. I know there will be parts of the datasets where there are differences, but till I can make the first leg the same, I think it will be difficult for me to spot even the biggest difference.
+
+
+Therion.th
+survey entrance_boulder
+  centerline
+    cs UTM30N
+    station 1 "Cueva del Nacimiento" entrance
+    fix 1 0363921 4789684 470
+
+    date 2011.08.14
+    #calibrate compass 357.35
+
+    units length meters
+    units compass clino degrees
+    data normal from to length compass clino
+
+1  2    13.40  131  10.0
+2  3    10.50  194  1.0
+endcentreline
+endsurvey
+
+config
+source therion.th
+
+export model -o therion.3d
+
+Survex.svx
+*begin entrance_boulder
+*entrance 1
+*fix 1 0363921 4789684 470; Cueva del Nacimiento (Cueva del Agua)
+
+*date 2011.08.14
+;instruments: SWCC compass and clino, colins laser pointer
+;*calibrate compass -2.65
+*calibrate clino -0.5
+
+;**ENTRANCE TO BOULDER HALL**
+;****************************
+
+*data normal from to direction tape compass clino
+1 2 13.40 131 10.0
+2 3 10.50 194 1.0
+*end entrance_boulder
+
+
+Regards,
+Alastair Gott.
+
+AlastairGott at hotmail.com,
+M: 07931779380.
+________________________________
+From: Therion <therion-bounces at speleo.sk> on behalf of Andrew Atkinson <andrew at wotcc.org.uk>
+Sent: 15 March 2021 16:53
+To: therion at speleo.sk <therion at speleo.sk>
+Subject: Re: [Therion] compass correction Re: Strange Therion/survex disparity
+
+First when you say calibration, you do mean calibration not declination,
+(or calibrate declination, which is an older form of declination) which
+have slightly different functions?
+There is more about these in the documentation, which can be useful when
+dealing with old data sets.
+
+I started a quick test hoping this would only take 5 mins, but got no
+where, but found something interesting, I have run out of time, not read
+the manual etc, so just putting this up as it could be useful
+
+I produced two files identical except in the annoying format
+differences. See below
+
+I was expecting to see some difference between the 1980 and 220 as the
+declination has moved about 3° I was interested to see what happened to
+the no date one.
+
+However, the answer was nothing happened everything came out the same,
+with not adjustment, both in survex and therion. I noticed I didn't get
+a list of declinations, so ran one of my older files, and it was there
+
+geomag declinations (deg):
+  2010.1.1  -2.6622
+  2011.1.1  -2.4922
+
+So at some point I knew what I was doing, but now I don't, but there are
+no errors and no way to tell its not working!
+
+Now I think that the problem with Therion is it is doing something weird
+with the date.
+
+Happily accepts
+date 9999999
+or
+date 999.11
+Not happy with
+date 99.99999 invalid date month
+
+Goodness know how it is interpreting those
+
+Survex give a sensible error message about the dates that can be use.
+
+Andrew
+
+
+Therion 5.5.7
+
+survey all
+
+
+equate 1 at 2020 1 at nodate 1 at 1980
+
+survey 2020
+centerline
+cs OSGB:ST
+date 2020
+data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+survey nodate
+centerline
+cs OSGB:ST
+data normal from to tape compass clino
+
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+survey 1980
+centerline
+cs OSGB:ST
+
+date 1980
+data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+endcentreline
+endsurvey
+
+endsurvey
+
+
+Survex
+
+*Begin all
+
+*Equate 2020.1 nodate.1 1980.1
+
+*Begin 2020
+*cs OSGB:ST
+*date 2020
+*Data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+
+*End 2020
+
+*Begin nodate
+
+*Data normal from to tape compass clino
+*cs OSGB:ST
+
+1 2 15 90 0
+2 3 10 180 0
+
+*End nodate
+
+*Begin 1980
+*cs OSGB:ST
+*Date 1980
+*Data normal from to tape compass clino
+1 2 15 90 0
+2 3 10 180 0
+
+*End 1980
+
+*End all
+
+On 15/03/2021 14:45, Alastair Gott wrote:
+> Hi therion people,
+>
+> I’m working on the dataset again with my friend.
+>
+> We’ve found that the survex model uses a compass calibration in some
+> places and are trying to work out if this needs transposing across to
+> the therion model.
+>  But in the process I have found out that when we give therion a compass
+> reading it’s always taking off 0.9 to 1 degree from the reading given in
+> the .th data.
+>
+> I’ve just run changes to entrance-boulder in both therion and survex.
+> Below results just for first leg 1-2
+>
+> No date+compass calib= 133.6 deg survex// 132.6 deg therion
+> Date + no compass calib=131.0 deg survex// 130.1 deg therion
+> No date+no compass calib=131 deg survex// 130deg therion
+> Date + compass calib=133.6 deg survex// 132.7 deg therion
+>
+> So clearly therion is correcting the data 1[] 2[] 13.4[] 131[] 10.0
+> By always taking one degree off the compass irrespective of what we tell it.
+>
+> (For information: When calibration used survex= *calibrate compass -2.65
+> // therion= calibrate compass 357.35)
+>
+> Does anyone have any ideas where therion is pulling this 1 degree
+> correction from?
+>
+>
+> Regards,
+> Alastair Gott.
+>
+> On 26 Feb 2021, at 07:43, A Gott <alastairgott at gmail.com
+> <mailto:alastairgott at gmail.com>> wrote:
+>
+>> HI Tarquin and Andrew,
+>>
+>> Many thanks for that, We were just lost, I think we'll be able to pick
+>> it up from here with your helpful guidance. Should just be a case of
+>> looking through the .th files and looking for all the 90's
+>>
+>> I hope you are both well.
+>>
+>> Al.
+>>
+>> On Fri, 26 Feb 2021 at 07:33, Andrew Atkinson <andrew at wotcc.org.uk
+>> <mailto:andrew at wotcc.org.uk>> wrote:
+>>
+>>
+>>     > DOWN has been mis-converted into +90 rather than -90, when
+>>     converting
+>>     > from Survex format to Therion format.
+>>     > Survex:
+>>     > 2213  2212    B       3.49    -       DOWN
+>>     > Therion:
+>>     > 2213  2212    3.49  311  90
+>>     > I'm guessing that error may turn up elsewhere. consort_climax looks
+>>     > similarly wrong.
+>>     As a point to note -90 and Down at treated differently for clino
+>>     correction, they can be treated ed the same
+>>
+>>      From the survex manual
+>>
+>>          "*infer plumbs on" tells cavern to interpret gradients of +/- 90
+>>     degrees as UP/DOWN (so it will not apply the clino correction to
+>>     them).
+>>     This is useful when the data has not been converted to have UP and
+>>     DOWN
+>>
+>>     Andrew
+>>     _______________________________________________
+>>     Therion mailing list
+>>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>     https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=04%7C01%7C%7Cb0afac4de572448cf95508d8e7d2f653%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637514240552340058%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=0kBJbg6XfaDY5GZiSEKNy%2Bp7uJ%2BNB4VGUZndn8sbuYg%3D&amp;reserved=0
+>>     <https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=04%7C01%7C%7Cb0afac4de572448cf95508d8e7d2f653%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637514240552340058%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=0kBJbg6XfaDY5GZiSEKNy%2Bp7uJ%2BNB4VGUZndn8sbuYg%3D&amp;reserved=0>
+>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=04%7C01%7C%7Cb0afac4de572448cf95508d8e7d2f653%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637514240552340058%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=0kBJbg6XfaDY5GZiSEKNy%2Bp7uJ%2BNB4VGUZndn8sbuYg%3D&amp;reserved=0
+>
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&amp;data=04%7C01%7C%7Cb0afac4de572448cf95508d8e7d2f653%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C637514240552340058%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=0kBJbg6XfaDY5GZiSEKNy%2Bp7uJ%2BNB4VGUZndn8sbuYg%3D&amp;reserved=0
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210315/1030178f/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: survex.3d
+Type: application/octet-stream
+Size: 150 bytes
+Desc: survex.3d
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210315/1030178f/attachment-0002.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion.3d
+Type: application/octet-stream
+Size: 171 bytes
+Desc: therion.3d
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210315/1030178f/attachment-0003.obj>
+
+From olly at survex.com  Wed Mar 17 03:20:59 2021
+From: olly at survex.com (Olly Betts)
+Date: Wed, 17 Mar 2021 02:20:59 +0000
+Subject: [Therion] compass correction Re: Strange Therion/survex
+ disparity
+In-Reply-To: <DB3PR0302MB3209D08057176ABC096E120BD66C9@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+References: <CAAJF8V-YOX2zUZkNEwffH38psxu6b8LC94EeyrTBeSSe6=WG9g@mail.gmail.com>
+ <02163bc3-9dcf-4f5f-aa78-e42b59ba0ba7@ntlworld.com>
+ <a8ec62550c8d170191c530a188ffb6f1@wotcc.org.uk>
+ <CAAJF8V_Xh4U4--5ryJiBE9UeeqcHuT46a4sei8eWxkT-Og9eqQ@mail.gmail.com>
+ <F3452D55-8A49-4771-B9E5-E6D60A23A0F0@gmail.com>
+ <6dfdf7ab-b674-16d8-442c-b6c6f18846fd@wotcc.org.uk>
+ <DB3PR0302MB3209D08057176ABC096E120BD66C9@DB3PR0302MB3209.eurprd03.prod.outlook.com>
+Message-ID: <20210317022059.GB8580@survex.com>
+
+On Mon, Mar 15, 2021 at 05:50:18PM +0000, alastair gott wrote:
+> I'm afraid I there is no answer as to whether I mean calibration,
+> declination or calibrate declination.
+> 
+> As the survex model has the *calibrate compass -2.65 already in it,
+> and I don't know whether this is because they knew the compass was
+> out, or whether they corrected for the declination in the survex model
+> when the data was put in.
+
+It would help a lot to determine what -2.65 includes.
+
+If it wasn't recorded and you can't usefully ask the people who recorded
+the data, you could try adjusting the data assuming this includes the
+declination and again assuming it doesn't and see which version gives
+better loop errors.  Aven can colour by error which provides a way to
+visualise this.
+
+>  When I refer to the calibration in Therion, I've just applied the
+>  same function calibrate compass 357.3
+> 
+> I was hoping that running the comparison between therion and survex on
+> the first leg of the survey, I could work out by trial and error what
+> I should do to make the data the same. I'm happy to apply a fix to all
+> the .th files, to ensure that the models align, but this doesn't seem
+> like the therion way given that the underlying data is the same.
+
+A key difference here is that Therion automatically corrects for
+declination and for grid convergence (the difference between true north
+and grid north) if you specify a coordinate system and put a date on a
+survey.  It does this by calculating the corrections at the location
+which is the average of all the specified fixed points (this doesn't
+seem to be documented, but that's my understanding from reading the
+source code.)
+
+Survex takes a different approach and you have to turn on the equivalent
+feature and specify the location to calculate the corrections at, e.g.:
+
+*declination auto 0410600 5282000 1234
+
+I didn't follow therion's automatic approach because it has the downside
+that adding a new fixed point slightly changes the location of *ALL*
+survey stations (apart from those which are also fixed points).
+
+> PS. I know there will be parts of the datasets where there are
+> differences, but till I can make the first leg the same, I think it
+> will be difficult for me to spot even the biggest difference.
+
+Rather than trying to maintain two parallel version of the data set,
+my suggestion would be to save yourself a lot of work and just tell
+Therion to use a .3d file produced from the Survex data set for the
+station coordinates (see the "import" command).
+
+Cheers,
+    Olly
+
+From omrigas at gmail.com  Sun Mar 21 20:00:42 2021
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Sun, 21 Mar 2021 21:00:42 +0200
+Subject: [Therion] GIS model output - open multipatch shp
+Message-ID: <CAOjFj0n84oQZzxi+4jAshcDvKcB4bpS=JoGsBn4Ot+bXqf107A@mail.gmail.com>
+
+Hi,
+I use the GIS model output to calculate the volume of a cave. To do it the
+multipatch have to be closed.
+
+The multipatch shp that therion exports is never close, even when
+everything is ok.
+
+To fix it, I use a tool in arc scene to close the multipatch shp, but it
+always adds an extra volume to the cave, sometimes it's significant.
+
+So my question is why the multipatch isn't close?
+Can it be fixed?
+
+Omri
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20210321/ddd263e8/attachment.htm>
+

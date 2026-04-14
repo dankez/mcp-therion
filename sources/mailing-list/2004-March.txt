@@ -1,0 +1,1296 @@
+From s.m at speleo.sk  Mon Mar  1 10:38:18 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 01 Mar 2004 10:38:18 +0100
+Subject: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <057@reconstruction>
+
+
+> bugs:
+>
+> In .th files - if you use
+> data normal ignore ignore ignore ignore newline tape compass clino then
+> every LRUD line must be followed by a data line, including the last one
+> If you s/ignore ignore ignore ignore/left right up down/ then it ignores
+> absence of TCC part in the last line, but not in lines in the middle of a run.
+> This is inconsistnet with survex behaviour (which will let you give LRUD
+> info for a station and then stop - without subsequent TCC info)
+
+
+I've started work on 3D on weekend, and I do not understand what you've written. I've tried
+
+centreline
+  data normal station up down left right newline compass clino tape
+  0 2 3 4 5
+     100 -10 10
+  1 1 2 3 4
+endcentreline
+
+and it works (in therion). Probably, I've not understood what is inconsistent behaviour. Could you please send me some examples? I would be also interested in, how should "data dimenstions" work.
+
+Regards, S.
+
+
+
+
+
+
+From s.m at speleo.sk  Mon Mar  1 10:26:33 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 01 Mar 2004 10:26:33 +0100
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <068@reconstruction>
+
+
+> > >I still can't get join [id:pt]@survey style to work: I get 'invalid object'
+> > >  join [fsceil1:0]@river [farsidewest3:8]@river. commented out in attached
+> > >.th file.
+> >
+> > omit the brackets. Unfortunately therionbook is misleading in this point.
+>
+> I tried it without the brackets too: it says 'line mark not a keyword --
+> fsceil1:0 at river'
+
+
+Finally it wasn't a bug, but we've forgotten, how we've done it :))) (We're almost not using this feature). So
+
+join fsceil1 at river:0 farsidewest3 at river:7
+
+should work with current version of therion. We will update thbook.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Mon Mar  1 13:13:01 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 1 Mar 2004 12:13:01 +0000
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <069@reconstruction>
+
++++ Stacho Mudrak [04-03-01 10:26 +0100]:
+
+>>
+>
+>>>>> >> >I still can't get join [id:pt]@survey style to work: I get 'invalid
+>>
+>>> >object'
+>>
+>>>>> >> >  join [fsceil1:0]@river [farsidewest3:8]@river. commented out in
+>>
+>>> >attached
+>>
+>>>>> >> >.th file.
+>>>
+>>>> >>
+>>>> >> omit the brackets. Unfortunately therionbook is misleading in this point.
+>>
+>>> >
+>>> >I tried it without the brackets too: it says 'line mark not a keyword --
+>>> >fsceil1:0 at river'
+>
+>>
+>> Finally it wasn't a bug, but we've forgotten, how we've done it :))) (We're
+>> almost not using this feature). So
+>>
+>> join fsceil1 at river:0 farsidewest3 at river:7
+>>
+>> should work with current version of therion. We will update thbook.
+
+
+OK, checked it - does. Makes my pic look noticeably better.
+
+That's actually a rather odd syntax don't you think? The syntax in thbook
+seems rather more sensible to me (with the smaller parts to the left).
+Thinking about it 0:fsceil1 at river would actually be the most logical, but
+somehow that doesn't seem as clear as fsceil1:0 at river
+
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From m.b at speleo.sk  Mon Mar  1 13:30:06 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 01 Mar 2004 13:30:06 +0100
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <070@reconstruction>
+
+>> join fsceil1 at river:0 farsidewest3 at river:7
+>
+>
+> That's actually a rather odd syntax don't you think? The syntax in thbook
+> seems rather more sensible to me (with the smaller parts to the left).
+> Thinking about it 0:fsceil1 at river would actually be the most logical, but
+> somehow that doesn't seem as clear as fsceil1:0 at river
+
+
+If we take 'fsceil1 at river' as a full-ID, then the current syntax means
+<full-id>:<mark>, which is odd, but consistent -- isn't it?
+Martin
+
+
+
+From s.m at speleo.sk  Mon Mar  1 13:39:57 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 01 Mar 2004 13:39:57 +0100
+Subject: [therion] Re: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <071@reconstruction>
+
+
+> OK, checked it - does. Makes my pic look noticeably better.
+>
+> That's actually a rather odd syntax don't you think?
+
+
+Yes, it's not natural. At the first approach, we had syntax "fsceil1:0 at river", (when I started to fix the bug, I realized, that I have just to uncomment some lines :))) but than we've changed it. The problem is, I can't remeber why :(((, but I believe we had a serious reason.
+
+But the second think is - that joining lines at given points is really very rare situation. Firstly, when we had no "join scrap1 scrap2 -count 2", it was quite common. But now, we're almost not using it... (when you first think a little bit, where the scraps will join).
+
+The last think, in naming we were inspired by internet (@ and ":" as separators). And there you also specify port using ":" behind the machine.
+
+In fact, there is a lot of stuff like this in therion, we've left on "more sophisticated user interface", where you will just drag line from one line point to another.
+
+I've put new developement version (20040229) on the server. We would like to release version 0.2.29 tomorrow, when Martin will include his changes and modify thbook. But if you're interested in, there should work line highlighting, selected line is red, area is automatically showed when selected and also moving commands to specific position in the file is possible.
+
+S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Mon Mar  1 13:40:20 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 1 Mar 2004 12:40:20 +0000
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <072@reconstruction>
+
++++ Martin Budaj [04-03-01 13:30 +0100]:
+
+>>>> >>join fsceil1 at river:0 farsidewest3 at river:7
+>>
+>>> >
+>>> >That's actually a rather odd syntax don't you think? The syntax in thbook
+>>> >seems rather more sensible to me (with the smaller parts to the left).
+>>> >Thinking about it 0:fsceil1 at river would actually be the most logical, but
+>>> >somehow that doesn't seem as clear as fsceil1:0 at river
+>
+>>
+>> If we take 'fsceil1 at river' as a full-ID, then the current syntax means
+>> <full-id>:<mark>, which is odd, but consistent -- isn't it?
+
+
+yes. fair enough.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From m.b at speleo.sk  Tue Mar  2 08:42:05 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 02 Mar 2004 08:42:05 +0100
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <073@reconstruction>
+
+John Pybus writes:
+
+> I would certainly appreciate this.  I currently mark all the places I substitute similar symbols for the ones I really want with a comment so that I can easily go back and change them as functionality increases, or I find the time to look at defining the symbols I want.
+
+
+BTW, why don't you ask for some new features which you really want in this conference? We're used to drawing caves in one way so we can't imagine what ever would others need...
+Regards,
+Martin
+
+
+
+From s.m at speleo.sk  Tue Mar  2 11:20:38 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 02 Mar 2004 11:20:38 +0100
+Subject: 0.2.19
+Message-ID: <076@reconstruction>
+
+Here is list of changes in the new version of therion, which is able to download.
+
+therion:
+
+ * input language changes:
+   - place option of point, line, area commands: none renamed to default
+   - area command: place bottom is default
+   - line command: if contour has no gradient specified, visualization
+      is symbol-set dependent (no gradient tick in UIS, tick in the middle
+      in SKBB)
+   - line command: pit may be spelled as pitch
+   - line command has new type: gradient
+   - survey command has new option: person-rename
+ * configuration file changes:
+   - layout command has new option: debug
+   - select command: new rules for selection if there is no map selected
+ * scrap transformation improved, distortion logged in the log file
+ * debugging map mode shows scrap distortions
+ * bug fixed in PLT export
+
+xtherion:
+
+ * Map editor: status bar displays command preview
+ * Map editor: new Area control
+ * Map editor: `Move to' in File commands added
+ * Map editor: name of the edited scrap displayed in Title bar
+ * Map editor: edited line is highlited
+ * Map editor: selected area is highlited
+ * Map editor: orientation tick at the beginning of line symbols
+ * Help/Control dialog with key and mouse shortcuts
+ * input (keyboard) encoding menu
+
+Yours, thTeam
+
+
+
+
+
+From wookey at aleph1.co.uk  Tue Mar  2 12:53:22 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 2 Mar 2004 11:53:22 +0000
+Subject: therion and contours
+Message-ID: <077@reconstruction>
+
++++ Erin Lynch [04-03-01 20:18 -0800]:
+
+>> Hi Wooks,
+>>
+>> Just wanted to let you know that we're thinking about using Therion to
+>> trace contours and then writing a script to convert from Therion to
+>> survex legs.
+
+
+Interesting idea. If you need this then maybe Therion should incorporate
+something like it more directly, although I'm not sure how exactly...
+
+>> It should be doable, but we're having a few problems with
+>> our installation of Therion. The biggest one is that if you zoom in on
+>> a big map the whole thing just becomes unfeasibly slow.  Dunks thinks
+>> it's probably making a bitmap (or something) of the entire image at
+>> high res, which is why it's so slow.  Any ideas?
+
+
+Yep - that's right, in fact there is more than one copy. I found the same
+problem. (on a 64MB machine attemting to zoom to 200% on a 4MB scan makes
+the whole thing disapear in a puff of smoke). Complaining to the Therion
+list elicited this explanation:
+
+>> 200% of 3.8Mb = 4Mb original image + 16Mb scaled image + 20Mb canvas RGBA
+>> buffer = 40MB = 60% of RAM. This may be a problem, especially on some
+>> operating systems.
+
+
+The problem is that tcl's functions are used for the image management. tcl
+stores images internally as full RGB, so making them b/w or greyscale
+doesn't save any RAM, and it doesn't do anything clever like
+image-manipulation programs to only expand the visible tile. Something could
+probably be done to improve this but it's not trivial. This is a tradeoff of
+using a quick-prototyping language for the GUI rather than doing it the hard
+way.
+
+For the tme being you need to work with either a machine with loads of RAM or
+smaller images. Some work to see if TCL's handing can be improved in this
+regard would also be a good idea. I agree it's a serious problem, stacho
+doesn't seem entirely convinced yet.
+
+>> The other problem is that the lines, control points and handles are all
+>> a bit too chunky to be useable.   Any idea what magic rune we need to
+>> change in order to make them a bit smaller?
+
+
+Nope - ask the list - they are _really_ helpful. (the ctrl modified lets
+you place points very close to other points which helps with the 'can't
+zoom' problem).
+
+cc:ed to Therion list
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Tue Mar  2 16:28:35 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 02 Mar 2004 16:28:35 +0100
+Subject: [therion] Re: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <078@reconstruction>
+
+
+> For the tme being you need to work with either a machine with loads of RAM or
+> smaller images. Some work to see if TCL's handing can be improved in this
+> regard would also be a good idea. I agree it's a serious problem, stacho
+> doesn't seem entirely convinced yet.
+
+
+No comment. You can try, if you do not believe. The only solution is writing Tcl extension in C...
+
+> > The other problem is that the lines, control points and handles are all
+> > a bit too chunky to be useable.   Any idea what magic rune we need to
+> > change in order to make them a bit smaller?
+
+
+Will be configurable from xtherion.ini in the next release.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Tue Mar  2 16:47:05 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 2 Mar 2004 15:47:05 +0000
+Subject: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <079@reconstruction>
+
++++ Stacho Mudrak [04-03-02 16:28 +0100]:
+
+>>
+>
+>>> >For the tme being you need to work with either a machine with loads of RAM
+>>> >or
+>>> >smaller images. Some work to see if TCL's handing can be improved in this
+>>> >regard would also be a good idea. I agree it's a serious problem, stacho
+>>> >doesn't seem entirely convinced yet.
+>
+>>
+>> No comment. You can try, if you do not believe. The only solution is
+>> writing Tcl extension in C...
+
+
+I didn't mean that writing it would not be difficult, I meant that the
+problem of not being able to zoom large images is a serious useability
+problem for real users (we have <10 I am aware of and two of them have
+complained already  :-) .
+
+You suggested 'buy a bigger machine', which is OK up to a point but I'd much
+prefer making the software smarter. I realise that this is not easy.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From john.pybus at zoology.oxford.ac.uk  Wed Mar  3 13:10:27 2004
+From: john.pybus at zoology.oxford.ac.uk (John Pybus)
+Date: Wed, 03 Mar 2004 12:10:27 +0000
+Subject: [therion] Re: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <080@reconstruction>
+
+Wookey wrote:
+
+> +++ Stacho Mudrak [04-03-02 16:28 +0100]:
+>
+>>> For the tme being you need to work with either a machine with loads of RAM or
+>>> smaller images. Some work to see if TCL's handing can be improved in this
+>>> regard would also be a good idea. I agree it's a serious problem, stacho
+>>> doesn't seem entirely convinced yet.
+>>
+>>
+>> No comment. You can try, if you do not believe. The only solution is writing Tcl extension in C...
+>
+>
+>
+> I didn't mean that writing it would not be difficult, I meant that the
+> problem of not being able to zoom large images is a serious useability
+> problem for real users (we have <10 I am aware of and two of them have
+> complained already :-) .
+> You suggested 'buy a bigger machine', which is OK up to a point but I'd much
+> prefer making the software smarter. I realise that this is not easy.
+
+
+On the other hand, would this be a good us of limited developer resources?  The smallest machine I still use, my laptop, has 256Mb of RAM, and this is capable (just about) of handling a 10Mb gif of a >A4 scan.  Admittedly, if you zoom to 200% it hits the VM system pretty hard (340Mb process size) but it is usable once you've waited for the scaling operation to finish.  As time goes by, any efforts to support small memory systems will bring diminishing returns as average system sizes increase.
+
+Personally, I'd rather see effort to support other vector output formats  such as SVG, which would be easier to import into other editing and publishing tools for further manipulation or inclusion in larger publications.
+
+Yours,
+
+John
+
+
+
+
+From wookey at aleph1.co.uk  Wed Mar  3 13:42:26 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 3 Mar 2004 12:42:26 +0000
+Subject: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <081@reconstruction>
+
++++ John Pybus [04-03-03 12:10 +0000]:
+
+>> Wookey wrote:
+>
+>>> >+++ Stacho Mudrak [04-03-02 16:28 +0100]:
+>>> >You suggested 'buy a bigger machine', which is OK up to a point but I'd
+>>> >much prefer making the software smarter. I realise that this is not easy.
+>
+>>
+>> On the other hand, would this be a good us of limited developer
+>> resources?  The smallest machine I still use, my laptop, has 256Mb of
+>> RAM,
+
+
+OK, but I don't own _any_ machines with that _much_ ram (and I've got 5,
+excluding ARM machines and PDAs)! The only one I have access to with >256 Mb
+of RAM is the server here and that already jammed up against it's memory
+limits doing other things anyway.
+
+I can accept that my machine can't really cope with the 28000x16000 scan I
+tried to autotrace recently, but I think I ought to be able to zoom in on a
+4MB image without it exploding (having doubled up my ram to 128MB I can now
+just about do that). Erin and duncan are in china and are skint - they are
+likely to be working with less-than-state-of-the-art equipment too.
+
+>> Personally, I'd rather see effort to support other vector output formats
+>>  such as SVG, which would be easier to import into other editing and
+>> publishing tools for further manipulation or inclusion in larger
+>> publications.
+
+
+Fair enough, and of course Stacho can decide what he wants to do too - this
+is very much a 'scratch your own itch' project. I'm just asserting that the
+current limitations are a problem for me, and for Erin, and I think they'll
+bite quite a few others too. Obviously if no-one wants to actually do
+anything about it, then things will stay as they are, but it will affect the
+uptake of Therion.
+
+The other argument for better efficiency in this regard is using therion on
+small machines in the field, which is something I'd like to see be possible
+at some point, but that might require a move away from TCL anyway in the
+interests of efficiency, in which case this particular problem goes
+away/changes anyway.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From martinsluka at mac.com  Sat Mar  6 09:48:16 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sat, 6 Mar 2004 09:48:16 +0100
+Subject: [therion] Re: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <082@reconstruction>
+
+At 12:42 +0000 3.3.2004, Wookey wrote:
+*******************************************
+
+> OK, but I don't own _any_ machines with that _much_ ram (and I've got 5,
+> excluding ARM machines and PDAs)! The only one I have access to with >256 Mb
+> of RAM is the server here and that already jammed up against it's memory
+> limits doing other things anyway.
+
+
+TCL and RGB - TCL must calculate each pixel as RGB, mostly all monitors are RGB, BW monitors are exception. TCL must send RGB data to video.
+
+Wookey, I apologize myself, I know, I do quite different things on my comps (DTP, picture manipulations in Photoshop and so on.), but one of the best time saving investment in my life was to buy 1 GB (or more) RAM for each comp I use.
+
+We live in time when one may compare price of one RAM chip to price of beers drinked in one night ;))) . I remember many many times more expensive ones.
+
+Only several words from an old man :o)>
+
+Martin
+--
+
+
+
+
+From wookey at aleph1.co.uk  Tue Mar 16 14:12:35 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 16 Mar 2004 13:12:35 +0000
+Subject: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <083@reconstruction>
+
++++ Martin Sluka [04-03-06 09:48 +0100]:
+
+>> At 12:42 +0000 3.3.2004, Wookey wrote:
+>> *******************************************
+>>
+>
+>>> >OK, but I don't own _any_ machines with that _much_ ram (and I've got 5,
+>>> >excluding ARM machines and PDAs)! The only one I have access to with >256
+>>> >Mb of RAM is the server here and that already jammed up against it's
+>>> >memory limits doing other things anyway.
+>
+>>
+>> TCL and RGB - TCL must calculate each pixel as RGB, mostly all
+>> monitors are RGB, BW monitors are exception. TCL must send RGB data
+>> to video.
+
+
+That's irrelevant - it's not TCL that sends the signals directly to the
+monitor - that's framebuffer/video drivers/X/video hardware. When working
+with B&W TCL could perfectly well use 1 byte or even 1bit image
+representations. I realise that it doesn't, but it still doesn't need to
+zoom all the image which is off-screen. Smart image manipulation software
+works in tiles to keep memory requirements sensible.
+
+>> Wookey, I apologize myself, I know, I do quite different things on my
+>> comps (DTP, picture manipulations in Photoshop and so on.), but one
+>> of the best time saving investment in my life was to buy 1 GB (or
+>> more) RAM for each comp I use.
+>>
+>> We live in time when one may compare price of one RAM chip to price
+>> of beers drinked in one night ;))) . I remember many many times more
+>> expensive ones.
+
+
+That's only true if the hardware you have has the capacity for lots of RAM.
+My laptop can only have a max of 256 fitted, my desktop 512 the servers here
+256 and 512 respectively. If you have to buy new motherboards (which means
+new cases - AT->ATX) new IO cards (ISA/VLBUS->PCI) and so on, then it is not
+simply the matter of the memory cost. I realise new hardware is relatively
+cheap these days but in this case (displaying a scanned image at arbitrary
+resolution) I don't believe the correct answer to crappy memory management
+in the underlying language is 'go and buy a new computer'. When you can't
+zoom a 4MB image to 200% on a 64MB computer with a virual memory system then
+the software is deeply inefficient and that should be addressed, not simply
+accepted. That way leads to massive software bloat.
+
+I can zoom the very same image several thousand pecent on the same machine
+using the GIMP, showing that it is perfectly feasible (which is obvious
+anyway of course). I understand that Stacho has better things to do right
+now than worry about TCL's crummy image-handling, but I can't accept the
+'just buy a new computer' argument - we should have higher intellectual
+standards than that, and more to the point I don't have the money to splash
+around on new computers - I just bought one to play DVDs, so that's my
+budget for the couple of years spent...
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From m.b at speleo.sk  Tue Mar 16 15:43:57 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Tue, 16 Mar 2004 15:43:57 +0100
+Subject: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <084@reconstruction>
+
+Wookey writes:
+
+> I understand that Stacho has better things to do right
+> now than worry about TCL's crummy image-handling, but I can't accept the
+> 'just buy a new computer' argument - we should have higher intellectual
+> standards than that, and more to the point I don't have the money to splash
+> around on new computers - I just bought one to play DVDs, so that's my
+> budget for the couple of years spent...
+
+
+I see following possible solutions:
+* invest a _lot_ of effort to overcome TCL's limitations. This may be
+only time-vaste if we would eventually reimplement XTherion from
+scratch -- see the next point. (It's like trying to upgrade an old
+car -- it's usually better and cheaper to buy a new one.)
+* rewrite XTherion from scratch in C++ or other non-interpreted language.
+This would also require great amount of work, but it could benefit
+from compiled and optimized code and a completely new design with
+all TCL-Xtherion's shiftiness in mind.
+We suggested some ideas for discussion a couple of weeks ago (link
+to http://labyrinth.speleo.sk on this list), but there was no response.
+If we could form a group of developers which would
+1) discuss 2) implement it, we could have easy-to-use and efficient
+user interface. But this is possible only as a team work.
+* buy a better computer and use XTherion
+Any ideas?
+Martin
+
+
+
+From s.m at speleo.sk  Wed Mar 17 07:34:23 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 17 Mar 2004 07:34:23 +0100
+Subject: [therion] Re: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <085@reconstruction>
+
+Hi Wookey,
+
+could you please test attached version of xtherion? I've slightly modified the image handling and it seems to be a little bit faster, when zooming large images... Please let me know, whether it has helped you.
+
+Regards, S.
+
+
+
+From therion at mdryan.net  Wed Mar 17 16:49:18 2004
+From: therion at mdryan.net (Matt Ryan)
+Date: Wed, 17 Mar 2004 23:49:18 +0800
+Subject: [therion] Re: therion and contours
+In-Reply-To: <077@reconstruction>
+Message-ID: <086@reconstruction>
+
+>>>> We live in time when one may compare price of one RAM chip to price
+>>>> of beers drinked in one night ;))) . I remember many many times more
+>>>> expensive ones.
+
+
+Indeed, buying RAM definitely is the way to improve computing performance
+and the time saved is well worth the money - but as Wookey says, buying RAM
+sometimes just isn't possible - if it's not your machine for example or is
+an older / laptop motherboard.
+
+I played with Therion a year or so back and like the idea, more or less drew
+a map before giving up and doing it by hand and tracing that in Photoshop.
+I've not used it since then (no time and no caves to draw!) although I've
+lurked here watching new developments.  I've got a list of other things to
+do as long as my arm, but I would be prepared to spend a little bit of time
+helping to port XTherion to C++ (wxWindows?).  It's certainly a very
+worthwhile project.  Don't expect anything from me anytime soon though...
+
+-Matt
+
+
+
+
+From wookey at aleph1.co.uk  Fri Mar  5 16:04:11 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 5 Mar 2004 15:04:11 +0000
+Subject: 0.2.19 debianization
+Message-ID: <087@reconstruction>
+
+OK, I downloaded 0.2.19 and debianised it (nice and easy).
+
+However on running xtherion I find I am getting an awful lot of debug info
+like this:
+259 -  261:[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49
+50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74
+75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99
+100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118
+119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137
+138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156
+157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175
+176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194
+195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213
+214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232
+233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251
+252 253 254 255 256 257 258 259 260 0]
+260 -  262:[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49
+50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74
+75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99
+100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118
+119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137
+138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156
+157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175
+176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194
+195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213
+214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232
+233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251
+252 253 254 255 256 257 258 259 260 261 0]
+
+These occur when loading the .th2 file in the map editor. and there are 260
+numbered lines in the file (I like the line numbers in the command window -
+I think that'll help a lot). It looks there is a count from 1-n for each
+line n.
+
+I don't know if this is something to do with the 'why do extra 'text' lines
+appear' problem, but that is still present in this version. As Stacho can't
+repeat it I'd better try and work out what's going on myself.
+
+I was going to upload this version as it seems to work, but can't with all
+this debug info - if you tell me where it is I'll noble it.
+
+BTW, for my little soundriver survey, this version gives a 127K PDF. v0.2.18
+gave a 32K PDF. Is this dramatic increase expected?
+
+I'm away for a week in norway, so nothing more till I get back.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Fri Mar  5 16:56:13 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 05 Mar 2004 16:56:13 +0100
+Subject: [therion] 0.2.19 debianization
+In-Reply-To: <087@reconstruction>
+Message-ID: <088@reconstruction>
+
+>> I don't know if this is something to do with the 'why do extra 'text' lines
+>> appear' problem, but that is still present in this version. As Stacho can't
+>> repeat it I'd better try and work out what's going on myself.
+
+
+Sorry for that :((( I forgot to remove this debugging line. Please
+comment out line 204 in me_cmds.tcl (puts "$f - $t [llength ...) and
+make once again. Will be fixed in new release.
+
+>> BTW, for my little soundriver survey, this version gives a 127K PDF. v0.2.18
+>> gave a 32K PDF. Is this dramatic increase expected?
+
+
+Yes. We've changed the behaviour of area command. Now the sand is filled
+randomly - it looks much better on the map, but it takes much more space
+(because every dot is given by coordinates, before it was pattern with
+three dots).
+
+We are on the way to find a compromise - randomly filled pattern big
+enought, that it will not be too much visible, that it is a pattern.
+
+We would like to add "area blocks", where random blocks are definitely
+needed (it can not be pattern). Therefore we've changed the management
+of area commands - and "area sand" was used as a test (randomly
+generated dots clipped to area border).
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Fri Mar  5 17:24:49 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 5 Mar 2004 16:24:49 +0000
+Subject: 0.2.19 debianization
+In-Reply-To: <087@reconstruction>
+Message-ID: <089@reconstruction>
+
++++ Stacho Mudrak [04-03-05 16:56 +0100]:
+
+>>> > I don't know if this is something to do with the 'why do extra 'text' lines
+>>> > appear' problem, but that is still present in this version. As Stacho can't
+>>> > repeat it I'd better try and work out what's going on myself.
+>
+>>
+>> Sorry for that :((( I forgot to remove this debugging line. Please
+>> comment out line 204 in me_cmds.tcl (puts "$f - $t [llength ...) and
+>> make once again. Will be fixed in new release.
+
+
+OK, building....built and tested OK. uploading...
+
+>>> > BTW, for my little soundriver survey, this version gives a 127K PDF. v0.2.18
+>>> > gave a 32K PDF. Is this dramatic increase expected?
+>
+>>
+>> Yes. We've changed the behaviour of area command. Now the sand is filled
+>> randomly - it looks much better on the map, but it takes much more space
+>> (because every dot is given by coordinates, before it was pattern with
+>> three dots).
+>>
+>> We are on the way to find a compromise - randomly filled pattern big
+>> enought, that it will not be too much visible, that it is a pattern.
+
+
+yes - the filesize increase is perhaps a bit much for the visual gain here.
+A compromise would be good.
+
+>> We would like to add "area blocks", where random blocks are definitely
+>> needed (it can not be pattern). Therefore we've changed the management
+>> of area commands - and "area sand" was used as a test (randomly
+>> generated dots clipped to area border).
+
+
+Right - that makes sense - I'm looking forward to that feature  :-)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Thu Mar 25 14:51:18 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 25 Mar 2004 13:51:18 +0000
+Subject: Can I rotate a map?
+Message-ID: <090@reconstruction>
+
+I've had a request from the editor to send him a therion map rotated 90
+degrees so it fits better on the page.
+
+We can simply rotate the whole image, but it is possible to print a map with
+the text upright but north rotated? This is often useful for getting maps to
+fit on a page more efficiently (I've done it before for paper surveys), so
+if it's not currently a feature can we add it to the wishlist?
+
+I read the layout command, and whilst finding various fun things I didn't
+see a way to address this problem
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Thu Mar 25 16:12:21 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 25 Mar 2004 16:12:21 +0100
+Subject: Can I rotate a map?
+In-Reply-To: <090@reconstruction>
+Message-ID: <091@reconstruction>
+
+No, BUT ...
+
+> fit on a page more efficiently (I've done it before for paper surveys), so
+> if it's not currently a feature can we add it to the wishlist?
+
+
+It's already there (I should translate at least some parts of TODO from Slovak into English :)))
+
+> I read the layout command, and whilst finding various fun things I didn't
+> see a way to address this problem
+
+
+But it is still possible to do it (using very dirty trick) with your current version -
+you can set declination for the top-survey surrounding entire cave.
+
+-declination [90 deg]
+
+will rotate entire output 90 degrees clockwise.
+
+Hope it helps.
+
+Regards, S.
+
+P.S. What about zooming large images in xtherion. Did the new version of xtherion solved your memory problems?
+
+P.S.2. When I've tried to set -declination [90 deg] with latest version of therion (0.3.0 - will be hopefully published on Eastern) - it didn't worked. But with 0.2.19, it was OK. So you have pointed me to some serious bug I've introduced to the code :) Thanks.
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Mar 25 16:29:48 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 25 Mar 2004 15:29:48 +0000
+Subject: Can I rotate a map?
+In-Reply-To: <090@reconstruction>
+Message-ID: <092@reconstruction>
+
++++ Stacho Mudrak [04-03-25 16:12 +0100]:
+
+>> No, BUT ...
+>>
+>
+>>> >fit on a page more efficiently (I've done it before for paper surveys), so
+>>> >if it's not currently a feature can we add it to the wishlist?
+>
+>>
+>> It's already there (I should translate at least some parts of TODO from
+>> Slovak into English :)))
+
+
+that would be useful - I have no idea what is currently on the list  :-)
+
+>>> >I read the layout command, and whilst finding various fun things I didn't
+>>> >see a way to address this problem
+>
+>>
+>> But it is still possible to do it (using very dirty trick) with your
+>> current version -
+>> you can set declination for the top-survey surrounding entire cave.
+>>
+>> -declination [90 deg]
+>>
+>> will rotate entire output 90 degrees clockwise.
+
+
+thanx - that'll do for now (I get the north arrow pointing the wrong
+way(?) but that doesn't matter in this case)
+
+OK, that works but now I have another query. The page size of the PDF seems
+to be determined by the size of the background image, rather than the actual
+drawn lines. In the old version there was a lot of space below the cave, now
+there is a lot of space to the left of the cave, and this means the centred
+legend is hanging in a lot of whitespace. Is there a clip layout control I
+can use? The Thbook tells me there is age-setup for atlas mode only, and
+size for Map mode, but this only works is page-grid is on (I tried that and
+it didn't look nice on this survey - partly due to the huge white-space area)
+
+Oh yes and setting doc-title in layout doesn't change the title of the
+survey - it is still just the survey name 'river'. How do I specify that I
+want the output survey to be called 'Terikan River Cave'?
+
+>> P.S. What about zooming large images in xtherion. Did the new version of
+>> xtherion solved your memory problems?
+
+
+I haven't had time to try it yet - I just copied from mail to my 'therion'
+machine today to try.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Thu Mar 25 16:47:27 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 25 Mar 2004 16:47:27 +0100
+Subject: [therion] Re: Can I rotate a map?
+In-Reply-To: <090@reconstruction>
+Message-ID: <093@reconstruction>
+
+
+> that would be useful - I have no idea what is currently on the list :-)
+
+
+A lot of ugly things :)))
+
+> thanx - that'll do for now (I get the north arrow pointing the wrong
+> way(?) but that doesn't matter in this case)
+
+
+You can change the MP macro via layout :))) OK, it's even more dirty...
+
+> OK, that works but now I have another query. The page size of the PDF seems
+> to be determined by the size of the background image, rather than the actual
+> drawn lines.
+
+
+This is not true.
+
+>  In the old version there was a lot of space below the cave, now
+> there is a lot of space to the left of the cave, and this means the centred
+> legend is hanging in a lot of whitespace. Is there a clip layout control I
+> can use?
+
+
+I don't think so. I've been also asking for such a things, but this is the area of Martin and he is currently in Paris. He should be back on Monday.
+
+Anyway - as far as I remember - this was also a bug in 0.2.18 and I'm not sure, whether is was fixed in 0.2.19. It was happening, when you've been exporting atlas and map from one thconfig file. So if this is the case, just comment out the "export atlas", may be it will help. The background images have for sure nothing to do with PDF size. It is strictly determined by drawn objects. May be - there is something drawn on the map, but you can no see it (degenerated background???). I do not know? If you can send me those sources, I can have a look at it.
+
+> Oh yes and setting doc-title in layout doesn't change the title of the
+> survey - it is still just the survey name 'river'. How do I specify that I
+> want the output survey to be called 'Terikan River Cave'?
+
+
+Doc-title was only a temporary think, it was removed in version 0.2.19. The "river" comes either from survey (most probably), or  from map name. All you need to do is to specify title for survey. E.g.
+
+survey river -title "Terikan River Cave"
+
+or title for map
+
+map river -title "Terikan River Cave"
+
+Probably you are the first case. Survey and titles are shown on the "Survey structure" or "Map structure" TAB in the compiler.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Thu Mar 25 17:05:20 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 25 Mar 2004 16:05:20 +0000
+Subject: Can I rotate a map?
+In-Reply-To: <090@reconstruction>
+Message-ID: <094@reconstruction>
+
++++ Stacho Mudrak [04-03-25 16:47 +0100]:
+
+>>
+>
+>>> >OK, that works but now I have another query. The page size of the PDF seems
+>>> >to be determined by the size of the background image, rather than the
+>>> >actual
+>>> >drawn lines.
+>
+>>
+>> This is not true.
+
+
+I did wonder... It just seemed to be about that size 'extra'
+
+>>> > In the old version there was a lot of space below the cave, now
+>>> >there is a lot of space to the left of the cave, and this means the centred
+>>> >legend is hanging in a lot of whitespace. Is there a clip layout control I
+>>> >can use?
+>
+>>
+>> I don't think so. I've been also asking for such a things, but this is the
+>> area of Martin and he is currently in Paris. He should be back on Monday.
+>>
+>> Anyway - as far as I remember - this was also a bug in 0.2.18 and I'm not
+>> sure, whether is was fixed in 0.2.19. It was happening, when you've been
+>> exporting atlas and map from one thconfig file. So if this is the case,
+>> just comment out the "export atlas", may be it will help.
+
+
+There is no atlas exported (it's already commented out  :-) .
+
+In fact I have fixed it by changing scale and base-scale till I get
+something 'about right'. It works OK when cave is small in comparison to
+Legend, but not with big cave and tiny legend. I will investigate more.
+
+>> The background
+>> images have for sure nothing to do with PDF size. It is strictly determined
+>> by drawn objects. May be - there is something drawn on the map, but you can
+>> no see it (degenerated background???). I do not know? If you can send me
+>> those sources, I can have a look at it.
+
+
+I expect you are right - If I can't understand myself I'll send you a copy.
+
+>>> >Oh yes and setting doc-title in layout doesn't change the title of the
+>>> >survey - it is still just the survey name 'river'. How do I specify that I
+>>> >want the output survey to be called 'Terikan River Cave'?
+>
+>>
+>> Doc-title was only a temporary think, it was removed in version 0.2.19. The
+>> "river" comes either from survey (most probably), or  from map name. All
+>> you need to do is to specify title for survey. E.g.
+>>
+>> survey river -title "Terikan River Cave"
+
+
+this works, but having
+title "Terikan River Cave"
+inside this survey didn't - is that right?
+
+>> map river -title "Terikan River Cave"
+
+
+but this:
+ export map -proj plan -title "Terikan River Cave (east)" -layout elevator -o soundriverpln.pdf
+
+gives the error 'unrecognised option -title'
+
+It would be nice to specify the title on the map layout in this case rather than as
+part of one component survey.
+
+>> Probably you are the first case. Survey and titles are shown on the "Survey
+>> structure" or "Map structure" TAB in the compiler.
+
+
+OK - I was avoiding loading xtherion up (takes time  :-)
+
+thanx again - I've now got a survey good enough for the compass Pints front
+cover  :-)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Fri Mar 26 09:44:41 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 26 Mar 2004 09:44:41 +0100
+Subject: Can I rotate a map?
+In-Reply-To: <090@reconstruction>
+Message-ID: <095@reconstruction>
+
+
+> In fact I have fixed it by changing scale and base-scale till I get
+> something 'about right'. It works OK when cave is small in comparison to
+> Legend, but not with big cave and tiny legend. I will investigate more.
+
+
+Look carefully on your map - you have there a survey station 25 in the lower left corner :)
+
+You have forgotten to comment out line
+
+point 1013.0 -911.0 station -name 25
+
+in your soundriver.th2 file.
+
+> > The background
+> > images have for sure nothing to do with PDF size. It is strictly determined
+> > by drawn objects. May be - there is something drawn on the map, but you can
+> > no see it (degenerated background???). I do not know? If you can send me
+> > those sources, I can have a look at it.
+>
+> I expect you are right - If I can't understand myself I'll send you a copy.
+
+
+Well, I'm not rigth completely. Also objects that are clipped have impact on PDF page size. This should be probably changed.
+
+> this works, but having
+> title "Terikan River Cave"
+> inside this survey didn't - is that right?
+
+
+Yes. Title is the property of survey and map objects.
+
+> > map river -title "Terikan River Cave"
+>
+> but this:
+>  export map -proj plan -title "Terikan River Cave (east)" -layout elevator -o soundriverpln.pdf
+>
+> gives the error 'unrecognised option -title'
+
+
+Yes. In fact, export has no title.
+
+> It would be nice to specify the title on the map layout in this case rather than as
+> part of one component survey.
+
+
+We always specify the titles for the surveys. It's allways easier to read "Passage above English hall", like "paeh" - the survey name.
+
+But there is also possibility to specify map title in the layout (but only between "layout" and "endlayout" commands). Also other things can be changed in the layout. Try to add following lines to your map layout:
+
+code tex-map
+\cavename={Terikan River Cave}
+\topotitle={Surveyed by}
+\cartotitle={Drawn by}
+\explotitle={Explored by}
+
+This is probably do, what you would like to.
+
+When I've been studying your code yesterday, I've found some thing, which I would like to comment:
+
+1. soundriver.th
+
+2  8  8  6  2
+  30  046  +9
+1  6  4  4  2
+ 0 0 0   # faked data to make therion happy
+2  -  -  -  -
+  30  223  -2
+3  8  7  6  2
+
+Therion would be very happy, if you would put break instead of 0 0 0 line. If there is a break in interleaved data, it should be explicitely defined in therion.
+
+2  8  8  6  2
+  30  046  +9
+1  6  4  4  2
+ break
+2  -  -  -  -
+  30  223  -2
+3  8  7  6  2
+
+will definitely make therion happy :)))
+
+This is because of following, assume:
+
+data normal station up down newline compass clino tape
+1 2 3
+2 3 4
+3 4 5
+4 5 6
+6 7 8
+5 3 4
+7 8 9
+10 10 10
+
+In this case, therion is unable to say, where the break occurs.
+
+2. All inner walls (walls that form holes in the scrap outline) must have specified -outline in. Otherwise the clipping and filling path will not be correct. And you will have also problems when 3D model will be generated from such a degenerated outline.
+
+3. Scraps should touch each other - to look OK if they're shaded.  So you should add invisible walls there (wall -subtype invisible).
+
+Thanks again for your feedback - it seems to me, that therion tutor document is more than necessary. We should probably put it on the first place in the TODO list.
+
+S.
+
+P.S. I've attached two pictures, to illustrate things I've changed in your file.
+
+
+
+
+
+
+
+
+From wookey at aleph1.co.uk  Wed Mar 31 15:59:47 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Wed, 31 Mar 2004 14:59:47 +0100
+Subject: drawing up - seeking advice
+Message-ID: <096@reconstruction>
+
++++ Martin Sluka [04-03-31 10:05 +0200]:
+
+>> At 15:50 +0100 30.3.2004, Wookey wrote:
+>> *******************************************
+>>
+>
+>>> >A comparison of therion, TunnelX and Carto would be very useful, but I
+>>> >don't
+>>> >know of anyone who's tried all three.
+>
+>>
+>> Only  a note: Check automatic overlap feature of therion - there is a
+>> sample on therion page.
+>>
+>> http://therion.speleo.sk/img/sample.png
+
+
+neat. Although I strongly contend that lines which go underneath should have
+a small gap so that they do not touch the wall which they are going under.
+This makes for much clearer pictures. Althernatively the greying could occur
+before the wall/clipping zone.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Wed Mar 31 16:12:49 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 31 Mar 2004 16:12:49 +0200
+Subject: [therion] Re: drawing up - seeking advice
+In-Reply-To: <096@reconstruction>
+Message-ID: <097@reconstruction>
+
+>> neat. Although I strongly contend that lines which go underneath should have
+>> a small gap so that they do not touch the wall which they are going under.
+>> This makes for much clearer pictures. Althernatively the greying could occur
+>> before the wall/clipping zone.
+
+
+You're right - this would help a lot, but...
+
+... our scrap outline is given by bezier curves. And as far as I know,
+problem of finding parallel curve to given bezier curve has no
+analytical solution (numerical isn't possible to do in metapost - too
+slow). Any ideas?
+
+S.
+
+
+
+
+
+

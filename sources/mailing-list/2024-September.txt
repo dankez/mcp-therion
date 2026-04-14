@@ -1,0 +1,356 @@
+From xavier.robert at univ-grenoble-alpes.fr  Tue Sep 17 13:24:55 2024
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Tue, 17 Sep 2024 13:24:55 +0200
+Subject: [Therion] Request: SHP export improvements
+Message-ID: <71A7BA96-94FC-47BB-8534-0D2371479184@univ-grenoble-alpes.fr>
+
+Dear all,
+
+I am mostly writing to Therion developers, as I am not able to propose a valid code modification myself.
+
+For a large project (Gouffre Jean-Bernard + Gouffre Mirolda, France), we are exporting the surveys as ESRI shapefiles to build a GIS. For that, we also are developing a style sheet to reproduce the Therion symbology inside QGIS. It permits us to have the complete survey database on our phones/tablets in the field as a GIS project (we are currently using Mergin Maps app with a custom server). For those interested in, please, see pages 89 - 95 of the report https://groupe-speleo-vulcain.com/wp-content/uploads/2024/03/2023_Rapport_Expe.pdf <https://groupe-speleo-vulcain.com/wp-content/uploads/2024/03/2023_Rapport_Expe.pdf> (in French).
+
+But, there are some points that quite problematics/time consuming, and that may (?) be improved directly in Therion with the ESRI/shp export command:
+for the shapefile points2d.shp, the Therion feature corresponding to the ? -value ? option is not exported. For us, this is a problem to render the point ? height ?, as the value of the height does not exists in the shp ?> If in a next Therion release the -value option could be added to the attribut table of the point2d.shp, it would be great!
+in our GIS, we want to get the altitude information for at least station points. This information is not included in the attribut tables (points2d.shp and stations3d.shp). To get it, we have to reprocess the station3d.shp with a python script to add the altitude value in the attribut table after each new Therion compilation ?> Is it possible to add the station altitude value in the attribut table directly from Therion shp export? 
+The lines and areas shapefiles produced by Therion export are not limited to the inside of the cave (i.e. inside of the outline), even if they have the -clip on option. We need to use a custom Python script to cut the lines and areas with the outline shapefile as a mask, and this is absolutely not tolerant even for a very minor topologic error. ?> Is it possible to modify the ESRI/shp exportation function from Therion to natively masked the lines and areas that have the -clip on option and that are outside of the cave outline ?
+
+Is that possible to implement these features in a future Therion release?
+Thanks a lot,
+
+Cheers,
+
+Xavier
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240917/a4133bf2/attachment.htm>
+
+From xavier.robert at univ-grenoble-alpes.fr  Tue Sep 17 14:49:04 2024
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Tue, 17 Sep 2024 14:49:04 +0200
+Subject: [Therion] Suggestion to add new flags for survey shots?
+Message-ID: <E530B2E4-1927-46D1-9080-BA36B5F6DAAB@univ-grenoble-alpes.fr>
+
+Dear all,
+
+Some weeks ago, I commented the issue ? https://github.com/therion/therion/issues/571 <https://github.com/therion/therion/issues/571> ( Suggestion to add new flags for survey shots) ? on Github. 
+So far, I have not seen any answers, so I forward it there in case of someone is interested in and/or is able to update Therion with such a new feature:
+
+I do not know if this is easy to code or not, but I completely agree with cctrunz, it would be very usefull also for me to add new flags for survey shots. I am interesting in "artificial", but also in something like "active meander"/"active gallery", "active phreatic gallery", "fossil phreatic gallery", etc.
+
+One suggestion could be that somewhere (in centerline blocks? In a config file (better?)?), the Therion user could define its proper shot flags names with a syntax like:
+def_flags "MyNewFlag" "MNF" where "MyNewFlag" is the name of the flag use in the command flags, and MNF correspond to the 3-letters string associated to this flag in the sql database (and in the ESRI/shp export?).
+
+That means that some cases have to be considered:
+	? if the new flag definition exists and is used in centerline(s) --> update the database accordingly
+	? if the new flag definition does not exist and a new flag is used in a centerline: 1) raise a warning during the compilation indicating the presence of an undefined flag, and 2) update the shot database by adding a flag_name by default as "udf" (undefined?).
+
+I will be very interested in that feature for large and long-lived network analysis purposes (i.e. extract only a certain type of conduit for instance). I am sure it will strongly extend the possibilities of Therion survey database post-analysis.
+
+Thanks a lot,
+
+Cheers
+
+Xavier
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240917/0e3e3f90/attachment.htm>
+
+From gardere.yann at gmail.com  Sun Sep 22 11:28:31 2024
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Sun, 22 Sep 2024 11:28:31 +0200
+Subject: [Therion] Text color
+Message-ID: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+
+Hi
+
+Does anyone have a solution to set the text color?
+
+(Point label)
+
+Maybe by code metapost ?
+
+Thanks
+
+Yann
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240922/4fcd8aeb/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Sep 22 21:55:15 2024
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 23 Sep 2024 07:55:15 +1200
+Subject: [Therion] Text color
+In-Reply-To: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+References: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+Message-ID: <000001db0d29$59fffb10$0dfff130$@tomo.co.nz>
+
+Yann
+
+The options below give broad control of labels by scrap, map or entire export built into Therion.
+
+Many years since I experimented with colour text, in the end I decided black is better, so these are based on memory with a refresher skim through the Therion Book.
+
+ 
+
+Existing layout options include:
+
+Colour <item> <colour> where <colour> = map-fg (which can be scrap or map, and maybe altitude if smooth-shading is off) and <colour> = labels.
+
+ 
+
+So specify the colour of the map-fg then on another line specify the colour of the labels.
+
+Or maybe the second line should be ? colour labels on
+
+ 
+
+Or, when selecting a map in your th-config use:
+
+select <map>  -colour [100 100 3] # yellow
+
+ 
+
+The above options should give you refined control where your export has multiple maps.
+
+ 
+
+Also to blanket change all text:
+
+symbol-colour <point/line or group > text <colour>
+
+ 
+
+Good luck
+
+Bruce
+
+ 
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Yann Gard?re
+Sent: Sunday, 22 September 2024 21:29
+To: List for Therion users <therion at speleo.sk>
+Subject: [Therion] Text color
+
+ 
+
+Hi
+
+ 
+
+Does anyone have a solution to set the text color?
+
+ 
+
+(Point label)
+
+ 
+
+Maybe by code metapost ?
+
+ 
+
+Thanks
+
+ 
+
+Yann
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240923/6a29bb71/attachment.htm>
+
+From armchair.caver.nz at gmail.com  Sun Sep 22 23:12:46 2024
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Mon, 23 Sep 2024 09:12:46 +1200
+Subject: [Therion] Text color
+In-Reply-To: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+References: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+Message-ID: <CAG1=ZB9tP1U9NqcUA2bTQeZZujnK-_Qc396e0CHsZ=UubGNiqg@mail.gmail.com>
+
+Hi Yann,
+You can't override the colour of a specific label, but I had one project
+where I wanted a subset of labels in a different colour. I created a copy
+of the original label metapost to make a new user defined symbol (e.g.
+u:label_warning) which could then be styled with a specific colour with the
+symbol-colour command.
+
+Regards,
+Paul
+
+On Sun, 22 Sept 2024 at 21:29, Yann Gard?re <gardere.yann at gmail.com> wrote:
+
+>
+> Hi
+>
+> Does anyone have a solution to set the text color?
+>
+> (Point label)
+>
+> Maybe by code metapost ?
+>
+> Thanks
+>
+> Yann
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240923/aac63af4/attachment.htm>
+
+From gardere.yann at gmail.com  Tue Sep 24 19:36:28 2024
+From: gardere.yann at gmail.com (=?UTF-8?Q?Yann_Gard=C3=A8re?=)
+Date: Tue, 24 Sep 2024 19:36:28 +0200
+Subject: [Therion] Text color
+In-Reply-To: <CAG1=ZB9tP1U9NqcUA2bTQeZZujnK-_Qc396e0CHsZ=UubGNiqg@mail.gmail.com>
+References: <CAD0miv77-=Bupndm3z39=A+fHWQeJCeuqKSoMjVSx5MHTo3wAQ@mail.gmail.com>
+ <CAG1=ZB9tP1U9NqcUA2bTQeZZujnK-_Qc396e0CHsZ=UubGNiqg@mail.gmail.com>
+Message-ID: <CAD0miv5Wampai-qGYKjje5T-dTYMVZZzyVJ1WTTppdrBWQVoDw@mail.gmail.com>
+
+Thanks  Bruce and Paul, the diff?rent solution work fine ?
+
+
+
+Le dim. 22 sept. 2024 ? 23:13, Paul Rowe <armchair.caver.nz at gmail.com> a
+?crit :
+
+> Hi Yann,
+> You can't override the colour of a specific label, but I had one project
+> where I wanted a subset of labels in a different colour. I created a copy
+> of the original label metapost to make a new user defined symbol (e.g.
+> u:label_warning) which could then be styled with a specific colour with the
+> symbol-colour command.
+>
+> Regards,
+> Paul
+>
+> On Sun, 22 Sept 2024 at 21:29, Yann Gard?re <gardere.yann at gmail.com>
+> wrote:
+>
+>>
+>> Hi
+>>
+>> Does anyone have a solution to set the text color?
+>>
+>> (Point label)
+>>
+>> Maybe by code metapost ?
+>>
+>> Thanks
+>>
+>> Yann
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240924/968eb689/attachment.htm>
+
+From andrew at wotcc.org.uk  Thu Sep 26 23:20:10 2024
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 26 Sep 2024 22:20:10 +0100
+Subject: [Therion] Request: SHP export improvements
+In-Reply-To: <71A7BA96-94FC-47BB-8534-0D2371479184@univ-grenoble-alpes.fr>
+References: <71A7BA96-94FC-47BB-8534-0D2371479184@univ-grenoble-alpes.fr>
+Message-ID: <95f82b60-2a89-431f-ab62-fea705d89457@wotcc.org.uk>
+
+
+
+On 17/09/2024 12:24, Xavier Robert wrote:
+> For that, we also are developing a style sheet to reproduce the Therion 
+> symbology inside QGIS.
+
+This would be interesting to see, have you shared it anywhere? Although 
+I do not know if my knowledge of GIS is good enough to use it. I've been 
+playing with QGIS.
+
+I also notice that geospatial PDF (PDF2.0) exists. I don't think this is 
+part of Therion, or if it is I cannot get it to work. Seems to have the 
+surveys at whatever 0,0 of the coordinate system I set.
+It would be good if the georeferencing part of PDF could be enabled. No 
+idea how hard that would be, but it would be an easy way for the end 
+user to be able to add plans to GIS and the like.
+
+https://en.wikipedia.org/wiki/Geospatial_PDF
+
+It appears hat this gets confused with
+
+https://en.wikipedia.org/wiki/GeoPDF
+
+Which I cannot say surprises me!
+
+Andrew
+
+
+From xavier.robert at univ-grenoble-alpes.fr  Fri Sep 27 09:54:30 2024
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Fri, 27 Sep 2024 09:54:30 +0200
+Subject: [Therion] Request: SHP export improvements
+In-Reply-To: <95f82b60-2a89-431f-ab62-fea705d89457@wotcc.org.uk>
+References: <71A7BA96-94FC-47BB-8534-0D2371479184@univ-grenoble-alpes.fr>
+ <95f82b60-2a89-431f-ab62-fea705d89457@wotcc.org.uk>
+Message-ID: <A45EAD40-E452-4108-8052-1C701854ECAE@univ-grenoble-alpes.fr>
+
+Hi Andrew,
+
+No, we haven?t shared it for now as the style sheet is still in development and not clean enough for sharing. This is in my Todo list for some months to finalize this style sheet to share it to the community ! For sure, we will inform the Therion list users as soon this is available !
+
+Cheers,
+
+Xavier
+
+> Le 26 sept. 2024 ? 23:20, Andrew Atkinson <andrew at wotcc.org.uk> a ?crit :
+> 
+> 
+> 
+> On 17/09/2024 12:24, Xavier Robert wrote:
+>> For that, we also are developing a style sheet to reproduce the Therion symbology inside QGIS.
+> 
+> This would be interesting to see, have you shared it anywhere? Although I do not know if my knowledge of GIS is good enough to use it. I've been playing with QGIS.
+> 
+> I also notice that geospatial PDF (PDF2.0) exists. I don't think this is part of Therion, or if it is I cannot get it to work. Seems to have the surveys at whatever 0,0 of the coordinate system I set.
+> It would be good if the georeferencing part of PDF could be enabled. No idea how hard that would be, but it would be an easy way for the end user to be able to add plans to GIS and the like.
+> 
+> https://en.wikipedia.org/wiki/Geospatial_PDF
+> 
+> It appears hat this gets confused with
+> 
+> https://en.wikipedia.org/wiki/GeoPDF
+> 
+> Which I cannot say surprises me!
+> 
+> Andrew
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From dropstone at gmx.de  Sat Sep 28 11:38:47 2024
+From: dropstone at gmx.de (Axel)
+Date: Sat, 28 Sep 2024 11:38:47 +0200
+Subject: [Therion] Request: SHP export improvements
+In-Reply-To: <95f82b60-2a89-431f-ab62-fea705d89457@wotcc.org.uk>
+References: <71A7BA96-94FC-47BB-8534-0D2371479184@univ-grenoble-alpes.fr>
+ <95f82b60-2a89-431f-ab62-fea705d89457@wotcc.org.uk>
+Message-ID: <trinity-6cff2e6d-0af8-45c0-9e31-96a2add9017c-1727516327017@3c-app-gmx-bap21>
+
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20240928/98eef9e9/attachment.htm>
+

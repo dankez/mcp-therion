@@ -1,0 +1,1598 @@
+From bruce at tomo.co.nz  Thu Nov  2 20:16:30 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 3 Nov 2023 08:16:30 +1300
+Subject: [Therion] Setting map border framethickness to zero (off)
+Message-ID: <000401da0dc1$18129090$4837b1b0$@tomo.co.nz>
+
+I have just now solved this problem.  The error status must have been some
+combination of setting \framethickness to 0mm and the order in which I was
+calling layouts, although I cannot pin down why this would be the case.
+Anyway, setting \framethickness to 0mm does now remove a frame that was
+previously set in my project.
+
+The key to solving the problem as to why \framethickness was not responsive
+to a second call was that I was mistaken in my belief as to the order of
+layout calls in export commands.
+
+I always assumed the second layout called would be the second layout
+processed.  Alas it seems to be the other way around and layouts in export
+commands are processed in reverse order.
+
+eg like this:
+
+      export map -projection plan \
+
+      -layout LayoutProcessedLast   \             
+
+      -layout LayoutProcessedFirst   \
+
+     -output ../Output/CavePlan.pdf
+
+ 
+
+At least that is what I deduce from the behaviour where there are
+conflicting \framethickness statements.
+
+Except I think I have evidence that for some layout content it is the other
+way around.
+
+Anyone else have any insights as to the order of layout processing in export
+commands?
+
+ 
+
+Bruce
+
+ 
+
+From: Bruce Mutton <bruce at tomo.co.nz> 
+Sent: Monday, 30 October 2023 12:15
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Setting map border framethickness to zero (off)
+
+ 
+
+Good morning
+
+Probably a simple tex question.
+
+ 
+
+I often use this code to create a border around an exported map:
+
+code tex-map
+
+  \framethickness=0.5mm
+
+ 
+
+>From time to time (in the same compilation run) I insert one exported map
+into another using map-image and usually the inserted map should not have a
+border.
+
+To date I have always arranged my layouts so that \framethickness is
+undefined while the initial map is exported, THEN set to 0.5 mm for the
+second map export.
+
+ 
+
+It occurred to me that with my project arrangment it would be more
+convenient to set the border to 0.5 mm (in a global layout) and THEN reset
+it to zero or undefined in a layout specific to only one of the exports.
+
+I have tried these two options:
+
+ 
+
+code tex-map
+
+  \framethickness={}
+
+ 
+
+code tex-map
+
+  \framethickness=0mm
+
+ 
+
+The first causes error (pdftex exit code 1) and the second draws a 0.5 mm
+border around both maps.
+
+ 
+
+How should I 'turn off' a map border if \framethickness has already been
+set?
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231103/838ebab8/attachment.htm>
+
+From braulitorres at gmail.com  Thu Nov  2 21:56:25 2023
+From: braulitorres at gmail.com (Brauli Torres)
+Date: Thu, 2 Nov 2023 21:56:25 +0100
+Subject: [Therion] Problems generating the sketch KML file
+Message-ID: <CAMnhk1hk_4XSggUbzS7ifBNxMZu5nmKKdbbvnOG0Z_QD3kCTfQ@mail.gmail.com>
+
+Hello,
+I have a problem generating the KML file of the sketch of one of the
+cavities in my system.
+Xtherion does not calculate the coordinates of the sketch and places it
+incorrectly in Google Earth.
+What do I have to do to force Xtherion to correctly calculate the sketch
+coordinates in KML?
+Detail of a piece of the KML file of the incorrect sketch:
+..
+Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+  nan,nan,0.00000000000000 nan,nan,0.00000000000000 nan,nan,0.00000000000000
+...</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+nan,nan,0.00000000000000 nan,nan,0.00000000000000
+nan,nan,0.00000000000000 nan,nan,0.00000000000000
+nan,nan,0.00000000000000 nan,nan,0.00000000000000  ...</coordinates>
+</LinearRing>
+</outerBou
+...
+On the other hand, if it generates the traverse KML correctly, Detail of a
+piece of the correct traverse KML file:
+...
+...<name>T97-24</name>
+<styleUrl>#ThSurveyLine</styleUrl>
+<MultiGeometry>
+<LineString><coordinates>
+-0.15632552379485,42.67499752311521,2418.00000000000000
+-0.15655344552491,42.67507855478213,2421.28999999999996
+</coordinates></LineString>
+<LineString><coordinates>
+-0.15632552379485,42.67499752311521,2418.00000000000000
+-0.15629671968055,42.67489064219563,2410.57999999999993
+
+</coordinates></LineString>
+<LineString><coordinates>
+-0.15625526310203,42.67494337019725,2437.57999999999993
+-0.15624481424440,42.67491294488270,2437.90999999999985
+
+...
+
+Thank you very much for your help
+
+Brauli Torres Milla
+GEB -Grup d'Espeleologia de Badalona
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231102/09ed142f/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Nov  2 22:03:48 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 2 Nov 2023 21:03:48 +0000
+Subject: [Therion] Problems generating the sketch KML file
+In-Reply-To: <CAMnhk1hk_4XSggUbzS7ifBNxMZu5nmKKdbbvnOG0Z_QD3kCTfQ@mail.gmail.com>
+References: <CAMnhk1hk_4XSggUbzS7ifBNxMZu5nmKKdbbvnOG0Z_QD3kCTfQ@mail.gmail.com>
+Message-ID: <993918a9-70ae-496b-925c-26a47b50685b@ntlworld.com>
+
+Hi Brauli,
+
+> Xtherion does not calculate the coordinates of the sketch and places it 
+> incorrectly in Google Earth.
+
+Sounds like your scraps may be missing the station points. Therion 
+sometimes manages to muddle through when they are all missing, for 
+generating a PDF, but it cannot cope when generating "map" KML.
+
+I assume you have already specified the correct coordinate system ("cs") 
+and fixed the survey ("fix"), since your lines seem to be correct.
+
+Fingers crossed.
+
+Tarquin
+
+From braulitorres at gmail.com  Thu Nov  2 23:33:58 2023
+From: braulitorres at gmail.com (Brauli Torres)
+Date: Thu, 2 Nov 2023 23:33:58 +0100
+Subject: [Therion] Problems generating the sketch KML file
+In-Reply-To: <993918a9-70ae-496b-925c-26a47b50685b@ntlworld.com>
+References: <CAMnhk1hk_4XSggUbzS7ifBNxMZu5nmKKdbbvnOG0Z_QD3kCTfQ@mail.gmail.com>
+ <993918a9-70ae-496b-925c-26a47b50685b@ntlworld.com>
+Message-ID: <CAMnhk1hbtq3q3NW-DEmynv29F_4z-rHqkUrNV=O=KVH3E9zh9g@mail.gmail.com>
+
+Hello Tarquin,
+I don't know where the problem could be, I am attaching an extract of the
+TH file and the Thconfig file.
+But the KML of the sketch is created wrong and the KML of the traverse is
+created correctly
+
+survey T97 -title "T97"
+  centerline
+  # Sistema de Coordenadas datum ETRS89 zona 30
+    cs EPSG:25830
+    fix T97-24 733009 4728646 2418
+    date 1990.09.10
+    units length meters
+    units compass clino degrees
+    data normal from to length compass clino
+    extend left
+    T97-24 T97-25 21.00 299.0 9.0
+    extend right    .............
+ endcenterline
+ input T97-1p.th2
+endsurvey
+
+And the thconfig:
+source T97.th
+export map -output OUTPUT/plantaT97.pdf \
+  -proj plan \
+  -layout-debug off \
+  -layout-scale 1 100 \
+  -layout-scale-bar 10 m \
+  -layout-statistics explo-length on \
+  -layout-map-header 10 10  n \
+  -layout-map-comment "Escala 1:100" \
+  -layout-color map-bg transparent \
+  -layout-legend on \
+export map -projection plan -fmt kml -o OUTPUT/croquisT97.kml
+export model -fmt kml -o OUTPUT/poligonalT97.kml
+
+  thanks for your help
+
+Brauli Torres Milla
+GEB -Grup d'Espeleologia de Badalona
+
+El jue, 2 nov 2023 a las 22:09, Tarquin Wilton-Jones via Therion (<
+therion at speleo.sk>) escribi?:
+
+> Hi Brauli,
+>
+> > Xtherion does not calculate the coordinates of the sketch and places it
+> > incorrectly in Google Earth.
+>
+> Sounds like your scraps may be missing the station points. Therion
+> sometimes manages to muddle through when they are all missing, for
+> generating a PDF, but it cannot cope when generating "map" KML.
+>
+> I assume you have already specified the correct coordinate system ("cs")
+> and fixed the survey ("fix"), since your lines seem to be correct.
+>
+> Fingers crossed.
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231102/637d8566/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: poligonalT97.kml
+Type: application/vnd.google-earth.kml+xml
+Size: 5917 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231102/637d8566/attachment-0002.kml>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: croquisT97.kml
+Type: application/vnd.google-earth.kml+xml
+Size: 67808 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231102/637d8566/attachment-0003.kml>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Nov  2 23:42:23 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 2 Nov 2023 22:42:23 +0000
+Subject: [Therion] Problems generating the sketch KML file
+In-Reply-To: <CAMnhk1hbtq3q3NW-DEmynv29F_4z-rHqkUrNV=O=KVH3E9zh9g@mail.gmail.com>
+References: <CAMnhk1hk_4XSggUbzS7ifBNxMZu5nmKKdbbvnOG0Z_QD3kCTfQ@mail.gmail.com>
+ <993918a9-70ae-496b-925c-26a47b50685b@ntlworld.com>
+ <CAMnhk1hbtq3q3NW-DEmynv29F_4z-rHqkUrNV=O=KVH3E9zh9g@mail.gmail.com>
+Message-ID: <dd721283-8bd2-4089-8ad5-742e82d7fe1f@ntlworld.com>
+
+>  ?input T97-1p.th2
+
+If I am right, the error is in this file.
+You need to check if you have created station points, with the correct 
+-name options, for all of your stations in the scraps.
+
+From rsev at pm.me  Sat Nov  4 12:31:39 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Sat, 04 Nov 2023 11:31:39 +0000
+Subject: [Therion] anchors and rebelays line options
+Message-ID: <0_ZdyoiTStXvS9W6jiVwyYRSOv1ONThEVIC7mvjl_q7SyJBFM7OGsK6TAM1dOz3DLrfcftgkx-o4NZWxtqBu42YFuF5p9U0N5_ZEFyRfk4A=@pm.me>
+
+Hi,
+
+I am trying to understand the effect of the anchors and rebelays line options.
+
+I can?t visually see any difference in the outputed map and looking in the code, I can?t find a place where the TT_LINE_TAG_ROPE_ANCHORS and TT_LINE_TAG_ROPE_REBELAYS flags are used. I can only find where they are set.
+
+Can someone explain to me how to use them and how to see their effects?
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231104/132e879b/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sat Nov  4 22:55:20 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 4 Nov 2023 21:55:20 +0000
+Subject: [Therion] anchors and rebelays line options
+In-Reply-To: <0_ZdyoiTStXvS9W6jiVwyYRSOv1ONThEVIC7mvjl_q7SyJBFM7OGsK6TAM1dOz3DLrfcftgkx-o4NZWxtqBu42YFuF5p9U0N5_ZEFyRfk4A=@pm.me>
+References: <0_ZdyoiTStXvS9W6jiVwyYRSOv1ONThEVIC7mvjl_q7SyJBFM7OGsK6TAM1dOz3DLrfcftgkx-o4NZWxtqBu42YFuF5p9U0N5_ZEFyRfk4A=@pm.me>
+Message-ID: <6ca75389-5d55-4b77-bd72-85d28a54c558@ntlworld.com>
+
+> I am trying to understand the effect of the anchors and rebelays line 
+> options.
+> 
+> I can?t visually see any difference in the outputed map and looking in 
+> the code, I can?t find a place where the TT_LINE_TAG_ROPE_ANCHORS and 
+> TT_LINE_TAG_ROPE_REBELAYS flags are used. I can only find where they are 
+> set.
+> 
+> Can someone explain to me how to use them and how to see their effects?
+
+Try them in elevation (extended or projected), and create a diagonal 
+rope line with at least three linepoints.
+
+Personally, I hate them, because you have no control, and they never 
+seem to end up looking like the actual rigging. They just do rebelay 
+loops in unnatural positions. So for my rigging topos, I use my own rope 
+lines, which just draw basic lines, and I then manually draw rebelays, 
+Y-hangs etc. using B?zier curves. I use point anchor for anchors with my 
+custom anchor code, so I can set the specific kind of anchor symbol.
+
+https://therion.speleo.sk/wiki/riggingtopos
+
+From bruce at tomo.co.nz  Sun Nov  5 06:52:07 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 5 Nov 2023 18:52:07 +1300
+Subject: [Therion] Setting map border framethickness to zero (off) -layout
+ call order inconsistent
+Message-ID: <000001da0fac$37264f20$a572ed60$@tomo.co.nz>
+
+OK, there is some strange behaviour wrt the order of layout processing, or
+at least which layout statement prevails in the case of a conflict.
+
+I took the basic rabbit cave example, and modified the thconfig slightly to
+give one of the exports conflicting layout calls:
+
+ 
+
+#CODE TO PUT BORDER AROUND MAP
+
+#-----------------------------
+
+layout LayoutMapBorder
+
+code tex-map
+
+  \framethickness=0.5mm
+
+endcode  
+
+endlayout LayoutMapBorder
+
+ 
+
+#CODE TO REMOVE BORDER AROUND MAP
+
+#-----------------------------
+
+layout LayoutRemoveMapBorder
+
+code tex-map
+
+  \framethickness=0mm
+
+endcode
+
+endlayout LayoutRemoveMapBorder
+
+ 
+
+export map -projection extended -output rabbit-xelev.pdf \
+
+  -layout water-blue -layout-map-header 0 0 s -layout-map-header 0 110 sw \
+
+  -layout LayoutRemoveMapBorder -layout LayoutMapBorder
+
+ 
+
+The above export produces a map with header top-left and no border (green
+arguments prevail).  If I swap the grey and green layout calls, I get a
+header bottom-left and a border (grey arguments prevail).
+
+ 
+
+So why are these layouts treated differently?
+
+Is it that layouts that contain tex are treated differently to layouts that
+do not?
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+Sent: Friday, 3 November 2023 08:17
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Setting map border framethickness to zero (off)
+
+ 
+
+I have just now solved this problem.  The error status must have been some
+combination of setting \framethickness to 0mm and the order in which I was
+calling layouts, although I cannot pin down why this would be the case.
+Anyway, setting \framethickness to 0mm does now remove a frame that was
+previously set in my project.
+
+The key to solving the problem as to why \framethickness was not responsive
+to a second call was that I was mistaken in my belief as to the order of
+layout calls in export commands.
+
+I always assumed the second layout called would be the second layout
+processed.  Alas it seems to be the other way around and layouts in export
+commands are processed in reverse order.
+
+eg like this:
+
+      export map -projection plan \
+
+      -layout LayoutProcessedLast   \             
+
+      -layout LayoutProcessedFirst   \
+
+     -output ../Output/CavePlan.pdf
+
+ 
+
+At least that is what I deduce from the behaviour where there are
+conflicting \framethickness statements.
+
+Except I think I have evidence that for some layout content it is the other
+way around.
+
+Anyone else have any insights as to the order of layout processing in export
+commands?
+
+ 
+
+Bruce
+
+ 
+
+Sent: Monday, 30 October 2023 12:15
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: Setting map border framethickness to zero (off)
+
+ 
+
+Good morning
+
+Probably a simple tex question.
+
+ 
+
+I often use this code to create a border around an exported map:
+
+code tex-map
+
+  \framethickness=0.5mm
+
+ 
+
+>From time to time (in the same compilation run) I insert one exported map
+into another using map-image and usually the inserted map should not have a
+border.
+
+To date I have always arranged my layouts so that \framethickness is
+undefined while the initial map is exported, THEN set to 0.5 mm for the
+second map export.
+
+ 
+
+It occurred to me that with my project arrangment it would be more
+convenient to set the border to 0.5 mm (in a global layout) and THEN reset
+it to zero or undefined in a layout specific to only one of the exports.
+
+I have tried these two options:
+
+ 
+
+code tex-map
+
+  \framethickness={}
+
+ 
+
+code tex-map
+
+  \framethickness=0mm
+
+ 
+
+The first causes error (pdftex exit code 1) and the second draws a 0.5 mm
+border around both maps.
+
+ 
+
+How should I 'turn off' a map border if \framethickness has already been
+set?
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231105/e6b75864/attachment.htm>
+
+From bruce at tomo.co.nz  Sun Nov  5 08:14:56 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 5 Nov 2023 20:14:56 +1300
+Subject: [Therion] Setting map border framethickness to zero (off) -layout
+ call order inconsistent
+Message-ID: <000701da0fb7$c973eb20$5c5bc160$@tomo.co.nz>
+
+And just noticed this https://github.com/therion/therion/issues/425 
+
+Maybe related?
+
+ 
+
+Sent: Sunday, 5 November 2023 18:52
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Setting map border framethickness to zero (off) -layout call order
+inconsistent
+
+ 
+
+OK, there is some strange behaviour wrt the order of layout processing, or
+at least which layout statement prevails in the case of a conflict.
+
+I took the basic rabbit cave example, and modified the thconfig slightly to
+give one of the exports conflicting layout calls:
+
+ 
+
+#CODE TO PUT BORDER AROUND MAP
+
+#-----------------------------
+
+layout LayoutMapBorder
+
+code tex-map
+
+  \framethickness=0.5mm
+
+endcode  
+
+endlayout LayoutMapBorder
+
+ 
+
+#CODE TO REMOVE BORDER AROUND MAP
+
+#-----------------------------
+
+layout LayoutRemoveMapBorder
+
+code tex-map
+
+  \framethickness=0mm
+
+endcode
+
+endlayout LayoutRemoveMapBorder
+
+ 
+
+export map -projection extended -output rabbit-xelev.pdf \
+
+  -layout water-blue -layout-map-header 0 0 s -layout-map-header 0 110 sw \
+
+  -layout LayoutRemoveMapBorder -layout LayoutMapBorder
+
+ 
+
+The above export produces a map with header top-left and no border (green
+arguments prevail).  If I swap the grey and green layout calls, I get a
+header bottom-left and a border (grey arguments prevail).
+
+ 
+
+So why are these layouts treated differently?
+
+Is it that layouts that contain tex are treated differently to layouts that
+do not?
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+Sent: Friday, 3 November 2023 08:17
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: Setting map border framethickness to zero (off)
+
+ 
+
+I have just now solved this problem.  The error status must have been some
+combination of setting \framethickness to 0mm and the order in which I was
+calling layouts, although I cannot pin down why this would be the case.
+Anyway, setting \framethickness to 0mm does now remove a frame that was
+previously set in my project.
+
+The key to solving the problem as to why \framethickness was not responsive
+to a second call was that I was mistaken in my belief as to the order of
+layout calls in export commands.
+
+I always assumed the second layout called would be the second layout
+processed.  Alas it seems to be the other way around and layouts in export
+commands are processed in reverse order.
+
+eg like this:
+
+      export map -projection plan \
+
+      -layout LayoutProcessedLast   \             
+
+      -layout LayoutProcessedFirst   \
+
+     -output ../Output/CavePlan.pdf
+
+ 
+
+At least that is what I deduce from the behaviour where there are
+conflicting \framethickness statements.
+
+Except I think I have evidence that for some layout content it is the other
+way around.
+
+Anyone else have any insights as to the order of layout processing in export
+commands?
+
+ 
+
+Bruce
+
+ 
+
+Sent: Monday, 30 October 2023 12:15
+To: 'List for Therion users' <therion at speleo.sk <mailto:therion at speleo.sk> >
+Subject: Setting map border framethickness to zero (off)
+
+ 
+
+Good morning
+
+Probably a simple tex question.
+
+ 
+
+I often use this code to create a border around an exported map:
+
+code tex-map
+
+  \framethickness=0.5mm
+
+ 
+
+>From time to time (in the same compilation run) I insert one exported map
+into another using map-image and usually the inserted map should not have a
+border.
+
+To date I have always arranged my layouts so that \framethickness is
+undefined while the initial map is exported, THEN set to 0.5 mm for the
+second map export.
+
+ 
+
+It occurred to me that with my project arrangment it would be more
+convenient to set the border to 0.5 mm (in a global layout) and THEN reset
+it to zero or undefined in a layout specific to only one of the exports.
+
+I have tried these two options:
+
+ 
+
+code tex-map
+
+  \framethickness={}
+
+ 
+
+code tex-map
+
+  \framethickness=0mm
+
+ 
+
+The first causes error (pdftex exit code 1) and the second draws a 0.5 mm
+border around both maps.
+
+ 
+
+How should I 'turn off' a map border if \framethickness has already been
+set?
+
+ 
+
+Regards
+
+Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231105/8cd9f07e/attachment-0001.htm>
+
+From rsev at pm.me  Mon Nov  6 10:13:36 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 06 Nov 2023 09:13:36 +0000
+Subject: [Therion] anchors and rebelays line options
+In-Reply-To: <6ca75389-5d55-4b77-bd72-85d28a54c558@ntlworld.com>
+References: <0_ZdyoiTStXvS9W6jiVwyYRSOv1ONThEVIC7mvjl_q7SyJBFM7OGsK6TAM1dOz3DLrfcftgkx-o4NZWxtqBu42YFuF5p9U0N5_ZEFyRfk4A=@pm.me>
+ <6ca75389-5d55-4b77-bd72-85d28a54c558@ntlworld.com>
+Message-ID: <aTz9bxm6khpjAAX0r35fWJiSF7rw4tmMCVJwDwfEcOArnKM4CON5eT8D3-az4NykcGYXP1esy9Ap_tr3ydZYWzD8rpUrEsBk_osbySo929Q=@pm.me>
+
+On Saturday, November 4th, 2023 at 6:55 PM, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+
+
+> > I am trying to understand the effect of the anchors and rebelays line
+> > options.
+> > 
+> > I can?t visually see any difference in the outputed map and looking in
+> > the code, I can?t find a place where the TT_LINE_TAG_ROPE_ANCHORS and
+> > TT_LINE_TAG_ROPE_REBELAYS flags are used. I can only find where they are
+> > set.
+> > 
+> > Can someone explain to me how to use them and how to see their effects?
+> 
+> 
+> Try them in elevation (extended or projected), and create a diagonal
+> rope line with at least three linepoints.
+
+Great! Thanks.
+
+I just figured out that the default value for both anchors and rebelays is on. For some reason I believed that the default option was off and never tried the off value. My bad.
+
+
+Regards,
+
+Rodrigo Severo
+
+
+From rsev at pm.me  Mon Nov  6 10:22:27 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 06 Nov 2023 09:22:27 +0000
+Subject: [Therion] scale option for lines
+Message-ID: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+
+Hi,
+
+Understanding Therion, bit by bit...
+
+I can't see the effects of scale option in lines. Can someone describe a situation where the lines are affected by the scale option?
+
+Regards,
+
+Rodrigo Severo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231106/018aa150/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Nov  6 10:29:42 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 6 Nov 2023 09:29:42 +0000
+Subject: [Therion] scale option for lines
+In-Reply-To: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+References: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+Message-ID: <a18bf265-01de-48aa-a75a-afa73b1bc4c0@ntlworld.com>
+
+> I can't see the effects of scale option in lines. Can someone describe a 
+> situation where the lines are affected by the scale option?
+
+
+Lines are not affected by it when they are drawn. If I remember 
+correctly, lines default to medium (normal) thickness. However, you can 
+use the "min-symbol-scale" layout option to control what size of symbols 
+should not be drawn, and lines disappear when you say "min-symbol-scale L".
+
+From rsev at pm.me  Mon Nov  6 10:34:15 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 06 Nov 2023 09:34:15 +0000
+Subject: [Therion] scale option for lines
+In-Reply-To: <a18bf265-01de-48aa-a75a-afa73b1bc4c0@ntlworld.com>
+References: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+ <a18bf265-01de-48aa-a75a-afa73b1bc4c0@ntlworld.com>
+Message-ID: <KgmlIyRiZ6Ei4Mk3WBBBkmDgJ1vC2JHbM1g-nOECtKph6xmze-UF4Ucn-Mur6MrNe-xyqBRSvOjRgwTIeToVfo-2Elt_tA-tVwGN7GXaALc=@pm.me>
+
+On Monday, November 6th, 2023 at 6:29 AM, Tarquin Wilton-Jones via Therion <therion at speleo.sk> wrote:
+
+
+> > I can't see the effects of scale option in lines. Can someone describe a
+> > situation where the lines are affected by the scale option?
+> 
+> 
+> 
+> Lines are not affected by it when they are drawn. If I remember
+> correctly, lines default to medium (normal) thickness. However, you can
+> use the "min-symbol-scale" layout option to control what size of symbols
+> should not be drawn, and lines disappear when you say "min-symbol-scale L".
+
+Interesting. Unexpected but interesting. Thanks.
+
+I just found out that there is a label line type. I only knew the point one.
+
+For label lines, the scale option affects the text size.
+
+Does anybody knows another situation where line scale option is relevant?
+
+
+Rodrigo
+
+From bruce at tomo.co.nz  Mon Nov  6 19:18:09 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 7 Nov 2023 07:18:09 +1300
+Subject: [Therion] scale option for lines
+In-Reply-To: <KgmlIyRiZ6Ei4Mk3WBBBkmDgJ1vC2JHbM1g-nOECtKph6xmze-UF4Ucn-Mur6MrNe-xyqBRSvOjRgwTIeToVfo-2Elt_tA-tVwGN7GXaALc=@pm.me>
+References: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+ <a18bf265-01de-48aa-a75a-afa73b1bc4c0@ntlworld.com>
+ <KgmlIyRiZ6Ei4Mk3WBBBkmDgJ1vC2JHbM1g-nOECtKph6xmze-UF4Ucn-Mur6MrNe-xyqBRSvOjRgwTIeToVfo-2Elt_tA-tVwGN7GXaALc=@pm.me>
+Message-ID: <000601da10dd$9a75a8f0$cf60fad0$@tomo.co.nz>
+
+> Does anybody know another situation where line scale option is relevant?
+
+My understandings and deductions are here
+https://therion.speleo.sk/wiki/drawingchecklist
+Probably you have all the line scale options now, but there maybe something
+more towards the bottom of the page.
+
+Bruce
+
+
+From rsev at pm.me  Mon Nov  6 22:02:38 2023
+From: rsev at pm.me (Rodrigo Severo)
+Date: Mon, 06 Nov 2023 21:02:38 +0000
+Subject: [Therion] scale option for lines
+In-Reply-To: <000601da10dd$9a75a8f0$cf60fad0$@tomo.co.nz>
+References: <8IL8Qsib0l3mTnJuEFwbxd8Zs6fPIbCz2BInszshW0x9SihnjNbWcj74k4xIKy64DpkRadPOGyhQ6yFd2JMOEQg4wbsZWvwJ91JeN2g0b84=@pm.me>
+ <a18bf265-01de-48aa-a75a-afa73b1bc4c0@ntlworld.com>
+ <KgmlIyRiZ6Ei4Mk3WBBBkmDgJ1vC2JHbM1g-nOECtKph6xmze-UF4Ucn-Mur6MrNe-xyqBRSvOjRgwTIeToVfo-2Elt_tA-tVwGN7GXaALc=@pm.me>
+ <000601da10dd$9a75a8f0$cf60fad0$@tomo.co.nz>
+Message-ID: <liXfiYT_JtAVYteIqTwHd6kgxqO5Ab-1KxCy_8uu3CfrHeqrDVcsGX80jAZpBP7JZlAFrcr3NBPEkcipTLdBFE_63Pm8kzZRobyASwo9wqY=@pm.me>
+
+On Monday, November 6th, 2023 at 3:18 PM, Bruce Mutton <bruce at tomo.co.nz> wrote:
+
+
+> > Does anybody know another situation where line scale option is relevant?
+> 
+> 
+> My understandings and deductions are here
+> https://therion.speleo.sk/wiki/drawingchecklist
+> Probably you have all the line scale options now, but there maybe something
+> more towards the bottom of the page.
+
+Great! I will take a look. Thanks.
+
+Rodrigo
+
+
+From bgee at campercaver.net  Wed Nov 29 14:20:09 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 29 Nov 2023 07:20:09 -0600
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+Message-ID: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+
+Hello everyone -
+
+This is probably more of a general practices question than something 
+specific to Therion.  Among the group there is likely to be some 
+experience with this.  I hope at minimum someone can guide me to a place 
+for further learning.
+
+A few years ago Apple released a very high-end smartphone which has a 
+LIDAR feature (iPhone 12 Pro).  There are a few more models now which 
+have it.  I have heard of some people using this to create cave maps. 
+There is much I do not understand.
+
+Has anyone in the group taken the point cloud from an Apple LIDAR scan 
+and turned it into a Therion cave map?  If so, I am very interested in 
+the details of the process.
+
+The biggest issue I see is this:  How does the iPhone know where it is? 
+There is no GPS in a cave.  GPS is not accurate enough even if it did 
+work.  Inertial navigation also has big problems dealing with a cave 
+environment.
+
+There are many other issues, but I think that is the big one.
+
+Thanks!
+
+-- 
+===============
+Bill Gee
+
+From holl.balazs63 at gmail.com  Wed Nov 29 14:36:29 2023
+From: holl.balazs63 at gmail.com (=?UTF-8?Q?Balamb=C3=A9r_Hakapesz?=)
+Date: Wed, 29 Nov 2023 14:36:29 +0100
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+Message-ID: <CAPq666MatAugHM1EPgqBZ8EONXOjkyRhs6qyuEAmX0q8_-eozg@mail.gmail.com>
+
+On Wed, Nov 29, 2023 at 2:28?PM Bill Gee <bgee at campercaver.net> wrote:
+
+> Hello everyone -
+>
+> This is probably more of a general practices question than something
+> specific to Therion.  Among the group there is likely to be some
+> experience with this.  I hope at minimum someone can guide me to a place
+> for further learning.
+>
+> A few years ago Apple released a very high-end smartphone which has a
+> LIDAR feature (iPhone 12 Pro).  There are a few more models now which
+> have it.  I have heard of some people using this to create cave maps.
+> There is much I do not understand.
+>
+> Has anyone in the group taken the point cloud from an Apple LIDAR scan
+> and turned it into a Therion cave map?  If so, I am very interested in
+> the details of the process.
+>
+The model must be converted into a raster image, it can be processed.
+
+>
+> The biggest issue I see is this:  How does the iPhone know where it is?
+
+The iPhone doesn't know, it doesn't use GPS for lidar.
+The model must be adjusted for surveying.
+
+>
+> There is no GPS in a cave.  GPS is not accurate enough even if it did
+> work.  Inertial navigation also has big problems dealing with a cave
+> environment.
+>
+> There are many other issues, but I think that is the big one.
+>
+> Thanks!
+>
+> --
+> ===============
+> Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+Bal?zs Holl
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231129/11184f5e/attachment.htm>
+
+From davleb at yahoo.fr  Wed Nov 29 14:56:28 2023
+From: davleb at yahoo.fr (david Le berre)
+Date: Wed, 29 Nov 2023 13:56:28 +0000 (UTC)
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+Message-ID: <372159474.15344284.1701266188688@mail.yahoo.com>
+
+ Hi everyone and Bill
+Same question as bill and quite interested as well to learn more about this techno and may be to test it as well.About the localisation I don't? know yet how they can localise something in cave but for sure if you link lidar survey to each centerline point made by the DsitoX? you can probably? turnaround this issue witch is worthwhile if the lidar takes significant higher quantity of datas.
+David
+
+
+
+
+
+    Le mercredi 29 novembre 2023 ? 14:28:26 UTC+1, Bill Gee <bgee at campercaver.net> a ?crit :  
+ 
+ Hello everyone -
+
+This is probably more of a general practices question than something 
+specific to Therion.? Among the group there is likely to be some 
+experience with this.? I hope at minimum someone can guide me to a place 
+for further learning.
+
+A few years ago Apple released a very high-end smartphone which has a 
+LIDAR feature (iPhone 12 Pro).? There are a few more models now which 
+have it.? I have heard of some people using this to create cave maps. 
+There is much I do not understand.
+
+Has anyone in the group taken the point cloud from an Apple LIDAR scan 
+and turned it into a Therion cave map?? If so, I am very interested in 
+the details of the process.
+
+The biggest issue I see is this:? How does the iPhone know where it is? 
+There is no GPS in a cave.? GPS is not accurate enough even if it did 
+work.? Inertial navigation also has big problems dealing with a cave 
+environment.
+
+There are many other issues, but I think that is the big one.
+
+Thanks!
+
+-- 
+===============
+Bill Gee
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231129/911634bd/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Wed Nov 29 15:09:15 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 29 Nov 2023 14:09:15 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+Message-ID: <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+
+Hi Bill,
+
+> A few years ago Apple released a very high-end smartphone which has a 
+> LIDAR feature (iPhone 12 Pro).? There are a few more models now which 
+> have it.? I have heard of some people using this to create cave maps. 
+> There is much I do not understand.
+> 
+> Has anyone in the group taken the point cloud from an Apple LIDAR scan 
+> and turned it into a Therion cave map?? If so, I am very interested in 
+> the details of the process.
+
+OK, that's a mountain of a question. But yes they have been turned into 
+maps, though I don't know about Therion.
+
+Firstly, iPhone can do LiDAR and photogrammetry at the same time, and 
+you can put those together as a mesh with a tonne of post processing (it 
+can even do colours because of the photogrammetry!). It can do some of 
+this with its own software, but afaik, people prefer to use other 
+software for the LiDAR processing. This can be used to create pretty 
+accurate 3D views of caves. The loop closures look amazing, but it's 
+hard to know whether the post processing is swallowing the errors. There 
+is some work going on at the British Cave Surveying Group to get it 
+working. Jono was pioneering this.
+https://3dcavesurveys.com
+https://www.youtube.com/@valaheritage-jonathanleste4205
+
+At the moment, it has no centreline (unless he added that since I last 
+looked, but it's not a trivial task), so that currently makes it quite 
+incompatible with Therion.
+
+It is also worth noting that the iPhone has a 10 metre range. With 
+passages larger than that, it just invents a ceiling or wall, even 
+though there isn't one, which can really confuse any software that wants 
+to use the result. And no LiDAR scanner copes well with water.
+
+Secondly, with point cloud data, Julian Todd has a completely different 
+surveying package used to draw up surveys. You draw them in 3D, using a 
+VR headset. It's called TunnelVR. Some people love the experience, it 
+feels a lot like a computer game. But it is extremely different from 
+Therion - an entire world away, and although it can export paper 
+drawings, it is not as mature as Therion in that respect. Julian is very 
+enthusiastic about this if you wanted to ask for a demo.
+
+There are others who do post processing of LiDAR data, using white 
+spheres placed in the cave to link the scans to each other. These rely 
+on very expensive hardware (but this was used as part of the project to 
+survey all the world's largest chambers). I am very poor with names, and 
+forget who was doing that. Perhaps someone else can remind me.
+
+In all of these cases, a centreline does not exist. You could of course 
+use a scanner at every station, and import those as splays. That is more 
+data than I would ever want to work with in Therion. It would be 
+impossible to see the positions of things like boulders, pitch lips, 
+ceiling steps, etc., because the entire thing would be a mass of splay 
+lines, and would just be a grey blob. Though you could draw the walls to 
+perfection!
+
+Those should be good places to get you started.
+
+Cheers,
+
+Tarquin
+
+From geospatial3d at gmail.com  Wed Nov 29 15:29:03 2023
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Wed, 29 Nov 2023 14:29:03 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+Message-ID: <CAAUsM+MGUy3wwvT6kowMHKcw5R=EPcp06hhHPpyoypZk8mr=tw@mail.gmail.com>
+
+Mix and match LIDAR and DistoX2 ?
+
+You need to have something sufficiently large enough on your DistoX2
+survey stations to register within your point cloud. Preferably at
+least two points so that you can rotate the LIDAR point cloud(s) to
+match the DistoX2 survey. Mine Surveys using ZEB or equivalent LIDAR
+typically do a centreline survey using a theodolite and then add the
+ZEB LIDAR clouds using Levelling Staffs at the Centreline survey
+stations when doing the ZEB LIDAR survey.
+
+The LIDAR survey can be decimated based upon distance to adjacent
+nearest LIDAR points eg. choose a 0.3m point threshold or whatever you
+think appropriate for your survey. The resulting manageable clouds can
+then be rendered as local theodolite surveys (Range, Inclination,
+Bearing) within the DistoX2 Survex/Therion survey, just make sure you
+have sufficient registration points between traditional DistoX2 survey
+and the LIDAR.
+
+You can do a lot of DistoX2 splays and then try to manually match the
+LIDAR point cloud to the DistoX2 splay model. This is the method I
+used twelve years ago when I was first experimenting - it is very time
+consuming. Now I would suggest you use something that is sufficiently
+large enough to register in the LIDAR cloud that can be surveyed with
+the DistoX2 eg. a large distinctive rock, formation or other natural
+feature or something man-made, tackle bag, container, helmet etc.
+
+There is also potential to use a photogrammetry model to bridge
+between DistoX2 survey and LIDAR. Useful software packages to look at
+include Meshlab and Meshroom.
+
+Kevin Dixon
+York
+
+On Wed, 29 Nov 2023 at 14:09, Tarquin Wilton-Jones via Therion
+<therion at speleo.sk> wrote:
+>
+> Hi Bill,
+>
+> > A few years ago Apple released a very high-end smartphone which has a
+> > LIDAR feature (iPhone 12 Pro).  There are a few more models now which
+> > have it.  I have heard of some people using this to create cave maps.
+> > There is much I do not understand.
+> >
+> > Has anyone in the group taken the point cloud from an Apple LIDAR scan
+> > and turned it into a Therion cave map?  If so, I am very interested in
+> > the details of the process.
+>
+> OK, that's a mountain of a question. But yes they have been turned into
+> maps, though I don't know about Therion.
+>
+> Firstly, iPhone can do LiDAR and photogrammetry at the same time, and
+> you can put those together as a mesh with a tonne of post processing (it
+> can even do colours because of the photogrammetry!). It can do some of
+> this with its own software, but afaik, people prefer to use other
+> software for the LiDAR processing. This can be used to create pretty
+> accurate 3D views of caves. The loop closures look amazing, but it's
+> hard to know whether the post processing is swallowing the errors. There
+> is some work going on at the British Cave Surveying Group to get it
+> working. Jono was pioneering this.
+> https://3dcavesurveys.com
+> https://www.youtube.com/@valaheritage-jonathanleste4205
+>
+> At the moment, it has no centreline (unless he added that since I last
+> looked, but it's not a trivial task), so that currently makes it quite
+> incompatible with Therion.
+>
+> It is also worth noting that the iPhone has a 10 metre range. With
+> passages larger than that, it just invents a ceiling or wall, even
+> though there isn't one, which can really confuse any software that wants
+> to use the result. And no LiDAR scanner copes well with water.
+>
+> Secondly, with point cloud data, Julian Todd has a completely different
+> surveying package used to draw up surveys. You draw them in 3D, using a
+> VR headset. It's called TunnelVR. Some people love the experience, it
+> feels a lot like a computer game. But it is extremely different from
+> Therion - an entire world away, and although it can export paper
+> drawings, it is not as mature as Therion in that respect. Julian is very
+> enthusiastic about this if you wanted to ask for a demo.
+>
+> There are others who do post processing of LiDAR data, using white
+> spheres placed in the cave to link the scans to each other. These rely
+> on very expensive hardware (but this was used as part of the project to
+> survey all the world's largest chambers). I am very poor with names, and
+> forget who was doing that. Perhaps someone else can remind me.
+>
+> In all of these cases, a centreline does not exist. You could of course
+> use a scanner at every station, and import those as splays. That is more
+> data than I would ever want to work with in Therion. It would be
+> impossible to see the positions of things like boulders, pitch lips,
+> ceiling steps, etc., because the entire thing would be a mass of splay
+> lines, and would just be a grey blob. Though you could draw the walls to
+> perfection!
+>
+> Those should be good places to get you started.
+>
+> Cheers,
+>
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Wed Nov 29 15:56:28 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 29 Nov 2023 14:56:28 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <CAAUsM+MGUy3wwvT6kowMHKcw5R=EPcp06hhHPpyoypZk8mr=tw@mail.gmail.com>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+ <CAAUsM+MGUy3wwvT6kowMHKcw5R=EPcp06hhHPpyoypZk8mr=tw@mail.gmail.com>
+Message-ID: <5455713d-691d-4bc8-adce-ceb635188831@ntlworld.com>
+
+> You can do a lot of DistoX2 splays and then try to manually match the
+> LIDAR point cloud to the DistoX2 splay model. This is the method I
+> used twelve years ago when I was first experimenting - it is very time
+> consuming. Now I would suggest you use something that is sufficiently
+> large enough to register in the LIDAR cloud that can be surveyed with
+> the DistoX2 eg. a large distinctive rock, formation or other natural
+> feature or something man-made, tackle bag, container, helmet etc.
+
+I believe this purpose could very easily be served by the "three white 
+orbs". (Though the accuracy might not be great, since they are not 
+points, so you are hitting somewhere on a surface,  and can't precisely 
+locate that.)
+
+But this also then brings out the potential for error when the post 
+processing doesn't match the centreline, and one of them has to "win". 
+As you said, this is done in mine surveys.
+
+I still wouldn't want to be using Therion to draw up LiDAR data, just 
+because there is so much that it becomes unusable. It is already hard 
+enough drawing up a survey that has a lot of regular splays because the 
+team got over-enthusiastic with the Disto. "Wait, which one of those 
+splays points to the pitch edge?". And there is nothing to tell you if 
+something is a pitch, a climb, a floor step, or a dangerous pile of 
+loose boulders. Point clouds are great for showing fancy fly-throughs 
+for non-cavers, and for mining engineers to see exactly how much more 
+material they can remove before compromising a wall, but they add a lot 
+of confusion for a cartographer. (But again, see Julian's project.)
+
+From bgee at campercaver.net  Wed Nov 29 16:46:56 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 29 Nov 2023 09:46:56 -0600
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+Message-ID: <d155bd48-585c-4284-8415-2d2603a8837a@campercaver.net>
+
+A mountain of a question!  That is for sure.  I have been talking by 
+email with a friend who claims to have done dozens of cave maps using 
+the Apple LiDAR system.  So far he has not gone into detail on how it 
+was done.  I asked for some samples of the maps he made.  No Therion for 
+him - he uses Xara and Compass.
+
+Update - While writing this, he sent me some sample files and a bit more 
+detail.  His description:
+
+"My process is create the "LIDARonly" version. Then layer on the
+cartography...then create the standard cave format...strip off the LIDAR
+(image without Lidar in the file name)."
+
+Looking at the sample files, it looks like he extracts some images from 
+the point cloud.  One of them is an overhead view and others are cross 
+sections and profiles.  He then uses these JPG images as the drawing 
+background to produce a traditional cave map.  The LiDAR scan 
+essentially replaces the in-cave sketching.  I suspect there is some 
+custom software to extract the images from the point cloud.
+
+Another of my caving friends was doing photogrammetry over ten years 
+ago.  He used a regular digital camera and processed the photos through 
+https://www.agisoft.com/ PhotoScan.  It was amazing, and totally useless 
+for cave survey except perhaps as a way to document formations.
+
+Yet another of my caving friends does survey in a slightly different 
+way.  In the cave he sets survey stations and records centerline data, 
+just like everyone else does.  But then he takes his GoPro and shoots a 
+video of everything he just did.  Later - out of the cave - he uses the 
+centerline data and the GoPro video to make a traditional sketch.  That 
+is where Dennis stops.  He does not go on to turn his sketch into a map. 
+  He hands it off to cartographers to take care of that.
+
+The stuff at 3DCaveSurveys is way cool - but it is not a cave map 
+despite claims to the contrary.  I found another web site which has a 3D 
+visualization of a cave made with the Apple lidar system.
+
+https://www.tetongravity.com/story/gear-tech/digitalisation-of-caves-proceeds-using-lidar-on-new-iphones
+
+I downloaded the Torhola GLB file and was able to view it in MeshLab. 
+Way cool stuff!  He calls it a "model, not a map, and I agree with that 
+nomenclature.
+
+I remember some years ago hearing about some mapping projects where the 
+survey stations were marked with small balls in a specific color.  The 
+processing software recognized that color and provided a way to connect 
+those points to known x,y,z locations - a centerline.  It was 
+fantastically expensive in both money and computer resources.
+
+In a way, we do sort of the same thing with Therion.  The centerline 
+data is processed to produce a set of x,y,z coordinates.  The survey 
+stations are flagged in that data set.  Then when the sketch is drawn 
+out, we insert points of type "survey station" which are also flagged. 
+The sketch can be considered as a sort of two dimensional point cloud. 
+Therion knows how to match up the survey station points in the sketch 
+with the survey stations in the x,y,z coordinate set.  From there it can 
+morph everything around.
+
+So far the 3D presentations I have seen of caves would be useful 
+auxiliary material for a cave map, but they are no substitute for 
+traditional maps.
+
+===============
+Bill Gee
+
+On 11/29/23 08:09, Tarquin Wilton-Jones via Therion wrote:
+> Hi Bill,
+> 
+>> A few years ago Apple released a very high-end smartphone which has a 
+>> LIDAR feature (iPhone 12 Pro).? There are a few more models now which 
+>> have it.? I have heard of some people using this to create cave maps. 
+>> There is much I do not understand.
+>>
+>> Has anyone in the group taken the point cloud from an Apple LIDAR scan 
+>> and turned it into a Therion cave map?? If so, I am very interested in 
+>> the details of the process.
+> 
+> OK, that's a mountain of a question. But yes they have been turned into 
+> maps, though I don't know about Therion.
+> 
+> Firstly, iPhone can do LiDAR and photogrammetry at the same time, and 
+> you can put those together as a mesh with a tonne of post processing (it 
+> can even do colours because of the photogrammetry!). It can do some of 
+> this with its own software, but afaik, people prefer to use other 
+> software for the LiDAR processing. This can be used to create pretty 
+> accurate 3D views of caves. The loop closures look amazing, but it's 
+> hard to know whether the post processing is swallowing the errors. There 
+> is some work going on at the British Cave Surveying Group to get it 
+> working. Jono was pioneering this.
+> https://3dcavesurveys.com
+> https://www.youtube.com/@valaheritage-jonathanleste4205
+> 
+> At the moment, it has no centreline (unless he added that since I last 
+> looked, but it's not a trivial task), so that currently makes it quite 
+> incompatible with Therion.
+> 
+> It is also worth noting that the iPhone has a 10 metre range. With 
+> passages larger than that, it just invents a ceiling or wall, even 
+> though there isn't one, which can really confuse any software that wants 
+> to use the result. And no LiDAR scanner copes well with water.
+> 
+> Secondly, with point cloud data, Julian Todd has a completely different 
+> surveying package used to draw up surveys. You draw them in 3D, using a 
+> VR headset. It's called TunnelVR. Some people love the experience, it 
+> feels a lot like a computer game. But it is extremely different from 
+> Therion - an entire world away, and although it can export paper 
+> drawings, it is not as mature as Therion in that respect. Julian is very 
+> enthusiastic about this if you wanted to ask for a demo.
+> 
+> There are others who do post processing of LiDAR data, using white 
+> spheres placed in the cave to link the scans to each other. These rely 
+> on very expensive hardware (but this was used as part of the project to 
+> survey all the world's largest chambers). I am very poor with names, and 
+> forget who was doing that. Perhaps someone else can remind me.
+> 
+> In all of these cases, a centreline does not exist. You could of course 
+> use a scanner at every station, and import those as splays. That is more 
+> data than I would ever want to work with in Therion. It would be 
+> impossible to see the positions of things like boulders, pitch lips, 
+> ceiling steps, etc., because the entire thing would be a mass of splay 
+> lines, and would just be a grey blob. Though you could draw the walls to 
+> perfection!
+> 
+> Those should be good places to get you started.
+> 
+> Cheers,
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From wookey at wookware.org  Wed Nov 29 17:01:33 2023
+From: wookey at wookware.org (Wookey)
+Date: Wed, 29 Nov 2023 16:01:33 +0000
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+Message-ID: <20231129160133.GE30574@mail.wookware.org>
+
+> Has anyone in the group taken the point cloud from an Apple LIDAR scan and
+> turned it into a Therion cave map?  If so, I am very interested in the
+> details of the process.
+
+As Tarquin said Jono Lester has been main UK pioneer on this. He may
+send a response.  Julian Todd will say that you are asking the wrong
+question, and the right thing to do with a point cloud is use it to
+draw a 3D simplification rather than try to convert it to a
+traditional 2D simplification. His tunnelVR software lets you do this.
+
+Not everyone is convinced of this argument, but tunnelVR is well worth a look:
+https://sidequestvr.com/app/1630/tunnelvr
+https://www.youtube.com/watch?v=vOktKq0c7BY
+
+Wookey
+-- 
+Principal hats:  Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231129/d5c8e4f1/attachment-0001.sig>
+
+From m.budaj at gmail.com  Wed Nov 29 19:45:11 2023
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Wed, 29 Nov 2023 19:45:11 +0100
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <d155bd48-585c-4284-8415-2d2603a8837a@campercaver.net>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+ <d155bd48-585c-4284-8415-2d2603a8837a@campercaver.net>
+Message-ID: <CALPsdSsYLK3d_e_7xt9+PFrW0V376HQ6jqxrF1PxNAq1Rn9ZdQ@mail.gmail.com>
+
+On Wed, Nov 29, 2023 at 4:47?PM Bill Gee <bgee at campercaver.net> wrote:
+
+> Looking at the sample files, it looks like he extracts some images from
+> the point cloud.  One of them is an overhead view and others are cross
+> sections and profiles.  He then uses these JPG images as the drawing
+> background to produce a traditional cave map.  The LiDAR scan
+> essentially replaces the in-cave sketching.  I suspect there is some
+> custom software to extract the images from the point cloud.
+
+Indeed, the scans (combined with videogrammetry as in iPhone or iPad)
+preserve a lot of details and can be used to draw 2D maps. However,
+they can't completely replace the sketches or notes, as there is much
+information that can't be captured in the scans (air droughts, lake
+bottom etc.)
+
+> I remember some years ago hearing about some mapping projects where the
+> survey stations were marked with small balls in a specific color.  The
+> processing software recognized that color and provided a way to connect
+> those points to known x,y,z locations - a centerline.  It was
+> fantastically expensive in both money and computer resources.
+>
+> In a way, we do sort of the same thing with Therion.  The centerline
+> data is processed to produce a set of x,y,z coordinates.  The survey
+> stations are flagged in that data set.  Then when the sketch is drawn
+> out, we insert points of type "survey station" which are also flagged.
+> The sketch can be considered as a sort of two dimensional point cloud.
+> Therion knows how to match up the survey station points in the sketch
+> with the survey stations in the x,y,z coordinate set.  From there it can
+> morph everything around.
+
+This is exactly the plan how to implement it in Therion, when time permits:
+
+1) you scan a fragment of a cave (a 3D scrap) with some survey
+stations visually marked
+2) you assign station names as used in Therion centreline to local 3D
+coordinates in the 3D scrap
+3) Therion warps the 3D scrap and aligns it with the centreline
+4) ideally, Therion smoothly joins adjacent 3D scraps
+
+The result would be a 3D model which could combine the walls captured
+from scans with those generated from the 2D scraps and LRUD data. This
+way you could progressively improve the 3D model as your LiDAR
+scanning progresses.
+
+There is a preliminary issue for this here:
+https://github.com/therion/therion/issues/475
+
+Martin
+
+P.S. Here is a 50-metres dig scanned by an Apple LiDAR in around 30
+minutes: https://photos.app.goo.gl/Cvs8mej2RCqpGoj9A
+
+From phil.vernant at gmail.com  Thu Nov 30 10:45:32 2023
+From: phil.vernant at gmail.com (Philippe Vernant)
+Date: Thu, 30 Nov 2023 10:45:32 +0100
+Subject: [Therion] Turning LIDAR point clouds into cave maps
+In-Reply-To: <CALPsdSsYLK3d_e_7xt9+PFrW0V376HQ6jqxrF1PxNAq1Rn9ZdQ@mail.gmail.com>
+References: <29972be5-6e0e-48b0-b36f-80e093c42d9c@campercaver.net>
+ <9dca7dd4-1c5a-4526-ac4c-d27625bc2863@ntlworld.com>
+ <d155bd48-585c-4284-8415-2d2603a8837a@campercaver.net>
+ <CALPsdSsYLK3d_e_7xt9+PFrW0V376HQ6jqxrF1PxNAq1Rn9ZdQ@mail.gmail.com>
+Message-ID: <92183C0F-2301-4931-83E1-33453D58B2C5@gmail.com>
+
+Hi guys,
+
+You can also view a 3D cave from a photogrammetric survey with caveview on Karst3D. Here is the link to the cave:
+https://data.oreme.org/karst3d/karst3d_map#selected_layer=karst3d_station&selected_station=61
+
+If you visualize the 3D lox file, this is a therion survey and if you visualize the 3D file (PLY), this is downgraded photogrammetric survey.
+
+You can easily project on a map the 3D point cloud and draw a map on it but in this case you have to work with a GIS software. The best would definitely be to have a code computing virtual survey stations to input it in therion, it could also be based on the trajectory of the camera used for the 3D photogrammetric model   
+
+Cheers,
+Phil
+
+
+
+> On Nov 29, 2023, at 19:45, Martin Budaj <m.budaj at gmail.com> wrote:
+> 
+> On Wed, Nov 29, 2023 at 4:47?PM Bill Gee <bgee at campercaver.net> wrote:
+> 
+>> Looking at the sample files, it looks like he extracts some images from
+>> the point cloud.  One of them is an overhead view and others are cross
+>> sections and profiles.  He then uses these JPG images as the drawing
+>> background to produce a traditional cave map.  The LiDAR scan
+>> essentially replaces the in-cave sketching.  I suspect there is some
+>> custom software to extract the images from the point cloud.
+> 
+> Indeed, the scans (combined with videogrammetry as in iPhone or iPad)
+> preserve a lot of details and can be used to draw 2D maps. However,
+> they can't completely replace the sketches or notes, as there is much
+> information that can't be captured in the scans (air droughts, lake
+> bottom etc.)
+> 
+>> I remember some years ago hearing about some mapping projects where the
+>> survey stations were marked with small balls in a specific color.  The
+>> processing software recognized that color and provided a way to connect
+>> those points to known x,y,z locations - a centerline.  It was
+>> fantastically expensive in both money and computer resources.
+>> 
+>> In a way, we do sort of the same thing with Therion.  The centerline
+>> data is processed to produce a set of x,y,z coordinates.  The survey
+>> stations are flagged in that data set.  Then when the sketch is drawn
+>> out, we insert points of type "survey station" which are also flagged.
+>> The sketch can be considered as a sort of two dimensional point cloud.
+>> Therion knows how to match up the survey station points in the sketch
+>> with the survey stations in the x,y,z coordinate set.  From there it can
+>> morph everything around.
+> 
+> This is exactly the plan how to implement it in Therion, when time permits:
+> 
+> 1) you scan a fragment of a cave (a 3D scrap) with some survey
+> stations visually marked
+> 2) you assign station names as used in Therion centreline to local 3D
+> coordinates in the 3D scrap
+> 3) Therion warps the 3D scrap and aligns it with the centreline
+> 4) ideally, Therion smoothly joins adjacent 3D scraps
+> 
+> The result would be a 3D model which could combine the walls captured
+> from scans with those generated from the 2D scraps and LRUD data. This
+> way you could progressively improve the 3D model as your LiDAR
+> scanning progresses.
+> 
+> There is a preliminary issue for this here:
+> https://github.com/therion/therion/issues/475
+> 
+> Martin
+> 
+> P.S. Here is a 50-metres dig scanned by an Apple LiDAR in around 30
+> minutes: https://photos.app.goo.gl/Cvs8mej2RCqpGoj9A
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20231130/cee91ec4/attachment.htm>
+

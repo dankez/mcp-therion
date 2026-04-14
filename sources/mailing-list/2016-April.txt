@@ -1,0 +1,656 @@
+From martinsluka at mac.com  Fri Apr  1 09:59:48 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 01 Apr 2016 09:59:48 +0200
+Subject: [Therion] bad scrap overlay
+In-Reply-To: <56FD58B5.60705@speleo.fr>
+References: <56FD58B5.60705@speleo.fr>
+Message-ID: <715D6D34-CD2C-4E80-B0A9-1BCEC7554514@mac.com>
+
+Imagine two sloppy passages like faults side by side. On map, one of them should be drawn „above“ another one „bellow“. But there could be a problem for Therion - centerline in passage „above“ is on floor of it and centerline in passage „bellow“ is near ceiling. It means centerline of „bellow“ passage is higher than centerline of „above“ passage. So only human may decide what is „above“ and what is „bellow“.
+
+m.s.
+
+
+
+
+From martinsluka at mac.com  Sun Apr  3 13:16:58 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Apr 2016 13:16:58 +0200
+Subject: [Therion] 2016 NSS Cartographic Salon
+Message-ID: <3898F6C7-5C42-4DB0-92E6-E1C200F1CA37@mac.com>
+
+I think, that it is great opportunity to show results from Therion to cavers world.
+
+They are looking for entries to next categories:
+
+	• Electronic Displays
+Electronic displays of maps are welcome, as long as the entrant supplies the necessary equipment and is entirely responsible for its set up and security. Such maps should be on display through convention day and evening hours from Monday to Friday noon. Stands or tables for display equipment must be supplied or arranged for by the entrant.
+
+	• Web Maps 
+Web based maps will be considered for entry by the judges. Innovation in this media is welcome and encouraged.
+
+Criteria specific to web based maps have not yet been developed for this salon, but it is likely that the presentation should include features that use the web format to advantage. A plain PDF of a wall map as viewed on a laptop is unlikely to be well received.
+
+We will post the web address of the map in the salon area (include the URL on your entry form) or feel free to create your own poster to draw an audience. Maybe show a barcode link for smartphones.
+
+The map will be reviewed by judges using a 17-inch laptop (1920 x 1080 resolution), Windows 7, Internet Explorer 8, a three-button (center scroll wheel) wireless mouse, and the local WIFI.
+
+	• Models 
+Models or other 3D maps are welcome. Stands or tables for models, and any special lighting, must be supplied by the entrant.
+
+Check: https://caves.org/committee/salons/Cartographic.shtml
+
+m.s.
+
+From vld.georgiev at gmail.com  Mon Apr  4 11:57:29 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Mon, 4 Apr 2016 12:57:29 +0300
+Subject: [Therion] Setting Scrap Colours
+In-Reply-To: <20160328023744.GO3266@survex.com>
+References: <kgfk12c061gp8mqbhvcuxd54.1457634054275@email.android.com>
+	<CAJkGg4kPUhvEyfJxiyYyaacqbF5SqOaE9S6cm44ov9+uCSnWEA@mail.gmail.com>
+	<DA6A4B24CD4944968EC16FA966C25ED7@JUICEBRAIN>
+	<20160327084436.GM3266@survex.com>
+	<20160328023744.GO3266@survex.com>
+Message-ID: <CAHzQzvSy8DT5yc_YLQr=+y-ybU1xmaK=U6+BQj8XR=YMpg3p-g@mail.gmail.com>
+
+Olly
+
+This is a very nice addition indeed.
+I tested it and it works with single level maps, but it doesn't seem to
+work with nested maps, or I missed something about the usage.
+
+It works with several map definitions, not being merged in an overall map
+like:
+
+*  map M1 -colour [60 70 80]*
+
+*  endmap*
+
+*  map M2 -colour [60 70 80]*
+
+
+*  endmap  ...*
+
+
+*  export map ........ pdf*
+However when I group M1 and M2 in a larger map(without specifying a colour)
+it overrides the colours and they do not appear.
+
+*  map MGlobal*
+
+*    M1*
+
+*    M2*
+
+*  endmap*
+
+To me it seems better that the lower level map colors are kept, unless the
+global one explicitly specifies a colour.
+I guess the example above was done with several map defs without grouping
+them in a larger one.
+
+​Also, when I have several map defs(without colours and without a global
+map) and specify "colour map-fg map"​ the pieces get colored randomly.
+Maybe this is the expected behavior, but to me it sounds more logical to
+use the default map-fg colour until a map specifies one explicitly.
+The moment I set a global map (without colour) the default map-fg steps in.
+
+Am I asking too much :)
+
+Vladimir
+
+
+On Mon, Mar 28, 2016 at 5:37 AM, Olly Betts <olly at survex.com> wrote:
+
+> On Sun, Mar 27, 2016 at 09:44:37AM +0100, Olly Betts wrote:
+> > On Mon, Mar 14, 2016 at 09:23:39PM +1300, Bruce wrote:
+> > > Colour by map works just fine, as does colour by scrap or altitude.
+> > >
+> > > In the context of your question I thought you were trying to SPECIFY
+> > > which colour a particular scrap (or map or altitude) would be
+> > > assigned.
+> >
+> > I was "commissioned" to implement the ability to specify the colour
+> > used for each map - patch attached.
+> >
+> > With this (surprisingly small) change you can specify the colour for
+> > each map, which then overrides the automatic choice when the layout
+> > specifies "colour map-fg [map]".  Any maps without one get the same
+> > automatic colour they would before.
+> >
+> > Usage example:
+> >
+> > map 2012.map -projection plan
+> >   colour [0 70 0]
+> >   # etc
+> > endmap
+>
+> You can also specify the colour on the "map" line (which is probably
+> clearer):
+>
+> map 2012.map -projection plan -colour [0 70 0]
+>   # etc
+> endmap
+>
+> Jenny Black produced an example showing what you can do with this patch:
+>
+> https://survex.com/~olly/107-plan-col-year.pdf
+>
+> Cheers,
+>     Olly
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160404/e5d459f6/attachment.htm>
+
+From wookey at wookware.org  Mon Apr  4 14:26:09 2016
+From: wookey at wookware.org (Wookey)
+Date: Mon, 4 Apr 2016 13:26:09 +0100
+Subject: [Therion] Setting Scrap Colours
+In-Reply-To: <20160327084436.GM3266@survex.com>
+References: <kgfk12c061gp8mqbhvcuxd54.1457634054275@email.android.com>
+	<CAJkGg4kPUhvEyfJxiyYyaacqbF5SqOaE9S6cm44ov9+uCSnWEA@mail.gmail.com>
+	<DA6A4B24CD4944968EC16FA966C25ED7@JUICEBRAIN>
+	<20160327084436.GM3266@survex.com>
+Message-ID: <20160404122609.GY5030@mail.wookware.org>
+
++++ Olly Betts [2016-03-27 09:44 +0100]:
+> On Mon, Mar 14, 2016 at 09:23:39PM +1300, Bruce wrote:
+> > Colour by map works just fine, as does colour by scrap or altitude.
+> > 
+> > In the context of your question I thought you were trying to SPECIFY
+> > which colour a particular scrap (or map or altitude) would be
+> > assigned.
+> 
+> I was "commissioned" to implement the ability to specify the colour
+> used for each map - patch attached.
+
+I've included this, in the latest therion upload to Debian
+5.3.16-10 which has now migrated to Testing.
+
+One with Geogiev's v8 3D (co-ordinate system export in 3D file)
+changes has been prepared but I need to fix a couple of other things
+before uploading. Soon, if I don't get too distracted...
+
+Wookey
+-- 
+Principal hats:  Linaro, Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 819 bytes
+Desc: Digital signature
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160404/edee41c4/attachment.sig>
+
+From bruce at tomo.co.nz  Mon Apr  4 21:02:26 2016
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 5 Apr 2016 07:02:26 +1200
+Subject: [Therion] Setting Scrap Colours
+Message-ID: <f72vorrw3s583s3crwbitjyf.1459795605543@email.android.com>
+
+
+    
+Vladimir, OllyI have not tested the map colour patch. It looks like you have done a good job. I second Vladimir's suggestions and requests and look forward to the precompiled update!
+Bruce
+Sent from my Samsung device, hence the typo's
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160405/6d182fb4/attachment.htm>
+
+From vld.georgiev at gmail.com  Wed Apr  6 13:45:34 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Wed, 6 Apr 2016 14:45:34 +0300
+Subject: [Therion] XTherion: Line simplification
+Message-ID: <CAHzQzvTifd9+JhyYit5pUHXH9ieeUVPcR4kF584-EGQWVAQuxg@mail.gmail.com>
+
+Hi guys
+
+There was one option I was missing in XTherion to reduce the number of
+points in a line.
+I work mostly with Topodroid and depending on the settings while drawing,
+in some cases I end up with lines with hundreds of points. This makes them
+harder to edit, enlarges the TH2 file and slows the compilation.
+
+I added a menu Edit line > Simplify line that reduces the points. There is
+also a setting in xtherion.ini called "xth(gui,me,line,simp_limit)" that
+controls how smooth/rough the line becomes. A value of 10 seemed to work
+well for me.
+One limitation is that Bezier lines become simple lines.
+
+I've attached a few screenshots, the patch file, and the xtherion.tcl file.
+Would be nice is someone can test how it works with their scraps.
+
+Vladimir
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: xtherion.rar
+Type: application/rar
+Size: 192671 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment.rar>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 0001-xtherion-Added-line-simplification-menu-in-Edit-line.patch
+Type: application/octet-stream
+Size: 8406 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_31_40.png
+Type: image/png
+Size: 18327 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_20_41.png
+Type: image/png
+Size: 17540 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment-0001.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_21_13.png
+Type: image/png
+Size: 8512 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment-0002.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_22_09.png
+Type: image/png
+Size: 39917 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_23_15.png
+Type: image/png
+Size: 39508 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2016-04-06 14_31_09.png
+Type: image/png
+Size: 21495 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/cbdc2a28/attachment-0005.png>
+
+From martinsluka at mac.com  Wed Apr  6 14:39:36 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 06 Apr 2016 14:39:36 +0200
+Subject: [Therion] XTherion: Line simplification
+In-Reply-To: <CAHzQzvTifd9+JhyYit5pUHXH9ieeUVPcR4kF584-EGQWVAQuxg@mail.gmail.com>
+References: <CAHzQzvTifd9+JhyYit5pUHXH9ieeUVPcR4kF584-EGQWVAQuxg@mail.gmail.com>
+Message-ID: <FBA1791D-6958-4FCA-B6D5-4661E0C4FC30@mac.com>
+
+And "Convert to curve" doesn’t works for you?
+
+m.s.
+
+> 6. 4. 2016 v 13:45, Владимир Георгиев <vld.georgiev at gmail.com>:
+> 
+> Hi guys
+> 
+> There was one option I was missing in XTherion to reduce the number of points in a line.
+> I work mostly with Topodroid and depending on the settings while drawing, in some cases I end up with lines with hundreds of points. This makes them harder to edit, enlarges the TH2 file and slows the compilation.
+> 
+> I added a menu Edit line > Simplify line that reduces the points. There is also a setting in xtherion.ini called "xth(gui,me,line,simp_limit)" that controls how smooth/rough the line becomes. A value of 10 seemed to work well for me.
+> One limitation is that Bezier lines become simple lines.
+> 
+> I've attached a few screenshots, the patch file, and the xtherion.tcl file.
+> Would be nice is someone can test how it works with their scraps.
+> 
+> Vladimir
+> <xtherion.rar><0001-xtherion-Added-line-simplification-menu-in-Edit-line.patch><2016-04-06 14_31_40.png><2016-04-06 14_20_41.png><2016-04-06 14_21_13.png><2016-04-06 14_22_09.png><2016-04-06 14_23_15.png><2016-04-06 14_31_09.png>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/7253af0f/attachment.htm>
+
+From vld.georgiev at gmail.com  Wed Apr  6 14:55:24 2016
+From: vld.georgiev at gmail.com (=?UTF-8?B?0JLQu9Cw0LTQuNC80LjRgCDQk9C10L7RgNCz0LjQtdCy?=)
+Date: Wed, 6 Apr 2016 15:55:24 +0300
+Subject: [Therion] XTherion: Line simplification
+In-Reply-To: <FBA1791D-6958-4FCA-B6D5-4661E0C4FC30@mac.com>
+References: <CAHzQzvTifd9+JhyYit5pUHXH9ieeUVPcR4kF584-EGQWVAQuxg@mail.gmail.com>
+	<FBA1791D-6958-4FCA-B6D5-4661E0C4FC30@mac.com>
+Message-ID: <CAHzQzvRirT6PQxC5GZf_D2kCGv0jVcKZCNUoWaJH96zu=f=Bow@mail.gmail.com>
+
+In most cases it does, but if the points in a line are too many it still
+leaves more points than I would like. And some remaining points are still
+very close together because the line segment had some micro-curves that the
+Bezier lines tries to preserve.
+In other cases "Conver to curve" doesn't work and does nothing, but I
+haven't checked the code to see why.
+
+Sometimes I just need a simple "rougher" line without curves so I added
+this option.
+
+Vladimir
+
+On Wed, Apr 6, 2016 at 3:39 PM, Martin Sluka <martinsluka at mac.com> wrote:
+
+> And "Convert to curve" doesn’t works for you?
+>
+> m.s.
+>
+> 6. 4. 2016 v 13:45, Владимир Георгиев <vld.georgiev at gmail.com>:
+>
+> Hi guys
+>
+> There was one option I was missing in XTherion to reduce the number of
+> points in a line.
+> I work mostly with Topodroid and depending on the settings while drawing,
+> in some cases I end up with lines with hundreds of points. This makes them
+> harder to edit, enlarges the TH2 file and slows the compilation.
+>
+> I added a menu Edit line > Simplify line that reduces the points. There is
+> also a setting in xtherion.ini called "xth(gui,me,line,simp_limit)" that
+> controls how smooth/rough the line becomes. A value of 10 seemed to work
+> well for me.
+> One limitation is that Bezier lines become simple lines.
+>
+> I've attached a few screenshots, the patch file, and the xtherion.tcl file.
+> Would be nice is someone can test how it works with their scraps.
+>
+> Vladimir
+> <xtherion.rar>
+> <0001-xtherion-Added-line-simplification-menu-in-Edit-line.patch><2016-04-06
+> 14_31_40.png><2016-04-06 14_20_41.png><2016-04-06 14_21_13.png><2016-04-06
+> 14_22_09.png><2016-04-06 14_23_15.png><2016-04-06 14_31_09.png>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/82b3d632/attachment.htm>
+
+From martinsluka at mac.com  Wed Apr  6 16:05:26 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 06 Apr 2016 14:05:26 +0000 (GMT)
+Subject: [Therion] XTherion: Line simplification
+Message-ID: <eafd389c-5804-4eee-8df8-d8c07c421116@me.com>
+
+Super!
+
+"Convert to curve" works only if there are not smooth points. The conversion will stop on such point. If you remove the smoothness it will continue.
+
+Martin
+
+On Apr 06, 2016, at 02:56 PM, Владимир Георгиев <vld.georgiev at gmail.com> wrote:
+
+In most cases it does, but if the points in a line are too many it still leaves more points than I would like. And some remaining points are still very close together because the line segment had some micro-curves that the Bezier lines tries to preserve.
+In other cases "Conver to curve" doesn't work and does nothing, but I haven't checked the code to see why.
+
+Sometimes I just need a simple "rougher" line without curves so I added this option.
+
+Vladimir
+
+On Wed, Apr 6, 2016 at 3:39 PM, Martin Sluka <martinsluka at mac.com> wrote:
+And "Convert to curve" doesn’t works for you?
+
+m.s.
+
+6. 4. 2016 v 13:45, Владимир Георгиев <vld.georgiev at gmail.com>:
+
+Hi guys
+
+There was one option I was missing in XTherion to reduce the number of points in a line.
+I work mostly with Topodroid and depending on the settings while drawing, in some cases I end up with lines with hundreds of points. This makes them harder to edit, enlarges the TH2 file and slows the compilation.
+
+I added a menu Edit line > Simplify line that reduces the points. There is also a setting in xtherion.ini called "xth(gui,me,line,simp_limit)" that controls how smooth/rough the line becomes. A value of 10 seemed to work well for me.
+One limitation is that Bezier lines become simple lines.
+
+I've attached a few screenshots, the patch file, and the xtherion.tcl file.
+Would be nice is someone can test how it works with their scraps.
+
+Vladimir
+<xtherion.rar><0001-xtherion-Added-line-simplification-menu-in-Edit-line.patch><2016-04-06 14_31_40.png><2016-04-06 14_20_41.png><2016-04-06 14_21_13.png><2016-04-06 14_22_09.png><2016-04-06 14_23_15.png><2016-04-06 14_31_09.png>_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160406/d1b6eecb/attachment.htm>
+
+From knollesimage at t-online.de  Wed Apr 13 12:46:07 2016
+From: knollesimage at t-online.de (Michael)
+Date: Wed, 13 Apr 2016 12:46:07 +0200
+Subject: [Therion] White space along survey lines
+Message-ID: <000001d19571$afd12f20$0f738d60$@t-online.de>
+
+Hello,
+Can someone help me with following problem:
+
+Survey lines in sketches (not in scraps) bring a white "channel" with them.
+I.e., white space along the survey lines.
+The white space makes the sketch beneath partly invisible. See picture.
+
+It appears that the white "channel" is derived from LRUD data, because if I
+omit the LRUD data, the white channel disappears, the survey line displays
+nicely.
+
+I looked at the definitions of l_survey_cave_SKBB and l_survey_cave_UIS
+(which one is used for symbol set AUT?) but have no idea how to redefine
+them to ignore LRUD.
+
+Michael.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: survey-lines.jpg
+Type: image/jpeg
+Size: 4523 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160413/ac0eb54c/attachment.jpg>
+
+From lists at group-s.sk  Thu Apr 14 13:09:52 2016
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Thu, 14 Apr 2016 13:09:52 +0200
+Subject: [Therion] White space along survey lines
+In-Reply-To: <000001d19571$afd12f20$0f738d60$@t-online.de>
+References: <000001d19571$afd12f20$0f738d60$@t-online.de>
+Message-ID: <CAP35+gG48JWPSj9wGC0f_Vjq1yWmN=r01fOVVMw3VtsvBoNoKA@mail.gmail.com>
+
+Hello Michael, I am not sure, but
+
+symbol-hide area dimensions
+
+in your layout should work.
+
+S.
+
+On 13 April 2016 at 12:46, Michael <knollesimage at t-online.de> wrote:
+
+> Hello,
+> Can someone help me with following problem:
+>
+> Survey lines in sketches (not in scraps) bring a white "channel" with them.
+> I.e., white space along the survey lines.
+> The white space makes the sketch beneath partly invisible. See picture.
+>
+> It appears that the white "channel" is derived from LRUD data, because if I
+> omit the LRUD data, the white channel disappears, the survey line displays
+> nicely.
+>
+> I looked at the definitions of l_survey_cave_SKBB and l_survey_cave_UIS
+> (which one is used for symbol set AUT?) but have no idea how to redefine
+> them to ignore LRUD.
+>
+> Michael.
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160414/ced0ba09/attachment.htm>
+
+From knollesimage at t-online.de  Wed Apr 20 15:47:14 2016
+From: knollesimage at t-online.de (Michael)
+Date: Wed, 20 Apr 2016 15:47:14 +0200
+Subject: [Therion] White space along survey lines
+In-Reply-To: <CAP35+gG48JWPSj9wGC0f_Vjq1yWmN=r01fOVVMw3VtsvBoNoKA@mail.gmail.com>
+References: <000001d19571$afd12f20$0f738d60$@t-online.de>
+	<CAP35+gG48JWPSj9wGC0f_Vjq1yWmN=r01fOVVMw3VtsvBoNoKA@mail.gmail.com>
+Message-ID: <000701d19b0b$25afd180$710f7480$@t-online.de>
+
+Hello Stacho,
+
+ 
+
+Your hint appears to work – pending further tests.
+
+ 
+
+Many thanks,
+
+Michael.
+
+ 
+
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag von Stacho Mudrak
+Gesendet: Donnerstag, 14. April 2016 13:10
+An: List for Therion users <therion at speleo.sk>
+Betreff: Re: [Therion] White space along survey lines
+
+ 
+
+Hello Michael, I am not sure, but
+
+ 
+
+symbol-hide area dimensions
+
+ 
+
+in your layout should work.
+
+ 
+
+S.
+
+ 
+
+On 13 April 2016 at 12:46, Michael <knollesimage at t-online.de <mailto:knollesimage at t-online.de> > wrote:
+
+Hello,
+Can someone help me with following problem:
+
+Survey lines in sketches (not in scraps) bring a white "channel" with them.
+I.e., white space along the survey lines.
+The white space makes the sketch beneath partly invisible. See picture.
+
+It appears that the white "channel" is derived from LRUD data, because if I
+omit the LRUD data, the white channel disappears, the survey line displays
+nicely.
+
+I looked at the definitions of l_survey_cave_SKBB and l_survey_cave_UIS
+(which one is used for symbol set AUT?) but have no idea how to redefine
+them to ignore LRUD.
+
+Michael.
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk <mailto:Therion at speleo.sk> 
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160420/2e14506a/attachment.htm>
+
+From martinsluka at mac.com  Fri Apr 29 14:16:34 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 29 Apr 2016 14:16:34 +0200
+Subject: [Therion] How to generate PDF only with polygon - solution
+In-Reply-To: <000701d19b0b$25afd180$710f7480$@t-online.de>
+References: <000001d19571$afd12f20$0f738d60$@t-online.de>
+	<CAP35+gG48JWPSj9wGC0f_Vjq1yWmN=r01fOVVMw3VtsvBoNoKA@mail.gmail.com>
+	<000701d19b0b$25afd180$710f7480$@t-online.de>
+Message-ID: <A919AE5C-7886-4436-9671-6171A4311076@mac.com>
+
+The trick is to „select“ a map defined from surveys in thconfig with full path, including the name of highest survey, where that map is defined.
+
+source index.th 
+
+select polygon.map at index_survey
+
+export map -layout-debug station-names ### to display station names too.
+
+
+######where#######
+
+
+survey index_survey -title "Perlová jaskyňa"
+
+input 2015.th
+input 2016.th
+
+equate 48 at 2015_survey    0 at 2016_survey
+
+map polygon.map -projection plan
+	2015_survey
+	2016_survey
+endmap
+
+endsurvey
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160429/c20660ce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: cave.pdf
+Type: application/pdf
+Size: 79303 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160429/c20660ce/attachment.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160429/c20660ce/attachment-0001.htm>
+

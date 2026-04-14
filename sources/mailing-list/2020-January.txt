@@ -1,0 +1,365 @@
+From tarquin.wilton-jones at ntlworld.com  Mon Jan  6 10:14:00 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 6 Jan 2020 09:14:00 +0000
+Subject: [Therion] compiling error
+In-Reply-To: <CAKBacK0eZd3RD8wERc0fL+9L6fYgVL7MphMaLV_qC95Rhn-0vw@mail.gmail.com>
+References: <CAKBacK0eZd3RD8wERc0fL+9L6fYgVL7MphMaLV_qC95Rhn-0vw@mail.gmail.com>
+Message-ID: <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+
+On 22/12/2019 18:13, Gareth Davies wrote:
+> I'm getting the same error every time I compile. it doesn't seem to
+> effect the process as the PDF appears to be creating correctly.. Anyhow
+> other than being annoying it means I have to switch views constantly so
+> any thoughts?
+> 
+> ##################### end of pdftex log file #####################
+> done
+> writing xtherion file ...
+> C:\Program Files (x86)\Therion\therion.exe: warning -- can't open
+> xtherion file for output -- Plan.thconfig.xth
+> compilation time: 1 sec
+
+GOT IT!
+
+This is a weird one indeed, and very definitely a bug or set of bugs in
+Therion.
+
+Your .xtherion.dat file (a log file created by Therion when it compiles)
+has the "Hidden" flag set on Windows, something it gets automatically on
+Linux by having a dot at the start of the name, except you're not using
+Linux. I don't know how that happened, since you never set it yourself.
+Maybe it has something to do with how you shared the files between
+computers using the PCloud service?...
+
+When .xtherion.dat has the "Hidden" flag set, Therion thinks it cannot
+write to it (even though it actually can, since the Read-Only flag is
+not set), so it doesn't output anything to that file, and throws an
+error. The error has the wrong message, since it claims not to be able
+to create Plan.thconfig.xth, when it actually did create that temporary
+file just fine.
+
+To fix it for yourself, right click on the .xtherion.dat file. Select
+"Properties". Untick the "Hidden" checkbox. Click OK. Problem solved.
+
+
+From welshcavediver at gmail.com  Tue Jan  7 00:55:26 2020
+From: welshcavediver at gmail.com (Gareth Davies)
+Date: Mon, 6 Jan 2020 23:55:26 +0000
+Subject: [Therion] compiling error
+In-Reply-To: <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+References: <CAKBacK0eZd3RD8wERc0fL+9L6fYgVL7MphMaLV_qC95Rhn-0vw@mail.gmail.com>
+ <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+Message-ID: <CAKBacK1j9+aZCh_T9HgQ1RFmF_2coh-9kMxy2DskeHyq_uFWmw@mail.gmail.com>
+
+The solution you mention has indeed worked.
+
+thanks g.
+
+
+On Mon, 6 Jan 2020, 09:14 Tarquin Wilton-Jones via Therion, <
+therion at speleo.sk> wrote:
+
+> On 22/12/2019 18:13, Gareth Davies wrote:
+> > I'm getting the same error every time I compile. it doesn't seem to
+> > effect the process as the PDF appears to be creating correctly.. Anyhow
+> > other than being annoying it means I have to switch views constantly so
+> > any thoughts?
+> >
+> > ##################### end of pdftex log file #####################
+> > done
+> > writing xtherion file ...
+> > C:\Program Files (x86)\Therion\therion.exe: warning -- can't open
+> > xtherion file for output -- Plan.thconfig.xth
+> > compilation time: 1 sec
+>
+> GOT IT!
+>
+> This is a weird one indeed, and very definitely a bug or set of bugs in
+> Therion.
+>
+> Your .xtherion.dat file (a log file created by Therion when it compiles)
+> has the "Hidden" flag set on Windows, something it gets automatically on
+> Linux by having a dot at the start of the name, except you're not using
+> Linux. I don't know how that happened, since you never set it yourself.
+> Maybe it has something to do with how you shared the files between
+> computers using the PCloud service?...
+>
+> When .xtherion.dat has the "Hidden" flag set, Therion thinks it cannot
+> write to it (even though it actually can, since the Read-Only flag is
+> not set), so it doesn't output anything to that file, and throws an
+> error. The error has the wrong message, since it claims not to be able
+> to create Plan.thconfig.xth, when it actually did create that temporary
+> file just fine.
+>
+> To fix it for yourself, right click on the .xtherion.dat file. Select
+> "Properties". Untick the "Hidden" checkbox. Click OK. Problem solved.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200106/e681e12c/attachment.htm>
+
+From martinsluka at mac.com  Tue Jan  7 09:43:10 2020
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 7 Jan 2020 09:43:10 +0100
+Subject: [Therion] compiling error
+In-Reply-To: <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+References: <CAKBacK0eZd3RD8wERc0fL+9L6fYgVL7MphMaLV_qC95Rhn-0vw@mail.gmail.com>
+ <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+Message-ID: <C93786D6-2D68-45C4-A13D-12F4CFDC3E86@mac.com>
+
+
+> 6. 1. 2020 v 10:14, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> When .xtherion.dat has the "Hidden" flag set, Therion thinks it cannot
+> write to it (even though it actually can, since the Read-Only flag is
+> not set), so it doesn't output anything to that file, and throws an
+> error. The error has the wrong message, since it claims not to be able
+> to create Plan.thconfig.xth, when it actually did create that temporary
+> file just fine.
+
+Didn’t the older versions of Therion use the same way to create .xtherion.dat file on Windows systems? If so rather it looks as Windows changed the permission to write to some files. Therion may do only what the operating system allows to it.
+
+Martin
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Jan  7 10:05:50 2020
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 7 Jan 2020 09:05:50 +0000
+Subject: [Therion] compiling error
+In-Reply-To: <C93786D6-2D68-45C4-A13D-12F4CFDC3E86@mac.com>
+References: <CAKBacK0eZd3RD8wERc0fL+9L6fYgVL7MphMaLV_qC95Rhn-0vw@mail.gmail.com>
+ <237719d4-1cf6-38d5-6f1f-6b6e0963e4b6@ntlworld.com>
+ <C93786D6-2D68-45C4-A13D-12F4CFDC3E86@mac.com>
+Message-ID: <93b3d789-eaeb-e484-b113-ae2486e97435@ntlworld.com>
+
+On 07/01/2020 08:43, Martin Sluka via Therion wrote:
+> 
+>> 6. 1. 2020 v 10:14, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+>>
+>> When .xtherion.dat has the "Hidden" flag set, Therion thinks it cannot
+>> write to it (even though it actually can, since the Read-Only flag is
+>> not set), so it doesn't output anything to that file, and throws an
+>> error. The error has the wrong message, since it claims not to be able
+>> to create Plan.thconfig.xth, when it actually did create that temporary
+>> file just fine.
+> 
+> Didn’t the older versions of Therion use the same way to create .xtherion.dat file on Windows systems? If so rather it looks as Windows changed the permission to write to some files. Therion may do only what the operating system allows to it.
+
+
+I don't think this is a Windows mistake. I can edit a "hidden" file in
+my text editor and save it. I cannot save a "read-only" file in my text
+editor. So the metadata seems to be working correctly on Windows.
+Therion is the only program I have which thinks it cannot write to a
+"hidden" file.
+
+This might be a limitation in Tcl/Tk's methods for opening a file. (MFC
+has a similar problem with CFile::Open in C++, for example.) Maybe it
+expects you to open an *existing* file using the same attributes as it
+already has. So if a file exists and is "hidden" and you try to open a
+file write stream without "hidden", it might refuse since the file
+exists without that attribute.
+
+The solution here would be either:
+
+if file_exists(filename)
+  foo = open_file_with_attributes(filename,'w',get_attributes(filename))
+else
+  foo = open_file(filename,'w')
+
+or:
+
+foo = open_file(filename,'w')
+if !foo
+  foo = open_file_with_attributes(filename,'w',hidden)
+
+But of course, I do not know Tcl/TK, so I cannot write this in proper
+code, only pseudo-code.
+
+The big issue here is when you share files between different computers,
+you can end up with one of them setting the "hidden" attribute for you,
+since the filename starts with a . character, and on Linux, that gives
+it "hidden" status automatically. When you copy the files from Linux to
+Windows, your copying tool (Gareth is using PCloud with a standard
+Windows mapped drive) may choose to give the file a "hidden" attribute,
+since that is what is automatically had on Linux. So files can easily
+gain a "hidden" flag because Therion creates lots of files with a "." at
+the start of the filenames.
+
+
+From omrigas at gmail.com  Wed Jan 22 21:10:48 2020
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Wed, 22 Jan 2020 22:10:48 +0200
+Subject: [Therion] Help - joining surveys error
+Message-ID: <CAOjFj0=RAs7XGdc25q5OUFbxgnirMgmKavhNycqyQfXvF=RcJQ@mail.gmail.com>
+
+Hi everyone,
+
+I need to join 4 surveys and I have a strange error which I don't
+understand...
+
+kikarOmRzRb071219
+kikar_start
+Hkikar_inner_3_1_20
+Hakikar_B_7_12_19
+
+every survey  by itself is generated fine.
+
+when I'm joining kikarOmRzRb071219 to Hakikar_B_7_12_19 the join is good,
+but when I add the others I get an error that the scrap file doesn't
+exists...
+
+why Therion doesn't recognize the scraps?
+
+I added the .th & .th2 files
+
+
+Omri
+--
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Hakikar_B_7_12_19.th
+Type: application/octet-stream
+Size: 46887 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Hkikar_inner_3_1_20.th
+Type: application/octet-stream
+Size: 7181 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kikarOmRzRb071219.th
+Type: application/octet-stream
+Size: 21876 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0002.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Kikar_all.th
+Type: application/octet-stream
+Size: 862 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0003.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kikar_start.th
+Type: application/octet-stream
+Size: 11977 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0004.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Hakikar_B_7_12_19-1p.th2
+Type: application/octet-stream
+Size: 35133 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0005.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Hkikar_inner_3_1_20-1p.th2
+Type: application/octet-stream
+Size: 11453 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0006.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kikar_start-1p.th2
+Type: application/octet-stream
+Size: 30940 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0007.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kikarOmRzRb071219-040120p.th2
+Type: application/octet-stream
+Size: 17268 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0008.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kikarOmRzRb071219-1p.th2
+Type: application/octet-stream
+Size: 28717 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/0ba19e9e/attachment-0009.obj>
+
+From omrigas at gmail.com  Wed Jan 22 22:07:09 2020
+From: omrigas at gmail.com (=?UTF-8?B?16LXnteo15kg15LXodeY16g=?=)
+Date: Wed, 22 Jan 2020 23:07:09 +0200
+Subject: [Therion] Help - joining surveys error
+In-Reply-To: <CAOjFj0=RAs7XGdc25q5OUFbxgnirMgmKavhNycqyQfXvF=RcJQ@mail.gmail.com>
+References: <CAOjFj0=RAs7XGdc25q5OUFbxgnirMgmKavhNycqyQfXvF=RcJQ@mail.gmail.com>
+Message-ID: <CAOjFj0=oR0hka35Qm=v2cFLGTARs+X1o-MY-UZVPsG5V=jvS4w@mail.gmail.com>
+
+Ok, I found the error...
+thanks for your help!
+
+‪On Wed, Jan 22, 2020 at 10:10 PM ‫עמרי גסטר‬‎ <omrigas at gmail.com> wrote:‬
+
+> Hi everyone,
+>
+> I need to join 4 surveys and I have a strange error which I don't
+> understand...
+>
+> kikarOmRzRb071219
+> kikar_start
+> Hkikar_inner_3_1_20
+> Hakikar_B_7_12_19
+>
+> every survey  by itself is generated fine.
+>
+> when I'm joining kikarOmRzRb071219 to Hakikar_B_7_12_19 the join is good,
+> but when I add the others I get an error that the scrap file doesn't
+> exists...
+>
+> why Therion doesn't recognize the scraps?
+>
+> I added the .th & .th2 files
+>
+>
+> Omri
+> --
+>
+>
+
+-- 
+בברכה,
+עמרי גסטר
+052-6124995
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20200122/55c5f5c3/attachment.htm>
+
+From beni at hallinger.org  Fri Jan 31 23:32:54 2020
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Fri, 31 Jan 2020 23:32:54 +0100
+Subject: [Therion] Changing Atlas layout
+In-Reply-To: <15ab369495c5dd52d831869187288ae1@hallinger.org>
+References: <15ab369495c5dd52d831869187288ae1@hallinger.org>
+Message-ID: <771a244514a94d38d67637239244f592@hallinger.org>
+
+Hello,
+i currently map a relatively long tunnel and want to be able to print it 
+out on several A4 papers.
+The Atlas function of therion is the thing that solves this problem 
+quite nicely.
+
+However, how can i tune the atlas layout, like disabling all visible 
+features of the atlas (no navigation, no title, no borders when showing 
+the overlapping (but the overlapping should persist!)
+
+The main goal is, to print the tunnel like it prints in normal export 
+mode, but on several pages which break like it does in atlas mode.
+
+

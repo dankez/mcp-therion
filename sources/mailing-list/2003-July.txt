@@ -1,0 +1,674 @@
+From wookey at aleph1.co.uk  Thu Jul  3 14:35:00 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 3 Jul 2003 13:35:00 +0100
+Subject: [therion-users] Therion 0.2.13 Debian packages - testing needed
+Message-ID: <20030703123500.GH6529@knossos.aleph1.co.uk>
+
+I've packaged therion 0.2.13 for debian and it's all very slick now as
+stacho has improved the source a lot. It should also fix the gcc 3.3 problem
+(old version doesn't compile).
+
+The only significant change I've made was to combine makeconvert1.pl and
+makeconvert2.pl into one command 'thconvert' which makes both the 0.2.6 and
+0.2.10 data changes. It'd be good for a perl expert to check that over and
+make sure I didn't accidentally change any of the logic - It seems to work
+OK on test cases here.
+
+There's only one catch - the new version of therion refuses to output any maps.
+
+Given a thconfig file like this:
+encoding  utf-8
+source dxd.th
+source test.th2
+export model -fmt survex
+export map extended -o dxd_extelv.pdf
+#export map plan -o dxd_plan.pdf
+#export atlas plan -o dxd_atlas.pdf
+
+I get an error "thconfig -- unknown option -- "extended"
+(or "plan" or "none" - whichever I use).
+
+The thconfig file format shouldn't have changed - so is there something
+something wrong with my compilation or is this version of therion broken?
+
+Is it just me?
+
+You can get the i386 packages and source at
+http://www.chaos.org.uk/~wookey/software/therion/
+
+As soon as we get to the bottom of this I can upload 0.2.13 (and therion can
+stop being one of the 900-odd releas-critical bugs in Debian :-)
+
+-- 
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at group-s.sk  Thu Jul  3 15:47:44 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 03 Jul 2003 15:47:44 +0200
+Subject: [therion-users] Therion 0.2.13 Debian packages - testing needed
+In-Reply-To: <20030703123500.GH6529@knossos.aleph1.co.uk>
+References: <20030703123500.GH6529@knossos.aleph1.co.uk>
+Message-ID: <oprrqlxumeyfws2v@internet.sk>
+
+> The thconfig file format shouldn't have changed - so is there something
+> something wrong with my compilation or is this version of therion broken?
+
+We're sorry - but this format really changed :((( Now the projection is 
+inserted via -proj[ection] switch, not as an argument of "export map|atlas" 
+command.
+
+As far as we know - there are only two other people, that are playing with 
+therion now - one is you and the second is one Czech caver (and he started 
+with newer version). So we've considered this change not very serious. 
+There were also other changes in thconfig file format anyway...
+
+We're not lucky, when doing such a changes, but doing them later would be 
+much more painfull...
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Thu Jul  3 16:28:59 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 3 Jul 2003 15:28:59 +0100
+Subject: [therion-users] Therion 0.2.13 Debian packages - testing needed
+In-Reply-To: <oprrqlxumeyfws2v@internet.sk>
+References: <20030703123500.GH6529@knossos.aleph1.co.uk>
+	<oprrqlxumeyfws2v@internet.sk>
+Message-ID: <20030703142859.GI6529@knossos.aleph1.co.uk>
+
+On Thu, Jul 03, 2003 at 03:47:44PM +0200, Stacho Mudrak wrote:
+> >The thconfig file format shouldn't have changed - so is there something
+> >something wrong with my compilation or is this version of therion broken?
+> 
+> We're sorry - but this format really changed :((( Now the projection is 
+> inserted via -proj[ection] switch, not as an argument of "export map|atlas" 
+> command.
+
+OK. I should have looked at the 'tests' files more carefully. I get it now.
+
+> As far as we know - there are only two other people, that are playing with 
+> therion now - one is you and the second is one Czech caver (and he started 
+> with newer version). So we've considered this change not very serious. 
+> There were also other changes in thconfig file format anyway...
+> 
+> We're not lucky, when doing such a changes, but doing them later would be 
+> much more painfull...
+
+That's fine - I understand we're still at an early stage and changing things
+will not affect many people. But I do need to know what the changes are so
+a) I can make my stuff work and b) the Debian packages tell people what the
+changes are. Did I miss a note somewhere, or another perl script that makes
+changes?
+
+I did read the Thbook and it seemed to still say that that the above
+format was OK - maybe it's out of date and maybe I misunderstood but if I
+can't work it out I don't think other users have much chance :-)
+
+Did anything else important change?
+
+I'll update the docs accordingly and upload 0.2.13-2 shortly.
+
+-- 
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at group-s.sk  Thu Jul  3 16:39:58 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 03 Jul 2003 16:39:58 +0200
+Subject: [therion-users] Therion 0.2.13 Debian packages - testing needed
+In-Reply-To: <20030703142859.GI6529@knossos.aleph1.co.uk>
+References: <20030703123500.GH6529@knossos.aleph1.co.uk>
+	<oprrqlxumeyfws2v@internet.sk> <20030703142859.GI6529@knossos.aleph1.co.uk>
+Message-ID: <oprrqocwneyfws2v@internet.sk>
+
+> changes are. Did I miss a note somewhere, or another perl script that 
+> makes changes?
+
+No, I was our mistake. We started the CHANGES file already, but we started 
+from version 12. :(
+
+> I did read the Thbook and it seemed to still say that that the above
+> format was OK - maybe it's out of date and maybe I misunderstood but if I
+> can't work it out I don't think other users have much chance :-)
+
+Yes, it's old. I hope, Martin will change this soon.
+
+> Did anything else important change?
+
+>From 12 see CHANGES file. Until than - nobody remebers :(((
+
+> I'll update the docs accordingly and upload 0.2.13-2 shortly.
+
+Thanks.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Fri Jul  4 16:06:54 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 4 Jul 2003 15:06:54 +0100
+Subject: [therion-users] Therion 0.2.13 Debian packages - testing needed
+In-Reply-To: <oprrqocwneyfws2v@internet.sk>
+References: <20030703123500.GH6529@knossos.aleph1.co.uk>
+	<20030703142859.GI6529@knossos.aleph1.co.uk> <oprrqocwneyfws2v@internet.sk>
+Message-ID: <20030704140654.GB16409@knossos.aleph1.co.uk>
+
+On Thu, Jul 03, 2003 at 04:39:58PM +0200, Stacho Mudrak wrote:
+> >changes are. Did I miss a note somewhere, or another perl script that 
+> >makes changes?
+> 
+> No, I was our mistake. We started the CHANGES file already, but we started 
+> from version 12. :(
+
+OK. I added this fix to thconvert (aka makeconvert.pl) so it does all the
+data-format changes so far in one go. Works OK on datasets here.
+
+> >I did read the Thbook and it seemed to still say that that the above
+> >format was OK - maybe it's out of date and maybe I misunderstood but if I
+> >can't work it out I don't think other users have much chance :-)
+> 
+> Yes, it's old. I hope, Martin will change this soon.
+
+Actually it had been partly-changed. I've updated it a bit.
+
+> >I'll update the docs accordingly and upload 0.2.13-2 shortly.
+
+OK- I've just uploaded. Attached is the full debian diff (only 11K)- Only the
+thbook/ch03.tex and makeconvert.pl patches are likely to be of interest.
+
+-- 
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion_0.2.13-2.diff.gz
+Type: application/octet-stream
+Size: 11223 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20030704/0eed1804/attachment.obj>
+
+From s.m at speleo.sk  Thu Jul 17 09:05:07 2003
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 17 Jul 2003 09:05:07 +0200
+Subject: [therion-users] New version of therion
+Message-ID: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+
+Hello everybody,
+
+this morning I've uploaded new version of therion to our web-site. Thanks 
+to Wookey, we've also man pages for therion and xtherion (we've slightly 
+modified them) and also documentation has been changed according to his 
+proposals (and should be up to date now).
+
+I've studied also the makeconvert.pl script changes, that Wookey did in his 
+Debian distribution, and it seems to me, that we've not understood 
+correctly. The projection stays in export command, but is inserted via 
+option.
+
+E.g. if you want to export map of extended profile, you enter into thconfig 
+file:
+
+export map -proj extended
+
+(previosly it has been "export map extended").
+
+The other thing for Debian distribution - at least at man pages is written, 
+that therion tex and mpost macros are installed into /usr/share/texmf/... 
+directory. But from version 0.2.13, therion don't need these macros! 
+They're compiled in therion executable - so no additional tex or metapost 
+configuration is needed! If you will remove them - nothing will happen and 
+therion continue to work.
+
+I hope, you understood what I have written :)
+
+The last point, if somebody is interested about future therion 
+developement, we would like to add to therion following features:
+
+1. Automatically generated graphical scale, north arrow, title, authors and 
+legend should be added to map and atlas by default. User will have 
+possibility to modify them.
+
+2. The modification of symbol set by user. It will be done via layout.
+
+3. The therion tutorial - we're now working on some documents, that will 
+make first steps in therion much more easy, like it is now. Because a lot 
+of people are asking us for them - at least here in Czechoslovakia.
+
+4. 3D passage wall modeling.
+
+Best regards, S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Jul 17 10:56:23 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 17 Jul 2003 09:56:23 +0100
+Subject: [therion-users] Re: New version of therion
+In-Reply-To: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+References: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+Message-ID: <20030717085623.GD7293@court.aleph1.co.uk>
+
++++ Stacho Mudrak [03-07-17 09:05 +0200]:
+> Hello everybody,
+> 
+> this morning I've uploaded new version of therion to our web-site. Thanks 
+> to Wookey, we've also man pages for therion and xtherion (we've slightly 
+> modified them) and also documentation has been changed according to his 
+> proposals (and should be up to date now).
+> 
+> I've studied also the makeconvert.pl script changes, that Wookey did in his 
+> Debian distribution, and it seems to me, that we've not understood 
+> correctly. The projection stays in export command, but is inserted via 
+> option.
+> 
+> E.g. if you want to export map of extended profile, you enter into thconfig 
+> file:
+> 
+> export map -proj extended
+
+OK- yes - I misunderstood. (mind you, it seemed to work in that I thought I
+got the expected map out of my data with this option missing - but then I
+didn't have any plan data to confuse matters).
+
+Presumably you have fixed the script?
+
+> The other thing for Debian distribution - at least at man pages is written, 
+> that therion tex and mpost macros are installed into /usr/share/texmf/... 
+> directory. But from version 0.2.13, therion don't need these macros! 
+> They're compiled in therion executable - so no additional tex or metapost 
+> configuration is needed! If you will remove them - nothing will happen and 
+> therion continue to work.
+> 
+> I hope, you understood what I have written :)
+
+Yep. I wasn't sure about that last point and as things were clearly working
+I left it how it was in the previous version. OK - so I should just treat
+those files as part of the source and not install them separately.
+
+I thought that's what you said but I didn't understand how metapost and Tex
+macros could be compiled into a C++ executable - I assumed TeX/Metapost
+still needed to be able to see the files somewhere.
+
+> The last point, if somebody is interested about future therion 
+> developement, we would like to add to therion following features:
+> 
+> 1. Automatically generated graphical scale, north arrow, title, authors and 
+> legend should be added to map and atlas by default. User will have 
+> possibility to modify them.
+
+That would be sensible - it wil need quite a lot of flexibility. Standard
+slots for Grade/survey type/entrance location(s) would probably be helpful.
+Other info can be free text.
+
+> 2. The modification of symbol set by user. It will be done via layout.
+
+Definately needed.
+
+> 3. The therion tutorial - we're now working on some documents, that will 
+> make first steps in therion much more easy, like it is now. Because a lot 
+> of people are asking us for them - at least here in Czechoslovakia.
+
+It would be useful to get a set of translators who understand caving,
+surveying and computers (as well as at least 2 languages) to generate
+documents in several world languages.Survex already has a set for error
+messages. Debian has a project DDTP (Debian Description translation project)
+to translate all software description (I see the .sk team is catching up
+with .br and .de fast at the moment and is the 4th best-supported language!).
+
+I don't know if it is possible to use this project for general documentation
+translation - probably not yet.
+
+> 4. 3D passage wall modeling.
+
+Survex (survex-1_1 branch in CVS) now has general passages round centrelines using
+opengl (also C++ code). Currently they are square because we haven't got
+code to read in better passage-dimension info yet. It may well be possible
+to 
+1) use that code in therion or 
+2) have therion provide passage dimension info to Aven and use that viewer 
+
+5. My suggestion:
+I need to do some more drawing to be sure but at the moment I think we need
+to improve xtherion so that drawing is not so slow - It will never be as
+fast as pen-drawing but currently I find it takes an amazingly long time and
+this makes me wonder if Therion is really practical for my surveys -
+things like code to auto-track walls would save a lot of time (TunnelX has
+this but it's java so we can't just use it directly unfortunately). Easier
+ways of drawing large, specific boulders. Maybe all I need is a list of the
+keyboard shortcuts for starting and stopping lines, changing line types,
+moving around the data-file. Is there one?
+
+I admit I have spent too much time packaging and not enough actually using
+recently! I have some surveys to draw soon so I'll use it some more...
+
+
+
+
+From s.m at group-s.sk  Thu Jul 17 11:35:30 2003
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 17 Jul 2003 11:35:30 +0200
+Subject: [therion-users] Re: New version of therion
+In-Reply-To: <20030717085623.GD7293@court.aleph1.co.uk>
+References: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+	<20030717085623.GD7293@court.aleph1.co.uk>
+Message-ID: <oprsf7lgzryfws2v@mail.stonline.sk>
+
+> Presumably you have fixed the script?
+
+I'm sorry - no. Probably nobody uses these versions - so I thought it 
+useless (at least no time for that).
+
+> I thought that's what you said but I didn't understand how metapost and 
+> Tex
+> macros could be compiled into a C++ executable - I assumed TeX/Metapost
+> still needed to be able to see the files somewhere.
+
+They're stored in C++ as string constants and written directly to the 
+beginning of MP file and TeX file. This is quite nasty - but seems to be 
+very idiot-proof.
+
+>> 1. Automatically generated graphical scale, north arrow, title, authors 
+>> and legend should be added to map and atlas by default. User will have 
+>> possibility to modify them.
+>
+> That would be sensible - it wil need quite a lot of flexibility. Standard
+> slots for Grade/survey type/entrance location(s) would probably be 
+> helpful.
+> Other info can be free text.
+
+Of course - we will discuss it at meetend in two weeks, than I'll let you 
+know and we can discuss it in conference.
+
+>> 4. 3D passage wall modeling.
+>
+> Survex (survex-1_1 branch in CVS) now has general passages round 
+> centrelines using
+> opengl (also C++ code). Currently they are square because we haven't got
+> code to read in better passage-dimension info yet. It may well be 
+> possible
+> to 1) use that code in therion or 2) have therion provide passage 
+> dimension info to Aven and use that viewer
+
+Thanks - at least the second possibility will be supported - because OpenGL 
+at TclTk is not so easy to set-up. Do you have also other shapes in aven? 
+Can I insert sections on other points, than centerline?
+
+> 5. My suggestion:
+> I need to do some more drawing to be sure but at the moment I think we 
+> need
+> to improve xtherion so that drawing is not so slow - It will never be as
+> fast as pen-drawing but currently I find it takes an amazingly long time 
+> and
+> this makes me wonder if Therion is really practical for my surveys -
+> things like code to auto-track walls would save a lot of time (TunnelX 
+> has
+> this but it's java so we can't just use it directly unfortunately). 
+> Easier
+> ways of drawing large, specific boulders. Maybe all I need is a list of 
+> the
+> keyboard shortcuts for starting and stopping lines, changing line types,
+> moving around the data-file. Is there one?
+
+Ad shortcuts:
+
+* create line : Ctrl+l (see menu)
+* finish line : click (insert point) on the last point by right button
+* close line: click (insert point) on the first line point
+* changing line type - no at the moment - do you have any idea? Some popup 
+menu or something simmilar?
+* moving around the data file - what do you mean? Scrolling can be done via 
+left-click and mouse move. We plan to put tree instead of list with objects 
+(file commands). Object search should work also.
+
+OK, I will put to TODO on the first place making the list of all controls 
+to thbook.
+
+
+Ad wall tracking:
+I have this in a long-term TODO - but if there is a code doing this in 
+TunnelX, I can try to steal it (transcription to Tcl from Java should be no 
+problem). By the way - you can use TunnelX (if it's faster) and convert 
+data to therion (as far as I know TunnelX, it should not be big problem - 
+just removing the <>""= XML stuff should be more or less enought. Or you 
+can definitelly use TunnelX :-)
+
+Ad boulders:
+I draw rock-edge lines not very cosher way (shapes like Y or so)- some line 
+segments are entered twise - but then I enter the entire rock-edge by one 
+line.
+
+> I admit I have spent too much time packaging and not enough actually 
+> using
+> recently! I have some surveys to draw soon so I'll use it some more...
+
+I'm very curious about your impressions...
+
+S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Jul 17 17:41:00 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 17 Jul 2003 16:41:00 +0100
+Subject: [therion-users] Re: New version of therion
+In-Reply-To: <oprsf7lgzryfws2v@mail.stonline.sk>
+References: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+	<20030717085623.GD7293@court.aleph1.co.uk>
+	<oprsf7lgzryfws2v@mail.stonline.sk>
+Message-ID: <20030717154059.GO7293@court.aleph1.co.uk>
+
++++ Stacho Mudrak [03-07-17 11:35 +0200]:
+
+I just tried to use uscan to get the new code but the direct link to
+therion-0.2.14.tar.gz has gone/moved. (uscan cannot use the download.cgi link)
+
+Is there a direct link on the new site? Can I have one? (why do you go via
+this downloadcgi thing anyway - what's wrong with a good old-fashioned link?)
+
+> >Presumably you have fixed the script?
+> 
+> I'm sorry - no. Probably nobody uses these versions - so I thought it 
+> useless (at least no time for that).
+
+OK. I'll probably do it as I still have unconverted datasets (and wrongly
+converted datasets from last time :-( )
+
+> >I thought that's what you said but I didn't understand how metapost and Tex
+> >macros could be compiled into a C++ executable - I assumed TeX/Metapost
+> >still needed to be able to see the files somewhere.
+> 
+> They're stored in C++ as string constants and written directly to the 
+> beginning of MP file and TeX file. This is quite nasty - but seems to be 
+> very idiot-proof.
+
+yuck. But I suppose if it works... I prefer doing it the Debian way but I
+can see the advantages for other platforms where config is less sure so lets
+go with this method.
+
+> >to 1) use that code in therion or 2) have therion provide passage 
+> >dimension info to Aven and use that viewer
+> 
+> Thanks - at least the second possibility will be supported - because OpenGL 
+> at TclTk is not so easy to set-up. Do you have also other shapes in aven? 
+> Can I insert sections on other points, than centerline?
+
+I don't know. Mark Shinwell has done most of the work and he is caving in
+Austria now for 5 weeks (and maybe hacking aven some more). Olly may know,
+and he's still here.
+
+> 
+> Ad shortcuts:
+> 
+> * create line : Ctrl+l (see menu)
+> * finish line : click (insert point) on the last point by right button
+> * close line: click (insert point) on the first line point
+> * changing line type - no at the moment - do you have any idea? Some popup 
+> menu or something simmilar?
+
+keystrokes. I found I spend far too much clicking on a line or point, then
+going to RH side menu and selecting somethign else, then clicking on another
+line or point right next door, then going to RH side menu and so on - common
+functions must be on keystrokes for efficient use.
+
+> * moving around the data file - what do you mean? Scrolling can be done via 
+> left-click and mouse move. We plan to put tree instead of list with objects 
+> (file commands). Object search should work also.
+
+I have forgotten the details now but I know I got quite frustrated - more
+next time I do some drawing.
+
+> OK, I will put to TODO on the first place making the list of all controls 
+> to thbook.
+
+that would be very helpful.
+
+> 
+> Ad wall tracking:
+> I have this in a long-term TODO - but if there is a code doing this in 
+> TunnelX, I can try to steal it (transcription to Tcl from Java should be no 
+> problem). By the way - you can use TunnelX (if it's faster) and convert 
+> data to therion (as far as I know TunnelX, it should not be big problem - 
+> just removing the <>""= XML stuff should be more or less enought. Or you 
+> can definitelly use TunnelX :-)
+
+Interesting - you think the formats are very similar? that would be useful -
+it's interface is more developed than xtherion. I don't use because I
+haven't found a free java implementation that works with it, and last time I
+tried to download Sun JRE I ran out of disk space, and basically I have had
+so much trouble with java over the years that I just don't use it :-)
+
+> Ad boulders:
+> I draw rock-edge lines not very cosher way (shapes like Y or so)- some line 
+> segments are entered twise - but then I enter the entire rock-edge by one 
+> line.
+
+That's the sort of thing I mean - it has to be drawn as more than one line
+but it is really one 'object' and going back to edit the file afterwards is
+slow and boring and error-prone. (I have hundreds of rocks to draw!)
+
+> 
+> I'm very curious about your impressions...
+
+I'll take some notes.
+
+-- 
+
+
+
+
+From wookey at aleph1.co.uk  Fri Jul 18 19:59:52 2003
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 18 Jul 2003 18:59:52 +0100
+Subject: [therion-users] Re: New version of therion
+In-Reply-To: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+References: <oprsf0mtw5a4i8vq@mail.speleo.sk>
+Message-ID: <20030718175952.GA1310@court.aleph1.co.uk>
+
++++ Stacho Mudrak [03-07-17 09:05 +0200]:
+> Hello everybody,
+> 
+> this morning I've uploaded new version of therion to our web-site. 
+
+I've got all efficient and done a therion 0.2.14-1 already and uploaded it -
+available from tomorrow.
+
+> I've studied also the makeconvert.pl script changes, that Wookey did in his 
+> Debian distribution, and it seems to me, that we've not understood 
+> correctly. The projection stays in export command, but is inserted via 
+> option.
+> 
+> E.g. if you want to export map of extended profile, you enter into thconfig 
+> file:
+> 
+> export map -proj extended
+> 
+> (previosly it has been "export map extended").
+
+OK - I fixed that (as it was easy)
+
+> The other thing for Debian distribution - at least at man pages is written, 
+> that therion tex and mpost macros are installed into /usr/share/texmf/... 
+> directory. But from version 0.2.13, therion don't need these macros! 
+> They're compiled in therion executable - so no additional tex or metapost 
+> configuration is needed! If you will remove them - nothing will happen and 
+> therion continue to work.
+
+and done that.
+
+Wookey
+-- 
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK  Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/     play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From martinsluka at mac.com  Wed Jul 30 10:01:13 2003
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 30 Jul 2003 10:01:13 +0200
+Subject: [therion-users] cross-sections
+Message-ID: <FCDD7AA6-C263-11D7-AFDF-000393BD49C0@mac.com>
+
+Stacho,
+
+we discussed the drawing of cross-sections with MartinB. It looks you 
+should add to therion section-endsection command. Recent method to draw 
+sections is a bit overcomplicated. There is not any relationship 
+between section and section line for example. Sections are not usable 
+for 3D now.
+
+section \
+-bearing xx \
+-slope yy \
+-visibility on/off (manual or automatic) \
+-anchor (inside passage - the point which belongs to real section) xy \
+-reference_point (where to draw section) \
+-standard_shape (for visibility off - not drawn on maps, but important 
+for 3D) \
+-
+[data] (in case of nonstandard shape - real section)
+endsection
+
+Therion should draw only "possible" sections - on 2D map only sections 
+connected to subhorizontal not the vertical passages,  ...
+
+There should be a validity check - if section corresponds to passage 
+dimensions and height symbol for example, bearing too far from 
+perpendicular orientation, ...
+
+The section line, orientation mark, connection line, etc. should be 
+generated by therion itself.
+
+xtherion should have separate window for editation of real 
+cross-sections and editable library of standard shapes.
+
+Any ideas from others?
+
+MartinS
+
+
+
+
+

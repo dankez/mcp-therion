@@ -1,0 +1,1446 @@
+From beni at hallinger.org  Sat Jul  2 11:43:01 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 02 Jul 2016 11:43:01 +0200
+Subject: [Therion] AUT Symbolset area flowstone
+In-Reply-To: <bdd68e34b91bf9338c12968aa82ea0bc@hallinger.org>
+References: <bdd68e34b91bf9338c12968aa82ea0bc@hallinger.org>
+Message-ID: <2cad78ce1ba0fdfce3df4b718dc45076@hallinger.org>
+
+Hello,
+recently i took some time to make a new symbol for area-flowstone in the AUT 
+symbol set.
+It resembles the austrian SPELDOK B43 guidelines.
+
+
+---snip---
+
+   # AUT area:flowstone
+   code metapost
+     beginpattern(pattern_flowstone_AUT);
+       pickup PenC;
+       draw (0.0u, 0.01u)--(0.33u, 0.01u);
+       draw (0.33u, 0.33u)--(0.66u, 0.33u);
+       patternbbox(0u,0u, 0.66u, 0.66u);
+     endpattern;
+
+     def a_flowstone_AUT (expr Path) =
+       T:=identity;
+       thclean Path;
+       thfill Path withpattern pattern_flowstone_AUT ;
+     enddef;
+
+     initsymbol("a_flowstone_AUT");  % make the symbol available in AUT 
+symbol set
+   endcode
+
+---snap---
+
+The code above could be made available in your layout definition. As soon as 
+you use "symbol-set AUT" and make an ordinary area tagged "flowstone", the 
+new pattern will be used.
+
+(probably this pattern could also be made available in the default symbol 
+set shipped with therion...)
+
+
+With best regards,
+Beni
+
+
+From beni at hallinger.org  Sat Jul  2 16:02:42 2016
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 02 Jul 2016 16:02:42 +0200
+Subject: [Therion] =?utf-8?q?Colouring_ceiling_formations=3F?=
+In-Reply-To: <2cad78ce1ba0fdfce3df4b718dc45076@hallinger.org>
+References: <bdd68e34b91bf9338c12968aa82ea0bc@hallinger.org>
+	<2cad78ce1ba0fdfce3df4b718dc45076@hallinger.org>
+Message-ID: <a6eb4c651f7f7725086de7dcafc85da6@hallinger.org>
+
+Hello again,
+
+i want to define an optional layout in which some formations are colored 
+differently, however i have no idea what to do.
+Following the examples in the wiki, i tried:
+
+-------
+layout colorMap.layout
+   symbol-colour group water  [30  30  95]    #this works! :)
+
+   symbol-colour line chimney [0.95 0.15 0.15]   # no change :(
+   symbol-colour line ceiling-meander [0.95 0.15 0.15]
+endlayout
+-------
+
+The water color changes like expected, but the chimney and meander parts 
+remain black :(
+What am i doing wrong here?
+
+
+
+
+Also the same occurs with sand and clay patterns, however here i did my 
+custom version:
+
+--------
+code metapost
+     % --- LEHM ---
+     beginpattern(pattern_clay_AUT_HVHO);
+       % Zeichnet einfach eine Reihe punkte an fixen X/Y Koordinaten
+       pickup PenC;
+       draw (0.20u, 0.30u);
+       draw (0.35u, 0.70u);
+       draw (0.40u, 0.40u);
+       draw (0.60u, 0.50u);
+       draw (0.80u, 0.10u);
+      endpattern;
+      def a_clay_AUT (expr Path) =
+       T:=identity;
+       %  thclean Path;
+       %thfill Path withpattern pattern_sand_AUT ;  % original
+       thfill Path withpattern pattern_clay_AUT_HVHO ;
+     enddef;
+
+     % --- SAND ---
+     beginpattern(pattern_sand_AUT_HVHO);
+       % Zeichnet einfach eine Reihe punkte an fixen X/Y Koordinaten
+       pickup PenB;
+       draw (0.20u, 0.20u);
+       draw (0.40u, 0.60u);
+       draw (0.80u, 0.40u);
+       patternbbox(0u,0u, 1.0u,1.0u); % definiert Rechteckgroesse des Symbols
+     endpattern;
+     def a_sand_AUT (expr Path) =
+       T:=identity;
+       %  thclean Path;
+       %thfill Path withpattern pattern_sand_AUT ;  % original
+       thfill Path withpattern pattern_sand_AUT_HVHO ;
+     enddef;
+   endcode
+---------
+
+I think i need to tell Therion somehow to draw the line in the color 
+specified using "symbol-colour".
+I know i could duplicate metapost code and add my colors there, however i 
+want to use the distributions symbol definitions here if possible 
+(maintianing upwards compatibility).
+
+
+
+Thank you very much!
+
+
+From marco.menchise at gmail.com  Sun Jul  3 12:20:19 2016
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Sun, 3 Jul 2016 12:20:19 +0200
+Subject: [Therion] Yellow symbol in debug
+Message-ID: <CADzYBB6LMPhJ08HYUDJDgtLs9AAsiuxWyXt9H2urwHC=mexeDQ@mail.gmail.com>
+
+Hello,
+here's a picture I got by cropping a plan map made by Therion with the
+option "debug all" in the layout.
+
+I noticed a strange yellow symbol and also Therion "distorted" my drawings.
+I can't figure out why. Could someone please clarify me?
+
+The station order is 4-7-8-9-10 and 4-5-6 (station 4 is a common point
+between two paths). My original drawings are in red, the final results are
+in blue.
+
+I wouldn't expect any distortion because I drew directly on real survey
+data (I used DistoX and Topodroid). Also, I can't figure out what the two
+small red lines connected by the yellow one are. I didn't draw them.. Any
+hint?
+
+Thanks,
+Marco
+[image: Inline image 1]
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/bfe493ce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screen Shot 2016-07-03 at 11.58.55.png
+Type: image/png
+Size: 124065 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/bfe493ce/attachment.png>
+
+From martinsluka at mac.com  Sun Jul  3 12:35:31 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jul 2016 12:35:31 +0200
+Subject: [Therion] Yellow symbol in debug
+In-Reply-To: <CADzYBB6LMPhJ08HYUDJDgtLs9AAsiuxWyXt9H2urwHC=mexeDQ@mail.gmail.com>
+References: <CADzYBB6LMPhJ08HYUDJDgtLs9AAsiuxWyXt9H2urwHC=mexeDQ@mail.gmail.com>
+Message-ID: <17D4FEB3-1770-42FE-9B17-F15301839113@mac.com>
+
+Please, read the part about debug command in TherionBook.
+
+The yellow lines represents the biggest distortion of your original sketch. Something wrong is around stations 7 and 8.
+
+Check, please, if there are not two stations with different names in the same place. 
+
+s.s.
+
+> 3. 7. 2016 v 12:20, Marco Menchise <marco.menchise at gmail.com>:
+> 
+> Hello,
+> here's a picture I got by cropping a plan map made by Therion with the option "debug all" in the layout.
+> 
+> I noticed a strange yellow symbol and also Therion "distorted" my drawings. I can't figure out why. Could someone please clarify me?
+> 
+> The station order is 4-7-8-9-10 and 4-5-6 (station 4 is a common point between two paths). My original drawings are in red, the final results are in blue. 
+> 
+> I wouldn't expect any distortion because I drew directly on real survey data (I used DistoX and Topodroid). Also, I can't figure out what the two small red lines connected by the yellow one are. I didn't draw them.. Any hint? 
+> 
+> Thanks,
+> Marco
+> <Screen Shot 2016-07-03 at 11.58.55.png>
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Sun Jul  3 12:38:53 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jul 2016 12:38:53 +0200
+Subject: [Therion] Really bad idea?
+In-Reply-To: <npffxqvbiqkfj9s4fr3o0inx.1467143862592@email.android.com>
+References: <npffxqvbiqkfj9s4fr3o0inx.1467143862592@email.android.com>
+Message-ID: <5774BDBA-F4F9-4E33-BCD9-27574C38D19D@mac.com>
+
+I just found a Metapost example generating color transition, so it should work:
+
+http://www.ursoswald.ch/metapost/tutorial/Colors.html <http://www.ursoswald.ch/metapost/tutorial/Colors.html>
+
+If you add this code to Metapost viewer ( http://www.tlhiv.org/mppreview/ <http://www.tlhiv.org/mppreview/> ), you may see it:
+
+u:=25;                    % 25 = 25bp = 25 PostScript points = 30/72 in
+wi:=10;                   % width  in units u   
+he:=10;                   % height in units u
+hoehe:=he*u;              % height
+breite:=wi*u;             % width
+pair P[], xy[];
+path p[];
+transform t;
+color c[];
+n:=20; rd:=0.2; b:=(wi-2rd)/4;
+
+P0:=(0, 0);
+t:=identity scaled u shifted P0;
+
+  fill (0, 0)--(breite, 0)--(breite, hoehe)--(0, hoehe)--cycle withcolor .9white;
+  draw (0, 0)--(breite, 0)--(breite, hoehe)--(0, hoehe)--cycle;
+  
+  for k=0 upto 3:
+    blau:=.3333k;
+    P1:=(rd, he-rd-b)+k*b*(1, -1);
+    for i=0 upto n-1:
+      for j=0 upto n-1:
+	xy0:=P1+(i*b/n, j*b/n);
+	p0:=xy0--(xy0+(b/n, 0))--(xy0+(b/n, b/n))--(xy0+(0, b/n))--cycle;
+	c0:=((i+1)/n, (j+1)/n, blau);
+	fill p0 transformed t withcolor c0;
+      endfor
+    endfor
+    draw (P1--(P1+(b, 0))--(P1+(b, b))--(P1+(0,b))--cycle) transformed t;
+    P2:=(P1+(0, b))transformed t;
+    label.lrt("bluepart c", P2);
+    label.lrt("="&decimal blau, P2+(0, -3mm));
+    label.urt("latex2html version 2002 - 1", (0,0));   
+  endfor 
+  
+endfig;
+
+end
+
+
+
+
+> 28. 6. 2016 v 21:57, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> I also am mildly frustrated that colours in plan do not match elevation. Your solution sounds like night mare to edit subsequently however.
+> 
+> Maybe better approach would be to work on a graded map-fg colour that changes appropriately based on altitude of nearby stations and maybe point altitude or dimensions for plan.
+> And a simple gradation for elevations. 
+> 
+> To date i have been using similar approach to Footleg.
+> 
+> Bruce
+> 
+> Sent from my Samsung device, hence the typo's
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/3543296e/attachment.htm>
+
+From marco.menchise at gmail.com  Sun Jul  3 13:23:11 2016
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Sun, 3 Jul 2016 13:23:11 +0200
+Subject: [Therion] Really bad idea?
+In-Reply-To: <5774BDBA-F4F9-4E33-BCD9-27574C38D19D@mac.com>
+References: <npffxqvbiqkfj9s4fr3o0inx.1467143862592@email.android.com>
+	<5774BDBA-F4F9-4E33-BCD9-27574C38D19D@mac.com>
+Message-ID: <CADzYBB7o-oh2MAk_kzShWna5o-b4VmidHFGAZ8emU7ErDV1VgA@mail.gmail.com>
+
+Thanks Martin, I had a look at the results by using mptopdf (because the
+website you linked seems unreachable right now).
+
+It seems quite good. I only need to find a way to integrate it in a layout
+:-)
+
+Marco
+
+
+On Sun, Jul 3, 2016 at 12:38 PM, Martin Sluka <martinsluka at mac.com> wrote:
+
+> I just found a Metapost example generating color transition, so it should
+> work:
+>
+> http://www.ursoswald.ch/metapost/tutorial/Colors.html
+>
+> If you add this code to Metapost viewer ( http://www.tlhiv.org/mppreview/ ),
+> you may see it:
+>
+> u:=25;                    % 25 = 25bp = 25 PostScript points = 30/72 in
+> wi:=10;                   % width  in units u
+> he:=10;                   % height in units u
+> hoehe:=he*u;              % height
+> breite:=wi*u;             % width
+> pair P[], xy[];
+> path p[];
+> transform t;
+> color c[];
+> n:=20; rd:=0.2; b:=(wi-2rd)/4;
+>
+> P0:=(0, 0);
+> t:=identity scaled u shifted P0;
+>
+>   fill (0, 0)--(breite, 0)--(breite, hoehe)--(0, hoehe)--cycle withcolor
+> .9white;
+>   draw (0, 0)--(breite, 0)--(breite, hoehe)--(0, hoehe)--cycle;
+>
+>   for k=0 upto 3:
+>     blau:=.3333k;
+>     P1:=(rd, he-rd-b)+k*b*(1, -1);
+>     for i=0 upto n-1:
+>       for j=0 upto n-1:
+> xy0:=P1+(i*b/n, j*b/n);
+> p0:=xy0--(xy0+(b/n, 0))--(xy0+(b/n, b/n))--(xy0+(0, b/n))--cycle;
+> c0:=((i+1)/n, (j+1)/n, blau);
+> fill p0 transformed t withcolor c0;
+>       endfor
+>     endfor
+>     draw (P1--(P1+(b, 0))--(P1+(b, b))--(P1+(0,b))--cycle) transformed t;
+>     P2:=(P1+(0, b))transformed t;
+>     label.lrt("bluepart c", P2);
+>     label.lrt("="&decimal blau, P2+(0, -3mm));
+>     label.urt("latex2html version 2002 - 1", (0,0));
+>   endfor
+>
+> endfig;
+>
+> end
+>
+>
+>
+>
+> 28. 6. 2016 v 21:57, Bruce Mutton <bruce at tomo.co.nz>:
+>
+> I also am mildly frustrated that colours in plan do not match elevation.
+> Your solution sounds like night mare to edit subsequently however.
+>
+> Maybe better approach would be to work on a graded map-fg colour that
+> changes appropriately based on altitude of nearby stations and maybe point
+> altitude or dimensions for plan.
+> And a simple gradation for elevations.
+>
+> To date i have been using similar approach to Footleg.
+>
+> Bruce
+>
+> Sent from my Samsung device, hence the typo's
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/b8d03a86/attachment.htm>
+
+From marco.menchise at gmail.com  Sun Jul  3 13:26:31 2016
+From: marco.menchise at gmail.com (Marco Menchise)
+Date: Sun, 3 Jul 2016 13:26:31 +0200
+Subject: [Therion] Yellow symbol in debug
+In-Reply-To: <17D4FEB3-1770-42FE-9B17-F15301839113@mac.com>
+References: <CADzYBB6LMPhJ08HYUDJDgtLs9AAsiuxWyXt9H2urwHC=mexeDQ@mail.gmail.com>
+	<17D4FEB3-1770-42FE-9B17-F15301839113@mac.com>
+Message-ID: <CADzYBB4umaziv0wVc7KJNokL_r+jbmbv1S1Ac2CigPifwS0MgQ@mail.gmail.com>
+
+Thanks Martin, I found the mistake. I read the Book but, in the description
+of "debug" command, it pointed me to the "scrap" command, but I wasn't able
+to find the word "yellow", hence I mailed the list :-)
+
+Thanks again,
+Marco
+
+On Sun, Jul 3, 2016 at 12:35 PM, Martin Sluka <martinsluka at mac.com> wrote:
+
+> Please, read the part about debug command in TherionBook.
+>
+> The yellow lines represents the biggest distortion of your original
+> sketch. Something wrong is around stations 7 and 8.
+>
+> Check, please, if there are not two stations with different names in the
+> same place.
+>
+> s.s.
+>
+> > 3. 7. 2016 v 12:20, Marco Menchise <marco.menchise at gmail.com>:
+> >
+> > Hello,
+> > here's a picture I got by cropping a plan map made by Therion with the
+> option "debug all" in the layout.
+> >
+> > I noticed a strange yellow symbol and also Therion "distorted" my
+> drawings. I can't figure out why. Could someone please clarify me?
+> >
+> > The station order is 4-7-8-9-10 and 4-5-6 (station 4 is a common point
+> between two paths). My original drawings are in red, the final results are
+> in blue.
+> >
+> > I wouldn't expect any distortion because I drew directly on real survey
+> data (I used DistoX and Topodroid). Also, I can't figure out what the two
+> small red lines connected by the yellow one are. I didn't draw them.. Any
+> hint?
+> >
+> > Thanks,
+> > Marco
+> > <Screen Shot 2016-07-03 at 11.58.55.png>
+> >
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/43598007/attachment.htm>
+
+From martinsluka at mac.com  Sun Jul  3 13:47:05 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jul 2016 13:47:05 +0200
+Subject: [Therion] Yellow symbol in debug
+In-Reply-To: <CADzYBB4umaziv0wVc7KJNokL_r+jbmbv1S1Ac2CigPifwS0MgQ@mail.gmail.com>
+References: <CADzYBB6LMPhJ08HYUDJDgtLs9AAsiuxWyXt9H2urwHC=mexeDQ@mail.gmail.com>
+	<17D4FEB3-1770-42FE-9B17-F15301839113@mac.com>
+	<CADzYBB4umaziv0wVc7KJNokL_r+jbmbv1S1Ac2CigPifwS0MgQ@mail.gmail.com>
+Message-ID: <29BE0B42-1133-47F6-8725-01158C7F6437@mac.com>
+
+I’m sorry, probably in wiki.
+
+m.s.
+
+
+> 3. 7. 2016 v 13:26, Marco Menchise <marco.menchise at gmail.com>:
+> 
+> Thanks Martin, I found the mistake. I read the Book but, in the description of "debug" command, it pointed me to the "scrap" command, but I wasn't able to find the word "yellow", hence I mailed the list :-)
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/769b9962/attachment.htm>
+
+From martinsluka at mac.com  Sun Jul  3 13:48:58 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jul 2016 13:48:58 +0200
+Subject: [Therion] North Grid and Mag
+In-Reply-To: <c1e07dde-c73b-44e3-8bc8-8f2bd1810f8f@me.com>
+References: <c1e07dde-c73b-44e3-8bc8-8f2bd1810f8f@me.com>
+Message-ID: <453414CE-3334-47D8-BE41-36B8CC530FAE@mac.com>
+
+It should be possible, just to define font in which is character „space“ included:
+
+pair A, B, C, D;
+u := 1cm; 
+A=(0,0); 
+B=(5u,0); 
+C=(2u,3u); 
+D = whatever[A,B] = C + whatever*dir(1/2*angle(A-C)+1/2*angle(B-C)); 
+draw A--B--C--cycle; 
+draw C--D; 
+dotlabel.lft("A",A); 
+dotlabel.urt("B",B); 
+dotlabel.top("C",C); 
+dotlabel.bot (((decimal day) & ". " & (decimal month) & ". " & (decimal year)) infont "ptmr8r",  D);
+endfig;
+￼￼
+
+
+
+
+> 27. 6. 2016 v 11:42, Martin Sluka <martinsluka at mac.com>:
+> 
+> https://www.tug.org/docs/metapost/mpman.pdf <https://www.tug.org/docs/metapost/mpman.pdf>
+> 
+> pge 65.
+> 
+> 
+> 
+> 14.1 Customizing Run-Time Behavior 
+> 
+> MetaPost knows and obeys a number of internal variables that have no direct impact on drawing commands, but can be used to customize the way the MetaPost compiler processes input files. The following paragraphs describe those variables (in no particular order). 
+> 
+> Date and Time MetaPost provides a number of internal numeric variables that store the date and time a job was started, i.e., the MetaPost executable was called on the command-line. Variables year, month, day, hour, and minute should be self-explanatory. Variable time returns the number of minutes past midnight, since the job was started, i.e., time = 60 * hour + minute.
+> 
+> 
+> 
+> m.
+> 
+> 
+> On Jun 27, 2016, at 11:15 AM, Bruce <bruce at tomo.co.nz> wrote:
+> 
+>> Dirk
+>> I have posted this on the wiki, but not tested.
+>> http://therion.speleo.sk/wiki/doku.php/metapost#special_symbol_examples <http://therion.speleo.sk/wiki/doku.php/metapost#special_symbol_examples>
+>>  
+>> Bruce
+>>  
+>> From: Dirk Peinelt [mailto:dirk.peinelt at t-online.de] 
+>> Sent: Thursday, 9 June 2016 7:35 a.m.
+>> To: 'Martin Sluka'; Bruce Mutton
+>> Subject: AW: [Therion] Therion Digest, Vol 126, Issue 7
+>>  
+>> Hi Martin, Bruce,
+>> the definition may be published to the wiki. 
+>> I’dont know if the code is effective. (I’ve not used the A-D Pens.)
+>>  
+>> I combine this compass rose with a creation date in the map-header (/currentdate).
+>> A date variable is not present in metapost.
+>>  
+>> If the CS is not set, the declination is Zero.
+>> Also if the declination is Zero, the northarrow is a Nmag arrow:
+>> North grid/true rotate the whole plan with the north arrow. (merid. Conv.?)
+>>  
+>> A small change… (I hope i am not mistaken.)
+>>  
+>>  
+>> <image001.jpg>
+>> <image003.jpg>
+>> 
+>>  
+>> def s_northarrow (expr rot) =
+>>               valscal=1.2; % scale your north arrow here
+>>               decl:=MagDecl; 
+>>               T:=identity;
+>>               picture tmp_pic;
+>>               tmp_pic = image (
+>>                             pickup pencircle scaled .3;
+>>                             thfill fullcircle scaled 4cm withcolor 1white;
+>>                             thdraw fullcircle scaled 3.1cm;
+>>                             thdraw fullcircle scaled 4.05cm;
+>>                             pickup pencircle scaled .1;
+>>                             thdraw fullcircle scaled 3cm;
+>>                             thdraw fullcircle scaled 4cm;
+>>                             pickup pencircle scaled .2;
+>>                             thdraw (dir(45)*2.025cm)--(dir(45)*3.7cm);
+>>                             thdraw (dir(135)*2.025cm)--(dir(135)*3.7cm);
+>>                             thdraw (dir(225)*2.025cm)--(dir(225)*3.7cm);
+>>                             thdraw (dir(315)*2.025cm)--(dir(315)*3.7cm);
+>>                             pickup pencircle scaled .1;
+>>                             for whereto=0 step 15 until 345:
+>>                               thdraw dir(whereto)*.65cm--dir(whereto)*.9cm;
+>>                               thdraw dir(whereto)*1.4cm--dir(whereto)*1.5cm;
+>>                             endfor;
+>>                             for whereto=0 step 5 until 355:
+>>                               thdraw dir(whereto)*.65cm--dir(whereto)*.8cm;
+>>                               thdraw dir(whereto)*1.45cm--dir(whereto)*1.5cm;
+>>                             endfor; 
+>>                             for whereto=0 step 1 until 359:
+>>                               thdraw dir(whereto)*1.94cm--dir(whereto)*2cm;
+>>                             endfor; 
+>>                             pickup pencircle scaled 1;
+>>                             thdraw fullcircle scaled 1cm;
+>>                             thdraw fullcircle scaled 1.1cm;
+>>                             thdraw fullcircle scaled 1.3cm withpen pencircle scaled .3;
+>>                             vald=90-decl;
+>>                             texrot=0-decl;
+>>                             drawarrow(dir(vald)*-2cm--dir(vald)*2cm) withpen pencircle scaled .2;
+>>                             if (MagDecl <> 0): thdraw image(label.top(btex $mg$ etex, (0,0)) scaled .5 rotated texrot;) shifted (dir(vald)*2.04cm); fi;                                               
+>>                             thfill (1.06cm,1.06cm)--(0,.2cm)--(-1.06cm,1.06cm)--(-.2cm,0)--(-1.06cm,-1.06cm)--(0,-.2cm)--(1.06cm,-1.06cm)--(.2cm,0)--cycle;
+>>                             thfill (-.2cm,.2cm)--(0,2cm)--(0,0)--cycle;
+>>                             thfill (.2cm,-.2cm)--(0,-2cm)--(0,0)--cycle;
+>>                             thfill (.2cm,.2cm)--(2cm,0)--(0,0)--cycle;
+>>                             thfill (-.2cm,-.2cm)--(-2cm,0)--(0,0)--cycle;
+>>                             thfill (.2cm,.2cm)--(-0,2cm)--(0,0)--cycle withcolor 1white;
+>>                             thfill (.2cm,-.2cm)--(2cm,0)--(0,0)--cycle withcolor 1white;
+>>                             thfill (-.2cm,-.2cm)--(0,-2cm)--(0,0)--cycle withcolor 1white;
+>>                             thfill (-.2cm,.2cm)--(-2cm,0)--(0,0)--cycle withcolor 1white;                                     
+>>                             pickup pencircle scaled .2;
+>>                             thdraw (-.2cm,.2cm)--(0,2cm)--(.2cm,.2cm)--(2cm,0cm)--(.2cm,-.2cm)--(0,-2cm)--(-.2cm,-.2cm)--(-2cm,0)--cycle;
+>>                             thfill fullcircle scaled .56cm withcolor 1white;
+>>                             pickup pencircle scaled .1;
+>>                             thdraw (.28cm,0)..(0,.28cm)..(-.28cm,0)..(0,-.28cm)..cycle;
+>>                             pickup pencircle scaled .4;
+>>                             thdraw (.2cm,0)..(0,.2cm)..(-.2cm,0)..(0,-.2cm)..cycle;
+>>                             if (MagDecl = 0): label.bot(btex $Nmag$ etex, (0,2.6cm)); else: label.bot(btex $N$ etex, (0,2.6cm)); fi;
+>>                             label.lft(btex $E$ etex, (2.6cm,0));
+>>                             label.rt(btex $W$ etex, (-2.6cm,0));
+>>                             label.top(btex $S$ etex, (0,-2.6cm));
+>>               );
+>>               thdraw tmp_pic scaled valscal rotatedaround(origin, -rot);
+>> enddef;
+>>  
+>>  
+>> //dirk
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+>> <image001.jpg>
+>> <image003.jpg>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk <mailto:Therion at speleo.sk>
+> http://mailman.speleo.sk/mailman/listinfo/therion <http://mailman.speleo.sk/mailman/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/10feffce/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2016-07-03 v?13.42.59.png
+Type: image/png
+Size: 100750 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/10feffce/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Sni?mek obrazovky 2016-07-03 v?13.02.29.png
+Type: image/png
+Size: 78194 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/10feffce/attachment-0001.png>
+
+From martinsluka at mac.com  Sun Jul  3 15:09:41 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 03 Jul 2016 15:09:41 +0200
+Subject: [Therion] North Grid and Mag
+In-Reply-To: <453414CE-3334-47D8-BE41-36B8CC530FAE@mac.com>
+References: <c1e07dde-c73b-44e3-8bc8-8f2bd1810f8f@me.com>
+	<453414CE-3334-47D8-BE41-36B8CC530FAE@mac.com>
+Message-ID: <5C0BFB36-87F2-488B-A95A-E5287384B75D@mac.com>
+
+With day generated (blue):
+
+m.s.
+
+def s_northarrow (expr rot) =
+              valscal=1.2; % scale your north arrow here
+              decl:=MagDecl; 
+              T:=identity;
+              picture tmp_pic;
+              tmp_pic = image (
+                            pickup pencircle scaled .3;
+                            thfill fullcircle scaled 4cm withcolor 1white;
+                            thdraw fullcircle scaled 3.1cm;
+                            thdraw fullcircle scaled 4.05cm;
+                            pickup pencircle scaled .1;
+                            thdraw fullcircle scaled 3cm;
+                            thdraw fullcircle scaled 4cm;
+                            pickup pencircle scaled .2;
+                            thdraw (dir(45)*2.025cm)--(dir(45)*3.7cm);
+                            thdraw (dir(135)*2.025cm)--(dir(135)*3.7cm);
+                            thdraw (dir(225)*2.025cm)--(dir(225)*3.7cm);
+                            thdraw (dir(315)*2.025cm)--(dir(315)*3.7cm);
+                            pickup pencircle scaled .1;
+                            for whereto=0 step 15 until 345:
+                              thdraw dir(whereto)*.65cm--dir(whereto)*.9cm;
+                              thdraw dir(whereto)*1.4cm--dir(whereto)*1.5cm;
+                            endfor;
+                            for whereto=0 step 5 until 355:
+                              thdraw dir(whereto)*.65cm--dir(whereto)*.8cm;
+                              thdraw dir(whereto)*1.45cm--dir(whereto)*1.5cm;
+                            endfor; 
+                            for whereto=0 step 1 until 359:
+                              thdraw dir(whereto)*1.94cm--dir(whereto)*2cm;
+                            endfor; 
+                            pickup pencircle scaled 1;
+                            thdraw fullcircle scaled 1cm;
+                            thdraw fullcircle scaled 1.1cm;
+                            thdraw fullcircle scaled 1.3cm withpen pencircle scaled .3;
+                            vald=90-decl;
+                            texrot=0-decl;
+                            drawarrow(dir(vald)*-2cm--dir(vald)*2cm) withpen pencircle scaled .2;
+                            if (MagDecl <> 0): 
+                          	string z;
+                          	z = ("mg " & (decimal day) & ". " & (decimal month) & ". " & (decimal year));
+                          	thdraw image(label.urt( z infont "ptmr8r", (0,0)) scaled .5 rotated texrot;) shifted (dir(vald)*2.04cm);
+ 				fi;                                               
+                            thfill (1.06cm,1.06cm)--(0,.2cm)--(-1.06cm,1.06cm)--(-.2cm,0)--(-1.06cm,-1.06cm)--(0,-.2cm)--(1.06cm,-1.06cm)--(.2cm,0)--cycle;
+                            thfill (-.2cm,.2cm)--(0,2cm)--(0,0)--cycle;
+                            thfill (.2cm,-.2cm)--(0,-2cm)--(0,0)--cycle;
+                            thfill (.2cm,.2cm)--(2cm,0)--(0,0)--cycle;
+                            thfill (-.2cm,-.2cm)--(-2cm,0)--(0,0)--cycle;
+                            thfill (.2cm,.2cm)--(-0,2cm)--(0,0)--cycle withcolor 1white;
+                            thfill (.2cm,-.2cm)--(2cm,0)--(0,0)--cycle withcolor 1white;
+                            thfill (-.2cm,-.2cm)--(0,-2cm)--(0,0)--cycle withcolor 1white;
+                            thfill (-.2cm,.2cm)--(-2cm,0)--(0,0)--cycle withcolor 1white;                                     
+                            pickup pencircle scaled .2;
+                            thdraw (-.2cm,.2cm)--(0,2cm)--(.2cm,.2cm)--(2cm,0cm)--(.2cm,-.2cm)--(0,-2cm)--(-.2cm,-.2cm)--(-2cm,0)--cycle;
+                            thfill fullcircle scaled .56cm withcolor 1white;
+                            pickup pencircle scaled .1;
+                            thdraw (.28cm,0)..(0,.28cm)..(-.28cm,0)..(0,-.28cm)..cycle;
+                            pickup pencircle scaled .4;
+                            thdraw (.2cm,0)..(0,.2cm)..(-.2cm,0)..(0,-.2cm)..cycle;
+                            if (MagDecl = 0): label.bot(btex $Nmag$ etex, (0,2.6cm)); else: label.bot(btex $N$ etex, (0,2.6cm)); fi;
+                            label.lft(btex $E$ etex, (2.6cm,0));
+                            label.rt(btex $W$ etex, (-2.6cm,0));
+                            label.top(btex $S$ etex, (0,-2.6cm));
+              );
+              thdraw tmp_pic scaled valscal rotatedaround(origin, -rot);
+enddef;
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160703/34a4b5f4/attachment.htm>
+
+From torsten.schnitter at netcologne.de  Fri Jul  8 13:34:14 2016
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Fri, 8 Jul 2016 13:34:14 +0200 (CEST)
+Subject: [Therion] Cavedepth
+Message-ID: <750268123.187905.1467977654137@comcenter.netcologne.de>
+
+Hi
+
+I have a question about "cavedepth" and propbably need some help as I can't figure out the problem.
+
+My complete survey is about underwater cave passages.
+Therfore I have an option inside every survey and centerline which is "calibrate depth 0 -1".
+All survey are with "data diving station depth left right up  down newline tape compass".
+And every depth is with positive numbers like 5.3 then which means -5.3m of waterdepth.
+Lowest number all over all surveys is 0.0.
+Biggest number is 24.1.
+
+Every scrap contains all the survey stations within this part of the cave as a "point station".
+So in the end I have every surveyed station inside the scraps.
+
+When I print the map as a pdf file (with all the scraps) I don't get the right number for Depth.
+With numbers as above I would expect a cave depth of 24m but I get 22m.
+
+Of course I can do an override with "\cavedepth{24\thinspace{}m}".
+But this is not what I want to.
+
+So can anyone explain please why I don't get the correct number for cavedepth in the map header?
+Thanks!
+
+cheers,
+Torsten
+
+
+From markus.boldt at gmx.net  Fri Jul  8 14:25:25 2016
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Fri, 8 Jul 2016 14:25:25 +0200
+Subject: [Therion] Cavedepth
+In-Reply-To: <750268123.187905.1467977654137@comcenter.netcologne.de>
+References: <750268123.187905.1467977654137@comcenter.netcologne.de>
+Message-ID: <006401d1d913$ce847bd0$6b8d7370$@gmx.net>
+
+Hi Torsten, 
+only a question...
+Do you have a fixed point for the entrance with a "depth" to your series of
+scraps? 
+May be there is the fault. 
+Regards 
+Markus
+
+-----Ursprüngliche Nachricht-----
+Von: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] Im Auftrag
+von Torsten Schnitter
+Gesendet: Freitag, 8. Juli 2016 13:34
+An: therion at speleo.sk
+Betreff: [Therion] Cavedepth
+
+Hi
+
+I have a question about "cavedepth" and propbably need some help as I can't
+figure out the problem.
+
+My complete survey is about underwater cave passages.
+Therfore I have an option inside every survey and centerline which is
+"calibrate depth 0 -1".
+All survey are with "data diving station depth left right up  down newline
+tape compass".
+And every depth is with positive numbers like 5.3 then which means -5.3m of
+waterdepth.
+Lowest number all over all surveys is 0.0.
+Biggest number is 24.1.
+
+Every scrap contains all the survey stations within this part of the cave as
+a "point station".
+So in the end I have every surveyed station inside the scraps.
+
+When I print the map as a pdf file (with all the scraps) I don't get the
+right number for Depth.
+With numbers as above I would expect a cave depth of 24m but I get 22m.
+
+Of course I can do an override with "\cavedepth{24\thinspace{}m}".
+But this is not what I want to.
+
+So can anyone explain please why I don't get the correct number for
+cavedepth in the map header?
+Thanks!
+
+cheers,
+Torsten
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From m.budaj at gmail.com  Mon Jul 18 15:58:03 2016
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Mon, 18 Jul 2016 15:58:03 +0200
+Subject: [Therion] new server
+Message-ID: <CALPsdSsF21wRzf_hoMqS=W1GRBGmZfxBq6zU9dFi-GKe5nm7fg@mail.gmail.com>
+
+Hi all,
+
+we have finished migration of web pages and mailing lists to a new
+server. We have also merged mailing list archives from various
+sources.
+
+Please let us know, if there is something broken.
+
+Big thanks to Marty and Ladislav for hosting therion website and
+mailing lists for more than 10 years!
+
+Martin
+
+
+From bruce at tomo.co.nz  Mon Jul 18 22:01:07 2016
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 19 Jul 2016 08:01:07 +1200
+Subject: [Therion] New Therion tips on wiki
+Message-ID: <7C90CBE8D0F348DE944C37554B86DBC3@JUICEBRAIN>
+
+Martin S
+
+I like your tip on straightening out zig-zig survey legs in passages in
+order to make extended elevations more realistic.
+
+https://therion.speleo.sk/wiki/doku.php/tips?s[]=zig
+<https://therion.speleo.sk/wiki/doku.php/tips?s%5b%5d=zig&s%5b%5d=zag>
+&s[]=zag
+
+I am sure I will use that.
+
+ 
+
+Also notice you have added a link to an executable for converting maps to
+data.
+
+Is there a page or some information about what it is and how it works?
+
+Some might be nervous about downloading an executable directly without any
+explanation about what it is and how it works (in case it is malware)
+
+ 
+
+Bruce
+
+ 
+
+PS New look wiki looks good.
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160719/90ac6b47/attachment.htm>
+
+From graham.mullan at coly.org.uk  Tue Jul 19 12:12:13 2016
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Tue, 19 Jul 2016 11:12:13 +0100
+Subject: [Therion] Map to Data
+Message-ID: <000601d1e1a6$0574daa0$105e8fe0$@coly.org.uk>
+
+Bruce wrote:
+
+"Also notice you have added a link to an executable for converting maps to data.
+
+Is there a page or some information about what it is and how it works?
+
+Some might be nervous about downloading an executable directly without any explanation about what it is and how it works (in case it is malware)"
+
+Bruce
+
+That program is part of Larry Fish's "Compass" suite. It is perfectly safe to use. The one thing to remember is that its output is a Compass data file which means that whatever you think you did when using it, it will automatically convert all lengths to decimal feet. This is not an issue just as long as you remember it. I've used it a number of times, but only on small caves or mines, so I've had little problem editing the output into a therion or survex file by hand - and remembering to add the line "tape units feet" to it.
+
+Graham
+
+
+
+
+
+From drfootleg at gmail.com  Tue Jul 19 12:24:27 2016
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 19 Jul 2016 10:24:27 +0000
+Subject: [Therion] Map to Data
+In-Reply-To: <000601d1e1a6$0574daa0$105e8fe0$@coly.org.uk>
+References: <000601d1e1a6$0574daa0$105e8fe0$@coly.org.uk>
+Message-ID: <CAJkGg4=3qCQTVXPC8ZAAKK6evFzCtqnKaJL2KOiwnHcrV7dduQ@mail.gmail.com>
+
+Or you could convert the Compass DAT file back to metric using my Cave
+Converter utility which reads Compass format now.
+
+http://wscc.darkgem.com/caveconverter/
+
+Footleg
+
+On Tue, Jul 19, 2016 at 11:12 AM Graham Mullan <graham.mullan at coly.org.uk>
+wrote:
+
+> Bruce wrote:
+>
+> "Also notice you have added a link to an executable for converting maps to
+> data.
+>
+> Is there a page or some information about what it is and how it works?
+>
+> Some might be nervous about downloading an executable directly without any
+> explanation about what it is and how it works (in case it is malware)"
+>
+> Bruce
+>
+> That program is part of Larry Fish's "Compass" suite. It is perfectly safe
+> to use. The one thing to remember is that its output is a Compass data file
+> which means that whatever you think you did when using it, it will
+> automatically convert all lengths to decimal feet. This is not an issue
+> just as long as you remember it. I've used it a number of times, but only
+> on small caves or mines, so I've had little problem editing the output into
+> a therion or survex file by hand - and remembering to add the line "tape
+> units feet" to it.
+>
+> Graham
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160719/f6604203/attachment.htm>
+
+From robert at staven.no  Tue Jul 19 12:25:43 2016
+From: robert at staven.no (Robert Staven)
+Date: Tue, 19 Jul 2016 12:25:43 +0200
+Subject: [Therion] Adjust opacity value in transparent color
+Message-ID: <704d2008-3395-7935-02a8-177d2dcb351e@staven.no>
+
+Hi,
+
+I'm using Therion to map waterfilled caves, and some systems have 
+'air-locks' (air chambers), so it's necessary to distinguish between air 
+filled cave, waterfilled cave and water surfaces. But the waterfilled 
+area should show details (be transparent) in same way as dry cave.
+
+Is there any way to adjust the opacity value (in meta code?) when 
+setting a transparent color?
+
+
+I have made a test to show my issues:
+The files can be found on http://www.staven.no/cavetest/
+
+
+The cave (ca 100m long)
+plan:
+-> http://www.staven.no/cavetest/testcave_plan.pdf
+elevation:
+-> http://www.staven.no/cavetest/testcave_elevation.pdf
+
+This doesn't work to well draw underwater maps.
+
+
+*** Changing the water color:
+
+layout test
+   code metapost
+
+     def a_water (expr p) =
+       T:=identity;
+       thfill p withcolor (0.8, 0.8, 1.0);
+     enddef;
+
+   endcode
+endlayout
+
+-> http://www.staven.no/cavetest/testcave_elevation_2.pdf
+
+Looks better but the cave and line 'behind' doesn't show thru the water.
+
+
+*** Try with transparent water color:
+
+     def_transparent_rgb(tr_lblue, 0.80, 0.80, 1.00);
+
+     def a_water (expr p) =
+       T:=identity;
+       thfill p withtransparentcolor tr_lblue;
+     enddef;
+
+-> http://www.staven.no/cavetest/testcave_elevation_3.pdf
+
+
+*** Almost perfect, but I like to adjust the opacity value so it looks 
+like this:
+
+     def a_water (expr p) =
+       T:=identity;
+     enddef;
+     # no drawing of water
+
+   color map-fg [80 80 100]
+
+-> http://www.staven.no/cavetest/testcave_elevation_4.pdf
+(NB You won't see the difference in Adobe Reader, but it shows up in 
+SumatraPDF)
+
+
+Is there any way to adjust the opacity value when setting a transparent 
+color?
+
+Or should I do this another way?
+
+
+From martinsluka at mac.com  Tue Jul 19 14:00:55 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 19 Jul 2016 12:00:55 +0000 (GMT)
+Subject: [Therion] Adjust opacity value in transparent color
+In-Reply-To: <704d2008-3395-7935-02a8-177d2dcb351e@staven.no>
+Message-ID: <2391f41b-9fb1-4c82-b165-122650b6295f@me.com>
+
+There is transparency parameter in MetaPost:
+
+Transparent colors 
+
+You can use transparent colors with the transparent(method, factor, color) function. For example:
+\runMPgraphicstrue
+\setupcolors[state=start]
+\starttext
+\startreusableMPgraphic{a}
+fill unitsquare scaled 1cm withcolor yellow;
+fill unitsquare shifted (0.5,0.5)
+  % method 1 = normal
+  scaled 1cm withcolor transparent(1,0.5,red);
+\stopreusableMPgraphic
+
+\placefigure[force,none]{}{\reuseMPgraphic{a}}
+\stoptext
+
+The available transparency methods are the twelve methods supported by PDF specification:
+1. normal 
+2. multiply 
+3. screen 
+4. overlay
+5. softlight 
+6. hardlight 
+7. colordodge 
+8. colorburn
+9. darken 
+10. lighten 
+11. difference 
+12. exclusion
+
+On Jul 19, 2016, at 12:25 PM, Robert Staven <robert at staven.no> wrote:
+
+Hi,
+
+I'm using Therion to map waterfilled caves, and some systems have 
+'air-locks' (air chambers), so it's necessary to distinguish between air 
+filled cave, waterfilled cave and water surfaces. But the waterfilled 
+area should show details (be transparent) in same way as dry cave.
+
+Is there any way to adjust the opacity value (in meta code?) when 
+setting a transparent color?
+
+
+I have made a test to show my issues:
+The files can be found on http://www.staven.no/cavetest/
+
+
+The cave (ca 100m long)
+plan:
+-> http://www.staven.no/cavetest/testcave_plan.pdf
+elevation:
+-> http://www.staven.no/cavetest/testcave_elevation.pdf
+
+This doesn't work to well draw underwater maps.
+
+
+*** Changing the water color:
+
+layout test
+code metapost
+
+def a_water (expr p) =
+T:=identity;
+thfill p withcolor (0.8, 0.8, 1.0);
+enddef;
+
+endcode
+endlayout
+
+-> http://www.staven.no/cavetest/testcave_elevation_2.pdf
+
+Looks better but the cave and line 'behind' doesn't show thru the water.
+
+
+*** Try with transparent water color:
+
+def_transparent_rgb(tr_lblue, 0.80, 0.80, 1.00);
+
+def a_water (expr p) =
+T:=identity;
+thfill p withtransparentcolor tr_lblue;
+enddef;
+
+-> http://www.staven.no/cavetest/testcave_elevation_3.pdf
+
+
+*** Almost perfect, but I like to adjust the opacity value so it looks 
+like this:
+
+def a_water (expr p) =
+T:=identity;
+enddef;
+# no drawing of water
+
+color map-fg [80 80 100]
+
+-> http://www.staven.no/cavetest/testcave_elevation_4.pdf
+(NB You won't see the difference in Adobe Reader, but it shows up in 
+SumatraPDF)
+
+
+Is there any way to adjust the opacity value when setting a transparent 
+color?
+
+Or should I do this another way?
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160719/d207aebf/attachment.htm>
+
+From m.budaj at gmail.com  Tue Jul 19 22:01:03 2016
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 19 Jul 2016 22:01:03 +0200
+Subject: [Therion] Adjust opacity value in transparent color
+In-Reply-To: <704d2008-3395-7935-02a8-177d2dcb351e@staven.no>
+References: <704d2008-3395-7935-02a8-177d2dcb351e@staven.no>
+Message-ID: <CALPsdSsznhYQ+a7tAU_F55j+BbkyxZ=6rHnu6BcPtyNsyGjWKg@mail.gmail.com>
+
+Hi,
+
+there is just one global setting "opacity" in the layout (70 % by
+default). Global means, that the same transparency value is applied to
+passage fills and to all areas filled using "withtransparentcolor".
+
+The reason is that therion draws all transparent areas in a scrap in
+one group (see https://mailman.speleo.sk/pipermail/therion/2012-November/004113.html
+for details) to avoid overlaps of transparent areas in the same scrap
+or transparent rendering of features in the same scrap which are
+bellow the transparent area and should be hidden.
+
+Given this, your examples 3 and 4 should give the same visual results
+and Adobe Reader is displaying them right.
+
+Martin
+
+On Tue, Jul 19, 2016 at 12:25 PM, Robert Staven <robert at staven.no> wrote:
+> Hi,
+>
+> I'm using Therion to map waterfilled caves, and some systems have
+> 'air-locks' (air chambers), so it's necessary to distinguish between air
+> filled cave, waterfilled cave and water surfaces. But the waterfilled area
+> should show details (be transparent) in same way as dry cave.
+>
+> Is there any way to adjust the opacity value (in meta code?) when setting a
+> transparent color?
+>
+>
+> I have made a test to show my issues:
+> The files can be found on http://www.staven.no/cavetest/
+>
+>
+> The cave (ca 100m long)
+> plan:
+> -> http://www.staven.no/cavetest/testcave_plan.pdf
+> elevation:
+> -> http://www.staven.no/cavetest/testcave_elevation.pdf
+>
+> This doesn't work to well draw underwater maps.
+>
+>
+> *** Changing the water color:
+>
+> layout test
+>   code metapost
+>
+>     def a_water (expr p) =
+>       T:=identity;
+>       thfill p withcolor (0.8, 0.8, 1.0);
+>     enddef;
+>
+>   endcode
+> endlayout
+>
+> -> http://www.staven.no/cavetest/testcave_elevation_2.pdf
+>
+> Looks better but the cave and line 'behind' doesn't show thru the water.
+>
+>
+> *** Try with transparent water color:
+>
+>     def_transparent_rgb(tr_lblue, 0.80, 0.80, 1.00);
+>
+>     def a_water (expr p) =
+>       T:=identity;
+>       thfill p withtransparentcolor tr_lblue;
+>     enddef;
+>
+> -> http://www.staven.no/cavetest/testcave_elevation_3.pdf
+>
+>
+> *** Almost perfect, but I like to adjust the opacity value so it looks like
+> this:
+>
+>     def a_water (expr p) =
+>       T:=identity;
+>     enddef;
+>     # no drawing of water
+>
+>   color map-fg [80 80 100]
+>
+> -> http://www.staven.no/cavetest/testcave_elevation_4.pdf
+> (NB You won't see the difference in Adobe Reader, but it shows up in
+> SumatraPDF)
+>
+>
+> Is there any way to adjust the opacity value when setting a transparent
+> color?
+>
+> Or should I do this another way?
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/listinfo/therion
+
+
+From martinsluka at mac.com  Wed Jul 20 07:50:15 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Wed, 20 Jul 2016 07:50:15 +0200
+Subject: [Therion] Adjust opacity value in transparent color
+In-Reply-To: <2391f41b-9fb1-4c82-b165-122650b6295f@me.com>
+References: <2391f41b-9fb1-4c82-b165-122650b6295f@me.com>
+Message-ID: <97A6CA77-ABD6-4FC0-B7FC-0226221E2021@mac.com>
+
+I’m sorry, I was too fast.
+
+transparency is part of MetaFun extension only.
+
+http://wiki.contextgarden.net/MetaFun <http://wiki.contextgarden.net/MetaFun>
+
+Samples of using of MetaFun:
+
+http://www.pragma-ade.com/show-gra.pdf <http://www.pragma-ade.com/show-gra.pdf>
+
+m.s.
+
+
+
+> 19. 7. 2016 v 14:00, Martin Sluka <martinsluka at mac.com>:
+> 
+> There is transparency parameter in MetaPost:
+> 
+> Transparent colors 
+> 
+> You can use transparent colors with the transparent(method, factor, color) function. For example:
+> \runMPgraphicstrue
+> \setupcolors[state=start]
+> \starttext
+> \startreusableMPgraphic{a}
+> fill unitsquare scaled 1cm withcolor yellow;
+> fill unitsquare shifted (0.5,0.5)
+>   % method 1 = normal
+>   scaled 1cm withcolor transparent(1,0.5,red);
+> \stopreusableMPgraphic
+> 
+> \placefigure[force,none]{}{\reuseMPgraphic{a}}
+> \stoptext
+> 
+> The available transparency methods are the twelve methods supported by PDF specification:
+> 1. normal 
+> 2. multiply 
+> 3. screen 
+> 4. overlay
+> 5. softlight 
+> 6. hardlight 
+> 7. colordodge 
+> 8. colorburn
+> 9. darken 
+> 10. lighten 
+> 11. difference 
+> 12. exclusion
+> 
+> On Jul 19, 2016, at 12:25 PM, Robert Staven <robert at staven.no> wrote:
+> 
+>> Hi,
+>> 
+>> I'm using Therion to map waterfilled caves, and some systems have 
+>> 'air-locks' (air chambers), so it's necessary to distinguish between air 
+>> filled cave, waterfilled cave and water surfaces. But the waterfilled 
+>> area should show details (be transparent) in same way as dry cave.
+>> 
+>> Is there any way to adjust the opacity value (in meta code?) when 
+>> setting a transparent color?
+>> 
+>> 
+>> I have made a test to show my issues:
+>> The files can be found on http://www.staven.no/cavetest/ <http://www.staven.no/cavetest/>
+>> 
+>> 
+>> The cave (ca 100m long)
+>> plan:
+>> -> http://www.staven.no/cavetest/testcave_plan.pdf <http://www.staven.no/cavetest/testcave_plan.pdf>
+>> elevation:
+>> -> http://www.staven.no/cavetest/testcave_elevation.pdf <http://www.staven.no/cavetest/testcave_elevation.pdf>
+>> 
+>> This doesn't work to well draw underwater maps.
+>> 
+>> 
+>> *** Changing the water color:
+>> 
+>> layout test
+>> code metapost
+>> 
+>> def a_water (expr p) =
+>> T:=identity;
+>> thfill p withcolor (0.8, 0.8, 1.0);
+>> enddef;
+>> 
+>> endcode
+>> endlayout
+>> 
+>> -> http://www.staven.no/cavetest/testcave_elevation_2.pdf <http://www.staven.no/cavetest/testcave_elevation_2.pdf>
+>> 
+>> Looks better but the cave and line 'behind' doesn't show thru the water.
+>> 
+>> 
+>> *** Try with transparent water color:
+>> 
+>> def_transparent_rgb(tr_lblue, 0.80, 0.80, 1.00);
+>> 
+>> def a_water (expr p) =
+>> T:=identity;
+>> thfill p withtransparentcolor tr_lblue;
+>> enddef;
+>> 
+>> -> http://www.staven.no/cavetest/testcave_elevation_3.pdf <http://www.staven.no/cavetest/testcave_elevation_3.pdf>
+>> 
+>> 
+>> *** Almost perfect, but I like to adjust the opacity value so it looks 
+>> like this:
+>> 
+>> def a_water (expr p) =
+>> T:=identity;
+>> enddef;
+>> # no drawing of water
+>> 
+>> color map-fg [80 80 100]
+>> 
+>> -> http://www.staven.no/cavetest/testcave_elevation_4.pdf <http://www.staven.no/cavetest/testcave_elevation_4.pdf>
+>> (NB You won't see the difference in Adobe Reader, but it shows up in 
+>> SumatraPDF)
+>> 
+>> 
+>> Is there any way to adjust the opacity value when setting a transparent 
+>> color?
+>> 
+>> Or should I do this another way?
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk <mailto:Therion at speleo.sk>
+>> http://mailman.speleo.sk/listinfo/therion <http://mailman.speleo.sk/listinfo/therion>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20160720/cf9eeeec/attachment.htm>
+
+From martinsluka at mac.com  Thu Jul 21 10:40:34 2016
+From: martinsluka at mac.com (Martin Sluka)
+Date: Thu, 21 Jul 2016 10:40:34 +0200
+Subject: [Therion] Map to Data
+In-Reply-To: <000601d1e1a6$0574daa0$105e8fe0$@coly.org.uk>
+References: <000601d1e1a6$0574daa0$105e8fe0$@coly.org.uk>
+Message-ID: <80506F8E-C0B5-4184-865A-52334510F427@mac.com>
+
+
+> 19. 7. 2016 v 12:12, Graham Mullan <graham.mullan at coly.org.uk>:
+> 
+> The one thing to remember is that its output is a Compass data file which means that whatever you think you did when using it, it will automatically convert all lengths to decimal feet.
+
+It looks that last version I have is able to use meters too. 
+
+m.s.
+
+From graham.mullan at coly.org.uk  Thu Jul 21 19:47:39 2016
+From: graham.mullan at coly.org.uk (Graham Mullan)
+Date: Thu, 21 Jul 2016 18:47:39 +0100
+Subject: [Therion] Therion Digest, Vol 127, Issue 11
+In-Reply-To: <mailman.1.1469095201.25190.therion@speleo.sk>
+References: <mailman.1.1469095201.25190.therion@speleo.sk>
+Message-ID: <001a01d1e377$fdd6c820$f9845860$@coly.org.uk>
+
+Martin Sluka said
+
+> 19. 7. 2016 v 12:12, Graham Mullan <graham.mullan at coly.org.uk>:
+> 
+> The one thing to remember is that its output is a Compass data file which means that whatever you think you did when using it, it will automatically convert all lengths to decimal feet.
+
+It looks that last version I have is able to use meters too. 
+
+It'll take input in metres, but I think you'll find the output is still in feet. I'm pretty sure that he has no intention of rewriting Compass to that extent.
+
+Graham
+
+
+

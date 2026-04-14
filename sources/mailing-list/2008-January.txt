@@ -1,0 +1,1398 @@
+From wookey at wookware.org  Thu Jan  3 17:42:27 2008
+From: wookey at wookware.org (Wookey)
+Date: Thu, 3 Jan 2008 16:42:27 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+Message-ID: <20080103164225.GB13289@knossos.aleph1.co.uk>
+
+I finally got round to uploading the work I did in January to Debian
+proper. So there is now a current Therion in unstable as well as
+experimental, and the various long-standing bugs are fixed.
+
+The new packages use texlive instead of tetex, as Debian has
+transitioned to these, and the wiki docs are included in the
+therion-docs package (that's currently the wiki docs as of about a
+year ago. I'll update those too shortly). 
+
+The package now appears in Applications/Science/Geoscience in line with
+current menu policy (I'll do an update of Survex with this property too
+soon).
+
+You can see current package status here:
+http://packages.qa.debian.org/t/therion.html
+and build logs here:
+http://buildd.debian.org/pkg.cgi?pkg=therion
+
+Please try them out if you can and report any problems. 
+
+I've included the current debian diff below in case Stacho wishes to
+include any of it upstream (I'm afraid I've trampled all over your
+nice multiplatform build stuff stacho, but a few bits of the diff are
+probably worth incorporating upstream).
+
+
+This has raised a few issues worthy of note.
+
+1) 64-bit loch
+
+Wolfgang Zillig reported in April that he couldn't get loch to work on
+his AMD64 box. It doesn't work on mine either. I'll post more details
+in that thread.
+
+2) gcc warnings
+
+The therion code generates hundreds of warnings if you do a build with
+default gcc4.2.2 like this:
+thdataleg.h:141: warning: deprecated conversion from string constant to 'char*'
+thdataleg.h:141: warning: deprecated conversion from string constant to 'char*'
+thdataleg.h:141: warning: deprecated conversion from string constant to 'char*'
+
+I've worked around that for now using -Wno-write-strings but I think
+the correct fix is to use const in the function prototypes to match
+the  declarations. You can see a log of the full set of whinges
+here if someone wants to go through them:
+http://buildd.debian.org/fetch.cgi?pkg=therion;ver=0.5.0-2;arch=ia64;stamp=1199241505
+
+The gcc docs suggest that -Wno-deprecated should also stop these
+warnings, but that doesn;t seem to work. Not sure if I was just having
+finger trouble/too much beer over xmas there, but it really didn't
+seem to stop them all.
+
+3) New sample data
+
+I had a bit of trouble building this, so it's not in the current
+package, but I've worked it out now (paths and dependencies was the
+issue) and so will integrate it into the docs package on the next
+upload.
+
+It's a nice piece of work. Is this intended to replace the wiki docs
+eventually?
+
+4) tcl version. 
+
+Does Therion care if tcl 8.4 or 8.5 is used? I've left it defaulting
+8.4 for now, but I guess 8.5 would work and would be preferred? A
+quick test suggests that it works fine.
+
+5) library linkages:
+The shared-library analyser points out that we link to all the wxgtk
+libs but only actually use some of them. This is wrong.
+
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libwx_gtk2u_xrc-2.6.so.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libwx_gtk2u_qa-2.6.so.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libwx_gtk2u_adv-2.6.so.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libwx_baseu_xml-2.6.so.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libwx_baseu_net-2.6.so.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libvtkImaging.so.5.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libvtkIO.so.5.0 (it uses none of its symbols).
+dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+be linked with libz.so.1 (it uses none of its symbols).
+
+I think the reason is that the build uses:
+$(shell wx-config --libs --gl-libs) to list the wx libs so gets all of
+them. I haven't fixed this yet as I'm not sure what the best fix is.
+Should we just list the libs that actually are used, or is there a way
+to use wx-config to DTRT?
+
+6) No desktop files
+
+Therion doesn't appear to have any desktop files so it doesn't appear
+in the main menus of xfce/gnome/kde. Anyone done any, or care to do
+some?
+
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: debian.diff
+Type: text/x-diff
+Size: 13472 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080103/7483a1ff/attachment.diff>
+
+From olly at survex.com  Thu Jan  3 18:11:52 2008
+From: olly at survex.com (Olly Betts)
+Date: Thu, 3 Jan 2008 17:11:52 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <20080103164225.GB13289@knossos.aleph1.co.uk>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+Message-ID: <20080103171152.GX14916@survex.com>
+
+On Thu, Jan 03, 2008 at 04:42:27PM +0000, Wookey wrote:
+> I think the reason is that the build uses:
+> $(shell wx-config --libs --gl-libs) to list the wx libs so gets all of
+> them. I haven't fixed this yet as I'm not sure what the best fix is.
+> Should we just list the libs that actually are used, or is there a way
+> to use wx-config to DTRT?
+
+You can list the libs you want like so (note I've not even looked at
+what loch might need - this just shows the syntax):
+
+wx-config --libs core,base
+
+Cheers,
+    Olly
+
+
+From ohc at vt.edu  Thu Jan  3 19:13:13 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Thu, 3 Jan 2008 13:13:13 -0500
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <20080103164225.GB13289@knossos.aleph1.co.uk>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+Message-ID: <1C6EADE6-0277-48DA-A363-D9D49B4807E7@vt.edu>
+
+Hmmm, runs on my AMD64 box.  I'm also running Gentoo and not Debian,  
+but that shouldn't matter.
+
+Philip Schuchardt
+
+
+On Jan 3, 2008, at 11:42 AM, Wookey wrote:
+
+> I finally got round to uploading the work I did in January to Debian
+> proper. So there is now a current Therion in unstable as well as
+> experimental, and the various long-standing bugs are fixed.
+>
+> The new packages use texlive instead of tetex, as Debian has
+> transitioned to these, and the wiki docs are included in the
+> therion-docs package (that's currently the wiki docs as of about a
+> year ago. I'll update those too shortly).
+>
+> The package now appears in Applications/Science/Geoscience in line  
+> with
+> current menu policy (I'll do an update of Survex with this property  
+> too
+> soon).
+>
+> You can see current package status here:
+> http://packages.qa.debian.org/t/therion.html
+> and build logs here:
+> http://buildd.debian.org/pkg.cgi?pkg=therion
+>
+> Please try them out if you can and report any problems.
+>
+> I've included the current debian diff below in case Stacho wishes to
+> include any of it upstream (I'm afraid I've trampled all over your
+> nice multiplatform build stuff stacho, but a few bits of the diff are
+> probably worth incorporating upstream).
+>
+>
+> This has raised a few issues worthy of note.
+>
+> 1) 64-bit loch
+>
+> Wolfgang Zillig reported in April that he couldn't get loch to work on
+> his AMD64 box. It doesn't work on mine either. I'll post more details
+> in that thread.
+>
+>
+> 2) gcc warnings
+>
+> The therion code generates hundreds of warnings if you do a build with
+> default gcc4.2.2 like this:
+> thdataleg.h:141: warning: deprecated conversion from string constant  
+> to 'char*'
+> thdataleg.h:141: warning: deprecated conversion from string constant  
+> to 'char*'
+> thdataleg.h:141: warning: deprecated conversion from string constant  
+> to 'char*'
+>
+> I've worked around that for now using -Wno-write-strings but I think
+> the correct fix is to use const in the function prototypes to match
+> the  declarations. You can see a log of the full set of whinges
+> here if someone wants to go through them:
+> http://buildd.debian.org/fetch.cgi?pkg=therion;ver=0.5.0-2;arch=ia64;stamp=1199241505
+>
+> The gcc docs suggest that -Wno-deprecated should also stop these
+> warnings, but that doesn;t seem to work. Not sure if I was just having
+> finger trouble/too much beer over xmas there, but it really didn't
+> seem to stop them all.
+>
+> 3) New sample data
+>
+> I had a bit of trouble building this, so it's not in the current
+> package, but I've worked it out now (paths and dependencies was the
+> issue) and so will integrate it into the docs package on the next
+> upload.
+>
+> It's a nice piece of work. Is this intended to replace the wiki docs
+> eventually?
+>
+> 4) tcl version.
+>
+> Does Therion care if tcl 8.4 or 8.5 is used? I've left it defaulting
+> 8.4 for now, but I guess 8.5 would work and would be preferred? A
+> quick test suggests that it works fine.
+>
+> 5) library linkages:
+> The shared-library analyser points out that we link to all the wxgtk
+> libs but only actually use some of them. This is wrong.
+>
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libwx_gtk2u_xrc-2.6.so.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libwx_gtk2u_qa-2.6.so.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libwx_gtk2u_adv-2.6.so.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libwx_baseu_xml-2.6.so.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libwx_baseu_net-2.6.so.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libvtkImaging.so.5.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libvtkIO.so.5.0 (it uses none of its symbols).
+> dpkg-shlibdeps: warning: debian/therion-viewer/usr/bin/loch shouldn't
+> be linked with libz.so.1 (it uses none of its symbols).
+>
+> I think the reason is that the build uses:
+> $(shell wx-config --libs --gl-libs) to list the wx libs so gets all of
+> them. I haven't fixed this yet as I'm not sure what the best fix is.
+> Should we just list the libs that actually are used, or is there a way
+> to use wx-config to DTRT?
+>
+> 6) No desktop files
+>
+> Therion doesn't appear to have any desktop files so it doesn't appear
+> in the main menus of xfce/gnome/kde. Anyone done any, or care to do
+> some?
+>
+>
+> Wookey
+> -- 
+> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+> http://wookware.org/
+> <debian.diff>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From wookey at wookware.org  Fri Jan  4 00:14:45 2008
+From: wookey at wookware.org (Wookey)
+Date: Thu, 3 Jan 2008 23:14:45 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <20080103164225.GB13289@knossos.aleph1.co.uk>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+Message-ID: <20080103231444.GH13289@knossos.aleph1.co.uk>
+
+On 2008-01-03 16:42 +0000, Wookey wrote:
+
+I forgot
+7) Loch warnings:
+
+Building loch gives a lot of this:
+In file included from /usr/include/wx-2.6/wx/gtk/cursor.h:23,
+                 from /usr/include/wx-2.6/wx/cursor.h:24,
+                 from /usr/include/wx-2.6/wx/event.h:32,
+                 from /usr/include/wx-2.6/wx/wx.h:23,
+		 from lxWX.h:6,
+                 from lxAboutDlg.cxx:1:
+/usr/include/wx-2.6/wx/image.h: In member function ‘wxImageHistogramBase_wxImplementation_HashTable::Node** wxImageHistogramBase_wxImplementation_HashTable::GetNodePtr(const long unsigned int&) const’:
+/usr/include/wx-2.6/wx/image.h:123: warning: dereferencing type-punned pointer will break strict-aliasing rules
+
+Which is something to do with referencing structure members using pointer types which 
+can not be guaranteed to have the same alignment as the pointer the member was
+assigned with.
+
+All these appear to be in wx headers, so maybe they are not really anything to do
+with therion, and all I should do is add -fno-strict-aliasing to the build to stop
+them appearing.
+
+But I'd like someone who groks C++ properly to tell me that's not just papering over
+cracks before doing so. Doing this certainly removes all the noise and shows us that
+there is one genuine set of warnings:
+lxRender.cxx: In member function ‘void lxRenderFile::RenderPDFHeader()’:
+lxRender.cxx:855: warning: format ‘%u’ expects type ‘unsigned int’, but argument 3 has type ‘size_t’
+lxRender.cxx: In member function ‘void lxRenderFile::RenderPDFFooter()’:
+lxRender.cxx:929: warning: format ‘%u’ expects type ‘unsigned int’, but argument 3 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 4 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 5 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 6 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 7 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 8 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 9 has type ‘size_t’
+lxRender.cxx:982: warning: format ‘%010u’ expects type ‘unsigned int’, but argument 10 has type ‘size_t’
+lxRender.cxx:983: warning: format ‘%u’ expects type ‘unsigned int’, but argument 3 has type ‘size_t’
+
+Does this just need some casts or should the format be changed?
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From wookey at wookware.org  Fri Jan  4 00:16:20 2008
+From: wookey at wookware.org (Wookey)
+Date: Thu, 3 Jan 2008 23:16:20 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <1C6EADE6-0277-48DA-A363-D9D49B4807E7@vt.edu>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+	<1C6EADE6-0277-48DA-A363-D9D49B4807E7@vt.edu>
+Message-ID: <20080103231619.GI13289@knossos.aleph1.co.uk>
+
+On 2008-01-03 13:13 -0500, Philip Schuchardt wrote:
+> Hmmm, runs on my AMD64 box.  I'm also running Gentoo and not Debian,  
+> but that shouldn't matter.
+
+Which version? Plain 0.5.1 tarball?
+
+If I do 
+make debian-config; cd loch; make
+the resulting loch still segfaults on running.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From olly at survex.com  Fri Jan  4 01:04:00 2008
+From: olly at survex.com (Olly Betts)
+Date: Fri, 4 Jan 2008 00:04:00 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <20080103231444.GH13289@knossos.aleph1.co.uk>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+	<20080103231444.GH13289@knossos.aleph1.co.uk>
+Message-ID: <20080104000359.GI14916@survex.com>
+
+On Thu, Jan 03, 2008 at 11:14:45PM +0000, Wookey wrote:
+> All these appear to be in wx headers, so maybe they are not really
+> anything to do with therion, and all I should do is add
+> -fno-strict-aliasing to the build to stop them appearing.
+
+That's probably the simplest fix.
+
+> But I'd like someone who groks C++ properly to tell me that's not just
+> papering over cracks before doing so.
+
+ISO C and C++ state in what cases the compiler can assume two pointers
+to different types don't alias each other.  In other words, when a write
+through one pointer won't affect data read by the other.  In recent
+years, compilers have started to make more aggressive use of the
+optimisations these rules allow, which causes problems for older code
+which "works fine", but isn't actually valid C/C++.  So GCC helpfully
+now produces warnings about code which it notices appears to violate
+these aliasing rules.
+
+So it's papering over the cracks in a sense in that the code isn't
+valid C/C++, but you could think of it as the code being written in a
+non-standardised dialect of C/C++ in which all pointers are assumed
+to be able to alias.  This may lose some performance - whether it
+actually makes much difference depends on the nature of the code.
+
+> Doing this certainly removes all
+> the noise and shows us that there is one genuine set of warnings:
+> lxRender.cxx: In member function ???void lxRenderFile::RenderPDFHeader()???:
+> lxRender.cxx:855: warning: format ???%u??? expects type ???unsigned int???, but argument 3 has type ???size_t???
+> lxRender.cxx: In member function ???void lxRenderFile::RenderPDFFooter()???:
+> lxRender.cxx:929: warning: format ???%u??? expects type ???unsigned int???, but argument 3 has type ???size_t???
+> [...]
+> 
+> Does this just need some casts or should the format be changed?
+
+One or the other - printf format "%u" expects "unsigned int", but is
+being passed size_t which is 64 bits not 32 on 64 bit Linux.  If the
+parameter could take any value, the format should be fixed.  If it will
+always fit in a 32 bit value, casting to "unsigned int" is fine.
+
+Cheers,
+    Olly
+
+
+From ohc at vt.edu  Fri Jan  4 01:21:19 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Thu, 3 Jan 2008 19:21:19 -0500
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <20080103231619.GI13289@knossos.aleph1.co.uk>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+	<1C6EADE6-0277-48DA-A363-D9D49B4807E7@vt.edu>
+	<20080103231619.GI13289@knossos.aleph1.co.uk>
+Message-ID: <279009F8-126D-43EB-A617-B73F7B7E1194@vt.edu>
+
+Okay, so I just built the development version, usually the most stable  
+(ironic).
+
+I get the same hash table warning issues.
+
+Loch does work and doesn't segfault on my machine.  Did you rebuild  
+your lox models?  There was a binary file bug in lox file that only  
+effects AMD64 arches.
+
+Philip Schuchardt
+
+On Jan 3, 2008, at 6:16 PM, Wookey wrote:
+
+> On 2008-01-03 13:13 -0500, Philip Schuchardt wrote:
+>> Hmmm, runs on my AMD64 box.  I'm also running Gentoo and not Debian,
+>> but that shouldn't matter.
+>
+> Which version? Plain 0.5.1 tarball?
+>
+> If I do
+> make debian-config; cd loch; make
+> the resulting loch still segfaults on running.
+>
+> Wookey
+> -- 
+> Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+
+From wookey at wookware.org  Fri Jan  4 02:54:25 2008
+From: wookey at wookware.org (Wookey)
+Date: Fri, 4 Jan 2008 01:54:25 +0000
+Subject: [Therion] therion 0.5.1 uploaded to Debian
+In-Reply-To: <279009F8-126D-43EB-A617-B73F7B7E1194@vt.edu>
+References: <20080103164225.GB13289@knossos.aleph1.co.uk>
+	<1C6EADE6-0277-48DA-A363-D9D49B4807E7@vt.edu>
+	<20080103231619.GI13289@knossos.aleph1.co.uk>
+	<279009F8-126D-43EB-A617-B73F7B7E1194@vt.edu>
+Message-ID: <20080104015424.GK13289@knossos.aleph1.co.uk>
+
+On 2008-01-03 19:21 -0500, Philip Schuchardt wrote:
+[down with top-posters]
+
+> Okay, so I just built the development version, usually the most stable  
+> (ironic).
+> 
+> I get the same hash table warning issues.
+> 
+> Loch does work and doesn't segfault on my machine.  Did you rebuild  
+> your lox models?  There was a binary file bug in lox file that only  
+> effects AMD64 arches.
+ 
+I haven't tried loading a model yet. I just ran 'loch'. So that can't
+be it.
+
+Wookey
+-- 
+Principal hats:  Balloonz - Toby Churchill - Aleph One - Debian
+http://wookware.org/
+
+
+From gfe_list at aliceadsl.fr  Fri Jan  4 18:31:03 2008
+From: gfe_list at aliceadsl.fr (Gilbert Fernandes (mailinglist))
+Date: Fri, 04 Jan 2008 18:31:03 +0100
+Subject: [Therion] Problem in 3D model
+Message-ID: <477E6D57.2070103@aliceadsl.fr>
+
+
+
+Hello,
+
+I notice a bug in the 3D modeling. In this short exemple you can reproduce the error.
+The main problem is when you have a pit, ans so a vertical survey ( compas = 90 or -90 ), the up and down value in survey data is used in the 3D model (.lox file) for the with of the pit and not for the hight (or down) of the galery. So pits are always as fat as they are hight.
+Look the .th file and try to change the up and down value as comment in the exemple, look the effect in the 3D view.
+Thanks,
+
+Gilbert
+
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: test-thconfig.txt
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080104/3c231df8/attachment.txt>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: pinee1.th
+Type: application/octet-stream
+Size: 2027 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080104/3c231df8/attachment.obj>
+
+From wolfgang.zillig at web.de  Sun Jan 13 14:51:45 2008
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Sun, 13 Jan 2008 14:51:45 +0100
+Subject: [Therion] long lines
+Message-ID: <478A1771.7060405@web.de>
+
+Hi,
+
+what is the limit in line length? My elevation model hits that limit (it 
+was just a test with interpolated data, so nothing that really bothers 
+me). The question is out of interest only.
+
+C:\Program Files\Therion\therion.exe: error -- AHS.th [12] -- line too long
+
+Regards
+Wolfgang
+
+
+From s.m at group-s.sk  Mon Jan 14 10:21:34 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Mon, 14 Jan 2008 10:21:34 +0100
+Subject: [Therion] long lines
+In-Reply-To: <478A1771.7060405@web.de>
+References: <478A1771.7060405@web.de>
+Message-ID: <1200302494.478b299e3959a@mail.atlantis.sk>
+
+Currently it was set to 8128 characters, but it is a constant that can be
+changed at thinput.cxx:36.
+
+S.
+
+Quoting Wolfgang Zillig <wolfgang.zillig at web.de>:
+
+> Hi,
+> 
+> what is the limit in line length? My elevation model hits that limit (it 
+> was just a test with interpolated data, so nothing that really bothers 
+> me). The question is out of interest only.
+> 
+> C:\Program Files\Therion\therion.exe: error -- AHS.th [12] -- line too long
+> 
+> Regards
+> Wolfgang
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+> 
+
+
+
+
+From david.a.riggs at gmail.com  Tue Jan 22 04:21:17 2008
+From: david.a.riggs at gmail.com (David A. Riggs)
+Date: Mon, 21 Jan 2008 22:21:17 -0500
+Subject: [Therion] Calculating Magnetic Declination
+Message-ID: <d8169c660801211921i71d51dceq8cc3045e6518024a@mail.gmail.com>
+
+I just spent far too long trying to get automatic calculation of
+magnetic declination to work, and I'm posting my findings so that
+others don't make the same mistake, and so that therion (an already
+great piece of software) can be improved accordingly. I've found
+that...
+
+Specifying the fixed coordinate before the coordinate system causes
+therion to silently fail to apply declination. In other words, this is
+wrong:
+
+   date 2007.06.31
+   fix A0 626333 4320333 2620
+   cs UTM17
+
+Specifying the coordinate system before the fixed coordinate causes
+therion to properly calculate magnetic declination. This is correct:
+
+   date 2007.06.31
+   cs UTM17
+   fix A0 626333 4320333 2620
+
+Therion 0.5.1 does this completely silently, with no notification that
+declination has been applied at all. Therion 0.5.0 prints the
+following (rather confusing) message in therion.log:
+
+   output coordinate system: EPSG:32617
+   meridian convergence (deg): -0.9190
+   geomag declinations (deg):
+     2007.1.1  -8.9944
+     2008.1.1  -9.0224
+
+My recommendations are that therion should:
+
+- Ignore the order of 'cs' and 'fix', apply declination as long as
+both are included
+- Explicitly state that declination has or has not been applied,
+regardless of configuration, so users are aware of this
+- Emit a warning if partially or incorrectly configured for magnetic
+declination calculation
+
+Thanks very much!
+
+Dave Riggs
+Morgantown, WV
+
+-- 
+David A. Riggs <david.a.riggs at gmail.com>
+
+
+From s.m at group-s.sk  Thu Jan 24 15:47:56 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 24 Jan 2008 15:47:56 +0100
+Subject: [Therion] Calculating Magnetic Declination
+In-Reply-To: <d8169c660801211921i71d51dceq8cc3045e6518024a@mail.gmail.com>
+References: <d8169c660801211921i71d51dceq8cc3045e6518024a@mail.gmail.com>
+Message-ID: <1201186076.4798a51c245cd@mail.atlantis.sk>
+
+Quoting "David A. Riggs" <david.a.riggs at gmail.com>:
+> Specifying the fixed coordinate before the coordinate system causes
+> therion to silently fail to apply declination. In other words, this is
+> wrong:
+> 
+>    date 2007.06.31
+>    fix A0 626333 4320333 2620
+>    cs UTM17
+> 
+> Specifying the coordinate system before the fixed coordinate causes
+> therion to properly calculate magnetic declination. This is correct:
+> 
+>    date 2007.06.31
+>    cs UTM17
+>    fix A0 626333 4320333 2620
+
+It is exactly like this. CS should be specified before coordinates in given
+system are used. You are right, it is nowhere stated in the thbook, we will try
+to write it there explicitly, to avoid confusions. Thanks for pointing out.
+
+> Therion 0.5.1 does this completely silently, with no notification that
+> declination has been applied at all. Therion 0.5.0 prints the
+> following (rather confusing) message in therion.log:
+> 
+>    output coordinate system: EPSG:32617
+>    meridian convergence (deg): -0.9190
+>    geomag declinations (deg):
+>      2007.1.1  -8.9944
+>      2008.1.1  -9.0224
+
+This is very strange - we did not touched this code. I am not sure about 0.5.1,
+but latest snapshot that I have, generates this output.
+
+> My recommendations are that therion should:
+> 
+> - Ignore the order of 'cs' and 'fix', apply declination as long as
+> both are included
+
+Well, this is a little bit problem. CS is handled same way for all commands,
+including centerline. Sometimes it is needed to switch coordinate system within
+single command (example from our experience: if we have a surface and usually 3D
+grind is in one CS and bitmap in another). But even in centerline it has happen
+to us. But one think we can do - generate a warning, if there is CS
+specification in centerline, but stations are fixed before it.
+
+> - Explicitly state that declination has or has not been applied,
+> regardless of configuration, so users are aware of this
+
+This should be the case - if it is not - it is a bug and needs to be fixed.
+Could you please try latest snapshot, if it is still the case?
+
+> - Emit a warning if partially or incorrectly configured for magnetic
+> declination calculation
+
+I will put it into TODO list. Thanks for pointing out.
+
+Regards, S.
+
+
+From s.m at group-s.sk  Thu Jan 24 15:47:56 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 24 Jan 2008 15:47:56 +0100
+Subject: [Therion] Calculating Magnetic Declination
+In-Reply-To: <d8169c660801211921i71d51dceq8cc3045e6518024a@mail.gmail.com>
+References: <d8169c660801211921i71d51dceq8cc3045e6518024a@mail.gmail.com>
+Message-ID: <1201186076.4798a51c245cd@mail.atlantis.sk>
+
+Quoting "David A. Riggs" <david.a.riggs at gmail.com>:
+> Specifying the fixed coordinate before the coordinate system causes
+> therion to silently fail to apply declination. In other words, this is
+> wrong:
+> 
+>    date 2007.06.31
+>    fix A0 626333 4320333 2620
+>    cs UTM17
+> 
+> Specifying the coordinate system before the fixed coordinate causes
+> therion to properly calculate magnetic declination. This is correct:
+> 
+>    date 2007.06.31
+>    cs UTM17
+>    fix A0 626333 4320333 2620
+
+It is exactly like this. CS should be specified before coordinates in given
+system are used. You are right, it is nowhere stated in the thbook, we will try
+to write it there explicitly, to avoid confusions. Thanks for pointing out.
+
+> Therion 0.5.1 does this completely silently, with no notification that
+> declination has been applied at all. Therion 0.5.0 prints the
+> following (rather confusing) message in therion.log:
+> 
+>    output coordinate system: EPSG:32617
+>    meridian convergence (deg): -0.9190
+>    geomag declinations (deg):
+>      2007.1.1  -8.9944
+>      2008.1.1  -9.0224
+
+This is very strange - we did not touched this code. I am not sure about 0.5.1,
+but latest snapshot that I have, generates this output.
+
+> My recommendations are that therion should:
+> 
+> - Ignore the order of 'cs' and 'fix', apply declination as long as
+> both are included
+
+Well, this is a little bit problem. CS is handled same way for all commands,
+including centerline. Sometimes it is needed to switch coordinate system within
+single command (example from our experience: if we have a surface and usually 3D
+grind is in one CS and bitmap in another). But even in centerline it has happen
+to us. But one think we can do - generate a warning, if there is CS
+specification in centerline, but stations are fixed before it.
+
+> - Explicitly state that declination has or has not been applied,
+> regardless of configuration, so users are aware of this
+
+This should be the case - if it is not - it is a bug and needs to be fixed.
+Could you please try latest snapshot, if it is still the case?
+
+> - Emit a warning if partially or incorrectly configured for magnetic
+> declination calculation
+
+I will put it into TODO list. Thanks for pointing out.
+
+Regards, S.
+
+
+From s.m at group-s.sk  Thu Jan 24 15:57:34 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Thu, 24 Jan 2008 15:57:34 +0100
+Subject: [Therion] Problem in 3D model
+In-Reply-To: <477E6D57.2070103@aliceadsl.fr>
+References: <477E6D57.2070103@aliceadsl.fr>
+Message-ID: <1201186654.4798a75e88812@mail.atlantis.sk>
+
+I am sorry for late answer, but sometimes it takes me a long time to get to the
+answers. I have tried the files you have submitted, but without success - I am
+not sure what is wrong on the image.
+
+OK, the interpretation of LRUD according to therion is following (we should
+probably put this into thbook):
+
+If passeges are horizontal (inclination < vthreshold, that can be set in
+centerline), LR is perpendicular to the shot and UD is vertical.
+
+If passages are more or less vertical (inclination > vthreshold), even UD
+becomes perpendicular to the shot - otherwise passages would not look very
+good. In the case of vertical (+- 90), UD is interpreted as north-south
+dimension from the station - to allow tube-like modelling of verticals. In your
+example - everything seems to me plotted correctly.
+
+Do I understand something wrong?
+
+Thanks, S.
+
+
+Quoting "Gilbert Fernandes (mailinglist)" <gfe_list at aliceadsl.fr>:
+> Hello,
+> 
+> I notice a bug in the 3D modeling. In this short exemple you can reproduce
+> the error.
+> The main problem is when you have a pit, ans so a vertical survey ( compas =
+> 90 or -90 ), the up and down value in survey data is used in the 3D model
+> (.lox file) for the with of the pit and not for the hight (or down) of the
+> galery. So pits are always as fat as they are hight.
+> Look the .th file and try to change the up and down value as comment in the
+> exemple, look the effect in the 3D view.
+> Thanks,
+> 
+> Gilbert
+> 
+> 
+
+
+
+
+From ohc at vt.edu  Sat Jan 26 00:46:20 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Fri, 25 Jan 2008 18:46:20 -0500
+Subject: [Therion] Cavewhere Experiment
+Message-ID: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>
+
+Help evaluate the next generation of cave visualization and mapping  
+software with the VT-CAVE!
+
+Requirements for participating:
+Basic knowledge of caves and cave features such as domes, pits, multi- 
+level passages, and drainage paths.  You must be over 18 years old to  
+participate and must NOT have extensive preexisting knowledge of Omega  
+(24.5mi / 39km), the longest and deepest cave in Virginia.  If you  
+have any questions about the requirements,  email me.
+
+Benefits:
+You will be able to use new technology for visualizing cave data.  You  
+may gain a better knowledge of the structure of Omega.
+
+Session Length:
+1 hour
+
+When:
+Contact me for scheduling your session.  Schedule early because  
+session slots fill up fast.
+
+Open Sessions -- January 28, 2008 to February 15, 2008
+Monday 10AM to 11PM
+Tuesday 4PM to 11PM
+Wednesday 10AM to 11PM
+Thursday 4PM to 11PM
+Friday 10AM to 5PM
+
+Where:
+Torgerson 3050 – The VT CAVE, Virginia Tech, Blacksburg, VA
+
+Thanks,
+Philip Schuchardt
+
+From eric.madelaine at sophia.inria.fr  Sat Jan 26 10:12:16 2008
+From: eric.madelaine at sophia.inria.fr (Eric Madelaine, INRIA)
+Date: Sat, 26 Jan 2008 10:12:16 +0100
+Subject: [Therion] Cavewhere Experiment
+In-Reply-To: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>
+References: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>
+Message-ID: <479AF970.2070608@sophia.inria.fr>
+
+Hi Philip,
+
+    Is this a virtual session, can we participate over the net ???  ;)
+
+Philip Schuchardt a écrit :
+> Help evaluate the next generation of cave visualization and mapping  
+> software with the VT-CAVE!
+>
+> Requirements for participating:
+> Basic knowledge of caves and cave features such as domes, pits, multi- 
+> level passages, and drainage paths.  You must be over 18 years old to  
+> participate and must NOT have extensive preexisting knowledge of Omega  
+> (24.5mi / 39km), the longest and deepest cave in Virginia.  If you  
+> have any questions about the requirements,  email me.
+>
+> Benefits:
+> You will be able to use new technology for visualizing cave data.  You  
+> may gain a better knowledge of the structure of Omega.
+>
+> Session Length:
+> 1 hour
+>
+> When:
+> Contact me for scheduling your session.  Schedule early because  
+> session slots fill up fast.
+>
+> Open Sessions -- January 28, 2008 to February 15, 2008
+> Monday 10AM to 11PM
+> Tuesday 4PM to 11PM
+> Wednesday 10AM to 11PM
+> Thursday 4PM to 11PM
+> Friday 10AM to 5PM
+>
+> Where:
+> Torgerson 3050 – The VT CAVE, Virginia Tech, Blacksburg, VA
+>
+> Thanks,
+> Philip Schuchardt
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+>   
+
+
+
+From ohc at vt.edu  Sun Jan 27 00:35:52 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sat, 26 Jan 2008 18:35:52 -0500
+Subject: [Therion] Cavewhere Experiment
+In-Reply-To: <479AF970.2070608@sophia.inria.fr>
+References: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>
+	<479AF970.2070608@sophia.inria.fr>
+Message-ID: <200801261835.53100.ohc@vt.edu>
+
+I wish.  Unfortunetally, it's a virtual environment and you have to be 
+physically be there.  
+
+There is a little more information on what a Cave Automatic Virtual 
+Environment is:
+http://en.wikipedia.org/wiki/CAVE
+
+Thanks,
+Philip Schuchardt
+
+On Saturday 26 January 2008 4:12 am, Eric Madelaine, INRIA wrote:
+> Hi Philip,
+>
+>     Is this a virtual session, can we participate over the net ???  ;)
+>
+> Philip Schuchardt a écrit :
+> > Help evaluate the next generation of cave visualization and mapping
+> > software with the VT-CAVE!
+> >
+> > Requirements for participating:
+> > Basic knowledge of caves and cave features such as domes, pits, multi-
+> > level passages, and drainage paths.  You must be over 18 years old to
+> > participate and must NOT have extensive preexisting knowledge of Omega
+> > (24.5mi / 39km), the longest and deepest cave in Virginia.  If you
+> > have any questions about the requirements,  email me.
+> >
+> > Benefits:
+> > You will be able to use new technology for visualizing cave data.  You
+> > may gain a better knowledge of the structure of Omega.
+> >
+> > Session Length:
+> > 1 hour
+> >
+> > When:
+> > Contact me for scheduling your session.  Schedule early because
+> > session slots fill up fast.
+> >
+> > Open Sessions -- January 28, 2008 to February 15, 2008
+> > Monday 10AM to 11PM
+> > Tuesday 4PM to 11PM
+> > Wednesday 10AM to 11PM
+> > Thursday 4PM to 11PM
+> > Friday 10AM to 5PM
+> >
+> > Where:
+> > Torgerson 3050 – The VT CAVE, Virginia Tech, Blacksburg, VA
+> >
+> > Thanks,
+> > Philip Schuchardt
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://www.speleo.sk/mailman/listinfo/therion
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From eric.madelaine at speleologie.org  Sun Jan 27 08:32:43 2008
+From: eric.madelaine at speleologie.org (Eric Madelaine)
+Date: Sun, 27 Jan 2008 08:32:43 +0100
+Subject: [Therion] Cavewhere Experiment
+In-Reply-To: <200801261835.53100.ohc@vt.edu>
+References: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>	<479AF970.2070608@sophia.inria.fr>
+	<200801261835.53100.ohc@vt.edu>
+Message-ID: <479C339B.10209@speleologie.org>
+
+Oh, this kind of CAVE...
+We have one in Sophia-Antipolis, and there is an ongoing project for 
+building a new one that will be built at INRIA, my institute, in 2008.
+
+I did not realize in your first message it was this. And I was not aware 
+of any caving software that would be rebdered in a CAVE...
+BTW, there are also experiments for linking CAVEs through the internet, 
+allowing people from different sites to interoperate in a single virtual 
+scene... are you aware of those ?
+
+Eric.
+
+
+Philip Schuchardt a écrit :
+> I wish.  Unfortunetally, it's a virtual environment and you have to be 
+> physically be there.  
+>
+> There is a little more information on what a Cave Automatic Virtual 
+> Environment is:
+> http://en.wikipedia.org/wiki/CAVE
+>
+> Thanks,
+> Philip Schuchardt
+>
+> On Saturday 26 January 2008 4:12 am, Eric Madelaine, INRIA wrote:
+>   
+>> Hi Philip,
+>>
+>>     Is this a virtual session, can we participate over the net ???  ;)
+>>
+>> Philip Schuchardt a écrit :
+>>     
+>>> Help evaluate the next generation of cave visualization and mapping
+>>> software with the VT-CAVE!
+>>>
+>>> Requirements for participating:
+>>> Basic knowledge of caves and cave features such as domes, pits, multi-
+>>> level passages, and drainage paths.  You must be over 18 years old to
+>>> participate and must NOT have extensive preexisting knowledge of Omega
+>>> (24.5mi / 39km), the longest and deepest cave in Virginia.  If you
+>>> have any questions about the requirements,  email me.
+>>>
+>>> Benefits:
+>>> You will be able to use new technology for visualizing cave data.  You
+>>> may gain a better knowledge of the structure of Omega.
+>>>
+>>> Session Length:
+>>> 1 hour
+>>>       
+
+
+
+From eric.madelaine at sophia.inria.fr  Sun Jan 27 09:14:47 2008
+From: eric.madelaine at sophia.inria.fr (Eric Madelaine, INRIA)
+Date: Sun, 27 Jan 2008 09:14:47 +0100
+Subject: [Therion] Cavewhere Experiment
+In-Reply-To: <479C339B.10209@speleologie.org>
+References: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>	<479AF970.2070608@sophia.inria.fr>	<200801261835.53100.ohc@vt.edu>
+	<479C339B.10209@speleologie.org>
+Message-ID: <479C3D77.9000000@sophia.inria.fr>
+
+Eric Madelaine a écrit :
+> Oh, this kind of CAVE...
+> We have one in Sophia-Antipolis, and there is an ongoing project for 
+> building a new one that will be built at INRIA, my institute, in 2008.
+>
+> I did not realize in your first message it was this. And I was not aware 
+> of any caving software that would be rebdered in a CAVE...
+>   
+ >> rendered...
+
+
+
+From ohc at vt.edu  Sun Jan 27 18:18:14 2008
+From: ohc at vt.edu (Philip Schuchardt)
+Date: Sun, 27 Jan 2008 12:18:14 -0500
+Subject: [Therion] Cavewhere Experiment
+In-Reply-To: <479C339B.10209@speleologie.org>
+References: <84A79FB9-73D4-4F7C-9D12-21E9A6C2B97E@vt.edu>
+	<200801261835.53100.ohc@vt.edu> <479C339B.10209@speleologie.org>
+Message-ID: <200801271218.15567.ohc@vt.edu>
+
+I have heard of CAVE's being liked through the internet before. Most CAVE's 
+have major software portability problems.  Unlike desktop computers, where 
+software is very portable,  CAVE's usually have custom hardware and software 
+to run them.  This makes it very difficult to link caves through the 
+internet.  I wish CAVE's where less expensive so individuals could afford 
+them.  ;)
+
+Philip Schuchardt
+
+
+On Sunday 27 January 2008 2:32 am, Eric Madelaine wrote:
+> Oh, this kind of CAVE...
+> We have one in Sophia-Antipolis, and there is an ongoing project for
+> building a new one that will be built at INRIA, my institute, in 2008.
+>
+> I did not realize in your first message it was this. And I was not aware
+> of any caving software that would be rebdered in a CAVE...
+> BTW, there are also experiments for linking CAVEs through the internet,
+> allowing people from different sites to interoperate in a single virtual
+> scene... are you aware of those ?
+>
+> Eric.
+>
+> Philip Schuchardt a écrit :
+> > I wish.  Unfortunetally, it's a virtual environment and you have to be
+> > physically be there.
+> >
+> > There is a little more information on what a Cave Automatic Virtual
+> > Environment is:
+> > http://en.wikipedia.org/wiki/CAVE
+> >
+> > Thanks,
+> > Philip Schuchardt
+> >
+> > On Saturday 26 January 2008 4:12 am, Eric Madelaine, INRIA wrote:
+> >> Hi Philip,
+> >>
+> >>     Is this a virtual session, can we participate over the net ???  ;)
+> >>
+> >> Philip Schuchardt a écrit :
+> >>> Help evaluate the next generation of cave visualization and mapping
+> >>> software with the VT-CAVE!
+> >>>
+> >>> Requirements for participating:
+> >>> Basic knowledge of caves and cave features such as domes, pits, multi-
+> >>> level passages, and drainage paths.  You must be over 18 years old to
+> >>> participate and must NOT have extensive preexisting knowledge of Omega
+> >>> (24.5mi / 39km), the longest and deepest cave in Virginia.  If you
+> >>> have any questions about the requirements,  email me.
+> >>>
+> >>> Benefits:
+> >>> You will be able to use new technology for visualizing cave data.  You
+> >>> may gain a better knowledge of the structure of Omega.
+> >>>
+> >>> Session Length:
+> >>> 1 hour
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://www.speleo.sk/mailman/listinfo/therion
+
+
+From martinsluka at mac.com  Mon Jan 28 19:59:56 2008
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 28 Jan 2008 19:59:56 +0100
+Subject: [Therion] instalation of therion on MacOS X
+Message-ID: <D9CCCF87-E202-4CEF-A626-7F6269380612@mac.com>
+
+It looks that on system 10.4 Tiger or 10.5 Panther one must install  
+only:
+
+1. XCode Tools (from installation DVD of MacOS X)
+
+2. MacTeX - http://www.tug.org/mactex/
+
+3. Survex – http://www.survex.com
+
+and therion:
+
+Download the therion source, expand it by doubleclick and copy the  
+therion folder to Application folder. Than from terminal:
+
+0. cd /Application/therion
+
+1. make config macosx
+
+2. make
+
+3. sudo make install
+
+All other bits are installed in system yet or in XCode Tools.
+
+There is a bug in therion if you install therion on new installed  
+MacOS X system the folder /usr/local/etc is not created. The  
+installation script of therion doesn't mkdir etc, so one must to do  
+it manually.
+
+Only remaining problem is with VTK and with Loch.
+
+m.
+
+From bruce.mutton at paradise.net.nz  Tue Jan 29 08:52:54 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 29 Jan 2008 20:52:54 +1300
+Subject: [Therion] Concatinate map-comment?
+Message-ID: <000001c8624b$f6a18970$be25f6d2@JUICEBRAIN>
+
+I'd like to add some 'standardised' blocks of text to my finished cave maps,
+and a convenient way seems to be to use the map-comment command to add the
+text to the title block.  As far as it goes the following works fine.
+
+ 
+
+FILE THCONFIG- GreenlinkAnnotationLayout
+
+layout GreenlinkAnnotationLayout
+
+  map-comment "REFERENCES:\
+
+           <br>Discovery and early exploration of Greenlink cave\
+
+           <br>NZSS Bulletin Vol 7 No 100 p500-510\
+
+           <br> \
+
+           <br>Original Maps of Greenlink cave\
+
+           <br>NZSS Bulletin Vol X No XXX pXXX-XXX"
+
+endlayout GreenlinkAnnotationLayout
+
+END FILE
+
+ 
+
+I'd then like to be able to concatenate similar blocks of text at
+compilation time.
+
+Trouble is if multiple map-comments are used, then the last one executed
+overwrites the other.
+
+ 
+
+Why concatenate them?
+
+For example;
+
+The thconfig file(s) producing output files for a particular cave all refer
+to the above layout for that particular cave.  This works fine.  I have
+three caves, each with their own files.  Now I'd like to reuse the data at
+the next level up, without maintaining duplicate copies.
+
+ 
+
+The data for these three caves is contained in a directory with a master
+thconfig that produces output files for the whole system of three caves.
+Rather than having duplicate copies of the map-comment layouts containing
+the text above, I'd like to refer to the same layout each time, ie
+concatenate the text along the lines of.
+
+ 
+
+layout.
+
+copy GreenlinkAnnotationLayout
+
+copy MiddleEAnnotationLayout
+
+copy SwissMAnnotationLayout
+
+.endlayout
+
+ 
+
+Trouble is each one overwrites the previous.
+
+ 
+
+Can I concatenate the map-comment field?
+
+Is there a better way to do this?
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080129/d1060a6c/attachment.htm>
+
+From bruce.mutton at paradise.net.nz  Tue Jan 29 08:52:55 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Tue, 29 Jan 2008 20:52:55 +1300
+Subject: [Therion] Output map Scale
+Message-ID: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+
+Can Therion output the scale of the map as drawn, in text?  (I'd like to
+display this as say 1:1000, as well as the scalebar)
+
+Thanks
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20080129/0e0f1bb3/attachment.htm>
+
+From s.m at group-s.sk  Tue Jan 29 16:13:23 2008
+From: s.m at group-s.sk (Stacho Mudrak)
+Date: Tue, 29 Jan 2008 16:13:23 +0100
+Subject: [Therion] Output map Scale
+In-Reply-To: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+References: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+Message-ID: <1201619603.479f429379219@mail.atlantis.sk>
+
+All you need to do is to redefine legend metapost macro. Example - derived from
+basic scalebar definiton (just add it to your layout):
+
+code metapost
+def s_scalebar (expr l, units, txt) =
+ begingroup
+  interim warningcheck:=0;
+  tmpl:=l / Scale * cm * units / 2;
+ endgroup;
+ pickup PenC;
+ draw (-tmpl,0)--(tmpl,0);
+ draw (-tmpl,0)--(-tmpl,2bp);
+ draw (tmpl,0)--(tmpl,2bp);
+ begingroup
+  interim labeloffset:=2bp;
+  label.top(thTEX(decimal (l) & "\thinspace" & txt),origin);
+  label.top(thTEX("1\thinspace:\thinspace" & decimal (Scale) & "00"), origin +
+(0,12bp));
+ endgroup
+enddef;    
+endcode
+
+Regards, S.
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+
+> Can Therion output the scale of the map as drawn, in text?  (I'd like to
+> display this as say 1:1000, as well as the scalebar)
+> 
+> Thanks
+> 
+> Bruce
+> 
+>  
+> 
+> 
+
+
+
+
+From bruce.mutton at paradise.net.nz  Tue Jan 29 20:06:42 2008
+From: bruce.mutton at paradise.net.nz (Bruce Mutton)
+Date: Wed, 30 Jan 2008 08:06:42 +1300
+Subject: [Therion] Output map Scale
+In-Reply-To: <1201619603.479f429379219@mail.atlantis.sk>
+References: <000501c8624c$03795920$be25f6d2@JUICEBRAIN>
+	<1201619603.479f429379219@mail.atlantis.sk>
+Message-ID: <001b01c862aa$171e1930$9e25f6d2@JUICEBRAIN>
+
+Thanks S, 
+Worked first try!
+
+By experiment, I think if I use base-scale, (and consequently enlarge the
+printed image after output) then somewhere I need to substitute base-scale
+for scale in the code below, but my attempts at editing it failed.
+
+Regards
+Bruce
+
+-----Original Message-----
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Wednesday, 30 January 2008 4:13 a.m.
+To: therion at speleo.sk
+Subject: Re: [Therion] Output map Scale
+
+All you need to do is to redefine legend metapost macro. Example - derived
+from
+basic scalebar definiton (just add it to your layout):
+
+code metapost
+def s_scalebar (expr l, units, txt) =
+ begingroup
+  interim warningcheck:=0;
+  tmpl:=l / Scale * cm * units / 2;
+ endgroup;
+ pickup PenC;
+ draw (-tmpl,0)--(tmpl,0);
+ draw (-tmpl,0)--(-tmpl,2bp);
+ draw (tmpl,0)--(tmpl,2bp);
+ begingroup
+  interim labeloffset:=2bp;
+  label.top(thTEX(decimal (l) & "\thinspace" & txt),origin);
+  label.top(thTEX("1\thinspace:\thinspace" & decimal (Scale) & "00"), origin
++
+(0,12bp));
+ endgroup
+enddef;    
+endcode
+
+Regards, S.
+
+Quoting Bruce Mutton <bruce.mutton at paradise.net.nz>:
+
+> Can Therion output the scale of the map as drawn, in text?  (I'd like to
+> display this as say 1:1000, as well as the scalebar)
+> 
+> Thanks
+> 
+> Bruce
+> 
+>  
+> 
+> 
+
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://www.speleo.sk/mailman/listinfo/therion
+
+
+

@@ -1,0 +1,4663 @@
+From wookey at aleph1.co.uk  Tue Feb 10 19:08:46 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Tue, 10 Feb 2004 18:08:46 +0000
+Subject: Queries and comments on 0.2.17
+Message-ID: <047@reconstruction>
+
+I've been writing an article about Therion for Compass points, which
+includes a complete tutorial on using therion to draw a simple survey.
+
+This process has generated a few queries, one of which needs answering for
+me to finish the article - others are mostly suggestions for improvements
+and a few bugs.
+
+I'm using 0.2.17
+
+urgent queries:
+How do I control overlap at joins? I have drawn a couple of scraps and at
+the place where they join there are contour lines on one scrap and
+ceilinglines on another that sort of intermingle. When drawn up therion put
+one scrap on top of the other and invents a 'join line' that covers quite a
+lot of the neighboring scrap. I need transparency, or a complex 'join line'.
+What is the best way to deal with this? Do scraps have
+to have perfect joins? Can I draw a join line?
+
+Also I tried to control the join in more detail by specifying that the ends
+of lines join but the syntax didn't work. What's wrong with this:
+join farsidewest:0 at farside2.river farsidewest2:end at farside.river
+(farsidewest are farsidewest2 are 'wall' lines).
+
+
+bugs:
+
+In .th files - if you use
+data normal ignore ignore ignore ignore newline tape compass clino then
+every LRUD line must be followed by a data line, including the last one
+If you s/ignore ignore ignore ignore/left right up down/ then it ignores
+absence of TCC part in the last line, but not in lines in the middle of a run.
+This is inconsistnet with survex behaviour (which will let you give LRUD
+info for a station and then stop - without subsequent TCC info)
+
+In the test editor, using above: data normal left right up down newline tape compass clino and
+then 'scan format' to get data table to have correct boxes is OK but when
+you enter data it appears as
+tape compass clino
+station left right up down
+which is the wrong order.
+
+When a created file is re-read every blank line gets a 'text' entry in the
+file commands section, and when saved ends up as 3 blank lines - whitespace
+text entries shouldn't appear.
+
+If I try to zoom in to 200% therion just crashes (64MB machine, 3.8Mb pnm file)
+Is this expected? It certainly makes it hard to draw boulders properly as I
+can;'t do stations very close together. The keys list suggets that I can
+hold down shift to create a station close to another station, but I have not
+suceeded - how exactly does it work?
+
+wishlist items:
+
+It would be _really_ good to have png support in Xtherion? GIFs are a pain
+for free software and pnm and ppm are huge. What needs to be done?
+
+Shortcuts for moving things between scraps would be helpful, otherwise it's
+'move down' about 100 times. Is there a better way?
+
+Entering stations - ther is a space for 'id' but not name, which you need to
+enter for every station. Indeed why is the id not the name?
+
+It's very tedious if you need to change a number of entries - need shortcuts
+to move between boxes in RH-side or to scroll up and down items in the file
+summary. e.g if you need to change all the station ids to names. Need to be
+able to navigate file commands with keys.
+
+graphical stuff
+
+Air drafts need to be able to specify number of ticks - this is used to
+indicate wind strength
+
+The QMs ('continuation point) come out really small on my survey.
+Where do I control the size?
+
+The debris area symbol looks terrible. I want a quick way to fill in areas
+of rocks - needs randomised rocks of some sort with controls over size and
+density. Tunnel (java) has good code for this, with an arrow that control
+desity gradient. Borrow code?
+
+Areas need some way of working out if they are 'connected' or not. The
+current scheme is hopeless - very cryptic messages which give no clue which
+area is at fault. Editing them is a real pain as you find the text in the
+file (takes a while, especially with all the blank ones) but then as soon as
+you click on a line to adjust it you lose the text again. An entry method
+that lets you 'group' some lines into an area might be best - especially if
+it auto-allocated the names.
+
+There is a real problem with editing a file and using xtherion at the same
+time - even F1 and F2 type editing. Therion just saves the map version over
+any other version you might have created. It needs to check for 'newer on disk' or
+something. Until the map interface is better there is a real need to edit
+the file by hand too. This is a tricky problem but it definately needs work
+before many people will use it.
+
+Ticks are too close together on pitches.
+
+How do I change the default for contour lines to al have 'none' (no downside
+tick mark)? I don't want to add -tick none on every contour - I want to set
+a default.
+
+How does the slope line symbol work? It just seemst od raw a lot of
+overlapping lines for me. How does it differ from the contour line?
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Wed Feb 11 09:47:40 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 11 Feb 2004 09:47:40 +0100
+Subject: [therion] Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <048@reconstruction>
+
+I'm sorry, currently I'm short of time, but I'll try to write down at least some comments.
+
+> How do I control overlap at joins? I have drawn a couple of scraps and at
+> the place where they join there are contour lines on one scrap and
+> ceilinglines on another that sort of intermingle. When drawn up therion put
+> one scrap on top of the other and invents a 'join line' that covers quite a
+> lot of the neighboring scrap. I need transparency, or a complex 'join line'.
+> What is the best way to deal with this? Do scraps have
+> to have perfect joins? Can I draw a join line?
+
+
+I'm sorry, but this I do not understand :((( Could you please draw me exactly what you have in your mind?
+
+Joining two scraps together covers only joining the walls - not the lines inside. They can be joined only by detail specification, you mentioned below.
+
+> Also I tried to control the join in more detail by specifying that the ends
+> of lines join but the syntax didn't work. What's wrong with this:
+> join farsidewest:0 at farside2.river farsidewest2:end at farside.river
+> (farsidewest are farsidewest2 are 'wall' lines).
+
+
+Nothing - it should work. If it does not - it's certainly a bug. Does therion generates an error or it simply does not join the lines? Did you tried this without :point specification (just farsidewest at farside2.river farsidewest2 at farside.river)? This should work also.
+
+> bugs:
+>
+> In .th files - if you use
+> data normal ignore ignore ignore ignore newline tape compass clino then
+> every LRUD line must be followed by a data line, including the last one
+> If you s/ignore ignore ignore ignore/left right up down/ then it ignores
+> absence of TCC part in the last line, but not in lines in the middle of a run.
+> This is inconsistnet with survex behaviour (which will let you give LRUD
+> info for a station and then stop - without subsequent TCC info)
+
+
+OK. This is a bug. I'll write it down.
+
+> In the test editor, using above: data normal left right up down newline tape compass clino and
+> then 'scan format' to get data table to have correct boxes is OK but when
+> you enter data it appears as
+> tape compass clino
+> station left right up down
+> which is the wrong order.
+
+
+This is not a bug. I just thought, that putting interleaved (or how you call this style) data, is more natural when TO station is inserted and not FROM station. So I enter empty cells for TAPE, COMPASS, CLINO, enter the first STATION and it's LRUD data. Then I enter TCC data and TO station and it's LRUD. This can be changed or I can add there a check box, which style you like.
+
+> When a created file is re-read every blank line gets a 'text' entry in the
+> file commands section, and when saved ends up as 3 blank lines - whitespace
+> text entries shouldn't appear.
+
+
+I thought, I've removed all such bugs. But do not have this experience. Do you have a "text" item before each point, line? If yes, this has probably something to do EOLN characters. Do you have the same experience on each operating system?
+
+> If I try to zoom in to 200% therion just crashes (64MB machine, 3.8Mb pnm file)
+> Is this expected?
+
+
+200% of 3.8Mb = 4Mb original image + 16Mb scaled image + 20Mb canvas RGBA buffer = 40MB = 60% of RAM. This may be a problem, especially on some operating systems.
+
+> It certainly makes it hard to draw boulders properly as I
+> can;'t do stations very close together. The keys list suggets that I can
+> hold down shift to create a station close to another station, but I have not
+> suceeded - how exactly does it work?
+
+
+The keys list is wrong - it's Control key :) Thanks.
+
+> wishlist items:
+>
+> It would be _really_ good to have png support in Xtherion? GIFs are a pain
+> for free software and pnm and ppm are huge. What needs to be done?
+
+
+Tcl/Tk supports only these file types. But:
+
+Install Img plug-in into your Tcl installation. On Win32 ActiveTcl it's included.
+Add "package require Img" into your xtherion.ini file - and you'll be able to use all image files :))) (I've tryied it now and it worked - I was just too lazy before) Please let me know, if you will find out the linux version of this plug-in - it would be very usefull also for us :)
+
+OK, I'll add these two things to xtherion and if Img plug-in will be detected, all image file types will be supported also in the image open window.
+
+> Shortcuts for moving things between scraps would be helpful, otherwise it's
+> 'move down' about 100 times. Is there a better way?
+
+
+Right. No way right now. I'll think about it (adding a button move to scrap).
+
+> Entering stations - ther is a space for 'id' but not name, which you need to
+> enter for every station. Indeed why is the id not the name?
+
+
+This is hard to explain, may be later.
+
+> It's very tedious if you need to change a number of entries - need shortcuts
+> to move between boxes in RH-side or to scroll up and down items in the file
+> summary. e.g if you need to change all the station ids to names. Need to be
+> able to navigate file commands with keys.
+
+
+We have in our minds building much more intuitive user interface, but...
+
+Anyway, you can use text editor and regular expressions find and replace...
+
+> graphical stuff
+>
+> Air drafts need to be able to specify number of ticks - this is used to
+> indicate wind strength
+>
+> The QMs ('continuation point) come out really small on my survey.
+> Where do I control the size?
+
+
+Can be done via changing the metapost codes (and using scale option - may be, scale option works already now (I'm not sure - you can try) for the wind ticks). We will write something to this later.
+
+> The debris area symbol looks terrible. I want a quick way to fill in areas
+> of rocks - needs randomised rocks of some sort with controls over size and
+> density. Tunnel (java) has good code for this, with an arrow that control
+> desity gradient. Borrow code?
+
+
+Firstly, we had randomized symbols in therion. Than we've removed them and we're using only symbols (in most cases, it's enought). In the last time, we're again on a way to put them back to therion - so any ideas in this field are welcome.
+
+> Areas need some way of working out if they are 'connected' or not. The
+> current scheme is hopeless - very cryptic messages which give no clue which
+> area is at fault. Editing them is a real pain as you find the text in the
+> file (takes a while, especially with all the blank ones) but then as soon as
+> you click on a line to adjust it you lose the text again. An entry method
+> that lets you 'group' some lines into an area might be best - especially if
+> it auto-allocated the names.
+
+
+This is already in TODO list.
+
+> There is a real problem with editing a file and using xtherion at the same
+> time - even F1 and F2 type editing. Therion just saves the map version over
+> any other version you might have created. It needs to check for 'newer on disk' or
+> something. Until the map interface is better there is a real need to edit
+> the file by hand too. This is a tricky problem but it definately needs work
+> before many people will use it.
+
+
+Right.
+
+> Ticks are too close together on pitches.
+>
+> How do I change the default for contour lines to al have 'none' (no downside
+> tick mark)? I don't want to add -tick none on every contour - I want to set
+> a default.
+
+
+Again, you have to edit metapost code, and than in the layout use symbol-set CUCC :)
+
+> How does the slope line symbol work? It just seemst od raw a lot of
+> overlapping lines for me. How does it differ from the contour line?
+
+
+This is complicated, and there are also some bugs in metapost code. We will write about this later.
+
+Last thing: thanks a lot for your feedback. We'll think about it a lot...
+
+S.
+
+
+
+
+From s.m at speleo.sk  Thu Feb 12 10:18:00 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 12 Feb 2004 10:18:00 +0100
+Subject: [therion] Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <049@reconstruction>
+
+Answers to your questions part II:
+
+> When a created file is re-read every blank line gets a 'text' entry in the
+> file commands section, and when saved ends up as 3 blank lines - whitespace
+> text entries shouldn't appear.
+
+
+??? I've been trying this, but without success. No blank lines converted to text appeared? Could you please send me one th2 file, where there is a lot of text entries?
+
+> Entering stations - ther is a space for 'id' but not name, which you need to
+> enter for every station. Indeed why is the id not the name?
+
+
+-id identifies the object it self (joins for example refer to id's). -name is a reference to survey station - it can not be ID, bacause you can not have two objects with the same ID in the same survey.
+
+> Air drafts need to be able to specify number of ticks - this is used to
+> indicate wind strength
+
+
+OK, the -scale does not work now. But the symbol can be easily redefined to change the number of ticks and not the size.
+
+> The debris area symbol looks terrible. I want a quick way to fill in areas
+> of rocks - needs randomised rocks of some sort with controls over size and
+> density. Tunnel (java) has good code for this, with an arrow that control
+> desity gradient. Borrow code?
+
+
+We will start working on this in the next release.
+
+> How does the slope line symbol work? It just seemst od raw a lot of
+> overlapping lines for me. How does it differ from the contour line?
+
+
+Click the l-size switch for one line point (optionally also orientation) and set the size to the desired slope width. This symbol generates gradient lines perpendicular (or in orientation) to main line with given size.
+
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 13 18:55:31 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 13 Feb 2004 17:55:31 +0000
+Subject: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <050@reconstruction>
+
++++ Stacho Mudrak [04-02-11 09:47 +0100]:
+
+>> I'm sorry, currently I'm short of time, but I'll try to write down at least
+>> some comments.
+>>
+>
+>>> >How do I control overlap at joins? I have drawn a couple of scraps and at
+>>> >the place where they join there are contour lines on one scrap and
+>>> >ceilinglines on another that sort of intermingle. When drawn up therion put
+>>> >one scrap on top of the other and invents a 'join line' that covers quite a
+>>> >lot of the neighboring scrap. I need transparency, or a complex 'join
+>>> >line'.
+>>> >What is the best way to deal with this? Do scraps have
+>>> >to have perfect joins? Can I draw a join line?
+>
+>>
+>> I'm sorry, but this I do not understand :((( Could you please draw me
+>> exactly what you have in your mind?
+
+
+I have put a picture of a screen shot of the scrap join and the resulting
+PDF image online to illustrate how one scrap cuts off parts of the other at
+the join - how should this be done to produce a satisfactory effect?
+
+see http://www.chaos.org.uk/~wookey/stacho/
+
+>> Joining two scraps together covers only joining the walls - not the lines
+>> inside. They can be joined only by detail specification, you mentioned
+>> below.
+
+
+OK - I hadn't appreciated that - this is important if there are features in
+the passage at the joins. Is it a requirment that there must be no passage
+features at the join that could be misaligned? If a whole cave has rocks or
+sand on the floor this could be a problem.
+
+>>> >Also I tried to control the join in more detail by specifying that the ends
+>>> >of lines join but the syntax didn't work. What's wrong with this:
+>>> >join farsidewest:0 at farside2.river farsidewest2:end at farside.river
+>>> >(farsidewest are farsidewest2 are 'wall' lines).
+>
+>>
+>> Nothing - it should work. If it does not - it's certainly a bug. Does
+>> therion generates an error or it simply does not join the lines?
+>> Did you
+>> tried this without :point specification (just farsidewest at farside2.river
+>> farsidewest2 at farside.river)? This should work also.
+
+
+
+Therion generates an error. 'invalid object name', but some more research on
+the various options shows that I get:
+  join farside at river farside2 at river
+
+works OK (except that it joins one (the south) wall of farside2 to a nearby
+column (the nearest wall) which is just wrong.
+
+  join farsidewest1 at farside.river farsidewest2.farside2 at river
+
+Gives 'survey farside.river does not exist' - which is right but I mean
+scrap farside within survey river - have I got the syntax wrong?
+
+  join [fsceil1:0]@farside.river [farsidewest3:8]@farside2.river
+
+'invalid object name' - but mnaybe this is the same problem as the line above
+
+The best reuslt is obtained with no 'join' at all but then the walls don't
+quite join up (which is odd because the scraps are drawn on a survex plot
+and thus acurately scaled - the walls should join up almost exactly anyway...)
+
+>>> >In the test editor, using above: data normal left right up down newline
+>>> >tape compass clino and
+>>> >then 'scan format' to get data table to have correct boxes is OK but when
+>>> >you enter data it appears as
+>>> >tape compass clino
+>>> >station left right up down
+>>> >which is the wrong order.
+>
+>>
+>> This is not a bug.
+
+
+OK. I'll think about that a bit more - it not important.
+
+
+>>> >When a created file is re-read every blank line gets a 'text' entry in the
+>>> >file commands section, and when saved ends up as 3 blank lines - whitespace
+>>> >text entries shouldn't appear.
+>
+>>
+>> I thought, I've removed all such bugs. But do not have this experience. Do
+>> you have a "text" item before each point, line? If yes, this has probably
+>> something to do EOLN characters. Do you have the same experience on each
+>> operating system?
+
+
+I only tried it on Linux. I just tried again loading the fale and saving,
+but making no changes with 0.2.18 and the problem did not recurr. Maybe I
+have to make changes - maybe it is fixed - I'll send you an example if I can
+reproduce it. The file has LF only throughout.
+
+>>> >If I try to zoom in to 200% therion just crashes (64MB machine, 3.8Mb pnm
+>>> >file)
+>>> >Is this expected?
+>
+>>
+>> 200% of 3.8Mb = 4Mb original image + 16Mb scaled image + 20Mb canvas RGBA
+>> buffer = 40MB = 60% of RAM. This may be a problem, especially on some
+>> operating systems.
+
+
+OK. So there is a need for original scans to be quite small, or lower colour
+depth (I have to scan greyscale because my scanner/software does not work
+properly in b/w). Now I'll reduce the colour depth of all the images and
+maybe chop them up for therion editing, because zoom is important and it's
+_very_ slow to load. I also just bought 128MB more ram, which should help.
+
+Presumably the software could be made to manage larger images better (like
+photo-editing software can load file _much_ bigger than the available
+memory). a 4MB scan shouldn't be 'too large to zoom' - it will catch users out.
+
+Perhaps the zoom should only attemtp to zoom the visible part of the image,
+not the whole thing. That would be sensible use of resources. Is this a TCL
+feature that it will be hard to change?
+
+>> Tcl/Tk supports only these file types. But:
+>>
+>> Install Img plug-in into your Tcl installation.
+
+
+OK - I'll try and find it. It's not obviously part of Debian, but it may
+well be there somewhere.
+
+>>> >Shortcuts for moving things between scraps would be helpful, otherwise it's
+>>> >'move down' about 100 times. Is there a better way?
+>
+>>
+>> Right. No way right now. I'll think about it (adding a button move to
+>> scrap).
+
+
+And a key! there are nothing like enough keyboard shortcuts. Mice are nasty
+and give you RSI  :-)
+
+>>> >It's very tedious if you need to change a number of entries - need
+>>> >shortcuts
+>>> >to move between boxes in RH-side or to scroll up and down items in the file
+>>> >summary. e.g if you need to change all the station ids to names. Need to be
+>>> >able to navigate file commands with keys.
+>
+>>
+>> We have in our minds building much more intuitive user interface, but...
+>>
+>> Anyway, you can use text editor and regular expressions find and replace...
+
+
+Except for the fact that you have to unload the map editor first otherwise
+it will overwrite them, and then you can't remember which objects to edit...
+
+And because it takes 2-3mins to load again I don't like unloading and
+loading it each time to make an edit. Smaller scans will help, as will more
+memory, but there does need to be a better way if drawing a survey is to
+take less than 100 years  :-)
+
+>>> >graphical stuff
+
+
+>> Last thing: thanks a lot for your feedback. We'll think about it a lot...
+
+
+thanx for taking it all seriously. I think we are getting to something that
+is useful, but various things are still too difficult or too slow.
+
+I'll send you the article text so far by the way, so you can check I didn't
+say anything wrong.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From m.b at speleo.sk  Mon Feb 16 09:29:16 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 16 Feb 2004 09:29:16 +0100
+Subject: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <051@reconstruction>
+
+> I have put a picture of a screen shot of the scrap join and the resulting
+> PDF image online to illustrate how one scrap cuts off parts of the other at
+> the join - how should this be done to produce a satisfactory effect?
+
+
+You may use `-clip off' option for all objects which shouldn't be clipped by the scrap border. However, it would be best to choose places for scrap joins where the passage is as simple as possible -- this saves a lot of work on defining IDs and joins for each object lying on the scrap join line.
+
+> Therion generates an error. 'invalid object name', but some more research on
+> the various options shows that I get:
+>   join farside at river farside2 at river
+> works OK (except that it joins one (the south) wall of farside2 to a nearby
+> column (the nearest wall) which is just wrong.
+>   join farsidewest1 at farside.river farsidewest2.farside2 at river
+>   Gives 'survey farside.river does not exist' - which is right but I mean
+> scrap farside within survey river - have I got the syntax wrong?
+
+
+Scraps don't create own namespace -- only surveys do. So
+ join farside at river farside2 at river
+is a variant of join which joins two scraps, and
+ join farsidewest1 at farside.river farsidewest2.farside2 at river
+should be
+ join farsidewest1 at river farsidewest2 at river
+
+>> >If I try to zoom in to 200% therion just crashes (64MB machine, 3.8Mb pnm >file)
+>> >Is this expected?
+>> 200% of 3.8Mb = 4Mb original image + 16Mb scaled image + 20Mb canvas RGBA buffer = 40MB = 60% of RAM. This may be a problem, especially on some operating systems.
+>
+>
+> OK. So there is a need for original scans to be quite small, or lower colour
+> depth (I have to scan greyscale because my scanner/software does not work
+> properly in b/w). Now I'll reduce the colour depth of all the images and
+> maybe chop them up for therion editing, because zoom is important and it's
+> _very_ slow to load. I also just bought 128MB more ram, which should help.
+
+
+I'm afraid TclTk uses RGB model internally, so it converts even b/w images into RGB anyway.
+I've been using XTherion on Athlon 2000 with 512 MB RAM. It works quite well and fast with more 100 dpi scans in one file (about 1000*500 pixels each) @ 200% zoom.
+
+> And because it takes 2-3mins to load again I don't like unloading and
+> loading it each time to make an edit. Smaller scans will help, as will more
+> memory, but there does need to be a better way if drawing a survey is to
+> take less than 100 years :-)
+
+
+We are fully aware of the fact, that XTherion and espacially TclTk language is not ideal. It would be nice to make a completely new interface (which may be devoloped parallel with therion and xtherion), but it would require a lot of help from other programmers, too. We've put some ideas on
+http://labyrinth.speleo.sk
+Martin
+
+
+
+From s.m at speleo.sk  Thu Feb 19 12:22:42 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 19 Feb 2004 12:22:42 +0100
+Subject: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <052@reconstruction>
+
+
+> Presumably the software could be made to manage larger images better (like
+> photo-editing software can load file _much_ bigger than the available
+> memory). a 4MB scan shouldn't be 'too large to zoom' - it will catch users out.
+
+
+I'm afraid, reducing memory usage would increase the processor usage. The only way how to solve this problem is hardware update. We've been programming therion with 150MHz and 48MB RAM. But when we started to enter real data - we were forced to upgrade. Now it looks, that 2GHz and 512MB ram is OK for A4 scans at 100dpi.
+
+> Perhaps the zoom should only attemtp to zoom the visible part of the image,
+> not the whole thing. That would be sensible use of resources. Is this a TCL
+> feature that it will be hard to change?
+
+
+This would take too much effort... Handling bitmap images in TCL is very limited. Anyway, you can spit images by your self in Photoshop or Gimp and turn on/off selected pictures visibility (last check box in the [Background images]). We've done it this way and it helped us a lot. In the file menu, there is also option Open XP (Excluding pictures). This is also very usefull for debugging.
+
+> And a key! there are nothing like enough keyboard shortcuts. Mice are nasty
+> and give you RSI :-)
+
+
+Could you please write down all the key-bindings (with exact keys) you would like to have in xtherion. Than I can add them in the next release.
+
+S.
+
+
+
+
+From s.m at speleo.sk  Mon Feb 23 09:57:06 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Mon, 23 Feb 2004 09:57:06 +0100
+Subject: [therion] Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <053@reconstruction>
+
+
+> The QMs ('continuation point) come out really small on my survey.
+> Where do I control the size?
+>
+> Ticks are too close together on pitches.
+
+
+I've noticed (in the file soundriverpln.pdf), that you're using scale 1:200 even if it's really a huge cave (you've probably been mapping in 1:500 or even smaller scale). When exporting such a large caves, you should use the scale, you've been mapping in (1:500) or if you want to have bigger symbols in the 1:200 scale, specify -layout-base-scale 1 500 - than each symbol will be 2.5x bigger (including QM and pitch ticks).
+
+Another point - in the layout: scale and base-scale is specified like:
+
+scale 1 500
+
+I believe, the number "1" is not needed there, and probably scales should be specified just by number 500 (I've never seen on any map scale 2:1000 or something like that). What do you think?
+
+> How do I change the default for contour lines to al have 'none' (no downside
+> tick mark)? I don't want to add -tick none on every contour - I want to set
+> a default.
+
+
+In the new version of therion, this will be default. So you can forget about this. I know changing default behaviour is not standard way, but in this case, I believe it will help.
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Mon Feb 23 16:53:14 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Mon, 23 Feb 2004 15:53:14 +0000
+Subject: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <054@reconstruction>
+
++++ Stacho Mudrak [04-02-23 09:57 +0100]:
+
+>>
+>
+>>> >The QMs ('continuation point) come out really small on my survey.
+>>> >Where do I control the size?
+>>> >
+>>> >Ticks are too close together on pitches.
+>
+>>
+>> I've noticed (in the file soundriverpln.pdf), that you're using scale 1:200
+>> even if it's really a huge cave (you've probably been mapping in 1:500 or
+>> even smaller scale). When exporting such a large caves, you should use the
+>> scale, you've been mapping in (1:500) or if you want to have bigger symbols
+>> in the 1:200 scale, specify -layout-base-scale 1 500 - than each symbol
+>> will be 2.5x bigger (including QM and pitch ticks).
+
+
+OK - yes 1:200 must be a default? I normally use 1:500. For this system
+1:1000 or 1:2000 will be appropriate. Well spotted.
+
+>> Another point - in the layout: scale and base-scale is specified like:
+>>
+>> scale 1 500
+>>
+>> I believe, the number "1" is not needed there, and probably scales should
+>> be specified just by number 500 (I've never seen on any map scale 2:1000 or
+>> something like that). What do you think?
+
+
+I have never seen 2:<anything> either, so I suppose you are right, but
+"scale 1 500" is perhaps more obvious than "scale 500" to a surveyor so
+maybe just leave it even though it is not very satisfactory from a
+computer-science point of view? I am not sure.
+
+>>> >How do I change the default for contour lines to al have 'none' (no
+>>> >downside
+>>> >tick mark)? I don't want to add -tick none on every contour - I want to set
+>>> >a default.
+>
+>>
+>> In the new version of therion, this will be default. So you can forget
+>> about this. I know changing default behaviour is not standard way, but in
+>> this case, I believe it will help.
+
+
+Except now people who _do_ want a tick on every contour will need to add
+-tick each time. This doesn't really address the problem of setting defaults
+for things like this. Does the UIS symbol set have ticks on contours?
+
+I know defaults should be set by specifying a symbol set, but that is going
+to be difficult for 'most users' who don't want to get into writing
+MetaPost.  Once we have a wide choice of symbol
+sets than most people should be happy I suppose, but I think many surveyors
+like to have a few little 'artisitic differences' in their surveys and not
+always use _all_ the standard symbols. Something to think about.
+
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From martinsluka at mac.com  Mon Feb 23 18:38:50 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 23 Feb 2004 18:38:50 +0100
+Subject: [therion] Re: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <055@reconstruction>
+
+At 15:53 +0000 23.2.2004, Wookey wrote:
+*******************************************
+
+> I have never seen 2:<anything> either
+
+
+An old Austrio-Hungarian map - something as 2 inches to 1 mile.
+
+:)
+
+Martin
+--
+
+
+
+
+From s.m at speleo.sk  Tue Feb 24 08:26:11 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 24 Feb 2004 08:26:11 +0100
+Subject: [therion] Re: Queries and comments on 0.2.17
+In-Reply-To: <047@reconstruction>
+Message-ID: <056@reconstruction>
+
+
+> OK - yes 1:200 must be a default? I normally use 1:500. For this system
+> 1:1000 or 1:2000 will be appropriate. Well spotted.
+
+
+Well, we're surveying caves where passage is in average 2m width, so we've set up this scale as default. Anyway, I'll think how to set up default layout (including symbols and all other stuff) in therion.ini. This should be the solution I believe.
+
+> Except now people who _do_ want a tick on every contour will need to add
+> -tick each time. This doesn't really address the problem of setting defaults
+> for things like this. Does the UIS symbol set have ticks on contours?
+>
+> I know defaults should be set by specifying a symbol set, but that is going
+> to be difficult for 'most users' who don't want to get into writing
+> MetaPost.  Once we have a wide choice of symbol
+> sets than most people should be happy I suppose, but I think many surveyors
+> like to have a few little 'artisitic differences' in their surveys and not
+> always use _all_ the standard symbols. Something to think about.
+
+
+Yes, you're right. Martin also pointed me this problem, so we've left behaviour on the macro. Now it decides, whether to put tick or not, if no user wish is present. Now two macros exists: l_contour_SKBB (with tick by default) and l_contour_UIS (without tick by default). I think, we will be able to live for a while with this state. So if you will use -layout-symbol-set UIS, no contour ticks should be present (I believe, this afternoon we will put on the server new developement release).
+
+S.
+
+
+
+
+
+From s.m at speleo.sk  Thu Feb 12 15:49:14 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 12 Feb 2004 15:49:14 +0100
+Subject: 0.2.18
+Message-ID: <058@reconstruction>
+
+On the server, you can find new release of therion. We've made huge improvements especially in automatical map header generation, SQL export (very usefull for finding info about cave you want) and a lot of new map layout features is present. Everything is documented in thbook.
+
+There is one thing missing: if you have Img Tcl/Tk plug-in installed, also jpeg and png images are supported in x-therion. Now we will focus on removing bugs and generating random passage fills (debris, sand, etc...)
+
+ThTeam.
+
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 13 16:55:52 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 13 Feb 2004 15:55:52 +0000
+Subject: 0.2.18
+In-Reply-To: <058@reconstruction>
+Message-ID: <059@reconstruction>
+
++++ Stacho Mudrak [04-02-12 15:49 +0100]:
+
+>> On the server, you can find new release of therion. We've made huge
+>> improvements especially in automatical map header generation, SQL export
+>> (very usefull for finding info about cave you want) and a lot of new map
+>> layout features is present. Everything is documented in thbook.
+
+
+OK, Debianised and uploaded. This one was nice and easy  :-)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 27 11:20:43 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 27 Feb 2004 10:20:43 +0000
+Subject: feedback on 0.2.18
+Message-ID: <060@reconstruction>
+
+Here's another batch of Therion feedback from my continuing efforts.
+
+
+I debianized and compiled 0.2.200400224 (is there any reason for not just
+calling this 0.2.19?  - this is the 3rd decimal version number so it might
+as well go up with each new version you put out)
+
+My mulu dataset which worked OK with 0.2.18 gives:
+therion: warning -- thconfig [7] -- no selected projection data -- plan
+The jsv test dataset works OK.
+Downgrading to 0.2.18 also still works, so something is amiss.
+
+Copy of thconfig, soundriver.th and soundriver.th2 attached.
+
+version 0.2.18
+
+thbook says -clip <bool> but it's -clip <on/off> like most other options -
+confusing - I tried 0, false before getting it right. Make the docs
+consistent.
+
+search for 'area' finds them in the File Commands box but there is no clue
+where it is on screen. Highlighting the associated paths would be really
+good.
+
+Finding lines instead of points is tricky - you can click on point, but not
+line. Especially with big rocks that have a lot of lines, it's hard to know
+that you have the right line. Highlighting the point at the other end of the
+line too or something would be good if not the line itself.
+
+In the File Commands box there is an underlined entry you can move with the
+cursor keys and a highlighted entry (the thing currently highlighted on
+screen) which you can only move with the mouse.
+
+WHy do both these things exist? It'd be more useful to be able to move the
+highlighed entry with the cursor keys, so that you can step through items
+and _see_ what they refer to.
+
+What is the intended use of Rock-edge and rock border?
+
+Can you explain what base-scale actually does and how scale interacts - I
+don't feel I understand properly from reading the thbook. You may have
+answered this from looking at the article...
+
+I still can't get join [id:pt]@survey style to work: I get 'invalid object'
+  join [fsceil1:0]@river [farsidewest3:8]@river. commented out in attached
+.th file.
+
+In the legend 'Topo' is not english - need to be able to change that text.
+We have 'surveyed', 'explored' and 'drawn' normally.
+
+Also 'pit' is 'pitch' in UK english - only American's call them pits. Indeed
+UK and US caving english are quite different, if Therion takes account of
+translations - that's why survex has en-gb and en-us translations.
+
+How do I deal with this situation: a wall round a corner and a pitch edge
+goes across the corner; I want to area fill up to the pitch edge? In the attached
+files this is sbr3(pitch edge), farsidewest2(wall) etc.
+The problem is that when describing the paths comprising the area you want
+to go wall, pitch, wall, but the wall has only one ID, so I put
+area sand
+  sbr1
+  farsidewest3
+  sbr2
+  farsidewest2
+  sbr3
+  farsidewest2
+endarea
+in the area coomand, but the sbr3 is ignored and the fill goes right up to
+the wall.
+do I have to split the wall into two paths or can the area command be made
+smart enough to do what is intended here?
+
+Is there an easy way of splitting lines without re-drawing? Needed for
+various situations, the above being just one example. At the moment I am
+deleting and re-drawing things when I want to split them, which is a pain.
+
+
+
+
+encoding  utf-8
+select evening.soundriver
+
+source soundriver.th
+
+ export model -fmt survex
+ export map -proj plan -layout-base-scale 1 500 -o soundriverpln.pdf
+# or to use full layout below
+# export map -proj plan -layout elevator -o soundriverpln.pdf
+
+# export atlas -proj plan -o soundriveratlas.pdf
+
+layout elevator
+  base-scale 1 500
+  doc-author "Wookey"
+endlayout
+
+
+
+encoding  utf-8
+survey soundriver
+
+  map elevator -title "Terikan: Elevator Entrance"
+    farside at river
+    farside2 at river
+  endmap
+
+
+  #connections
+
+#  join farside at river farside2 at river
+  join farsidewest1 at river farsidewest2 at river
+#  join [fsceil1:0]@river [farsidewest3:8]@river
+
+  centerline
+    equate 17 at evening 53 at river
+    equate 24 at evening 1 at river
+
+    #*equate 4 at river2 6 at evening  ; was it stn 6 cairn? closure suggests not
+
+    equate 1 at rifticious 2 at evening
+    equate 5 at rifticious 12 at evening
+
+    equate 1 at pooh 50 at river
+
+    equate 22 at rifticious 1 at rifticious2
+
+    equate 10 at penthouse 27 at river
+
+  endcenterline
+
+  survey evening -title "Top of the Evening"
+
+
+    centerline
+
+        #export 25 2 12 17 24
+        date 2003.02.02
+        team "Wookey" notes
+        team "Andy Eavis" clino compass tape
+        #CUCC set #2, Fisco ranger tape?
+
+        #surveying in, looking in
+
+
+        2  1  18.15  191  -03
+        3  2  30.00  140  -01
+        4  3  17.25  179  -01
+        5  4  21.25  215  +01
+        6  5  28.1  271  +01
+        7  6  30.0  305  +10
+        8  7  30  286  -03
+        9  8  30.00  290  -12
+        10  9  16.2  298  -07
+        9  11  1.4  -  down
+        12  10  30  321  +01
+        13  12  23.95  214  -17
+        14  13  17.8  194  -25
+        15  14  28.0  216  -10
+16  15  22.0  195  +11
+16  17  15.4  140  +36
+18  17  23.0  203  +25
+19  18  21.9  230  +27
+20  19  30  241  +04
+21  20  27.35  251  -08
+22  21  13.0  213  +12
+23  22  13.5  242  +02
+24  23  30  204  -02
+1  25  9.0  230  +08
+
+#2  4  6  ~20  2  ; cairn (Andy's Head)
+#1  2(12)  5  10(17)  0.6  ; Nester's cairn (actual)
+#3  1  4  10  1.7  ; AH/WH
+#4  1  6  10+  1.7  ; Head - rock on floor
+#5  7  4/20+  -  1.7  ; AH - arrow on floor
+#6  1(~9)  12  36  1.7  ;Kneeling over cairn (up with disto)
+#7  ~20  3  ~25  1.7  ; AH, cairn
+#8  15  10  25  2  ; AH
+#25  3(15)  7  8(18)  2  ; WH over cairn - last station on previous survey (escalator.pt3)(looking in)
+#9  9  12  8  2  ; WH above cairn, note
+#10  1  10  ~10  3  ; AH on rock
+#11  as 9      0.3  ; cairn, note
+#12  14  14  -  -  ; AH, cairn, note
+#13  ~20  ~20  ~8  -  ;
+#14  10  9  7  1.5
+#15  ~20  ~20  ~20  2  ;AH
+#16  -  -  -  -
+#17  lots  10  ~30  3.5  ; big cairn, top of passage '17' in pencil
+#18  10  15  ~30  2  ; AH
+#19  9  ~23  8  2  ;AH
+#20  12  8  13  2  ;AH, cairn, note
+#21  ~16  2  5  4  ; AH on stal bridge
+#22  12  3  6  1.7  ; AH
+#23  15?  4  3  2  ;AH
+#24  4  15  8  2.5  ;AH
+
+
+    endcenterline
+
+  endsurvey evening
+
+
+  survey river
+
+    input soundriver.th2
+    centerline
+
+      #export 1 27 40 43 50 53
+      title "River of Sound"
+      date 2003.02.03
+      team Wookey notes
+      team "Robbie Shone" clino compass
+      team "James Alker" tape
+
+      #CUCC insts set #2
+
+1  2  30.00  047  00
+2  3  28.25  318  -13
+2  4  21.60  020  -13
+2  5  19.0  112  +04
+5  6  25.6  038  -03
+4  7  1.1  335  00
+7  8  5.4  -  down
+8  9  30.0  082  -01
+9  10  15.2  093  +02
+10  11  28.7  085  -01
+11  12  30.0  021  +01
+12  13  22.8  050  +06
+13  14  15.9  064  -12
+14  15  18.7  139  +04
+15  16  30.0  135  +08
+16  17  30.0  037  +02
+17  18  15.6  103  +16
+18  19  24.0  170  -22 # clino surveyed on later trip!
+19  20  30.0  071  +01
+20  21  28.6  038  +09
+21  22  17.1  351  +17
+22  23  7.2  -  down
+23  24  28.0  314  -05
+24  25  30.0  019  +03
+25  26  30.0  037  -01
+26  27  30.0  062  00
+27  28  30.0  039  +01
+28  29  30.0  029  -01
+29  30  30.0  042  +04
+30  31  30.0  023  -03
+31  32  14.3  028  +08
+32  33  9.1  320  -18
+33  34  30.0  268  -18
+34  35  16.5  258  00
+35  36  15.0  242  -12
+36  37  11.0  267  -02
+37  38  11.3  320  +22
+38  39  6.4  336  +04
+33  41  25.5  033  -02
+41  42  28.3  081.5  -15
+32  43a  20.2  055  +01
+31  44  28.0  092  +10
+39  40  23.1  345  +03
+42  43  11.3  110  +02
+3  45  30.0  303  -06
+45  46  30.0  231  -02
+46  47  30.0  214  00
+47  48  30.0  219  00
+48  49  18.0  228  -01
+49  50  30.0  255  -03
+50  51  30.0  172  +17  # was -17 in notes - can't be right
+51  52  27.3  165  +29
+52  53  19.2  158  +28
+
+#1  -  -  -  -  Stn 24 of last survey. Head on cairn
+#2  5  ~8  ~6  1.8  ; head
+#3  8  ~20  6  2  ; stal (S corner)
+#4  10  ?  3  2  ; head by stal column
+#5  ?  15  3  1.7  ; head
+#6  -  -  ~8  0.8  ; tip of stal at prow
+#7  -  -  -  -  ; Over drop
+#8  8  1  ~8  1.7  ; top of drop
+#9  3.5  7(~40)  ~20  2  ; head
+#10  5  6  15+  2  ; edge of 4m drop, head
+#11  10  (2)8  20  2  ; head
+#12  ~10  2  -  -  ; head
+#13  10  5(12)  20+  1.5  ; head
+#14  6(12)  6(12)  ~15  2  ; head
+#15  -  -  -  -  ; head
+#16  40  9  20  8  ; head
+#20  8(25+)  0  6(15+)  1.8  ; head
+#21  -  8  -  -
+#19  -  0  -  1.8
+#24  2  5  5(7)  1.8
+#23  1  6  ~12  1.5
+#25  6  3  30+  1.7
+#26  3  7(30+)  9(+)  1.7
+#27  2  10  9  2
+#28  1(7)  5  7  4
+#29  9  1(6)  15  4
+#30  ~15  2  ~30  2(10?)  ; head
+#31  4  10  6  2  ; head
+#32  -  4  -  2  ; head
+#33  -  -  0.4  ~10  ; tip of boulder '33'
+#34  5  8  -  1  ; sitting head
+#35  5  2  3  1(5)  ; sitting head
+#36  6  1  1  1  ; sitting head
+#37  2  8  1(5)  0.5  ; sitting head '37' written in mud
+#38  5  1  7  3  ; head
+#39  5  3  6  1  ; sitting head, note
+#40  7  1  2  1  ; sitting head, note
+#43  ?  6  2.5  2  ; sitting head, note
+#41  10  ?  -  -  ; sitting head
+#42  2  3  1  1.5  ; 0.4 above cairn
+#43  6  5.5  2  1  ; point of rock
+#44  8  8  2  1  ; cairn on boulders (actual)
+#45  20  0  10  4  ; head
+#46  5  5  9  1.8  ; head
+#47  4  4  10  1.8  ; head
+#48  5  8  10  1.8  ; head
+#49  1(8)  4(10)  10  1.8  ; head
+#50  6  5  8  2  ; head
+#51  8  8  lots  2  ; head
+#52  15  15  -  -  ; head
+#53          ; cairn '17' on top
+
+    endcenterline
+  endsurvey river
+
+
+  survey rifticious
+    centerline
+      #export 1 5 22
+
+      date 2003.02.03
+      team "Wookey" notes
+      team "Robbie Shone" clino compass
+      team "Colin Boothroyd" tape
+
+      #CUCC set #2, Fisco ranger tape?
+
+      #surveying in, looking in
+
+# RH side of passage
+1  2  18.7  021  +01
+2  3  24.0  022  +01
+3  4  16.8  350  00
+
+#1  3  4  ~12  2.5  ; =stn 2, wook & Andy stn 3, 2003-02-02
+#2  3.5  6  +10  2
+#3  6  2(+4)  ~25  3
+#4          ; stn 6 of above survey
+
+# SW trending lead from lower corner of Top of the Evening
+5  6  30.0  217  -11
+6  7  30  190.5  00
+7  8  10.5  194.5  +12
+8  9  15.9  217  -24
+9  10  8.0  182  +07
+10  11  7.7  170  +18
+11  12  5.5  126  +12
+12  13  14.8  224  -06
+13  14  18.0  191  -01
+14  15  13.7  195  00
+15  16  2.000  119  -19
+16  17  10.6  210.5  +08
+17  18  22.20  205.5  00
+18  19  13.70  201  00
+19  20  15.00  221  -28
+20  21  9.10  268  -46
+21  22  6.50  293  -53
+19  23  13.2  100  +55
+23  24  7.20  184  +31
+24  25  7.70  062  +55
+25  26  8  060  +26 # grade3
+
+      #LRUD to come
+    endcenterline
+  endsurvey rifticious
+
+
+  survey pooh
+    centerline
+      #export 1
+      date 2003.02.03
+      team "Wookey" tape #and dog
+      team "Robbie Shone" clino compass
+      team "Colin Boothroyd" notes pictures
+
+      # same day as rifticious survey
+
+      #CUCC set #2, Fisco ranger tape?
+
+      data normal station left right up down newline tape compass clino
+1  -  -  -  -  # stn 50 of 2003-02-03 survey
+  17.4  241  -05
+2  2.5  6  0+8  1
+  19.08  253.5  -18    # could be 233.5?
+3  5  3  4  1.2
+  7.18  238  -15
+4  0  5  3.5  1.5
+  17.94  000  +20
+5  4  3  8  2
+  8.72  251  -28
+6  0.5  2  3  1
+  21.26  353  +09
+7  1  2.5  4  1.6
+  11.50  033  +07
+8  2  4  8  1
+  10.13  080  +01
+9  3.5  2  1  2.5
+  14.49  021.5  -06
+10  3.5  1.5  1.8  1.5 # cairn
+
+    endcenterline
+  endsurvey pooh
+
+
+
+  survey rifticious2
+
+    centerline
+
+      #export 1 3
+
+      #pitch connection between rifticious and menagerie - done on following day
+      date 2003.02.06
+      team "James Alker" dog
+      team "Robbie shone" notes insts tape
+
+      1  2  10.6  292  -44  # 0.6 length in notes - lost '1'?
+      2  3  15.4  -  down   # measured rope length
+
+    endcenterline
+  endsurvey rifticious2
+
+
+  survey penthouse
+
+    centerline
+      #export 10
+
+      date 2003.02.06
+      team "James Alker" notes tape
+      team "Robbie shone" clino compass
+      #Entrance on shelf before narrowing on way to farside
+
+      data normal station left right up down newline tape compass clino
+
+      #CUCC insts 2
+
+2  8  8  6  2
+  30  046  +9
+1  6  4  4  2
+ 0 0 0   # faked data to make therion happy
+2  -  -  -  -
+  30  223  -2
+3  8  7  6  2
+  30  220  0
+4  4  20  5  2
+  28.6  239  -1
+5  5  0  3  0.5
+  9.8  278  -12
+6  4  2  5  0.5
+  20.2  204  +1
+7  2  40  5  2
+  23.0  300  -7
+8  20  20  10  2
+  18.6  0  -25
+9  2  40  15  1  # on a stal
+  5.3  54  -12
+10  2  10  15  2  # entrance
+
+
+#   entrance 1
+#   entrance 10
+
+    endcenterline
+  endsurvey penthouse
+endsurvey
+
+
+
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -128 -1247 1800 1328
+##XTHERION## xth_me_area_zoom_to 200
+##XTHERION## xth_me_image_insert {0 1 1.0} 1200 soundriver1pln.pnm 0 {}
+
+
+
+
+
+
+scrap farside2 -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+
+
+
+line wall -id wall1
+  51.0 244.0
+  51.0 244.0 64.55 227.73 78.0 206.0
+  91.0 185.0 97.0 179.0 97.0 179.0
+  smooth off
+  107.0 167.0
+  107.0 167.0 109.0 159.0 117.0 144.0
+  125.0 129.0 133.0 111.0 133.0 111.0
+  smooth off
+endline
+
+
+
+
+point 1013.0 -911.0 station -name 25
+
+#point 983.0 -677.0 station -name 26
+#point 1055.0 -455.0 station -name 27
+#point 1035.0 -220.0 station -name 28
+#point 970.0 9.0 station -name 29
+#point 961.0 244.0 station -name 30
+
+
+point 618.0 413.0 station -name 34
+
+
+
+
+point 546.0 303.0 station -name 35
+
+
+
+
+point 511.0 195.0 station -name 36
+
+
+
+
+point 451.0 125.0 station -name 37
+
+
+
+
+point 360.0 136.0 station -name 38
+
+
+
+
+point 317.0 153.0 station -name 39
+
+
+
+
+point 158.0 244.0 station -name 40
+
+
+
+
+point 165.0 151.0 debris
+
+
+
+
+point 131.0 161.0 debris
+
+
+
+
+point 139.0 141.0 debris
+
+
+
+
+point 181.0 160.0 debris
+
+
+
+
+point 169.0 181.0 debris
+
+
+
+
+point 159.0 159.0 debris
+
+
+
+
+point 243.0 212.0 air-draught -orientation 300.9
+
+
+
+
+point 646.0 505.0 air-draught -orientation 205.7
+
+
+
+
+point 661.0 353.0 air-draught -orientation 210.6
+
+
+
+
+point 474.0 66.0 continuation
+
+
+
+
+point 332.0 -61.0 continuation
+
+
+
+
+point 243.0 270.0 continuation
+
+
+
+
+point 179.0 107.0 continuation
+
+
+
+
+point 68.0 279.0 continuation
+
+
+
+
+point 105.0 229.0 air-draught -orientation 321.7
+
+
+
+
+line wall -close on
+  397.0 89.0
+  393.0 100.0
+  393.0 100.0 409.0 121.0 413.0 123.0
+  417.0 125.0 421.0 130.0 423.0 120.0
+  smooth off
+  419.0 109.0 397.0 89.0 397.0 89.0
+  smooth off
+endline
+
+
+
+
+line wall
+  358.0 -42.0
+  374.0 -18.0 402.0 34.0 400.0 65.0
+  smooth off
+  420.0 75.0 412.0 96.0 439.0 104.0
+  smooth off
+  450.0 92.0 453.0 85.0 459.0 72.0
+  smooth off
+endline
+
+
+
+
+line border -id sbr1 -subtype invisible
+  652.0 386.0
+  652.0 386.0 671.0 498.0 626.0 554.0
+  smooth off
+endline
+
+
+
+
+point 595.0 302.0 debris
+
+
+
+
+point 674.0 504.0 debris
+
+
+
+
+line wall -id farsidewest3
+  471.0 83.0
+  454.0 116.0
+  454.0 116.0 465.0 106.0 483.0 110.0
+  501.0 114.0 534.0 136.0 542.0 164.0
+  550.0 192.0 539.0 237.0 549.0 252.0
+  559.0 267.0 589.0 284.0 599.0 295.0
+  625.17 323.78 639.0 366.0 652.0 386.0
+  660.99 399.83 741.0 478.0 741.0 478.0
+  smooth off
+  746.0 452.0 742.63 391.23 849.0 427.0
+  smooth off
+endline
+
+#Rocks inside wall1, wall2, rb1, rb2
+
+
+area debris
+  wall1
+  rb1
+  wall2
+  rb2
+endarea
+
+
+
+
+line rock-border -id rb2
+  175.0 199.0
+  107.0 167.0
+endline
+
+
+
+
+line rock-border -id rb1
+  133.0 111.0
+  202.0 151.0
+endline
+
+
+
+
+line wall -id wall2
+  202.0 151.0
+  175.0 199.0
+  175.0 199.0 185.0 211.0 201.0 206.0
+  217.0 201.0 285.0 148.0 291.0 142.0
+  297.0 136.0 327.0 107.0 333.0 83.0
+  339.0 59.0 343.0 28.0 317.0 -27.0
+  smooth off
+endline
+
+
+
+
+line pit -id sbr2
+  536.0 312.0
+  558.0 285.0
+  563.0 266.0
+endline
+
+
+
+
+area sand
+  sbr1
+  farsidewest3
+  sbr2
+  farsidewest2
+  sbr3
+  farsidewest2
+endarea
+
+
+
+
+line wall -id farsidewest2
+  359.0 142.0
+  359.0 142.0 375.0 176.0 383.0 183.0
+  391.0 190.0 390.0 180.0 398.0 188.0
+  406.0 196.0 445.84 222.97 447.0 216.0
+  448.0 210.0 473.0 203.0 473.0 189.0
+  473.0 175.0 461.0 154.0 461.0 154.0
+  smooth off
+  461.0 154.0 484.0 161.0 495.0 176.0
+  506.0 191.0 509.0 221.0 509.0 234.0
+  509.0 247.0 505.0 280.0 510.0 303.0
+  515.0 326.0 543.0 306.0 536.0 312.0
+  529.0 318.0 562.0 346.0 568.0 358.0
+  574.0 370.0 584.0 396.0 577.0 399.0
+  570.0 402.0 537.0 371.0 531.0 378.0
+  525.0 385.0 533.0 389.0 533.0 389.0
+  smooth off
+  533.0 389.0 573.0 460.0 583.0 461.0
+  593.0 462.0 601.0 449.0 601.0 449.0
+  smooth off
+  601.0 449.0 614.0 461.0 616.0 480.0
+  618.0 499.0 626.0 541.0 626.0 554.0
+  626.0 567.0 629.0 590.0 629.0 590.0
+  smooth off
+endline
+
+
+
+
+line wall
+  254.0 258.0
+  277.11 221.68 345.0 160.0 359.0 142.0
+  smooth off
+endline
+
+
+
+
+line wall
+  112.0 282.0
+  145.0 243.0
+  145.0 243.0 149.0 263.0 171.0 266.0
+  202.11 270.24 245.0 236.0 245.0 236.0
+  smooth off
+  245.0 236.0 239.0 247.0 237.0 254.0
+  smooth off
+endline
+
+
+
+
+line pit -id sbr3
+  560.0 388.0
+  558.0 397.0 549.0 405.0 541.0 405.0
+  smooth off
+endline
+
+
+
+
+line contour
+  480.0 119.0
+  480.0 119.0 505.0 125.0 520.0 143.0
+  535.0 161.0 535.0 165.0 537.0 181.0
+  539.0 197.0 538.0 220.0 539.0 233.0
+  540.0 246.0 546.7 266.32 552.0 271.0
+  555.23 273.85 560.0 280.5 558.0 285.0
+  smooth off
+endline
+
+
+
+
+line contour
+  475.0 127.0
+  475.0 127.0 512.0 151.0 518.0 159.0
+  524.0 167.0 529.0 172.0 531.0 182.0
+  533.0 192.0 533.0 226.0 535.0 239.0
+  537.0 252.0 548.0 278.0 551.0 281.0
+  555.47 285.47 552.0 292.0 552.0 292.0
+  smooth off
+endline
+
+
+
+
+line arrow
+  735.0 515.0
+  712.0 517.0
+endline
+
+
+
+
+line arrow
+  728.0 477.0
+  698.0 481.0
+endline
+
+
+
+
+line contour -clip off
+  692.0 432.0
+  692.0 432.0 696.92 439.2 710.0 477.0
+  723.08 514.8 728.0 536.0 728.0 536.0
+  smooth off
+endline
+
+
+
+
+line pit -clip off
+  657.0 411.0
+  657.0 411.0 647.11 386.22 665.0 422.0
+  682.89 457.78 669.38 427.77 684.0 465.0
+  698.62 502.23 707.0 529.0 707.0 529.0
+  smooth off
+endline
+
+
+
+
+line pit
+  352.0 91.0
+  352.0 91.0 368.0 111.0 372.0 120.0
+  smooth off
+endline
+
+
+
+
+endscrap
+
+
+
+
+
+
+scrap farside -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+
+
+
+point 875.0 460.0 station -name 31
+
+
+
+
+point 968.0 805.0 air-draught -orientation 230.6
+
+
+
+
+point 844.0 567.0 station -name 32
+
+
+
+
+point 775.0 574.0 station -name 33
+
+
+
+
+point 873.0 726.0 station -name 43a
+
+
+
+
+point 948.0 977.0 station -name 43
+
+
+
+
+point 867.0 942.0 station -name 42
+
+
+
+
+point 736.0 770.0 station -name 41
+
+
+
+
+point 1035.0 606.0 station -name 44
+
+
+
+
+line wall
+  919.0 1102.0
+  987.0 995.0
+endline
+
+
+
+
+line arrow
+  987.0 616.0
+  949.0 588.0
+endline
+
+
+
+
+line arrow
+  1006.0 548.0
+  969.0 519.0
+endline
+
+
+
+
+point 973.0 871.0 continuation
+
+
+
+
+point 898.0 1109.0 continuation
+
+
+
+
+line contour
+  1032.0 521.0
+  1032.0 521.0 1012.0 556.0 1007.0 581.0
+  1002.0 606.0 1001.0 615.0 999.0 624.0
+  997.0 633.0 996.0 643.0 998.0 654.0
+  smooth off
+endline
+
+
+
+
+line contour
+  995.0 484.0
+  995.0 484.0 964.0 565.0 964.0 593.0
+  964.0 621.0 967.0 630.0 967.0 630.0
+  smooth off
+endline
+
+
+
+
+line ceiling-step -id fsceil1 -clip off
+  741.0 478.0
+  741.0 478.0 750.0 533.0 769.0 579.0
+  788.0 625.0 802.0 630.0 817.0 635.0
+  smooth off
+endline
+
+
+
+
+line contour -reverse on -clip off
+  868.0 587.0
+  868.0 587.0 848.0 592.0 823.0 568.0
+  798.0 544.0 795.0 516.0 795.0 516.0
+  smooth off
+  795.0 516.0 773.0 521.0 743.0 490.0
+  smooth off
+endline
+
+
+
+
+line contour -reverse on -clip off
+  869.0 579.0
+  869.0 579.0 844.0 563.0 833.0 550.0
+  822.0 537.0 807.0 504.0 807.0 504.0
+  smooth off
+  807.0 504.0 788.5 504.5 745.5 474.5
+  smooth off
+endline
+
+
+
+
+line contour -id rbr5c
+  969.0 448.0
+  969.0 448.0 945.0 494.0 943.0 514.0
+  941.0 534.0 940.0 555.0 938.0 573.0
+  936.89 582.99 940.0 600.0 943.0 612.0
+  smooth off
+endline
+
+
+
+
+line wall -id rbr5b
+  1075.0 556.0
+  1075.0 556.0 1037.0 531.0 1001.0 490.0
+  965.0 449.0 960.0 437.0 955.0 426.0
+  smooth off
+endline
+
+
+
+
+line label -text choked
+  1149.0 645.0
+  1104.0 713.0
+endline
+
+
+
+
+line wall -id rbr5a
+  1125.0 589.0
+  subtype presumed
+  1075.0 556.0
+endline
+
+
+
+
+line wall -id rbr5e
+  1005.0 656.0
+  subtype presumed
+  1072.0 704.0
+endline
+
+
+
+
+point 817.0 583.0 debris
+
+
+
+
+point 863.0 609.0 debris
+
+
+
+
+point 836.0 616.0 debris
+
+
+
+
+point 814.0 610.0 debris
+
+
+
+
+area debris
+  rbr5a
+  rbr5b
+  rbr5c
+  rbr5d
+  rbr5e
+  rbr5f
+endarea
+
+
+
+
+line border -id rbr5f
+  1028.0 673.0
+  1028.0 673.0 1050.0 601.0 1092.0 565.0
+  smooth off
+endline
+
+
+
+
+line wall -id rbr5d
+  936.0 740.0
+  936.0 740.0 914.0 717.0 893.0 667.0
+  872.0 617.0 864.0 584.0 869.0 579.0
+  883.3 564.7 948.0 613.0 1005.0 656.0
+  smooth off
+endline
+
+
+
+
+line wall
+  975.0 782.0
+  subtype presumed
+  936.0 740.0
+endline
+
+
+
+
+line border -id blockage1 -close on -subtype invisible
+  987.0 995.0
+  957.0 966.0
+  934.0 928.0
+  940.0 917.0
+  968.0 938.0
+  983.0 959.0
+  1002.0 972.0
+  987.0 995.0
+endline
+
+
+
+
+area debris -id blk1area -clip off
+  blockage1
+endarea
+
+
+
+
+point 728.0 688.0 debris
+
+
+
+
+point 731.0 702.0 debris
+
+
+
+
+point 711.0 698.0 debris
+
+
+
+
+point 703.0 709.0 debris
+
+
+
+
+point 683.0 701.0 debris
+
+
+
+
+point 682.0 679.0 debris
+
+
+
+
+point 682.0 629.0 debris
+
+
+
+
+point 673.0 659.0 debris
+
+
+
+
+point 722.0 801.0 debris
+
+
+
+
+point 676.0 735.0 debris
+
+
+
+
+line pit
+  727.0 737.0
+  727.0 737.0 702.0 726.0 665.0 720.0
+  smooth off
+endline
+
+
+
+
+line pit
+  741.0 845.0
+  741.0 845.0 726.0 823.0 750.0 803.0
+  smooth off
+endline
+
+
+
+
+line rock-edge
+  797.0 825.0
+  801.0 836.0
+  811.0 839.0
+endline
+
+
+
+
+line rock-edge
+  831.0 842.0
+  812.0 832.0
+  811.0 844.0
+  829.0 849.0
+endline
+
+
+
+
+line rock-edge -close on
+  842.0 843.0
+  836.0 854.0
+  829.0 849.0
+  831.0 842.0
+  842.0 843.0
+endline
+
+
+
+
+line rock-edge -close on
+  853.0 868.0
+  846.0 871.0
+  837.0 865.0
+  844.0 850.0
+  860.0 859.0
+  853.0 868.0
+endline
+
+
+
+
+line rock-edge
+  871.0 871.0
+  870.0 858.0
+  860.0 859.0
+  853.0 868.0
+  866.0 881.0
+endline
+
+
+
+
+line rock-edge -reverse on
+  871.0 905.0
+  880.0 892.0
+  876.0 886.0
+  866.0 881.0
+  871.0 871.0
+  884.0 877.0
+  880.0 892.0
+endline
+
+
+
+
+line wall -reverse on -subtype blocks
+  886.0 927.0
+  871.0 905.0
+endline
+
+
+
+
+line wall -reverse on -subtype blocks
+  924.0 941.0
+  924.0 941.0 922.0 949.0 913.0 950.0
+  904.0 951.0 895.0 942.0 895.0 942.0
+  smooth off
+  886.0 940.0
+  886.0 927.0
+endline
+
+
+
+
+line wall
+  940.0 917.0
+  subtype presumed
+  924.0 941.0
+endline
+
+
+
+
+line wall
+  987.0 995.0
+  subtype presumed
+  1011.0 958.0
+endline
+
+
+
+
+line wall -id farsidewest1
+  629.0 590.0
+  632.0 624.0
+  636.0 655.0
+  642.0 723.0
+  642.0 723.0 651.0 772.0 663.0 791.0
+  671.44 804.37 705.0 826.0 705.0 826.0
+  smooth off
+  720.0 833.0
+  739.0 857.0
+  748.0 862.0
+  753.0 870.0
+  762.0 871.0
+  769.0 874.0
+  773.0 881.0
+  782.0 881.0
+  782.0 881.0 790.0 885.0 793.0 890.0
+  796.0 895.0 800.62 903.69 806.0 906.0
+  813.0 909.0 820.0 912.0 820.0 912.0
+  smooth off
+  828.0 915.0 875.0 976.0 875.0 976.0
+  smooth off
+  874.0 987.0
+  874.0 987.0 900.0 1017.0 897.0 1029.0
+  894.0 1041.0 880.0 1071.0 880.0 1071.0
+  smooth off
+endline
+
+
+
+
+line rock-edge -close on
+  830.0 818.0
+  812.0 832.0
+  781.0 818.0
+  791.0 792.0
+  818.0 805.0
+  830.0 818.0
+endline
+
+
+
+
+line rock-edge
+  752.0 781.0
+  732.0 791.0
+  722.0 754.0
+  742.0 750.0
+endline
+
+
+
+
+line rock-edge -close on
+  787.0 768.0
+  758.0 788.0
+  752.0 781.0
+  752.0 781.0 752.0 770.0 750.0 763.0
+  748.0 756.0 742.0 750.0 742.0 750.0
+  smooth off
+  751.0 724.0
+  751.0 724.0 764.0 717.0 764.0 723.0
+  764.0 729.0 767.0 731.0 774.0 731.0
+  781.0 731.0 774.0 744.0 774.0 744.0
+  smooth off
+  787.0 768.0
+endline
+
+
+
+
+line rock-edge -close on
+  689.0 669.0
+  689.0 669.0 688.0 702.0 694.0 703.0
+  700.0 704.0 708.0 678.0 708.0 678.0
+  smooth off
+  689.0 669.0
+endline
+
+
+
+
+line rock-edge -clip off
+  687.0 613.0
+  660.0 538.0
+  671.0 530.0
+endline
+
+
+
+
+line rock-edge -clip off
+  671.0 530.0
+  694.0 536.0
+endline
+
+
+
+
+line rock-edge -clip off
+  660.0 538.0
+  669.0 544.0
+endline
+
+
+
+
+line rock-edge -close on -clip off
+  687.0 613.0
+  687.0 613.0 701.0 621.0 708.0 614.0
+  715.0 607.0 716.0 596.0 713.0 589.0
+  710.0 582.0 694.0 536.0 694.0 536.0
+  smooth off
+  669.0 544.0
+  687.0 613.0
+endline
+
+
+
+
+line rock-edge -close on
+  851.0 555.0
+  867.0 546.0
+  869.0 561.0
+  857.0 564.0
+  851.0 555.0
+endline
+
+
+
+
+point 901.0 465.0 debris
+
+
+
+
+line arrow
+endline
+
+
+
+
+line wall -close on
+  924.0 475.0
+  931.0 481.0 936.0 473.0 930.0 468.0
+  924.0 463.0 917.0 469.0 924.0 475.0
+endline
+
+
+
+
+line wall -close on
+  909.0 501.0
+  909.0 501.0 902.0 504.0 898.0 501.0
+  894.0 498.0 889.0 496.0 894.0 492.0
+  899.0 488.0 909.0 501.0 909.0 501.0
+  smooth off
+endline
+
+
+
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+
+
+
+line border -id rbr3 -subtype invisible
+  936.0 740.0
+  914.0 816.0
+  860.0 859.0
+  830.0 818.0
+  787.0 761.0
+  788.0 726.0
+  773.0 705.0
+  754.0 704.0
+  695.0 502.0
+  718.0 492.0
+  788.0 571.0
+  769.0 594.0
+  777.0 623.0
+  809.0 643.0
+  883.5 637.5
+endline
+
+#rb3 and nearby wall surrounds rocky area
+
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+
+
+
+line pit
+  897.0 1029.0
+  905.0 1020.0
+  905.0 1020.0 910.0 990.0 921.0 987.0
+  932.0 984.0 948.0 989.0 949.0 994.0
+  950.0 999.0 943.0 1010.0 941.0 1023.0
+  939.0 1036.0 947.0 1057.0 937.0 1073.0
+  smooth off
+endline
+
+
+
+
+line pit
+  880.0 1071.0
+  880.0 1071.0 878.0 1057.0 908.0 1066.0
+  938.0 1075.0 933.0 1086.0 933.0 1086.0
+  smooth off
+endline
+
+
+
+
+endscrap
+
+
+
+
+
+
+
+
+From m.b at speleo.sk  Fri Feb 27 15:37:56 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Fri, 27 Feb 2004 15:37:56 +0100
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <061@reconstruction>
+
+> I debianized and compiled 0.2.200400224 (is there any reason for not just
+> calling this 0.2.19?  - this is the 3rd decimal version number so it might
+> as well go up with each new version you put out)
+
+
+Sometimes there is a new version each day -- this is only something like CVS depository with up-to-date sources for developers. Numbered versions should have CHANGES and other documentation updated.
+
+> thbook says -clip <bool> but it's -clip <on/off> like most other options -
+> confusing - I tried 0, false before getting it right. Make the docs
+> consistent.
+
+
+Will be fixed
+
+> What is the intended use of Rock-edge and rock border?
+
+
+rock-border is the outer border, rock-edge marks edges inside a large block
+(is usually omited in smaller blocks)
+
+> Can you explain what base-scale actually does and how scale interacts - I
+> don't feel I understand properly from reading the thbook. You may have
+> answered this from looking at the article...
+
+
+scale is the output scale. If you specify also base-scale, it has the effect as if you did the following steps:
+* print a map in base-scale
+* go to a copy shop and say 'I want a copy of this in the scale'
+both maps are finally in scale but with different line widths and symbol sizes.
+
+> I still can't get join [id:pt]@survey style to work: I get 'invalid object'
+>   join [fsceil1:0]@river [farsidewest3:8]@river. commented out in attached
+> .th file.
+
+
+omit the brackets. Unfortunately therionbook is misleading in this point.
+
+> In the legend 'Topo' is not english - need to be able to change that text.
+> We have 'surveyed', 'explored' and 'drawn' normally.
+
+
+Would it be correct to say
+Surveyed: A.B., C.D.
+Drawn: X.Y. ?
+
+> Also 'pit' is 'pitch' in UK english - only American's call them pits. Indeed
+> UK and US caving english are quite different, if Therion takes account of
+> translations - that's why survex has en-gb and en-us translations.
+
+
+well, it is possible to use en-us and en-uk subtypes, but only for texts in the output files.
+
+> Is there an easy way of splitting lines without re-drawing? Needed for
+> various situations, the above being just one example. At the moment I am
+> deleting and re-drawing things when I want to split them, which is a pain.
+
+
+select a point where the line should be splitted; than Line control->Edit line->Split line
+Martin
+
+
+
+From s.m at speleo.sk  Fri Feb 27 16:39:39 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 27 Feb 2004 16:39:39 +0100
+Subject: [therion] feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <062@reconstruction>
+
+>> My mulu dataset which worked OK with 0.2.18 gives:
+>> therion: warning -- thconfig [7] -- no selected projection data -- plan
+
+
+We've changed the behaviour of "select" command. If there is
+
+select <some-survey>
+
+only maps from <some-survey> survey are exported. This is very useful if
+you have huge datasets. So look for the select command
+
+select evening.soundriver
+
+in your thconfig file. You've selected survey for export, where no maps
+are given. You have to change it to "select soundriver", or use another
+select:
+
+select elevator at soundriver
+
+or remove all selects at all.
+
+>> search for 'area' finds them in the File Commands box but there is no clue
+>> where it is on screen. Highlighting the associated paths would be really
+>> good.
+
+
+You've probably not noticed "Show" button in the area control :)))
+
+>> Finding lines instead of points is tricky - you can click on point, but not
+>> line. Especially with big rocks that have a lot of lines, it's hard to know
+>> that you have the right line. Highlighting the point at the other end of the
+>> line too or something would be good if not the line itself.
+
+
+OK.
+
+>> In the File Commands box there is an underlined entry you can move with the
+>> cursor keys and a highlighted entry (the thing currently highlighted on
+>> screen) which you can only move with the mouse.
+>>
+>> WHy do both these things exist? It'd be more useful to be able to move the
+>> highlighed entry with the cursor keys, so that you can step through items
+>> and _see_ what they refer to.
+
+
+This behaviour I "can not" change (I was also wondering). This is
+because of BWidgets. You have to move "underlined cursor" to desired
+position and press "Space". I'll look at it.
+
+>> What is the intended use of Rock-edge and rock border?
+
+
+>> rock-border is the outer border, rock-edge marks edges inside a large block
+>> (is usually omited in smaller blocks)
+
+
+... and in the new version, if the rock border will be closed-line
+ - it will be filled with background color and overlap all items below.
+Like this, you'll be able to draw rocks on some area (sand, debris, water) also.
+
+>> Also 'pit' is 'pitch' in UK english - only American's call them pits. Indeed
+>> UK and US caving english are quite different, if Therion takes account of
+>> translations - that's why survex has en-gb and en-us translations.
+
+
+OK, I've added it into output en_UK translation (to the legend). It
+would be also very easy to add it into input parsing table, but I'm not
+sure, whether it makes sense (a lot of equivalents can lead to chaos).
+You have to decide (at least, we support centreline/centerline so I
+think pitch/pit could be also supported, because pitch is quite
+important. But I'm not sure about popcorn (cauliflowercalcite in UIS
+signatures :)) or other items like that...
+
+Hope this helps,
+S.
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 27 16:49:48 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 27 Feb 2004 15:49:48 +0000
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <063@reconstruction>
+
++++ Martin Budaj [04-02-27 15:37 +0100]:
+
+>>> >What is the intended use of Rock-edge and rock border?
+>
+>>
+>> rock-border is the outer border, rock-edge marks edges inside a large block
+>> (is usually omited in smaller blocks)
+
+
+The outer border of an individual large rock? (as opposed to the border of
+an area of rocks, or a rocky wall (that is wall -subtype blocks, right?)
+
+>>> >Can you explain what base-scale actually does and how scale interacts - I
+>>> >don't feel I understand properly from reading the thbook. You may have
+>>> >answered this from looking at the article...
+>
+>>
+>> scale is the output scale. If you specify also base-scale, it has the
+>> effect as if you did the following steps:
+>>
+>> * print a map in base-scale
+>> * go to a copy shop and say 'I want a copy of this in the scale'
+
+
+OK - I suggest you put it like that in the thbook - it is easy to understand
+when put like that.
+
+>>> >I still can't get join [id:pt]@survey style to work: I get 'invalid object'
+>>> >  join [fsceil1:0]@river [farsidewest3:8]@river. commented out in attached
+>>> >.th file.
+>
+>>
+>> omit the brackets. Unfortunately therionbook is misleading in this point.
+
+
+I tried it without the brackets too: it says 'line mark not a keyword --
+fsceil1:0 at river'
+
+
+>>> >In the legend 'Topo' is not english - need to be able to change that text.
+>>> >We have 'surveyed', 'explored' and 'drawn' normally.
+>
+>>
+>> Would it be correct to say
+>> Surveyed: A.B., C.D.
+>> Drawn: X.Y. ?
+
+
+Yes, or 'Surveyed by:...' 'Drawn by:...' - either is OK
+
+Actually I would use Surveyed: <date>, Surveyed by: <people> and
+Drawn: <date>, Drawn by: <people>
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Fri Feb 27 17:23:59 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 27 Feb 2004 17:23:59 +0100
+Subject: [therion] Re: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <064@reconstruction>
+
+>> I tried it without the brackets too: it says 'line mark not a keyword --
+>> fsceil1:0 at river'
+
+
+Congratulations! This is a real BUG :))) Temporary - you can fixed it
+using:
+
+join fsceil1:0 farsidewest3:7
+
+behind "survey river" command. I believe, I'll fix this bug over
+weekend.
+
+I have another question.
+
+I saw, that you're using "arrows" to show the gradient of the floor.
+Until now we have only "point gradient", that should be used like this.
+Probably, you would welcome also "line gradient".
+
+Because in fact "line arrow" serves (from our point of view) for showing
+the relation between labels (or sections) to the places in the passage.
+And there will be a symbol conflict, if you will use arrows and "point
+gradient" for the same thing.
+
+Regards, S.
+
+
+>>
+>>
+>
+>>>> > >In the legend 'Topo' is not english - need to be able to change that text.
+>>>> > >We have 'surveyed', 'explored' and 'drawn' normally.
+>>
+>>> >
+>>> > Would it be correct to say
+>>> > Surveyed: A.B., C.D.
+>>> > Drawn: X.Y. ?
+>
+>>
+>> Yes, or 'Surveyed by:...' 'Drawn by:...' - either is OK
+>>
+>> Actually I would use Surveyed: <date>, Surveyed by: <people> and
+>> Drawn: <date>, Drawn by: <people>
+>>
+>> Wookey
+
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 27 17:36:49 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 27 Feb 2004 16:36:49 +0000
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <065@reconstruction>
+
++++ Stacho Mudrak [04-02-27 16:39 +0100]:
+
+>>> > My mulu dataset which worked OK with 0.2.18 gives:
+>>> > therion: warning -- thconfig [7] -- no selected projection data -- plan
+>
+>>
+>> We've changed the behaviour of "select" command. If there is
+
+
+OK, thanx
+
+>>
+>> You've probably not noticed "Show" button in the area control :)))
+
+
+Ah, yes - that's better, although it would still be good if an 'area' search
+'pushed' this button automatically then it would seem like searching for
+other items (they highlight when found).
+
+>> This behaviour I "can not" change (I was also wondering). This is
+>> because of BWidgets. You have to move "underlined cursor" to desired
+>> position and press "Space". I'll look at it.
+
+
+ah - another useful key. Here's a thing for the wishlist - add a list of
+keys to the help menu - that would help users a lot as they are easy to
+forget.
+
+>>> > What is the intended use of Rock-edge and rock border?
+>
+>>
+>
+>>> > rock-border is the outer border, rock-edge marks edges inside a large block
+>>> > (is usually omited in smaller blocks)
+>
+>>
+>> ... and in the new version, if the rock border will be closed-line
+>>  - it will be filled with background color and overlap all items below.
+>> Like this, you'll be able to draw rocks on some area (sand, debris, water) also.
+
+
+ahh - excellent.
+
+>>> > Also 'pit' is 'pitch' in UK english - only American's call them pits. Indeed
+>>> > UK and US caving english are quite different, if Therion takes account of
+>>> > translations - that's why survex has en-gb and en-us translations.
+>
+>>
+>> OK, I've added it into output en_UK translation (to the legend). It
+>> would be also very easy to add it into input parsing table, but I'm not
+>> sure, whether it makes sense (a lot of equivalents can lead to chaos).
+>> You have to decide (at least, we support centreline/centerline so I
+>> think pitch/pit could be also supported, because pitch is quite
+>> important. But I'm not sure about popcorn (cauliflowercalcite in UIS
+>> signatures :)) or other items like that...
+
+
+You are right that this is tricky.
+
+Normally it would be best to say 'the format is the format' and it's only in
+one language. However in this application a lot of the spelling and syntax
+is exposed to the user (entering options for example), so 'foreign'
+spellings are a problem (I remember once spending hours wondering why
+<CENTRE> didn't work in my HTML - it has to be <CENTER>, of course). Therion
+users are likley to have similar problems but I agree that trying to enter
+every translation into the syntax is a mistake. Some of the UIS names are a
+bit odd to any english speaker - they are 'swiss english'  :-)
+
+Allowing alternatives for 'really common' items probably makes sense, but no
+more, and hiding things behind translatable widgets is also a good idea in
+this context.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 27 17:41:34 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 27 Feb 2004 16:41:34 +0000
+Subject: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <066@reconstruction>
+
++++ Stacho Mudrak [04-02-27 17:23 +0100]:
+
+>> I have another question.
+>>
+>> I saw, that you're using "arrows" to show the gradient of the floor.
+
+
+yes. I got this from German surveyors. I thought that contours+gradient
+arrows was 'UIS' symbols, but maybe I am wrong? - this is why I didn't want
+contour ticks.
+
+>> Until now we have only "point gradient", that should be used like this.
+>> Probably, you would welcome also "line gradient".
+
+
+Yes. At some point I will try and do a BCRA symbol set, but I try to use
+approximately UIS symbols myself.
+
+>> Because in fact "line arrow" serves (from our point of view) for showing
+>> the relation between labels (or sections) to the places in the passage.
+>> And there will be a symbol conflict, if you will use arrows and "point
+>> gradient" for the same thing.
+
+
+understood.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From john.pybus at zoology.oxford.ac.uk  Fri Feb 27 17:59:24 2004
+From: john.pybus at zoology.oxford.ac.uk (John Pybus)
+Date: Fri, 27 Feb 2004 16:59:24 +0000
+Subject: [therion] Re: feedback on 0.2.18
+In-Reply-To: <060@reconstruction>
+Message-ID: <067@reconstruction>
+
+Stacho Mudrak wrote:
+
+> I have another question.
+>
+> I saw, that you're using "arrows" to show the gradient of the floor.
+> Until now we have only "point gradient", that should be used like this.
+> Probably, you would welcome also "line gradient".
+> Because in fact "line arrow" serves (from our point of view) for showing
+> the relation between labels (or sections) to the places in the passage.
+> And there will be a symbol conflict, if you will use arrows and "point
+> gradient" for the same thing.
+
+
+I would certainly appreciate this.  I currently mark all the places I substitute similar symbols for the ones I really want with a comment so that I can easily go back and change them as functionality increases, or I find the time to look at defining the symbols I want.
+
+Yours,
+
+John
+
+
+
+
+From wookey at aleph1.co.uk  Fri Feb 27 02:58:37 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Fri, 27 Feb 2004 01:58:37 +0000
+Subject: Example of spurious text appearing
+Message-ID: <074@reconstruction>
+
+OK, I've reproduced the 'text between every item' bug.
+
+Take the attached soundriver.orig file and load it into Xtherion (I used the
+20040224 release). In File Commands there is a 'text' item between each real
+item. Most of them are just a blank line.
+
+If you save there is no change in the file, but if you add a line (and then
+delete it), then save, then each <lf><lf> turns into <lf><lf><lf><lf><lf>,
+resulting in soundriver.th2, attached.
+
+Hoipe this helps track it down. This is on Debian GNU/Linux 'testing' release.
+
+Wookey
+
+
+
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -128 -1247 1800 1328
+##XTHERION## xth_me_area_zoom_to 200
+##XTHERION## xth_me_image_insert {0 1 1.0} 1200 soundriver1pln.pnm 0 {}
+
+scrap farside2 -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+line wall -id wall1
+  51.0 244.0
+  51.0 244.0 64.55 227.73 78.0 206.0
+  91.0 185.0 97.0 179.0 97.0 179.0
+  smooth off
+  107.0 167.0
+  107.0 167.0 109.0 159.0 117.0 144.0
+  125.0 129.0 133.0 111.0 133.0 111.0
+  smooth off
+endline
+
+point 1013.0 -911.0 station -name 25
+
+#point 983.0 -677.0 station -name 26
+#point 1055.0 -455.0 station -name 27
+#point 1035.0 -220.0 station -name 28
+#point 970.0 9.0 station -name 29
+#point 961.0 244.0 station -name 30
+
+point 618.0 413.0 station -name 34
+
+point 546.0 303.0 station -name 35
+
+point 511.0 195.0 station -name 36
+
+point 451.0 125.0 station -name 37
+
+point 360.0 136.0 station -name 38
+
+point 317.0 153.0 station -name 39
+
+point 158.0 244.0 station -name 40
+
+point 165.0 151.0 debris
+
+point 131.0 161.0 debris
+
+point 139.0 141.0 debris
+
+point 181.0 160.0 debris
+
+point 169.0 181.0 debris
+
+point 159.0 159.0 debris
+
+point 243.0 212.0 air-draught -orientation 300.9
+
+point 646.0 505.0 air-draught -orientation 205.7
+
+point 661.0 353.0 air-draught -orientation 210.6
+
+point 474.0 66.0 continuation
+
+point 332.0 -61.0 continuation
+
+point 243.0 270.0 continuation
+
+point 179.0 107.0 continuation
+
+point 68.0 279.0 continuation
+
+point 105.0 229.0 air-draught -orientation 321.7
+
+line wall -close on
+  397.0 89.0
+  393.0 100.0
+  393.0 100.0 409.0 121.0 413.0 123.0
+  417.0 125.0 421.0 130.0 423.0 120.0
+  smooth off
+  419.0 109.0 397.0 89.0 397.0 89.0
+  smooth off
+endline
+
+line wall
+  358.0 -42.0
+  374.0 -18.0 402.0 34.0 400.0 65.0
+  smooth off
+  420.0 75.0 412.0 96.0 439.0 104.0
+  smooth off
+  450.0 92.0 453.0 85.0 459.0 72.0
+  smooth off
+endline
+
+line border -id sbr1 -subtype invisible
+  652.0 386.0
+  652.0 386.0 671.0 498.0 626.0 554.0
+  smooth off
+endline
+
+point 595.0 302.0 debris
+
+point 674.0 504.0 debris
+
+line wall -id farsidewest3
+  471.0 83.0
+  454.0 116.0
+  454.0 116.0 465.0 106.0 483.0 110.0
+  501.0 114.0 534.0 136.0 542.0 164.0
+  550.0 192.0 539.0 237.0 549.0 252.0
+  559.0 267.0 589.0 284.0 599.0 295.0
+  625.17 323.78 639.0 366.0 652.0 386.0
+  660.99 399.83 741.0 478.0 741.0 478.0
+  smooth off
+  746.0 452.0 742.63 391.23 849.0 427.0
+  smooth off
+endline
+
+#Rocks inside wall1, wall2, rb1, rb2
+area debris
+  wall1
+  rb1
+  wall2
+  rb2
+endarea
+
+line rock-border -id rb2
+  175.0 199.0
+  107.0 167.0
+endline
+
+line rock-border -id rb1
+  133.0 111.0
+  202.0 151.0
+endline
+
+line wall -id wall2
+  202.0 151.0
+  175.0 199.0
+  175.0 199.0 185.0 211.0 201.0 206.0
+  217.0 201.0 285.0 148.0 291.0 142.0
+  297.0 136.0 327.0 107.0 333.0 83.0
+  339.0 59.0 343.0 28.0 317.0 -27.0
+  smooth off
+endline
+
+line pit -id sbr2
+  536.0 312.0
+  558.0 285.0
+  563.0 266.0
+endline
+
+area sand
+  sbr1
+  farsidewest3
+  sbr2
+  farsidewest2
+  sbr3
+  farsidewest2
+endarea
+
+line wall -id farsidewest2
+  359.0 142.0
+  359.0 142.0 375.0 176.0 383.0 183.0
+  391.0 190.0 390.0 180.0 398.0 188.0
+  406.0 196.0 445.84 222.97 447.0 216.0
+  448.0 210.0 473.0 203.0 473.0 189.0
+  473.0 175.0 461.0 154.0 461.0 154.0
+  smooth off
+  461.0 154.0 484.0 161.0 495.0 176.0
+  506.0 191.0 509.0 221.0 509.0 234.0
+  509.0 247.0 505.0 280.0 510.0 303.0
+  515.0 326.0 543.0 306.0 536.0 312.0
+  529.0 318.0 562.0 346.0 568.0 358.0
+  574.0 370.0 584.0 396.0 577.0 399.0
+  570.0 402.0 537.0 371.0 531.0 378.0
+  525.0 385.0 533.0 389.0 533.0 389.0
+  smooth off
+  533.0 389.0 573.0 460.0 583.0 461.0
+  593.0 462.0 601.0 449.0 601.0 449.0
+  smooth off
+  601.0 449.0 614.0 461.0 616.0 480.0
+  618.0 499.0 626.0 541.0 626.0 554.0
+  626.0 567.0 629.0 590.0 629.0 590.0
+  smooth off
+endline
+
+line wall
+  254.0 258.0
+  277.11 221.68 345.0 160.0 359.0 142.0
+  smooth off
+endline
+
+line wall
+  112.0 282.0
+  145.0 243.0
+  145.0 243.0 149.0 263.0 171.0 266.0
+  202.11 270.24 245.0 236.0 245.0 236.0
+  smooth off
+  245.0 236.0 239.0 247.0 237.0 254.0
+  smooth off
+endline
+
+line pit -id sbr3
+  560.0 388.0
+  558.0 397.0 549.0 405.0 541.0 405.0
+  smooth off
+endline
+
+line contour
+  480.0 119.0
+  480.0 119.0 505.0 125.0 520.0 143.0
+  535.0 161.0 535.0 165.0 537.0 181.0
+  539.0 197.0 538.0 220.0 539.0 233.0
+  540.0 246.0 546.7 266.32 552.0 271.0
+  555.23 273.85 560.0 280.5 558.0 285.0
+  smooth off
+endline
+
+line contour
+  475.0 127.0
+  475.0 127.0 512.0 151.0 518.0 159.0
+  524.0 167.0 529.0 172.0 531.0 182.0
+  533.0 192.0 533.0 226.0 535.0 239.0
+  537.0 252.0 548.0 278.0 551.0 281.0
+  555.47 285.47 552.0 292.0 552.0 292.0
+  smooth off
+endline
+
+line arrow
+  735.0 515.0
+  712.0 517.0
+endline
+
+line arrow
+  728.0 477.0
+  698.0 481.0
+endline
+
+line contour -clip off
+  692.0 432.0
+  692.0 432.0 696.92 439.2 710.0 477.0
+  723.08 514.8 728.0 536.0 728.0 536.0
+  smooth off
+endline
+
+line pit -clip off
+  657.0 411.0
+  657.0 411.0 647.11 386.22 665.0 422.0
+  682.89 457.78 669.38 427.77 684.0 465.0
+  698.62 502.23 707.0 529.0 707.0 529.0
+  smooth off
+endline
+
+line pit
+  352.0 91.0
+  352.0 91.0 368.0 111.0 372.0 120.0
+  smooth off
+endline
+
+endscrap
+
+
+
+scrap farside -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+point 875.0 460.0 station -name 31
+
+point 968.0 805.0 air-draught -orientation 230.6
+
+point 844.0 567.0 station -name 32
+
+point 775.0 574.0 station -name 33
+
+point 873.0 726.0 station -name 43a
+
+point 948.0 977.0 station -name 43
+
+point 867.0 942.0 station -name 42
+
+point 736.0 770.0 station -name 41
+
+point 1035.0 606.0 station -name 44
+
+line wall
+  919.0 1102.0
+  987.0 995.0
+endline
+
+line arrow
+  987.0 616.0
+  949.0 588.0
+endline
+
+line arrow
+  1006.0 548.0
+  969.0 519.0
+endline
+
+point 973.0 871.0 continuation
+
+point 898.0 1109.0 continuation
+
+line contour
+  1032.0 521.0
+  1032.0 521.0 1012.0 556.0 1007.0 581.0
+  1002.0 606.0 1001.0 615.0 999.0 624.0
+  997.0 633.0 996.0 643.0 998.0 654.0
+  smooth off
+endline
+
+line contour
+  995.0 484.0
+  995.0 484.0 964.0 565.0 964.0 593.0
+  964.0 621.0 967.0 630.0 967.0 630.0
+  smooth off
+endline
+
+line ceiling-step -id fsceil1 -clip off
+  741.0 478.0
+  741.0 478.0 750.0 533.0 769.0 579.0
+  788.0 625.0 802.0 630.0 817.0 635.0
+  smooth off
+endline
+
+line contour -reverse on -clip off
+  868.0 587.0
+  868.0 587.0 848.0 592.0 823.0 568.0
+  798.0 544.0 795.0 516.0 795.0 516.0
+  smooth off
+  795.0 516.0 773.0 521.0 743.0 490.0
+  smooth off
+endline
+
+line contour -reverse on -clip off
+  869.0 579.0
+  869.0 579.0 844.0 563.0 833.0 550.0
+  822.0 537.0 807.0 504.0 807.0 504.0
+  smooth off
+  807.0 504.0 788.5 504.5 745.5 474.5
+  smooth off
+endline
+
+line contour -id rbr5c
+  969.0 448.0
+  969.0 448.0 945.0 494.0 943.0 514.0
+  941.0 534.0 940.0 555.0 938.0 573.0
+  936.89 582.99 940.0 600.0 943.0 612.0
+  smooth off
+endline
+
+line wall -id rbr5b
+  1075.0 556.0
+  1075.0 556.0 1037.0 531.0 1001.0 490.0
+  965.0 449.0 960.0 437.0 955.0 426.0
+  smooth off
+endline
+
+line label -text choked
+  1149.0 645.0
+  1104.0 713.0
+endline
+
+line wall -id rbr5a
+  1125.0 589.0
+  subtype presumed
+  1075.0 556.0
+endline
+
+line wall -id rbr5e
+  1005.0 656.0
+  subtype presumed
+  1072.0 704.0
+endline
+
+point 817.0 583.0 debris
+
+point 863.0 609.0 debris
+
+point 836.0 616.0 debris
+
+point 814.0 610.0 debris
+
+area debris
+  rbr5a
+  rbr5b
+  rbr5c
+  rbr5d
+  rbr5e
+  rbr5f
+endarea
+
+line border -id rbr5f
+  1028.0 673.0
+  1028.0 673.0 1050.0 601.0 1092.0 565.0
+  smooth off
+endline
+
+line wall -id rbr5d
+  936.0 740.0
+  936.0 740.0 914.0 717.0 893.0 667.0
+  872.0 617.0 864.0 584.0 869.0 579.0
+  883.3 564.7 948.0 613.0 1005.0 656.0
+  smooth off
+endline
+
+line wall
+  975.0 782.0
+  subtype presumed
+  936.0 740.0
+endline
+
+line border -id blockage1 -close on -subtype invisible
+  987.0 995.0
+  957.0 966.0
+  934.0 928.0
+  940.0 917.0
+  968.0 938.0
+  983.0 959.0
+  1002.0 972.0
+  987.0 995.0
+endline
+
+area debris -id blk1area -clip off
+  blockage1
+endarea
+
+point 728.0 688.0 debris
+
+point 731.0 702.0 debris
+
+point 711.0 698.0 debris
+
+point 703.0 709.0 debris
+
+point 683.0 701.0 debris
+
+point 682.0 679.0 debris
+
+point 682.0 629.0 debris
+
+point 673.0 659.0 debris
+
+point 722.0 801.0 debris
+
+point 676.0 735.0 debris
+
+line pit
+  727.0 737.0
+  727.0 737.0 702.0 726.0 665.0 720.0
+  smooth off
+endline
+
+line pit
+  741.0 845.0
+  741.0 845.0 726.0 823.0 750.0 803.0
+  smooth off
+endline
+
+line rock-edge
+  797.0 825.0
+  801.0 836.0
+  811.0 839.0
+endline
+
+line rock-edge
+  831.0 842.0
+  812.0 832.0
+  811.0 844.0
+  829.0 849.0
+endline
+
+line rock-edge -close on
+  842.0 843.0
+  836.0 854.0
+  829.0 849.0
+  831.0 842.0
+  842.0 843.0
+endline
+
+line rock-edge -close on
+  853.0 868.0
+  846.0 871.0
+  837.0 865.0
+  844.0 850.0
+  860.0 859.0
+  853.0 868.0
+endline
+
+line rock-edge
+  871.0 871.0
+  870.0 858.0
+  860.0 859.0
+  853.0 868.0
+  866.0 881.0
+endline
+
+line rock-edge -reverse on
+  871.0 905.0
+  880.0 892.0
+  876.0 886.0
+  866.0 881.0
+  871.0 871.0
+  884.0 877.0
+  880.0 892.0
+endline
+
+line wall -reverse on -subtype blocks
+  886.0 927.0
+  871.0 905.0
+endline
+
+line wall -reverse on -subtype blocks
+  924.0 941.0
+  924.0 941.0 922.0 949.0 913.0 950.0
+  904.0 951.0 895.0 942.0 895.0 942.0
+  smooth off
+  886.0 940.0
+  886.0 927.0
+endline
+
+line wall
+  940.0 917.0
+  subtype presumed
+  924.0 941.0
+endline
+
+line wall
+  987.0 995.0
+  subtype presumed
+  1011.0 958.0
+endline
+
+line wall -id farsidewest1
+  629.0 590.0
+  632.0 624.0
+  636.0 655.0
+  642.0 723.0
+  642.0 723.0 651.0 772.0 663.0 791.0
+  671.44 804.37 705.0 826.0 705.0 826.0
+  smooth off
+  720.0 833.0
+  739.0 857.0
+  748.0 862.0
+  753.0 870.0
+  762.0 871.0
+  769.0 874.0
+  773.0 881.0
+  782.0 881.0
+  782.0 881.0 790.0 885.0 793.0 890.0
+  796.0 895.0 800.62 903.69 806.0 906.0
+  813.0 909.0 820.0 912.0 820.0 912.0
+  smooth off
+  828.0 915.0 875.0 976.0 875.0 976.0
+  smooth off
+  874.0 987.0
+  874.0 987.0 900.0 1017.0 897.0 1029.0
+  894.0 1041.0 880.0 1071.0 880.0 1071.0
+  smooth off
+endline
+
+line rock-edge -close on
+  830.0 818.0
+  812.0 832.0
+  781.0 818.0
+  791.0 792.0
+  818.0 805.0
+  830.0 818.0
+endline
+
+line rock-edge
+  752.0 781.0
+  732.0 791.0
+  722.0 754.0
+  742.0 750.0
+endline
+
+line rock-edge -close on
+  787.0 768.0
+  758.0 788.0
+  752.0 781.0
+  752.0 781.0 752.0 770.0 750.0 763.0
+  748.0 756.0 742.0 750.0 742.0 750.0
+  smooth off
+  751.0 724.0
+  751.0 724.0 764.0 717.0 764.0 723.0
+  764.0 729.0 767.0 731.0 774.0 731.0
+  781.0 731.0 774.0 744.0 774.0 744.0
+  smooth off
+  787.0 768.0
+endline
+
+line rock-edge -close on
+  689.0 669.0
+  689.0 669.0 688.0 702.0 694.0 703.0
+  700.0 704.0 708.0 678.0 708.0 678.0
+  smooth off
+  689.0 669.0
+endline
+
+line rock-edge -clip off
+  687.0 613.0
+  660.0 538.0
+  671.0 530.0
+endline
+
+line rock-edge -clip off
+  671.0 530.0
+  694.0 536.0
+endline
+
+line rock-edge -clip off
+  660.0 538.0
+  669.0 544.0
+endline
+
+line rock-edge -close on -clip off
+  687.0 613.0
+  687.0 613.0 701.0 621.0 708.0 614.0
+  715.0 607.0 716.0 596.0 713.0 589.0
+  710.0 582.0 694.0 536.0 694.0 536.0
+  smooth off
+  669.0 544.0
+  687.0 613.0
+endline
+
+line rock-edge -close on
+  851.0 555.0
+  867.0 546.0
+  869.0 561.0
+  857.0 564.0
+  851.0 555.0
+endline
+
+point 901.0 465.0 debris
+
+line arrow
+endline
+
+line wall -close on
+  924.0 475.0
+  931.0 481.0 936.0 473.0 930.0 468.0
+  924.0 463.0 917.0 469.0 924.0 475.0
+endline
+
+line wall -close on
+  909.0 501.0
+  909.0 501.0 902.0 504.0 898.0 501.0
+  894.0 498.0 889.0 496.0 894.0 492.0
+  899.0 488.0 909.0 501.0 909.0 501.0
+  smooth off
+endline
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+line border -id rbr3 -subtype invisible
+  936.0 740.0
+  914.0 816.0
+  860.0 859.0
+  830.0 818.0
+  787.0 761.0
+  788.0 726.0
+  773.0 705.0
+  754.0 704.0
+  695.0 502.0
+  718.0 492.0
+  788.0 571.0
+  769.0 594.0
+  777.0 623.0
+  809.0 643.0
+  883.5 637.5
+endline
+
+#rb3 and nearby wall surrounds rocky area
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+line pit
+  897.0 1029.0
+  905.0 1020.0
+  905.0 1020.0 910.0 990.0 921.0 987.0
+  932.0 984.0 948.0 989.0 949.0 994.0
+  950.0 999.0 943.0 1010.0 941.0 1023.0
+  939.0 1036.0 947.0 1057.0 937.0 1073.0
+  smooth off
+endline
+
+line pit
+  880.0 1071.0
+  880.0 1071.0 878.0 1057.0 908.0 1066.0
+  938.0 1075.0 933.0 1086.0 933.0 1086.0
+  smooth off
+endline
+
+endscrap
+
+
+
+
+
+
+
+encoding  utf-8
+##XTHERION## xth_me_area_adjust -128 -1247 1800 1328
+##XTHERION## xth_me_area_zoom_to 200
+##XTHERION## xth_me_image_insert {0 1 1.0} 1200 soundriver1pln.pnm 0 {}
+
+
+
+
+
+
+scrap farside2 -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+
+
+
+line wall -id wall1
+  51.0 244.0
+  51.0 244.0 64.55 227.73 78.0 206.0
+  91.0 185.0 97.0 179.0 97.0 179.0
+  smooth off
+  107.0 167.0
+  107.0 167.0 109.0 159.0 117.0 144.0
+  125.0 129.0 133.0 111.0 133.0 111.0
+  smooth off
+endline
+
+
+
+
+point 1013.0 -911.0 station -name 25
+
+#point 983.0 -677.0 station -name 26
+#point 1055.0 -455.0 station -name 27
+#point 1035.0 -220.0 station -name 28
+#point 970.0 9.0 station -name 29
+#point 961.0 244.0 station -name 30
+
+
+point 618.0 413.0 station -name 34
+
+
+
+
+point 546.0 303.0 station -name 35
+
+
+
+
+point 511.0 195.0 station -name 36
+
+
+
+
+point 451.0 125.0 station -name 37
+
+
+
+
+point 360.0 136.0 station -name 38
+
+
+
+
+point 317.0 153.0 station -name 39
+
+
+
+
+point 158.0 244.0 station -name 40
+
+
+
+
+point 165.0 151.0 debris
+
+
+
+
+point 131.0 161.0 debris
+
+
+
+
+point 139.0 141.0 debris
+
+
+
+
+point 181.0 160.0 debris
+
+
+
+
+point 169.0 181.0 debris
+
+
+
+
+point 159.0 159.0 debris
+
+
+
+
+point 243.0 212.0 air-draught -orientation 300.9
+
+
+
+
+point 646.0 505.0 air-draught -orientation 205.7
+
+
+
+
+point 661.0 353.0 air-draught -orientation 210.6
+
+
+
+
+point 474.0 66.0 continuation
+
+
+
+
+point 332.0 -61.0 continuation
+
+
+
+
+point 243.0 270.0 continuation
+
+
+
+
+point 179.0 107.0 continuation
+
+
+
+
+point 68.0 279.0 continuation
+
+
+
+
+point 105.0 229.0 air-draught -orientation 321.7
+
+
+
+
+line wall -close on
+  397.0 89.0
+  393.0 100.0
+  393.0 100.0 409.0 121.0 413.0 123.0
+  417.0 125.0 421.0 130.0 423.0 120.0
+  smooth off
+  419.0 109.0 397.0 89.0 397.0 89.0
+  smooth off
+endline
+
+
+
+
+line wall
+  358.0 -42.0
+  374.0 -18.0 402.0 34.0 400.0 65.0
+  smooth off
+  420.0 75.0 412.0 96.0 439.0 104.0
+  smooth off
+  450.0 92.0 453.0 85.0 459.0 72.0
+  smooth off
+endline
+
+
+
+
+line border -id sbr1 -subtype invisible
+  652.0 386.0
+  652.0 386.0 671.0 498.0 626.0 554.0
+  smooth off
+endline
+
+
+
+
+point 595.0 302.0 debris
+
+
+
+
+point 674.0 504.0 debris
+
+
+
+
+line wall -id farsidewest3
+  471.0 83.0
+  454.0 116.0
+  454.0 116.0 465.0 106.0 483.0 110.0
+  501.0 114.0 534.0 136.0 542.0 164.0
+  550.0 192.0 539.0 237.0 549.0 252.0
+  559.0 267.0 589.0 284.0 599.0 295.0
+  625.17 323.78 639.0 366.0 652.0 386.0
+  660.99 399.83 741.0 478.0 741.0 478.0
+  smooth off
+  746.0 452.0 742.63 391.23 849.0 427.0
+  smooth off
+endline
+
+#Rocks inside wall1, wall2, rb1, rb2
+
+
+area debris
+  wall1
+  rb1
+  wall2
+  rb2
+endarea
+
+
+
+
+line rock-border -id rb2
+  175.0 199.0
+  107.0 167.0
+endline
+
+
+
+
+line rock-border -id rb1
+  133.0 111.0
+  202.0 151.0
+endline
+
+
+
+
+line wall -id wall2
+  202.0 151.0
+  175.0 199.0
+  175.0 199.0 185.0 211.0 201.0 206.0
+  217.0 201.0 285.0 148.0 291.0 142.0
+  297.0 136.0 327.0 107.0 333.0 83.0
+  339.0 59.0 343.0 28.0 317.0 -27.0
+  smooth off
+endline
+
+
+
+
+line pit -id sbr2
+  536.0 312.0
+  558.0 285.0
+  563.0 266.0
+endline
+
+
+
+
+area sand
+  sbr1
+  farsidewest3
+  sbr2
+  farsidewest2
+  sbr3
+  farsidewest2
+endarea
+
+
+
+
+line wall -id farsidewest2
+  359.0 142.0
+  359.0 142.0 375.0 176.0 383.0 183.0
+  391.0 190.0 390.0 180.0 398.0 188.0
+  406.0 196.0 445.84 222.97 447.0 216.0
+  448.0 210.0 473.0 203.0 473.0 189.0
+  473.0 175.0 461.0 154.0 461.0 154.0
+  smooth off
+  461.0 154.0 484.0 161.0 495.0 176.0
+  506.0 191.0 509.0 221.0 509.0 234.0
+  509.0 247.0 505.0 280.0 510.0 303.0
+  515.0 326.0 543.0 306.0 536.0 312.0
+  529.0 318.0 562.0 346.0 568.0 358.0
+  574.0 370.0 584.0 396.0 577.0 399.0
+  570.0 402.0 537.0 371.0 531.0 378.0
+  525.0 385.0 533.0 389.0 533.0 389.0
+  smooth off
+  533.0 389.0 573.0 460.0 583.0 461.0
+  593.0 462.0 601.0 449.0 601.0 449.0
+  smooth off
+  601.0 449.0 614.0 461.0 616.0 480.0
+  618.0 499.0 626.0 541.0 626.0 554.0
+  626.0 567.0 629.0 590.0 629.0 590.0
+  smooth off
+endline
+
+
+
+
+line wall
+  254.0 258.0
+  277.11 221.68 345.0 160.0 359.0 142.0
+  smooth off
+endline
+
+
+
+
+line wall
+  112.0 282.0
+  145.0 243.0
+  145.0 243.0 149.0 263.0 171.0 266.0
+  202.11 270.24 245.0 236.0 245.0 236.0
+  smooth off
+  245.0 236.0 239.0 247.0 237.0 254.0
+  smooth off
+endline
+
+
+
+
+line pit -id sbr3
+  560.0 388.0
+  558.0 397.0 549.0 405.0 541.0 405.0
+  smooth off
+endline
+
+
+
+
+line contour
+  480.0 119.0
+  480.0 119.0 505.0 125.0 520.0 143.0
+  535.0 161.0 535.0 165.0 537.0 181.0
+  539.0 197.0 538.0 220.0 539.0 233.0
+  540.0 246.0 546.7 266.32 552.0 271.0
+  555.23 273.85 560.0 280.5 558.0 285.0
+  smooth off
+endline
+
+
+
+
+line contour
+  475.0 127.0
+  475.0 127.0 512.0 151.0 518.0 159.0
+  524.0 167.0 529.0 172.0 531.0 182.0
+  533.0 192.0 533.0 226.0 535.0 239.0
+  537.0 252.0 548.0 278.0 551.0 281.0
+  555.47 285.47 552.0 292.0 552.0 292.0
+  smooth off
+endline
+
+
+
+
+line arrow
+  735.0 515.0
+  712.0 517.0
+endline
+
+
+
+
+line arrow
+  728.0 477.0
+  698.0 481.0
+endline
+
+
+
+
+line contour -clip off
+  692.0 432.0
+  692.0 432.0 696.92 439.2 710.0 477.0
+  723.08 514.8 728.0 536.0 728.0 536.0
+  smooth off
+endline
+
+
+
+
+line pit -clip off
+  657.0 411.0
+  657.0 411.0 647.11 386.22 665.0 422.0
+  682.89 457.78 669.38 427.77 684.0 465.0
+  698.62 502.23 707.0 529.0 707.0 529.0
+  smooth off
+endline
+
+
+
+
+line pit
+  352.0 91.0
+  352.0 91.0 368.0 111.0 372.0 120.0
+  smooth off
+endline
+
+
+
+
+endscrap
+
+
+
+
+
+
+scrap farside -projection plan -scale [-128 -1247 1800 -1247 0.0 0.0 48.9712 0.0 m]
+
+
+
+
+point 875.0 460.0 station -name 31
+
+
+
+
+point 968.0 805.0 air-draught -orientation 230.6
+
+
+
+
+point 844.0 567.0 station -name 32
+
+
+
+
+point 775.0 574.0 station -name 33
+
+
+
+
+point 873.0 726.0 station -name 43a
+
+
+
+
+point 948.0 977.0 station -name 43
+
+
+
+
+point 867.0 942.0 station -name 42
+
+
+
+
+point 736.0 770.0 station -name 41
+
+
+
+
+point 1035.0 606.0 station -name 44
+
+
+
+
+line wall
+  919.0 1102.0
+  987.0 995.0
+endline
+
+
+
+
+line arrow
+  987.0 616.0
+  949.0 588.0
+endline
+
+
+
+
+line arrow
+  1006.0 548.0
+  969.0 519.0
+endline
+
+
+
+
+point 973.0 871.0 continuation
+
+
+
+
+point 898.0 1109.0 continuation
+
+
+
+
+line contour
+  1032.0 521.0
+  1032.0 521.0 1012.0 556.0 1007.0 581.0
+  1002.0 606.0 1001.0 615.0 999.0 624.0
+  997.0 633.0 996.0 643.0 998.0 654.0
+  smooth off
+endline
+
+
+
+
+line contour
+  995.0 484.0
+  995.0 484.0 964.0 565.0 964.0 593.0
+  964.0 621.0 967.0 630.0 967.0 630.0
+  smooth off
+endline
+
+
+
+
+line ceiling-step -id fsceil1 -clip off
+  741.0 478.0
+  741.0 478.0 750.0 533.0 769.0 579.0
+  788.0 625.0 802.0 630.0 817.0 635.0
+  smooth off
+endline
+
+
+
+
+line contour -reverse on -clip off
+  868.0 587.0
+  868.0 587.0 848.0 592.0 823.0 568.0
+  798.0 544.0 795.0 516.0 795.0 516.0
+  smooth off
+  795.0 516.0 773.0 521.0 743.0 490.0
+  smooth off
+endline
+
+
+
+
+line contour -reverse on -clip off
+  869.0 579.0
+  869.0 579.0 844.0 563.0 833.0 550.0
+  822.0 537.0 807.0 504.0 807.0 504.0
+  smooth off
+  807.0 504.0 788.5 504.5 745.5 474.5
+  smooth off
+endline
+
+
+
+
+line contour -id rbr5c
+  969.0 448.0
+  969.0 448.0 945.0 494.0 943.0 514.0
+  941.0 534.0 940.0 555.0 938.0 573.0
+  936.89 582.99 940.0 600.0 943.0 612.0
+  smooth off
+endline
+
+
+
+
+line wall -id rbr5b
+  1075.0 556.0
+  1075.0 556.0 1037.0 531.0 1001.0 490.0
+  965.0 449.0 960.0 437.0 955.0 426.0
+  smooth off
+endline
+
+
+
+
+line label -text choked
+  1149.0 645.0
+  1104.0 713.0
+endline
+
+
+
+
+line wall -id rbr5a
+  1125.0 589.0
+  subtype presumed
+  1075.0 556.0
+endline
+
+
+
+
+line wall -id rbr5e
+  1005.0 656.0
+  subtype presumed
+  1072.0 704.0
+endline
+
+
+
+
+point 817.0 583.0 debris
+
+
+
+
+point 863.0 609.0 debris
+
+
+
+
+point 836.0 616.0 debris
+
+
+
+
+point 814.0 610.0 debris
+
+
+
+
+area debris
+  rbr5a
+  rbr5b
+  rbr5c
+  rbr5d
+  rbr5e
+  rbr5f
+endarea
+
+
+
+
+line border -id rbr5f
+  1028.0 673.0
+  1028.0 673.0 1050.0 601.0 1092.0 565.0
+  smooth off
+endline
+
+
+
+
+line wall -id rbr5d
+  936.0 740.0
+  936.0 740.0 914.0 717.0 893.0 667.0
+  872.0 617.0 864.0 584.0 869.0 579.0
+  883.3 564.7 948.0 613.0 1005.0 656.0
+  smooth off
+endline
+
+
+
+
+line wall
+  975.0 782.0
+  subtype presumed
+  936.0 740.0
+endline
+
+
+
+
+line border -id blockage1 -close on -subtype invisible
+  987.0 995.0
+  957.0 966.0
+  934.0 928.0
+  940.0 917.0
+  968.0 938.0
+  983.0 959.0
+  1002.0 972.0
+  987.0 995.0
+endline
+
+
+
+
+area debris -id blk1area -clip off
+  blockage1
+endarea
+
+
+
+
+point 728.0 688.0 debris
+
+
+
+
+point 731.0 702.0 debris
+
+
+
+
+point 711.0 698.0 debris
+
+
+
+
+point 703.0 709.0 debris
+
+
+
+
+point 683.0 701.0 debris
+
+
+
+
+point 682.0 679.0 debris
+
+
+
+
+point 682.0 629.0 debris
+
+
+
+
+point 673.0 659.0 debris
+
+
+
+
+point 722.0 801.0 debris
+
+
+
+
+point 676.0 735.0 debris
+
+
+
+
+line pit
+  727.0 737.0
+  727.0 737.0 702.0 726.0 665.0 720.0
+  smooth off
+endline
+
+
+
+
+line pit
+  741.0 845.0
+  741.0 845.0 726.0 823.0 750.0 803.0
+  smooth off
+endline
+
+
+
+
+line rock-edge
+  797.0 825.0
+  801.0 836.0
+  811.0 839.0
+endline
+
+
+
+
+line rock-edge
+  831.0 842.0
+  812.0 832.0
+  811.0 844.0
+  829.0 849.0
+endline
+
+
+
+
+line rock-edge -close on
+  842.0 843.0
+  836.0 854.0
+  829.0 849.0
+  831.0 842.0
+  842.0 843.0
+endline
+
+
+
+
+line rock-edge -close on
+  853.0 868.0
+  846.0 871.0
+  837.0 865.0
+  844.0 850.0
+  860.0 859.0
+  853.0 868.0
+endline
+
+
+
+
+line rock-edge
+  871.0 871.0
+  870.0 858.0
+  860.0 859.0
+  853.0 868.0
+  866.0 881.0
+endline
+
+
+
+
+line rock-edge -reverse on
+  871.0 905.0
+  880.0 892.0
+  876.0 886.0
+  866.0 881.0
+  871.0 871.0
+  884.0 877.0
+  880.0 892.0
+endline
+
+
+
+
+line wall -reverse on -subtype blocks
+  886.0 927.0
+  871.0 905.0
+endline
+
+
+
+
+line wall -reverse on -subtype blocks
+  924.0 941.0
+  924.0 941.0 922.0 949.0 913.0 950.0
+  904.0 951.0 895.0 942.0 895.0 942.0
+  smooth off
+  886.0 940.0
+  886.0 927.0
+endline
+
+
+
+
+line wall
+  940.0 917.0
+  subtype presumed
+  924.0 941.0
+endline
+
+
+
+
+line wall
+  987.0 995.0
+  subtype presumed
+  1011.0 958.0
+endline
+
+
+
+
+line wall -id farsidewest1
+  629.0 590.0
+  632.0 624.0
+  636.0 655.0
+  642.0 723.0
+  642.0 723.0 651.0 772.0 663.0 791.0
+  671.44 804.37 705.0 826.0 705.0 826.0
+  smooth off
+  720.0 833.0
+  739.0 857.0
+  748.0 862.0
+  753.0 870.0
+  762.0 871.0
+  769.0 874.0
+  773.0 881.0
+  782.0 881.0
+  782.0 881.0 790.0 885.0 793.0 890.0
+  796.0 895.0 800.62 903.69 806.0 906.0
+  813.0 909.0 820.0 912.0 820.0 912.0
+  smooth off
+  828.0 915.0 875.0 976.0 875.0 976.0
+  smooth off
+  874.0 987.0
+  874.0 987.0 900.0 1017.0 897.0 1029.0
+  894.0 1041.0 880.0 1071.0 880.0 1071.0
+  smooth off
+endline
+
+
+
+
+line rock-edge -close on
+  830.0 818.0
+  812.0 832.0
+  781.0 818.0
+  791.0 792.0
+  818.0 805.0
+  830.0 818.0
+endline
+
+
+
+
+line rock-edge
+  752.0 781.0
+  732.0 791.0
+  722.0 754.0
+  742.0 750.0
+endline
+
+
+
+
+line rock-edge -close on
+  787.0 768.0
+  758.0 788.0
+  752.0 781.0
+  752.0 781.0 752.0 770.0 750.0 763.0
+  748.0 756.0 742.0 750.0 742.0 750.0
+  smooth off
+  751.0 724.0
+  751.0 724.0 764.0 717.0 764.0 723.0
+  764.0 729.0 767.0 731.0 774.0 731.0
+  781.0 731.0 774.0 744.0 774.0 744.0
+  smooth off
+  787.0 768.0
+endline
+
+
+
+
+line rock-edge -close on
+  689.0 669.0
+  689.0 669.0 688.0 702.0 694.0 703.0
+  700.0 704.0 708.0 678.0 708.0 678.0
+  smooth off
+  689.0 669.0
+endline
+
+
+
+
+line rock-edge -clip off
+  687.0 613.0
+  660.0 538.0
+  671.0 530.0
+endline
+
+
+
+
+line rock-edge -clip off
+  671.0 530.0
+  694.0 536.0
+endline
+
+
+
+
+line rock-edge -clip off
+  660.0 538.0
+  669.0 544.0
+endline
+
+
+
+
+line rock-edge -close on -clip off
+  687.0 613.0
+  687.0 613.0 701.0 621.0 708.0 614.0
+  715.0 607.0 716.0 596.0 713.0 589.0
+  710.0 582.0 694.0 536.0 694.0 536.0
+  smooth off
+  669.0 544.0
+  687.0 613.0
+endline
+
+
+
+
+line rock-edge -close on
+  851.0 555.0
+  867.0 546.0
+  869.0 561.0
+  857.0 564.0
+  851.0 555.0
+endline
+
+
+
+
+point 901.0 465.0 debris
+
+
+
+
+line arrow
+endline
+
+
+
+
+line wall -close on
+  924.0 475.0
+  931.0 481.0 936.0 473.0 930.0 468.0
+  924.0 463.0 917.0 469.0 924.0 475.0
+endline
+
+
+
+
+line wall -close on
+  909.0 501.0
+  909.0 501.0 902.0 504.0 898.0 501.0
+  894.0 498.0 889.0 496.0 894.0 492.0
+  899.0 488.0 909.0 501.0 909.0 501.0
+  smooth off
+endline
+
+
+
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+
+
+
+line border -id rbr3 -subtype invisible
+  936.0 740.0
+  914.0 816.0
+  860.0 859.0
+  830.0 818.0
+  787.0 761.0
+  788.0 726.0
+  773.0 705.0
+  754.0 704.0
+  695.0 502.0
+  718.0 492.0
+  788.0 571.0
+  769.0 594.0
+  777.0 623.0
+  809.0 643.0
+  883.5 637.5
+endline
+
+#rb3 and nearby wall surrounds rocky area
+
+
+area debris
+  rbr3
+  rbr5d
+endarea
+
+
+
+
+line pit
+  897.0 1029.0
+  905.0 1020.0
+  905.0 1020.0 910.0 990.0 921.0 987.0
+  932.0 984.0 948.0 989.0 949.0 994.0
+  950.0 999.0 943.0 1010.0 941.0 1023.0
+  939.0 1036.0 947.0 1057.0 937.0 1073.0
+  smooth off
+endline
+
+
+
+
+line pit
+  880.0 1071.0
+  880.0 1071.0 878.0 1057.0 908.0 1066.0
+  938.0 1075.0 933.0 1086.0 933.0 1086.0
+  smooth off
+endline
+
+
+
+
+endscrap
+
+
+
+
+
+
+
+
+From s.m at speleo.sk  Fri Feb 27 17:48:49 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 27 Feb 2004 17:48:49 +0100
+Subject: [therion] Re: Example of spurious text appearing
+In-Reply-To: <074@reconstruction>
+Message-ID: <075@reconstruction>
+
+Looks strange, on my machine all goes OK (I'm not able to reproduce the
+file with manu <lf>'s). Could you please send me these two files once
+more .tar.gz-ipped. May be some characters dissappeared when they were
+MIME en(de)coded.
+
+S.
+
+On Fri, 2004-02-27 at 02:58, Wookey wrote:
+
+>> OK, I've reproduced the 'text between every item' bug.
+>>
+>> Take the attached soundriver.orig file and load it into Xtherion (I used the
+>> 20040224 release). In File Commands there is a 'text' item between each real
+>> item. Most of them are just a blank line.
+>>
+>> If you save there is no change in the file, but if you add a line (and then
+>> delete it), then save, then each <lf><lf> turns into <lf><lf><lf><lf><lf>,
+>> resulting in soundriver.th2, attached.
+>>
+>> Hoipe this helps track it down. This is on Debian GNU/Linux 'testing' release.
+>>
+>> Wookey
+
+
+
+
+

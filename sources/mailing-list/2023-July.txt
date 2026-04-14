@@ -1,0 +1,900 @@
+From m.budaj at gmail.com  Thu Jul  6 20:12:13 2023
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 6 Jul 2023 20:12:13 +0200
+Subject: [Therion] mailing list issues
+Message-ID: <CALPsdSuzBVuVXSd55g8niigJxUFsEYUaxbW4jyW=q2gWJfCrYg@mail.gmail.com>
+
+Hi,
+
+there was an issue with rejected posts to this list:
+https://github.com/therion/therion/issues/515
+
+We did some modifications in the mailing system configuration; it should be
+fixed now.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230706/ef929e4b/attachment.htm>
+
+From bgee at campercaver.net  Fri Jul  7 02:01:53 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 6 Jul 2023 19:01:53 -0500
+Subject: [Therion] Creating GeoTIFF files
+Message-ID: <58336897-9569-502b-96a0-4d170cbb33cd@campercaver.net>
+
+A question has come up from one of my caver friends who is very new to 
+cave survey but an old hand at ArcGIS and various other ESRI tools.  He 
+earns a living as a GIS expert.
+
+He would like to get a georeferenced TIFF (GeoTIFF) which includes GPS 
+coordinates of survey stations.  I looked at the KML file produced by 
+Therion and find no references to survey stations.  A KML file is really 
+just a long (very long!) list of GPS coordinates, so it probably could 
+include survey stations.
+
+So my question for the group:  Is there a way to produce a GeoTIFF file 
+which includes survey stations?
+
+Related question:  Do the ESRI outputs from Therion include survey stations?
+
+Thanks!
+-- 
+===============
+Bill Gee
+
+From xavier.robert at univ-grenoble-alpes.fr  Fri Jul  7 09:25:40 2023
+From: xavier.robert at univ-grenoble-alpes.fr (Xavier Robert)
+Date: Fri, 7 Jul 2023 09:25:40 +0200
+Subject: [Therion] Creating GeoTIFF files
+In-Reply-To: <58336897-9569-502b-96a0-4d170cbb33cd@campercaver.net>
+References: <58336897-9569-502b-96a0-4d170cbb33cd@campercaver.net>
+Message-ID: <96921F7A-5C62-4160-9D60-D3B58EF0C806@univ-grenoble-alpes.fr>
+
+Hi Bill,
+
+I do not really understand why to export survey stations as a geotiff file (raster, image). Survey stations are points (vectors) and are more easier to manage through GIS softwares as shapefiles (vector format). This is the Therion ESRI output.
+
+In the ESRI output folder, you have several shapefiles in 2D (exported as map) and in 3D (exported as model): outline, areas, lines, areas, points, shots3d, stations3d (several files for each shapefile). 
+
+Stations3d contains all the stations of the survey? 
+The points shapefile should also contain the points station. See the attribut table associated to this file and use that to select the points you want to plot.
+
+
+For one of my main project, I wanted to produce a clean georeferenced map with :
+the survey with a rendering depending on the zoom used,
+at important zoom, the stations with their altitude, 
+and overlays as OSM, Geology, hillshade, altitude contours,?
+
+We used that in a QGIS project that we coupled with the Merging Maps app. This is still in development, but that permits to do field prospection with all the cave database and GPS positioning on your phone.
+     
+
+Unfortunately, the direct ESRI Therion output is not clean enough to produce such GIS maps. I needed to write Python scripts to :
+add the stations and entrances altitude as a new column in the attribute table,
+cut the lines and areas shapefiles to keep only what is inside the outline (expect for the option clip off); Before running this script, I often need to test the validity of the polygons shapefiles to make sure that they are valid? 
+We also make some svg symbols corresponding to symbols used by Therion, but this is not yet complete. (If someone has already a svg symbols library for therion shp, I am interested !)
+
+For those interested, this is now partially included in the Samo?ns cave repository : https://github.com/robertxa/Topographies-Samoens_Folly (written mostly in French)
+To make the GIS files, I run the ? SamoensGIS.thconfig ?. After compiling Therion files, it calls Python scripts (edit the .thconfig to check if the lines are not commented) that are in Samoens-GIS/Scripts (https://github.com/robertxa/Topographies-Samoens_Folly/tree/master/Samoens-GIS/Scripts). The whole QGIS project is not uploaded on GitHub as some files are to big for Github. But I can share it on demand.
+
+For now, this is still a bit dirty (and still dedicated to this project, you will need numerous changes to apply it to an other project), I am still working on this. If you try it, if you miss a specific file, if you have any questions or suggestions/improvements, etc. do not hesitate to contact me !
+
+Cheers,
+
+Xavier
+
+
+> Le 7 juil. 2023 ? 02:01, Bill Gee <bgee at campercaver.net> a ?crit :
+> 
+> A question has come up from one of my caver friends who is very new to cave survey but an old hand at ArcGIS and various other ESRI tools.  He earns a living as a GIS expert.
+> 
+> He would like to get a georeferenced TIFF (GeoTIFF) which includes GPS coordinates of survey stations.  I looked at the KML file produced by Therion and find no references to survey stations.  A KML file is really just a long (very long!) list of GPS coordinates, so it probably could include survey stations.
+> 
+> So my question for the group:  Is there a way to produce a GeoTIFF file which includes survey stations?
+> 
+> Related question:  Do the ESRI outputs from Therion include survey stations?
+> 
+> Thanks!
+> -- 
+> ===============
+> Bill Gee
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230707/4f1162e9/attachment-0003.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: GraphiqueColl?-1.pdf
+Type: application/pdf
+Size: 339418 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230707/4f1162e9/attachment-0002.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230707/4f1162e9/attachment-0004.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: GraphiqueColl?-2.pdf
+Type: application/pdf
+Size: 389228 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230707/4f1162e9/attachment-0003.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230707/4f1162e9/attachment-0005.htm>
+
+From andrew at wotcc.org.uk  Fri Jul  7 11:29:21 2023
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 07 Jul 2023 10:29:21 +0100
+Subject: [Therion] Creating GeoTIFF files
+In-Reply-To: <96921F7A-5C62-4160-9D60-D3B58EF0C806@univ-grenoble-alpes.fr>
+References: <58336897-9569-502b-96a0-4d170cbb33cd@campercaver.net>
+ <96921F7A-5C62-4160-9D60-D3B58EF0C806@univ-grenoble-alpes.fr>
+Message-ID: <FB341891-CC77-4E66-B3E8-5765D9281E97@wotcc.org.uk>
+
+Although not the answer to your question, another route is Patrick Warren's 3d to qgis (not arcgis) plug in
+
+https://github.com/patrickbwarren/qgis3-survex-import
+
+Andrew
+-- 
+Sent with K-9 Mail
+
+On 7 July 2023 08:25:40 BST, Xavier Robert <xavier.robert at univ-grenoble-alpes.fr> wrote:
+>Hi Bill,
+>
+>I do not really understand why to export survey stations as a geotiff file (raster, image). Survey stations are points (vectors) and are more easier to manage through GIS softwares as shapefiles (vector format). This is the Therion ESRI output.
+>
+>In the ESRI output folder, you have several shapefiles in 2D (exported as map) and in 3D (exported as model): outline, areas, lines, areas, points, shots3d, stations3d (several files for each shapefile). 
+>
+>Stations3d contains all the stations of the survey? 
+>The points shapefile should also contain the points station. See the attribut table associated to this file and use that to select the points you want to plot.
+>
+>
+>For one of my main project, I wanted to produce a clean georeferenced map with :
+>the survey with a rendering depending on the zoom used,
+>at important zoom, the stations with their altitude, 
+>and overlays as OSM, Geology, hillshade, altitude contours,?
+>
+>We used that in a QGIS project that we coupled with the Merging Maps app. This is still in development, but that permits to do field prospection with all the cave database and GPS positioning on your phone.
+>     
+>
+>Unfortunately, the direct ESRI Therion output is not clean enough to produce such GIS maps. I needed to write Python scripts to :
+>add the stations and entrances altitude as a new column in the attribute table,
+>cut the lines and areas shapefiles to keep only what is inside the outline (expect for the option clip off); Before running this script, I often need to test the validity of the polygons shapefiles to make sure that they are valid? 
+>We also make some svg symbols corresponding to symbols used by Therion, but this is not yet complete. (If someone has already a svg symbols library for therion shp, I am interested !)
+>
+>For those interested, this is now partially included in the Samo?ns cave repository : https://github.com/robertxa/Topographies-Samoens_Folly (written mostly in French)
+>To make the GIS files, I run the ? SamoensGIS.thconfig ?. After compiling Therion files, it calls Python scripts (edit the .thconfig to check if the lines are not commented) that are in Samoens-GIS/Scripts (https://github.com/robertxa/Topographies-Samoens_Folly/tree/master/Samoens-GIS/Scripts). The whole QGIS project is not uploaded on GitHub as some files are to big for Github. But I can share it on demand.
+>
+>For now, this is still a bit dirty (and still dedicated to this project, you will need numerous changes to apply it to an other project), I am still working on this. If you try it, if you miss a specific file, if you have any questions or suggestions/improvements, etc. do not hesitate to contact me !
+>
+>Cheers,
+>
+>Xavier
+>
+>
+>> Le 7 juil. 2023 ? 02:01, Bill Gee <bgee at campercaver.net> a ?crit :
+>> 
+>> A question has come up from one of my caver friends who is very new to cave survey but an old hand at ArcGIS and various other ESRI tools.  He earns a living as a GIS expert.
+>> 
+>> He would like to get a georeferenced TIFF (GeoTIFF) which includes GPS coordinates of survey stations.  I looked at the KML file produced by Therion and find no references to survey stations.  A KML file is really just a long (very long!) list of GPS coordinates, so it probably could include survey stations.
+>> 
+>> So my question for the group:  Is there a way to produce a GeoTIFF file which includes survey stations?
+>> 
+>> Related question:  Do the ESRI outputs from Therion include survey stations?
+>> 
+>> Thanks!
+>> -- 
+>> ===============
+>> Bill Gee
+
+From bgee at campercaver.net  Fri Jul  7 14:39:44 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 7 Jul 2023 07:39:44 -0500
+Subject: [Therion] Creating GeoTIFF files
+In-Reply-To: <96921F7A-5C62-4160-9D60-D3B58EF0C806@univ-grenoble-alpes.fr>
+References: <58336897-9569-502b-96a0-4d170cbb33cd@campercaver.net>
+ <96921F7A-5C62-4160-9D60-D3B58EF0C806@univ-grenoble-alpes.fr>
+Message-ID: <ffdeaa0e-48be-d26e-3cde-1ec26452266f@campercaver.net>
+
+Thanks Xavier and Andrew!
+
+I do not know enough about GIS systems to understand why my friend 
+wanted a GeoTIFF file.  I set up Therion to create ESRI output, and he 
+seems happy with that.  He has imported those files into ArcGIS and says 
+they are useful.  He is taking surface topography data from LIDAR scans 
+and overlaying the cave maps.
+
+QGIS is available for Linux.  I do not have it installed, mostly because 
+I know so little about what it can do and how to use it.
+
+So far we are experimenting with a couple of very small caves.  One is 
+less than 30 meters, the other is about 150 meters.  They are only 50 
+meters apart, and there are numerous sinkholes nearby.  The larger cave 
+has a debris pile in the back that blows air and might be possible to 
+dig through.  We want to see if there are corresponding surface features.
+
+===============
+Bill Gee
+
+On 7/7/23 02:25, Xavier Robert wrote:
+> Hi Bill,
+> 
+> I do not really understand why to export survey stations as a geotiff 
+> file (raster, image). Survey stations are points (vectors) and are more 
+> easier to manage through GIS softwares as shapefiles (vector format). 
+> This is the Therion ESRI output.
+> 
+> In the ESRI output folder, you have several shapefiles in 2D (exported 
+> as map) and in 3D (exported as model): outline, areas, lines, areas, 
+> points, shots3d, stations3d (several files for each shapefile).
+> 
+> Stations3d contains all the stations of the survey?
+> The points shapefile should also contain the points station. See the 
+> attribut table associated to this file and use that to select the points 
+> you want to plot.
+> 
+> 
+> For one of my main project, I wanted to produce a clean georeferenced 
+> map with :
+> 
+>   * the survey with a rendering depending on the zoom used,
+>   * at important zoom, the stations with their altitude,
+>   * and overlays as OSM, Geology, hillshade, altitude contours,?
+> 
+> 
+> We used that in a QGIS project that we coupled with the Merging Maps 
+> app. This is still in development, but that permits to do field 
+> prospection with all the cave database and GPS positioning on your phone.
+> 
+> 
+> 
+> Unfortunately, the direct ESRI Therion output is not clean enough to 
+> produce such GIS maps. I needed to write Python scripts to :
+> 
+>   * add the stations and entrances altitude as a new column in the
+>     attribute table,
+>   * cut the lines and areas shapefiles to keep only what is inside the
+>     outline (expect for the option clip off); Before running this
+>     script, I often need to test the validity of the polygons shapefiles
+>     to make sure that they are valid? 
+> 
+> We also make some svg symbols corresponding to symbols used by Therion, 
+> but this is not yet complete. (If someone has already a svg symbols 
+> library for therion shp, I am interested !)
+> 
+> For those interested, this is now partially included in the Samo?ns cave 
+> repository : https://github.com/robertxa/Topographies-Samoens_Folly 
+> <https://github.com/robertxa/Topographies-Samoens_Folly> (written mostly 
+> in French)
+> To make the GIS files, I run the ? SamoensGIS.thconfig ?. After 
+> compiling Therion files, it calls Python scripts (edit the .thconfig to 
+> check if the lines are not commented) that are in Samoens-GIS/Scripts 
+> (https://github.com/robertxa/Topographies-Samoens_Folly/tree/master/Samoens-GIS/Scripts <https://github.com/robertxa/Topographies-Samoens_Folly/tree/master/Samoens-GIS/Scripts>). The whole QGIS project is not uploaded on GitHub as some files are to big for Github. But I can share it on demand.
+> 
+> For now, this is still a bit dirty (and still dedicated to this project, 
+> you will need numerous changes to apply it to an other project), I am 
+> still working on this. If you try it, if you miss a specific file, if 
+> you have any questions or suggestions/improvements, etc. do not hesitate 
+> to contact me !
+> 
+> Cheers,
+> 
+> Xavier
+> 
+> 
+>> Le 7 juil. 2023 ? 02:01, Bill Gee <bgee at campercaver.net 
+>> <mailto:bgee at campercaver.net>> a ?crit :
+>>
+>> A question has come up from one of my caver friends who is very new to 
+>> cave survey but an old hand at ArcGIS and various other ESRI tools. 
+>> ?He earns a living as a GIS expert.
+>>
+>> He would like to get a georeferenced TIFF (GeoTIFF) which includes GPS 
+>> coordinates of survey stations. ?I looked at the KML file produced by 
+>> Therion and find no references to survey stations. ?A KML file is 
+>> really just a long (very long!) list of GPS coordinates, so it 
+>> probably could include survey stations.
+>>
+>> So my question for the group: ?Is there a way to produce a GeoTIFF 
+>> file which includes survey stations?
+>>
+>> Related question: ?Do the ESRI outputs from Therion include survey 
+>> stations?
+>>
+>> Thanks!
+>> -- 
+>> ===============
+>> Bill Gee
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bruce at tomo.co.nz  Mon Jul 10 03:50:12 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 10 Jul 2023 13:50:12 +1200
+Subject: [Therion] map colour usage description in Therion Book
+Message-ID: <000001d9b2d0$de95ef10$9bc1cd30$@tomo.co.nz>
+
+Hello
+
+Just now I was having difficulty remembering how to colour a particular map
+a specific colour, different to the colour scheme applied to most of the
+maps being output.  My first challenge was to figure out that this could
+only be done via 'select' in a thconfig, and not within the definition of a
+map.
+
+I think that the Therion Book could do with a small edit to clarify usage of
+'select map  -colour [r g b]'.
+
+The Therion book says.
+
+ 
+
+'map'
+Description: A map is a collection of .
+
+Arguments:
+
+.
+
+. colo[u]r <color>  set the map colour; this option overrides the automatic
+choice when the layout specifies colour map-fg [map].
+
+ 
+
+>From that I had the incorrect impression that specifying a colour when
+selecting a map for output would always override.  What I have found is that
+this is only sometimes true.
+
+ 
+
+Map select colour overrides when.
+
+colour map-fg [r g b]
+
+colour map-fg scrap
+
+colour map-fg map
+
+ 
+
+Map select colour does not override when.
+
+colour map-fg altitude
+
+colour map-fg topo-date
+
+colour map-fg explo-date
+
+ 
+
+For (sub)maps where there is no date set, the map select colour will be
+shown, otherwise select map  -colour [r g b] has no effect.
+
+ 
+
+So I suggest an edit to the Therion Book along the lines of.
+
+ 
+
+'map'
+Description: A map is a collection of .
+
+Arguments:
+
+.
+
+. colo[u]r <color>  set the map colour when selecting a map; this option
+overrides the specified colour palette when the layout specifies colour
+map-fg [map], [scrap] or [<colour>].  It has no effect when the layout
+specifies colour map-fg [altitude].  It has no effect when the layout
+specifies colour map-fg [topo-date] or [explo-date], for the scraps whose
+associated surveys have dates assigned.
+
+ 
+
+I have not assessed how this plays out with lookups
+<https://therion.speleo.sk/wiki/examples#colour_palette_scales_-_lookups> ,
+but I imagine they should not have any different impacts to those described
+above.
+
+ 
+
+Regards
+
+Bruce  
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230710/773fcd5b/attachment.htm>
+
+From plch.matej at gmail.com  Mon Jul 24 21:02:52 2023
+From: plch.matej at gmail.com (=?UTF-8?Q?Mat=C4=9Bj_Plch?=)
+Date: Mon, 24 Jul 2023 21:02:52 +0200
+Subject: [Therion] Problem compiling Therion 6.1.7 on Fedora 38
+In-Reply-To: <f7890d9d-bc0b-8e48-f09f-d7364446b5dc@campercaver.net>
+References: <bf954c41-97cd-7e39-5130-a73a22419375@campercaver.net>
+ <CAO3xD3nCYRqowWcL_shdt2V9X7i2yhbJeS2D6Gix8_xquQcXzw@mail.gmail.com>
+ <90cccd97-9836-8ba6-90dd-b6f3fb54ee5d@campercaver.net>
+ <CAO3xD3m3ufbqxuxpOuNCqsL+9SE1p64N9T6FyOKWfgZmnOav1A@mail.gmail.com>
+ <CAO3xD3neWCgscnUv6p8zfe0U9PNSJ1dr01Sd50aJFkS=8UNCKw@mail.gmail.com>
+ <f7890d9d-bc0b-8e48-f09f-d7364446b5dc@campercaver.net>
+Message-ID: <CAO3xD3kJ3oLid+untcpEdW+gSPM5KUn=a=jhxAnm9vrWTdiw0Q@mail.gmail.com>
+
+Hi,
+I see that my response was not delivered due to the problem with the
+mailing list, but for the record I'll reply again now.
+Arithmetic problems now should be fixed in the latest release, only
+32-bit builds on Windows were affected.
+
+Mat?j
+
+po 15. 5. 2023 v 18:56 odes?latel Bill Gee <bgee at campercaver.net> napsal:
+>
+> Arithmetic problems?!?!  If it's not one thing, it's another!
+>
+> Thanks for your efforts.  I will be patient and see how things develop.
+> For now I have a working installation of Therion 6.1.6, and I have no
+> active cave map projects.
+>
+> ===============
+> Bill Gee
+>
+> On 5/15/23 10:38, Mat?j Plch wrote:
+> > It should be fixed in the master branch now, the problem was caused by
+> > the new version of GCC 13.1. However, with the same compiler there is
+> > an issue with floating-point arithmetics, so Therion now computes
+> > different results, we are investigating how to fix this.
+> >
+> > so 13. 5. 2023 v 0:12 odes?latel Mat?j Plch <plch.matej at gmail.com> napsal:
+> >>
+> >> Looks like there are for some reason missing includes, I will fix and test this on Fedora over the weekend.
+> >>
+> >> Dne p? 12. 5. 2023 20:12 u?ivatel Bill Gee <bgee at campercaver.net> napsal:
+> >>>
+> >>> Thanks!  That made a difference.  I still get an error, but it happens
+> >>> later in the process.  This happens after a bunch of other g++ commands
+> >>> have run.
+> >>>
+> >>> ====================== Paste text =============
+> >>> g++ -c -DIMG_API_VERSION=1 -Wall -DTHLINUX -O2 -DPROJ_VER=9
+> >>> -I/usr/include -Iextern -Iextern/shapelib -Iextern/quickhull -std=c++17
+> >>> -o thdb1d.o thdb1d.cxx
+> >>> In file included from extern/quickhull/QuickHull.hpp:10,
+> >>>                    from thdb1d.cxx:53:
+> >>> extern/quickhull/Structs/Mesh.hpp:41:30: error: ?uint8_t? in namespace
+> >>> ?std? does not name a type; did you mean ?wint_t??
+> >>>      41 |                         std::uint8_t
+> >>> m_isVisibleFaceOnCurrentIteration : 1;
+> >>>         |                              ^~~~~~~
+> >>>         |                              wint_t
+> >>> extern/quickhull/Structs/Mesh.hpp:42:30: error: ?uint8_t? in namespace
+> >>> ?std? does not name a type; did you mean ?wint_t??
+> >>>      42 |                         std::uint8_t m_inFaceStack : 1;
+> >>>         |                              ^~~~~~~
+> >>>         |                              wint_t
+> >>> extern/quickhull/Structs/Mesh.hpp:43:30: error: ?uint8_t? in namespace
+> >>> ?std? does not name a type; did you mean ?wint_t??
+> >>>      43 |                         std::uint8_t
+> >>> m_horizonEdgesOnCurrentIteration : 3; // Bit for each half edge assigned
+> >>> to this face, each being 0 or 1 depending on whether the edge belongs to
+> >>> horizon edge
+> >>>         |                              ^~~~~~~
+> >>>         |                              wint_t
+> >>> extern/quickhull/Structs/Mesh.hpp: In constructor
+> >>> ?quickhull::MeshBuilder<T>::Face::Face()?:
+> >>> extern/quickhull/Structs/Mesh.hpp:50:42: error: class
+> >>> ?quickhull::MeshBuilder<T>::Face? does not have any field named
+> >>> ?m_isVisibleFaceOnCurrentIteration?
+> >>>      50 |
+> >>> m_isVisibleFaceOnCurrentIteration(0),
+> >>>         |
+> >>> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >>> extern/quickhull/Structs/Mesh.hpp:51:42: error: class
+> >>> ?quickhull::MeshBuilder<T>::Face? does not have any field named
+> >>> ?m_inFaceStack?
+> >>>      51 |                                          m_inFaceStack(0),
+> >>>         |                                          ^~~~~~~~~~~~~
+> >>> extern/quickhull/Structs/Mesh.hpp:52:42: error: class
+> >>> ?quickhull::MeshBuilder<T>::Face? does not have any field named
+> >>> ?m_horizonEdgesOnCurrentIteration?
+> >>>      52 |
+> >>> m_horizonEdgesOnCurrentIteration(0)
+> >>>         |
+> >>> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >>> make: *** [Makefile:151: thdb1d.o] Error 1
+> >>> ================================ End of pasted text ================
+> >>>
+> >>> When I built therion 6.1.6 on Fedora 37, I used cmake instead of make.
+> >>> Trying that process, I get yet another error!
+> >>>
+> >>> ============== Begin pasted text ===============
+> >>> /home/bgee/Installs/therion-6.1.7/loch/lxFile.cxx: In member function
+> >>> ?bool lxFile::HasAnyWalls()?:
+> >>> /home/bgee/Installs/therion-6.1.7/loch/lxFile.cxx:1345:30: error: no
+> >>> match for ?operator!=? (operand types are ?lxFileSize? and ?<unnamed enum>?)
+> >>>    1345 |       if (shi->m_sectionType != LXFILE_SHOT_SECTION_NONE) {
+> >>>         |           ~~~~~~~~~~~~~~~~~~ ^~ ~~~~~~~~~~~~~~~~~~~~~~~~
+> >>>         |                |                |
+> >>>         |                lxFileSize       <unnamed enum>
+> >>> /home/bgee/Installs/therion-6.1.7/loch/lxMath.h:77:6: note: candidate:
+> >>> ?bool operator!=(const lxVec&, const lxVec&)?
+> >>>      77 | bool operator != ( const lxVec& p, const lxVec& q );
+> >>>         |      ^~~~~~~~
+> >>> /home/bgee/Installs/therion-6.1.7/loch/lxMath.h:77:33: note:   no known
+> >>> conversion for argument 1 from ?lxFileSize? to ?const lxVec&?
+> >>>      77 | bool operator != ( const lxVec& p, const lxVec& q );
+> >>>         |                    ~~~~~~~~~~~~~^
+> >>> make[2]: *** [loch/CMakeFiles/common-utils.dir/build.make:76:
+> >>> loch/CMakeFiles/common-utils.dir/lxFile.cxx.o] Error 1
+> >>> make[1]: *** [CMakeFiles/Makefile2:3821:
+> >>> loch/CMakeFiles/common-utils.dir/all] Error 2
+> >>> make: *** [Makefile:146: all] Error 2
+> >>>
+> >>> =================== End pasted text ===============
+> >>>
+> >>> ===============
+> >>> Bill Gee
+> >>>
+> >>> On 5/12/23 12:40, Mat?j Plch wrote:
+> >>>> Hi, Therion 6.1.7 does not include internal copy of fmt library, you
+> >>>> need to install package fmt-devel.
+> >>>>
+> >>>> Dne p? 12. 5. 2023 17:03 u?ivatel Bill Gee <bgee at campercaver.net
+> >>>> <mailto:bgee at campercaver.net>> napsal:
+> >>>>
+> >>>>      I gave it a shot today to see if I could duplicate Rodrigo's
+> >>>>      problem.  I
+> >>>>      got a completely different error:
+> >>>>
+> >>>>      ===========================
+> >>>>      [bgee at main2 build]$ cmake ..
+> >>>>      CMake Error at cmake/Dependencies.cmake:8 (find_package):
+> >>>>          By not providing "Findfmt.cmake" in CMAKE_MODULE_PATH this
+> >>>>      project has
+> >>>>          asked CMake to find a package configuration file provided by
+> >>>>      "fmt", but
+> >>>>          CMake did not find one.
+> >>>>
+> >>>>          Could not find a package configuration file provided by "fmt"
+> >>>>      with any of
+> >>>>          the following names:
+> >>>>
+> >>>>            fmtConfig.cmake
+> >>>>            fmt-config.cmake
+> >>>>
+> >>>>          Add the installation prefix of "fmt" to CMAKE_PREFIX_PATH or set
+> >>>>      "fmt_DIR"
+> >>>>          to a directory containing one of the above files.  If "fmt"
+> >>>>      provides a
+> >>>>          separate development package or SDK, be sure it has been installed.
+> >>>>      Call Stack (most recent call first):
+> >>>>          CMakeLists.txt:18 (include)
+> >>>>      ===============================
+> >>>>
+> >>>>      This is Fedora 38.  The compile of 6.1.6 on Fedora 37 worked correctly
+> >>>>      for me.  6.1.6 still works after the upgrade to Fedora 38.  I did not
+> >>>>      recompile it.
+> >>>>
+> >>>>
+> >>>>
+> >>>>      --
+> >>>>      ===============
+> >>>>      Bill Gee
+> >>>>      _______________________________________________
+> >>>>      Therion mailing list
+> >>>>      Therion at speleo.sk <mailto:Therion at speleo.sk>
+> >>>>      https://mailman.speleo.sk/listinfo/therion
+> >>>>      <https://mailman.speleo.sk/listinfo/therion>
+> >>>>
+> >>>>
+> >>>> _______________________________________________
+> >>>> Therion mailing list
+> >>>> Therion at speleo.sk
+> >>>> https://mailman.speleo.sk/listinfo/therion
+> >>> _______________________________________________
+> >>> Therion mailing list
+> >>> Therion at speleo.sk
+> >>> https://mailman.speleo.sk/listinfo/therion
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From plch.matej at gmail.com  Mon Jul 24 21:14:34 2023
+From: plch.matej at gmail.com (=?UTF-8?Q?Mat=C4=9Bj_Plch?=)
+Date: Mon, 24 Jul 2023 21:14:34 +0200
+Subject: [Therion] Problems building latest Therion in Fedora 37:
+ missing pdfetex.ini
+In-Reply-To: <naK8LuZ2aPalbmJrBsF80yiZ52r8vBSGTQrXe-X7QRvPPyzNBglyZO_MhqnCDMYpWtMAc9D6BdMRGkGAPu9BbM1X-sTSHzzOzT2aOCDxfZM=@pm.me>
+References: <naK8LuZ2aPalbmJrBsF80yiZ52r8vBSGTQrXe-X7QRvPPyzNBglyZO_MhqnCDMYpWtMAc9D6BdMRGkGAPu9BbM1X-sTSHzzOzT2aOCDxfZM=@pm.me>
+Message-ID: <CAO3xD3==Y3fe9O+tyL7wbRWF3quQ0u9TkODT8b4WV=r9uMHOnQ@mail.gmail.com>
+
+Hi,
+I see that my response was not delivered due to the problem with the
+mailing list.
+Try to just reinstall texlive and all related packages. In my
+previous comment at
+https://github.com/therion/therion/pull/474#issuecomment-1353245276
+you can see that I had to install texlive packages separately, because
+otherwise texlive would end up being broken.
+
+Mat?j
+
+?t 11. 5. 2023 v 23:53 odes?latel Rodrigo Severo via Therion
+<therion at speleo.sk> napsal:
+>
+> Hi,
+>
+>
+> I am having trouble building ThBook in latest Therion in Fedora 37. I am getting the following error:
+>
+> [ 98%] Generating thbook.pdf
+> This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdftex)
+>  restricted \write18 enabled.
+>
+> kpathsea: Running mktexfmt pdftex.fmt
+> mktexfmt: mktexfmt is using the following fmtutil.cnf files (in precedence order):
+> mktexfmt:   /usr/share/texlive/texmf-dist/web2c/fmtutil.cnf
+> mktexfmt: mktexfmt is using the following fmtutil.cnf file for writing changes:
+> mktexfmt:   /home/rodrigo/.texlive2021/texmf-config/web2c/fmtutil.cnf
+> mktexfmt [INFO]: writing formats under /home/rodrigo/.texlive2021/texmf-var/web2c
+> mktexfmt [INFO]: --- remaking pdftex with pdftex
+> mktexfmt [WARNING]: inifile pdfetex.ini for pdftex/pdftex not found.
+> mktexfmt [INFO]: not selected formats: 19
+> mktexfmt [INFO]: failed to build: 1 (pdftex/pdftex)
+>
+> To my untrained eyes it seems that a "pdfetex.ini" file is missing.
+>
+> Any ideas on how to solve this issue?
+>
+>
+> Regards,
+>
+> Rodrigo Severo
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From armchair.caver.nz at gmail.com  Tue Jul 25 02:00:55 2023
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Tue, 25 Jul 2023 12:00:55 +1200
+Subject: [Therion] Can't change default l_wall style with metapost
+Message-ID: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+
+Hi,
+I have changed wall subtypes before in my layout. e.g. Using Bruce Mutton's
+
+code metapost
+def l_wall_unsurveyed (expr P) =
+  T:=identity;
+  pickup PenC;
+  thdraw P dashed evenly scaled (2*optical_zoom);
+enddef;
+endcode
+
+However, I can't get this working on the default l_wall type. Any changes,
+including using the same style as in the above l_wall_unsurveyed example
+get ignored. e.g.
+code metapost
+def l_wall (expr P) =
+  T:=identity;
+  pickup PenC;
+  thdraw P dashed evenly scaled (2*optical_zoom);
+enddef;
+endcode
+
+I'm not sure what I'm missing. I'm first trying to prove I can override
+this, and then working on a wall style with a shadow or external
+cross-hatching.
+
+Thanks,
+Paul
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230725/215c4c42/attachment.htm>
+
+From gfe.list at free.fr  Tue Jul 25 20:14:19 2023
+From: gfe.list at free.fr (Gilbert (liste))
+Date: Tue, 25 Jul 2023 20:14:19 +0200
+Subject: [Therion] Can't change default l_wall style with metapost
+In-Reply-To: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+References: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+Message-ID: <c7b8888e-98e9-4880-5245-338c07ec38b9@free.fr>
+
+Hello,
+
+change your function name to : l_wall_unsurveyed_MYLINE
+
+do not forget the code :
+
+
+ ??? initsymbol("l_wall_unsurveyed");
+
+ ??? symbol-assign line unsurveyed MYLINE
+
+
+after enddef; and before endcode;
+
+it will should work.
+
+(-;
+
+
+Le 25/07/2023 ? 02:00, Paul Rowe a ?crit?:
+> Hi,
+> I have changed wall subtypes before in my layout. e.g. Using Bruce 
+> Mutton's
+>
+> code metapost
+> def l_wall_unsurveyed (expr P) =
+> ? T:=identity;
+> ? pickup PenC;
+> ? thdraw P dashed evenly scaled (2*optical_zoom);
+> enddef;
+> endcode
+>
+> However, I can't get this working on the default l_wall type. Any 
+> changes, including using the same style as in the above 
+> l_wall_unsurveyed example get ignored. e.g.
+> code metapost
+> def l_wall (expr P) =
+> ? T:=identity;
+> ? pickup PenC;
+> ? thdraw P dashed evenly scaled (2*optical_zoom);
+> enddef;
+> endcode
+>
+> I'm not sure what I'm missing. I'm first trying to prove I can 
+> override this, and then working on a wall style with a shadow or 
+> external cross-hatching.
+>
+> Thanks,
+> Paul
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From m.budaj at gmail.com  Tue Jul 25 21:00:34 2023
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Tue, 25 Jul 2023 21:00:34 +0200
+Subject: [Therion] Can't change default l_wall style with metapost
+In-Reply-To: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+References: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+Message-ID: <CALPsdSuE=OnR+bumFmOuUaX6xaq4kKqEG4q-PcDT5Pzj0rNNvQ@mail.gmail.com>
+
+Hi,
+
+define l_wall_bedrock instead of l_wall
+
+M.
+
+On Tue, Jul 25, 2023 at 2:03?AM Paul Rowe <armchair.caver.nz at gmail.com>
+wrote:
+
+> Hi,
+> I have changed wall subtypes before in my layout. e.g. Using Bruce
+> Mutton's
+>
+> code metapost
+> def l_wall_unsurveyed (expr P) =
+>   T:=identity;
+>   pickup PenC;
+>   thdraw P dashed evenly scaled (2*optical_zoom);
+> enddef;
+> endcode
+>
+> However, I can't get this working on the default l_wall type. Any changes,
+> including using the same style as in the above l_wall_unsurveyed example
+> get ignored. e.g.
+> code metapost
+> def l_wall (expr P) =
+>   T:=identity;
+>   pickup PenC;
+>   thdraw P dashed evenly scaled (2*optical_zoom);
+> enddef;
+> endcode
+>
+> I'm not sure what I'm missing. I'm first trying to prove I can override
+> this, and then working on a wall style with a shadow or external
+> cross-hatching.
+>
+> Thanks,
+> Paul
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230725/7b6e0cef/attachment.htm>
+
+From armchair.caver.nz at gmail.com  Tue Jul 25 23:10:43 2023
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Wed, 26 Jul 2023 09:10:43 +1200
+Subject: [Therion] Can't change default l_wall style with metapost
+In-Reply-To: <CALPsdSuE=OnR+bumFmOuUaX6xaq4kKqEG4q-PcDT5Pzj0rNNvQ@mail.gmail.com>
+References: <CAG1=ZB_foeV1hV5ejApEyvOJXpA+J8MDbXzJPw394YziCmPXZQ@mail.gmail.com>
+ <CALPsdSuE=OnR+bumFmOuUaX6xaq4kKqEG4q-PcDT5Pzj0rNNvQ@mail.gmail.com>
+Message-ID: <CAG1=ZB8oTk-1QSz9Ok3FvzHgOkZPV+z0h_7DWqMTtVHQtHv71A@mail.gmail.com>
+
+Thanks, that's exactly what I needed.
+
+Is that approach the case for any point/line/area that has subtypes? i.e.
+You have to override the default subtype.
+
+Paul
+
+On Wed, 26 Jul 2023 at 07:01, Martin Budaj <m.budaj at gmail.com> wrote:
+
+> Hi,
+>
+> define l_wall_bedrock instead of l_wall
+>
+> M.
+>
+> On Tue, Jul 25, 2023 at 2:03?AM Paul Rowe <armchair.caver.nz at gmail.com>
+> wrote:
+>
+>> Hi,
+>> I have changed wall subtypes before in my layout. e.g. Using Bruce
+>> Mutton's
+>>
+>> code metapost
+>> def l_wall_unsurveyed (expr P) =
+>>   T:=identity;
+>>   pickup PenC;
+>>   thdraw P dashed evenly scaled (2*optical_zoom);
+>> enddef;
+>> endcode
+>>
+>> However, I can't get this working on the default l_wall type. Any
+>> changes, including using the same style as in the above l_wall_unsurveyed
+>> example get ignored. e.g.
+>> code metapost
+>> def l_wall (expr P) =
+>>   T:=identity;
+>>   pickup PenC;
+>>   thdraw P dashed evenly scaled (2*optical_zoom);
+>> enddef;
+>> endcode
+>>
+>> I'm not sure what I'm missing. I'm first trying to prove I can override
+>> this, and then working on a wall style with a shadow or external
+>> cross-hatching.
+>>
+>> Thanks,
+>> Paul
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> https://mailman.speleo.sk/listinfo/therion
+>>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230726/f984441e/attachment.htm>
+

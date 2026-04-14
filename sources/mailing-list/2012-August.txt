@@ -1,0 +1,2118 @@
+From jonathanprouty at gmail.com  Fri Aug  3 20:20:45 2012
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Fri, 3 Aug 2012 12:20:45 -0600
+Subject: [Therion] mixing local and global coordinate systems
+Message-ID: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+
+Hello all,
+
+I have a compass PLT file that I would like to import into an existing
+therion project that I have. The therion project has numerous fixed
+stations, all in the same UTM zone. Unfortunately, if I try to equate a
+station in the PLT file with the equivalent station in my project, I can't
+proceed as I can't mix local (in the PLT file) and global (in my project)
+coordinate systems. If I comment out all of the "cs" commands in my therion
+project as a test, I can't proceed because therion won't allow two fixed
+stations to be equated with one another. Removing the "cs" commands isn't
+really a viable option anyways since I need the stations to have real-world
+coordinates so that I can load the maps into QGIS and GRASS.
+
+My question then is is it possible to override the coordinates of an
+imported PLT file, transforming them into the coordinate system of my
+project? Thanks very much in advance!
+
+Best regards,
+
+Jonny
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120803/edf36989/attachment.htm>
+
+From bruce at tomo.co.nz  Fri Aug  3 23:56:31 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Sat, 4 Aug 2012 09:56:31 +1200
+Subject: [Therion] mixing local and global coordinate systems
+In-Reply-To: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+References: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+Message-ID: <D06E52304DA34D41A447005DA2A8616A@JUICEBRAIN>
+
+Hi Jonny
+
+No real answer, but you can equate two fixed stations, but you will need to specify error values for one or both of them.  I have done it before with coordinates in the same cs.  It should work for differing cs (I have done this in different circumstances), but of course not for an arbitrary coordinate system.  There are some interesting hacks needed in some circumstances, see http://article.gmane.org/gmane.comp.gis.therion/2909/match=loop+fix
+
+Stacho indicated he would look at correcting some of the issues raised, perhaps why the next update is taking so long :-)
+
+ 
+
+>From the therion book…
+
+ 
+
+fix <station> [<x> <y> <z> [<std x> <std y> <std z>]] ◃ fix station coordinates (with specified errors—only the units transformation, not calibration, is applied to them).
+
+ 
+
+And on transforming the plt coordinates, the calibrate option of the import command on page 33 of The Therion Book seems to suggest a way forward.  I have never used ‘import’ so cannot speak from experience.
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf Of Jonny Prouty
+Sent: Saturday, 4 August 2012 6:21 a.m.
+To: List for Therion users
+Subject: [Therion] mixing local and global coordinate systems
+
+ 
+
+Hello all,
+
+ 
+
+I have a compass PLT file that I would like to import into an existing therion project that I have. The therion project has numerous fixed stations, all in the same UTM zone. Unfortunately, if I try to equate a station in the PLT file with the equivalent station in my project, I can't proceed as I can't mix local (in the PLT file) and global (in my project) coordinate systems. If I comment out all of the "cs" commands in my therion project as a test, I can't proceed because therion won't allow two fixed stations to be equated with one another. Removing the "cs" commands isn't really a viable option anyways since I need the stations to have real-world coordinates so that I can load the maps into QGIS and GRASS.
+
+ 
+
+My question then is is it possible to override the coordinates of an imported PLT file, transforming them into the coordinate system of my project? Thanks very much in advance!
+
+ 
+
+Best regards,
+
+ 
+
+Jonny
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120804/42643a75/attachment.htm>
+
+From andrew at wotcc.org.uk  Fri Aug  3 23:39:01 2012
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Fri, 03 Aug 2012 22:39:01 +0100
+Subject: [Therion] mixing local and global coordinate systems
+In-Reply-To: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+References: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+Message-ID: <501C44F5.90201@wotcc.org.uk>
+
+I have not tried this with plt but with 3d, however according to the
+thbook it should work.
+
+import file.plt calibrate [<x> <y> <z> <X> <Y> <Z>]
+
+Where coordinates in the imported file are shifted
+from lower-case coordinates to upper-case coordinates.
+
+I hope I have understood what you are trying to achieve, if not a sample
+file might help
+
+Andrew
+
+On 03/08/12 19:20, Jonny Prouty wrote:
+> Hello all,
+> 
+> I have a compass PLT file that I would like to import into an existing
+> therion project that I have. The therion project has numerous fixed
+> stations, all in the same UTM zone. Unfortunately, if I try to equate a
+> station in the PLT file with the equivalent station in my project, I can't
+> proceed as I can't mix local (in the PLT file) and global (in my project)
+> coordinate systems. If I comment out all of the "cs" commands in my therion
+> project as a test, I can't proceed because therion won't allow two fixed
+> stations to be equated with one another. Removing the "cs" commands isn't
+> really a viable option anyways since I need the stations to have real-world
+> coordinates so that I can load the maps into QGIS and GRASS.
+> 
+> My question then is is it possible to override the coordinates of an
+> imported PLT file, transforming them into the coordinate system of my
+> project? Thanks very much in advance!
+> 
+> Best regards,
+> 
+> Jonny
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From jonathanprouty at gmail.com  Fri Aug  3 23:58:50 2012
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Fri, 3 Aug 2012 15:58:50 -0600
+Subject: [Therion] mixing local and global coordinate systems
+In-Reply-To: <D06E52304DA34D41A447005DA2A8616A@JUICEBRAIN>
+References: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+	<D06E52304DA34D41A447005DA2A8616A@JUICEBRAIN>
+Message-ID: <CAEzKa90k1vde4-D68_miq_pWaCPN=hdFX01YnRoVfV129_CCOw@mail.gmail.com>
+
+Hello Bruce,
+
+Thanks for the suggestions! I'll go have a more thorough look through the
+therion book. The calibrate command looks particularly promising!
+
+Jonny
+
+On Fri, Aug 3, 2012 at 3:56 PM, Bruce <bruce at tomo.co.nz> wrote:
+
+> **
+>
+> Hi Jonny****
+>
+> No real answer, but you can equate two fixed stations, but you will need
+> to specify error values for one or both of them.  I have done it before
+> with coordinates in the same cs.  It should work for differing cs (I have
+> done this in different circumstances), but of course not for an arbitrary
+> coordinate system.  There are some interesting hacks needed in some
+> circumstances, see
+> http://article.gmane.org/gmane.comp.gis.therion/2909/match=loop+fix****
+>
+> Stacho indicated he would look at correcting some of the issues raised,
+> perhaps why the next update is taking so long J****
+>
+> ** **
+>
+> From the therion book…****
+>
+> ** **
+>
+> fix <station> [<x> <y> <z> [<std x> <std y> <std z>]] ◃ fix station
+> coordinates (with specified errors—only the units transformation, not
+> calibration, is applied to them).****
+>
+> ** **
+>
+> And on transforming the plt coordinates, the calibrate option of the
+> import command on page 33 of The Therion Book seems to suggest a way
+> forward.  I have never used ‘import’ so cannot speak from experience.****
+>
+> ** **
+>
+> Bruce****
+>
+> ** **
+>  ------------------------------
+>
+> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Jonny Prouty
+> *Sent:* Saturday, 4 August 2012 6:21 a.m.
+> *To:* **List for Therion users**
+> *Subject:* [Therion] mixing local and global coordinate systems****
+>
+> ** **
+>
+> Hello all,****
+>
+> ** **
+>
+> I have a compass PLT file that I would like to import into an existing
+> therion project that I have. The therion project has numerous fixed
+> stations, all in the same UTM zone. Unfortunately, if I try to equate a
+> station in the PLT file with the equivalent station in my project, I can't
+> proceed as I can't mix local (in the PLT file) and global (in my project)
+> coordinate systems. If I comment out all of the "cs" commands in my therion
+> project as a test, I can't proceed because therion won't allow two fixed
+> stations to be equated with one another. Removing the "cs" commands isn't
+> really a viable option anyways since I need the stations to have real-world
+> coordinates so that I can load the maps into QGIS and GRASS.****
+>
+> ** **
+>
+> My question then is is it possible to override the coordinates of an
+> imported PLT file, transforming them into the coordinate system of my
+> project? Thanks very much in advance!****
+>
+> ** **
+>
+> Best regards,****
+>
+> ** **
+>
+> Jonny****
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120803/d021d7db/attachment.htm>
+
+From jonathanprouty at gmail.com  Sat Aug  4 00:27:06 2012
+From: jonathanprouty at gmail.com (Jonny Prouty)
+Date: Fri, 3 Aug 2012 16:27:06 -0600
+Subject: [Therion] mixing local and global coordinate systems
+In-Reply-To: <501C44F5.90201@wotcc.org.uk>
+References: <CAEzKa91SO5JG4nQK7V=8EeEYrS7=zysZjh-GcPpvB9RbdP36nA@mail.gmail.com>
+	<501C44F5.90201@wotcc.org.uk>
+Message-ID: <CAEzKa93WeidDMqPZKBXFLYDw0Jb+jKy5q1DS43tk=tP-Rd0JnA@mail.gmail.com>
+
+Hello again Bruce and Andrew,
+
+Your suggestion of using the calibrate option with the import command did
+the trick! The origin of the coordinate reference system in the PLT file
+was set to one of the entrances. My calibrate command set 0 0 0 in the
+input to the northing, easting, and elevation for that point, i.e. import
+test.plt -calibrate [0 0 0 363315 3837128 368]. I am now able to use the
+survey with the surface I've created for that area and have it tie in with
+my survey.
+
+I've commented out all of the "cs" commands in the project, as I haven't
+fiddled with setting the error values for one of the stations, as suggested
+by Bruce. Exported maps will at least have the correct X and Y pairs, I'll
+simply have to go in after the fact and specify the specific reference
+system. Thanks again for the all of the help.
+
+Jonny
+
+On Fri, Aug 3, 2012 at 3:39 PM, Andrew Atkinson <andrew at wotcc.org.uk> wrote:
+
+> I have not tried this with plt but with 3d, however according to the
+> thbook it should work.
+>
+> import file.plt calibrate [<x> <y> <z> <X> <Y> <Z>]
+>
+> Where coordinates in the imported file are shifted
+> from lower-case coordinates to upper-case coordinates.
+>
+> I hope I have understood what you are trying to achieve, if not a sample
+> file might help
+>
+> Andrew
+>
+> On 03/08/12 19:20, Jonny Prouty wrote:
+> > Hello all,
+> >
+> > I have a compass PLT file that I would like to import into an existing
+> > therion project that I have. The therion project has numerous fixed
+> > stations, all in the same UTM zone. Unfortunately, if I try to equate a
+> > station in the PLT file with the equivalent station in my project, I
+> can't
+> > proceed as I can't mix local (in the PLT file) and global (in my project)
+> > coordinate systems. If I comment out all of the "cs" commands in my
+> therion
+> > project as a test, I can't proceed because therion won't allow two fixed
+> > stations to be equated with one another. Removing the "cs" commands isn't
+> > really a viable option anyways since I need the stations to have
+> real-world
+> > coordinates so that I can load the maps into QGIS and GRASS.
+> >
+> > My question then is is it possible to override the coordinates of an
+> > imported PLT file, transforming them into the coordinate system of my
+> > project? Thanks very much in advance!
+> >
+> > Best regards,
+> >
+> > Jonny
+> >
+> >
+> >
+> >
+> > _______________________________________________
+> > Therion mailing list
+> > Therion at speleo.sk
+> > http://mailman.speleo.sk/mailman/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120803/3240de81/attachment.htm>
+
+From martinsluka at me.com  Sat Aug  4 12:17:33 2012
+From: martinsluka at me.com (Martin Sluka)
+Date: Sat, 04 Aug 2012 12:17:33 +0200
+Subject: [Therion] shift for extended scraps
+Message-ID: <1156DB49-FE71-4A9A-B3AA-E3342208F55E@me.com>
+
+I used shift for scraps with projection map. No problems.
+
+I tried to use shift for scrap with projection extended. The result is:
+
+therion: error -- milada.th [65] -- shift is not allowed for scrap -- milada_ext_s8 at milada
+
+Definition of map is as follows:
+
+map milada_ext.map -projection extended
+  milada_ext_s7 at milada #pritokova chodba
+  break
+  milada_ext_s8 at milada [0 -10 m] below
+  break
+...
+
+Is there any workaround or did a mistake there?
+
+Thanks
+
+Martin s.
+
+
+From lists at group-s.sk  Sat Aug  4 16:58:20 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 4 Aug 2012 16:58:20 +0200
+Subject: [Therion] shift for extended scraps
+In-Reply-To: <1156DB49-FE71-4A9A-B3AA-E3342208F55E@me.com>
+References: <1156DB49-FE71-4A9A-B3AA-E3342208F55E@me.com>
+Message-ID: <CAP35+gEjBemr0vb=zmYPgVfL6urD-+BB6H9eqW+nVXAOj5F9Qw@mail.gmail.com>
+
+I am afraid, therion does not allow shifting individual scraps.
+
+All you have to do is to create separate map for each scrap and then shift
+these maps in map one level above.
+
+HTH, S.
+
+On 4 August 2012 12:17, Martin Sluka <martinsluka at me.com> wrote:
+
+> I used shift for scraps with projection map. No problems.
+>
+> I tried to use shift for scrap with projection extended. The result is:
+>
+> therion: error -- milada.th [65] -- shift is not allowed for scrap --
+> milada_ext_s8 at milada
+>
+> Definition of map is as follows:
+>
+> map milada_ext.map -projection extended
+>   milada_ext_s7 at milada #pritokova chodba
+>   break
+>   milada_ext_s8 at milada [0 -10 m] below
+>   break
+> ...
+>
+> Is there any workaround or did a mistake there?
+>
+> Thanks
+>
+> Martin s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120804/a0db701d/attachment.htm>
+
+From martinsluka at me.com  Sun Aug  5 08:41:18 2012
+From: martinsluka at me.com (Martin Sluka)
+Date: Sun, 05 Aug 2012 08:41:18 +0200
+Subject: [Therion] shift for extended scraps
+In-Reply-To: <CAP35+gEjBemr0vb=zmYPgVfL6urD-+BB6H9eqW+nVXAOj5F9Qw@mail.gmail.com>
+References: <1156DB49-FE71-4A9A-B3AA-E3342208F55E@me.com>
+	<CAP35+gEjBemr0vb=zmYPgVfL6urD-+BB6H9eqW+nVXAOj5F9Qw@mail.gmail.com>
+Message-ID: <B79D1BDC-329B-45CC-9C8A-3BA7FA9A091C@me.com>
+
+Exactly!
+
+What is the name of that disease? Beginning on b... or a...? I'm not able to remember... ;o)
+
+m.
+
+
+On Aug 4, 2012, at 4:58 PM, Stacho Mudrak wrote:
+
+> I am afraid, therion does not allow shifting individual scraps. 
+> 
+> All you have to do is to create separate map for each scrap and then shift these maps in map one level above.
+> 
+> HTH, S.
+> 
+> On 4 August 2012 12:17, Martin Sluka <martinsluka at me.com> wrote:
+> I used shift for scraps with projection map. No problems.
+> 
+> I tried to use shift for scrap with projection extended. The result is:
+> 
+> therion: error -- milada.th [65] -- shift is not allowed for scrap -- milada_ext_s8 at milada
+> 
+> Definition of map is as follows:
+> 
+> map milada_ext.map -projection extended
+>   milada_ext_s7 at milada #pritokova chodba
+>   break
+>   milada_ext_s8 at milada [0 -10 m] below
+>   break
+> ...
+> 
+> Is there any workaround or did a mistake there?
+> 
+> Thanks
+> 
+> Martin s.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120805/b5e4527c/attachment.htm>
+
+From martinsluka at me.com  Sun Aug  5 18:11:29 2012
+From: martinsluka at me.com (Martin Sluka)
+Date: Sun, 05 Aug 2012 18:11:29 +0200
+Subject: [Therion] kartograph.org
+Message-ID: <9B5307E4-3458-4790-B6AE-B427BD1897AE@me.com>
+
+http://kartograph.org/
+
+m.
+
+
+From bruce at tomo.co.nz  Sun Aug 12 02:28:22 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Sun, 12 Aug 2012 12:28:22 +1200
+Subject: [Therion] nosurvey needs the date it was not surveyed
+Message-ID: <DAA77EA42B2F4E26A71395585CC9C387@JUICEBRAIN>
+
+This is a trivial matter, but may be worth some discussion and perhaps
+adjusting Therions behaviour sometime.
+
+ 
+
+I have been moving 'data nosurvey' entries from the main survey centreline
+into their own centrelines, so that, presumably (when I learn to use sql)
+users will be able to interrogate the database and uniquely identify each
+unsurveyed connection, when it was made and who 'explored' it.  (The
+metadata gets distributed across the whole centreline if these are all put
+in the same centreline).
+
+ 
+
+The relevant data fields would seem to be 'explo-date' and 'explo-team' and
+'date' would seem to be irrelevant, as 'date' is the survey date, and these
+short passages have by definition not been surveyed.
+
+ 
+
+If however, the overall survey has a coordinate system set, and the
+particular centreline has a 'data <xxx>' block set as well, then Therion
+will helpfully display a warning message;
+
+ 
+
+"warning -- unable to determine magnetic declination for undated surveys"
+
+ 
+
+It would seem to me that 'data nosurvey' is a special case that should not
+trigger this warning. 
+
+ 
+
+An example of how I am entering these in my overall cave survey file below.
+
+ 
+
+Regards
+
+Bruce
+
+ 
+
+ 
+
+  #Unsurveyed Connections
+
+  #==================   
+
+centreline
+
+  explo-date 2011.05.28 
+
+  explo-team "This Caver" 
+
+  explo-team "That Caver"
+
+  explo-team "Bruce Mutton"
+
+  #date 2011.05.28 #date needed to suppress 'undated survey declination'
+error
+
+  data nosurvey from to
+
+  jg8.10 at jg ij3.44 at ij     #unsurveyed connection Train to Carpe Diem
+
+  ig2.60 at ig IK10.21 at ik    #unsurveyed connection What Sump Lucky Cowboy
+
+endcentreline
+
+  
+
+centreline
+
+  explo-date 2012.03.24   
+
+  explo-team "This Caver" 
+
+  explo-team "That Caver"
+
+  #date 2012.03.24 #date needed to suppress 'undated survey declination'
+error  
+
+  data nosurvey from to
+
+  kb51.33 at kb2 ka50.4 at ka2  #unsurveyed connection in KA-KB-Conscious
+
+endcentreline
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120812/0b92dc2a/attachment.htm>
+
+From martinsluka at me.com  Mon Aug 13 09:28:53 2012
+From: martinsluka at me.com (Martin Sluka)
+Date: Mon, 13 Aug 2012 09:28:53 +0200
+Subject: [Therion] version 5.3.10 to download
+Message-ID: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+
+New in version 5.3.10:
+
+therion:
+ * full OSGB grid coverage (e.g. cs OSGB:ST)
+  * added New Zealand symbol set (NZSS, thanks to Bruce Mutton)
+ * updated UIS symbol set (thanks to Bruce Mutton)
+ * updated English translation (thanks to Bruce Mutton)
+ * added te reo Maori translation (thanks to Kyle Davis)
+ * bugs fixed:
+   
+xtherion:
+ * bugs fixed:
+   
+loch:
+ * added checkbox that enables/disables surface lighting (Scene->Surface)
+ * bugs fixed:
+
+
+
+From bruce at tomo.co.nz  Mon Aug 13 10:37:15 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Mon, 13 Aug 2012 20:37:15 +1200
+Subject: [Therion] OOPS:  version 5.3.10
+In-Reply-To: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+References: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+Message-ID: <D410DD6D59134BB8AE789C01B75446F7@JUICEBRAIN>
+
+5.3.10 works OK for most of my datasets I think.
+Will look through the symbol sets in due course...
+
+My largest dataset has a problem though, as below.
+Bruce
+
+  2013.1.1  21.7741
+scanning centreline tree ... done
+searching for centerline loops ... done
+calculating station coordinates ... 
+D:\Program Files\Therion\therion.exe: error -- a software BUG is present
+(thdb1d.cxx:2290)
+writing xtherion file ... done
+
+
+
+From lists at group-s.sk  Mon Aug 13 11:40:31 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Mon, 13 Aug 2012 11:40:31 +0200
+Subject: [Therion] OOPS: version 5.3.10
+In-Reply-To: <D410DD6D59134BB8AE789C01B75446F7@JUICEBRAIN>
+References: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+	<D410DD6D59134BB8AE789C01B75446F7@JUICEBRAIN>
+Message-ID: <CAP35+gH+K4DoX7irQvubT=vtCLhFvS7Smog60zUwH0YvUxALrg@mail.gmail.com>
+
+I am really sorry.
+
+But unless you can extract a dataset, that causes the problem, I am not
+able to fix it :(
+
+I will diff thdb1d.cxx changes and see, where potentially error can be, but
+some dataset, that causes this problem would help a lot. All my datasets
+seems to work fine.
+
+S.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120813/1c80ab18/attachment.htm>
+
+From drfootleg at gmail.com  Mon Aug 13 13:54:56 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Mon, 13 Aug 2012 12:54:56 +0100
+Subject: [Therion] version 5.3.10 to download
+In-Reply-To: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+References: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+Message-ID: <CAJkGg4mWv0cOWRt6HGwd2iCXWr8X4tm2X_nd6CicrziBGLBLmg@mail.gmail.com>
+
+Excellent! Just did a quick test with my project cave in North
+Yorkshire. The KML file was generated in the correct location using
+the OSGB grid for the Yorkshire Dales, and the KML was opened in
+GoogleEarth without needing tweaking for white space either.
+
+Thank you!
+Footleg
+
+On 13 August 2012 08:28, Martin Sluka <martinsluka at me.com> wrote:
+> New in version 5.3.10:
+>
+> therion:
+>  * full OSGB grid coverage (e.g. cs OSGB:ST)
+>   * added New Zealand symbol set (NZSS, thanks to Bruce Mutton)
+>  * updated UIS symbol set (thanks to Bruce Mutton)
+>  * updated English translation (thanks to Bruce Mutton)
+>  * added te reo Maori translation (thanks to Kyle Davis)
+>  * bugs fixed:
+>
+> xtherion:
+>  * bugs fixed:
+>
+> loch:
+>  * added checkbox that enables/disables surface lighting (Scene->Surface)
+>  * bugs fixed:
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+From ricardo at entrada.tv  Tue Aug 14 16:01:06 2012
+From: ricardo at entrada.tv (Ricardo Constantino)
+Date: Tue, 14 Aug 2012 15:01:06 +0100
+Subject: [Therion] KML Output
+Message-ID: <502A5A22.7050202@entrada.tv>
+
+Hello,
+
+I need someone's help to generate a KML file ...
+Attached is an extract of the cave survey data / config file that I've 
+been using - but the result is always an "emplty" KML file.
+What am I doing wrong ?
+
+Thanks in advance,
+Ricardo
+
+
+	facebook.com/RICARDO.CONSTANTINO 
+<http://www.facebook.com/RICARDO.CONSTANTINO>
+ALVIELA.com <http://www.ALVIELA.com>
+CPAS.pt <http://www.CPAS.pt>
+DEEPREEFS.com <http://www.DEEPREEFS.com>
+ENTRADA.tv <http://www.ENTRADA.tv>
+GlobalUnderwaterExplorers.org <http://www.globalunderwaterexplorers.org/>
+SPE.pt <http://www.SPE.pt>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/bbe8fb01/attachment.htm>
+-------------- next part --------------
+encoding  utf-8
+
+# Survey ID
+# --------------------------------------------
+# ALV
+# --------------------------------------------
+survey ALV \
+  #-namespace on \
+  #-declination \
+  -title "ALV" \
+  
+  # Centerline ID
+  # ------------------------------------------
+  centreline \
+    -id ALV \
+    -author 2008.09.14 "Ricardo Constantino" \
+    -copyright 2008 "SPE" \
+    -title "ALV"
+    
+    #explo-date 2008.06.01 # discovery date 
+    #explo-team "SPE"
+
+    date 2008.09.14 survey date 2008.09.14
+
+    instrument length "meter tape"
+    instrument compass "TUONO"
+    instrument depth "TUONO"
+    
+    units bearing degrees
+    units depth meters
+    units length meters
+
+    #declination 
+    #sd <length, bearing, counter, depth, x, y, z, position> <value> <units>
+    calibrate depth 0 -1
+
+    data diving station depth left right up down ignore newline length bearing ignoreall
+    
+    cs lat-long
+    fix 0 39.445565 -8.712165 75
+    
+    infer equates on # shots of zero length are taken to be equates
+
+
+#survey on way in
+0  11.7  0  0  0  0  "Bottom of shaft"
+  6.4  358        
+1  12.9  4  1  0  0  "0"
+  4.9  018        
+2  13.8  2  0  0  0  "0"
+  6.9  040        
+3  14.8  6  0  0  0  "0"
+  6.5  346        
+4  16.0  4  1  0  0  "0"
+  0  0       
+
+       
+  endcentreline
+
+endsurvey ALV
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ALV_kml.kml
+Type: application/vnd.google-earth.kml+xml
+Size: 372 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/bbe8fb01/attachment.kml>
+-------------- next part --------------
+encoding  utf-8
+
+source ALV
+export map -format kml -projection plan -output ALV_kml.kml
+
+From Xavier.Pennec at inria.fr  Tue Aug 14 16:42:48 2012
+From: Xavier.Pennec at inria.fr (Xavier Pennec)
+Date: Tue, 14 Aug 2012 16:42:48 +0200
+Subject: [Therion] KML Output
+In-Reply-To: <502A5A22.7050202@entrada.tv>
+References: <502A5A22.7050202@entrada.tv>
+Message-ID: <502A63E8.7060601@inria.fr>
+
+Hi Ricardo,
+
+I guess the problem is that you export a map without having a contour 
+drawn, thus there is nothing  to export.
+Try to draw some cave walls or to export a model to see the wireframe of 
+the cave:
+
+export model -format kml -output ALV_kml_model.kml
+
+Xavier
+
+
+Le 14/08/2012 16:01, Ricardo Constantino a écrit :
+> Hello,
+>
+> I need someone's help to generate a KML file ...
+> Attached is an extract of the cave survey data / config file that I've 
+> been using - but the result is always an "emplty" KML file.
+> What am I doing wrong ?
+>
+> Thanks in advance,
+> Ricardo
+>
+>
+> 	facebook.com/RICARDO.CONSTANTINO 
+> <http://www.facebook.com/RICARDO.CONSTANTINO>
+> ALVIELA.com <http://www.ALVIELA.com>
+> CPAS.pt <http://www.CPAS.pt>
+> DEEPREEFS.com <http://www.DEEPREEFS.com>
+> ENTRADA.tv <http://www.ENTRADA.tv>
+> GlobalUnderwaterExplorers.org <http://www.globalunderwaterexplorers.org/>
+> SPE.pt <http://www.SPE.pt>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-- 
+> -------------------------
+> Xavier Pennec
+> Senior Research Scientist / Directeur de recherche
+> Asclepios project-team, INRIA Sophia-Antipolis
+> 2004 Route des Lucioles, BP93
+> F-06902 Sophia-Antipolis Cedex, France
+> +33 4 92 38 76 64
+> +33 6 78 35 16 90
+> http://www-sop.inria.fr/asclepios/
+> -------------------------------
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/c10be6c8/attachment.htm>
+
+From drfootleg at gmail.com  Tue Aug 14 16:58:30 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 14 Aug 2012 15:58:30 +0100
+Subject: [Therion] KML Output
+In-Reply-To: <502A5A22.7050202@entrada.tv>
+References: <502A5A22.7050202@entrada.tv>
+Message-ID: <CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+
+It looks like you have not drawn and included any scraps yet. These are
+needed to define the walls which in turn drive the KML file generation. I
+don't know if there is any way to create a centreline only KML file. I've
+wondered this before, as it would be quite useful to see the centrelines
+for an entire cave in GoogleEarth before drawing all (or even before I've
+drawn any) scraps.
+
+Footleg
+
+On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv> wrote:
+
+>  Hello,
+>
+> I need someone's help to generate a KML file ...
+> Attached is an extract of the cave survey data / config file that I've
+> been using - but the result is always an "emplty" KML file.
+> What am I doing wrong ?
+>
+> Thanks in advance,
+> Ricardo
+>
+>
+>     facebook.com/RICARDO.CONSTANTINO<http://www.facebook.com/RICARDO.CONSTANTINO>
+> ALVIELA.com <http://www.ALVIELA.com>
+> CPAS.pt <http://www.CPAS.pt>
+> DEEPREEFS.com <http://www.DEEPREEFS.com>
+> ENTRADA.tv <http://www.ENTRADA.tv>
+> GlobalUnderwaterExplorers.org <http://www.globalunderwaterexplorers.org/>
+> SPE.pt <http://www.SPE.pt>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/863db49b/attachment.htm>
+
+From ricardo at entrada.tv  Tue Aug 14 17:28:30 2012
+From: ricardo at entrada.tv (Ricardo Constantino)
+Date: Tue, 14 Aug 2012 16:28:30 +0100
+Subject: [Therion] KML Output
+In-Reply-To: <CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+References: <502A5A22.7050202@entrada.tv>
+	<CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+Message-ID: <502A6E9E.9040808@entrada.tv>
+
+
+Thanks for the feedback.
+
+That was the general idea - map out over Google the centerlines of a 
+couple of caves to see "the big picture".
+Is it worth trying to draw a single line scrap over the centerline to 
+see how it reacts ?
+
+I've also tried to generate KML output with my complete data set (with 
+scraps) - it warns that the data is not georeferenced and generates an 
+empty KML.
+I have at least one station fixed (as in the example I attached 
+previously), and don't understand what I am missing to get over this hurdle.
+
+Best,
+Ricardo
+
+
+Em 14-08-2012 15:58, Footleg escreveu:
+> It looks like you have not drawn and included any scraps yet. These 
+> are needed to define the walls which in turn drive the KML file 
+> generation. I don't know if there is any way to create a centreline 
+> only KML file. I've wondered this before, as it would be quite useful 
+> to see the centrelines for an entire cave in GoogleEarth before 
+> drawing all (or even before I've drawn any) scraps.
+>
+> Footleg
+>
+> On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv 
+> <mailto:ricardo at entrada.tv>> wrote:
+>
+>     Hello,
+>
+>     I need someone's help to generate a KML file ...
+>     Attached is an extract of the cave survey data / config file that
+>     I've been using - but the result is always an "emplty" KML file.
+>     What am I doing wrong ?
+>
+>     Thanks in advance,
+>     Ricardo
+>
+>
+>     	facebook.com/RICARDO.CONSTANTINO
+>     <http://www.facebook.com/RICARDO.CONSTANTINO>
+>     ALVIELA.com <http://www.ALVIELA.com>
+>     CPAS.pt <http://www.CPAS.pt>
+>     DEEPREEFS.com <http://www.DEEPREEFS.com>
+>     ENTRADA.tv <http://www.ENTRADA.tv>
+>     GlobalUnderwaterExplorers.org
+>     <http://www.globalunderwaterexplorers.org/>
+>     SPE.pt <http://www.SPE.pt>
+>
+>
+>     _______________________________________________
+>     Therion mailing list
+>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>     http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/4ade7a72/attachment.htm>
+
+From ricardo at entrada.tv  Tue Aug 14 17:38:07 2012
+From: ricardo at entrada.tv (Ricardo Constantino)
+Date: Tue, 14 Aug 2012 16:38:07 +0100
+Subject: [Therion] KML Output
+In-Reply-To: <502A63E8.7060601@inria.fr>
+References: <502A5A22.7050202@entrada.tv> <502A63E8.7060601@inria.fr>
+Message-ID: <502A70DF.6010301@entrada.tv>
+
+
+Hi Xavier,
+That export line works nicely (after removing the spaces from the 
+coordinate data in the KML) and gets the job done :)
+Many Thanks
+
+
+Em 14-08-2012 15:42, Xavier Pennec escreveu:
+> Hi Ricardo,
+>
+> I guess the problem is that you export a map without having a contour 
+> drawn, thus there is nothing  to export.
+> Try to draw some cave walls or to export a model to see the wireframe 
+> of the cave:
+> export model -format kml -output ALV_kml_model.kml
+> Xavier
+>
+>
+> Le 14/08/2012 16:01, Ricardo Constantino a écrit :
+>> Hello,
+>>
+>> I need someone's help to generate a KML file ...
+>> Attached is an extract of the cave survey data / config file that 
+>> I've been using - but the result is always an "emplty" KML file.
+>> What am I doing wrong ?
+>>
+>> Thanks in advance,
+>> Ricardo
+>>
+>>
+>> 	facebook.com/RICARDO.CONSTANTINO 
+>> <http://www.facebook.com/RICARDO.CONSTANTINO>
+>> ALVIELA.com <http://www.ALVIELA.com>
+>> CPAS.pt <http://www.CPAS.pt>
+>> DEEPREEFS.com <http://www.DEEPREEFS.com>
+>> ENTRADA.tv <http://www.ENTRADA.tv>
+>> GlobalUnderwaterExplorers.org <http://www.globalunderwaterexplorers.org/>
+>> SPE.pt <http://www.SPE.pt>
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+> -- 
+> > -------------------------
+> > Xavier Pennec
+> > Senior Research Scientist / Directeur de recherche
+> > Asclepios project-team, INRIA Sophia-Antipolis
+> > 2004 Route des Lucioles, BP93
+> > F-06902 Sophia-Antipolis Cedex, France
+> > +33 4 92 38 76 64
+> > +33 6 78 35 16 90
+> >http://www-sop.inria.fr/asclepios/
+> > -------------------------------
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/0da75968/attachment.htm>
+
+From torstein.finnesand at gmail.com  Tue Aug 14 17:44:03 2012
+From: torstein.finnesand at gmail.com (Torstein Finnesand)
+Date: Tue, 14 Aug 2012 17:44:03 +0200
+Subject: [Therion] KML Output
+In-Reply-To: <502A6E9E.9040808@entrada.tv>
+References: <502A5A22.7050202@entrada.tv>
+	<CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+	<502A6E9E.9040808@entrada.tv>
+Message-ID: <502A7243.60503@gmail.com>
+
+I thought it was possible to create a centerline only KML file by using 
+"model" (not "map"), like this:
+
+export model -format kml -output ALV_kml.kml
+
+Torstein
+
+
+On 14.08.2012 17:28, Ricardo Constantino wrote:
+>
+> Thanks for the feedback.
+>
+> That was the general idea - map out over Google the centerlines of a 
+> couple of caves to see "the big picture".
+> Is it worth trying to draw a single line scrap over the centerline to 
+> see how it reacts ?
+>
+> I've also tried to generate KML output with my complete data set (with 
+> scraps) - it warns that the data is not georeferenced and generates an 
+> empty KML.
+> I have at least one station fixed (as in the example I attached 
+> previously), and don't understand what I am missing to get over this 
+> hurdle.
+>
+> Best,
+> Ricardo
+>
+>
+> Em 14-08-2012 15:58, Footleg escreveu:
+>> It looks like you have not drawn and included any scraps yet. These 
+>> are needed to define the walls which in turn drive the KML file 
+>> generation. I don't know if there is any way to create a centreline 
+>> only KML file. I've wondered this before, as it would be quite useful 
+>> to see the centrelines for an entire cave in GoogleEarth before 
+>> drawing all (or even before I've drawn any) scraps.
+>>
+>> Footleg
+>>
+>> On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv 
+>> <mailto:ricardo at entrada.tv>> wrote:
+>>
+>>     Hello,
+>>
+>>     I need someone's help to generate a KML file ...
+>>     Attached is an extract of the cave survey data / config file that
+>>     I've been using - but the result is always an "emplty" KML file.
+>>     What am I doing wrong ?
+>>
+>>     Thanks in advance,
+>>     Ricardo
+>>
+>>
+>>     	facebook.com/RICARDO.CONSTANTINO
+>>     <http://www.facebook.com/RICARDO.CONSTANTINO>
+>>     ALVIELA.com <http://www.ALVIELA.com>
+>>     CPAS.pt <http://www.CPAS.pt>
+>>     DEEPREEFS.com <http://www.DEEPREEFS.com>
+>>     ENTRADA.tv <http://www.ENTRADA.tv>
+>>     GlobalUnderwaterExplorers.org
+>>     <http://www.globalunderwaterexplorers.org/>
+>>     SPE.pt <http://www.SPE.pt>
+>>
+>>
+>>     _______________________________________________
+>>     Therion mailing list
+>>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>     http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/4201b592/attachment.htm>
+
+From ricardo at entrada.tv  Tue Aug 14 18:01:46 2012
+From: ricardo at entrada.tv (Ricardo Constantino)
+Date: Tue, 14 Aug 2012 17:01:46 +0100
+Subject: [Therion] KML Output
+In-Reply-To: <502A7243.60503@gmail.com>
+References: <502A5A22.7050202@entrada.tv>
+	<CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+	<502A6E9E.9040808@entrada.tv> <502A7243.60503@gmail.com>
+Message-ID: <502A766A.5080405@entrada.tv>
+
+
+Works perfectly as suggested by Xavier also.
+Attached is what I was trying to achieve, now I just need to integrate 
+it into this KMZ (http://www.projectbaseline.org/estremenho-karst-massif).
+Thanks guys !
+
+
+Em 14-08-2012 16:44, Torstein Finnesand escreveu:
+> I thought it was possible to create a centerline only KML file by 
+> using "model" (not "map"), like this:
+>
+> export model -format kml -output ALV_kml.kml
+>
+> Torstein
+>
+>
+> On 14.08.2012 17:28, Ricardo Constantino wrote:
+>>
+>> Thanks for the feedback.
+>>
+>> That was the general idea - map out over Google the centerlines of a 
+>> couple of caves to see "the big picture".
+>> Is it worth trying to draw a single line scrap over the centerline to 
+>> see how it reacts ?
+>>
+>> I've also tried to generate KML output with my complete data set 
+>> (with scraps) - it warns that the data is not georeferenced and 
+>> generates an empty KML.
+>> I have at least one station fixed (as in the example I attached 
+>> previously), and don't understand what I am missing to get over this 
+>> hurdle.
+>>
+>> Best,
+>> Ricardo
+>>
+>>
+>> Em 14-08-2012 15:58, Footleg escreveu:
+>>> It looks like you have not drawn and included any scraps yet. These 
+>>> are needed to define the walls which in turn drive the KML file 
+>>> generation. I don't know if there is any way to create a centreline 
+>>> only KML file. I've wondered this before, as it would be quite 
+>>> useful to see the centrelines for an entire cave in GoogleEarth 
+>>> before drawing all (or even before I've drawn any) scraps.
+>>>
+>>> Footleg
+>>>
+>>> On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv 
+>>> <mailto:ricardo at entrada.tv>> wrote:
+>>>
+>>>     Hello,
+>>>
+>>>     I need someone's help to generate a KML file ...
+>>>     Attached is an extract of the cave survey data / config file
+>>>     that I've been using - but the result is always an "emplty" KML
+>>>     file.
+>>>     What am I doing wrong ?
+>>>
+>>>     Thanks in advance,
+>>>     Ricardo
+>>>
+>>>
+>>>     	facebook.com/RICARDO.CONSTANTINO
+>>>     <http://www.facebook.com/RICARDO.CONSTANTINO>
+>>>     ALVIELA.com <http://www.ALVIELA.com>
+>>>     CPAS.pt <http://www.CPAS.pt>
+>>>     DEEPREEFS.com <http://www.DEEPREEFS.com>
+>>>     ENTRADA.tv <http://www.ENTRADA.tv>
+>>>     GlobalUnderwaterExplorers.org
+>>>     <http://www.globalunderwaterexplorers.org/>
+>>>     SPE.pt <http://www.SPE.pt>
+>>>
+>>>
+>>>     _______________________________________________
+>>>     Therion mailing list
+>>>     Therion at speleo.sk <mailto:Therion at speleo.sk>
+>>>     http://mailman.speleo.sk/mailman/listinfo/therion
+>>>
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> Therion mailing list
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/6182f26e/attachment.htm>
+
+From martinsluka at mac.com  Tue Aug 14 21:17:14 2012
+From: martinsluka at mac.com (Sluka Martin)
+Date: Tue, 14 Aug 2012 21:17:14 +0200
+Subject: [Therion] KML Output
+In-Reply-To: <502A766A.5080405@entrada.tv>
+References: <502A5A22.7050202@entrada.tv>
+	<CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+	<502A6E9E.9040808@entrada.tv> <502A7243.60503@gmail.com>
+	<502A766A.5080405@entrada.tv>
+Message-ID: <E7431D88-8453-49DE-BD3F-FBE1287B8615@mac.com>
+
+
+On 14.8.2012, at 18:01, Ricardo Constantino wrote:
+
+> 
+> Works perfectly as suggested by Xavier also.
+> Attached is what I was trying to achieve, now I just need to integrate it into this KMZ (http://www.projectbaseline.org/estremenho-karst-massif).
+> Thanks guys !
+> 
+> 
+> Em 14-08-2012 16:44, Torstein Finnesand escreveu:
+>> I thought it was possible to create a centerline only KML file by using "model" (not "map"), like this:
+>> 
+>> export model -format kml -output ALV_kml.kml
+>> 
+>> Torstein
+>> 
+>> 
+>> On 14.08.2012 17:28, Ricardo Constantino wrote:
+>>> 
+>>> Thanks for the feedback.
+>>> 
+>>> That was the general idea - map out over Google the centerlines of a couple of caves to see "the big picture".
+>>> Is it worth trying to draw a single line scrap over the centerline to see how it reacts ?
+>>> 
+>>> I've also tried to generate KML output with my complete data set (with scraps) - it warns that the data is not georeferenced and generates an empty KML.
+>>> I have at least one station fixed (as in the example I attached previously), and don't understand what I am missing to get over this hurdle.
+>>> 
+>>> Best,
+>>> Ricardo
+>>> 
+>>> 
+>>> Em 14-08-2012 15:58, Footleg escreveu:
+>>>> It looks like you have not drawn and included any scraps yet. These are needed to define the walls which in turn drive the KML file generation. I don't know if there is any way to create a centreline only KML file. I've wondered this before, as it would be quite useful to see the centrelines for an entire cave in GoogleEarth before drawing all (or even before I've drawn any) scraps.
+>>>> 
+>>>> Footleg
+>>>> 
+>>>> On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv> wrote:
+>>>> Hello,
+>>>> 
+>>>> I need someone's help to generate a KML file ...
+>>>> Attached is an extract of the cave survey data / config file that I've been using - but the result is always an "emplty" KML file.
+>>>> What am I doing wrong ?
+>>>> 
+>>>> Thanks in advance,
+>>>> Ricardo
+>>>> 
+>>>> 
+>>>> 	facebook.com/RICARDO.CONSTANTINO
+>>>> ALVIELA.com
+>>>> CPAS.pt
+>>>> DEEPREEFS.com
+>>>> ENTRADA.tv
+>>>> GlobalUnderwaterExplorers.org
+>>>> SPE.pt
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>>> 
+>>>> 
+>>>> 
+>>>> 
+>>>> _______________________________________________
+>>>> Therion mailing list
+>>>> 
+>>>> Therion at speleo.sk
+>>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>> 
+>>> 
+>>> 
+>>> _______________________________________________
+>>> Therion mailing list
+>>> 
+>>> Therion at speleo.sk
+>>> http://mailman.speleo.sk/mailman/listinfo/therion
+>> 
+>> 
+>> _______________________________________________
+>> Therion mailing list
+>> 
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From martinsluka at mac.com  Tue Aug 14 20:58:18 2012
+From: martinsluka at mac.com (Sluka Martin)
+Date: Tue, 14 Aug 2012 20:58:18 +0200
+Subject: [Therion] KML Output
+In-Reply-To: <502A70DF.6010301@entrada.tv>
+References: <502A5A22.7050202@entrada.tv> <502A63E8.7060601@inria.fr>
+	<502A70DF.6010301@entrada.tv>
+Message-ID: <A2E7DD0D-1B03-4D1F-A4F6-106B18CCE547@mac.com>
+
+
+On 14.8.2012, at 17:38, Ricardo Constantino wrote:
+
+> That export line works nicely (after removing the spaces from the coordinate data in the KML) and gets the job done :)
+
+Check version 5.3.10, the bug with additional spaces is corrected
+
+m.s.
+
+
+From drfootleg at gmail.com  Tue Aug 14 21:58:31 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Tue, 14 Aug 2012 20:58:31 +0100
+Subject: [Therion] KML Output
+In-Reply-To: <502A7243.60503@gmail.com>
+References: <502A5A22.7050202@entrada.tv>
+	<CAJkGg4mJg=H_wMeauZdNvO0n9xM-G-q_SQEKKyZ3rhXjq_Ld=Q@mail.gmail.com>
+	<502A6E9E.9040808@entrada.tv> <502A7243.60503@gmail.com>
+Message-ID: <CAJkGg4kd+FnotmONRmMk-9WitoTfTQbJe91xJejPCtVng=caGA@mail.gmail.com>
+
+I had never realised that. Thanks! That is most useful.
+
+Footleg
+
+On 14 August 2012 16:44, Torstein Finnesand <torstein.finnesand at gmail.com>wrote:
+
+>  I thought it was possible to create a centerline only KML file by using
+> "model" (not "map"), like this:
+>
+> export model -format kml -output ALV_kml.kml
+>
+> Torstein
+>
+>
+>
+> On 14.08.2012 17:28, Ricardo Constantino wrote:
+>
+>
+> Thanks for the feedback.
+>
+> That was the general idea - map out over Google the centerlines of a
+> couple of caves to see "the big picture".
+> Is it worth trying to draw a single line scrap over the centerline to see
+> how it reacts ?
+>
+> I've also tried to generate KML output with my complete data set (with
+> scraps) - it warns that the data is not georeferenced and generates an
+> empty KML.
+> I have at least one station fixed (as in the example I attached
+> previously), and don't understand what I am missing to get over this hurdle.
+>
+> Best,
+> Ricardo
+>
+>
+> Em 14-08-2012 15:58, Footleg escreveu:
+>
+> It looks like you have not drawn and included any scraps yet. These are
+> needed to define the walls which in turn drive the KML file generation. I
+> don't know if there is any way to create a centreline only KML file. I've
+> wondered this before, as it would be quite useful to see the centrelines
+> for an entire cave in GoogleEarth before drawing all (or even before I've
+> drawn any) scraps.
+>
+>  Footleg
+>
+> On 14 August 2012 15:01, Ricardo Constantino <ricardo at entrada.tv> wrote:
+>
+>>  Hello,
+>>
+>> I need someone's help to generate a KML file ...
+>> Attached is an extract of the cave survey data / config file that I've
+>> been using - but the result is always an "emplty" KML file.
+>> What am I doing wrong ?
+>>
+>> Thanks in advance,
+>> Ricardo
+>>
+>>
+>>     facebook.com/RICARDO.CONSTANTINO<http://www.facebook.com/RICARDO.CONSTANTINO>
+>> ALVIELA.com <http://www.ALVIELA.com>
+>> CPAS.pt <http://www.CPAS.pt>
+>> DEEPREEFS.com <http://www.DEEPREEFS.com>
+>> ENTRADA.tv <http://www.ENTRADA.tv>
+>> GlobalUnderwaterExplorers.org <http://www.globalunderwaterexplorers.org/>
+>> SPE.pt <http://www.SPE.pt>
+>>
+>> _______________________________________________
+>> Therion mailing list
+>> Therion at speleo.sk
+>> http://mailman.speleo.sk/mailman/listinfo/therion
+>>
+>>
+>
+>
+> _______________________________________________
+> Therion mailing listTherion at speleo.skhttp://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing listTherion at speleo.skhttp://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120814/66a0b537/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Aug 15 10:03:03 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 15 Aug 2012 20:03:03 +1200
+Subject: [Therion] Distinguishing between survey centrelines and drawings
+Message-ID: <377BD46A36694A039E41DFB3B51DB94A@JUICEBRAIN>
+
+The recent kml output discussion reminds me that it took me about three
+years of using Therion before I realized that the outputs usually do not
+present a consistent or unified set of representations of the cave.  Since
+then I have been trying to make sense of it and almost came up with a
+tabular representation to improve on the Therion's Features wiki pages, but
+then got confused again.
+
+ 
+
+This information is already available in the Therion Book and on the wiki in
+various places, but I do not recall reading in one place a clear description
+or why it is so. Does anyone else get confused by this aspect of Therion's
+behaviour?
+
+ 
+
+Here is my first cut on an overview description of what goes on and a table
+that hopefully clarifies the relationships between 'export' 'selection' and
+'file formats'.
+http://therion.speleo.sk/wiki/doku.php?id=exportselectionformat
+
+ 
+
+Feel free to make suggestions or edit the page to clarify further or to
+correct any errors in what I've presented so far.
+
+I've made a few guesses about the capabilities of many of the file formats,
+as I'm not familiar with all of them.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120815/0f9c0d37/attachment.htm>
+
+From drfootleg at gmail.com  Thu Aug 16 13:38:31 2012
+From: drfootleg at gmail.com (Footleg)
+Date: Thu, 16 Aug 2012 12:38:31 +0100
+Subject: [Therion] Distinguishing between survey centrelines and drawings
+In-Reply-To: <377BD46A36694A039E41DFB3B51DB94A@JUICEBRAIN>
+References: <377BD46A36694A039E41DFB3B51DB94A@JUICEBRAIN>
+Message-ID: <CAJkGg4nMXkJJiaqkTK-Hi=z=FL-A95mmE=oJ7e092C+0=0Un9w@mail.gmail.com>
+
+Thanks for putting together that page Bruce. I learned a few things
+from looking at your table, and did not spot anything that looked
+wrong as far as my knowledge of the formats I've used goes.
+
+Footleg
+
+On 15 August 2012 09:03, Bruce <bruce at tomo.co.nz> wrote:
+> The recent kml output discussion reminds me that it took me about three
+> years of using Therion before I realized that the outputs usually do not
+> present a consistent or unified set of representations of the cave.  Since
+> then I have been trying to make sense of it and almost came up with a
+> tabular representation to improve on the Therion’s Features wiki pages, but
+> then got confused again.
+>
+>
+>
+> This information is already available in the Therion Book and on the wiki in
+> various places, but I do not recall reading in one place a clear description
+> or why it is so. Does anyone else get confused by this aspect of Therion’s
+> behaviour?
+>
+>
+>
+> Here is my first cut on an overview description of what goes on and a table
+> that hopefully clarifies the relationships between ‘export’ ‘selection’ and
+> ‘file formats’.
+> http://therion.speleo.sk/wiki/doku.php?id=exportselectionformat
+>
+>
+>
+> Feel free to make suggestions or edit the page to clarify further or to
+> correct any errors in what I’ve presented so far.
+>
+> I’ve made a few guesses about the capabilities of many of the file formats,
+> as I’m not familiar with all of them.
+>
+>
+>
+> Bruce
+>
+>
+>
+>
+>
+>
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+
+
+From gaetan.perrier at speleolot.org  Tue Aug 21 02:45:36 2012
+From: gaetan.perrier at speleolot.org (=?ISO-8859-1?Q?Ga=EBtan?= PERRIER)
+Date: Tue, 21 Aug 2012 02:45:36 +0200
+Subject: [Therion] therion 5.3.10 and source tar.gz
+Message-ID: <20120821024536.138bedab05643645719f91ea@speleolot.org>
+
+Hi,
+
+It seems that the source tar.gz is malformed. After decompression, the
+directories haven't the good rights (x is missing).
+
+Regards,
+
+-- 
+Gaëtan PERRIER <gaetan.perrier at speleolot.org>
+
+
+From bruce at tomo.co.nz  Tue Aug 21 12:34:26 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Tue, 21 Aug 2012 22:34:26 +1200
+Subject: [Therion] OOPS: version 5.3.10
+In-Reply-To: <CAP35+gH+K4DoX7irQvubT=vtCLhFvS7Smog60zUwH0YvUxALrg@mail.gmail.com>
+References: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com><D410DD6D59134BB8AE789C01B75446F7@JUICEBRAIN>
+	<CAP35+gH+K4DoX7irQvubT=vtCLhFvS7Smog60zUwH0YvUxALrg@mail.gmail.com>
+Message-ID: <F36445B692A6401FA03AABF758BF3528@JUICEBRAIN>
+
+Stacho
+
+The error that I experienced was not caused by the change from 5.3.9 to
+5.3.10 but rather I suspect a recent change that I made in my dataset.
+
+So most likely my fault in not identifying the cause correctly.
+
+I get the same error for particular thconfig files and selections regardless
+of the therion version, and other thconfig files are OK in both versions.
+
+ 
+
+The debug version you sent me gives this;
+
+.
+
+LEG: - at de [1999] (from DE23.12 at de [1993])
+
+LEG: - at de [1998] (from DE23.12 at de [1993])
+
+LEG: - at de [1997] (from DE23.12 at de [1993])
+
+LEG: - at de [1996] (from DE23.12 at de [1993])
+
+LEG: - at de [1995] (from DE23.12 at de [1993])
+
+LEG: - at de [1994] (from DE23.12 at de [1993])
+
+LEG: - at de [1992] (from DE23.11 at de [1980])
+
+LEG: - at de [1991] (from DE23.11 at de [1980])
+
+LEG: - at de [1990] (from DE23.11 at de [1980])
+
+LEG: - at de [1989] (from DE23.11 at de [1980])
+
+LEG: - at de [1988] (from DE23.11 at de [1980])
+
+LEG: - at de [1987] (from DE23.11 at de [1980])
+
+LEG: - at de [1986] (from DE23.11 at de [1980])
+
+LEG: - at de [1985] (from DE23.11 at de [1980])
+
+LEG: - at de [1984] (from DE23.11 at de [1980])
+
+LEG: - at de [1983] (from DE23.11 at de [1980])
+
+LEG: - at de [1982] (from DE23.11 at de [1980])
+
+LEG: - at de [1981] (from DE23.11 at de [1980])
+
+LEG: - at de [1979] (from DE23.10 at de [1967])
+
+D:\Program Files\Therion\therion.exe: error -- (thdb1d.cxx:2290): a software
+BUG is present (thdb1d.cxx:2290)
+
+writing xtherion file ... done
+
+ 
+
+and an inspection of a diff of my last data commit gives me;
+
+.
+
+centreline
+
+explo-date 2012.01.22 
+
+explo-team "Bruce Mutton" 
+
+explo-date 2012.06.24
+
+explo-team "Michael Brewer"
+
+date 2012 #date needed to suppress 'undated survey declination' error 
+
+data nosurvey from to
+
+DE23.10 at de dm30.15 at dm #unsurveyed connection Bermuda Triangle Spiders Lair
+
+DJ27.5 at dj dm30.15 at dm #unsurveyed new main route Hobbit Hole Spiders Lair
+
+endcentreline
+
+ 
+
+Intriguingly this centerline does not give an error when it is processed at
+this cave level, but it does when it is processed at a higher level as part
+of a multi-cave compilation.  So it is inconsistent in the way it triggers a
+crash.
+
+ 
+
+My initial guess is that there is something about my (almost) first usage of
+'nosurvey' that Therion does not like.  2x nosurveys to the same station
+perhaps?
+
+ 
+
+My initial trials suggest that commenting out the centerline above fixes the
+problem.
+
+Any comments on whether my usage of nosurvey 'breaks any rules'?
+
+Ie Should it be considered a bug in my data file or a Therion bug?  (I guess
+at least the error should be trapped more gracefully).
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Stacho Mudrak
+Sent: Monday, 13 August 2012 9:41 p.m.
+To: List for Therion users
+Subject: Re: [Therion] OOPS: version 5.3.10
+
+ 
+
+I am really sorry.
+
+ 
+
+But unless you can extract a dataset, that causes the problem, I am not able
+to fix it :(
+
+ 
+
+I will diff thdb1d.cxx changes and see, where potentially error can be, but
+some dataset, that causes this problem would help a lot. All my datasets
+seems to work fine.
+
+ 
+
+S.
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120821/acc5ac30/attachment.htm>
+
+From lists at group-s.sk  Tue Aug 21 18:21:51 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Tue, 21 Aug 2012 18:21:51 +0200
+Subject: [Therion] OOPS: version 5.3.10
+In-Reply-To: <F36445B692A6401FA03AABF758BF3528@JUICEBRAIN>
+References: <DDB7CADD-1D94-4669-8EEF-192707012B2E@me.com>
+	<D410DD6D59134BB8AE789C01B75446F7@JUICEBRAIN>
+	<CAP35+gH+K4DoX7irQvubT=vtCLhFvS7Smog60zUwH0YvUxALrg@mail.gmail.com>
+	<F36445B692A6401FA03AABF758BF3528@JUICEBRAIN>
+Message-ID: <CAP35+gEYQHyAKeMvhxJpO8AemuYTd90eB81MswnhPARtZFnWhw@mail.gmail.com>
+
+Thanks a lot bruce, I think I have an idea what is going on. "nosurvey"
+part of code is quite new one, and it may be a problem.
+
+I will try to check it. It is definitely a problem of therion - it should
+at least generate some reasonable error, not a bug report ;)
+
+Thanks a lot, S.
+
+On 21 August 2012 12:34, Bruce <bruce at tomo.co.nz> wrote:
+
+> **
+>
+> Stacho****
+>
+> The error that I experienced was not caused by the change from 5.3.9 to
+> 5.3.10 but rather I suspect a recent change that I made in my dataset.****
+>
+> So most likely my fault in not identifying the cause correctly.****
+>
+> I get the same error for particular thconfig files and selections
+> regardless of the therion version, and other thconfig files are OK in both
+> versions.****
+>
+> ** **
+>
+> The debug version you sent me gives this;****
+>
+> …****
+>
+> LEG: - at de [1999] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1998] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1997] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1996] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1995] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1994] (from DE23.12 at de [1993])****
+>
+> LEG: - at de [1992] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1991] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1990] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1989] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1988] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1987] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1986] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1985] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1984] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1983] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1982] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1981] (from DE23.11 at de [1980])****
+>
+> LEG: - at de [1979] (from DE23.10 at de [1967])****
+>
+> D:\Program Files\Therion\therion.exe: error -- (thdb1d.cxx:2290): a
+> software BUG is present (thdb1d.cxx:2290)****
+>
+> writing xtherion file ... done****
+>
+> ** **
+>
+> and an inspection of a diff of my last data commit gives me;****
+>
+> …****
+>
+> centreline****
+>
+> explo-date 2012.01.22 ****
+>
+> explo-team "Bruce Mutton" ****
+>
+> explo-date 2012.06.24****
+>
+> explo-team "Michael Brewer"****
+>
+> date 2012 #date needed to suppress 'undated survey declination' error ****
+>
+> data nosurvey from to****
+>
+> DE23.10 at de dm30.15 at dm #unsurveyed connection Bermuda Triangle Spiders Lair
+> ****
+>
+> DJ27.5 at dj dm30.15 at dm #unsurveyed new main route Hobbit Hole Spiders Lair**
+> **
+>
+> endcentreline****
+>
+> ** **
+>
+> Intriguingly this centerline does not give an error when it is processed
+> at this cave level, but it does when it is processed at a higher level as
+> part of a multi-cave compilation.  So it is inconsistent in the way it
+> triggers a crash.****
+>
+> ** **
+>
+> My initial guess is that there is something about my (almost) first usage
+> of ‘nosurvey’ that Therion does not like.  2x nosurveys to the same station
+> perhaps?****
+>
+> ** **
+>
+> My initial trials suggest that commenting out the centerline above fixes
+> the problem.****
+>
+> Any comments on whether my usage of nosurvey ‘breaks any rules’?****
+>
+> Ie Should it be considered a bug in my data file or a Therion bug?  (I
+> guess at least the error should be trapped more gracefully).****
+>
+> ** **
+>
+> Bruce****
+>
+> ** **
+>  ------------------------------
+>
+> *From:* therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] *On
+> Behalf Of *Stacho Mudrak
+> *Sent:* Monday, 13 August 2012 9:41 p.m.
+> *To:* **List for Therion users**
+> *Subject:* Re: [Therion] OOPS: version 5.3.10****
+>
+> ** **
+>
+> I am really sorry.****
+>
+> ** **
+>
+> But unless you can extract a dataset, that causes the problem, I am not
+> able to fix it :(****
+>
+> ** **
+>
+> I will diff thdb1d.cxx changes and see, where potentially error can be,
+> but some dataset, that causes this problem would help a lot. All my
+> datasets seems to work fine.****
+>
+> ** **
+>
+> S.****
+>
+> ** **
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120821/66c971d9/attachment.htm>
+
+From bruce at tomo.co.nz  Wed Aug 22 10:25:17 2012
+From: bruce at tomo.co.nz (Bruce)
+Date: Wed, 22 Aug 2012 20:25:17 +1200
+Subject: [Therion] Interleaved data options
+Message-ID: <E16FB89FB62B4C6B86AA61F4DBC878D4@JUICEBRAIN>
+
+Hi
+
+I have some data that is easily copied out of another application in a
+format like this;
+
+ 
+
+ 
+
+station  tape      compass           clino
+
+                                                
+
+1                                              
+
+2                      22.6      112       0
+
+3                      25.3      244       10
+
+
+                                                
+
+2                      
+
+4                      30         8          -23
+
+5                      30         134       11
+
+ 
+
+And with a bit of simple but tedious manipulation I can get it into a
+Therion friendly;
+
+ 
+
+data normal station newline tape compass clino   
+
+1                      
+
+                          22.6    112       0
+
+2
+
+                        25.3      244       10
+
+3                                              
+
+data normal station newline tape compass clino
+
+
+2
+
+                        30         8          -23
+
+4
+
+                        30         134       11
+
+5
+
+ 
+
+And this works perfectly.  I am looking to reduce the manipulation required
+however. Is there a way I can get the first format to work directly in
+therion?
+
+ 
+
+I have tried;
+
+ 
+
+data normal station newline to tape compass clino
+
+and
+
+data normal from newline to tape compass clino
+
+and some other variations, but they always give a 'missing data' or 'too
+much data' error at the start or end of the data block.
+
+ 
+
+Ideas anyone?
+
+Bruce
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120822/d953863a/attachment.htm>
+
+From wookey at wookware.org  Fri Aug 24 09:28:55 2012
+From: wookey at wookware.org (Wookey)
+Date: Fri, 24 Aug 2012 08:28:55 +0100
+Subject: [Therion] therion 5.3.10 and source tar.gz
+In-Reply-To: <20120821024536.138bedab05643645719f91ea@speleolot.org>
+References: <20120821024536.138bedab05643645719f91ea@speleolot.org>
+Message-ID: <20120824072854.GD27622@stoneboat.aleph1.co.uk>
+
++++ Gaëtan PERRIER [2012-08-21 02:45 +0200]:
+> Hi,
+> 
+> It seems that the source tar.gz is malformed. After decompression, the
+> directories haven't the good rights (x is missing).
+
+yes, confirmed - that confused me for a while too, and broke the
+debian source updte from 5.3.9. A new source tarbal release would be
+good, and I can do kosher 5.3.10 debian/ubuntu packages.
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From lists at group-s.sk  Sat Aug 25 22:05:20 2012
+From: lists at group-s.sk (Stacho Mudrak)
+Date: Sat, 25 Aug 2012 22:05:20 +0200
+Subject: [Therion] therion 5.3.10 and source tar.gz
+In-Reply-To: <20120824072854.GD27622@stoneboat.aleph1.co.uk>
+References: <20120821024536.138bedab05643645719f91ea@speleolot.org>
+	<20120824072854.GD27622@stoneboat.aleph1.co.uk>
+Message-ID: <CAP35+gEW8LbVvqiUV+WG5vfEBN_8pq2qxAVhLjwYUdNFS7TjEg@mail.gmail.com>
+
+Thanks for pointing out, no idea what went wrong (besides I made tarball on
+Win32). It should be fixed now.
+
+S.
+
+On 24 August 2012 09:28, Wookey <wookey at wookware.org> wrote:
+
+> +++ Gaëtan PERRIER [2012-08-21 02:45 +0200]:
+> > Hi,
+> >
+> > It seems that the source tar.gz is malformed. After decompression, the
+> > directories haven't the good rights (x is missing).
+>
+> yes, confirmed - that confused me for a while too, and broke the
+> debian source updte from 5.3.9. A new source tarbal release would be
+> good, and I can do kosher 5.3.10 debian/ubuntu packages.
+>
+> Wookey
+> --
+> Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+> http://wookware.org/
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20120825/b1a1dbb2/attachment.htm>
+

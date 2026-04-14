@@ -1,0 +1,1238 @@
+From olly at survex.com  Sun Sep  5 17:47:29 2004
+From: olly at survex.com (Olly Betts)
+Date: Sun, 5 Sep 2004 16:47:29 +0100
+Subject: demo-rabbit doesn't process
+Message-ID: <162@reconstruction>
+
+Using the therion 0.3.1 debian packages, I unpacked demo-rabbit from the
+tar.gz file, ran xtherion, File->Open thconfig from the demo-rabbit
+directory, and then File->Compile.  This stops with an error - the full
+output cut and pasted from the lower frame is:
+
+
+therion 0.3.1
+
+initialization file: /etc/therion.ini
+reading
+open file -- /etc/therion.ini
+close file -- /etc/therion.ini
+
+
+configuration file: thconfig
+reading
+open file -- thconfig
+close file -- thconfig
+
+
+reading input -- rabbit.th
+open file -- rabbit.th
+open file -- rabbit.th2
+therion (therion.cxx:332): error -- (thdatareader.cxx:213): rabbit.th2
+[708] -- (thline.cxx:370): invalid number -- horizontal
+
+
+Line 708 of rabbit.th2 says "adjust horizontal".  If I remove this, I
+get an error for a later line which says "adjust vertical".  Searching
+the manual for "adjust", "horizontal", or "vertical" doesn't turn up
+anything useful.
+
+Cheers,
+    Olly
+
+
+
+
+From m.b at speleo.sk  Mon Sep  6 07:52:01 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Mon, 6 Sep 2004 07:52:01 +0200 (CEST)
+Subject: [therion] demo-rabbit doesn't process
+In-Reply-To: <162@reconstruction>
+Message-ID: <163@reconstruction>
+
+>> Line 708 of rabbit.th2 says "adjust horizontal".  If I remove this, I
+>> get an error for a later line which says "adjust vertical".  Searching
+>> the manual for "adjust", "horizontal", or "vertical" doesn't turn up
+>> anything useful.
+
+
+I'm really sorry for this. Adjust horizontal/vertical is a feature of
+0.3.3 version which hasn't been released yet (it allows to produce exactly
+horizontal/vertical lines in the elevation or section even after the scrap
+distortion). Stacho was too happy to implement it that he updated the
+example to use this feature. None of us noticed that the corresponding
+therion is not available yet  :(
+Until the 0.3.3 version comes, there will be old rabbit cave demo on the
+web page.
+
+Regards,
+Martin
+
+
+
+
+From olly at survex.com  Fri Sep 10 00:06:18 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 9 Sep 2004 23:06:18 +0100
+Subject: [therion] demo-rabbit doesn't process
+In-Reply-To: <162@reconstruction>
+Message-ID: <164@reconstruction>
+
+On Mon, Sep 06, 2004 at 07:52:01AM +0200, Martin Budaj wrote:
+
+>> Until the 0.3.3 version comes, there will be old rabbit cave demo on the
+>> web page.
+
+
+Thankyou - it now processes for me.
+
+One question I have though - why is the elevation in the map editor
+drawn rotated 90 degrees?  That would seem to make is much harder to
+draw unless there's some "view rotated" option, which I can't see to
+find.
+
+Cheers,
+    Olly
+
+
+
+
+From s.m at speleo.sk  Fri Sep 10 09:14:24 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 10 Sep 2004 09:14:24 +0200
+Subject: [therion] demo-rabbit doesn't process
+In-Reply-To: <162@reconstruction>
+Message-ID: <165@reconstruction>
+
+Olly Betts wrote:
+
+> One question I have though - why is the elevation in the map editor
+> drawn rotated 90 degrees?
+
+
+The reason is very simple. In the original scan - it was drawn on the border of the paper rotated 90degrees to the plan. The plan was drawn beside. And I was too lazy to split this scan into two separate bitmaps and rotate one of them 90 degrees. Now it looks very strange, I agree :( May be if original scan will be included, it can help.
+
+> That would seem to make is much harder to
+> draw unless there's some "view rotated" option, which I can't see to
+> find.
+
+
+There is no such an option. If you have such a problem (image rotation, scaling, color adjustments), it is very easy to do these bitmap transformations in some picture editor (e.g. gimp or photoshop) and load it into xtherion already prepared. Than you can draw it natural way.
+
+Regards, S.
+
+
+-=x=-
+Skontrolované antivírovým programom NOD32
+
+
+
+
+From olly at survex.com  Fri Sep 10 16:05:02 2004
+From: olly at survex.com (Olly Betts)
+Date: Fri, 10 Sep 2004 15:05:02 +0100
+Subject: [therion] demo-rabbit doesn't process
+In-Reply-To: <162@reconstruction>
+Message-ID: <166@reconstruction>
+
+On Fri, Sep 10, 2004 at 09:14:24AM +0200, Stacho Mudrak wrote:
+
+>> The reason is very simple. In the original scan - it was drawn on the
+>> border of the paper rotated 90degrees to the plan. The plan was drawn
+>> beside. And I was too lazy to split this scan into two separate bitmaps
+>> and rotate one of them 90 degrees. Now it looks very strange, I agree  :(
+
+
+Ah, I see.
+
+>> May be if original scan will be included, it can help.
+
+
+Probably - it's hard to know why it's like that otherwise.
+
+Incidentally why is the "load without images" menu option called
+"Open XP"?  It's not at all self-documenting, and even having looked up
+the function in the manual, the name isn't obvious to me.  My best guess
+is it's short for "Open eXcluding Pictures".  I realise you want to
+avoid turning a menu entry into an essay, but something like "Open without
+pictures" or "Open (no pics)" would still be reasonably short while
+making the function obvious.
+
+>>> >That would seem to make is much harder to
+>>> >draw unless there's some "view rotated" option, which I can't see to
+>>> >find.
+>
+>>
+>> There is no such an option. If you have such a problem (image rotation,
+>> scaling, color adjustments), it is very easy to do these bitmap
+>> transformations in some picture editor (e.g. gimp or photoshop) and load
+>> it into xtherion already prepared. Than you can draw it natural way.
+
+
+Sure.  I only went looking for it because I didn't think someone would
+have drawn the elevation sideways!
+
+Cheers,
+Olly
+
+
+
+
+From s.m at speleo.sk  Fri Sep 10 16:07:28 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Fri, 10 Sep 2004 16:07:28 +0200
+Subject: [therion] demo-rabbit doesn't process
+In-Reply-To: <162@reconstruction>
+Message-ID: <167@reconstruction>
+
+>> Incidentally why is the "load without images" menu option called
+>> "Open XP"?  It's not at all self-documenting, and even having looked up
+>> the function in the manual, the name isn't obvious to me.  My best guess
+>> is it's short for "Open eXcluding Pictures".  I realise you want to
+
+
+Your guess is correct  :)
+
+>> avoid turning a menu entry into an essay, but something like "Open without
+>> pictures" or "Open (no pics)" would still be reasonably short while
+>> making the function obvious.
+
+
+"Open (no pics)" sounds much better, I agree. Will be changed in next
+version.
+
+Thanks, S.
+
+
+-=x=-
+Skontrolované antivírovým programom NOD32
+
+
+
+
+From m.b at speleo.sk  Fri Sep 10 13:09:11 2004
+From: m.b at speleo.sk (Martin Budaj)
+Date: Fri, 10 Sep 2004 13:09:11 +0200 (CEST)
+Subject: Therion 0.3.3 announce
+Message-ID: <168@reconstruction>
+
+Hello everybody,
+
+therion 0.3.3 is available. The most important changes are
+
+* support for surface map (2D) and surface grid (3D)
+* it's possible do display centreline in 2D map without drawing the scrap
+  (it's enough to include survey in the map command)
+
+See the file CHANGES for details.
+
+The web page contains screenshots illustrating new features.
+
+Best wishes,
+Martin
+
+
+
+
+
+
+From martinsluka at mac.com  Fri Sep 10 13:38:00 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 10 Sep 2004 13:38:00 +0200
+Subject: Havranik
+Message-ID: <169@reconstruction>
+
+Tak je to presne tak, ako som si myslel :)
+
+M.
+--
+
+
+
+
+
+From martinsluka at mac.com  Fri Sep 10 15:24:43 2004
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 10 Sep 2004 15:24:43 +0200
+Subject: [therion] Havranik
+In-Reply-To: <169@reconstruction>
+Message-ID: <170@reconstruction>
+
+I apologize myself,
+
+I sent the original mail to therion conference instead of private one.
+
+The graph is measurement of waterflow of one permanent karst spring under Muran plateau at East Slovakia. We found the second spring, periodical one, not far from it.
+
+As you may see, there are missed peaks of the individual curves of permanent spring - the missed water flows from periodical one.
+
+Sorry, nothing connected with therion till now. Maybe somebody will dig through the temporary spring and...
+
+Martin
+
+
+--
+
+
+
+From olly at survex.com  Mon Sep 27 21:53:44 2004
+From: olly at survex.com (Olly Betts)
+Date: Mon, 27 Sep 2004 20:53:44 +0100
+Subject: How to change settings for just a few readings?
+Message-ID: <171@reconstruction>
+
+I'm looking at how to convert from .svx format to .th format.  Mostly
+working, except I can't see how to handle this cleanly (the situation
+modelled here is that the tape is too short, and for one leg is was
+measured from a different point - in the example this was distilled
+from because 2-3 was a plumb and we needed more tape to tie a crab on):
+
+  *begin test
+
+  *calibrate tape 1
+  1 2 10 0 0
+
+  *begin
+  *calibrate tape 2
+  2 3 10 0 0
+  *end
+  ; *calibrate 1 is now be back in effect
+
+  3 4 10 0 0
+
+  *end test
+
+The nearest I can get is:
+
+  encoding iso8859-1
+  survey test -title "test"
+  centreline
+  calibrate tape 1
+  1 2 10 0 0
+  endcentreline
+  centreline
+  calibrate tape 2
+  2 3 10 0 0
+  endcentreline
+  centreline
+  3 4 10 0 0
+  endcentreline
+  endsurvey
+
+However this doesn't restore the "calibrate tape 1" of course (the
+survey length is 27m).  I can't omit the survey name for a survey
+command, or pass an empty name.  And I can't nest centreline commands.
+
+The only solution I can see is to track which settings are in effect and
+reset them all after the *end.  That's just about OK for automated
+conversion if nobody's going to want to edit the result, but it must be
+a right headache for anyone who has tried to hand convert a dataset so
+I'm wondering if there's some way to express this situation.
+
+Cheers,
+    Olly
+
+
+
+
+From s.m at speleo.sk  Tue Sep 28 12:29:51 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 28 Sep 2004 12:29:51 +0200
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <172@reconstruction>
+
+Olly Betts wrote:
+
+> The only solution I can see is to track which settings are in effect and
+> reset them all after the *end.  That's just about OK for automated
+> conversion if nobody's going to want to edit the result, but it must be
+> a right headache for anyone who has tried to hand convert a dataset so
+> I'm wondering if there's some way to express this situation.
+
+
+No, there is no such possibility. You have to repeat calibration every time it changes. I would rewrite your example this way:
+
+  encoding iso8859-1
+    survey test -title "test"
+      centreline
+      calibrate tape 1
+      1 2 10 0 0
+      calibrate tape 2
+      2 3 10 0 0
+      calibrate tape 1
+      3 4 10 0 0
+    endcentreline
+  endsurvey
+
+I'm just wondering, whether these situations are so common...
+
+S.
+
+
+
+
+From olly at survex.com  Tue Sep 28 12:45:42 2004
+From: olly at survex.com (Olly Betts)
+Date: Tue, 28 Sep 2004 11:45:42 +0100
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <173@reconstruction>
+
+On Tue, Sep 28, 2004 at 12:29:51PM +0200, Stacho Mudrak wrote:
+
+>> Olly Betts wrote:
+>>
+>
+>>> >The only solution I can see is to track which settings are in effect and
+>>> >reset them all after the *end.  That's just about OK for automated
+>>> >conversion if nobody's going to want to edit the result, but it must be
+>>> >a right headache for anyone who has tried to hand convert a dataset so
+>>> >I'm wondering if there's some way to express this situation.
+>
+>>
+>> No, there is no such possibility. You have to repeat calibration every
+>> time it changes. I would rewrite your example this way:
+>>
+>>   encoding iso8859-1
+>>     survey test -title "test"
+>>       centreline
+>>       calibrate tape 1
+>>       1 2 10 0 0
+>>       calibrate tape 2
+>>       2 3 10 0 0
+>>       calibrate tape 1
+>>       3 4 10 0 0
+>>     endcentreline
+>>   endsurvey
+
+
+Ick.
+
+>> I'm just wondering, whether these situations are so common...
+
+
+It happens 8 times in CUCC's Austria dataset.
+
+Cheers,
+    Olly
+
+
+
+
+From john.pybus at zoology.oxford.ac.uk  Tue Sep 28 13:21:16 2004
+From: john.pybus at zoology.oxford.ac.uk (John Pybus)
+Date: Tue, 28 Sep 2004 12:21:16 +0100
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <174@reconstruction>
+
+Stacho Mudrak wrote:
+
+> No, there is no such possibility. You have to repeat calibration every time it changes. I would rewrite your example this way:
+>
+>   encoding iso8859-1
+>     survey test -title "test"
+>       centreline
+>       calibrate tape 1
+>       1 2 10 0 0
+>       calibrate tape 2
+>       2 3 10 0 0
+>       calibrate tape 1
+>       3 4 10 0 0
+>     endcentreline
+>   endsurvey
+>
+> I'm just wondering, whether these situations are so common...
+
+
+I'd say common enough on fairly large survey projects, especially those under exploration/expedition conditions where the surveying is done in a hurry and the chances of going back and correcting iffy readings are low.
+
+I quite often make use of changing the SD for particular legs where it's known that the survey wasn't done to the general standard.  In general the SD is defined in a separate file which I *include in the survex data.  Having to undo that separation when using therion, and repeat the definition of the SD, is a shame, and makes converting data harder (as I first attempt I've usually just ignored changes in SD and put a comment in the .th file).
+
+Yours,
+
+John
+
+
+
+
+From s.m at speleo.sk  Tue Sep 28 14:44:20 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 28 Sep 2004 14:44:20 +0200
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <175@reconstruction>
+
+There is no problem to add somethig like group-endgroup pair inside centerline, if it will really help you (or I can use just begin-end pair if you wish).
+
+Then it could be rewritten this way:
+
+centreline
+  calibrate tape 1
+  1 2 10 0 0
+  group
+  calibrate tape 2
+  2 3 10 0 0
+  endgroup
+  3 4 10 0 0
+endcentreline
+
+Or do you see some other trivial solution of this problem?
+
+Regards, S.
+
+
+John Pybus wrote:
+
+> Stacho Mudrak wrote:
+>
+>> No, there is no such possibility. You have to repeat calibration every time it changes. I would rewrite your example this way:
+>>
+>>   encoding iso8859-1
+>>     survey test -title "test"
+>>       centreline
+>>       calibrate tape 1
+>>       1 2 10 0 0
+>>       calibrate tape 2
+>>       2 3 10 0 0
+>>       calibrate tape 1
+>>       3 4 10 0 0
+>>     endcentreline
+>>   endsurvey
+>>
+>> I'm just wondering, whether these situations are so common...
+>
+>
+>
+> I'd say common enough on fairly large survey projects, especially those under exploration/expedition conditions where the surveying is done in a hurry and the chances of going back and correcting iffy readings are low.
+>
+> I quite often make use of changing the SD for particular legs where it's known that the survey wasn't done to the general standard.  In general the SD is defined in a separate file which I *include in the survex data.  Having to undo that separation when using therion, and repeat the definition of the SD, is a shame, and makes converting data harder (as I first attempt I've usually just ignored changes in SD and put a comment in the .th file).
+>
+> Yours,
+>
+> John
+>
+>
+
+
+
+
+
+From john.pybus at zoology.oxford.ac.uk  Tue Sep 28 14:53:08 2004
+From: john.pybus at zoology.oxford.ac.uk (John Pybus)
+Date: Tue, 28 Sep 2004 13:53:08 +0100
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <176@reconstruction>
+
+Stacho Mudrak wrote:
+
+> There is no problem to add somethig like group-endgroup pair inside centerline, if it will really help you (or I can use just begin-end pair if you wish).
+>
+> Then it could be rewritten this way:
+>
+> centreline
+>   calibrate tape 1
+>   1 2 10 0 0
+>   group
+>   calibrate tape 2
+>   2 3 10 0 0
+>   endgroup
+>   3 4 10 0 0
+> endcentreline
+>
+> Or do you see some other trivial solution of this problem?
+
+
+That seems like the most natural solution; it directly mirrors an unlabeled begin-end pair in survex data.  I see no need for the syntax to actually be begin/end, and group/endgroup sounds ideal.  Thanks, it would tidy up one of the few edge cases in mapping survex data to therion centrelines.
+
+John
+
+
+
+From s.m at speleo.sk  Tue Sep 28 14:56:33 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Tue, 28 Sep 2004 14:56:33 +0200
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <177@reconstruction>
+
+OK, I'll put it on the top of TODO list - at least now it seems to be like a very simple thing to implement.
+
+Regards, S.
+
+John Pybus wrote:
+
+> Stacho Mudrak wrote:
+>
+>> There is no problem to add somethig like group-endgroup pair inside centerline, if it will really help you (or I can use just begin-end pair if you wish).
+>>
+>> Then it could be rewritten this way:
+>>
+>> centreline
+>>   calibrate tape 1
+>>   1 2 10 0 0
+>>   group
+>>   calibrate tape 2
+>>   2 3 10 0 0
+>>   endgroup
+>>   3 4 10 0 0
+>> endcentreline
+>>
+>> Or do you see some other trivial solution of this problem?
+>
+>
+>
+> That seems like the most natural solution; it directly mirrors an unlabeled begin-end pair in survex data.  I see no need for the syntax to actually be begin/end, and group/endgroup sounds ideal.  Thanks, it would tidy up one of the few edge cases in mapping survex data to therion centrelines.
+>
+> John
+>
+>
+
+
+
+
+
+From s.m at speleo.sk  Wed Sep 29 09:23:19 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Wed, 29 Sep 2004 09:23:19 +0200
+Subject: [therion] How to change settings for just a few readings?
+In-Reply-To: <171@reconstruction>
+Message-ID: <178@reconstruction>
+
+The attached patch should enable group-endgroup inside centerline command.
+
+I have not tested it extensively, but you should be able to change everything (data order, calibration, sd, units etc.) inside.
+
+Regards, S.
+
+John Pybus wrote:
+
+> Stacho Mudrak wrote:
+>
+>> There is no problem to add somethig like group-endgroup pair inside centerline, if it will really help you (or I can use just begin-end pair if you wish).
+>>
+>> Then it could be rewritten this way:
+>>
+>> centreline
+>>   calibrate tape 1
+>>   1 2 10 0 0
+>>   group
+>>   calibrate tape 2
+>>   2 3 10 0 0
+>>   endgroup
+>>   3 4 10 0 0
+>> endcentreline
+>>
+>> Or do you see some other trivial solution of this problem?
+>
+>
+>
+> That seems like the most natural solution; it directly mirrors an unlabeled begin-end pair in survex data.  I see no need for the syntax to actually be begin/end, and group/endgroup sounds ideal.  Thanks, it would tidy up one of the few edge cases in mapping survex data to therion centrelines.
+>
+> John
+>
+>
+
+
+
+
+From olly at survex.com  Thu Sep 30 16:21:41 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 15:21:41 +0100
+Subject: snow and ice
+Message-ID: <179@reconstruction>
+
+There doesn't seem to be a way to make an area "snow and ice" (the UIS
+symbol for either is stars).
+
+Does this entail writing some metapost?  Has anyone already done it?
+
+Cheers,
+Olly
+
+
+
+
+From s.m at speleo.sk  Thu Sep 30 16:58:24 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 30 Sep 2004 16:58:24 +0200
+Subject: [therion] snow and ice
+In-Reply-To: <179@reconstruction>
+Message-ID: <180@reconstruction>
+
+> There doesn't seem to be a way to make an area "snow and ice" (the UIS
+> symbol for either is stars).
+>
+> Does this entail writing some metapost?  Has anyone already done it?
+
+
+Yes, and nobody did it until now. Until now, we have only ice point symbol. So we need new type (for point and for area). I suggest to add
+
+point snow
+area snow
+area ice
+
+Or any does your symbol set make a difference between snow, snow-and-ice and ice? Coding of these symbols is not so complicated.
+
+Regards, S.
+
+
+
+
+From olly at survex.com  Thu Sep 30 17:49:06 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 16:49:06 +0100
+Subject: [therion] snow and ice
+In-Reply-To: <179@reconstruction>
+Message-ID: <181@reconstruction>
+
+On Thu, Sep 30, 2004 at 04:58:24PM +0200, Stacho Mudrak wrote:
+
+>>> >There doesn't seem to be a way to make an area "snow and ice" (the UIS
+>>> >symbol for either is stars).
+>>> >
+>>> >Does this entail writing some metapost?  Has anyone already done it?
+>
+>>
+>> Yes, and nobody did it until now. Until now, we have only ice point
+>> symbol. So we need new type (for point and for area). I suggest to add
+>>
+>> point snow
+>> area snow
+>> area ice
+>>
+>> Or any does your symbol set make a difference between snow, snow-and-ice
+>> and ice? Coding of these symbols is not so complicated.
+
+
+The UIS set doesn't distinguish - it's all just stars.  I'm not sure
+about other symbol sets.  In reality, the difference is often arbitrary
+and whether a particular area is best described as ice or snow or a
+combination varies with time.
+
+It looks like mpost/thArea.mp is the file for it, and I can see the
+definition of p_ice_UIS in mpost/thPoint.mp, which presumably is a
+single star.  But how do I fill an area with that tesselated?
+
+Cheers,
+    Olly
+
+
+
+
+From s.m at speleo.sk  Thu Sep 30 17:52:06 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 30 Sep 2004 17:52:06 +0200
+Subject: [therion] snow and ice
+In-Reply-To: <179@reconstruction>
+Message-ID: <182@reconstruction>
+
+> It looks like mpost/thArea.mp is the file for it, and I can see the
+> definition of p_ice_UIS in mpost/thPoint.mp, which presumably is a
+> single star.  But how do I fill an area with that tesselated?
+
+
+Firstly, therion must support the snow area type. How to write exact macro, I do not know :( , Martin will probably write us tomorrow.
+
+Regards, S.
+
+
+
+
+From wookey at aleph1.co.uk  Thu Sep 30 16:55:28 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 30 Sep 2004 15:55:28 +0100
+Subject: Example models?
+Message-ID: <183@reconstruction>
+
+I'm giving a talk about Therion at the BCRA conference this weekend.
+Are there any examples of real 3D models and how to create them beyond the
+piccy on the website?
+
+Is this functionality actually in therion 0.3.3?
+
+Can it do colour in surveys yet? If so how?
+
+Is morphing restricted to within a scrap? e.g. say I have two parallel
+passages, the data for one changes so it morphs. If they are drawn on the
+same scrap then the walls of both passages will move. If they are on
+separate scrpas then only the one that changes moves - correct? i..e
+morphing is done on a 'distance from station, within a scrap' basis?
+
+Can someone explain what the numbers and arrows and things in the bottom of
+the atlas view are for? I've pressed a lot of buttons and the view changes
+but I have not managed to understand exactly what is going on in terms of
+levels, names, links and grid positions. (I am looking at the cvs cave_a.pdf
+example)
+
+I'm leaving in about 1hr so any quick answers ytou have would be good  :-)
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Thu Sep 30 17:10:12 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 30 Sep 2004 17:10:12 +0200
+Subject: [therion] Example models?
+In-Reply-To: <183@reconstruction>
+Message-ID: <184@reconstruction>
+
+> I'm giving a talk about Therion at the BCRA conference this weekend.
+> Are there any examples of real 3D models and how to create them beyond the
+> piccy on the website?
+
+
+I will send you some at about 15 minutes.
+
+They are created just by:
+
+source input.th
+export model
+
+Where input is only 2D map. Nothing else.
+
+> Is this functionality actually in therion 0.3.3?
+
+
+Yes, it is generated by 0.3.3.
+
+> Can it do colour in surveys yet? If so how?
+
+
+No. It can do nothing. Just view and rotate. The 3D stuff is still in the stage of design and those models are only preliminary.
+
+> Is morphing restricted to within a scrap? e.g. say I have two parallel
+> passages, the data for one changes so it morphs. If they are drawn on the
+> same scrap then the walls of both passages will move. If they are on
+> separate scrpas then only the one that changes moves - correct? i..e
+> morphing is done on a 'distance from station, within a scrap' basis?
+
+
+Yes, but if two scraps lie on the same loop, error will be distributed between stations in both scraps so both passages will be morphed.
+
+Regards, S.
+
+
+
+
+From s.m at speleo.sk  Thu Sep 30 17:34:50 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 30 Sep 2004 17:34:50 +0200
+Subject: [therion] Example models?
+In-Reply-To: <183@reconstruction>
+Message-ID: <185@reconstruction>
+
+> Can someone explain what the numbers and arrows and things in the bottom of
+> the atlas view are for? I've pressed a lot of buttons and the view changes
+> but I have not managed to understand exactly what is going on in terms of
+> levels, names, links and grid positions. (I am looking at the cvs cave_a.pdf
+> example)
+
+
+Hope this image helps.
+
+S.
+
+
+
+
+
+From wookey at aleph1.co.uk  Thu Sep 30 17:43:31 2004
+From: wookey at aleph1.co.uk (Wookey)
+Date: Thu, 30 Sep 2004 16:43:31 +0100
+Subject: Example models?
+In-Reply-To: <183@reconstruction>
+Message-ID: <186@reconstruction>
+
++++ Stacho Mudrak [04-09-30 17:10 +0200]:
+
+>>> >I'm giving a talk about Therion at the BCRA conference this weekend.
+>>> >Are there any examples of real 3D models and how to create them beyond the
+>>> >piccy on the website?
+>
+>>
+>> I will send you some at about 15 minutes.
+
+
+Thanx - I just noticed that one of the website examples claims to have a 3D
+model... The older example data I have mostly doesn't work with 0.3.3  :-(
+
+>> They are created just by:
+>>
+>> source input.th
+>> export model
+>>
+>> Where input is only 2D map. Nothing else.
+
+
+Doesn't it need height symbols adding? Or does it guess if none are entered?
+
+
+>>> >Can it do colour in surveys yet? If so how?
+>
+>>
+>> No. It can do nothing. Just view and rotate. The 3D stuff is still in
+>> the stage of design and those models are only preliminary.
+
+
+Sorry I meant does the 2D stuff support passage colouring at all? or only
+greyscale/Black&White?
+
+>>> >Is morphing restricted to within a scrap? e.g. say I have two parallel
+>>> >passages, the data for one changes so it morphs. If they are drawn on the
+>>> >same scrap then the walls of both passages will move. If they are on
+>>> >separate scrpas then only the one that changes moves - correct? i..e
+>>> >morphing is done on a 'distance from station, within a scrap' basis?
+>
+>>
+>> Yes, but if two scraps lie on the same loop, error will be distributed
+>> between stations in both scraps so both passages will be morphed.
+
+
+THanx very much for the quick response.
+
+Wookey
+--
+Aleph One Ltd, Bottisham, CAMBRIDGE, CB5 9BA, UK Tel +44 (0) 1223 811679
+work: http://www.aleph1.co.uk/ play: http://www.chaos.org.uk/~wookey/
+
+
+
+
+From s.m at speleo.sk  Thu Sep 30 17:46:59 2004
+From: s.m at speleo.sk (Stacho Mudrak)
+Date: Thu, 30 Sep 2004 17:46:59 +0200
+Subject: [therion] Re: Example models?
+In-Reply-To: <183@reconstruction>
+Message-ID: <187@reconstruction>
+
+>> Where input is only 2D map. Nothing else.
+>
+>
+>
+> Doesn't it need height symbols adding? Or does it guess if none are entered?
+
+
+Height symbol helps. Otherwise a guess is used.
+
+> Sorry I meant does the 2D stuff support passage colouring at all? or only
+> greyscale/Black&White?
+
+
+You may define colors of symbols in metapost (see lakes in rabbit cave),  but things like passage color by survey/depth are not supported yet.
+
+S.
+
+
+
+
+
+
+From olly at survex.com  Thu Sep 30 19:38:52 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 18:38:52 +0100
+Subject: Unhelpful metapost error
+Message-ID: <188@reconstruction>
+
+My, I'm all questions today...
+
+When I try to process my survey to produce a PDF plan, metapost appears
+to not like something, but there's no error message, so I've no idea
+where to look.
+
+I've attached the log, I can send other stuff if that's helpful.
+
+This is therion 0.3.3 on Linux, with THUSESVX defined.
+
+Cheers,
+    Olly
+
+
+
+therion 0.3.3
+initialization file: /etc/therion.ini
+reading ... done
+configuration file: thconfig
+reading ... done
+reading source files ... done
+preprocessing database ... done
+processing survey data ...
+####################### cavern log file ########################
+ 1> Survex 1.0.31
+ 2> Copyright (C) 1990-2004 Olly Betts
+ 3> Survey has no fixed points. Therefore I've fixed 1 at (0,0,0)
+ 4>
+ 5> Survey contains 275 survey stations, joined by 274 legs.
+ 6> There are 0 loops.
+ 7> Total length of survey legs = 1180.04m (1180.04m adjusted)
+ 8> Total plan length of survey legs =  868.99m
+ 9> Total vertical length of survey legs =  522.64m
+10> Vertical range = 189.70m (from 21 at 2.59m to 185 at -187.11m)
+11> North-South range = 139.82m (from 261 at 16.42m to 242 at -123.40m)
+12> East-West range = 145.01m (from 196 at 34.11m to 231 at -110.90m)
+13>   32 1-nodes.
+14>  219 2-nodes.
+15>   19 3-nodes.
+16>    4 4-nodes.
+17>    1 5-node.
+18>
+######################### transcription ########################
+ 3> 1 : 2 at entrance.76
+ 5> 275 : 15 at boiling.76 -- 274 : 14 at boiling.76
+10> 21 : 1 at bent.76 -- 185 : 11 at keg.76
+11> 261 : 1 at boiling.76 -- 242 : 12 at noways.76
+12> 196 : 3 at tap.76 -- 231 : 1 at noways.76
+13> 32 : 5 at brave.76
+14> 219 : 5 at rift.76
+15> 19 : 8 at bent.76
+16> 4 : 4 at entrance.76
+17> 1 : 2 at entrance.76
+#################### end of cavern log file ####################
+done
+calculating basic statistics ... done
+processing references ... done
+selecting export objects ... done
+scanning centreline tree ... done
+processing projection plan ... done
+average distortion: 2.77%
+writing 76_plan.pdf ...
+####################### metapost log file ########################
+Survex 1.0.31
+Copyright (C) 1990-2004 Olly Betts
+Survey has no fixed points. Therefore I've fixed 1 at (0,0,0)
+
+Survey contains 275 survey stations, joined by 274 legs.
+There are 0 loops.
+Total length of survey legs = 1180.04m (1180.04m adjusted)
+Total plan length of survey legs =  868.99m
+Total vertical length of survey legs =  522.64m
+Vertical range = 189.70m (from 21 at 2.59m to 185 at -187.11m)
+North-South range = 139.82m (from 261 at 16.42m to 242 at -123.40m)
+East-West range = 145.01m (from 196 at 34.11m to 231 at -110.90m)
+  32 1-nodes.
+ 219 2-nodes.
+  19 3-nodes.
+   4 4-nodes.
+   1 5-node.
+
+#################### end of metapost log file ####################
+therion: error -- metapost exit code -- 256
+
+
+
+
+From olly at survex.com  Thu Sep 30 20:56:45 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 19:56:45 +0100
+Subject: [therion] Unhelpful metapost error
+In-Reply-To: <188@reconstruction>
+Message-ID: <189@reconstruction>
+
+On Thu, Sep 30, 2004 at 06:38:52PM +0100, Olly Betts wrote:
+
+>> When I try to process my survey to produce a PDF plan, metapost appears
+>> to not like something, but there's no error message, so I've no idea
+>> where to look.
+>>
+>> I've attached the log, I can send other stuff if that's helpful.
+>>
+>> This is therion 0.3.3 on Linux, with THUSESVX defined.
+
+
+Hmm, well by rearranging what stuff was in which file I seem to have
+stopped metapost complaining.  But the pdf file seems to ignore all
+the scraps and I just get a lot of station markers with "arms".
+
+I've not tried to join any scraps together yet, but it seems odd that
+I don't get an error message if that's the problem.
+
+I also tried without THUSESVX defined, but that doesn't make the scraps
+appear.
+
+Cheers,
+    Olly
+
+P.S. I'll keep the dataset which made metapost around for a while in case
+you want to investigate that.
+
+
+
+
+From olly at survex.com  Thu Sep 30 21:15:21 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 20:15:21 +0100
+Subject: [therion] Unhelpful metapost error
+In-Reply-To: <188@reconstruction>
+Message-ID: <190@reconstruction>
+
+On Thu, Sep 30, 2004 at 07:56:45PM +0100, Olly Betts wrote:
+
+>> Hmm, well by rearranging what stuff was in which file I seem to have
+>> stopped metapost complaining.  But the pdf file seems to ignore all
+>> the scraps and I just get a lot of station markers with "arms".
+>>
+>> I've not tried to join any scraps together yet, but it seems odd that
+>> I don't get an error message if that's the problem.
+
+
+Ah, I didn't have a map ... endmap section for my plan.  It might be
+better if that produced at least a warning...
+
+Cheers,
+    Olly
+
+
+
+
+From olly at survex.com  Thu Sep 30 19:43:11 2004
+From: olly at survex.com (Olly Betts)
+Date: Thu, 30 Sep 2004 18:43:11 +0100
+Subject: thbook typo corrections
+Message-ID: <194@reconstruction>
+
+Just to prove I have actually read the manual...
+
+Cheers,
+    Olly
+
+
+
+diff -ru therion-0.3.3-orig/thbook/ch01.tex therion-0.3.3/thbook/ch01.tex
+--- therion-0.3.3-orig/thbook/ch01.tex	2004-04-23 08:10:16.000000000 +0100
++++ therion-0.3.3/thbook/ch01.tex	2004-09-30 18:36:54.000000000 +0100
+@@ -56,7 +56,7 @@
+
+ \subchapter Features.
+
+-Therion is a command-line application. It processess input files, which
++Therion is a command-line application. It processes input files, which
+ are---including 2D maps---in text format, and creates files with 2D maps or
+ 3D model as the output.
+
+@@ -148,7 +148,7 @@
+
+ \subsubchapter Setting-up environment.
+
+-Therion reads settigs from the initialization file. Default settings should
++Therion reads settings from the initialization file. Default settings should
+ work fine for users using only ASCII (non-accented latin) characters,
+ standard \TeX\ and \MP.
+
+@@ -182,7 +182,7 @@
+ * green---input files created by the user and output files created by Therion
+ \endlist
+
+-Therion itself does the main task. It reads the input files, interpretes them,
++Therion itself does the main task. It reads the input files, interprets them,
+ finds closed loops and distributes errors. Next it transforms all other data
+ (e.g.~2D maps) according to new stations position.
+ Therion exports data for 2D maps in \MP\ format. \MP\ gives
+diff -ru therion-0.3.3-orig/thbook/ch02.tex therion-0.3.3/thbook/ch02.tex
+--- therion-0.3.3-orig/thbook/ch02.tex	2004-09-10 06:36:29.000000000 +0100
++++ therion-0.3.3/thbook/ch02.tex	2004-09-30 18:35:43.000000000 +0100
+@@ -148,7 +148,7 @@
+
+ \description
+   inserts the contents of a file in place of
+-  the command. Default extension is `.th' and may be ommited. For greatest
++  the command. Default extension is `.th' and may be omitted. For greatest
+   portability use relative paths and Unix slashes `|/|', not Windows
+   backslashes `|\|', as
+   directory separators.
+@@ -274,7 +274,7 @@
+
+ \options
+   * |id <ext_keyword>| = id of the object
+-  * |author <date> <person>| = author of the data and it's creation date
++  * |author <date> <person>| = author of the data and its creation date
+   * |copyright <date> <string>| = copyright date and name
+   * |title <string>| = description of the object
+ \endoptions
+@@ -368,11 +368,11 @@
+   separately by \MP; scraps which are too large may exceed \MP's memory and
+   cause errors.
+
+-  Scrap consits of point, line and area map symbols. See chapter {\it How
++  Scrap consists of point, line and area map symbols. See chapter {\it How
+   the map is put together} for explanation how and in which order are they
+   displayed.
+
+-  Scrap border consits of lines with the |-outline out| or |-outline in|
++  Scrap border consists of lines with the |-outline out| or |-outline in|
+   options (passage walls have |-outline out| by default). These line shouldn't
+   intersect---otherwise Therion (\MP) can't detemine the interior of the scrap
+   and \MP\ issues a warning message ``|scrap outline intersects itself|''.
+@@ -462,7 +462,7 @@
+   * |3d <on/off/auto>| = specify if the scrap should be used in 3D model
+     reconstruction
+
+-  * |author <date> <person>| = author of the data and it's creation date
++  * |author <date> <person>| = author of the data and its creation date
+   * |copyright <date> <string>| = copyright date and name
+   * |title <string>| = description of the object
+ \endoptions
+diff -ru therion-0.3.3-orig/thbook/ch03.tex therion-0.3.3/thbook/ch03.tex
+--- therion-0.3.3-orig/thbook/ch03.tex	2004-09-10 08:36:25.000000000 +0100
++++ therion-0.3.3/thbook/ch03.tex	2004-09-30 18:37:33.000000000 +0100
+@@ -220,7 +220,7 @@
+   * |exclude-pages <on/off> <list>| = exclude specified pages from cave
+     atlas. The list may contain page numbers separated by a comma or dash
+     (for intervals) e.g.~|2,4-7,9,23| means, that pages 2, 4, 5, 6, 7, 9 and 23
+-    should be omited. Only the map pages should be counted. (Set |own-pages 0|
++    should be omitted. Only the map pages should be counted. (Set |own-pages 0|
+     and |title-pages off| to get the correct page numbers to be excluded.)
+     Changes of |own-pages| or |title-pages| options don't affect page
+     excluding. (A)
+diff -ru therion-0.3.3-orig/thbook/ch04.tex therion-0.3.3/thbook/ch04.tex
+--- therion-0.3.3-orig/thbook/ch04.tex	2004-07-12 17:21:53.000000000 +0100
++++ therion-0.3.3/thbook/ch04.tex	2004-09-30 18:39:07.000000000 +0100
+@@ -64,7 +64,7 @@
+   (select SURVEY_ID from CENTRELINE
+   where TOPO_DATE between '1998-01-01' and '1998-12-31');|
+
+-{\it How long are pasages lying between 1500 and 1550 m a.s.l.?}
++{\it How long are passages lying between 1500 and 1550 m a.s.l.?}
+
+ |select sum(LENGTH) from SHOT, STATION S1, STATION S2
+   where (S1.Z+S2.Z)/2 between 1500 and 1550 and
+
+
+
+
+From andrew at wotcc.org.uk  Fri Sep 17 03:48:42 2004
+From: andrew at wotcc.org.uk (Andrew Atkinson)
+Date: Thu, 16 Sep 2004 18:48:42 -0700
+Subject: [therion] Re: Mud and sand
+In-Reply-To: <228@reconstruction>
+Message-ID: <234@reconstruction>
+
+>>
+>
+>>> > We have a problem with that - in one symbol set used in
+>
+>> Lechuguilla cave
+>
+>>> > (I am not able to locate it on the WEB now), we have found a RAFT and
+>>> > RAFT CONE symbols. We still do not know, for what we should use them...
+>>> > Therefore we would like to remove them (I guess, nobody used them until
+>>> > now).
+>
+>>
+>> I think these are a type of speleothem - calcite raft floating on water.
+>> I'mnot sure about a raft cone, but presumably it is some variation. These
+>> are certainly quite rare formations....
+>>
+
+I am guessing but are raft cones where a 'raft' has calcited around a stal?
+
+Andrew Atkinson
+
+
+
+

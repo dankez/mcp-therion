@@ -1,0 +1,2750 @@
+From geospatial3d at gmail.com  Thu Apr 11 17:05:38 2019
+From: geospatial3d at gmail.com (kevin dixon)
+Date: Thu, 11 Apr 2019 16:05:38 +0100
+Subject: [Therion] World Magnetic Model
+Message-ID: <CAAUsM+N0tkb_5voAB4nHZRRAC5EucsnwVPV8sLWWZ11Stn1iHw@mail.gmail.com>
+
+The last Therion release 5.4.3 is dated 01 Feb 2019.
+
+There has in recent years been a significant change of the Magnetic North
+Pole location, less so for the Geomagnetic South Pole:
+https://ngdc.noaa.gov/geomag/GeomagneticPoles.shtml
+
+Given the above, an out of cycle World Geomagnetic Model WMM2015v2 was
+released 04 Feb 2019.
+
+When will this update appear in Survex and Therion ?
+
+Thanks,
+
+Kevin Dixon
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190411/001f96c8/attachment.htm>
+
+From m.budaj at gmail.com  Thu Apr 11 18:03:39 2019
+From: m.budaj at gmail.com (Martin Budaj)
+Date: Thu, 11 Apr 2019 18:03:39 +0200
+Subject: [Therion] World Magnetic Model
+In-Reply-To: <CAAUsM+N0tkb_5voAB4nHZRRAC5EucsnwVPV8sLWWZ11Stn1iHw@mail.gmail.com>
+References: <CAAUsM+N0tkb_5voAB4nHZRRAC5EucsnwVPV8sLWWZ11Stn1iHw@mail.gmail.com>
+Message-ID: <CALPsdSu_qbj1MQQTM-2qgPJ_aw00CxptgZjcA85SW8fx-4_f1g@mail.gmail.com>
+
+Hi,
+
+Therion does not use WMM at all (as it doesn't contain 20th century
+historical data).
+It uses IGRF model (https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) which
+hasn't been updated yet.
+
+Best regards
+Martin
+
+On Thu, Apr 11, 2019 at 5:05 PM kevin dixon via Therion <therion at speleo.sk>
+wrote:
+
+> The last Therion release 5.4.3 is dated 01 Feb 2019.
+>
+> There has in recent years been a significant change of the Magnetic North
+> Pole location, less so for the Geomagnetic South Pole:
+> https://ngdc.noaa.gov/geomag/GeomagneticPoles.shtml
+>
+> Given the above, an out of cycle World Geomagnetic Model WMM2015v2 was
+> released 04 Feb 2019.
+>
+> When will this update appear in Survex and Therion ?
+>
+> Thanks,
+>
+> Kevin Dixon
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190411/7283fd4d/attachment.htm>
+
+From olly at survex.com  Fri Apr 12 00:08:26 2019
+From: olly at survex.com (Olly Betts)
+Date: Thu, 11 Apr 2019 23:08:26 +0100
+Subject: [Therion] World Magnetic Model
+In-Reply-To: <CALPsdSu_qbj1MQQTM-2qgPJ_aw00CxptgZjcA85SW8fx-4_f1g@mail.gmail.com>
+References: <CAAUsM+N0tkb_5voAB4nHZRRAC5EucsnwVPV8sLWWZ11Stn1iHw@mail.gmail.com>
+ <CALPsdSu_qbj1MQQTM-2qgPJ_aw00CxptgZjcA85SW8fx-4_f1g@mail.gmail.com>
+Message-ID: <20190411220826.4icllaxdpgpgaz3q@survex.com>
+
+On Thu, Apr 11, 2019 at 06:03:39PM +0200, Martin Budaj via Therion wrote:
+> On Thu, Apr 11, 2019 at 5:05 PM kevin dixon via Therion <therion at speleo.sk>
+> wrote:
+> > The last Therion release 5.4.3 is dated 01 Feb 2019.
+> >
+> > There has in recent years been a significant change of the Magnetic North
+> > Pole location, less so for the Geomagnetic South Pole:
+> > https://ngdc.noaa.gov/geomag/GeomagneticPoles.shtml
+> >
+> > Given the above, an out of cycle World Geomagnetic Model WMM2015v2 was
+> > released 04 Feb 2019.
+
+Shortly after WMM2015v2 was released I did some comparisons for
+Northerly locations on land between WMM2015v2 and IGRF12 for dates at
+the end of this year (since IGRF13 is due out in December 2019) and the
+largest difference I found was 0.1° which is probably acceptable given
+the accuracy of the readings involved (and considering this is only an
+issue until this December anyway).
+
+> > When will this update appear in Survex and Therion ?
+
+My current plan for Survex is to address this by updating to IGRF13 in
+December 2019.
+
+> Therion does not use WMM at all (as it doesn't contain 20th century
+> historical data).
+> It uses IGRF model (https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) which
+> hasn't been updated yet.
+
+Survex uses IGRF too, and for the same reason.
+
+It'd be nice to support WMM2015v2 but we would still need to use IGRF
+for dates before 2015 and have some way to cleanly transition between
+the two (just using IGRF for < 2015 and WMM for >= 2015 would mean that
+a series of surveys made from late 2014 to early 2015 could have a
+sudden step in the declination corrections, which seems problematic).
+
+I can't speak for Therion, but I'm open to supporting WMM in Survex if
+the difference is actually an issue for people.  But if someone wants
+WMM support in Survex we at least need a workable plan for what to do
+about dates that WMM doesn't handle.  And even better would be a patch
+to implement that plan.
+
+Cheers,
+    Olly
+
+
+From knollesimage at t-online.de  Fri Apr 12 09:23:07 2019
+From: knollesimage at t-online.de (Michael)
+Date: Fri, 12 Apr 2019 09:23:07 +0200
+Subject: [Therion] World Magnetic Model
+In-Reply-To: <20190411220826.4icllaxdpgpgaz3q@survex.com>
+References: <CAAUsM+N0tkb_5voAB4nHZRRAC5EucsnwVPV8sLWWZ11Stn1iHw@mail.gmail.com>
+ <CALPsdSu_qbj1MQQTM-2qgPJ_aw00CxptgZjcA85SW8fx-4_f1g@mail.gmail.com>
+ <20190411220826.4icllaxdpgpgaz3q@survex.com>
+Message-ID: <002c01d4f100$93fb9720$bbf2c560$@t-online.de>
+
+Hello,
+For our group, support of old dates (from 1975) is more important than the 0.1° difference in accuracy.
+
+Cheers, Michael.
+www.arge-hoehle-stuttgart.de
+
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Sat Apr 13 19:31:44 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 13 Apr 2019 18:31:44 +0100
+Subject: [Therion] Joining maps with the join command
+Message-ID: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+
+Hi,
+
+I am currently learning how to use Therion to draw up a detailed survey.
+
+My survey is split into several "caves", each of which has its own .th
+and .th2 file. In the .th file for each cave is a separate "map", so
+that the cave can be rendered separately.
+
+cave1.th:
+survey cave1
+ input "cave1 plan.th2"
+ input "cave1 ee.th2"
+ map cave1MP
+  scrap1
+  scrap2
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+cave2.th:
+survey cave2
+ input "cave2 plan.th2"
+ input "cave2 ee.th2"
+ map cave2MP
+  scrapa
+  scrapb
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Then I have an overall file which combines the maps called allcaves.th:
+survey allcaves
+ map allcavesMP
+  cave1MP at cave1
+  cave2MP at cave2
+  join ____________
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Imagine the two caves join in scrap1 (id "foo":0) and scrapb (id
+"bar":end), and I want to use a join command to make the scraps join
+neatly (I have already positioned the passage ends very close to each
+other). Could you please tell me the syntax needed to make the join
+command reference the correct points of the correct lines inside the
+correct scraps inside the correct maps?
+
+Every example of the "join" command I could find assumes you were trying
+to join scraps inside the same map, and did not show how to reference
+items in a sub-map. As a result, I have not been able to work out how to
+construct a valid join command for this situation.
+
+Many thanks for any information you can provide.
+
+Tarquin
+
+
+From beni at hallinger.org  Sat Apr 13 20:00:31 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Sat, 13 Apr 2019 20:00:31 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+Message-ID: <78F68D7A-F21F-43DC-9032-029D4E963BA4@hallinger.org>
+
+Hi, you can join scraps but not maps. Scraps are not tied to maps in any way, maps are just „collections“ of scraps. Scraps however are part of a survey.
+So what you want is achieved by adding join commands on scraps of subsurveys in your overall index th file allcaves. You can reference those scraps like this: „join scrap1 at cave1 scrapb at cave2“
+
+This should work, but i havet tested it now.
+
+> Am 13.04.2019 um 19:31 schrieb Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> Hi,
+> 
+> I am currently learning how to use Therion to draw up a detailed survey.
+> 
+> My survey is split into several "caves", each of which has its own .th
+> and .th2 file. In the .th file for each cave is a separate "map", so
+> that the cave can be rendered separately.
+> 
+> cave1.th:
+> survey cave1
+> input "cave1 plan.th2"
+> input "cave1 ee.th2"
+> map cave1MP
+>  scrap1
+>  scrap2
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> cave2.th:
+> survey cave2
+> input "cave2 plan.th2"
+> input "cave2 ee.th2"
+> map cave2MP
+>  scrapa
+>  scrapb
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> Then I have an overall file which combines the maps called allcaves.th:
+> survey allcaves
+> map allcavesMP
+>  cave1MP at cave1
+>  cave2MP at cave2
+>  join ____________
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> Imagine the two caves join in scrap1 (id "foo":0) and scrapb (id
+> "bar":end), and I want to use a join command to make the scraps join
+> neatly (I have already positioned the passage ends very close to each
+> other). Could you please tell me the syntax needed to make the join
+> command reference the correct points of the correct lines inside the
+> correct scraps inside the correct maps?
+> 
+> Every example of the "join" command I could find assumes you were trying
+> to join scraps inside the same map, and did not show how to reference
+> items in a sub-map. As a result, I have not been able to work out how to
+> construct a valid join command for this situation.
+> 
+> Many thanks for any information you can provide.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Sat Apr 13 20:24:05 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sat, 13 Apr 2019 19:24:05 +0100
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <78F68D7A-F21F-43DC-9032-029D4E963BA4@hallinger.org>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <78F68D7A-F21F-43DC-9032-029D4E963BA4@hallinger.org>
+Message-ID: <961fa7d9-cf52-1cb7-ed7a-ec39cfcc2238@ntlworld.com>
+
+Hi Benedikt,
+
+Many thanks for that speedy reply.
+
+> you can join scraps but not maps. Scraps are not tied to maps in any way, maps are just „collections“ of scraps. Scraps however are part of a survey.
+> So what you want is achieved by adding join commands on scraps of subsurveys in your overall index th file allcaves. You can reference those scraps like this: „join scrap1 at cave1 scrapb at cave2“
+
+
+That would explain why I couldn't find the syntax...
+
+So in allcaves.th, using your line, how would I combine that with the
+line id and linepoint index, so that it knows exactly which line point
+to join to which other linepoint?
+
+In my original question, these were foo:0 and bar:end
+
+I found examples like this:
+join line1 at branch1:0   line2:end
+but this doesn't then show how to combine that with your join command.
+
+Cheers!
+
+Tarquin
+
+
+From martinsluka at mac.com  Sun Apr 14 08:02:59 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 14 Apr 2019 08:02:59 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <961fa7d9-cf52-1cb7-ed7a-ec39cfcc2238@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <78F68D7A-F21F-43DC-9032-029D4E963BA4@hallinger.org>
+ <961fa7d9-cf52-1cb7-ed7a-ec39cfcc2238@ntlworld.com>
+Message-ID: <7B823D48-B223-469B-B41C-DD766401A9AF@mac.com>
+
+First of all you should input cave1.th and cave2.th to your survey caveaall! Therion must know the way to data. 
+
+Martin
+
+Odesláno z iPhonu
+
+13. 4. 2019 v 20:24, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+> Hi Benedikt,
+> 
+> Many thanks for that speedy reply.
+> 
+>> you can join scraps but not maps. Scraps are not tied to maps in any way, maps are just „collections“ of scraps. Scraps however are part of a survey.
+>> So what you want is achieved by adding join commands on scraps of subsurveys in your overall index th file allcaves. You can reference those scraps like this: „join scrap1 at cave1 scrapb at cave2“
+> 
+> 
+> That would explain why I couldn't find the syntax...
+> 
+> So in allcaves.th, using your line, how would I combine that with the
+> line id and linepoint index, so that it knows exactly which line point
+> to join to which other linepoint?
+> 
+> In my original question, these were foo:0 and bar:end
+> 
+> I found examples like this:
+> join line1 at branch1:0   line2:end
+> but this doesn't then show how to combine that with your join command.
+> 
+> Cheers!
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From Henry.Bennett at dell.com  Sun Apr 14 08:21:46 2019
+From: Henry.Bennett at dell.com (Henry.Bennett at dell.com)
+Date: Sun, 14 Apr 2019 06:21:46 +0000
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+Message-ID: <184ce18be1e94b059d4e27642c45b9e8@SNNX13MDC115.EMEA.DELL.COM>
+
+In your allcaves.th
+
+	centreline
+		equate 2 at first 1 at second
+	endcentreline
+
+Henry
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: 13 April 2019 18:32
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones
+Subject: [Therion] Joining maps with the join command
+
+
+[EXTERNAL EMAIL] 
+
+Hi,
+
+I am currently learning how to use Therion to draw up a detailed survey.
+
+My survey is split into several "caves", each of which has its own .th and .th2 file. In the .th file for each cave is a separate "map", so that the cave can be rendered separately.
+
+cave1.th:
+survey cave1
+ input "cave1 plan.th2"
+ input "cave1 ee.th2"
+ map cave1MP
+  scrap1
+  scrap2
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+cave2.th:
+survey cave2
+ input "cave2 plan.th2"
+ input "cave2 ee.th2"
+ map cave2MP
+  scrapa
+  scrapb
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Then I have an overall file which combines the maps called allcaves.th:
+survey allcaves
+ map allcavesMP
+  cave1MP at cave1
+  cave2MP at cave2
+  join ____________
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Imagine the two caves join in scrap1 (id "foo":0) and scrapb (id "bar":end), and I want to use a join command to make the scraps join neatly (I have already positioned the passage ends very close to each other). Could you please tell me the syntax needed to make the join command reference the correct points of the correct lines inside the correct scraps inside the correct maps?
+
+Every example of the "join" command I could find assumes you were trying to join scraps inside the same map, and did not show how to reference items in a sub-map. As a result, I have not been able to work out how to construct a valid join command for this situation.
+
+Many thanks for any information you can provide.
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+Company details for other Dell UK entities can be found on  www.dell.co.uk.
+
+From martinsluka at mac.com  Sun Apr 14 08:45:53 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 14 Apr 2019 08:45:53 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <184ce18be1e94b059d4e27642c45b9e8@SNNX13MDC115.EMEA.DELL.COM>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <184ce18be1e94b059d4e27642c45b9e8@SNNX13MDC115.EMEA.DELL.COM>
+Message-ID: <FF095981-94C5-4021-B84B-18510125D069@mac.com>
+
+There could be 
+equate 1 at cave1 1 at cave2 
+too. Each survey is its unique namespace. 
+
+Martin
+
+Odesláno z iPhonu
+
+14. 4. 2019 v 8:21, Henry.Bennett--- via Therion <therion at speleo.sk>:
+
+> In your allcaves.th
+> 
+>    centreline
+>        equate 2 at first 1 at second
+>    endcentreline
+> 
+> Henry
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+> Sent: 13 April 2019 18:32
+> To: therion at speleo.sk
+> Cc: Tarquin Wilton-Jones
+> Subject: [Therion] Joining maps with the join command
+> 
+> 
+> [EXTERNAL EMAIL] 
+> 
+> Hi,
+> 
+> I am currently learning how to use Therion to draw up a detailed survey.
+> 
+> My survey is split into several "caves", each of which has its own .th and .th2 file. In the .th file for each cave is a separate "map", so that the cave can be rendered separately.
+> 
+> cave1.th:
+> survey cave1
+> input "cave1 plan.th2"
+> input "cave1 ee.th2"
+> map cave1MP
+>  scrap1
+>  scrap2
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> cave2.th:
+> survey cave2
+> input "cave2 plan.th2"
+> input "cave2 ee.th2"
+> map cave2MP
+>  scrapa
+>  scrapb
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> Then I have an overall file which combines the maps called allcaves.th:
+> survey allcaves
+> map allcavesMP
+>  cave1MP at cave1
+>  cave2MP at cave2
+>  join ____________
+> endmap
+> centreline
+>  ...
+> endcentreline
+> endsurvey
+> 
+> Imagine the two caves join in scrap1 (id "foo":0) and scrapb (id "bar":end), and I want to use a join command to make the scraps join neatly (I have already positioned the passage ends very close to each other). Could you please tell me the syntax needed to make the join command reference the correct points of the correct lines inside the correct scraps inside the correct maps?
+> 
+> Every example of the "join" command I could find assumes you were trying to join scraps inside the same map, and did not show how to reference items in a sub-map. As a result, I have not been able to work out how to construct a valid join command for this situation.
+> 
+> Many thanks for any information you can provide.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> Dell Corporation Limited is registered in England and Wales. Company Registration Number: 2081369
+> Registered address: Dell House, The Boulevard, Cain Road, Bracknell,  Berkshire, RG12 1LF, UK.
+> Company details for other Dell UK entities can be found on  www.dell.co.uk.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Sun Apr 14 09:01:32 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 14 Apr 2019 19:01:32 +1200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+Message-ID: <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+
+Tarquin
+
+As Benedikt mentioned, scraps are joined, not maps.  If you join scraps, the maps that use those scraps will automatically show the join, so the maps themselves are not relevant to the joining process.
+
+I have an example of a three cave system that we surveyed and subsequently joined in 2007-2008.  The highlighted words are the names of the respective cave surveys.
+
+ 
+
+For one of the joins, we could use a simple (and recommended) scrap to scrap join, using scrap_ids;
+
+ 
+
+  join GreenlinkUSumpsPlan_s2 at Greenlink GreenlinkFPlan_s1 at MiddleEarth  -smooth on
+
+ 
+
+For the other pair of caves, I have lots of lines within each scrap that crossed from one to the other, so I had to use the more complicated line by line joining, that you seem to be trying to follow, using line_ids;
+
+ 
+
+   join jpwall04 at SwissM:end GUSwall02 at Greenlink:end 
+
+   join jpwall03 at SwissM:00  GUSwall01 at Greenlink:0 
+
+ 
+
+   join jpwall06 at SwissM:end GUSwall03 at Greenlink:0
+
+   join jpwall07 at SwissM:end GUSwall04 at Greenlink:end  
+
+   
+
+    join uwall04 at SwissM:0 swall02 at Greenlink:end
+
+    join secondwall01 at SwissM:0 swall05 at Greenlink:end
+
+ 
+
+Although looking at it now, with the benefit of 10 more years of experience, I wonder if I could have used a simpler scrap to scrap join, with the -count 3 option.  [Refer to the description of join on page 40-41 of The Therion Book].
+
+Depending on the details of your data structure, there may need to be subtle differences in the way you reference the scraps, but looking at your description below, I think the style of scrap referencing I have used should work for you (probably).  If it does not, you could try removing the (highlighted) cave survey names.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Sunday, 14 April 2019 05:32
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Joining maps with the join command
+
+ 
+
+Hi,
+
+ 
+
+I am currently learning how to use Therion to draw up a detailed survey.
+
+ 
+
+My survey is split into several "caves", each of which has its own .th and .th2 file. In the .th file for each cave is a separate "map", so that the cave can be rendered separately.
+
+ 
+
+cave1.th:
+
+survey cave1
+
+input "cave1 plan.th2"
+
+input "cave1 ee.th2"
+
+map cave1MP
+
+  scrap1
+
+  scrap2
+
+endmap
+
+centreline
+
+  ...
+
+endcentreline
+
+endsurvey
+
+ 
+
+cave2.th:
+
+survey cave2
+
+input "cave2 plan.th2"
+
+input "cave2 ee.th2"
+
+map cave2MP
+
+  scrapa
+
+  scrapb
+
+endmap
+
+centreline
+
+  ...
+
+endcentreline
+
+endsurvey
+
+ 
+
+Then I have an overall file which combines the maps called allcaves.th:
+
+survey allcaves
+
+map allcavesMP
+
+  cave1MP at cave1
+
+  cave2MP at cave2
+
+  join ____________
+
+endmap
+
+centreline
+
+  ...
+
+endcentreline
+
+endsurvey
+
+ 
+
+Imagine the two caves join in scrap1 (id "foo":0) and scrapb (id "bar":end), and I want to use a join command to make the scraps join neatly (I have already positioned the passage ends very close to each other). Could you please tell me the syntax needed to make the join command reference the correct points of the correct lines inside the correct scraps inside the correct maps?
+
+ 
+
+Every example of the "join" command I could find assumes you were trying to join scraps inside the same map, and did not show how to reference items in a sub-map. As a result, I have not been able to work out how to construct a valid join command for this situation.
+
+ 
+
+Many thanks for any information you can provide.
+
+ 
+
+Tarquin
+
+_______________________________________________
+
+Therion mailing list
+
+ <mailto:Therion at speleo.sk> Therion at speleo.sk
+
+ <https://mailman.speleo.sk/listinfo/therion> https://mailman.speleo.sk/listinfo/therion
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190414/982f50fc/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Apr 14 09:32:14 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 14 Apr 2019 08:32:14 +0100
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+Message-ID: <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+
+Hi all,
+
+Thanks for that impressive load of answers,
+
+> First of all you should input cave1.th and cave2.th to your survey caveaall! Therion must know the way to data. 
+
+
+Ah yes, in my example I was simplifying to keep only the most important
+lines visible and keep the question simple. That is one thing I should
+have kept in :)
+
+My real data does of course have the imports.
+
+>   join GreenlinkUSumpsPlan_s2 at Greenlink GreenlinkFPlan_s1 at MiddleEarth 
+> -smooth on
+
+
+OK ... so that syntax does in fact exist. I had not expected it to be
+valid (double @ symbol). I see Henry's example is using that same approach.
+
+>    join jpwall04 at SwissM:end GUSwall02 at Greenlink:end
+
+
+I thought this is what I had used, but it failed. So I assume I have
+done something else wrong somewhere. Sadly the only error message I see
+is "invalid map item", which made me assume I was using the wrong
+approach. It's not a particularly helpful error message, since it
+doesn't tell me either the name it doesn't like, or the property that it
+doesn't like. Certainly don't want to complain about such an incredible
+piece of software, but imagine how nice it would be to see this:
+"invalid map item: jpwall04 at SwissM:*end*" ("end" is in bold/red)
+
+With such highlighting, I would quickly be able to see that the initial
+scrap reference is good, and the line reference is good, but the
+linepoint is wrong. Oh well, this is probably not the best place for a
+feature request.
+
+> Although looking at it now, with the benefit of 10 more years of
+> experience, I wonder if I could have used a simpler scrap to scrap join,
+> with the -count 3 option.  [Refer to the description of join on page
+> 40-41 of The Therion Book].
+
+
+Yes, I had wondered how to join mine in a place where there are some
+oxbowing avens (the caves join vertically through a series of holes,
+only the main one of which is surveyed with true legs), without using
+walls. It seems -count is indeed my answer! Very nice, thanks.
+
+So now back to wondering what it doesn't like about my (apparently
+valid) join.
+
+Cheers all!
+
+Tarquin
+
+
+From martinsluka at mac.com  Sun Apr 14 09:35:10 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 14 Apr 2019 09:35:10 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+Message-ID: <D625F52F-4205-470C-A52D-C6887A9AEC3F@mac.com>
+
+Tarquin, may you share your data?
+
+Martin
+
+Odesláno z iPhonu
+
+14. 4. 2019 v 9:32, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+> Hi all,
+> 
+> Thanks for that impressive load of answers,
+> 
+>> First of all you should input cave1.th and cave2.th to your survey caveaall! Therion must know the way to data. 
+> 
+> 
+> Ah yes, in my example I was simplifying to keep only the most important
+> lines visible and keep the question simple. That is one thing I should
+> have kept in :)
+> 
+> My real data does of course have the imports.
+> 
+>>   join GreenlinkUSumpsPlan_s2 at Greenlink GreenlinkFPlan_s1 at MiddleEarth 
+>> -smooth on
+> 
+> 
+> OK ... so that syntax does in fact exist. I had not expected it to be
+> valid (double @ symbol). I see Henry's example is using that same approach.
+> 
+>>    join jpwall04 at SwissM:end GUSwall02 at Greenlink:end
+> 
+> 
+> I thought this is what I had used, but it failed. So I assume I have
+> done something else wrong somewhere. Sadly the only error message I see
+> is "invalid map item", which made me assume I was using the wrong
+> approach. It's not a particularly helpful error message, since it
+> doesn't tell me either the name it doesn't like, or the property that it
+> doesn't like. Certainly don't want to complain about such an incredible
+> piece of software, but imagine how nice it would be to see this:
+> "invalid map item: jpwall04 at SwissM:*end*" ("end" is in bold/red)
+> 
+> With such highlighting, I would quickly be able to see that the initial
+> scrap reference is good, and the line reference is good, but the
+> linepoint is wrong. Oh well, this is probably not the best place for a
+> feature request.
+> 
+>> Although looking at it now, with the benefit of 10 more years of
+>> experience, I wonder if I could have used a simpler scrap to scrap join,
+>> with the -count 3 option.  [Refer to the description of join on page
+>> 40-41 of The Therion Book].
+> 
+> 
+> Yes, I had wondered how to join mine in a place where there are some
+> oxbowing avens (the caves join vertically through a series of holes,
+> only the main one of which is surveyed with true legs), without using
+> walls. It seems -count is indeed my answer! Very nice, thanks.
+> 
+> So now back to wondering what it doesn't like about my (apparently
+> valid) join.
+> 
+> Cheers all!
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From bruce at tomo.co.nz  Sun Apr 14 10:34:51 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 14 Apr 2019 20:34:51 +1200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+Message-ID: <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+
+>Sadly the only error message I see is "invalid map item"
+
+ 
+
+Common mistakes I have made;
+
+*	Forgetting to have an 'endmap' statement
+*	Mixing scraps and maps within the same map definition
+*	Missing a dash at the start of an option such as ‘-title’
+*	Forgetting one of more “ surrounding a string (such as in -title “map title string”)
+
+ 
+
+But looking at your original post, I think maybe you have a join inside a map definition.
+
+Joins should be inside the survey, not inside the map.
+
+ 
+
+Brue
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190414/647eb9f6/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Apr 14 21:15:53 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 14 Apr 2019 20:15:53 +0100
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+ <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+Message-ID: <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+
+Hi Bruce,
+
+> But looking at your original post, I think maybe you have a join inside
+> a map definition.
+
+Oh my goodness. Nail on the head, sir! I owe you one. My command was
+already correct (after Benedikt explained that scraps do not belong to a
+map, and to reference the scrap as a child of its survey), I just put it
+in the wrong place. Failed to recognise the context options for the command.
+
+For anyone else who finds this thread while looking for help, this is a
+summary:
+
+Both the line/point IDs and the scrap IDs can be referenced within the
+survey where they are created/imported. You can either tell it to
+automatically connect the best fitting points of the scraps (with the
+optional -count parameter to tell it how many passage ends join with the
+other scraps). Or you can manually select each linepoint in one scrap
+that should connect with which linepoint in another scrap.
+
+cave1.th:
+survey cave1
+ input "cave1 plan.th2"
+ input "cave1 ee.th2"
+ map cave1MP
+  scrap1
+  scrap2
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+cave2.th:
+survey cave2
+ input "cave2 plan.th2"
+ input "cave2 ee.th2"
+ map cave2MP
+  scrapa
+  scrapb
+ endmap
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Then I have an overall file which combines the maps called allcaves.th:
+survey allcaves
+ input "cave1.th"
+ input "cave2.th"
+ map allcavesMP
+  cave1MP at cave1
+  cave2MP at cave2
+ endmap
+ #either
+ join scrap1 at cave1 scrapb at cave2 -smooth on -count 1
+ #or
+ join line1 at cave1:end line3 at cave2:0 -smooth on
+ join line2 at cave1:0 line4 at cave2:end -smooth on
+ centreline
+  ...
+ endcentreline
+endsurvey
+
+Another survey that uses "input allcaves" could also use one of these to
+reference the scrap or linepoint within the child "allcaves" survey:
+scrap1 at cave1.allcaves
+line1 at cave1.allcaves:end
+
+<aside>
+
+I do wish these error messages were a little more informative, pointing
+out where you made a mistake, but I am so glad it was something so
+simple. Does it actually not know what the problem is? Rather than
+saying "you put it in the wrong place" it says "the map item is not
+valid", which makes me assume a syntax error rather than a command
+hierarchy error.
+
+(My favourite error is the one where I forget to click on some survey
+stations when defining a scrap, and it tells me "this map is too large,
+and you need to pick a smaller scale". Or the one where I click on a
+station that was already defined in another scrap, and it fails to put
+the right -name in the options - or it just picks the "next" station
+number which was not the right one. Same error message. Or some random
+code dumps about it failing to find the largest coordinate when closing
+lines. These messages are ... "fun".)
+
+</aside>
+
+Many thanks to you all for the advice (and to Martin for offering to
+help debug). It seems that I have it working well enough now.
+
+Cheers!
+
+Tarquin
+
+
+From martinsluka at mac.com  Mon Apr 15 08:43:51 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 15 Apr 2019 08:43:51 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+ <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+ <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+Message-ID: <6DCAF6C8-C186-4D19-BC88-2D5652704A65@mac.com>
+
+
+
+> 14. 4. 2019 v 21:15, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> I do wish these error messages were a little more informative, pointing
+> out where you made a mistake, but I am so glad it was something so
+> simple. Does it actually not know what the problem is? Rather than
+> saying "you put it in the wrong place" it says "the map item is not
+> valid", which makes me assume a syntax error rather than a command
+> hierarchy error.
+> 
+> (My favourite error is the one where I forget to click on some survey
+> stations when defining a scrap, and it tells me "this map is too large,
+> and you need to pick a smaller scale". Or the one where I click on a
+> station that was already defined in another scrap, and it fails to put
+> the right -name in the options - or it just picks the "next" station
+> number which was not the right one. Same error message. Or some random
+> code dumps about it failing to find the largest coordinate when closing
+> lines. These messages are ... "fun".)
+
+It looks there should be new section on wiki: Interpretation of error messages, I think.
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190415/4af71305/attachment.htm>
+
+From beni at hallinger.org  Mon Apr 15 12:19:02 2019
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 15 Apr 2019 12:19:02 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <6DCAF6C8-C186-4D19-BC88-2D5652704A65@mac.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+ <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+ <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+ <6DCAF6C8-C186-4D19-BC88-2D5652704A65@mac.com>
+Message-ID: <C8D224CD-629A-488C-AFA3-03F1F8DAD8E9@hallinger.org>
+
+That would indeed be helpful.
+
+> Am 15.04.2019 um 08:43 schrieb Martin Sluka via Therion <therion at speleo.sk>:
+> 
+> 
+> 
+>> 14. 4. 2019 v 21:15, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+>> 
+>> I do wish these error messages were a little more informative, pointing
+>> out where you made a mistake, but I am so glad it was something so
+>> simple. Does it actually not know what the problem is? Rather than
+>> saying "you put it in the wrong place" it says "the map item is not
+>> valid", which makes me assume a syntax error rather than a command
+>> hierarchy error.
+>> 
+>> (My favourite error is the one where I forget to click on some survey
+>> stations when defining a scrap, and it tells me "this map is too large,
+>> and you need to pick a smaller scale". Or the one where I click on a
+>> station that was already defined in another scrap, and it fails to put
+>> the right -name in the options - or it just picks the "next" station
+>> number which was not the right one. Same error message. Or some random
+>> code dumps about it failing to find the largest coordinate when closing
+>> lines. These messages are ... "fun".)
+> 
+> It looks there should be new section on wiki: Interpretation of error messages, I think.
+> 
+> Martin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190415/23c0522e/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Mon Apr 15 19:35:43 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 15 Apr 2019 18:35:43 +0100
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <C8D224CD-629A-488C-AFA3-03F1F8DAD8E9@hallinger.org>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+ <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+ <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+ <6DCAF6C8-C186-4D19-BC88-2D5652704A65@mac.com>
+ <C8D224CD-629A-488C-AFA3-03F1F8DAD8E9@hallinger.org>
+Message-ID: <0aa4cc13-312d-ae83-5b00-ca55d474d86c@ntlworld.com>
+
+Sorry for dragging a thread in the wrong direction, but ...
+
+> That would indeed be helpful.
+
+
+If you're looking for a nice example ... this is what happens when you
+create a slope with two straight points, then accidentally add a third
+point on the same position as the first one:
+
+"
+! angle(0,0) is taken as zero.
+<for(0)> ...EXPR0)])-angle(thdir((path),(EXPR0))))
+
+mod360;alw_perpendicular:=...
+
+l_slope->...wn.lengths[i]:lengths[i]:=-1;fi;endfor
+
+;ni:=0;pi:=0;for.i=0upto.l...
+l.9329 ...(1,51.7368,24.3004),(2,51.7368,24.3004))
+                                                  ;
+The `angle' between two identical points is undefined.
+I'm zeroing this one. Proceed, with fingers crossed.
+
+...
+
+error -- metapost exit code -- 2
+"
+
+That one is really not very human readable (though I can at least see it
+was a "slope" at fault).
+
+
+Tarquin
+
+
+From martinsluka at mac.com  Mon Apr 15 20:33:27 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Mon, 15 Apr 2019 20:33:27 +0200
+Subject: [Therion] Joining maps with the join command
+In-Reply-To: <0aa4cc13-312d-ae83-5b00-ca55d474d86c@ntlworld.com>
+References: <940596ee-4817-b53c-13d5-86d70d36f3b5@ntlworld.com>
+ <001701d4f28f$e62b9cd0$b282d670$@tomo.co.nz>
+ <04415d70-d794-a825-aef4-9277a95d3a7f@ntlworld.com>
+ <002301d4f29c$ef2bebc0$cd83c340$@tomo.co.nz>
+ <e8ea9798-611b-711d-ade4-cce51f06e8cb@ntlworld.com>
+ <6DCAF6C8-C186-4D19-BC88-2D5652704A65@mac.com>
+ <C8D224CD-629A-488C-AFA3-03F1F8DAD8E9@hallinger.org>
+ <0aa4cc13-312d-ae83-5b00-ca55d474d86c@ntlworld.com>
+Message-ID: <D4F0ED9E-AAB4-440D-952A-0284719CB865@mac.com>
+
+The angle between two identical points. 
+
+Odesláno z iPhonu
+
+15. 4. 2019 v 19:35, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+
+> Sorry for dragging a thread in the wrong direction, but ...
+> 
+>> That would indeed be helpful.
+> 
+> 
+> If you're looking for a nice example ... this is what happens when you
+> create a slope with two straight points, then accidentally add a third
+> point on the same position as the first one:
+> 
+> "
+> ! angle(0,0) is taken as zero.
+> <for(0)> ...EXPR0)])-angle(thdir((path),(EXPR0))))
+> 
+> mod360;alw_perpendicular:=...
+> 
+> l_slope->...wn.lengths[i]:lengths[i]:=-1;fi;endfor
+> 
+> ;ni:=0;pi:=0;for.i=0upto.l...
+> l.9329 ...(1,51.7368,24.3004),(2,51.7368,24.3004))
+>                                                  ;
+> The `angle' between two identical points is undefined.
+> I'm zeroing this one. Proceed, with fingers crossed.
+> 
+> ...
+> 
+> error -- metapost exit code -- 2
+> "
+> 
+> That one is really not very human readable (though I can at least see it
+> was a "slope" at fault).
+> 
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Apr 18 20:33:02 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 18 Apr 2019 19:33:02 +0100
+Subject: [Therion] How to get the right count for cave lengths
+Message-ID: <059bf5f2-3683-d8da-1230-32463661f813@ntlworld.com>
+
+Hi,
+
+I have nearly completed the total survey for the system I am mapping. In
+total, there are a series of little caves (actually mines, but I will
+stick with the word "caves" because it is clearer), a blind surface
+shaft, and a couple of significantly long caves. In total, these were
+surveyed over a series of 6 trips. On one of those trips, we surveyed
+the surface, and any short fragments of passage that we encountered that
+way. One of those fragments turned out to be one of the major caves. The
+major cave's survey was subsequently completed on another trip, but its
+first few metres are included in the surface survey.
+
+I am used to Survex. Each of the surveying trips has its own .th file:
+
+overall.th ("input"s all the other files)
+surface1/surface1.th (contains the entrances to several fragments, and
+the first 2 legs of cave 1)
+surface2/surface2.th (contains the blind shaft's plumbed depth and some
+other entrances)
+cave1/cave1.th (does not contain any entrances, but is a long cave,
+connected to the "cave 1 legs" in surface1.th
+cave2/cave2.th (contains the first part of cave2, and its entrance)
+cave3/cave3.th (contains cave3, with two entrances)
+cave2ext/cave2ext.th (contains the second part of cave2)
+
+Cave1 is connected to cave2.
+
+Each entrance is marked using "station 2 Cave1 entrance" in the
+centreline section of the file where it is defined. Survex only displays
+aggregate statistics. Therion tries to identify "caves", which is a
+concept I am not used to.
+
+I had hoped that Therion would be smart enough to see that caves are
+connected to each other, and work out the connected lengths. But it
+seems that it only works out the length of the files within the same
+survey. Cave1 doesn't get any length. Cave2 gets only the length from
+cave2.th - the length of the cave2ext and cave1 are not included.
+
+How do I make Therion realise what caves are connected? Do I need to put
+them into a structure like this?
+survey overall
+survey cave1_2 -entrance 2 at cave2 -name "Caves 1 and 2"
+input cave1.th
+input cave2.th
+input cave2ext.th
+endsurvey
+endsurvey
+
+And if so ... how do I tell it that *part* of the cave lies within the
+surface survey file? Do I need to split the surface survey up into
+parts, one of which is the entrance to cave1?
+
+Separately, when using "statistics topo-length on", it ignores the
+surface survey legs, which is quite unfair for the person who surveyed 1
+km of surface to link all of the entrances - they get no credit at all.
+Can it be asked to include surface legs in the topo-length calculations
+for survey credits?
+
+Thanks for any advice.
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Sun Apr 21 05:58:25 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sun, 21 Apr 2019 15:58:25 +1200
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <059bf5f2-3683-d8da-1230-32463661f813@ntlworld.com>
+Message-ID: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+
+TarquinHave a look at https://therion.speleo.sk/wiki/faq#how_do_i_specify_a_main_entrance_and_also_the_other_entrancesto find out more about specifying what is a cave and what is just another entrance. To see what Therion is interpreting from your input, cave-list and survey-list are a good compliment to the map output statistics. Surface survey is not counted as cave survey, so the statistics are not reported on map outputs. Yes you do need to structure your data to define which trips belong to which caves. I would also have an overall surface survey to contain all of the surface trips. Also, flags surface and flags not surface are required to distinguish cave passage from from surface survey. I prefer to also make sure the surface survey is in its own centreline (or own survey)  if it is more than just once or two legs. In general I find it preferable to keep surface survey for surface (including isolated features like shafts), and create a new trip file for each cave. This helps maintain a clear separation of data for subsequent survey processing and statistics gathering. BruceSent from my Samsung Galaxy smartphone.
+-------- Original message --------From: Tarquin Wilton-Jones via Therion <therion at speleo.sk> Date: 19/04/19  06:33  (GMT+12:00) To: therion at speleo.sk Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com> Subject: [Therion] How to get the right count for cave lengths Hi,I have nearly completed the total survey for the system I am mapping. Intotal, there are a series of little caves (actually mines, but I willstick with the word "caves" because it is clearer), a blind surfaceshaft, and a couple of significantly long caves. In total, these weresurveyed over a series of 6 trips. On one of those trips, we surveyedthe surface, and any short fragments of passage that we encountered thatway. One of those fragments turned out to be one of the major caves. Themajor cave's survey was subsequently completed on another trip, but itsfirst few metres are included in the surface survey.I am used to Survex. Each of the surveying trips has its own .th file:overall.th ("input"s all the other files)surface1/surface1.th (contains the entrances to several fragments, andthe first 2 legs of cave 1)surface2/surface2.th (contains the blind shaft's plumbed depth and someother entrances)cave1/cave1.th (does not contain any entrances, but is a long cave,connected to the "cave 1 legs" in surface1.thcave2/cave2.th (contains the first part of cave2, and its entrance)cave3/cave3.th (contains cave3, with two entrances)cave2ext/cave2ext.th (contains the second part of cave2)Cave1 is connected to cave2.Each entrance is marked using "station 2 Cave1 entrance" in thecentreline section of the file where it is defined. Survex only displaysaggregate statistics. Therion tries to identify "caves", which is aconcept I am not used to.I had hoped that Therion would be smart enough to see that caves areconnected to each other, and work out the connected lengths. But itseems that it only works out the length of the files within the samesurvey. Cave1 doesn't get any length. Cave2 gets only the length fromcave2.th - the length of the cave2ext and cave1 are not included.How do I make Therion realise what caves are connected? Do I need to putthem into a structure like this?survey overallsurvey cave1_2 -entrance 2 at cave2 -name "Caves 1 and 2"input cave1.thinput cave2.thinput cave2ext.thendsurveyendsurveyAnd if so ... how do I tell it that *part* of the cave lies within thesurface survey file? Do I need to split the surface survey up intoparts, one of which is the entrance to cave1?Separately, when using "statistics topo-length on", it ignores thesurface survey legs, which is quite unfair for the person who surveyed 1km of surface to link all of the entrances - they get no credit at all.Can it be asked to include surface legs in the topo-length calculationsfor survey credits?Thanks for any advice.Tarquin_______________________________________________Therion mailing listTherion at speleo.skhttps://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190421/54bdc158/attachment.htm>
+
+From martinsluka at mac.com  Sun Apr 21 08:43:47 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Sun, 21 Apr 2019 08:43:47 +0200
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+References: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+Message-ID: <50EB7B22-DBCA-4BD8-8D87-194E0A793983@mac.com>
+
+Try to arange your surveys to a structure with several layers (“name spaces”).
+
+Martin
+
+Odesláno z iPhonu
+
+21. 4. 2019 v 5:58, Bruce Mutton <bruce at tomo.co.nz>:
+
+> Tarquin
+> Have a look at 
+> https://therion.speleo.sk/wiki/faq#how_do_i_specify_a_main_entrance_and_also_the_other_entrances
+> to find out more about specifying what is a cave and what is just another entrance. 
+> 
+> To see what Therion is interpreting from your input, cave-list and survey-list are a good compliment to the map output statistics. Surface survey is not counted as cave survey, so the statistics are not reported on map outputs. 
+> Yes you do need to structure your data to define which trips belong to which caves. I would also have an overall surface survey to contain all of the surface trips. 
+> Also, flags surface and flags not surface are required to distinguish cave passage from from surface survey. I prefer to also make sure the surface survey is in its own centreline (or own survey)  if it is more than just once or two legs. 
+> 
+> In general I find it preferable to keep surface survey for surface (including isolated features like shafts), and create a new trip file for each cave. This helps maintain a clear separation of data for subsequent survey processing and statistics gathering. 
+> 
+> Bruce
+> Sent from my Samsung Galaxy smartphone.
+> 
+> -------- Original message --------
+> From: Tarquin Wilton-Jones via Therion <therion at speleo.sk>
+> Date: 19/04/19 06:33 (GMT+12:00)
+> To: therion at speleo.sk
+> Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+> Subject: [Therion] How to get the right count for cave lengths
+> 
+> Hi,
+> 
+> I have nearly completed the total survey for the system I am mapping. In
+> total, there are a series of little caves (actually mines, but I will
+> stick with the word "caves" because it is clearer), a blind surface
+> shaft, and a couple of significantly long caves. In total, these were
+> surveyed over a series of 6 trips. On one of those trips, we surveyed
+> the surface, and any short fragments of passage that we encountered that
+> way. One of those fragments turned out to be one of the major caves. The
+> major cave's survey was subsequently completed on another trip, but its
+> first few metres are included in the surface survey.
+> 
+> I am used to Survex. Each of the surveying trips has its own .th file:
+> 
+> overall.th ("input"s all the other files)
+> surface1/surface1.th (contains the entrances to several fragments, and
+> the first 2 legs of cave 1)
+> surface2/surface2.th (contains the blind shaft's plumbed depth and some
+> other entrances)
+> cave1/cave1.th (does not contain any entrances, but is a long cave,
+> connected to the "cave 1 legs" in surface1.th
+> cave2/cave2.th (contains the first part of cave2, and its entrance)
+> cave3/cave3.th (contains cave3, with two entrances)
+> cave2ext/cave2ext.th (contains the second part of cave2)
+> 
+> Cave1 is connected to cave2.
+> 
+> Each entrance is marked using "station 2 Cave1 entrance" in the
+> centreline section of the file where it is defined. Survex only displays
+> aggregate statistics. Therion tries to identify "caves", which is a
+> concept I am not used to.
+> 
+> I had hoped that Therion would be smart enough to see that caves are
+> connected to each other, and work out the connected lengths. But it
+> seems that it only works out the length of the files within the same
+> survey. Cave1 doesn't get any length. Cave2 gets only the length from
+> cave2.th - the length of the cave2ext and cave1 are not included.
+> 
+> How do I make Therion realise what caves are connected? Do I need to put
+> them into a structure like this?
+> survey overall
+> survey cave1_2 -entrance 2 at cave2 -name "Caves 1 and 2"
+> input cave1.th
+> input cave2.th
+> input cave2ext.th
+> endsurvey
+> endsurvey
+> 
+> And if so ... how do I tell it that *part* of the cave lies within the
+> surface survey file? Do I need to split the surface survey up into
+> parts, one of which is the entrance to cave1?
+> 
+> Separately, when using "statistics topo-length on", it ignores the
+> surface survey legs, which is quite unfair for the person who surveyed 1
+> km of surface to link all of the entrances - they get no credit at all.
+> Can it be asked to include surface legs in the topo-length calculations
+> for survey credits?
+> 
+> Thanks for any advice.
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190421/ac73f167/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Sun Apr 21 09:07:05 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Sun, 21 Apr 2019 08:07:05 +0100
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+References: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+Message-ID: <4147cbae-09d4-b45a-531f-e5dd5a987e3a@ntlworld.com>
+
+Hi Bruce,
+
+> To see what Therion is interpreting from your input, cave-list and
+> survey-list are a good compliment to the map output statistics.
+
+
+Indeed - this is what made me realise I was probably doing it the wrong
+way for Therion to understand. It is definitely a pain having to split
+up surveys, but the resulting structure will make more sense in future.
+
+> Surface survey is not counted as cave survey, so the statistics are not
+> reported on map outputs.
+
+
+This is a real shame. People who put in work should be recognised for
+that work, no matter which part of the survey they take part in. I have
+no problem at all with the part saying "the cave is this long" - which
+should of course only use the "not surface" part. But it is wrong for
+the map to say "this person surveyed 50 metres" or to ignore them
+completely, when they actually produced 1km of surface survey that
+allowed all of the other surveys to be linked together in the correct
+positions.
+
+I would dearly love some option to say "include surface legs in
+topo-length statistics". Really hoping you missed something, but you
+seem to know the program as well as anyone, so if you don't know of such
+an option then ... :(
+
+Guess I should file it as a feature request.
+
+> Yes you do need to structure your data to define which trips belong to
+> which caves. I would also have an overall surface survey to contain all
+> of the surface trips. 
+
+
+A load of great advice, thanks :)
+
+I have basically now done all of this.
+
+(I also switched to using a new centreline when the team changes - this
+is a pain though, because it means any calibration, copyright, date,
+authorship, etc. also has to be repeated. It would be so much easier for
+it to respect group.)
+
+
+Thanks again for all the assistance.
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Tue Apr 23 11:17:13 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 23 Apr 2019 21:17:13 +1200
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <4147cbae-09d4-b45a-531f-e5dd5a987e3a@ntlworld.com>
+References: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+ <4147cbae-09d4-b45a-531f-e5dd5a987e3a@ntlworld.com>
+Message-ID: <000b01d4f9b5$587e0e40$097a2ac0$@tomo.co.nz>
+
+>(I also switched to using a new centreline when the team changes - this is a pain though, because it means any calibration, copyright, date, authorship, etc. also has to be repeated. It would be so much easier for it to respect group.)
+
+ 
+
+It is a pain, but it is something I have got used to. 
+
+Repeating from memory my interpretation of something that I think Stacho or Martin B posted some years ago; the reporting of statistics is only resolved down to centreline resolution (not survey leg resolution).  So this means that Therion might well be honouring any changes to metadata that you make using group - endgroup.  But the statistics gathering code cannot report accurately those changes, because the lowest resolution is 'by centreline'.  If this interpretation is correct, then group endgroup is good for settings that affect the centreline shape, flags, standard deviation, but not for metadata that needs to be gathered for statistics reporting, such as changes relating to team members.
+
+ 
+
+Regarding reporting of surface survey statistics, you can export a sql database, and I am sure that it will contain the information you want, subject to the 'centreline resolution' issue above.  You will need to think of the query criteria to set to get the result you are after.  That is perhaps not completely helpful, because it means you will need to manually enter that information in the map-header, either by customising it, or entering it as a map-comment.
+
+ 
+
+'Statistics' is a layout option, so it is possible that the visibility of surface centrelines may affect the statistics reported.  I don't think so, but it is something you should check.  ie
+
+symbol-show group surface-centreline vs symbol-hide group surface-centreline
+
+ 
+
+Otherwise, the next best option is as you have requested, an option to include or exclude the surface survey in the explo-length and topo-length totals for team members.
+
+Maybe a new statistics option is desirable;
+
+statistics <explo/topo-length on/off>, with the default [off] matching the current behaviour.
+
+ 
+
+If such a change were contemplated, then I would like carto'-length' (or maybe better carto'-scrap') to be included in the statistics that can be sorted by team member 'contribution' sorting.  ie, I would like to sort cartographers by the amount of drawing they have contributed (currently only alphabetically is possible).  I think the best measure of this would be the number of scraps they have drawn (consistent with my contention that more little scraps is better than few large scraps).
+
+And I guess the same potentially applies to copyrights.  If there are 50 scraps that are copyrighted to one organisation, and 4 scraps to another, there should be the ability to sort the larger one first, rather than alphabetically.  ie expand
+
+statistics <explo/topo-length                               on/hide/off> to
+
+statistics <explo/topo-length/carto/copyright on/hide/off> with the last two ranked on scrap count.
+
+ 
+
+Bruce
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190423/647effc6/attachment.htm>
+
+From bruce at tomo.co.nz  Tue Apr 23 11:23:32 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 23 Apr 2019 21:23:32 +1200
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <000b01d4f9b5$587e0e40$097a2ac0$@tomo.co.nz>
+References: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+ <4147cbae-09d4-b45a-531f-e5dd5a987e3a@ntlworld.com>
+ <000b01d4f9b5$587e0e40$097a2ac0$@tomo.co.nz>
+Message-ID: <001501d4f9b6$39ae37f0$ad0aa7d0$@tomo.co.nz>
+
+Oops, a mistake in the previous post.  Should be…
+
+ 
+
+Maybe a new statistics option is desirable;
+
+statistics <surface-length on/off>, with the default [off] matching the current behaviour
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190423/ed03892c/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 23 13:01:52 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 23 Apr 2019 13:01:52 +0200
+Subject: [Therion] How to get the right count for cave lengths
+In-Reply-To: <001501d4f9b6$39ae37f0$ad0aa7d0$@tomo.co.nz>
+References: <52.8C.06856.46AEBBC5@sparkbusinessmail.co.nz>
+ <4147cbae-09d4-b45a-531f-e5dd5a987e3a@ntlworld.com>
+ <000b01d4f9b5$587e0e40$097a2ac0$@tomo.co.nz>
+ <001501d4f9b6$39ae37f0$ad0aa7d0$@tomo.co.nz>
+Message-ID: <62550181-f6b2-b633-20ab-9250182923e1@ntlworld.com>
+
+> Maybe a new statistics option is desirable;
+> 
+> *statistics <surface-length on/off>*, with the default [off] matching
+> the current behaviour
+
+
+Or a new value for topo-length, such as:
+statistics topo-length all
+But yes, your suggestion covers a few other cases, such as making sure
+it is also included in carto statistics, which is also nice, imho.
+
+It is filed here, but without any suggestion for how to implement it -
+feel free to add your comment to it, with your suggested option name:
+https://github.com/therion/therion/issues/132
+
+Your idea of being able to show/sort by carto-length is also great. Not
+that it matters to our project right now, since I am the only one
+currently drawing up, but if someone else draws up a single scrap, it
+would be a little disproportionate to show them first just because their
+name sorts higher.
+
+Copyright, though, is a legal state, so it doesn't really matter so much
+to me about the ordering - (though yes, I can see why you might want
+it). Its main need for being there is to say to people "you need to
+contact these organisations for permission". But I did notice that it
+only pulls the copyright information from the scraps, not from the
+centreline, which means that if club A does the surveying (and therefore
+holds copyright of the data), and club B does the cartography, it will
+only show club B as copyright holders of the survey. In such a case, the
+drawn survey is a derived work of the data, and therefore anyone who
+needs to seek permission to make a derived work would need to seek
+permission from both club A and club B.
+
+
+From tarquin.wilton-jones at ntlworld.com  Wed Apr 24 23:55:56 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 24 Apr 2019 23:55:56 +0200
+Subject: [Therion] Making projected elevations, and using map connectors
+Message-ID: <620e1e0c-cc25-82f5-962c-ec386507b3a2@ntlworld.com>
+
+Hi,
+
+Still learning (never stop)...
+
+I have looked through the various tutorials, and several examples, but I
+have not found any information on how to create a projected elevation -
+all tutorials stop at that point with "TODO: show how to do elevations".
+The software I am using to survey the caves (DistoX2 + SexyTopo) gives
+me a plan view and an extended elevation, exported as centreline+xvi.
+The area I am surveying is mostly linear with passages stacked at
+various levels above each other. As a result, projected elevation is
+more useful than extended elevation.
+
+I know I have to use "-projection [elevation 265]" on my scraps and maps
+to make them all work when I try to use:
+export map -projection [elevation 265]
+
+However, I have not been able to find how to get from an extended
+elevation to a projected elevation. I had hoped for some magic where I
+just create an extended elevation then ask Therion to warp that extended
+elevation into a projected elevation, but I have come to the conclusion
+that I probably have to do this:
+
+export map -projection [elevation 265] -output elevation265.xvi
+
+Then create a dedicated surveyname_elevation265.th2 file and go over all
+the survey data and create the required scraps for it, without being
+able to see the sketches in the XTherion scrap editor.
+
+Have I made the right assumption, or is there some clever magic that can
+happen? Does this mean that in order to create two elevations, one
+facing 265° and one facing 180°, I actually have to do this all twice,
+creating each scrap from scratch each time?
+
+Imagine I want to have half of the cave on a bearing of 265 and the
+other half on a bearing of 180 in the same file (because the cave turns
+a corner half way along) - essentially extending a projected elevation.
+I could export the data once on a bearing of 265, and once on a bearing
+of 180, then create appropriate scraps for each half, pretend that the
+ones on a bearing of 100 are actually on a bearing of 265 by using the
+-projection options of maps and scraps. But then it would warp them to
+oblivion when trying to make it fit the centreline. So would I actually
+have to export two PDFs, one with a map that only covers half of the
+cave on a bearing of 265, and another that covers the other half of the
+cave on a bearing of 180, and position the outputs very close together
+by importing them as images into a third map?
+
+(Not as insane as it sounds. It is a mine, with major passages all very
+linear at different levels, and just one significant passage running at
+right angles to the other passages.)
+
+
+While I have your attention, I have been using "map [10 0 m] above" to
+displace certain parts of the cave. I worked out how to use map
+connector points (just place a connector on whichever scrap will end up
+moving) to show their displacement. Some parts of the cave get displaced
+once away from their parent map, then again when their parent map gets
+displaced by a grandparent map. It seemed to be impossible to show a
+line from their original location to their new one, so I split them up
+into pieces, one has the connector to show the line from the parent map,
+and the other gets its own map which is displaced directly into the
+final position, with a connector showing the original position. This
+seems like the best solution to me, but please shout if you know better.
+
+I am struggling a bit with this though, since it is not mentioned
+anywhere in much detail:
+	map intermediateMP
+		movedtwiceMP [-60 0 m] none
+		movedonceMP
+	endmap
+	map finalMP
+		intermediateMP [10 0 m] above
+		notmovedMP
+	endmap
+...
+select finalMP...
+
+In this case, it leaves the "above" outline at the original position,
+not the intermediate position, while the passage is correctly shown at
+the final position. Meanwhile the map-connector arrow shows the 60 metre
+move. Have I misunderstood how that is supposed to work? I would have
+expected an outline at the intermediate position. But it seems that
+generation of outlines happens on a different step from generation of
+the connector arrows. Could someone please confirm the order it does
+these moves and arrow creation in, so I can wrap my head around what the
+expected outcome will be? Is it this:
+select finalMP
+position notmovedMP and intermediateMP in their natural positions.
+shift intermediateMP 10 metres right, and leave an outline behind.
+shift movedtwiceMP 60 metres left.
+if movedonceMP has moved and has any map-connectors, draw the
+map-connector to show its most recent move (10 metres right).
+if movedtwiceMP has moved and has any map-connectors, draw the
+map-connector to show its most recent move (60 metres left).
+That is to say; it processes the moves starting at the shallow end of
+the nesting (with the selected map being the shallowest), but it draws
+the arrows at the final step showing only the deepest move.
+
+Thanks for helping me wade through the confusion.
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Fri Apr 26 08:18:24 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 26 Apr 2019 18:18:24 +1200
+Subject: [Therion] Making projected elevations
+Message-ID: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+
+Hi Tarquin
+Probably better to create a new post for each topic.  Makes for smaller bites and easier to respond to.
+
+Basically, there is no conversion of sketches from one projection to another.  You have to do the work yourself or accept any distortions that a fudge might incur.
+Have a search on the mail archive for 'projected elevation'. In essence I think you have come to the right conclusions below.
+https://www.mail-archive.com/therion at speleo.sk/
+Check out https://www.mail-archive.com/therion at speleo.sk/msg06370.html and https://www.mail-archive.com/therion at speleo.sk/msg06368.html
+
+I started my Therion life as a projected elevation fan, but now I think extended is the way to go (subject to the proviso that they are way more vexatious for a non-trivial cave).
+Your description of the cave/mine makes it sound perfect for an extended elevation to me, especially as you already have extended sketches.
+
+Multiple projections on the same pdf page can only be achieved using map-image to insert them as images.  Or you could post-process with another application (which defeats a key advantage of Therion).
+You could take your extended sketches and just flag them as projected, accepting that there may be gross distortions.
+You could forget about the xvi file, and print out a projected centreline (one trip file at a time is my preference), and sketch on that the passage detail, scan it, and import it as a background image in XTherion.  Then you trace it with XTherion to produce scraps.  Seems odd to take an electronic process, and force a pencil and paper stage to it, but that is my preference if the alternative is to have an xvi with no sketches embedded.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Thursday, 25 April 2019 09:56
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Making projected elevations, and using map connectors
+
+Hi,
+
+Still learning (never stop)...
+
+I have looked through the various tutorials, and several examples, but I have not found any information on how to create a projected elevation - all tutorials stop at that point with "TODO: show how to do elevations".
+The software I am using to survey the caves (DistoX2 + SexyTopo) gives me a plan view and an extended elevation, exported as centreline+xvi.
+The area I am surveying is mostly linear with passages stacked at various levels above each other. As a result, projected elevation is more useful than extended elevation.
+
+I know I have to use "-projection [elevation 265]" on my scraps and maps to make them all work when I try to use:
+export map -projection [elevation 265]
+
+However, I have not been able to find how to get from an extended elevation to a projected elevation. I had hoped for some magic where I just create an extended elevation then ask Therion to warp that extended elevation into a projected elevation, but I have come to the conclusion that I probably have to do this:
+
+export map -projection [elevation 265] -output elevation265.xvi
+
+Then create a dedicated surveyname_elevation265.th2 file and go over all the survey data and create the required scraps for it, without being able to see the sketches in the XTherion scrap editor.
+
+Have I made the right assumption, or is there some clever magic that can happen? Does this mean that in order to create two elevations, one facing 265° and one facing 180°, I actually have to do this all twice, creating each scrap from scratch each time?
+
+Imagine I want to have half of the cave on a bearing of 265 and the other half on a bearing of 180 in the same file (because the cave turns a corner half way along) - essentially extending a projected elevation.
+I could export the data once on a bearing of 265, and once on a bearing of 180, then create appropriate scraps for each half, pretend that the ones on a bearing of 100 are actually on a bearing of 265 by using the -projection options of maps and scraps. But then it would warp them to oblivion when trying to make it fit the centreline. So would I actually have to export two PDFs, one with a map that only covers half of the cave on a bearing of 265, and another that covers the other half of the cave on a bearing of 180, and position the outputs very close together by importing them as images into a third map?
+
+(Not as insane as it sounds. It is a mine, with major passages all very linear at different levels, and just one significant passage running at right angles to the other passages.)
+
+... snipped...
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Fri Apr 26 08:51:35 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 26 Apr 2019 08:51:35 +0200
+Subject: [Therion] Making projected elevations
+In-Reply-To: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+Message-ID: <e6721def-0357-1c23-85f2-e700590b4823@ntlworld.com>
+
+Hi Bruce,
+
+A most helpful reply, as always.
+
+Since it seems I am not totally insane, it would be good to get this
+somewhere easier to find, such as a wiki page. Having never edited the
+Therion wiki, what is the convention there - it usually looks like one
+page per jumble of knowledge someone tries to impart (with a meaningless
+URL), rather than a single page per topic. Any suggestions for where to
+create the page to store this information?
+
+> I started my Therion life as a projected elevation fan, but now I think extended is the way to go (subject to the proviso that they are way more vexatious for a non-trivial cave).
+
+
+<aside title="In support of projections">
+
+In most cases where we would use elevations - potholes, for example -
+extended is most certainly the best way, since it moves everything out
+of the way. Once you tweak everything to make it all make sense.
+
+In this case though, the relationships between the levels and/or surface
+is the main thing of interest; where you see an aven (rise/stope) in the
+lower level, and exactly where that is likely to meet a pile of boulders
+in the level above. Or when a passage sits directly below a surface
+shaft. Extended elevations, while you can use them for navigation,
+destroy the relationship between the different levels. Unless you put in
+a tonne of work to twist them back into alignment (destroying the
+purpose of an extended elevation).
+
+Projected definitely hurts when passages run parallel to each other or
+meander towards the viewer, but that only happens once in our entire
+system, and only for an unimportant part of it. It is an extremely
+linear system.
+
+Obviously, each approach has its benefits. But in this case, our team
+prefers projected. I was mainly checking to make sure I wasn't going to
+put in loads of effort to draw the projected and extended separately,
+only to have someone say "you could have done that automatically". But
+you have confirmed that separately is the way to go anyway.
+
+</aside>
+
+> Multiple projections on the same pdf page can only be achieved using map-image to insert them as images.
+
+
+OK, should be simple enough. It could be done with "continues from here"
+slashes, similarly to  how Cuthbert's was done.
+
+> You could forget about the xvi file, and print out a projected centreline (one trip file at a time is my preference), and sketch on that the passage detail, scan it, and import it as a background image in XTherion.  Then you trace it with XTherion to produce scraps.  Seems odd to take an electronic process, and force a pencil and paper stage to it, but that is my preference if the alternative is to have an xvi with no sketches embedded.
+
+
+Very nice, thanks for the tip. Pencils still have a place.
+
+Cheers,
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Fri Apr 26 09:32:26 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 26 Apr 2019 19:32:26 +1200
+Subject: [Therion] wiki editing
+Message-ID: <002801d4fc02$341e92a0$9c5bb7e0$@tomo.co.nz>
+
+> it would be good to get this somewhere easier to find, such as a wiki page. Having never edited the Therion wiki, what is the convention there - it usually looks like one page per jumble of knowledge someone tries to impart (with a meaningless URL), rather than a single page per topic. Any suggestions for where to create the page to store this information?
+
+Instructions are at the top of https://therion.speleo.sk/wiki/doku.php
+Ladislav  will most likely give you access.  New users often have the best insights as to how to 'improve' the documentation, so you are ripe for authorship!
+
+Alas the wiki is chaotic, I think you have characterised it reasonably.  There was a call for interest in rationalising it some years ago.  While it would be worthwhile, I fear it would be a very big job, so I kept very quiet!  I still have far too many unfinished projects to contemplate such a thing.  The search function is quite effective in the wiki, although less effective in the mail archive.
+
+My approach is to always try to add to an existing page that is referenced by topic on the wiki home page. Unfortunately sometimes a topic is fragmented across many pages, and in that case I just try not to make the fragmentation worse.  And sometimes it is just too hard (or risky) to try to edit 'someone else's page', as there are many somewhat incompatible ways that people can chose to use Therion, so I create a new page, sometimes with a meaningful url.
+
+If you have insights into use of projections, then I think the FAQ page would be a good place to start.  Somewhere near https://therion.speleo.sk/wiki/faq#projections_plan_elevation_extended_and_none might work.
+
+Bruce
+
+
+
+
+
+
+From martinsluka at mac.com  Fri Apr 26 11:04:15 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 26 Apr 2019 11:04:15 +0200
+Subject: [Therion] Making projected elevations
+In-Reply-To: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+Message-ID: <3085FB3C-5F9C-4422-88BE-E92BA80DFD57@mac.com>
+
+
+> 26. 4. 2019 v 8:18, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Basically, there is no conversion of sketches from one projection to another.  You have to do the work yourself or accept any distortions that a fudge might incur.
+
+Very simple example, just one shot:
+
+file test_levation.th
+
+survey test_elevation -title "test elevation"
+
+input test_elevation.th2
+
+    centreline
+    units clino compass grad
+    data normal from to compass clino length
+      extend right
+       1 2 5 20 10
+  endcentreline
+endsurvey
+
+And outputs as orientation extended and elevation 0. The converted sketch is not what I want to see. So there is not way how to automatically convert extended sketches to elevation map. But if the orientation of elevation view will be not too far from perpendicular to the centerline shot, the result could be acceptable. See third image.
+
+Martin
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test_elevation_map_extended.pdf
+Type: application/pdf
+Size: 40860 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test_elevation_map_elevation_0.pdf
+Type: application/pdf
+Size: 42268 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment-0001.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment-0002.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: test_elevation_map_elevation_300.pdf
+Type: application/pdf
+Size: 38987 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment-0002.pdf>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190426/703be3cc/attachment-0003.htm>
+
+From Nick at pff.uk.com  Fri Apr 26 11:35:18 2019
+From: Nick at pff.uk.com (Nick Bairstow)
+Date: Fri, 26 Apr 2019 09:35:18 +0000
+Subject: [Therion] Making projected elevations
+In-Reply-To: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+Message-ID: <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+
+There is another option with regards to producing projected elevations.
+
+By using PocketTopo and then using Andrew Atkinsons Topparser to create the directories and files needed for your Therion project, as well as the extended elevation files you have the option of producing a projected elevation .th2 along with a projected xvi which shows all your splays and not just the centreline. The splays can sometimes be difficult to interpret as with PocketTopo you have no option to sketch a projected elevation whilst surveying but I find this much easier/quicker than the method Bruce suggested.
+
+As with a lot of things a bit of forward planning with how you survey your cave (if that is possible) can make a big difference to how difficult this process is.
+
+Can I say you two (Tarquin and Bruce) make a quite good team. Tarquin you are asking some good questions for a new user and Bruce as always you have answers normal people can understand.
+
+Nick
+
+-----Original Message-----
+From: Therion [mailto:therion-bounces at speleo.sk] On Behalf Of Bruce Mutton
+Sent: 26 April 2019 07:18
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: Re: [Therion] Making projected elevations
+
+Hi Tarquin
+Probably better to create a new post for each topic.  Makes for smaller bites and easier to respond to.
+
+Basically, there is no conversion of sketches from one projection to another.  You have to do the work yourself or accept any distortions that a fudge might incur.
+Have a search on the mail archive for 'projected elevation'. In essence I think you have come to the right conclusions below.
+https://www.mail-archive.com/therion at speleo.sk/
+Check out https://www.mail-archive.com/therion at speleo.sk/msg06370.html and https://www.mail-archive.com/therion at speleo.sk/msg06368.html
+
+I started my Therion life as a projected elevation fan, but now I think extended is the way to go (subject to the proviso that they are way more vexatious for a non-trivial cave).
+Your description of the cave/mine makes it sound perfect for an extended elevation to me, especially as you already have extended sketches.
+
+Multiple projections on the same pdf page can only be achieved using map-image to insert them as images.  Or you could post-process with another application (which defeats a key advantage of Therion).
+You could take your extended sketches and just flag them as projected, accepting that there may be gross distortions.
+You could forget about the xvi file, and print out a projected centreline (one trip file at a time is my preference), and sketch on that the passage detail, scan it, and import it as a background image in XTherion.  Then you trace it with XTherion to produce scraps.  Seems odd to take an electronic process, and force a pencil and paper stage to it, but that is my preference if the alternative is to have an xvi with no sketches embedded.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Thursday, 25 April 2019 09:56
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Making projected elevations, and using map connectors
+
+Hi,
+
+Still learning (never stop)...
+
+I have looked through the various tutorials, and several examples, but I have not found any information on how to create a projected elevation - all tutorials stop at that point with "TODO: show how to do elevations".
+The software I am using to survey the caves (DistoX2 + SexyTopo) gives me a plan view and an extended elevation, exported as centreline+xvi.
+The area I am surveying is mostly linear with passages stacked at various levels above each other. As a result, projected elevation is more useful than extended elevation.
+
+I know I have to use "-projection [elevation 265]" on my scraps and maps to make them all work when I try to use:
+export map -projection [elevation 265]
+
+However, I have not been able to find how to get from an extended elevation to a projected elevation. I had hoped for some magic where I just create an extended elevation then ask Therion to warp that extended elevation into a projected elevation, but I have come to the conclusion that I probably have to do this:
+
+export map -projection [elevation 265] -output elevation265.xvi
+
+Then create a dedicated surveyname_elevation265.th2 file and go over all the survey data and create the required scraps for it, without being able to see the sketches in the XTherion scrap editor.
+
+Have I made the right assumption, or is there some clever magic that can happen? Does this mean that in order to create two elevations, one facing 265° and one facing 180°, I actually have to do this all twice, creating each scrap from scratch each time?
+
+Imagine I want to have half of the cave on a bearing of 265 and the other half on a bearing of 180 in the same file (because the cave turns a corner half way along) - essentially extending a projected elevation.
+I could export the data once on a bearing of 265, and once on a bearing of 180, then create appropriate scraps for each half, pretend that the ones on a bearing of 100 are actually on a bearing of 265 by using the -projection options of maps and scraps. But then it would warp them to oblivion when trying to make it fit the centreline. So would I actually have to export two PDFs, one with a map that only covers half of the cave on a bearing of 265, and another that covers the other half of the cave on a bearing of 180, and position the outputs very close together by importing them as images into a third map?
+
+(Not as insane as it sounds. It is a mine, with major passages all very linear at different levels, and just one significant passage running at right angles to the other passages.)
+
+... snipped...
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Fri Apr 26 18:12:22 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Fri, 26 Apr 2019 18:12:22 +0200
+Subject: [Therion] Making projected elevations
+In-Reply-To: <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+ <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+Message-ID: <0a8dcb07-78bc-32f9-60da-2a5b502e3713@ntlworld.com>
+
+Hi Nick,
+
+Thanks for the insight into PocketTopo+Topparser. I am passing it back
+to the author of SexyTopo as well.
+
+> By using PocketTopo and then using Andrew Atkinsons Topparser
+> [...] you have the option of producing a projected elevation .th2 along with
+> a projected xvi which shows all your splays and not just the centreline.
+
+
+It would be a bit late to switch to PocketTopo ;)
+
+But this is basically how I am doing it with Therion itself, which does
+not rely on an external app, and should work no matter what tool you use
+to collect your data.
+
+1. Survey whatever I am going to survey, get the .th files for the
+centrelines.
+
+2. Link them together. This step means that any projected lines pointing
+towards the camera are in their roughly final position (new loops can of
+course change that), so there is a lower chance of loop closures messing
+up the directions. This step is not needed, but it makes me feel better
+knowing that they will not be distorted as much after I draw them, and
+declination is catered to, etc.
+
+3. Therion:
+source "cavesystem.th" #overall file, not the individual survey file
+select surveyname at section.cave #surveyname not mapname
+export map -projection [elevation 265] -fmt xvi -output "surveyname
+elevation265.xvi"
+
+4. Therion. F2. Create a new th2 file, save as
+"surveyname elevation265.th2"
+
+5. Edit - Insert image - select "surveyname elevation265.xvi"
+
+6. Refer to the ee drawings with centreline, which were taken in the
+cave. Replicate them using the splays and centreline on the projected
+elevation.
+
+I'll see if I can add these various howto notes somewhere useful on the
+wiki.
+
+It would be lovely if - in step 3 - we could say "and use the extended
+elevation drawings as your basis" to make it export the drawing as well
+as the splays in the xvi, with the drawings wrapped around the
+centreline. It won't be perfect, but it would make it so much easier to
+trace over the parts where it is a good enough match, and just correct
+the parts that are too badly warped. But I think I am dreaming here.
+
+Martin's PDFs did a great job of showing why I came to the conclusion
+that I will have to do this manually, but imagine Martin's drawings with
+centreline and splays as your xvi to get you started, and it would be
+much nicer to work with that, rather than just a centreline with splays,
+and no passage sketch.
+
+Cheers,
+
+Tarquin
+
+
+From tarquin.wilton-jones at ntlworld.com  Mon Apr 29 17:03:05 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Mon, 29 Apr 2019 17:03:05 +0200
+Subject: [Therion] Best approach for colouring elevations
+Message-ID: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+
+Hi folks,
+
+With either extended or projected elevations, we end up with a few
+passages overlapping each other. This is intentional (so displacing some
+of them is not a desired solution). However, it would be nice to be able
+to colour them differently, to make it easier to see which parts belong
+to which passage. Colouring by altitude doesn't help in elevations,
+because they are all at the same altitude when they are overlapping.
+"Colour by distance from the viewer" is better.
+
+This could be coloured by colouring the individual scraps, but that is
+messy, and hard to maintain. The desired output would be "colour by
+break". Meaning; each time there is a "break" in the map, change the fg
+colour.
+
+Does anyone have any tips on how best to colour extended/projected
+elevations? Is "colour by break" possible in some way? Or do you prefer
+a different approach?
+
+Cheers,
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Tue Apr 30 10:16:54 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 Apr 2019 20:16:54 +1200
+Subject: [Therion] Making projected elevations
+In-Reply-To: <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+ <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+Message-ID: <000201d4ff2d$13f9b490$3bed1db0$@tomo.co.nz>
+
+Thanks Nick for the good feedback.
+
+And yes, PocketTopo paired with TopParser is still 'the only way to survey' if you are processing with Therion.  At least that is my biased opinion.
+Alas windows devices are on the way out, so I am hopeful that SexyTopo will be imbued with the simplicity, flexibility and speed of use of PocketTopo - it is not there yet, but it is looking promising.
+Topodroid has many nice features that I wish PocketTopo had, but apart from calibrating distos well, it does not have as smooth a workflow or play as nicely with Therion as it could/should. However if you tend to have small caves or short survey trips, then your opinion of Topodroid over TopParser might be comparatively better.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Nick Bairstow
+Sent: Friday, 26 April 2019 21:35
+To: List for Therion users <therion at speleo.sk>
+Subject: Re: [Therion] Making projected elevations
+
+There is another option with regards to producing projected elevations.
+
+By using PocketTopo and then using Andrew Atkinsons Topparser to create the directories and files needed for your Therion project, as well as the extended elevation files you have the option of producing a projected elevation .th2 along with a projected xvi which shows all your splays and not just the centreline. The splays can sometimes be difficult to interpret as with PocketTopo you have no option to sketch a projected elevation whilst surveying but I find this much easier/quicker than the method Bruce suggested.
+
+As with a lot of things a bit of forward planning with how you survey your cave (if that is possible) can make a big difference to how difficult this process is.
+
+Can I say you two (Tarquin and Bruce) make a quite good team. Tarquin you are asking some good questions for a new user and Bruce as always you have answers normal people can understand.
+
+Nick
+
+
+
+From bruce at tomo.co.nz  Tue Apr 30 10:16:54 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 Apr 2019 20:16:54 +1200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+Message-ID: <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+
+Hi Tarquin
+There is no difference between colouring of plan or elevation projections.
+If I am being pedantic, I make sure that scrap joins in plan and elevation are all made in the same passage location, and then colour both plan and elevation by altitude, unless I don't colour them at all.  If I am colouring for presentation I usually colour by altitude, but I also make use of all of the other automated colouring options, and white is a good choice too.
+Automated colouring options are listed here, along with user definable overrides.
+https://therion.speleo.sk/wiki/examples?s[]=lookup#colour_scales_-_lookups
+
+Usually I am not so pedantic, and my scrap joins in elevation do not match those in the plan.  To compensate I just make sure scraps are short, and joins are placed near a change in gradient or altitude.
+
+In the situation you describe I would probably define a new elevation map between each of your 'breaks'.
+Then in your layout include...
+colour map-fg map
+
+Then if you also wish to manually specify the actual colours or labels, in your th-config include...
+
+lookup map -title "Map colour legend"
+  map1 at some_survey [colour] "passage in front"
+  map2 [colour]                             "passage in between"
+  map3 [colour]                             "passage behind"
+endlookup
+
+The colours are optional I think, you should be able to replace them with empty square brackets if you also want labels in the legend.  You can omit specifying the colours and the labels.  When this feature was first introduced I played with it quite a bit, but I may not have used the exact variant shown above.  I did have some trouble with colouring maps directly using select statements, as hinted at in the web page above, so it may not work perfectly.
+
+Strategic use of transparency and opacity in your layout can also minimise the need to apply fancy colouring to your outputs, and in any case will enhance them.
+Here are the statements and comments I put in my 'standard' layout to remind me of what might be good settings.  The opacity setting that works best for white passage fill is different to that which works best with colour fills.  It also differs for on-screen or printed output viewing.
+
+  transparency on     # see thru passages
+  opacity 50               # degree of transparency: transparent = 0 <= opacity <= 100 = opaque
+                      #00 = transparent
+                      #40 = subtle, 60 - 70 = apparent: overwritten text still visible
+                      #80 = good passage definition but overwritten text barely visible  
+                    #100 = block out passage underneath
+Bruce
+
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Tuesday, 30 April 2019 03:03
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: [Therion] Best approach for colouring elevations
+
+Hi folks,
+
+With either extended or projected elevations, we end up with a few passages overlapping each other. This is intentional (so displacing some of them is not a desired solution). However, it would be nice to be able to colour them differently, to make it easier to see which parts belong to which passage. Colouring by altitude doesn't help in elevations, because they are all at the same altitude when they are overlapping.
+"Colour by distance from the viewer" is better.
+
+This could be coloured by colouring the individual scraps, but that is messy, and hard to maintain. The desired output would be "colour by break". Meaning; each time there is a "break" in the map, change the fg colour.
+
+Does anyone have any tips on how best to colour extended/projected elevations? Is "colour by break" possible in some way? Or do you prefer a different approach?
+
+Cheers,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Tue Apr 30 10:34:27 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 30 Apr 2019 10:34:27 +0200
+Subject: [Therion] Making projected elevations
+In-Reply-To: <000201d4ff2d$13f9b490$3bed1db0$@tomo.co.nz>
+References: <001601d4fbf7$dc223430$94669c90$@tomo.co.nz>
+ <36b67015005043e2aae5708e114b1e00@PFF-EXCH1.pff.local>
+ <000201d4ff2d$13f9b490$3bed1db0$@tomo.co.nz>
+Message-ID: <EA986E3B-25C1-479D-A0F0-F5467D651DE0@mac.com>
+
+SexyTopo should be out with calibration too yet.
+
+Martin
+
+> 30. 4. 2019 v 10:16, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Thanks Nick for the good feedback.
+> 
+> And yes, PocketTopo paired with TopParser is still 'the only way to survey' if you are processing with Therion.  At least that is my biased opinion.
+> Alas windows devices are on the way out, so I am hopeful that SexyTopo will be imbued with the simplicity, flexibility and speed of use of PocketTopo - it is not there yet, but it is looking promising.
+> Topodroid has many nice features that I wish PocketTopo had, but apart from calibrating distos well, it does not have as smooth a workflow or play as nicely with Therion as it could/should. However if you tend to have small caves or short survey trips, then your opinion of Topodroid over TopParser might be comparatively better.
+> 
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Nick Bairstow
+> Sent: Friday, 26 April 2019 21:35
+> To: List for Therion users <therion at speleo.sk>
+> Subject: Re: [Therion] Making projected elevations
+> 
+> There is another option with regards to producing projected elevations.
+> 
+> By using PocketTopo and then using Andrew Atkinsons Topparser to create the directories and files needed for your Therion project, as well as the extended elevation files you have the option of producing a projected elevation .th2 along with a projected xvi which shows all your splays and not just the centreline. The splays can sometimes be difficult to interpret as with PocketTopo you have no option to sketch a projected elevation whilst surveying but I find this much easier/quicker than the method Bruce suggested.
+> 
+> As with a lot of things a bit of forward planning with how you survey your cave (if that is possible) can make a big difference to how difficult this process is.
+> 
+> Can I say you two (Tarquin and Bruce) make a quite good team. Tarquin you are asking some good questions for a new user and Bruce as always you have answers normal people can understand.
+> 
+> Nick
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 10:35:51 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 10:35:51 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+Message-ID: <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+
+> In the situation you describe I would probably define a new elevation map between each of your 'breaks'.
+> Then in your layout include...
+> colour map-fg map
+
+
+Oh ... How obvious. Yes, I can just put them in separately coloured
+maps, and break between maps.
+
+I had tried "colour map-fg map" before, but it seems to treat my entire
+system as the same map, instead of colouring per sub-map. Presumably
+because I have:
+
+select overallElevationMap at caveArea
+
+If I wanted to automatically colour per sub map, would I have to instead
+switch to selecting each submap separately like this?
+select sectionMap1 at cave1.caveArea
+select sectionMap2 at cave1.caveArea
+select sectionMap1 at cave2.caveArea
+...
+
+Or am I just missing something obvious?
+
+Cheers,
+
+Tarquin
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 10:40:46 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 10:40:46 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+Message-ID: <15dff223-914e-8958-07e4-3df89e73d3f3@ntlworld.com>
+
+> I had tried "colour map-fg map" before, but it seems to treat my entire
+> system as the same map, instead of colouring per sub-map. Presumably
+> because I have:
+> 
+> select overallElevationMap at caveArea
+> 
+> If I wanted to automatically colour per sub map, would I have to instead
+> switch to selecting each submap separately like this?
+> select sectionMap1 at cave1.caveArea
+> select sectionMap2 at cave1.caveArea
+> select sectionMap1 at cave2.caveArea
+> ...
+> 
+> Or am I just missing something obvious?
+
+
+Never mind, I will answer myself.
+select overallElevationMap at caveArea -map-level 3
+
+Thanks again folks.
+
+
+From markus.boldt at gmx.net  Tue Apr 30 10:44:56 2019
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Tue, 30 Apr 2019 10:44:56 +0200
+Subject: [Therion] Calculation of LRUD from splays
+Message-ID: <002f01d4ff30$fd18c8c0$f74a5a40$@gmx.net>
+
+Hello,
+
+is there a possibility to calculate LRUD-Data from splays? It would be nice,
+if you have not measured LRUD at the point in the cave, but only splays for
+drawing.
+
+I hope you understand my terrible English J.
+
+Greetings
+
+Markus
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190430/1c408a33/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 11:01:52 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 11:01:52 +0200
+Subject: [Therion] Calculation of LRUD from splays
+In-Reply-To: <002f01d4ff30$fd18c8c0$f74a5a40$@gmx.net>
+References: <002f01d4ff30$fd18c8c0$f74a5a40$@gmx.net>
+Message-ID: <7e86437f-6e5d-0826-cc6b-4c80ff480386@ntlworld.com>
+
+Hi Markus
+
+Don't worry, your English is fine :)
+
+Not sure why you would want to remove the useful splays, and replace
+them with limited LRUDs, but I assume you have a reason.
+
+> is there a possibility to calculate LRUD-Data from splays? It would be
+> nice, if you have not measured LRUD at the point in the cave, but only
+> splays for drawing.
+
+
+If you are starting with (simple) Survex files or PocketTopo data, Cave
+Converter can create LRUD data, and turn it into "passage" blocks (which
+are basically just LRUD data). It does it by taking the largest splay
+that appears to be perpendicular-ish to the passage, and works out its
+perpendicular size.
+
+However, it is only an approximation, and it is not perfect. It also
+only understands simple Survex files or PocketTopo data - it cannot cope
+with Therion files. It cannot cope with data containing "data nosurvey",
+so you must use only the default "data normal". It also removes anything
+that it doesn't understand, so you lose your fixes and entrances.
+
+But maybe it is useful enough for your needs:
+http://wscc.darkgem.com/caveconverter/
+
+Hope this helps,
+
+Tarquin
+
+
+From bruce at tomo.co.nz  Tue Apr 30 11:04:00 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 Apr 2019 21:04:00 +1200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <15dff223-914e-8958-07e4-3df89e73d3f3@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+ <15dff223-914e-8958-07e4-3df89e73d3f3@ntlworld.com>
+Message-ID: <000501d4ff33$a84eab90$f8ec02b0$@tomo.co.nz>
+
+Or you could avoid selecting any maps or surveys.  That way every map will be exported.  But I think your two solutions are better.
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Tuesday, 30 April 2019 20:41
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Best approach for colouring elevations
+
+> I had tried "colour map-fg map" before, but it seems to treat my 
+> entire system as the same map, instead of colouring per sub-map. 
+> Presumably because I have:
+> 
+> select overallElevationMap at caveArea
+> 
+> If I wanted to automatically colour per sub map, would I have to 
+> instead switch to selecting each submap separately like this?
+> select sectionMap1 at cave1.caveArea
+> select sectionMap2 at cave1.caveArea
+> select sectionMap1 at cave2.caveArea
+> ...
+> 
+> Or am I just missing something obvious?
+
+
+Never mind, I will answer myself.
+select overallElevationMap at caveArea -map-level 3
+
+Thanks again folks.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From martinsluka at mac.com  Tue Apr 30 11:13:17 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 30 Apr 2019 11:13:17 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <000501d4ff33$a84eab90$f8ec02b0$@tomo.co.nz>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+ <15dff223-914e-8958-07e4-3df89e73d3f3@ntlworld.com>
+ <000501d4ff33$a84eab90$f8ec02b0$@tomo.co.nz>
+Message-ID: <464BCCA1-E956-4B87-842F-0CC120EFE0E8@mac.com>
+
+
+> 30. 4. 2019 v 11:04, Bruce Mutton <bruce at tomo.co.nz>:
+> 
+> Or you could avoid selecting any maps or surveys.
+
+Take care, than it that case Therion will export EVERYTHING it is able to find to export. What is probably not what you want.
+
+Martin
+
+From bruce at tomo.co.nz  Tue Apr 30 11:21:14 2019
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Tue, 30 Apr 2019 21:21:14 +1200
+Subject: [Therion] Calculation of LRUD from splays
+In-Reply-To: <7e86437f-6e5d-0826-cc6b-4c80ff480386@ntlworld.com>
+References: <002f01d4ff30$fd18c8c0$f74a5a40$@gmx.net>
+ <7e86437f-6e5d-0826-cc6b-4c80ff480386@ntlworld.com>
+Message-ID: <000601d4ff36$1072e8b0$3158ba10$@tomo.co.nz>
+
+The Therion wiki is a bit out of date with regards to caveconverter.  https://therion.speleo.sk/wiki/contrib:complimentarycaveapps
+Maybe someone could update it.
+
+There was some discussion about splay to lrud conversion a few years back.
+https://www.mail-archive.com/therion at speleo.sk/msg04447.html
+https://www.mail-archive.com/therion at speleo.sk/msg04446.html
+
+I experimented with Loch's treatment of splays and LRUD around that time, and made these notes.
+https://therion.speleo.sk/wiki/examples#loch_models_paperless_survey_plan_scraps_and_lrud
+Since then, Loch has implemented passage shape generation based on splays, introducing another variable, and probably making most of those notes incorrect.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones via Therion
+Sent: Tuesday, 30 April 2019 21:02
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] Calculation of LRUD from splays
+
+Hi Markus
+
+Don't worry, your English is fine :)
+
+Not sure why you would want to remove the useful splays, and replace them with limited LRUDs, but I assume you have a reason.
+
+> is there a possibility to calculate LRUD-Data from splays? It would be 
+> nice, if you have not measured LRUD at the point in the cave, but only 
+> splays for drawing.
+
+
+If you are starting with (simple) Survex files or PocketTopo data, Cave Converter can create LRUD data, and turn it into "passage" blocks (which are basically just LRUD data). It does it by taking the largest splay that appears to be perpendicular-ish to the passage, and works out its perpendicular size.
+
+However, it is only an approximation, and it is not perfect. It also only understands simple Survex files or PocketTopo data - it cannot cope with Therion files. It cannot cope with data containing "data nosurvey", so you must use only the default "data normal". It also removes anything that it doesn't understand, so you lose your fixes and entrances.
+
+But maybe it is useful enough for your needs:
+http://wscc.darkgem.com/caveconverter/
+
+Hope this helps,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From markus.boldt at gmx.net  Tue Apr 30 11:31:39 2019
+From: markus.boldt at gmx.net (Markus Boldt)
+Date: Tue, 30 Apr 2019 11:31:39 +0200
+Subject: [Therion] Calculation of LRUD from splays
+In-Reply-To: <7e86437f-6e5d-0826-cc6b-4c80ff480386@ntlworld.com>
+References: <002f01d4ff30$fd18c8c0$f74a5a40$@gmx.net>
+ <7e86437f-6e5d-0826-cc6b-4c80ff480386@ntlworld.com>
+Message-ID: <003f01d4ff37$840ff730$8c2fe590$@gmx.net>
+
+Hi Tarquin, 
+thanks for that very fast answer. 
+And it looks like it will help. 
+My Idea is to get "forgotten LRUD-Data by measuring in the cave" that I can do they into the Data-list of the scraps in Therion. I hope to get a better Loch-Modell with this additional data. 
+Markus
+
+-----Ursprüngliche Nachricht-----
+Von: Therion [mailto:therion-bounces at speleo.sk] Im Auftrag von Tarquin Wilton-Jones via Therion
+Gesendet: Dienstag, 30. April 2019 11:02
+An: therion at speleo.sk
+Cc: Tarquin Wilton-Jones
+Betreff: Re: [Therion] Calculation of LRUD from splays
+
+Hi Markus
+
+Don't worry, your English is fine :)
+
+Not sure why you would want to remove the useful splays, and replace them with limited LRUDs, but I assume you have a reason.
+
+> is there a possibility to calculate LRUD-Data from splays? It would be 
+> nice, if you have not measured LRUD at the point in the cave, but only 
+> splays for drawing.
+
+
+If you are starting with (simple) Survex files or PocketTopo data, Cave Converter can create LRUD data, and turn it into "passage" blocks (which are basically just LRUD data). It does it by taking the largest splay that appears to be perpendicular-ish to the passage, and works out its perpendicular size.
+
+However, it is only an approximation, and it is not perfect. It also only understands simple Survex files or PocketTopo data - it cannot cope with Therion files. It cannot cope with data containing "data nosurvey", so you must use only the default "data normal". It also removes anything that it doesn't understand, so you lose your fixes and entrances.
+
+But maybe it is useful enough for your needs:
+http://wscc.darkgem.com/caveconverter/
+
+Hope this helps,
+
+Tarquin
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 12:33:27 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 12:33:27 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <464BCCA1-E956-4B87-842F-0CC120EFE0E8@mac.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <005aaa7d-d648-683c-6e4e-37f4bb67129d@ntlworld.com>
+ <15dff223-914e-8958-07e4-3df89e73d3f3@ntlworld.com>
+ <000501d4ff33$a84eab90$f8ec02b0$@tomo.co.nz>
+ <464BCCA1-E956-4B87-842F-0CC120EFE0E8@mac.com>
+Message-ID: <a1aeafe0-ee14-62b7-ef44-271a8bae096c@ntlworld.com>
+
+>> Or you could avoid selecting any maps or surveys.
+> 
+> Take care, than it that case Therion will export EVERYTHING it is able to find to export. What is probably not what you want.
+
+
+Indeed. I have a couple of different versions of each master map at each
+orientation. Such as a simple plan view, and a plan view with levels
+displaced so that you can see what is underneath them. If I let Therion
+select everything, it will try to layer them all on the same PDF, which
+wouldn't work. So I only select the master map I am interested in.
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 19:00:24 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 19:00:24 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+Message-ID: <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+
+> lookup map -title "Map colour legend"
+>   map1 at some_survey [colour] "passage in front"
+>   map2 [colour]                             "passage in between"
+>   map3 [colour]                             "passage behind"
+> endlookup
+
+
+This is pretty much exactly what I had in mind, and it works great :)
+Sadly it is not documented anywhere (except the mail and wiki page you
+already pointed to), so I can't see if it has any other useful features.
+Just wondering; is there is any way to group them together, when you
+have multiple maps sharing a value?
+
+Eg.
+
+lookup map:mainset
+  segment1 at cave1 [100 40 40]
+  segmenta at cave2 [100 40 40]
+  segmenti at cave3 [100 40 40]
+
+  segment2 at cave1 [100 70 0]
+  segment4 at cave1 [100 70 0]
+  segmentii at cave3 [100 70 0]
+
+  segment3 at cave1 [100 100 0]
+  segmentb at cave2 [100 100 0]
+  segmentiii at cave3 [100 100 0]
+endlookup
+
+it would be nicer if these could be grouped so that you only need to
+specify the colour just once per group (makes it easier to change them
+if you reorder things, or a new segment gets added).
+
+I can see ways to group dates or altitudes, but not scraps or maps.
+Hoping I missed something.
+
+
+From martinsluka at mac.com  Tue Apr 30 19:38:40 2019
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 30 Apr 2019 19:38:40 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+Message-ID: <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+
+
+
+> 30. 4. 2019 v 19:00, Tarquin Wilton-Jones via Therion <therion at speleo.sk>:
+> 
+> segment1 at cave1 [100 40 40]
+>  segmenta at cave2 [100 40 40]
+>  segmenti at cave3 [100 40 40]
+> 
+>  segment2 at cave1 [100 70 0]
+>  segment4 at cave1 [100 70 0]
+>  segmentii at cave3 [100 70 0]
+> 
+>  segment3 at cave1 [100 100 0]
+>  segmentb at cave2 [100 100 0]
+>  segmentiii at cave3
+
+And what is the problem define another maps from segments and colour them?
+
+map 100_40_40
+ segment1 at cave1
+ segmenta at cave2
+ segmenti at cave3
+endmap
+
+etc
+
+lookup map:mainset
+    100_40_40 [100 40 40]
+    …
+endlookup
+
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20190430/cd084264/attachment.htm>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Apr 30 19:57:15 2019
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 30 Apr 2019 19:57:15 +0200
+Subject: [Therion] Best approach for colouring elevations
+In-Reply-To: <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+References: <fe8c675a-99be-68e6-24a7-3d33ba3b0eb0@ntlworld.com>
+ <000301d4ff2d$14445220$3cccf660$@tomo.co.nz>
+ <94713dfc-a0af-92d1-1655-c4d125ca9dd9@ntlworld.com>
+ <58F38CF5-B3AC-41CD-8D3E-3375E976DFEE@mac.com>
+Message-ID: <670c5487-386c-7702-7f18-938bf1a20edd@ntlworld.com>
+
+>> segment1 at cave1 [100 40 40]
+>>  segmenta at cave2 [100 40 40]
+>>  segmenti at cave3 [100 40 40]
+>>
+>>  segment2 at cave1 [100 70 0]
+>>  segment4 at cave1 [100 70 0]
+>>  segmentii at cave3 [100 70 0]
+>>
+>>  segment3 at cave1 [100 100 0]
+>>  segmentb at cave2 [100 100 0]
+>>  segmentiii at cave3
+> 
+> And what is the problem define another maps from segments and colour them?
+
+
+In the simple case I showed above, there would be no problem. But in my
+actual case, I am doing this:
+
+select profilemap1 at area
+...
+lookup map:xyz
+#map within survey, grouping scraps that are in the same plane:
+scrapGroupingMap1 at survey.cave.area
+#whole survey, since the whole cave is in the same plane:
+wholecave at cave.area
+endlookup
+
+I have already split the surveys up into separate maps to show each
+aligned group.
+
+Having to split my overall map up into yet another series of submaps,
+each of which covers an arbitrary group of maps from several unrelated
+subsections, is getting really close to spaghetti code. Meanwhile
+grouping within the lookup would be comparatively clean and easier to
+understand.
+
+

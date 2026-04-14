@@ -1,0 +1,2320 @@
+From armchair.caver.nz at gmail.com  Wed Aug  2 02:07:30 2023
+From: armchair.caver.nz at gmail.com (Paul Rowe)
+Date: Wed, 2 Aug 2023 12:07:30 +1200
+Subject: [Therion] Change default PDF output font
+Message-ID: <CAG1=ZB9LumucyE4b_cm+C7RiEWEVsivJ-e4NZ=PC9SGrokGdxA@mail.gmail.com>
+
+Is there a way to override the default output font through 'code tex-map'?
+
+I can see there are ConTeXt macros to change basic styles (e.g. serif font
+= \rm) but can't find any examples of how that is used to change the
+default font style for the whole PDF map output. I ideally want to change
+the font family as well.
+
+Thanks,
+Paul Rowe
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230802/59cdbcb2/attachment.htm>
+
+From bgee at campercaver.net  Wed Aug  2 17:28:05 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 2 Aug 2023 10:28:05 -0500
+Subject: [Therion] Big room multiple scraps - How to join
+Message-ID: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+
+Hello everyone - I am having a problem getting Therion to understand how 
+to join several scraps to make a large room.  The working map is at
+
+https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf
+
+Take a look at the east part of the map in an area called Grand Canyon. 
+This is really one large room, though we did not realize that when we 
+started sketching several years ago.  Now I have at least three 
+different pieces of sketch to try and fit together.
+
+As you can see, there is a large triangle in the center which Therion 
+thinks is not cave.  There are also some part which are outside the 
+cave, but are considered by Therion to be inside.
+
+All of the joins in here are using line-to-line.  I named the lines, 
+then created "join" statements specifying the two lines and which points 
+on those lines to join.  Therion is happy with that, and the wall that 
+it draws is a fair depiction of the area.  The problem is that much of 
+the interior is getting lost.
+
+I have not tried to use plain joins of the scraps - joins which do not 
+specify the lines.  I suspect that would not change much.
+
+I have already drawn some of this area three times.  It is 
+extraordinarily complicated due to multiple levels, especially along the 
+east side.  We thought for a long time that the east side was separate 
+passages, but it is really just a complicated pile of big breakdown blocks.
+
+I really REALLY do not want to go back and make one huge sketch of the 
+entire room.  That would take several days.
+
+What can I do to convince Therion where the cave really is?  Can I put 
+in some invisible walls (subtype hidden)?
+
+Thanks!
+
+-- 
+===============
+Bill Gee
+
+From tarquin.wilton-jones at ntlworld.com  Wed Aug  2 17:44:27 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 2 Aug 2023 16:44:27 +0100
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+Message-ID: <989ec624-782e-8095-31ba-7dfce823fbf7@ntlworld.com>
+
+Hi Bill,
+
+> Hello everyone - I am having a problem getting Therion to understand how
+> to join several scraps to make a large room.
+
+The best advice; never begin or end a survey at a junction! Always
+survey through the junction in one surveying trip, so that one survey
+"owns" the entire junction itself, and other surveying trips own the
+branches off it.
+
+Draw a chamber, and starts of the passages (at the same level) leading
+out of it, as a single scrap.
+
+Now that you have not done that, you face a common problem. Thankfully,
+it can be easily solved, but you will need some creative "join" commands.
+
+1. Draw invisible walls from the opening of one passage, leading into
+the middle of the chamber. That is a subtype of normal walls. Do the
+same with If you manage to do it well enough, the lines all match up
+well enough to colour the whole chamber. And potentially, a standard
+"join" command on the scraps can make it link them all nicely.
+
+2. OK, reality; your chamber is going to be awkward. Joins will not be
+so easy to join because there are not stations perfectly on the joins on
+a wall, and you will probably not be able to use a standard scrap join.
+You will need to use line joins.
+
+Every line that needs a join, needs an ID attribute.
+
+in survey from "trunk" passage:
+trunkeast (visible east wall of the passage)
+trunkwest (visible wast wall of the passage)
+chamberdivide (invisible wall)
+
+in survey from "side" passage:
+sidenorth
+sidesouth
+chamberdividenorth
+
+etc.
+
+then you can join all the line points to make them connect perfectly:
+
+join trunkeast at trunk:0 chamberdivide at trunk:end sidenorth at side:end
+chamberdividenorth at side:0 -smooth off
+
+join chamberdivide at trunk:0 chamberdividenorth at side:end -smooth off
+
+etc.
+
+you will need one join statement for every line point that needs to
+connect to another one.
+
+This way you can fill the chamber with enough walls to fill the space
+with colour.
+
+Does that all make sense?
+
+Tarquin
+
+From alastairgott at hotmail.com  Wed Aug  2 19:16:11 2023
+From: alastairgott at hotmail.com (alastair gott)
+Date: Wed, 2 Aug 2023 17:16:11 +0000
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+Message-ID: <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+
+Hi bill,
+
+Could you set up a map for just that chamber which will then join all the sketches and export the .th2 for it. When you then subsequently export that .th2 to pdf, you do not need the joins and therefore do not lose any of the detail.
+
+Regards,
+Alastair Gott.
+
+Get Outlook for iOS<https://aka.ms/o0ukef>
+________________________________
+From: Therion <therion-bounces at speleo.sk> on behalf of Bill Gee <bgee at campercaver.net>
+Sent: Wednesday, August 2, 2023 4:28:05 PM
+To: Therion Mail List <therion at speleo.sk>
+Subject: [Therion] Big room multiple scraps - How to join
+
+Hello everyone - I am having a problem getting Therion to understand how
+to join several scraps to make a large room.  The working map is at
+
+https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcampercaver.net%2FMiscFiles%2FStarkCavernsNoCenter.pdf&data=05%7C01%7C%7C9c8f11c9727b4d3cf07108db936d2187%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638265869140778678%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=%2BmgbyseQrvzpE7OkIVQzqkimViOE0Xm7nNobpMemVvw%3D&reserved=0<https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf>
+
+Take a look at the east part of the map in an area called Grand Canyon.
+This is really one large room, though we did not realize that when we
+started sketching several years ago.  Now I have at least three
+different pieces of sketch to try and fit together.
+
+As you can see, there is a large triangle in the center which Therion
+thinks is not cave.  There are also some part which are outside the
+cave, but are considered by Therion to be inside.
+
+All of the joins in here are using line-to-line.  I named the lines,
+then created "join" statements specifying the two lines and which points
+on those lines to join.  Therion is happy with that, and the wall that
+it draws is a fair depiction of the area.  The problem is that much of
+the interior is getting lost.
+
+I have not tried to use plain joins of the scraps - joins which do not
+specify the lines.  I suspect that would not change much.
+
+I have already drawn some of this area three times.  It is
+extraordinarily complicated due to multiple levels, especially along the
+east side.  We thought for a long time that the east side was separate
+passages, but it is really just a complicated pile of big breakdown blocks.
+
+I really REALLY do not want to go back and make one huge sketch of the
+entire room.  That would take several days.
+
+What can I do to convince Therion where the cave really is?  Can I put
+in some invisible walls (subtype hidden)?
+
+Thanks!
+
+--
+===============
+Bill Gee
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&data=05%7C01%7C%7C9c8f11c9727b4d3cf07108db936d2187%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638265869140778678%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=HYijHjsXdRWESe3nnA4oTzz%2Fro1w5VrS4fF4qVBesSs%3D&reserved=0<https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230802/57906b9b/attachment.htm>
+
+From bgee at campercaver.net  Wed Aug  2 19:21:47 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 2 Aug 2023 12:21:47 -0500
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <989ec624-782e-8095-31ba-7dfce823fbf7@ntlworld.com>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <989ec624-782e-8095-31ba-7dfce823fbf7@ntlworld.com>
+Message-ID: <8aee4e36-2861-168d-91c1-3bebc1cf22ae@campercaver.net>
+
+Thanks Tarquin.  I suspected some sort of game with invisible walls 
+would be required.  I will see if I can get something useful to happen. 
+There are lots of features that will cross those walls, so I will be 
+making extensive use of "-clip off".
+
+I already join lines by points:
+
+join I1-1-I1-12_1:end I10bcd_2:0
+join I1-I15_3:0 I1-I2_1:end
+join I1-8_2:0 I1-I15_2:end
+join I1-I15_3:end I1-1-I1-12_1:0
+join I10wall1:0 I1-I15_2:0
+join I10wall2:0 I1-I15_4:end
+join I10bcd_1:end I1-I15_5:0
+
+A thought occurred as I was writing this.  There is one survey station 
+about in the middle of the white triangle which is present on all of the 
+sketches.  I wonder if I can draw invisible walls to that station? 
+Might that help everything fit together?  Should be fairly easy to try.
+
+I have considered trying to get all the sketches mangled together in a 
+single JPG file to use as the drawing background.  The problem with that 
+is some of the sketch is done at 20 feet to the inch and some at 10 feet 
+to the inch.  Resizing everything to match would take some doing.  I am 
+sure GIMP can do it, if only I knew how to use it.
+
+Hindsight is, of course, 20/20.  If I knew then what I know now, I would 
+have sketched the whole room as one big scrap.  It would have taken 
+several trips, but it could all fit on one sheet of paper.
+
+
+===============
+Bill Gee
+
+
+On 8/2/23 10:44, Tarquin Wilton-Jones via Therion wrote:
+> Hi Bill,
+> 
+>> Hello everyone - I am having a problem getting Therion to understand how
+>> to join several scraps to make a large room.
+> 
+> The best advice; never begin or end a survey at a junction! Always
+> survey through the junction in one surveying trip, so that one survey
+> "owns" the entire junction itself, and other surveying trips own the
+> branches off it.
+> 
+> Draw a chamber, and starts of the passages (at the same level) leading
+> out of it, as a single scrap.
+> 
+> Now that you have not done that, you face a common problem. Thankfully,
+> it can be easily solved, but you will need some creative "join" commands.
+> 
+> 1. Draw invisible walls from the opening of one passage, leading into
+> the middle of the chamber. That is a subtype of normal walls. Do the
+> same with If you manage to do it well enough, the lines all match up
+> well enough to colour the whole chamber. And potentially, a standard
+> "join" command on the scraps can make it link them all nicely.
+> 
+> 2. OK, reality; your chamber is going to be awkward. Joins will not be
+> so easy to join because there are not stations perfectly on the joins on
+> a wall, and you will probably not be able to use a standard scrap join.
+> You will need to use line joins.
+> 
+> Every line that needs a join, needs an ID attribute.
+> 
+> in survey from "trunk" passage:
+> trunkeast (visible east wall of the passage)
+> trunkwest (visible wast wall of the passage)
+> chamberdivide (invisible wall)
+> 
+> in survey from "side" passage:
+> sidenorth
+> sidesouth
+> chamberdividenorth
+> 
+> etc.
+> 
+> then you can join all the line points to make them connect perfectly:
+> 
+> join trunkeast at trunk:0 chamberdivide at trunk:end sidenorth at side:end
+> chamberdividenorth at side:0 -smooth off
+> 
+> join chamberdivide at trunk:0 chamberdividenorth at side:end -smooth off
+> 
+> etc.
+> 
+> you will need one join statement for every line point that needs to
+> connect to another one.
+> 
+> This way you can fill the chamber with enough walls to fill the space
+> with colour.
+> 
+> Does that all make sense?
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From tarquin.wilton-jones at ntlworld.com  Wed Aug  2 19:36:30 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 2 Aug 2023 18:36:30 +0100
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <8aee4e36-2861-168d-91c1-3bebc1cf22ae@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <989ec624-782e-8095-31ba-7dfce823fbf7@ntlworld.com>
+ <8aee4e36-2861-168d-91c1-3bebc1cf22ae@campercaver.net>
+Message-ID: <3364458f-e83e-f47d-3a0c-94cacac58a62@ntlworld.com>
+
+> There are lots of features that will cross those walls, so I will be
+> making extensive use of "-clip off".
+
+That is entirely up to where you draw your invisible walls. I would try
+not to allow them to go through any area fills, but you can join feature
+lines too, so either clip off, or two separate lines with a join.
+
+The reason Therion struggles with your drawing is that your gaps are
+bigger than the passage width. It needs gaps in the walls to be narrower
+than the width across a passage. It tries to close gaps with the
+"nearest end of a wall", which is the far side of the passage, instead
+of the wide gap. You can leave gaps, just not such wide ones. So if
+needed, an invisible wall across the mouth of a passage (that is not in
+the current scrap) might help.
+
+> A thought occurred as I was writing this.? There is one survey station
+> about in the middle of the white triangle which is present on all of the
+> sketches.? I wonder if I can draw invisible walls to that station? Might
+> that help everything fit together?? Should be fairly easy to try.
+
+That sounds like something worth trying. It will be a case of
+suck-it-and-see.
+
+> I have considered trying to get all the sketches mangled together in a
+> single JPG file to use as the drawing background.? The problem with that
+> is some of the sketch is done at 20 feet to the inch and some at 10 feet
+> to the inch.? Resizing everything to match would take some doing.? I am
+> sure GIMP can do it, if only I knew how to use it.
+
+It can, but we're getting quite off topic for this mailing list if you
+want a tutorial on Gimp too...
+
+> Hindsight is, of course, 20/20.? If I knew then what I know now, I would
+> have sketched the whole room as one big scrap.
+
+This is always the issue with surveying during exploration, rather than
+surveying after exploration. A grade 1 helps plan the grade 5+. It is
+something you can expect to happen. We hit the same issue in one of mine
+- a collapse chamber with loads of walls that are actually not walls.
+You don't realise until afterwards.
+
+From bruce at tomo.co.nz  Wed Aug  2 22:05:21 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 3 Aug 2023 08:05:21 +1200
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+Message-ID: <000501d9c57c$abf22510$03d66f30$@tomo.co.nz>
+
+Bill
+As Tarquin points out, looks to me like scraps with openings wider than the
+scrap is long.  The solution is invisible walls along the interior joins.
+Another thing to check is that all the walls have the correct orientation -
+all the left-side yellow ticks point to the interior of the passage (if not
+for pdf outputs, it still helps for models).
+And that wall -outline is set correctly to out, in or none.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Thursday, 3 August 2023 03:28
+To: Therion Mail List <therion at speleo.sk>
+Subject: [Therion] Big room multiple scraps - How to join
+
+Hello everyone - I am having a problem getting Therion to understand how to
+join several scraps to make a large room.  The working map is at
+
+https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf
+
+Take a look at the east part of the map in an area called Grand Canyon. 
+This is really one large room, though we did not realize that when we
+started sketching several years ago.  Now I have at least three different
+pieces of sketch to try and fit together.
+
+As you can see, there is a large triangle in the center which Therion thinks
+is not cave.  There are also some part which are outside the cave, but are
+considered by Therion to be inside.
+
+All of the joins in here are using line-to-line.  I named the lines, then
+created "join" statements specifying the two lines and which points on those
+lines to join.  Therion is happy with that, and the wall that it draws is a
+fair depiction of the area.  The problem is that much of the interior is
+getting lost.
+
+I have not tried to use plain joins of the scraps - joins which do not
+specify the lines.  I suspect that would not change much.
+
+I have already drawn some of this area three times.  It is extraordinarily
+complicated due to multiple levels, especially along the east side.  We
+thought for a long time that the east side was separate passages, but it is
+really just a complicated pile of big breakdown blocks.
+
+I really REALLY do not want to go back and make one huge sketch of the
+entire room.  That would take several days.
+
+What can I do to convince Therion where the cave really is?  Can I put in
+some invisible walls (subtype hidden)?
+
+Thanks!
+
+--
+===============
+Bill Gee
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Thu Aug  3 11:31:57 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 3 Aug 2023 21:31:57 +1200
+Subject: [Therion] How to add 1.5 x linefeed to a text string
+Message-ID: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+
+Good evening
+
+I'm wondering if there is a way to add a 1.5x <br> linefeed to text strings
+in Therion?
+
+ 
+
+I can make the same effect using the tex parameter \medskip as demonstrated
+in the Therion \legendcontent routine.
+
+But sometimes it would be nice to do it in drawing labels and in strings
+such as map-comment, were it is not practicable to use tex.
+
+ 
+
+As in this example:
+
+
+
+ 
+
+The text highlighted yellow is a map-comment, like this:
+
+  map-comment "NZVD2016 / New Zealand Vertical Datum 2016 \ 
+
+<br>This map represents Deer Pot on the day it was connected to ."
+
+ 
+
+. and the vertical 1.5x linefeeds are embedded in the \legendcontent tex.
+
+ 
+
+I want to add an extra half <br> space between the two yellow lines.  The
+only way I can think of is a bit of a hack.
+
+map-comment "NZVD2016 / New Zealand Vertical Datum 2016 \ 
+
+<size:40><br><size:12>This map represents Deer Pot on the day it was
+connected to."
+
+ 
+
+but it does not work!  It seems that a <br> and a 'space' does not render as
+anything other than the highest character on the line, regardless of the
+'size' of the break. 
+
+ 
+
+Any ideas?
+
+ 
+
+Regards Bruce
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230803/d5963098/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image002.png
+Type: image/png
+Size: 24882 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230803/d5963098/attachment-0001.png>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Aug  3 11:47:58 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 3 Aug 2023 10:47:58 +0100
+Subject: [Therion] How to add 1.5 x linefeed to a text string
+In-Reply-To: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+References: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+Message-ID: <79a7f832-5d20-11a0-d788-787096726b9d@ntlworld.com>
+
+> I?m wondering if there is a way to add a 1.5x <br> linefeed to text
+> strings in Therion?
+
+Not sure if there is a proper way, but you can just put tex into the
+text input in xtherion, right? If so, you could try
+foo \thtinysize <br><br> \thnormalsize bar
+
+That's quite hacky though ;)
+
+From bgee at campercaver.net  Thu Aug  3 16:33:30 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 3 Aug 2023 09:33:30 -0500
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <000501d9c57c$abf22510$03d66f30$@tomo.co.nz>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <000501d9c57c$abf22510$03d66f30$@tomo.co.nz>
+Message-ID: <678dcb6f-b169-39a1-9938-20c16249d835@campercaver.net>
+
+Update:  Thank you everyone for suggestions.  I think I have conquered 
+(more or less) this problem by using some invisible walls.  Results at
+
+https://campercaver.net/MiscFiles/StarkCavernsNoCenter-1.pdf
+
+For comparison the old map is still there:
+
+https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf
+
+There is some overlap which shows in the background coloring.  The 
+overlaps are a bit darker than the rest.  I am not too concerned about 
+that.  It is not a rocket ship - Does not have to be perfect.
+
+There are no new join statements.  I just added invisible walls to the 
+scraps
+
+I did have scraps wider than deep, which several people pointed out is a 
+problem.  I checked all the wall orientations, as Bruce suggested.  They 
+were all correct.  My habit is to draw walls counter-clockwise which 
+should result in correct orientation.
+
+As Tarquin pointed out - We should have surveyed the whole room before 
+we surveyed the room.  Hindsight is 20/20!  Next time I know better. 
+That does fly in the face of a common American caving practice which is 
+to survey as you go.  Scooping is frowned on.  Sometimes, though, you 
+really need to scoop the passage before taking survey shots.
+
+Of course I found a new problem!  That will be another thread.
+
+===============
+Bill Gee
+
+On 8/2/23 15:05, Bruce Mutton wrote:
+> Bill
+> As Tarquin points out, looks to me like scraps with openings wider than the
+> scrap is long.  The solution is invisible walls along the interior joins.
+> Another thing to check is that all the walls have the correct orientation -
+> all the left-side yellow ticks point to the interior of the passage (if not
+> for pdf outputs, it still helps for models).
+> And that wall -outline is set correctly to out, in or none.
+> 
+> Bruce
+> 
+> -----Original Message-----
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+> Sent: Thursday, 3 August 2023 03:28
+> To: Therion Mail List <therion at speleo.sk>
+> Subject: [Therion] Big room multiple scraps - How to join
+> 
+> Hello everyone - I am having a problem getting Therion to understand how to
+> join several scraps to make a large room.  The working map is at
+> 
+> https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf
+> 
+> Take a look at the east part of the map in an area called Grand Canyon.
+> This is really one large room, though we did not realize that when we
+> started sketching several years ago.  Now I have at least three different
+> pieces of sketch to try and fit together.
+> 
+> As you can see, there is a large triangle in the center which Therion thinks
+> is not cave.  There are also some part which are outside the cave, but are
+> considered by Therion to be inside.
+> 
+> All of the joins in here are using line-to-line.  I named the lines, then
+> created "join" statements specifying the two lines and which points on those
+> lines to join.  Therion is happy with that, and the wall that it draws is a
+> fair depiction of the area.  The problem is that much of the interior is
+> getting lost.
+> 
+> I have not tried to use plain joins of the scraps - joins which do not
+> specify the lines.  I suspect that would not change much.
+> 
+> I have already drawn some of this area three times.  It is extraordinarily
+> complicated due to multiple levels, especially along the east side.  We
+> thought for a long time that the east side was separate passages, but it is
+> really just a complicated pile of big breakdown blocks.
+> 
+> I really REALLY do not want to go back and make one huge sketch of the
+> entire room.  That would take several days.
+> 
+> What can I do to convince Therion where the cave really is?  Can I put in
+> some invisible walls (subtype hidden)?
+> 
+> Thanks!
+> 
+> --
+> ===============
+> Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bgee at campercaver.net  Thu Aug  3 16:56:33 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Thu, 3 Aug 2023 09:56:33 -0500
+Subject: [Therion] How to define steps
+Message-ID: <88407917-068c-6277-77db-879ca28d2edc@campercaver.net>
+
+A mucdh smaller problem than my last one ... Stark Caverns has several 
+places with stairways.  I am using the line type "steps" to draw them 
+in.  Three issues:
+
+1) One of the stairways is wider than long, and only three steps.  When 
+Therion draws that, it places it sideways.  Is there a way to tell 
+Therion how to orient the steps?
+
+Here is the definition from the th2 file:
+
+line steps -close on -attr c 3
+   1558.0 -1203.5
+   1593.75 -1206.75
+   1581.75 -1158.75
+   1553.75 -1167.0
+   1558.0 -1203.5
+endline
+
+This can be seen on the map at
+
+https://campercaver.net/MiscFiles/StarkCavernsNoCenter-1.pdf
+
+Find the Onyx Circle.  There is an arrow calling out a ceiling 
+waterfall.  Move west from the arrowhead about 5 scale feet to see this 
+set of steps.
+
+There is another stairway very close by which has more steps.  That one 
+is oriented correctly.
+
+Related question - Is there a way to indicate which end of the stairway 
+is down?
+
+2) I originally defined this stairway using a curved line on one side. 
+When Therion compiled the map it gave an error about "illegal steps 
+definition".  The only way I found to fix that was to draw it again 
+using only straight lines.
+
+I know Therion can have curved lines in a stairway because there are 
+some others in this map where I did that.  Is this a case where Therion 
+requires straight lines for the top and bottom, but can have curved 
+lines for the sides?  If so, then changing the orientation as in problem 
+one should fix this.
+
+3) For future versions of Therion - The Therion Book does not have any 
+documentation about the "-attr c #" option for the steps line type. 
+This needs to be added.  Also a note about curved vs. straight lines, 
+and how to change orientation.
+
+Thanks!
+-- 
+===============
+Bill Gee
+
+From alastairgott at hotmail.com  Thu Aug  3 21:58:57 2023
+From: alastairgott at hotmail.com (alastair gott)
+Date: Thu, 3 Aug 2023 19:58:57 +0000
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+Message-ID: <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+
+HI Bill,
+
+Something along the lines of
+map ProblemchamberMP
+GrandcanyonSP
+FlatroomSP
+endmap
+
+select Problemchamber
+export map -proj plan -o Problemchamber.th2
+
+Instead of exporting to pdf, this will then export this to a .th2 file, where I guess it will appear with all the lines you have joined, instead of you having to join them with line joins/scrap joins or amending line end positions to force therion to automatically recognise them.
+
+This will allow you to work on the whole chamber as one in a single .th2 file.
+
+Of course then (more or less) in your master file you will have
+survey StarkCaverns
+input problemchamber.th2
+input otherpartsofcave.th2
+
+map StarkcavernsMP
+PromblemchamberMP
+OtherpartsofcaveMP
+endmap
+
+centreline
+equate ...
+endcentreline
+endsurvey
+
+This should hopefully reduce the overlap you are seeing in your current workaround, and it's probably still possible to implement this and delete the invisible walls from the centre of your chamber.
+
+[cid:b0947cc4-0cfc-45f3-8d84-09fe9b29f7b8]
+
+
+Regards,
+Al
+________________________________
+From: Bill Gee <bgee at campercaver.net>
+Sent: 03 August 2023 15:37
+To: alastair gott <alastairgott at hotmail.com>
+Subject: Re: [Therion] Big room multiple scraps - How to join
+
+Hi Alistair -
+
+I am not sure I understand what you are suggesting.  It sounds like  the
+idea is to use something like GIMP to collect all of the sketches for
+the room into one JPG file, then use that file as the background for
+Therion.
+
+True?
+
+I considered that idea.  There are two problems.  First, I know almost
+nothing about GIMP.  It would be a steep learning curve.  Second, the
+sketches are not all the same scale.  Some of them would have to be
+shrunk.  Again a GIMP task, and beyond my knowledge of how GIMP works.
+
+===============
+Bill Gee
+
+On 8/2/23 12:16, alastair gott wrote:
+> Hi bill,
+>
+> Could you set up a map for just that chamber which will then join all
+> the sketches and export the .th2 for it. When you then subsequently
+> export that .th2 to pdf, you do not need the joins and therefore do not
+> lose any of the detail.
+>
+> Regards,
+> Alastair Gott.
+>
+> Get Outlook for iOS <https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faka.ms%2Fo0ukef&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=QbCrIJHIwAUKZvxSqZYb6OgO7j%2BIrh7mqwPgjEkWh6c%3D&reserved=0<https://aka.ms/o0ukef>>
+> ------------------------------------------------------------------------
+> *From:* Therion <therion-bounces at speleo.sk> on behalf of Bill Gee
+> <bgee at campercaver.net>
+> *Sent:* Wednesday, August 2, 2023 4:28:05 PM
+> *To:* Therion Mail List <therion at speleo.sk>
+> *Subject:* [Therion] Big room multiple scraps - How to join
+> Hello everyone - I am having a problem getting Therion to understand how
+> to join several scraps to make a large room.  The working map is at
+>
+> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcampercaver.net%2FMiscFiles%2FStarkCavernsNoCenter.pdf&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=JaEkdo9ILBvbQ%2FBvVAopbYGXV5ODrdNV9WTWBT3MNLk%3D&reserved=0<https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf> <https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcampercaver.net%2FMiscFiles%2FStarkCavernsNoCenter.pdf&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=JaEkdo9ILBvbQ%2FBvVAopbYGXV5ODrdNV9WTWBT3MNLk%3D&reserved=0<https://campercaver.net/MiscFiles/StarkCavernsNoCenter.pdf>>
+>
+> Take a look at the east part of the map in an area called Grand Canyon.
+> This is really one large room, though we did not realize that when we
+> started sketching several years ago.  Now I have at least three
+> different pieces of sketch to try and fit together.
+>
+> As you can see, there is a large triangle in the center which Therion
+> thinks is not cave.  There are also some part which are outside the
+> cave, but are considered by Therion to be inside.
+>
+> All of the joins in here are using line-to-line.  I named the lines,
+> then created "join" statements specifying the two lines and which points
+> on those lines to join.  Therion is happy with that, and the wall that
+> it draws is a fair depiction of the area.  The problem is that much of
+> the interior is getting lost.
+>
+> I have not tried to use plain joins of the scraps - joins which do not
+> specify the lines.  I suspect that would not change much.
+>
+> I have already drawn some of this area three times.  It is
+> extraordinarily complicated due to multiple levels, especially along the
+> east side.  We thought for a long time that the east side was separate
+> passages, but it is really just a complicated pile of big breakdown blocks.
+>
+> I really REALLY do not want to go back and make one huge sketch of the
+> entire room.  That would take several days.
+>
+> What can I do to convince Therion where the cave really is?  Can I put
+> in some invisible walls (subtype hidden)?
+>
+> Thanks!
+>
+> --
+> ===============
+> Bill Gee
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=7kaOkbQoxP6UMZ3zDt52%2BFMV4aBE7yDxe7yVEQi0QWE%3D&reserved=0<https://mailman.speleo.sk/listinfo/therion> <https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=7kaOkbQoxP6UMZ3zDt52%2BFMV4aBE7yDxe7yVEQi0QWE%3D&reserved=0<https://mailman.speleo.sk/listinfo/therion>>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fmailman.speleo.sk%2Flistinfo%2Ftherion&data=05%7C01%7C%7C13afc0601da0489ee6ad08db942f3937%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C638266702773179124%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=7kaOkbQoxP6UMZ3zDt52%2BFMV4aBE7yDxe7yVEQi0QWE%3D&reserved=0<https://mailman.speleo.sk/listinfo/therion>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230803/9aac7ecf/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Outlook-3hdqno53.png
+Type: image/png
+Size: 33125 bytes
+Desc: Outlook-3hdqno53.png
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230803/9aac7ecf/attachment-0001.png>
+
+From tarquin.wilton-jones at ntlworld.com  Thu Aug  3 22:13:47 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 3 Aug 2023 21:13:47 +0100
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+ <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+Message-ID: <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+
+> Something along the lines of
+> map ProblemchamberMP
+> GrandcanyonSP
+> FlatroomSP
+> endmap
+> 
+> select Problemchamber
+> export?map -proj plan -o Problemchamber.th2
+> 
+> Instead of exporting to pdf, this will then export this to a .th2 file,
+> where I guess it will appear with all the lines you have joined, instead
+> of you having to join them with line joins/scrap joins or amending line
+> end positions to force therion to automatically recognise them.
+> 
+> This will allow you to work on the whole chamber as one in a single .th2
+> file.
+
+Fun fact, you can even ask therion to take the sketches, and output
+those, pre-warped and pre-scaled, aligned to each other. It's fairly
+advanced stuff though, and I only used it once while boggling slightly.
+
+Sketch Morphing, in the Therion book. Or here:
+http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm
+
+That's harder than the original problem, but very cool if you wanted to
+use it, since it can solve this exact problem (multiple surveys of
+different arts of the same chamber at different scales).
+
+From bruce at tomo.co.nz  Thu Aug  3 22:58:19 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 4 Aug 2023 08:58:19 +1200
+Subject: [Therion] How to add 1.5 x linefeed to a text string
+In-Reply-To: <79a7f832-5d20-11a0-d788-787096726b9d@ntlworld.com>
+References: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+ <79a7f832-5d20-11a0-d788-787096726b9d@ntlworld.com>
+Message-ID: <000201d9c64d$3cb979b0$b62c6d10$@tomo.co.nz>
+
+>> I'm wondering if there is a way to add a 1.5x <br> linefeed to text 
+>> strings in Therion?
+
+>Not sure if there is a proper way, but you can just put tex into the text
+input in xtherion, right? If so, you could try foo \thtinysize <br><br>
+\thnormalsize bar
+
+Could not make that work.  No errors, Therion just echos what is typed in
+the text string.
+Some examples of what I tried...
+
+-text "25 <\thtinysize> P" -scale l
+-text "25 \thtinysize P" -scale l
+map-comment "NZVD2016 / New Zealand Vertical Datum 2016 \thtinysize <br>This
+map represents..."
+
+Perhaps there is a way to force interpretation of part of a text string as a
+tex control?
+
+Bruce
+
+
+From tarquin.wilton-jones at ntlworld.com  Thu Aug  3 23:20:48 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Thu, 3 Aug 2023 22:20:48 +0100
+Subject: [Therion] How to add 1.5 x linefeed to a text string
+In-Reply-To: <000201d9c64d$3cb979b0$b62c6d10$@tomo.co.nz>
+References: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+ <79a7f832-5d20-11a0-d788-787096726b9d@ntlworld.com>
+ <000201d9c64d$3cb979b0$b62c6d10$@tomo.co.nz>
+Message-ID: <9d1b8a3e-8c95-7d4c-248f-3778ce0e3a24@ntlworld.com>
+
+> Could not make that work.  No errors, Therion just echos what is typed in
+> the text string.
+
+I only ever used it directly in the metapost (it's in my code for
+creating custom labels). In the .th, Therion turns everything into
+\char103 escape sequences. In the metapost, you have more control.
+
+I don't know of a way to inject tex control characters directly from a
+.th but I have no doubt someone else on this mailing list will know a
+lot more than me.
+
+You could create custom labels with your own string replacement to add
+your own control character, like <lb> instead of <br>, but that only
+works for symbols. Not sure how to do that for strings in the cave info.
+
+From bruce at tomo.co.nz  Fri Aug  4 00:26:32 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Fri, 4 Aug 2023 10:26:32 +1200
+Subject: [Therion] How to add 1.5 x linefeed to a text string
+In-Reply-To: <9d1b8a3e-8c95-7d4c-248f-3778ce0e3a24@ntlworld.com>
+References: <000201d9c5ed$5a5262d0$0ef72870$@tomo.co.nz>
+ <79a7f832-5d20-11a0-d788-787096726b9d@ntlworld.com>
+ <000201d9c64d$3cb979b0$b62c6d10$@tomo.co.nz>
+ <9d1b8a3e-8c95-7d4c-248f-3778ce0e3a24@ntlworld.com>
+Message-ID: <000001d9c659$8f4d7f30$ade87d90$@tomo.co.nz>
+
+Thanks Tarquin
+I am able in my bumbling way to work with metapost and tex, but my use case
+here does not warrant that and feels better suited to using standard
+features.  I'll leave this one for now.
+
+Possibly there is a case for a <1.5br> control to compliment the existing
+<br> <left> <right> <thsp> etc in some future update.
+
+Bruce
+
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Tarquin Wilton-Jones
+via Therion
+Sent: Friday, 4 August 2023 09:21
+To: therion at speleo.sk
+Cc: Tarquin Wilton-Jones <tarquin.wilton-jones at ntlworld.com>
+Subject: Re: [Therion] How to add 1.5 x linefeed to a text string
+
+> Could not make that work.  No errors, Therion just echos what is typed 
+> in the text string.
+
+I only ever used it directly in the metapost (it's in my code for creating
+custom labels). In the .th, Therion turns everything into
+\char103 escape sequences. In the metapost, you have more control.
+
+I don't know of a way to inject tex control characters directly from a .th
+but I have no doubt someone else on this mailing list will know a lot more
+than me.
+
+You could create custom labels with your own string replacement to add your
+own control character, like <lb> instead of <br>, but that only works for
+symbols. Not sure how to do that for strings in the cave info.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+https://mailman.speleo.sk/listinfo/therion
+
+
+From bgee at campercaver.net  Fri Aug  4 17:08:03 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 4 Aug 2023 10:08:03 -0500
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+ <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+Message-ID: <08d9de93-c430-cdd5-698f-4d3acfc48139@campercaver.net>
+
+A couple of very interesting ideas here.  I tried them out this morning 
+on a small test cave.  I will have to think about this for a bit to see 
+how it might be useful.
+
+My small test cave has a total of about 80 feet of passage.  There are 
+three scraps which come from background sketch on two different sheets 
+of paper.  The same sheets also include profile and cross-section sketches.
+
+The first thing I did was Tarquin's method of creating a single .th2 
+file.  Creating the file was easy - just adding another export line to 
+the thconfig file.  It produced a valid .th2 file which has all objects 
+from all scraps.  The joins were already performed.
+
+There was no background image, so adding anything to this would be a 
+matter of eyeballing it.  I don't think there is any way to add a 
+background image that would make sense.
+
+The second thing I did was review Marco Corvi's documentation at the URL 
+Tarquin provided.  The new thing I learned is that backgrounds can be 
+assigned to scraps as well as the drawing area.  With my test cave I 
+added background to the three scraps, added the appropriate export line 
+to thconfig and then compiled.
+
+In the map editor I then started a new .th2 file.  I imported the .xvi 
+as the drawing area background.  It came in.  I can see where all three 
+sketches were apparently overlaid.  There is a nice centerline for the 
+entire cave.
+
+The problem is the sketches are not transparent enough to use.  The only 
+part of the sketch that has any visible drawing on it is for the last 
+scrap mentioned in the map statement of the .th file.  The other 
+drawings are not visible.
+
+The result file can be seen at
+
+https://campercaver.net/MiscFiles/test.xvi
+
+===============
+Bill Gee
+
+On 8/3/23 15:13, Tarquin Wilton-Jones via Therion wrote:
+>> Something along the lines of
+>> map ProblemchamberMP
+>> GrandcanyonSP
+>> FlatroomSP
+>> endmap
+>>
+>> select Problemchamber
+>> export?map -proj plan -o Problemchamber.th2
+>>
+>> Instead of exporting to pdf, this will then export this to a .th2 file,
+>> where I guess it will appear with all the lines you have joined, instead
+>> of you having to join them with line joins/scrap joins or amending line
+>> end positions to force therion to automatically recognise them.
+>>
+>> This will allow you to work on the whole chamber as one in a single .th2
+>> file.
+> 
+> Fun fact, you can even ask therion to take the sketches, and output
+> those, pre-warped and pre-scaled, aligned to each other. It's fairly
+> advanced stuff though, and I only used it once while boggling slightly.
+> 
+> Sketch Morphing, in the Therion book. Or here:
+> http://marcocorvi.altervista.org/caving/tbe/m_04/m_045.htm
+> 
+> That's harder than the original problem, but very cool if you wanted to
+> use it, since it can solve this exact problem (multiple surveys of
+> different arts of the same chamber at different scales).
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bruce at tomo.co.nz  Fri Aug  4 21:53:32 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 5 Aug 2023 07:53:32 +1200
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <08d9de93-c430-cdd5-698f-4d3acfc48139@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+ <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+ <08d9de93-c430-cdd5-698f-4d3acfc48139@campercaver.net>
+Message-ID: <000001d9c70d$59d73a80$0d85af80$@tomo.co.nz>
+
+> The problem is the sketches are not transparent enough to use.  The only part of the sketch that has any visible drawing on it is for the last scrap mentioned in the map statement of the .th file.  The other drawings are not visible.
+
+ 
+
+Bill
+
+Select the image, untick visibility
+
+ 
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230805/96aef184/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: image001.png
+Type: image/png
+Size: 77359 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230805/96aef184/attachment-0001.png>
+
+From bgee at campercaver.net  Fri Aug  4 22:43:32 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Fri, 4 Aug 2023 15:43:32 -0500
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <000001d9c70d$59d73a80$0d85af80$@tomo.co.nz>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+ <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+ <08d9de93-c430-cdd5-698f-4d3acfc48139@campercaver.net>
+ <000001d9c70d$59d73a80$0d85af80$@tomo.co.nz>
+Message-ID: <6a226742-4853-3628-ef05-64d9176b721a@campercaver.net>
+
+Hmmm....  I think I get it.  The xvi file consists of three images. 
+When I set it as the background for a drawing window, there are four 
+entries in the background list.  They are the file name and each of the 
+images it contains.  The file name holds the centerline and each image 
+holds one drawing.
+
+To draw on top, uncheck visibility for all but one of the images.  Draw 
+on that, then make it invisible and turn on another image.  Add to the 
+drawing, then repeat for the third background.
+
+Is that the basic process?
+
+Screen shot attached.
+
+===============
+Bill Gee
+
+On 8/4/23 14:53, Bruce Mutton wrote:
+>  > The problem is the sketches are not transparent enough to use.? The 
+> only part of the sketch that has any visible drawing on it is for the 
+> last scrap mentioned in the map statement of the .th file.? The other 
+> drawings are not visible.
+> 
+> Bill
+> 
+> Select the image, untick visibility
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot_20230804_154141.jpg
+Type: image/jpeg
+Size: 37476 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230804/ce6881ff/attachment-0001.jpg>
+
+From bruce at tomo.co.nz  Sat Aug  5 02:27:26 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Sat, 5 Aug 2023 12:27:26 +1200
+Subject: [Therion] Big room multiple scraps - How to join
+In-Reply-To: <6a226742-4853-3628-ef05-64d9176b721a@campercaver.net>
+References: <f4fd32e9-4316-b2b5-05bf-cad35ad3da58@campercaver.net>
+ <GV2PR10MB6308FC7576445B8F509B8BCCD60BA@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <0edd383a-cc3f-3d95-9819-518a9c335eca@campercaver.net>
+ <GV2PR10MB6308044BA71D8017781B560ED608A@GV2PR10MB6308.EURPRD10.PROD.OUTLOOK.COM>
+ <a52039fa-3d6e-4217-4481-39aa7c5b22ac@ntlworld.com>
+ <08d9de93-c430-cdd5-698f-4d3acfc48139@campercaver.net>
+ <000001d9c70d$59d73a80$0d85af80$@tomo.co.nz>
+ <6a226742-4853-3628-ef05-64d9176b721a@campercaver.net>
+Message-ID: <002001d9c733$9e041ef0$da0c5cd0$@tomo.co.nz>
+
+Hi Bill
+That is generally what I do.
+Depending on the arrangement of the images you might be able to leave some or most of them visible if you change the stacking order.  Experiment with the Top, Up, Down, Bottom buttons.
+
+You can also double-right-click an image to allow you to drag it to another location before you start drawing.  This can avoid the 'problem' of images overlapping each other.  However doing this is likely counter-productive for the work flow we are discussing in this thread.
+
+As another aside, if you insert .png format images with a transparent background, the problem of one image obscuring another is greatly reduced.  I don't have any experience with how these survive export to .th2 or .xvi, so not sure how relevant this is here.
+
+Bruce
+
+-----Original Message-----
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bill Gee
+Sent: Saturday, 5 August 2023 08:44
+To: Therion Mail List <therion at speleo.sk>
+Subject: Re: [Therion] Big room multiple scraps - How to join
+
+Hmmm....  I think I get it.  The xvi file consists of three images. 
+When I set it as the background for a drawing window, there are four entries in the background list.  They are the file name and each of the images it contains.  The file name holds the centerline and each image holds one drawing.
+
+To draw on top, uncheck visibility for all but one of the images.  Draw on that, then make it invisible and turn on another image.  Add to the drawing, then repeat for the third background.
+
+Is that the basic process?
+
+Screen shot attached.
+
+===============
+Bill Gee
+
+On 8/4/23 14:53, Bruce Mutton wrote:
+>  > The problem is the sketches are not transparent enough to use.  The 
+> only part of the sketch that has any visible drawing on it is for the 
+> last scrap mentioned in the map statement of the .th file.  The other 
+> drawings are not visible.
+> 
+> Bill
+> 
+> Select the image, untick visibility
+> 
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+
+From bruce at tomo.co.nz  Mon Aug  7 05:36:11 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 7 Aug 2023 15:36:11 +1200
+Subject: [Therion] Invalid length reading error reported due to (valid)
+ scrap definition
+Message-ID: <000001d9c8e0$50e69ae0$f2b3d0a0$@tomo.co.nz>
+
+Hello
+
+I have a perplexing error, this time around after a complicated git merge,
+and I have had similar on one occasion a while back.
+
+I think I resolved by omitting the file, which is not really a resolution.
+This time I need a better solution!
+
+ 
+
+On compiling a thconfig I get an error:
+
+ 
+
+C:\Program Files (x86)\Therion\therion.exe: error -- 11-DeerPlan.th2 [8] --
+invalid length reading -- -projection
+
+ 
+
+The start of file 11-DeerPlan.th2 is like this:
+
+ 
+
+encoding  utf-8
+
+##XTHERION## xth_me_area_adjust -160.83 -127.28 965.01 763.65
+
+##XTHERION## xth_me_area_zoom_to 200
+
+##XTHERION## xth_me_image_insert {502.386220472 1 1.0} {626.342677165 11.8}
+ptopoDeer/11-Deer_p.xvi 0 {}
+
+ 
+
+ 
+
+ 
+
+scrap 11-DeerPlan-s1 -projection plan -station-names []@11 -author
+2023.02.26 "B Mutton" -copyright 2023 NZSS -scale [0 0 787.4 787.4 0 0 10 10
+m]
+
+ 
+
+point 10.25 711.5 label -text "Deer Pot" -align l -scale xl
+
+ 
+
+point 186.25 712.5 anchor -align r
+
+ 
+
+This is a well established scrap in a well established file in a well
+established project and both of the parent branches compiled without issue
+through many editing and versioning iterations.  Comparison with both of the
+parent git branches do not suggest any changes that should trigger such an
+error - at least I have not found it yet. 
+
+I have checked this file and all calling it for closed blocks (scrap
+endscrap, map endmap, centreline endcentreline, survey end survey etc)
+because long ago Therion used to complain in a similar manner if such blocks
+were not closed (reporting survey data type error due to a drawing file
+error - illogical).
+
+ 
+
+Since this is the second time in a month I've experienced this type of
+'illogical' error after nothing like it for years, I'm wondering if anyone
+else has, or has a clue as to what might be happening?
+
+ 
+
+Bruce
+
+ 
+
+Using:
+
+therion 6.1.8 (2023-06-14)
+
+Windows 10 Home 22H2
+
+GitHub desktop 3.2.7 (x64)
+
+TortoiseGit 2.14.0
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230807/bbca7b7f/attachment.htm>
+
+From bruce at tomo.co.nz  Mon Aug  7 07:38:37 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Mon, 7 Aug 2023 17:38:37 +1200
+Subject: [Therion] Invalid length reading error reported due to (valid)
+ scrap definition
+In-Reply-To: <000001d9c8e0$50e69ae0$f2b3d0a0$@tomo.co.nz>
+References: <000001d9c8e0$50e69ae0$f2b3d0a0$@tomo.co.nz>
+Message-ID: <000101d9c8f1$6ba8fa10$42faee30$@tomo.co.nz>
+
+OK, found it.  It was as I suspected a missing endcentreline in the file
+called by an input statement immediately preceding the statement 'input
+11-DeerPlan.th2'.
+
+So my mistake, I did not check as well as I thought I had.
+
+I wonder if Therion could check for endcentreline statements (where they
+might normally be expected) and if not found by the end of a file, then
+issue a warning "missing endcentreline in file xxx.th".
+
+ 
+
+Thanks
+
+Bruce
+
+ 
+
+From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+Sent: Monday, 7 August 2023 15:36
+To: 'List for Therion users' <therion at speleo.sk>
+Subject: [Therion] Invalid length reading error reported due to (valid)
+scrap definition
+
+ 
+
+Hello
+
+I have a perplexing error, this time around after a complicated git merge,
+and I have had similar on one occasion a while back.
+
+I think I resolved by omitting the file, which is not really a resolution.
+This time I need a better solution!
+
+ 
+
+On compiling a thconfig I get an error:
+
+ 
+
+C:\Program Files (x86)\Therion\therion.exe: error -- 11-DeerPlan.th2 [8] --
+invalid length reading -- -projection
+
+ 
+
+The start of file 11-DeerPlan.th2 is like this:
+
+ 
+
+encoding  utf-8
+
+##XTHERION## xth_me_area_adjust -160.83 -127.28 965.01 763.65
+
+##XTHERION## xth_me_area_zoom_to 200
+
+##XTHERION## xth_me_image_insert {502.386220472 1 1.0} {626.342677165 11.8}
+ptopoDeer/11-Deer_p.xvi 0 {}
+
+ 
+
+ 
+
+ 
+
+scrap 11-DeerPlan-s1 -projection plan -station-names []@11 -author
+2023.02.26 "B Mutton" -copyright 2023 NZSS -scale [0 0 787.4 787.4 0 0 10 10
+m]
+
+ 
+
+point 10.25 711.5 label -text "Deer Pot" -align l -scale xl
+
+ 
+
+point 186.25 712.5 anchor -align r
+
+ 
+
+This is a well established scrap in a well established file in a well
+established project and both of the parent branches compiled without issue
+through many editing and versioning iterations.  Comparison with both of the
+parent git branches do not suggest any changes that should trigger such an
+error - at least I have not found it yet. 
+
+I have checked this file and all calling it for closed blocks (scrap
+endscrap, map endmap, centreline endcentreline, survey end survey etc)
+because long ago Therion used to complain in a similar manner if such blocks
+were not closed (reporting survey data type error due to a drawing file
+error - illogical).
+
+ 
+
+Since this is the second time in a month I've experienced this type of
+'illogical' error after nothing like it for years, I'm wondering if anyone
+else has, or has a clue as to what might be happening?
+
+ 
+
+Bruce
+
+ 
+
+Using:
+
+therion 6.1.8 (2023-06-14)
+
+Windows 10 Home 22H2
+
+GitHub desktop 3.2.7 (x64)
+
+TortoiseGit 2.14.0
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230807/59c29f25/attachment.htm>
+
+From beni at hallinger.org  Mon Aug  7 08:38:27 2023
+From: beni at hallinger.org (Benedikt Hallinger)
+Date: Mon, 07 Aug 2023 08:38:27 +0200
+Subject: [Therion] Invalid length reading error reported due to (valid)
+ scrap definition
+In-Reply-To: <000101d9c8f1$6ba8fa10$42faee30$@tomo.co.nz>
+References: <000001d9c8e0$50e69ae0$f2b3d0a0$@tomo.co.nz>
+ <000101d9c8f1$6ba8fa10$42faee30$@tomo.co.nz>
+Message-ID: <7d31c048b9099069bf6c841a798db210@hallinger.org>
+
+Hm, I'm not sure this will not trigger alot of false positives in some 
+of my projects, where structure is heavily divided into smaller files 
+which are inputted to form a whole complete.
+
+But I want to second you: the error message shown is very not-intuitive 
+to find the root cause.
+So maybe we should add some syntax sanity checks to the overall 
+strcture. When an encenterline is missing somewhere, this is some sort 
+of unbalanced braces problem like in a C compiler; so mabye therion 
+should output at the end that there is unbalanced 
+centerline/endcenterline numbers (or all other such structures, in this 
+regard) in the input data.
+
+
+Am 2023-08-07 7:38, schrieb Bruce Mutton:
+> OK, found it.  It was as I suspected a missing endcentreline in the
+> file called by an input statement immediately preceding the statement
+> 'input 11-DeerPlan.th2'.
+> 
+> So my mistake, I did not check as well as I thought I had.
+> 
+> I wonder if Therion could check for endcentreline statements (where
+> they might normally be expected) and if not found by the end of a
+> file, then issue a warning "missing endcentreline in file xxx.th".
+> 
+> Thanks
+> 
+> Bruce
+> 
+> From: Therion <therion-bounces at speleo.sk> On Behalf Of Bruce Mutton
+> Sent: Monday, 7 August 2023 15:36
+> To: 'List for Therion users' <therion at speleo.sk>
+> Subject: [Therion] Invalid length reading error reported due to
+> (valid) scrap definition
+> 
+> Hello
+> 
+> I have a perplexing error, this time around after a complicated git
+> merge, and I have had similar on one occasion a while back.
+> 
+> I think I resolved by omitting the file, which is not really a
+> resolution.  This time I need a better solution!
+> 
+> On compiling a thconfig I get an error:
+> 
+> C:\Program Files (x86)\Therion\therion.exe: error -- 11-DeerPlan.th2
+> [8] -- invalid length reading -- -projection
+> 
+> The start of file 11-DeerPlan.th2 is like this:
+> 
+> encoding  utf-8
+> 
+> ##XTHERION## xth_me_area_adjust -160.83 -127.28 965.01 763.65
+> 
+> ##XTHERION## xth_me_area_zoom_to 200
+> 
+> ##XTHERION## xth_me_image_insert {502.386220472 1 1.0} {626.342677165
+> 11.8} ptopoDeer/11-Deer_p.xvi 0 {}
+> 
+> scrap 11-DeerPlan-s1 -projection plan -station-names []@11 -author
+> 2023.02.26 "B Mutton" -copyright 2023 NZSS -scale [0 0 787.4 787.4 0 0
+> 10 10 m]
+> 
+> point 10.25 711.5 label -text "Deer Pot" -align l -scale xl
+> 
+> point 186.25 712.5 anchor -align r
+> 
+> This is a well established scrap in a well established file in a well
+> established project and both of the parent branches compiled without
+> issue through many editing and versioning iterations.  Comparison with
+> both of the parent git branches do not suggest any changes that should
+> trigger such an error - at least I have not found it yet.
+> 
+> I have checked this file and all calling it for closed blocks (scrap
+> endscrap, map endmap, centreline endcentreline, survey end survey etc)
+> because long ago Therion used to complain in a similar manner if such
+> blocks were not closed (reporting survey data type error due to a
+> drawing file error - illogical).
+> 
+> Since this is the second time in a month I've experienced this type of
+> 'illogical' error after nothing like it for years, I'm wondering if
+> anyone else has, or has a clue as to what might be happening?
+> 
+> Bruce
+> 
+> Using:
+> 
+> therion 6.1.8 (2023-06-14)
+> 
+> Windows 10 Home 22H2
+> 
+> GitHub desktop 3.2.7 (x64)
+> 
+> TortoiseGit 2.14.0
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From torsten.schnitter at netcologne.de  Tue Aug 15 20:50:21 2023
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Tue, 15 Aug 2023 20:50:21 +0200 (CEST)
+Subject: [Therion] Problem with Depth
+Message-ID: <75938214.5333439.1692125421333@comcenter.netcologne.de>
+
+Hi all
+I have a problem (again) with water depth in the map (elevated view).
+ 
+Exporting the xvi file it looks all good and all points are at the expected depth.
+(as the grid in xtherion should be 1m per square)
+This point in the following picture is around 1.2km inside the cave and is at a water depth of 29m:
+So counting grid squares the line is at a waterdepth of 29m (as it should be).
+These points are 29 squares down related to the start point at the beginning of the cave and at a depth of 0m.
+ 
+In the map export I use a grid output for a depth line every 10m.
+  grid-size 1000 1000 10 m
+  grid-origin 0 0 100 m
+So the grid is with one line exactly at 0m water depth at the start of the cave:
+ 
+But at a point of around 1.2km inside the cave (which is the part of the xvi shown above) the cave is not at the right level:
+The real depth at this point is 29m and not around 35m as drawn on the map.
+ 
+There is only one GPS point at the start of the cave and no loops (and therefore no loop closures).
+Why is the map morphed somehow or changed in any other way with a difference in depth over distance?
+ 
+Does anyone have a hint what's going on and what is wrong?
+Any help is welcome.
+Thanks, Torsten
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230815/9c44d176/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: grafik.png
+Type: image/png
+Size: 11042 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230815/9c44d176/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: grafik.png
+Type: image/png
+Size: 15704 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230815/9c44d176/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: grafik.png
+Type: image/png
+Size: 23230 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230815/9c44d176/attachment-0005.png>
+
+From tarquin.wilton-jones at ntlworld.com  Tue Aug 15 22:39:03 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 15 Aug 2023 21:39:03 +0100
+Subject: [Therion] Problem with Depth
+In-Reply-To: <ece5e279-8923-5069-0b95-e8213e06bbc8@ntlworld.com>
+References: <75938214.5333439.1692125421333@comcenter.netcologne.de>
+ <ece5e279-8923-5069-0b95-e8213e06bbc8@ntlworld.com>
+Message-ID: <721d54a4-27b5-05a9-a434-d5867ce44b7b@ntlworld.com>
+
+Sorry, I accidentally sent this direct instead of to the list. Copied
+below to save anyone else having to send replies. This solved the issue.
+
+On 15/08/2023 20:14, Tarquin Wilton-Jones wrote:
+> Hi Torsten,
+> 
+>> Does anyone have a hint what's going on and what is wrong?
+> 
+> I would export a .3d file. That way there is no morphing involved, only
+> the centreline. Measure the depth with Survex Aven. If it is right,
+> good, then this is not a data issue.
+> 
+> Then enable centreline in the layout, so you can see whether the
+> centreline and the cave walls agree with each other. I suspect you will
+> see the error here; maybe you have selected the wrong station number in
+> a scrap when creating a "point station" with "-name foo". This tends to
+> create the biggest warps.
+> 
+> In the layout:
+> debug all
+> 
+> That will show you which parts of a scrap have the most distortion. Your
+> error is somewhere around that.
+> 
+> Hopefully one of those helps. If not ... share the code if you can, and
+> I will try to debug it?
+> 
+> Cheers,
+> 
+> Tarquin
+> 
+
+
+From tarquin.wilton-jones at ntlworld.com  Tue Aug 15 22:40:02 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 15 Aug 2023 21:40:02 +0100
+Subject: [Therion] Problem with Depth
+In-Reply-To: <369187363.5336231.1692131617194@comcenter.netcologne.de>
+References: <75938214.5333439.1692125421333@comcenter.netcologne.de>
+ <ece5e279-8923-5069-0b95-e8213e06bbc8@ntlworld.com>
+ <369187363.5336231.1692131617194@comcenter.netcologne.de>
+Message-ID: <00f5f612-2017-ddb1-f45a-055cefa1c154@ntlworld.com>
+
+No problemo, glad it was so easy to solve :)
+
+On 15/08/2023 21:33, Torsten Schnitter wrote:
+> Hi Tarquin
+> Thanks a lot for your advices!
+> It was not a wrong station point but missing ones.
+> I did not have all stations within the drawing but only some.
+> And therefore not all surveys did have stations marked in the drawing.
+> With "debug on" the distortion was very obvious.
+> Now that I have inserted all stations ... tadaaa ... everything shows up as expected.
+> THANK YOU!
+> regards, Torsten
+> 
+
+
+From bgee at campercaver.net  Tue Aug 15 23:52:35 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Tue, 15 Aug 2023 16:52:35 -0500
+Subject: [Therion] A puzzle in Loch
+Message-ID: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+
+Looking at the .lox file for Stark Caverns, I see a spike that does not 
+make any sense.  I suspect it might be a blunder in the LRUD data, 
+perhaps a misplaced decimal point - but I have searched all over the 
+data and cannot find anything that looks out of line.  Besides, the 
+spike is not horizontal, which you would expect from an LRUD blunder. 
+It goes up at about a 20 degree angle.
+
+Take a look at the file at
+
+https://campercaver.net/MiscFiles/StarkCaverns.lox
+
+Turn on display of walls, survey stations and station labels.  The spike 
+is fairly obvious.  It starts at around station BU1, station 3, or 
+station E1.
+
+Does anyone have any ideas about why this shows up?  Is there a way to 
+find the survey stations that it connects to?
+
+For what it is worth, it does not appear in Aven using a .3d file.  It 
+also does not appear on the PDF plan map.  It appears to do no harm ... 
+but it is really bugging me!
+
+Thanks!
+-- 
+===============
+Bill Gee
+
+From tarquin.wilton-jones at ntlworld.com  Wed Aug 16 00:10:38 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Tue, 15 Aug 2023 23:10:38 +0100
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+Message-ID: <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+
+On 15/08/2023 22:52, Bill Gee wrote:
+> Looking at the .lox file for Stark Caverns, I see a spike that does not
+> make any sense.? I suspect it might be a blunder in the LRUD data,
+> perhaps a misplaced decimal point - but I have searched all over the
+> data and cannot find anything that looks out of line.? Besides, the
+> spike is not horizontal, which you would expect from an LRUD blunder. It
+> goes up at about a 20 degree angle.
+> 
+> Take a look at the file at
+> 
+> https://campercaver.net/MiscFiles/StarkCaverns.lox
+
+Possibly unrelated to the problem, but ...
+Several legs are created with a splay, when it looks like they should
+have been a leg or a duplicate.
+BU1 to BU2 (where the problem is)
+G13 to Z1
+B1 to B1a
+AB1 and AB2
+A5 to R1
+12 and 14
+These can cause issues, because splays are legs are different things,
+and you could confuse Therion when it tries to generate walls. It is
+supposed to use actual splays for that, but not duplicates. Because you
+are calling them splays, Therion tries to use them to work out where the
+walls are, and generates a wall where the LRUD data conflicts with what
+you have called a splay. So it tries to join the wall it drew at a
+station, with the wall you told it is somewhere else in the LRUD data. I
+can understand if it does so with a crazy spike, though it is usually
+better at handling inconsistent data.
+
+I would need to see the source data to debug further, since I cannot see
+what any of the LRUD data looks like.
+
+Cheers
+
+Tarquin
+
+From bgee at campercaver.net  Wed Aug 16 02:41:51 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Tue, 15 Aug 2023 19:41:51 -0500
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+Message-ID: <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+
+Hmmm.....   Maybe I am not using the splay flag correctly?  Is there 
+another flag that might be more appropriate?
+
+The reason those stations are flagged as splay is because they do not 
+contribute to the length of the cave.  They are just connecting a side 
+passage into the rest of the survey.  Marking the shots as splay means 
+they get left out of the total length calculation.
+
+That part of the cave is a big challenge to survey.  The main feature 
+there is a stairwell with steel hand rails on either side.  The rails 
+really mess with the compass measurements.  We tried every which way but 
+could not get a good match between forward and backward compass.  I just 
+have to trust that averaging the shots will get somewhere reasonably 
+close to correct.
+
+It also is a place where a lower level stream passage (the E series), a 
+mid-level side passage (the BU series) and the main passage (plain 
+numbers going up the stairs) all come together.
+
+The survey trips in this part of the cave happened over three years.  We 
+did not know the BU passage existed until someone was just fooling 
+around climbing over a rail and along a rock shelf full of electric 
+lights.  From the stairs it looks like a shallow alcove.  Even the tour 
+guides who go past there multiple times every day had no idea.  Had we 
+known, we would have left a good tie-in station.  As it is - we had to 
+make due.
+
+An extract from the centerline data file looks like this:
+
+==========================
+   data normal from to tape compass clino backcompass backclino left 
+right up down
+
+# Side passage behind the overlook
+flags splay
+# The next line is the data we actually shot.  Getting it to fit right 
+on the map
+# required juggling the numbers a bit, and that is the second line.
+#  3      BU1     4.8     345.5    5.3    180.5   -6.3   - - - -
+   3      BU1     4.0     315.5    5.3    135.5    -6.3   - - - -
+   BU1    BU2    11.6      53.1   84.4    228.4   -84.9   16.8 2.2 1.1 11.6
+flags not splay
+   BU2    BU3    18.6     152.8    0.5    332.1   -0.7   4.6 0 0.5 5.1
+   BU3    BU4    20.5     137.1   -1.1    318.1    1.4   10.7 6.8 1.0 2.2
+   BU4    BU5    18.5      68.6    2.5    248.7   -2.3   4.9 1.9 1.0 0.8
+   BU5    BU6    11.3     141.7   10.0    323.1  -11.1   0.5 10.6 7.2 2.3
+   BU6    BU7     7.8     207.0   18.6     27.9  -19.6   12.9 4.4 18.2 2.8
+   BU7    BU8     6.9     130.3  -48.0    312.4   47.8   3.8 3.7 5.9 0.5
+   BU8    BU9     8.6     184.0   10.4      3.2   -9.8   6.4 2.6 3.4 3.0
+
+
+===============
+Bill Gee
+
+On 8/15/23 17:10, Tarquin Wilton-Jones via Therion wrote:
+> On 15/08/2023 22:52, Bill Gee wrote:
+>> Looking at the .lox file for Stark Caverns, I see a spike that does not
+>> make any sense.? I suspect it might be a blunder in the LRUD data,
+>> perhaps a misplaced decimal point - but I have searched all over the
+>> data and cannot find anything that looks out of line.? Besides, the
+>> spike is not horizontal, which you would expect from an LRUD blunder. It
+>> goes up at about a 20 degree angle.
+>>
+>> Take a look at the file at
+>>
+>> https://campercaver.net/MiscFiles/StarkCaverns.lox
+> 
+> Possibly unrelated to the problem, but ...
+> Several legs are created with a splay, when it looks like they should
+> have been a leg or a duplicate.
+> BU1 to BU2 (where the problem is)
+> G13 to Z1
+> B1 to B1a
+> AB1 and AB2
+> A5 to R1
+> 12 and 14
+> These can cause issues, because splays are legs are different things,
+> and you could confuse Therion when it tries to generate walls. It is
+> supposed to use actual splays for that, but not duplicates. Because you
+> are calling them splays, Therion tries to use them to work out where the
+> walls are, and generates a wall where the LRUD data conflicts with what
+> you have called a splay. So it tries to join the wall it drew at a
+> station, with the wall you told it is somewhere else in the LRUD data. I
+> can understand if it does so with a crazy spike, though it is usually
+> better at handling inconsistent data.
+> 
+> I would need to see the source data to debug further, since I cannot see
+> what any of the LRUD data looks like.
+> 
+> Cheers
+> 
+> Tarquin
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From olly at survex.com  Wed Aug 16 02:52:41 2023
+From: olly at survex.com (Olly Betts)
+Date: Wed, 16 Aug 2023 01:52:41 +0100
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+ <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+Message-ID: <20230816005241.GG16321@survex.com>
+
+On Tue, Aug 15, 2023 at 07:41:51PM -0500, Bill Gee wrote:
+> Hmmm.....   Maybe I am not using the splay flag correctly?  Is there another
+> flag that might be more appropriate?
+> 
+> The reason those stations are flagged as splay is because they do not
+> contribute to the length of the cave.  They are just connecting a side
+> passage into the rest of the survey.  Marking the shots as splay means they
+> get left out of the total length calculation.
+
+The "duplicate" flag seems to be what you're wanting here.
+
+Cheers,
+    Olly
+
+From tarquin.wilton-jones at ntlworld.com  Wed Aug 16 09:18:50 2023
+From: tarquin.wilton-jones at ntlworld.com (Tarquin Wilton-Jones)
+Date: Wed, 16 Aug 2023 08:18:50 +0100
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+ <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+Message-ID: <bce3e0ed-445a-7b07-9274-3879694ebf08@ntlworld.com>
+
+> Hmmm.....?? Maybe I am not using the splay flag correctly?? Is there
+> another flag that might be more appropriate?
+
+flags duplicate = a leg that must not count towards the length. It can
+count towards the vertical range, if it is the highest or lowest point
+in the cave. Use this when you have had to survey twice (or more) down
+the same passage. Also use it if you are going from a station in a
+passage whose length was already included with the legs going down the
+passage itself, and the new legs are used to reach the start of a side
+passage, where the main passage is really wide (such as a station on the
+left wall of a 50m wide passage, and you need to get to a side passage
+on the right wall). This is particularly useful when you have a side
+passage you did not have a useful fixed station for, and the nearest
+fixed station is a long way down the passage, so you will need to
+resurvey from that fixed station, back down the passage you already
+surveyed, to reach the side passage. As Olly said, this is the one you want.
+
+#survey from fixed station to AB side passage
+flags duplicate
+megacairn AB1 12.34 27.5 1.5
+AB1 AB2 8.97 42.93 -21.5 #AB2 is start of side passage
+flags not duplicate
+
+flags splay = a shot from a station towards a wall, ceiling, floor or
+other solid object, such as a stalagmite. Therion uses these to build
+the walls in the .lox file. Normally, you use anonymous splays like this
+("-" instead of a station name):
+AB1 - 1.234 12.5 -17.5
+However, sometimes *rarely* you might want to name a splay, such as a
+splay that hits something important like a named formation. Imagine you
+have a stalagmite called "Medusa", you might do this to tell Therion "I
+know this looks like a station, but it's a named splay":
+
+flags splay
+AB1 medusa 1.234 12.5 -17.5
+flags not splay
+
+flags surface = a leg or splay that is on the surface, not in the cave.
+This will not be used for length, depth, or wall generation. It
+basically tells Therion to ignore it for cave statistics, and for wall
+generation. This might be used for the legs that go from the cave
+entrance to your fixed location on the surface, or for splays that go
+from a surface station to a surface feature, such as a cliff face
+outside the cave.
+
+station 2 "Alpha Cave" entrance
+flags surface
+fixedpoint 1 12.345 27.5 1.5
+#splays around the outside of the entrance
+1	-	0.555	237.50	-37.67	
+1	-	0.882	258.89	-16.29	
+1	-	0.895	296.19	-14.58	
+1	-	1.198	320.46	-3.11	
+1	2	1.266	62.55	-31.87
+flags not surface
+
+> ? BU1??? BU2??? 11.6????? 53.1?? 84.4??? 228.4?? -84.9?? 16.8 2.2 1.1 11.6
+
+Oh, this is interesting. I was wondering if you had used "UP" to get
+from BU1 to BU2. In such a case, LRUDs are quite useless, as a leg has
+no direction, so Therion has no information about which direction is
+"left" or "right", so it might have had to make things up and got it
+wrong. (Splays are vastly superior to LRUDs, because each one has an
+explicit direction, so you can point to all walls of a pitch, not just 2
+of them.)
+
+I had expected maybe it was generating walls without any idea where to
+point them, but that seems not to be the case, since you have an actual
+direction for that leg.
+
+So it seems the most likely cause for your problem is indeed the "flags
+splay" where you meant "flags duplicate".
+
+However, I would need more of the data forming that part of the cave to
+be sure, since when I tried to compile your snippet, it did not show the
+problem. Maybe it only shows up when you have both the old and new data.
+
+I also have never seen data in this format, and am curious as to what
+your "data" command looks like. It looks like it should be this:
+
+data normal from to tape compass clino backcompass backclino left right
+up down
+But Therion won't let me use that, because the compass and backcompass
+are not perfectly opposite. I am wondering if it gets confused when you
+ask it to use all the data columns (I told it to ignore the backcompass).
+
+Equally curious about what your measurement device is, since you are
+getting only 10 cm accuracy (suggesting a measuring tape) and yet .1
+degree precision compass and clino, which seems incredibly precise for
+manual tools, especially considering the forward and backward devices
+seem to disagree with each other by as much as 2.1 degrees (compass) and
+1.1 degrees (clino). There is a huge 4.7 degree disagreement on the
+BU1-BU2 leg. (Because the devices are being used nearly vertically, so
+compass error is increased. Plumbed legs would normally be recommended
+when using manual devices.) Whenever I have seen high quality data from
+manual devices, the compass and clino have been given to 0.5 degree
+precision, because that is the reading limit of the devices.
+
+From wookey at wookware.org  Wed Aug 16 14:31:26 2023
+From: wookey at wookware.org (Wookey)
+Date: Wed, 16 Aug 2023 13:31:26 +0100
+Subject: [Therion] Invalid length reading error reported due to (valid)
+ scrap definition
+In-Reply-To: <7d31c048b9099069bf6c841a798db210@hallinger.org>
+References: <000001d9c8e0$50e69ae0$f2b3d0a0$@tomo.co.nz>
+ <000101d9c8f1$6ba8fa10$42faee30$@tomo.co.nz>
+ <7d31c048b9099069bf6c841a798db210@hallinger.org>
+Message-ID: <20230816123126.GN30840@mail.wookware.org>
+
+On 2023-08-07 08:38 +0200, Benedikt Hallinger wrote:
+> Hm, I'm not sure this will trigger a lot of false positives in some of my
+> projects, where structure is heavily divided into smaller files which are
+> inputted to form a whole complete.
+
+Right. centreline doesn't have to be balanced on a per-file
+basis. Survey structure and file structure are independent in Therion
+same as they are in survex. 
+
+> When an encenterline is missing somewhere, this is some sort of unbalanced
+> braces problem like in a C compiler; so mabye therion should output at the
+> end that there is unbalanced centerline/endcenterline numbers (or all other
+> such structures, in this regard) in the input data.
+
+Right if it errored on unbalanced start/end primitives and said which
+files were unbalanced that should narrow it down enough to find the
+mistake (because on most projects most files will be balanced?).
+
+I'm not sure if there is a better interface/algorithm?
+
+Wookey
+-- 
+Principal hats:  Debian, Wookware, ARM
+http://wookware.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230816/28d459a4/attachment.sig>
+
+From bgee at campercaver.net  Wed Aug 16 15:20:09 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 16 Aug 2023 08:20:09 -0500
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <bce3e0ed-445a-7b07-9274-3879694ebf08@ntlworld.com>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+ <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+ <bce3e0ed-445a-7b07-9274-3879694ebf08@ntlworld.com>
+Message-ID: <b8dfb22a-8076-8460-9352-77016b8c9330@campercaver.net>
+
+Wow, thanks Tarquin!  And Ollie, too.  I tried a few things, but the 
+spike still exists in the .lox file.
+
+I changed the connecting shots from 3 to BU1 and BU2 from splay to 
+duplicate.  After recompiling, the spike is still there.
+
+Next I change the shot from BU1 to BU2 so that it has no LRUD data. 
+Recompile, and the spike is still there.  Hmmm....  I think I need to 
+change most of the splay shots to duplicate, but that seems to not be 
+the reason for this anomaly.
+
+I double-verified the LRUD data for stations BU3, BU4 and BU5.  The 
+passage makes a sharp turn at BU4, and a bad left measurement would go 
+about the same direction as the spike.  The LRUD data for those stations 
+is all correct.
+
+One thing that strikes me is that the spike is not horizontal.  It 
+angles upward by about 20 degrees.  If it were the result of bad LRUD 
+interpretation, I would expect it to be horizontal.
+
+I included the data line in my extract.  It is indeed the same line as 
+you deduced by looking at the data.  Therion does produce warnings about 
+"forwards and backwards bearing readings do not match".  There are about 
+20 of these in the therion.log file.  I have checked every one against 
+the original notes.  It really is off.  Most are under ten degrees.  The 
+worst is 17 degrees off.
+
+Most of this cave was surveyed with DistoX2 devices.  The compass and 
+inclination readings go to two decimal places (0.01 degree). I do not 
+believe for a New York minute that the DistoX2 is really that accurate. 
+I suspect it is no better than a Suunto.  The readings in the book are 
+rounded to the nearest tenth, and I count on Therion averaging the two 
+shots to get a somewhat better consensus.
+
+In this cave, especially around the tour trail, compass readings are 
+difficult because there is so much metal.  Hand rails, electric lighting 
+fixtures, rebar in the concrete, support pillars and framing for the 
+overlook platform ...  It is a magnetic mess!  We did the best we could, 
+but there is just a lot of noise in the data.
+
+Some time ago I asked about reverse tape readings.  That is a fairly new 
+feature in Therion.  For this cave we did not record any reverse 
+distance data.  The distances are in Imperial measurements to the 
+nearest 0.1 foot.  The DistoX2 displays to the nearest 0.01 foot and we 
+round that to 0.1 before writing it down.
+
+I found a photo of the area we are looking at.
+
+https://campercaver.net/MiscFiles/P1100940-Small.jpg
+
+This shows the stairs leading up to the overlook.  Station 3 is just out 
+of sight on the left of the photo.  BU1 and BU2 are out of the photo at 
+upper right.  The BU side passage is reached by getting onto the rock 
+ledge on the right, then coming toward the camera.  The passage goes off 
+to the right of this photo.  There is an electric light fixture just 
+about dead center in the photo.  If you levitate about 8 feet up from 
+that fixture and look right, that is the passage entrance.
+
+===============
+Bill Gee
+
+On 8/16/23 02:18, Tarquin Wilton-Jones via Therion wrote:
+>> Hmmm.....?? Maybe I am not using the splay flag correctly?? Is there
+>> another flag that might be more appropriate?
+> 
+> flags duplicate = a leg that must not count towards the length. It can
+> count towards the vertical range, if it is the highest or lowest point
+> in the cave. Use this when you have had to survey twice (or more) down
+> the same passage. Also use it if you are going from a station in a
+> passage whose length was already included with the legs going down the
+> passage itself, and the new legs are used to reach the start of a side
+> passage, where the main passage is really wide (such as a station on the
+> left wall of a 50m wide passage, and you need to get to a side passage
+> on the right wall). This is particularly useful when you have a side
+> passage you did not have a useful fixed station for, and the nearest
+> fixed station is a long way down the passage, so you will need to
+> resurvey from that fixed station, back down the passage you already
+> surveyed, to reach the side passage. As Olly said, this is the one you want.
+> 
+> #survey from fixed station to AB side passage
+> flags duplicate
+> megacairn AB1 12.34 27.5 1.5
+> AB1 AB2 8.97 42.93 -21.5 #AB2 is start of side passage
+> flags not duplicate
+> 
+> flags splay = a shot from a station towards a wall, ceiling, floor or
+> other solid object, such as a stalagmite. Therion uses these to build
+> the walls in the .lox file. Normally, you use anonymous splays like this
+> ("-" instead of a station name):
+> AB1 - 1.234 12.5 -17.5
+> However, sometimes *rarely* you might want to name a splay, such as a
+> splay that hits something important like a named formation. Imagine you
+> have a stalagmite called "Medusa", you might do this to tell Therion "I
+> know this looks like a station, but it's a named splay":
+> 
+> flags splay
+> AB1 medusa 1.234 12.5 -17.5
+> flags not splay
+> 
+> flags surface = a leg or splay that is on the surface, not in the cave.
+> This will not be used for length, depth, or wall generation. It
+> basically tells Therion to ignore it for cave statistics, and for wall
+> generation. This might be used for the legs that go from the cave
+> entrance to your fixed location on the surface, or for splays that go
+> from a surface station to a surface feature, such as a cliff face
+> outside the cave.
+> 
+> station 2 "Alpha Cave" entrance
+> flags surface
+> fixedpoint 1 12.345 27.5 1.5
+> #splays around the outside of the entrance
+> 1	-	0.555	237.50	-37.67	
+> 1	-	0.882	258.89	-16.29	
+> 1	-	0.895	296.19	-14.58	
+> 1	-	1.198	320.46	-3.11	
+> 1	2	1.266	62.55	-31.87
+> flags not surface
+> 
+>>  ? BU1??? BU2??? 11.6????? 53.1?? 84.4??? 228.4?? -84.9?? 16.8 2.2 1.1 11.6
+> 
+> Oh, this is interesting. I was wondering if you had used "UP" to get
+> from BU1 to BU2. In such a case, LRUDs are quite useless, as a leg has
+> no direction, so Therion has no information about which direction is
+> "left" or "right", so it might have had to make things up and got it
+> wrong. (Splays are vastly superior to LRUDs, because each one has an
+> explicit direction, so you can point to all walls of a pitch, not just 2
+> of them.)
+> 
+> I had expected maybe it was generating walls without any idea where to
+> point them, but that seems not to be the case, since you have an actual
+> direction for that leg.
+> 
+> So it seems the most likely cause for your problem is indeed the "flags
+> splay" where you meant "flags duplicate".
+> 
+> However, I would need more of the data forming that part of the cave to
+> be sure, since when I tried to compile your snippet, it did not show the
+> problem. Maybe it only shows up when you have both the old and new data.
+> 
+> I also have never seen data in this format, and am curious as to what
+> your "data" command looks like. It looks like it should be this:
+> 
+> data normal from to tape compass clino backcompass backclino left right
+> up down
+> But Therion won't let me use that, because the compass and backcompass
+> are not perfectly opposite. I am wondering if it gets confused when you
+> ask it to use all the data columns (I told it to ignore the backcompass).
+> 
+> Equally curious about what your measurement device is, since you are
+> getting only 10 cm accuracy (suggesting a measuring tape) and yet .1
+> degree precision compass and clino, which seems incredibly precise for
+> manual tools, especially considering the forward and backward devices
+> seem to disagree with each other by as much as 2.1 degrees (compass) and
+> 1.1 degrees (clino). There is a huge 4.7 degree disagreement on the
+> BU1-BU2 leg. (Because the devices are being used nearly vertically, so
+> compass error is increased. Plumbed legs would normally be recommended
+> when using manual devices.) Whenever I have seen high quality data from
+> manual devices, the compass and clino have been given to 0.5 degree
+> precision, because that is the reading limit of the devices.
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From bruce at tomo.co.nz  Wed Aug 16 22:04:41 2023
+From: bruce at tomo.co.nz (Bruce Mutton)
+Date: Thu, 17 Aug 2023 08:04:41 +1200
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <b8dfb22a-8076-8460-9352-77016b8c9330@campercaver.net>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+ <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+ <bce3e0ed-445a-7b07-9274-3879694ebf08@ntlworld.com>
+ <b8dfb22a-8076-8460-9352-77016b8c9330@campercaver.net>
+Message-ID: <000501d9d07c$e7577190$b60654b0$@tomo.co.nz>
+
+> One thing that strikes me is that the spike is not horizontal.  It angles upward by about 20 degrees. 
+Hi Bill
+If it helps (unlikely), I have had a project where the Loch model has (had) just such a spike, one hundred or so metres long, angling about 20 deg upwards.  For more than 10 years the model had this spike, and from time to time I tried to troubleshoot it without luck.  I have had other similar cases as well. I looked up some outputs compiled January this year - it seems this spike is no longer present.  So there must have been a change in the algorithm in recent years to resolve this.  There has been no survey or drawing activity in that part of the cave or model since about 2008-2010, but I concede that edits more than 100 m away (from the spike) in the model could possibly have had some effect.
+I notice that other Loch rendering artifacts seem to have been resolved also. 
+
+Are you using a recent version of Therion?
+I'm using 6.1.8, but unsure what it would have been in January.
+
+Bruce
+
+
+From bgee at campercaver.net  Thu Aug 17 01:14:15 2023
+From: bgee at campercaver.net (Bill Gee)
+Date: Wed, 16 Aug 2023 18:14:15 -0500
+Subject: [Therion] A puzzle in Loch
+In-Reply-To: <000501d9d07c$e7577190$b60654b0$@tomo.co.nz>
+References: <b52ba5e0-fbc6-6a23-37f7-2f2081205de0@campercaver.net>
+ <1e7cc384-0137-392a-1c31-f9d55a2a8be1@ntlworld.com>
+ <f0f62c3f-08fc-5082-6476-06ad98d39dd0@campercaver.net>
+ <bce3e0ed-445a-7b07-9274-3879694ebf08@ntlworld.com>
+ <b8dfb22a-8076-8460-9352-77016b8c9330@campercaver.net>
+ <000501d9d07c$e7577190$b60654b0$@tomo.co.nz>
+Message-ID: <a2bee0fd-fee8-8ab4-62f1-d74f35a9f810@campercaver.net>
+
+Hi Bruce -
+
+I am glad to hear someone else has seen this kind of problem.  It is 
+really not much more than annoying since no one but me sees the .lox 
+files.  I have CaveView on a web server, so I suppose that might count 
+as publishing the file.
+
+I am using Therion 6.1.8 and Survex 1.4.5 running on Fedora 38.  I 
+compiled Therion from source.  Survex is the package the Jim Begley puts 
+in his COPR repository.
+
+The Stark Caverns survey project has been going since December 2018.  It 
+has been run through quite a few versions of both applications.  Every 
+compile job builds the .lox file from scratch, so there should not be 
+any cruft from old versions.
+
+And now I find something REALLY interesting!  Mentioning CaveView in the 
+first paragraph reminded me that it is a full LOX viewer with no 
+dependency on Loch.  Just for grins - I copied the latest Stark Caverns 
+LOX file over to that server and opened it up.  No spike!  The anomaly 
+is not there in CaveView.  Take a look ...
+
+https://campercaver.net/CaveView/my-index.html
+
+and use the gear icon to choose the Stark Caverns file.
+
+I think something odd is going on in Loch.  What other applications can 
+open a .lox file?  I gave it a quick try in MeshLab, but it does not 
+recognize .lox as a valid file type.
+
+===============
+Bill Gee
+
+On 8/16/23 15:04, Bruce Mutton wrote:
+>> One thing that strikes me is that the spike is not horizontal.  It angles upward by about 20 degrees.
+> Hi Bill
+> If it helps (unlikely), I have had a project where the Loch model has (had) just such a spike, one hundred or so metres long, angling about 20 deg upwards.  For more than 10 years the model had this spike, and from time to time I tried to troubleshoot it without luck.  I have had other similar cases as well. I looked up some outputs compiled January this year - it seems this spike is no longer present.  So there must have been a change in the algorithm in recent years to resolve this.  There has been no survey or drawing activity in that part of the cave or model since about 2008-2010, but I concede that edits more than 100 m away (from the spike) in the model could possibly have had some effect.
+> I notice that other Loch rendering artifacts seem to have been resolved also.
+> 
+> Are you using a recent version of Therion?
+> I'm using 6.1.8, but unsure what it would have been in January.
+> 
+> Bruce
+> 
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> https://mailman.speleo.sk/listinfo/therion
+
+From torsten.schnitter at netcologne.de  Thu Aug 31 18:14:32 2023
+From: torsten.schnitter at netcologne.de (Torsten Schnitter)
+Date: Thu, 31 Aug 2023 18:14:32 +0200 (CEST)
+Subject: [Therion] Bug with "copyright" symbol ?
+Message-ID: <30083347.5911340.1693498472898@comcenter.netcologne.de>
+
+Hello
+ 
+I'm using a redefined legend and within this there is a line:
+...{\size[\thsizem]\si\the\cartotitle: \ss\the\cartoteam\quad\size[\thsizem]{\copyright\thinspace\si\the\cartodate\par}}...
+ 
+The variable \thsizem is defined within the layout:
+... code-tex ...
+\def\thsizem{36}
+... endcode ...
+ 
+The output is like this:
+ 
+As you can see the circle around the letter "c" is not correct and is not changed in size as the letter itself.
+ 
+Does anyone have a solution to correct this?
+ 
+Thanks in advance,
+Torsten
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230831/9e055627/attachment-0001.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: grafik.png
+Type: image/png
+Size: 19058 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20230831/9e055627/attachment-0001.png>
+

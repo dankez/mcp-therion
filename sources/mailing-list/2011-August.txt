@@ -1,0 +1,517 @@
+From dangle at tomo.co.nz  Mon Aug  1 10:17:07 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Mon, 1 Aug 2011 20:17:07 +1200
+Subject: [Therion] Odd behavior exporting map using LRUD's
+In-Reply-To: <CABuoLxxsCo4s=KU3yAfo8LkiY+ABqUr4H+CYgb4RRnaXOiNGyw@mail.gmail.com>
+References: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+	<60E12273-BD86-4FE0-8CBF-D452C20FD373@mac.com>
+	<CABuoLxxsCo4s=KU3yAfo8LkiY+ABqUr4H+CYgb4RRnaXOiNGyw@mail.gmail.com>
+Message-ID: <623473E623F2450FB954245648715E36@JUICEBRAIN>
+
+As far as I can tell all New Zealand cave surveyors use the convention that
+the lrud data refers to the 'from' station (unlike Therion).
+
+Mostly because the preprinted survey paper pads we use lead people to this
+way of doing it.
+
+When learning to use Therion I pretty quickly moved to the solution 2)
+suggested by Martin below.  
+
+The advantage is that users are certain about which station the lrud applies
+to, and the amount of potentially confusing data on each line is reduced.  
+
+The disadvantage is that when there are multiple legs from each station,
+Therion does not know which leg to apply the lrud to.
+
+Personally I am happy with this limitation, however a 'lrud-station
+[to|from]' statement  would provide some flexibility and clarity without the
+need for new users to refer to The Therion Book quite so much.
+
+ 
+
+Bruce
+
+ 
+
+  _____  
+
+From: therion-bounces at speleo.sk [mailto:therion-bounces at speleo.sk] On Behalf
+Of Niklas Konstenius
+Sent: Saturday, 23 July 2011 10:43 p.m.
+To: List for Therion users
+Subject: Re: [Therion] Odd behavior exporting map using LRUD's
+
+ 
+
+> 1. use [from to] syntax:
+
+ 
+
+Thanks for the tip. This method however forces us to write the LRUD
+measurements in the data files twice. This redundancy in the data is not a
+good thing as I see it.
+
+ 
+
+It would be very nice if therion could have an option to define which
+station the LRUD's belongs to. For example:
+
+ 
+
+centerline
+
+            lrud-station from
+
+            data normal from  to  length  compass  clino left right up down
+
+            a  b  10 90 0 2 0 2 0
+
+            b  c  10 90 0 0 2 2 0 
+
+            c  d  10 90 0 2 0 2 0
+
+endcenterline
+
+ 
+
+ 
+
+Or is it so uncommon to get LRUD from the FROM station that this
+functionality is not needed?
+
+ 
+
+/niklas
+
+On 23 July 2011 08:21, Martin Sluka <martinsluka at mac.com> wrote:
+
+
+On 23.7.2011, at 1:10, Niklas Konstenius wrote:
+
+       a  b  10 90 0 2 0 2 0
+       b  c  10 90 0 0 2 2 0
+       c  d  10 90 0 2 0 2 0
+endcenterline
+-----
+Since LRUD is measured at from-station this data indicates that station a
+and c is positiond at the right cave wall and station b is positioned at the
+left wall (station d is undefined).
+
+ 
+
+Therion in this case use LRUD on TO station - default behavior.
+
+If you need LRUD on FROM station you may:
+
+1. use [from to] syntax:
+
+
+
+data normal from  to  length  compass  clino left right up down
+
+   a b 10 90 0 [2 0] [0 2] [2 2] [0 0]
+   b c 10 90 0 [0 2] [2 0] [2 2] [0 0]
+
+2. station left right up down
+
+
+
+data normal from  to  length  compass  clino
+
+       a  b  10 90 0
+
+       b  c  10 90 0
+
+       c  d  10 90 0
+
+station left right up down
+
+
+
+      a 2 0 2 0
+
+       b 0 2 2 0
+
+       c 2 0 2 0
+
+m.
+_______________________________________________
+Therion mailing list
+Therion at speleo.sk
+http://mailman.speleo.sk/mailman/listinfo/therion
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110801/2d27e2f5/attachment.htm>
+
+From martinsluka at mac.com  Tue Aug  2 09:45:34 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Tue, 02 Aug 2011 09:45:34 +0200
+Subject: [Therion] Odd behavior exporting map using LRUD's
+In-Reply-To: <623473E623F2450FB954245648715E36@JUICEBRAIN>
+References: <CABuoLxwuoVsmFii47=A+V0QRY3Pgv=hC0n7K2pJctRwtt3vbJA@mail.gmail.com>
+	<60E12273-BD86-4FE0-8CBF-D452C20FD373@mac.com>
+	<CABuoLxxsCo4s=KU3yAfo8LkiY+ABqUr4H+CYgb4RRnaXOiNGyw@mail.gmail.com>
+	<623473E623F2450FB954245648715E36@JUICEBRAIN>
+Message-ID: <80EE6401-B225-4015-A656-EC69A24B9F40@mac.com>
+
+
+On 1.8.2011, at 10:17, Bruce wrote:
+
+> data normal from  to  length  compass  clino left right up down
+>
+>    a b 10 90 0 [2 0] [0 2] [2 2] [0 0]
+>    b c 10 90 0 [0 2] [2 0] [2 2] [0 0]
+
+This solution allow to define for simple 3D (without walls) the better  
+model if there is sharp angle on station, or if the narrow passage  
+penetrate to huge one (or opposite).
+
+m.
+
+
+From Dirk.Peinelt at t-online.de  Wed Aug  3 15:26:20 2011
+From: Dirk.Peinelt at t-online.de (Dirk.Peinelt at t-online.de)
+Date: Wed, 03 Aug 2011 15:26:20 +0200
+Subject: [Therion] =?utf-8?q?_survex_3d_export_without_splay_and_surface?=
+Message-ID: <1QobSm-1umZpw0@fwd01.aul.t-online.de>
+
+Have anyone a suggestion?
+The "export model" option "disable" is not working.  
+
+	//dirk 
+
+-------------------------
+
+	Dirk Peinelt dirk.peinelt at t-online.de  [1]
+Tue Jul 19 01:46:49 CEST 2011   
+
+[THERION] SURVEX 3D WITHOUT SPLAY
+
+	 Hi, 
+
+	is it possible to export a survex 3d file without splay shots? 
+
+	Regards,  
+
+	dirk
+
+Links:
+------
+[1]
+mailto:therion%40speleo.sk?Subject=Re%3A%20%5BTherion%5D%20survex%203d%20without%20splay&amp;In-Reply-To=%3C003701cc45a4%24f66b1df0%24e34159d0%24%40t-online.de%3E
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110803/1d9ff3b8/attachment.htm>
+
+From will.urbanski at gmail.com  Fri Aug 19 20:23:28 2011
+From: will.urbanski at gmail.com (Will Urbanski)
+Date: Fri, 19 Aug 2011 14:23:28 -0400
+Subject: [Therion] how to do multilevel scrap
+Message-ID: <CAHWhU8wek4USCsMUaE+vyKYiN21SZiWOcts1AZgQ4YzJhukmxg@mail.gmail.com>
+
+Hello everyone,
+
+I am trying to do a multilevel map in Therion and for some reason i can't
+figure out how to get dashed wall lines to appear. Attached is a screenshot
+of my area in question. There is a plumb shot from a60 to a67, and that's
+where the confusion starts. a67+ should all be below, and even though this
+data is in therion, it does not seem to understand that. Is there a
+directive I should be using to accomplish this?
+
+Thanks in advance!!!!
+
+Will
+
+-- 
+Will Urbanski
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110819/34b50f98/attachment.htm>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: therion-funkyfloor.png
+Type: image/png
+Size: 134485 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110819/34b50f98/attachment.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: ddc.tgz
+Type: application/x-gzip
+Size: 707078 bytes
+Desc: not available
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110819/34b50f98/attachment.bin>
+
+From martinsluka at mac.com  Fri Aug 19 22:27:44 2011
+From: martinsluka at mac.com (Martin Sluka)
+Date: Fri, 19 Aug 2011 22:27:44 +0200
+Subject: [Therion] how to do multilevel scrap
+In-Reply-To: <CAHWhU8wek4USCsMUaE+vyKYiN21SZiWOcts1AZgQ4YzJhukmxg@mail.gmail.com>
+References: <CAHWhU8wek4USCsMUaE+vyKYiN21SZiWOcts1AZgQ4YzJhukmxg@mail.gmail.com>
+Message-ID: <B593B953-9E38-4ABE-843D-72E23DB76B31@mac.com>
+
+There are two very strange things in your scraps:
+
+1. the pillar (hole in the map) should have wall -outline in . It is  
+strange it works without it in your case, but correct is add option - 
+outine in
+
+2. you drew two scraps from two separated parts (20101106_2_p1,  
+20101106_4_p1. Correct way is to name each part as separate scrap.  
+Very important it is in second case where each part belong to  
+different level.
+
+If there are two levels you should write in map:
+
+above_scrap
+break
+below_scrap
+
+Martin
+
+
+On 19.8.2011, at 20:23, Will Urbanski wrote:
+
+> Hello everyone,
+>
+> I am trying to do a multilevel map in Therion and for some reason i  
+> can't figure out how to get dashed wall lines to appear. Attached is  
+> a screenshot of my area in question. There is a plumb shot from a60  
+> to a67, and that's where the confusion starts. a67+ should all be  
+> below, and even though this data is in therion, it does not seem to  
+> understand that. Is there a directive I should be using to  
+> accomplish this?
+>
+> Thanks in advance!!!!
+>
+> Will
+>
+> -- 
+> Will Urbanski
+>
+>
+> <therion- 
+> funkyfloor 
+> .png><ddc.tgz>_______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From dangle at tomo.co.nz  Fri Aug 19 23:39:38 2011
+From: dangle at tomo.co.nz (Bruce)
+Date: Sat, 20 Aug 2011 09:39:38 +1200
+Subject: [Therion] how to do multilevel scrap
+In-Reply-To: <B593B953-9E38-4ABE-843D-72E23DB76B31@mac.com>
+References: <CAHWhU8wek4USCsMUaE+vyKYiN21SZiWOcts1AZgQ4YzJhukmxg@mail.gmail.com>
+	<B593B953-9E38-4ABE-843D-72E23DB76B31@mac.com>
+Message-ID: <4ECE6A84BF9E404FB42C06AF0F8692AB@JUICEBRAIN>
+
+
+>2. you drew two scraps from two separated parts (20101106_2_p1,  
+20101106_4_p1. Correct way is to name each part as separate scrap.  
+Very important it is in second case where each part belong to  
+different level.
+
+I have tried to explain this here
+http://therion.speleo.sk/wiki/doku.php?id=tips#avoiding_invisible_or_misshap
+en_scraps_in_loch_and_google_earth
+although it could do with some pictures I expect.
+
+If it could be explained better, or if there are peculiarities that I have
+left out, then please edit the page, or send me suggestions.
+
+Bruce
+
+
+
+
+From wookey at wookware.org  Tue Aug 23 02:13:58 2011
+From: wookey at wookware.org (Wookey)
+Date: Tue, 23 Aug 2011 01:13:58 +0100
+Subject: [Therion] Terraintool packaged for Debian and Ubuntu
+Message-ID: <20110823001358.GK5649@dream.aleph1.co.uk>
+
+I've packaged Terraintool - the handy utility for generating surface
+meshes for Survex and Therion from SRTM and ASTER datasets. 
+
+It is now waiting in the NEW queue for upload to Debian unstable, and
+is in my PPA for natty:
+https://launchpad.net/~wookey/+archive/wookstuff/+packages
+
+That also contains current versions of therion (5.3.8-3), survex
+(1.1.16-1) and tunnelx (20110801-1), built for natty. 
+
+Please test the packages and report any problems. 
+
+Wookey
+-- 
+Principal hats:  Linaro, Emdebian, Wookware, Balloonboard, ARM
+http://wookware.org/
+
+
+From torstein.finnesand at gmail.com  Mon Aug 29 16:59:51 2011
+From: torstein.finnesand at gmail.com (Torstein Finnesand)
+Date: Mon, 29 Aug 2011 16:59:51 +0200
+Subject: [Therion] Is it possible to not use the equate command when all
+ stations are unique
+Message-ID: <4E5BA967.3040709@gmail.com>
+
+Hi,
+"Equate" is used to set the survey stations equivalence, i.e: equate 
+2 at first 1 at second. The cave I survey has only unique station names (about 
+3000). But still I have to use the equate command for a station that is 
+located in 2 surveys. If not, the loops will not be closed. So I do like 
+this: equate TA40 at first TA40 at second. I have to use this command many 
+times, since the cave has a lot of surveys.
+
+Question: Is it possible to not use the equate command, since all 
+stations are unique? For instance by another command that tells 
+Therion/survex that the station names are unique even if there are two 
+or more surveys or by arranging data in another way.
+
+Torstein Finnesand
+Norway
+
+
+
+
+From wolfgang.zillig at web.de  Mon Aug 29 17:33:19 2011
+From: wolfgang.zillig at web.de (Wolfgang Zillig)
+Date: Mon, 29 Aug 2011 17:33:19 +0200
+Subject: [Therion] Is it possible to not use the equate command when all
+ stations are unique
+In-Reply-To: <4E5BA967.3040709@gmail.com>
+References: <4E5BA967.3040709@gmail.com>
+Message-ID: <4E5BB13F.3020909@web.de>
+
+Hi Torsten,
+
+either you use equate, or you need to remove the individual surveys. You 
+can use "#" to mark the lines as comment. Small hint, you can use more 
+than two stations at the equate command.
+
+Regards
+Wolfgang
+
+Am 29.08.2011 16:59, schrieb Torstein Finnesand:
+> Hi,
+> "Equate" is used to set the survey stations equivalence, i.e: equate 
+> 2 at first 1 at second. The cave I survey has only unique station names 
+> (about 3000). But still I have to use the equate command for a station 
+> that is located in 2 surveys. If not, the loops will not be closed. So 
+> I do like this: equate TA40 at first TA40 at second. I have to use this 
+> command many times, since the cave has a lot of surveys.
+>
+> Question: Is it possible to not use the equate command, since all 
+> stations are unique? For instance by another command that tells 
+> Therion/survex that the station names are unique even if there are two 
+> or more surveys or by arranging data in another way.
+>
+> Torstein Finnesand
+> Norway
+>
+>
+> _______________________________________________
+> Therion mailing list
+> Therion at speleo.sk
+> http://mailman.speleo.sk/mailman/listinfo/therion
+
+
+
+From emmanuel.vitte at laposte.net  Wed Aug 31 16:07:27 2011
+From: emmanuel.vitte at laposte.net (emmanuel.vitte at laposte.net)
+Date: Wed, 31 Aug 2011 16:07:27 +0200
+Subject: [Therion] vthreshold inefficient
+Message-ID: <7370925.7010.1314799646809.JavaMail.www@wwinf8224>
+
+
+  
+Hello All,
+ 
+I have LRUD data and the UD is always vertical. If  I understand manual and mailing lists, vthreshold can be set to 90 degrees for that purpose. But I noticed that vthreshold has no effect, even with any other value then 90. Is it normal or missed I something ?
+ 
+Thank you in advance,
+ 
+I'm new to Therion so I'm sorry if it has been answered.
+ 
+Regards,
+Emmanuel
+
+
+Une messagerie gratuite, garantie à vie et des services en plus, ça vous tente ?
+Je crée ma boîte mail www.laposte.net
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110831/8796c78c/attachment.htm>
+
+From ipogeorge at email.it  Wed Aug 31 16:53:24 2011
+From: ipogeorge at email.it (Giorgio Pannuzzo)
+Date: Wed, 31 Aug 2011 16:53:24 +0200
+Subject: [Therion] vthreshold inefficient
+Message-ID: <3e64ec99e08f18da629e03d389b6f3ef@151.55.150.73>
+
+The last time I checked it, many months ago, I encountered the opposite
+problem: no way to exclude vtrheshold, even with 90° value. This was a great
+problem for using old data collected in traditional way (only vertical
+up-down values).
+I'm going to check this as soon as possible.
+
+Giorgio 
+
+
+
+
+	--------- Original Message --------
+	Da: List for Therion users <therion at speleo.sk>
+	To: therion at speleo.sk <therion at speleo.sk>
+	Oggetto: [Therion] vthreshold inefficient
+	Data: 31/08/11 16:15 
+ --
+ Caselle da 1GB, trasmetti allegati fino a 3GB e in piu' IMAP, POP3 e SMTP
+autenticato? GRATIS solo con Email.it: http://www.email.it/f
+ 
+ Sponsor:
+ Family Hotel Costa dei Pini Cervia, dal 3 all'11 Settembre 2 Bimbi Gratis,
+per soggiorni minimo di una settimana
+ Clicca qui: http://adv.email.it/cgi-bin/foclick.cgi?mid=11774&d=20110831
+
+
+ 
+ 
+ --
+ Caselle da 1GB, trasmetti allegati fino a 3GB e in piu' IMAP, POP3 e SMTP autenticato? GRATIS solo con Email.it http://www.email.it/f
+ 
+ Sponsor:
+ Family Hotel Costa dei Pini Cervia, dal 3 all'11 Settembre 2 Bimbi Gratis, per soggiorni minimo di una settimana
+ Clicca qui: http://adv.email.it/cgi-bin/foclick.cgi?mid=11774&d=31-8
+
+
+From emmanuel.vitte at laposte.net  Wed Aug 31 17:58:42 2011
+From: emmanuel.vitte at laposte.net (emmanuel.vitte at laposte.net)
+Date: Wed, 31 Aug 2011 17:58:42 +0200
+Subject: [Therion] vthreshold inefficient
+In-Reply-To: <3e64ec99e08f18da629e03d389b6f3ef@151.55.150.73>
+References: <3e64ec99e08f18da629e03d389b6f3ef@151.55.150.73>
+Message-ID: <306343.15573.1314806322297.JavaMail.www@wwinf8217>
+
+
+
+I tested that on Therion is 5.3.8.
+To be more precise :
+If inclination <= 59, UD is vertical
+If inclination > 60, UD is perpendicular to the shot
+Changing the value of vthreshold does not have any effect
+
+Emmanuel
+
+Une messagerie gratuite, garantie à vie et des services en plus, ça vous tente ?
+Je crée ma boîte mail www.laposte.net
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://mailman.speleo.sk/pipermail/therion/attachments/20110831/44519c6d/attachment.htm>
+
