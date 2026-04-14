@@ -93,6 +93,9 @@ def compile_therion(rel_path: str):
     dir_path = os.path.dirname(full_path)
     file_name = os.path.basename(full_path)
     
+    if not os.path.exists(full_path):
+        return f"Chyba: Súbor {rel_path} neexistuje."
+
     try:
         result = subprocess.run(
             ['therion', file_name],
@@ -110,7 +113,7 @@ def compile_therion(rel_path: str):
 @mcp.tool()
 def generate_th2_skeleton(description: str):
     """Vygeneruje logickú kostru .th2 súboru."""
-    return f"layout local\n  scale 1 100\nendlayout\n\n# Kostra: {description}\nscrap scrap1 -projection plan\n  line wall\n    10 10\n    20 10\n    20 20\n    10 20\n    10 10\n  endline\nendscrap"
+    return f"layout local\n  scale 1 100\nendlayout\n\n# Logická kostra pre: {description}\nscrap scrap1 -projection plan\n  line wall\n    10 10\n    20 10\n    20 20\n    10 20\n    10 10\n  endline\nendscrap"
 
 if __name__ == "__main__":
     mcp.run()
