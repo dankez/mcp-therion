@@ -31,7 +31,7 @@ def test_compile_therion_success():
                 cwd=os.path.dirname(os.path.join("/home/dankez/Downloads/dropbox-spolu/", "project/main.th")),
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=60
             )
 
 def test_compile_therion_error():
