@@ -9,16 +9,21 @@ base_url = "https://mailman.speleo.sk/pipermail/therion/"
 os.makedirs("sources/mailing-list", exist_ok=True)
 STUDNICA_PATH = "studnica.json"
 
-def add_to_studnica(topic, trick):
-    data = {}
+def load_studnica():
     if os.path.exists(STUDNICA_PATH):
         try:
             with open(STUDNICA_PATH, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except: pass
-    data[topic] = trick
+                return json.load(f)
+        except:
+            pass
+    return {}
+
+def save_studnica(data):
     with open(STUDNICA_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
+
+def add_to_studnica(data, topic, trick):
+    data[topic] = trick
 
 # Simulácia získania zoznamu (v reálnom prostredí by sme stiahli index.html)
 # Tu použijem vzorku mesiacov a rokov, aby sme nezahltili systém, 
@@ -32,6 +37,8 @@ for y in years:
         filenames.append(f"{y}-{m}.txt.gz")
 
 print(f"Začínam sťahovanie a analýzu archívov...")
+
+studnica_data = load_studnica()
 
 for fname in filenames:
     url = base_url + fname
@@ -57,10 +64,12 @@ for fname in filenames:
                 topic = f"MetaPost Hack ({fname} #{i+1})"
                 # Skrátime na rozumnú dĺžku pre Studnicu
                 snippet = match[:500] + ("..." if len(match) > 500 else "")
-                add_to_studnica(topic, snippet)
+                add_to_studnica(studnica_data, topic, snippet)
             
             print(f"  [OK] {fname} - nájdené {len(metapost_matches)} trikov.")
     except Exception:
         pass # Súbor pravdepodobne neexistuje (budúcnosť alebo minulosť pred začiatkom listu)
+
+save_studnica(studnica_data)
 
 print("Proces dokončený.")
