@@ -3,7 +3,7 @@ import re
 
 DATA_ROOT = "/home/dankez/Downloads/dropbox-spolu/"
 MAX_ERRORS = 20
-IGNORE_DIRS = ['trash', 'tmp', 'old', 'zaloha'] # Pridal som aj zalohu pre istotu
+IGNORE_DIRS = {'trash', 'tmp', 'old', 'zaloha'} # Pridal som aj zalohu pre istotu
 errors = []
 
 patterns = [
