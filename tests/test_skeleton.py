@@ -7,7 +7,7 @@ def test_generate_th2_skeleton_content():
     
     assert "layout local" in result
     assert "scale 1 100" in result
-    assert f"# Logická kostra pre: {description}" in result
+    assert f"# Kostra: {description}" in result
     assert "scrap scrap1 -projection plan" in result
     assert "line wall" in result
     assert "10 10" in result

@@ -63,11 +63,8 @@ def read_therion_file(rel_path: str, anonymize: bool = False):
     """
     full_path = os.path.join(DATA_ROOT, rel_path)
     
-    # Podpora pre 'thconfig' bez prípony
-    if not os.path.exists(full_path) and not rel_path.endswith('.thconfig'):
-        potential_path = full_path + "" # Skúsime presne tak, ako je
-        if not os.path.exists(potential_path):
-             return f"Chyba: Súbor {rel_path} nebol nájdený."
+    if not os.path.exists(full_path):
+        return f"Chyba: Súbor {rel_path} nebol nájdený."
 
     try:
         with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
