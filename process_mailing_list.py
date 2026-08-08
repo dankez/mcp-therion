@@ -39,7 +39,9 @@ for fname in filenames:
     try:
         r = requests.get(url, timeout=5)
         if r.status_code == 200:
-            file_path = f"sources/mailing-list/{fname}"
+            # Sanitizácia názvu súboru pre prevenciu Path Traversal
+            safe_fname = os.path.basename(fname)
+            file_path = f"sources/mailing-list/{safe_fname}"
             with open(file_path, "wb") as f:
                 f.write(r.content)
             

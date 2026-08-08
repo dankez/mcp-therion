@@ -15,11 +15,13 @@ os.makedirs("sources/mailing-list", exist_ok=True)
 print(f"Sťahujem {len(filenames)} súborov...")
 
 for fname in filenames:
+    # Sanitizácia názvu súboru pre prevenciu Path Traversal
+    safe_fname = os.path.basename(fname)
     url = base_url + fname
-    print(f"  -> {fname}")
+    print(f"  -> {fname} (ukladám ako {safe_fname})")
     try:
         r = requests.get(url)
-        with open(f"sources/mailing-list/{fname}", "wb") as f:
+        with open(f"sources/mailing-list/{safe_fname}", "wb") as f:
             f.write(r.content)
             
         # Skúsime vybrať pár zaujímavých riadkov (prvých 10 KB z každého archívu)

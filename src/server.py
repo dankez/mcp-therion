@@ -13,6 +13,15 @@ SOURCES_DIR = "sources"
 if not os.path.exists(SOURCES_DIR):
     os.makedirs(SOURCES_DIR)
 
+def validate_path(rel_path: str):
+    """Overí, či je cesta bezpečná a nachádza sa v DATA_ROOT."""
+    abs_path = os.path.abspath(os.path.join(DATA_ROOT, rel_path))
+    root_path = os.path.abspath(DATA_ROOT)
+    # Použitie os.path.commonpath na prevenciu "sibling directory bypass"
+    if os.path.commonpath([root_path, abs_path]) != root_path:
+        raise ValueError(f"Neplatná cesta: {rel_path}. Prístup mimo {DATA_ROOT} je zakázaný.")
+    return abs_path
+
 @mcp.tool()
 def search_studnica(query: str):
     """Vyhľadá záznamy v Studnici (vaša vedomostná báza)."""
@@ -61,7 +70,10 @@ def read_therion_file(rel_path: str, anonymize: bool = False):
     Načíta Therion súbor (.th, .th2, .thcfg, .txt, thconfig).
     Predvolene načítava plnohodnotné dáta. Ak anonymize=True, citlivé údaje sa odfiltrujú.
     """
-    full_path = os.path.join(DATA_ROOT, rel_path)
+    try:
+        full_path = validate_path(rel_path)
+    except ValueError as e:
+        return str(e)
     
     # Podpora pre 'thconfig' bez prípony
     if not os.path.exists(full_path) and not rel_path.endswith('.thconfig'):
@@ -89,7 +101,11 @@ def list_therion_projects():
 @mcp.tool()
 def compile_therion(rel_path: str):
     """Spustí kompiláciu Therion lokálne a vráti výsledok."""
-    full_path = os.path.join(DATA_ROOT, rel_path)
+    try:
+        full_path = validate_path(rel_path)
+    except ValueError as e:
+        return str(e)
+
     dir_path = os.path.dirname(full_path)
     file_name = os.path.basename(full_path)
     
