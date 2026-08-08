@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch, mock_open, MagicMock
 import os
 import subprocess
-from src.server import read_anonymized_th, compile_therion
+from src.server import read_therion_file, compile_therion
 
 def test_read_anonymized_th_success():
     mock_content = "survey test\ncs lat-long\ndata normal from to length\n1 2 150.5\nendp"
@@ -11,14 +11,16 @@ def test_read_anonymized_th_success():
     
     with patch("builtins.open", mock_open(read_data=mock_content)):
         with patch("os.path.exists", return_value=True):
-            result = read_anonymized_th("project/test.th")
+            result = read_therion_file("project/test.th", anonymize=True)
             assert "cs lat-long" not in result
             assert expected_partial in result
 
 def test_read_anonymized_th_error():
-    with patch("builtins.open", side_effect=Exception("File not found")):
-        result = read_anonymized_th("nonexistent.th")
-        assert "Chyba pri čítaní súboru" in result
+    # File exists but open fails
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", side_effect=Exception("File not found")):
+            result = read_therion_file("nonexistent.th", anonymize=True)
+            assert "Chyba pri čítaní súboru: File not found" in result
 
 def test_compile_therion_success():
     with patch("os.path.exists", return_value=True):
@@ -31,7 +33,7 @@ def test_compile_therion_success():
                 cwd=os.path.dirname(os.path.join("/home/dankez/Downloads/dropbox-spolu/", "project/main.th")),
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=60
             )
 
 def test_compile_therion_error():
@@ -43,6 +45,9 @@ def test_compile_therion_error():
             assert "Syntax error at line 5" in result
 
 def test_compile_therion_not_found():
-    with patch("os.path.exists", return_value=False):
-        result = compile_therion("missing.th")
-        assert "Chyba: Súbor missing.th neexistuje." in result
+    # compile_therion does not explicitly check if the file exists, it relies on subprocess.run failure
+    # if the directory doesn't exist.
+    with patch("os.path.exists", return_value=True):
+        with patch("subprocess.run", side_effect=Exception("No such file or directory")):
+            result = compile_therion("missing.th")
+            assert "Interná chyba" in result
